@@ -176,14 +176,14 @@ void CMeasureHZtagsPage::OnAdjust()
 
 void CMeasureHZtagsPage::OnOK()
 {
-	auto p_tags_list = m_pdatDoc->GetpHZtags();
+	auto p_tags_list = m_pdatDoc->get_hz_tags_list();
 	p_tags_list->CopyTagList(&m_pChartDataWnd->m_HZtags);
 	m_pMO->b_changed = TRUE;
 	if (m_pMO->wOption != 1)
 	{
 		m_pChartDataWnd->m_HZtags.RemoveAllTags();
 		if (m_pMO->wOption == 0)
-			m_pChartDataWnd->m_VTtags.CopyTagList(m_pdatDoc->GetpVTtags());
+			m_pChartDataWnd->m_VTtags.CopyTagList(m_pdatDoc->get_vt_tags_list());
 	}
 	CPropertyPage::OnOK();
 }
@@ -195,10 +195,10 @@ void CMeasureHZtagsPage::OnCancel()
 	{
 		m_pChartDataWnd->m_HZtags.RemoveAllTags();
 		if (m_pMO->wOption == 0)
-			m_pChartDataWnd->m_VTtags.CopyTagList(m_pdatDoc->GetpVTtags());
+			m_pChartDataWnd->m_VTtags.CopyTagList(m_pdatDoc->get_vt_tags_list());
 	}
 	else
-		m_pChartDataWnd->m_HZtags.CopyTagList(m_pdatDoc->GetpHZtags());
+		m_pChartDataWnd->m_HZtags.CopyTagList(m_pdatDoc->get_hz_tags_list());
 	m_pChartDataWnd->Invalidate();
 	CPropertyPage::OnCancel();
 }
@@ -207,7 +207,7 @@ BOOL CMeasureHZtagsPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	m_pChartDataWnd->m_HZtags.CopyTagList(m_pdatDoc->GetpHZtags());
+	m_pChartDataWnd->m_HZtags.CopyTagList(m_pdatDoc->get_hz_tags_list());
 	m_pChartDataWnd->m_VTtags.RemoveAllTags();
 	m_pChartDataWnd->Invalidate();
 	m_nbcursors = m_pChartDataWnd->m_HZtags.GetNTags();

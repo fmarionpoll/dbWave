@@ -15,7 +15,7 @@ OPTIONS_INPUTDATA& OPTIONS_INPUTDATA::operator =(const OPTIONS_INPUTDATA& arg)
 	if (this != &arg)
 	{
 		chanArray.Copy( &arg.chanArray);
-		waveFormat.Copy( &arg.waveFormat);
+		waveFormat.copy( &arg.waveFormat);
 		csBasename = arg.csBasename;
 		csPathname = arg.csPathname;
 		exptnumber = arg.exptnumber;

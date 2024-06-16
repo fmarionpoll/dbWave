@@ -194,21 +194,21 @@ void CMeasureResultsPage::MeasureFromVTtags(const int channel)
 void CMeasureResultsPage::GetMaxMin(const int channel, long l_first, const long l_last)
 {
 	short* p_data;
-	int n_channels;
-	const auto p_buf = m_pdatDoc->LoadRawDataParams(&n_channels);
-	CChanlistItem* pchan = m_pChartDataWnd->GetChanlistItem(channel);
-	const auto source_chan = pchan->GetSourceChan();
-	const auto transform_mode = pchan->GetTransformMode();
-	const auto span = m_pdatDoc->GetTransfDataSpan(transform_mode);
+	int n_channels = m_pdatDoc->get_scan_count();
+	const auto p_buf = m_pdatDoc->get_raw_data_buffer();
+	const CChanlistItem* channel_list_item = m_pChartDataWnd->GetChanlistItem(channel);
+	const auto source_chan = channel_list_item->GetSourceChan();
+	const auto transform_mode = channel_list_item->GetTransformMode();
+	const auto span = m_pdatDoc->get_transformed_data_span(transform_mode);
 
 	// get first data point (init max and min)
 	auto buf_chan_first = l_first;
 	auto buf_chan_last = l_last;
 	int offset;
-	m_pdatDoc->LoadRawData(&buf_chan_first, &buf_chan_last, span);
+	m_pdatDoc->load_raw_data(&buf_chan_first, &buf_chan_last, span);
 	if (transform_mode > 0)
 	{
-		p_data = m_pdatDoc->LoadTransformedData(l_first, buf_chan_last, transform_mode, source_chan);
+		p_data = m_pdatDoc->load_transformed_data(l_first, buf_chan_last, transform_mode, source_chan);
 		offset = 1;
 	}
 	else
@@ -228,11 +228,11 @@ void CMeasureResultsPage::GetMaxMin(const int channel, long l_first, const long 
 		// load file data and get a pointer to these data
 		buf_chan_first = l_first;
 		buf_chan_last = l_last;
-		m_pdatDoc->LoadRawData(&buf_chan_first, &buf_chan_last, span);
+		m_pdatDoc->load_raw_data(&buf_chan_first, &buf_chan_last, span);
 		if (l_last < buf_chan_last)
 			buf_chan_last = l_last;
 		if (transform_mode > 0)
-			p_data = m_pdatDoc->LoadTransformedData(l_first, buf_chan_last, transform_mode, source_chan);
+			p_data = m_pdatDoc->load_transformed_data(l_first, buf_chan_last, transform_mode, source_chan);
 		else
 			p_data = p_buf + (l_first - buf_chan_first) * n_channels + source_chan;
 		// now search for max and min
@@ -261,7 +261,7 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 {
 	// get scale factor for channel and sampling rate
 	m_mVperBin = m_pChartDataWnd->GetChanlistItem(channel)->GetVoltsperDataBin() * 1000.0f;
-	const auto rate = m_pdatDoc->GetpWaveFormat()->sampling_rate_per_channel;
+	const auto rate = m_pdatDoc->get_waveformat()->sampling_rate_per_channel;
 
 	auto output_column = (m_col - 1) * m_nbdatacols + 1; // output data into column icol
 	auto item = m_listResults.GetItemCount(); // compute which line will receive data
@@ -530,7 +530,7 @@ BOOL CMeasureResultsPage::MeasureParameters()
 			p_vd->bacqchcomment = FALSE; // acq channel indiv comment
 			p_vd->bacqchsetting = FALSE; // acq chan indiv settings (gain, filter, etc)
 			auto cs = cs_out;
-			cs += m_pdbDoc->m_pDat->GetDataFileInfos(p_vd);
+			cs += m_pdbDoc->m_pDat->get_data_file_infos(p_vd);
 			p_copy += wsprintf(p_copy, _T("%s\r\n"), static_cast<LPCTSTR>(cs));
 
 			// output title for this data set

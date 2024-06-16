@@ -168,7 +168,7 @@ int RowItem::select_individual_spike(int no_spike) const
 {
 	if (chart_spike_shape != nullptr)
 		chart_spike_shape->SelectSpikeShape(no_spike);
-	return chart_spike_bar->SelectSpike(no_spike);
+	return chart_spike_bar->select_spike(no_spike);
 }
 
 void RowItem::print(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3) const

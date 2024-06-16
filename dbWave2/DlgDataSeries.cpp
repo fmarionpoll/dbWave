@@ -45,15 +45,15 @@ BOOL DlgDataSeries::OnInitDialog()
 		m_listseries.AddString(m_pChartDataWnd->GetChanlistItem(i)->GetComment());
 
 	// doc channel comments
-	chanmax = (m_pdbDoc->GetpWaveFormat())->scan_count;
-	const auto pchan_array = m_pdbDoc->GetpWavechanArray();
+	chanmax = (m_pdbDoc->get_waveformat())->scan_count;
+	const auto pchan_array = m_pdbDoc->get_wavechan_array();
 	for (i = 0; i < chanmax; i++)
 		m_ordinates.AddString(pchan_array->Get_p_channel(i)->am_csComment);
 
 	// doc transferts allowed
-	chanmax = m_pdbDoc->GetTransfDataNTypes();
+	chanmax = m_pdbDoc->get_transforms_count();
 	for (i = 0; i < chanmax; i++)
-		m_transform.AddString(m_pdbDoc->GetTransfDataName(i));
+		m_transform.AddString(m_pdbDoc->get_transform_name(i));
 
 	// select...
 	m_listseries.SetCurSel(1);
@@ -154,8 +154,8 @@ void DlgDataSeries::OnCancel()
 void DlgDataSeries::OnSelchangeTransform()
 {
 	const auto i = m_transform.GetCurSel();
-	m_ispan = m_pdbDoc->GetTransfDataSpan(i);
-	const auto b_change = m_pdbDoc->IsWBSpanChangeAllowed(i);
+	m_ispan = m_pdbDoc->get_transformed_data_span(i);
+	const auto b_change = m_pdbDoc->is_wb_span_change_allowed(i);
 	const auto nshow = (b_change == 1) ? SW_SHOW : SW_HIDE;
 	GetDlgItem(IDC_EDIT1)->ShowWindow(nshow);
 	GetDlgItem(IDC_STATIC1)->ShowWindow(nshow);
@@ -173,5 +173,5 @@ void DlgDataSeries::OnEnChangeEdit1()
 		m_ispan = 0;
 		SetDlgItemInt(IDC_EDIT1, m_ispan);
 	}
-	m_pdbDoc->SetWBTransformSpan(i, m_ispan);
+	m_pdbDoc->set_wb_transform_span(i, m_ispan);
 }

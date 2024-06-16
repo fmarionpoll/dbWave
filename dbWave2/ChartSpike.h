@@ -1,8 +1,12 @@
 ﻿#pragma once
+#include <tuple>
+
 #include "ChartWnd.h"
 #include "dbWaveDoc.h"
 #include "Spikedoc.h"
+#include "Spike_selected.h"
 #include "Spikelist.h"
+
 
 class ChartSpike : public ChartWnd
 {
@@ -18,7 +22,7 @@ protected:
 	int m_index_last_spike = 0;				// index last spike
 	int m_current_class = 0;				// current class in case of displaying classes
 	// m_selected_spike = -1;				// selected spike (display differently)
-	std::pair <int, int> selected_spike_ = std::make_pair (-1, -1);
+	Spike_selected spike_selected_;
 	int m_selected_pen{};
 	int m_hit_spike = -1;					// no of spike selected
 	int m_selected_class{};					// index class selected

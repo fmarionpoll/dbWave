@@ -57,7 +57,7 @@ int ChartData::AddChanlistItem(int ns, int mode)
 	// create new Envelope and store pointer into Envelopeslist
 	auto span = 0;
 	if (m_pDataFile != nullptr)
-		span = m_pDataFile->GetTransfDataSpan(mode);
+		span = m_pDataFile->get_transformed_data_span(mode);
 	auto* p_envelope_y = new CEnvelope(static_cast<WORD>(m_npixels), m_dataperpixel, ns, mode, span);
 	ASSERT(p_envelope_y != NULL);
 	const auto j = envelope_ptr_array.Add(p_envelope_y);
@@ -73,9 +73,9 @@ int ChartData::AddChanlistItem(int ns, int mode)
 	if (m_pDataFile != nullptr)
 	{
 		float voltsperb;
-		m_pDataFile->GetWBVoltsperBin(ns, &voltsperb, mode);
-		const auto pchan_array = m_pDataFile->GetpWavechanArray();
-		const auto pwave_format = m_pDataFile->GetpWaveFormat();
+		m_pDataFile->get_volts_per_bin(ns, &voltsperb, mode);
+		const auto pchan_array = m_pDataFile->get_wavechan_array();
+		const auto pwave_format = m_pDataFile->get_waveformat();
 		p_chan_list_item->SetDataBinFormat(pwave_format->binzero, pwave_format->binspan);
 		p_chan_list_item->SetDataVoltsFormat(voltsperb, pwave_format->fullscale_volts);
 		if (ns >= pchan_array->ChanArray_getSize())
@@ -85,7 +85,7 @@ int ChartData::AddChanlistItem(int ns, int mode)
 		UpdateChanlistMaxSpan(); 
 		if (mode > 0) 
 			p_chan_list_item->dl_comment = 
-			(m_pDataFile->GetTransfDataName(mode)).Left(8) + ": " + p_chan_list_item->dl_comment;
+			(m_pDataFile->get_transform_name(mode)).Left(8) + ": " + p_chan_list_item->dl_comment;
 	}
 	return index_newchan;
 }
@@ -152,13 +152,13 @@ void ChartData::UpdateChanlistFromDoc()
 		const auto p_ord = p_chanlist_item->pEnvelopeOrdinates;
 		const auto ns = p_ord->GetSourceChan();
 		const auto mode = p_ord->GetSourceMode();
-		p_ord->SetDocbufferSpan(m_pDataFile->GetTransfDataSpan(mode));
-		const auto pchan_array = m_pDataFile->GetpWavechanArray();
+		p_ord->SetDocbufferSpan(m_pDataFile->get_transformed_data_span(mode));
+		const auto pchan_array = m_pDataFile->get_wavechan_array();
 		const auto pchan = pchan_array->Get_p_channel(ns);
 		p_chanlist_item->dl_comment = pchan->am_csComment;
 		if (mode > 0)
 			p_chanlist_item->dl_comment = 
-			 (m_pDataFile->GetTransfDataName(mode)).Left(6) + ": " + p_chanlist_item->dl_comment;
+			 (m_pDataFile->get_transform_name(mode)).Left(6) + ": " + p_chanlist_item->dl_comment;
 		UpdateGainSettings(i);
 	}
 	UpdateChanlistMaxSpan(); 
@@ -171,9 +171,9 @@ void ChartData::UpdateGainSettings(int ichan)
 	const auto ns = p_ord->GetSourceChan();
 	const auto mode = p_ord->GetSourceMode();
 	float doc_volts_per_bin;
-	m_pDataFile->GetWBVoltsperBin(ns, &doc_volts_per_bin, mode);
+	m_pDataFile->get_volts_per_bin(ns, &doc_volts_per_bin, mode);
 	const auto volts_per_data_bin = pchan->GetVoltsperDataBin();
-	const auto pwave_format = m_pDataFile->GetpWaveFormat();
+	const auto pwave_format = m_pDataFile->get_waveformat();
 	if (doc_volts_per_bin != volts_per_data_bin)
 	{
 		pchan->SetDataBinFormat(pwave_format->binzero, pwave_format->binspan);
@@ -187,7 +187,7 @@ void ChartData::UpdateGainSettings(int ichan)
 int ChartData::SetChanlistSourceChan(int ichan, int acqchan)
 {
 	// check if channel is allowed
-	const auto pwave_format = m_pDataFile->GetpWaveFormat();
+	const auto pwave_format = m_pDataFile->get_waveformat();
 	if (pwave_format->scan_count <= acqchan || acqchan < 0)
 		return -1;
 
@@ -202,11 +202,11 @@ int ChartData::SetChanlistSourceChan(int ichan, int acqchan)
 	p_ord->SetSourceChan(acqchan);
 	const auto mode = p_ord->GetSourceMode();
 	// modify comment
-	const auto pchan_array = m_pDataFile->GetpWavechanArray();
+	const auto pchan_array = m_pDataFile->get_wavechan_array();
 	const auto pchan = pchan_array->Get_p_channel(acqchan);
 	p_chanlist_item->dl_comment = pchan->am_csComment;
 	if (mode > 0)
-		p_chanlist_item->dl_comment = (m_pDataFile->GetTransfDataName(mode)).Left(6) + _T(": ") + p_chanlist_item->
+		p_chanlist_item->dl_comment = (m_pDataFile->get_transform_name(mode)).Left(6) + _T(": ") + p_chanlist_item->
 			dl_comment;
 	UpdateGainSettings(ichan);
 	return acqchan;
@@ -218,13 +218,13 @@ void ChartData::SetChanlistOrdinates(int ichan, int acqchan, int transform)
 	const auto chanlist_item = chanlistitem_ptr_array[ichan];
 	chanlist_item->SetOrdinatesSourceData(acqchan, transform);
 	// modify comment
-	const auto pchanArray = m_pDataFile->GetpWavechanArray();
+	const auto pchanArray = m_pDataFile->get_wavechan_array();
 	if (acqchan >= pchanArray->ChanArray_getSize())
 		acqchan = 0;
 	const auto pchan = pchanArray->Get_p_channel(acqchan);
 	chanlist_item->dl_comment = pchan->am_csComment;
 	if (transform > 0)
-		chanlist_item->dl_comment = (m_pDataFile->GetTransfDataName(transform)).Left(6) + _T(": ") + chanlist_item->
+		chanlist_item->dl_comment = (m_pDataFile->get_transform_name(transform)).Left(6) + _T(": ") + chanlist_item->
 			dl_comment;
 }
 
@@ -280,8 +280,8 @@ void ChartData::SetChanlistVoltsZero(const int ichan, const float* pvalue)
 int ChartData::SetChanlistTransformMode(int ichan, int imode)
 {
 	// check if transform is allowed
-	if (!m_pDataFile->IsWBTransformAllowed(imode) || // ? is transform allowed
-		!m_pDataFile->InitWBTransformBuffer()) // ? is init OK
+	if (!m_pDataFile->is_wb_transform_allowed(imode) || // ? is transform allowed
+		!m_pDataFile->init_wb_transform_buffer()) // ? is init OK
 	{
 		AfxMessageBox(IDS_LNVERR02, MB_OK);
 		return -1;
@@ -291,14 +291,14 @@ int ChartData::SetChanlistTransformMode(int ichan, int imode)
 	const auto p_chanlist_item = chanlistitem_ptr_array[ichan];
 	const auto p_ord = p_chanlist_item->pEnvelopeOrdinates;
 	const auto ns = p_ord->GetSourceChan();
-	p_ord->SetSourceMode(imode, m_pDataFile->GetTransfDataSpan(imode));
+	p_ord->SetSourceMode(imode, m_pDataFile->get_transformed_data_span(imode));
 
 	// modify comment
-	const auto pchan_array = m_pDataFile->GetpWavechanArray();
+	const auto pchan_array = m_pDataFile->get_wavechan_array();
 	const auto pchan = pchan_array->Get_p_channel(ns);
 	p_chanlist_item->dl_comment = pchan->am_csComment;
 	if (imode > 0)
-		p_chanlist_item->dl_comment = (m_pDataFile->GetTransfDataName(imode)).Left(8)
+		p_chanlist_item->dl_comment = (m_pDataFile->get_transform_name(imode)).Left(8)
 			+ _T(": ") + p_chanlist_item->dl_comment;
 	UpdateGainSettings(ichan);
 	UpdateChanlistMaxSpan();
@@ -456,15 +456,15 @@ int ChartData::ResizeChannels(const int npixels, const long l_size)
 BOOL ChartData::AttachDataFile(AcqDataDoc* p_data_file)
 {
 	m_pDataFile = p_data_file;
-	m_samplingrate = m_pDataFile->GetpWaveFormat()->sampling_rate_per_channel;
-	m_pDataFile->SetReadingBufferDirty();
-	ASSERT(m_pDataFile->GetDOCchanLength() > 0);
+	m_samplingrate = m_pDataFile->get_waveformat()->sampling_rate_per_channel;
+	m_pDataFile->set_reading_buffer_dirty();
+	ASSERT(m_pDataFile->get_doc_channel_length() > 0);
 
-	const long l_size = m_pDataFile->GetDOCchanLength();
+	const long l_size = m_pDataFile->get_doc_channel_length();
 
 	// init parameters used to display Envelopes
 	const int l_very_last = m_lxVeryLast;
-	m_lxVeryLast = m_pDataFile->GetDOCchanLength() - 1;
+	m_lxVeryLast = m_pDataFile->get_doc_channel_length() - 1;
 	m_lxFirst = 0;
 	m_lxLast = l_size - 1;
 	if (m_lxSize != l_size || l_very_last != m_lxVeryLast)
@@ -475,7 +475,7 @@ BOOL ChartData::AttachDataFile(AcqDataDoc* p_data_file)
 	}
 
 	//Remove irrelevant Chanlist items;
-	const auto docchanmax = m_pDataFile->GetpWaveFormat()->scan_count - 1;
+	const auto docchanmax = m_pDataFile->get_waveformat()->scan_count - 1;
 	const auto chanlistmax = chanlistitem_ptr_array.GetUpperBound();
 	for (auto i = chanlistmax; i >= 0; i--)
 	{
@@ -505,7 +505,7 @@ BOOL ChartData::GetDataFromDoc()
 	// get document parameters: exit if empty document
 	if (m_bADbuffers || m_pDataFile == nullptr)
 		return FALSE;
-	if (m_pDataFile->GetDOCchanLength() <= 0)
+	if (m_pDataFile->get_doc_channel_length() <= 0)
 		return FALSE;
 
 	// check intervals	(assume m_lxSize OK)
@@ -530,7 +530,7 @@ BOOL ChartData::GetDataFromDoc()
 	// within one pixel...
 	auto l_first = m_lxFirst; // start
 	const auto ipixelmax = m_scale.GetnIntervals(); // max pixel
-	const auto nchans = m_pDataFile->GetScanCount();
+	const auto nchans = m_pDataFile->get_scan_count();
 
 	for (auto ipixel = 0; ipixel < ipixelmax; ipixel++)
 	{
@@ -545,7 +545,7 @@ BOOL ChartData::GetDataFromDoc()
 			long lBUFchanLast = l_last; // index very last pixel
 
 			// ask document to read raw data, document returns index of data loaded within the buffer
-			if (!m_pDataFile->LoadRawData(&lBUFchanFirst, &lBUFchanLast, nspan))
+			if (!m_pDataFile->load_raw_data(&lBUFchanFirst, &lBUFchanLast, nspan))
 				break; // exit if error reported
 
 			// build Envelopes  .................
@@ -564,12 +564,12 @@ BOOL ChartData::GetDataFromDoc()
 				const auto itransf = p_cont->GetSourceMode(); 
 				if (itransf > 0)
 				{
-					const auto lp_data = m_pDataFile->LoadTransformedData(l_first, lBUFchanLast, itransf, source_chan);
+					const auto lp_data = m_pDataFile->load_transformed_data(l_first, lBUFchanLast, itransf, source_chan);
 					p_cont->FillEnvelopeWithMxMi(ipixel, lp_data, 1, npoints, b_new);
 				}
 				else 
 				{
-					const auto lp_data = m_pDataFile->GetpRawDataElmt(source_chan, l_first);
+					const auto lp_data = m_pDataFile->get_raw_data_element(source_chan, l_first);
 					p_cont->FillEnvelopeWithMxMi(ipixel, lp_data, nchans, npoints, b_new);
 				}
 			}
@@ -585,7 +585,7 @@ BOOL ChartData::GetSmoothDataFromDoc(int ioption)
 	// get document parameters: exit if empty document
 	if (m_bADbuffers || m_pDataFile == nullptr)
 		return FALSE;
-	if (m_pDataFile->GetDOCchanLength() <= 0)
+	if (m_pDataFile->get_doc_channel_length() <= 0)
 		return FALSE;
 
 	// check intervals	(assume m_lxSize OK)
@@ -599,7 +599,7 @@ BOOL ChartData::GetSmoothDataFromDoc(int ioption)
 		m_lxLast = m_lxVeryLast; // clip to end
 		m_lxFirst = m_lxLast - m_lxSize + 1; // change start
 	}
-	const auto nchans = m_pDataFile->GetScanCount(); // n raw channels
+	const auto nchans = m_pDataFile->get_scan_count(); // n raw channels
 	short* lp_data; // pointer used later
 	// max nb of points spanning around raw data pt stored in array(0)
 	auto p_cont = envelope_ptr_array.GetAt(0);
@@ -623,7 +623,7 @@ BOOL ChartData::GetSmoothDataFromDoc(int ioption)
 			auto l_buf_chan_last = l_last; // index very last pixel
 
 			// ask document to read raw data, document returns index of data loaded within the buffer
-			if (!m_pDataFile->LoadRawData(&l_buf_chan_first, &l_buf_chan_last, nspan))
+			if (!m_pDataFile->load_raw_data(&l_buf_chan_first, &l_buf_chan_last, nspan))
 				break; // exit if error reported
 
 			// build Envelopes  .................
@@ -643,11 +643,11 @@ BOOL ChartData::GetSmoothDataFromDoc(int ioption)
 				int intervals = nchans;
 				if (itransf > 0) 
 				{
-					lp_data = m_pDataFile->LoadTransformedData(l_first, l_buf_chan_last, itransf, source_chan);
+					lp_data = m_pDataFile->load_transformed_data(l_first, l_buf_chan_last, itransf, source_chan);
 					intervals = 1;
 				}
 				else 
-					lp_data = m_pDataFile->GetpRawDataElmt(source_chan, l_first);
+					lp_data = m_pDataFile->get_raw_data_element(source_chan, l_first);
 				p_cont->FillEnvelopeWithSmoothMxMi(pixel, lp_data, intervals, npoints, b_new, ioption);
 			}
 			b_new = FALSE;
@@ -1117,7 +1117,7 @@ BOOL ChartData::CopyAsText(int ioption, int iunit, int nabcissa)
 		constexpr DWORD dw_len = 32768; // 32 Kb
 		size_t pcch_remaining = dw_len / sizeof(TCHAR);
 		const auto h_copy = GlobalAlloc(GHND, dw_len);
-		const auto pwave_format = m_pDataFile->GetpWaveFormat();
+		const auto pwave_format = m_pDataFile->get_waveformat();
 
 		if (h_copy != nullptr)
 		{
@@ -1130,7 +1130,7 @@ BOOL ChartData::CopyAsText(int ioption, int iunit, int nabcissa)
 			                  _T("%s\t%s\r\n"), static_cast<LPCTSTR>(m_pDataFile->GetPathName()),
 			                  static_cast<LPCTSTR>(date));
 			StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE,
-			                  _T("%s\t\r\n"), static_cast<LPCTSTR>(pwave_format->GetComments(_T("\t"), 0)));
+			                  _T("%s\t\r\n"), static_cast<LPCTSTR>(pwave_format->get_comments(_T("\t"), 0)));
 			// time interval
 			auto tt = float(GetDataFirstIndex()) / pwave_format->sampling_rate_per_channel; 
 			StringCchPrintfEx(lp_copy, pcch_remaining, &lp_copy, &pcch_remaining, STRSAFE_NULL_ON_FAILURE,
@@ -1752,7 +1752,7 @@ void ChartData::load_data_within_window(const boolean set_time_span, const float
 {
 	const auto n_pixels = GetRectWidth();
 	long l_first = 0;
-	long l_last = m_pDataFile->GetDOCchanLength() - 1;
+	long l_last = m_pDataFile->get_doc_channel_length() - 1;
 	if (set_time_span)
 	{
 		l_first = static_cast<long>(t_first * m_samplingrate);
@@ -1766,7 +1766,7 @@ void ChartData::load_data_within_window(const boolean set_time_span, const float
 
 void ChartData::load_all_channels(int data_transform)
 {
-	const int n_document_channels = m_pDataFile->GetpWaveFormat()->scan_count;
+	const int n_document_channels = m_pDataFile->get_waveformat()->scan_count;
 	auto n_channels_to_plot = GetChanlistSize();
 
 	// add channels if value is zero

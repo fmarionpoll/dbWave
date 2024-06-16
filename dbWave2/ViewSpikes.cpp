@@ -318,7 +318,7 @@ BOOL ViewSpikes::add_spike_to_list(long ii_time, BOOL check_if_spike_nearby)
 	const int doc_channel = m_pSpkList->get_detection_parameters()->extract_channel;
 	const int pre_threshold = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
 	const int spike_length = m_pSpkList->get_spike_length();
-	const int transformation_data_span = m_pDataDoc->GetTransfDataSpan(method);
+	const int transformation_data_span = m_pDataDoc->get_transformed_data_span(method);
 	const auto ii_time0 = ii_time - pre_threshold;
 	auto l_read_write_first = ii_time0;
 	auto l_read_write_last = ii_time0 + spike_length;
@@ -334,11 +334,11 @@ BOOL ViewSpikes::add_spike_to_list(long ii_time, BOOL check_if_spike_nearby)
 
 	if (!is_found)
 	{
-		if (!m_pDataDoc->LoadRawData(&l_read_write_first, &l_read_write_last, transformation_data_span))
+		if (!m_pDataDoc->load_raw_data(&l_read_write_first, &l_read_write_last, transformation_data_span))
 			return FALSE;
 
-		m_pDataDoc->LoadTransformedData(l_read_write_first, l_read_write_last, method, doc_channel);
-		const auto p_data_spike_0 = m_pDataDoc->GetpTransfDataElmt(ii_time0 - l_read_write_first);
+		m_pDataDoc->load_transformed_data(l_read_write_first, l_read_write_last, method, doc_channel);
+		const auto p_data_spike_0 = m_pDataDoc->get_transformed_data_element(ii_time0 - l_read_write_first);
 
 		spike_index = m_pSpkList->add_spike(p_data_spike_0,	//lpSource	= buff pointer to the buffer to copy
 		                                  1,				//nb of interleaved channels
@@ -537,7 +537,7 @@ void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 
 	const auto detect = m_pSpkList->get_detection_parameters();
 	int source_data_view = detect->extract_channel;
-	if (source_data_view >= m_pDataDoc->GetpWaveFormat()->scan_count)
+	if (source_data_view >= m_pDataDoc->get_waveformat()->scan_count)
 	{
 		detect->extract_channel = 0;
 		source_data_view = 0;
@@ -545,7 +545,7 @@ void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 	if (detect->detect_what == DETECT_STIMULUS)
 	{
 		source_data_view = detect->detect_channel;
-		if (source_data_view >= m_pDataDoc->GetpWaveFormat()->scan_count)
+		if (source_data_view >= m_pDataDoc->get_waveformat()->scan_count)
 		{
 			detect->detect_channel = 0;
 			source_data_view = 0;
@@ -582,7 +582,7 @@ void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 		// adjust scroll bar (size of button and left/right limits)
 		m_file_scroll_infos.fMask = SIF_ALL;
 		m_file_scroll_infos.nMin = 0;
-		m_file_scroll_infos.nMax = m_pDataDoc->GetDOCchanLength() - 1;
+		m_file_scroll_infos.nMax = m_pDataDoc->get_doc_channel_length() - 1;
 		m_file_scroll_infos.nPos = 0;
 		m_file_scroll_infos.nPage = m_ChartDataWnd.GetDataLastIndex() - m_ChartDataWnd.GetDataFirstIndex() + 1;
 		m_file_scroll.SetScrollInfo(&m_file_scroll_infos);
@@ -610,8 +610,8 @@ void ViewSpikes::updateSpikeFile(BOOL bUpdateInterface)
 		m_pSpkDoc->SetPathName(GetDocument()->db_get_current_spk_file_name(), FALSE);
 		m_tabCtrl.InitctrlTabFromSpikeDoc(m_pSpkDoc);
 
-		const int current_index = GetDocument()->get_current_spike_file()->get_spk_list_current_index();
-		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_index);
+		const int current_index = GetDocument()->get_current_spike_file()->get_spike_list_current_index();
+		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_index);
 		m_pspkDP = m_pSpkList->get_detection_parameters();
 
 		m_spikeClassListBox.set_source_data(m_pSpkList, GetDocument());
@@ -691,7 +691,7 @@ void ViewSpikes::adjust_y_zoom_to_max_min(BOOL bForceSearchMaxMin)
 
 void ViewSpikes::select_spike_list(int current_selection)
 {
-	m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_selection);
+	m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_selection);
 	ASSERT(m_pSpkList != NULL);
 
 	m_spikeClassListBox.SetSpkList(m_pSpkList);
@@ -879,7 +879,7 @@ CString ViewSpikes::PrintGetFileInfos()
 	// document's main comment (print on multiple lines if necessary)
 	if (options_viewdata->bAcqComment)
 	{
-		str_comment += p_wave_format->GetComments(_T(" ")); // cs_comment
+		str_comment += p_wave_format->get_comments(_T(" ")); // cs_comment
 		str_comment += rc;
 	}
 
@@ -1068,7 +1068,7 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 		if (p_dbwave_doc->get_db_n_spike_classes() <= 0)
 		{
 			m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
-			m_pSpkList = m_pSpkDoc->get_spk_list_current();
+			m_pSpkList = m_pSpkDoc->get_spike_list_current();
 			if (!m_pSpkList->is_class_list_valid()) // if class list not valid:
 			{
 				m_pSpkList->update_class_list(); // rebuild list of classes
@@ -1221,7 +1221,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		rw_text.right = rw_text.left + r_col;
 		rw_spikes.left = rw_text.right + r_separator;
 		//auto n = m_pSpkDoc->GetSpkListCurrent()->get_spike_length();
-		if (m_pSpkDoc->get_spk_list_current()->get_spike_length() > 1)
+		if (m_pSpkDoc->get_spike_list_current()->get_spike_length() > 1)
 			rw_spikes.right = rw_spikes.left + r_col;
 		else
 			rw_spikes.right = rw_spikes.left;
@@ -1268,7 +1268,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		//m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 		//AdjustYZoomToMaxMin(true); 
 		short max, min;
-		m_pSpkDoc->get_spk_list_current()->get_total_max_min(TRUE, &max, &min);
+		m_pSpkDoc->get_spike_list_current()->get_total_max_min(TRUE, &max, &min);
 		const int middle = (static_cast<int>(max) + static_cast<int>(min)) / 2;
 		m_spikeClassListBox.SetYzoom(extent, middle);
 		const auto n_count = m_spikeClassListBox.GetCount(); 
@@ -1457,11 +1457,11 @@ void ViewSpikes::centerDataDisplayOnSpike(const int spike_no)
 	// center curve vertically
 	CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(0);
 	const int doc_channel = m_pSpkList->get_detection_parameters()->extract_channel;
-	short max_data = m_pDataDoc->BGetVal(doc_channel, spk_first);
+	short max_data = m_pDataDoc->get_value_from_buffer(doc_channel, spk_first);
 	short min_data = max_data;
 	for (long i = spk_first; i <= spk_last; i++)
 	{
-		const short value = m_pDataDoc->BGetVal(doc_channel, i);
+		const short value = m_pDataDoc->get_value_from_buffer(doc_channel, i);
 		if (value > max_data) max_data = value;
 		if (value < min_data) min_data = value;
 	}

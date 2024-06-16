@@ -69,7 +69,7 @@ ViewData::ViewData()
 
 ViewData::~ViewData()
 {
-	m_pdatDoc->AcqCloseFile();
+	m_pdatDoc->acq_close_file();
 	DeleteObject(m_hBias);
 	DeleteObject(m_hZoom);
 }
@@ -387,11 +387,11 @@ void ViewData::OnUpdateEditCopy(CCmdUI* pCmdUI)
 void ViewData::ADC_OnHardwareChannelsDlg()
 {
 	DlgADInputs dlg;
-	dlg.m_pwFormat = m_pdatDoc->GetpWaveFormat();
-	dlg.m_pchArray = m_pdatDoc->GetpWavechanArray();
+	dlg.m_pwFormat = m_pdatDoc->get_waveformat();
+	dlg.m_pchArray = m_pdatDoc->get_wavechan_array();
 	if (IDOK == dlg.DoModal())
 	{
-		m_pdatDoc->AcqSaveDataDescriptors();
+		m_pdatDoc->acq_save_data_descriptors();
 		m_pdatDoc->SetModifiedFlag(TRUE);
 	}
 }
@@ -399,10 +399,10 @@ void ViewData::ADC_OnHardwareChannelsDlg()
 void ViewData::ADC_OnHardwareIntervalsDlg()
 {
 	DlgADIntervals dlg;
-	dlg.m_p_wave_format = m_pdatDoc->GetpWaveFormat();
+	dlg.m_p_wave_format = m_pdatDoc->get_waveformat();
 	if (IDOK == dlg.DoModal())
 	{
-		m_pdatDoc->AcqSaveDataDescriptors();
+		m_pdatDoc->acq_save_data_descriptors();
 		m_pdatDoc->SetModifiedFlag(TRUE);
 	}
 }
@@ -452,14 +452,14 @@ void ViewData::UpdateFileParameters(BOOL bUpdateInterface)
 		return;
 	}
 	m_pdatDoc = dbwave_doc->m_pDat;
-	m_pdatDoc->ReadDataInfos();
-	const auto wave_format = m_pdatDoc->GetpWaveFormat();
+	m_pdatDoc->read_data_infos();
+	const auto wave_format = m_pdatDoc->get_waveformat();
 
 	if (b_first_update)
 	{
 		m_samplingRate = wave_format->sampling_rate_per_channel; 
 		m_time_first_abcissa = 0.0f; 
-		m_time_last_abcissa = (m_pdatDoc->GetDOCchanLength()) / m_samplingRate;
+		m_time_last_abcissa = (m_pdatDoc->get_doc_channel_length()) / m_samplingRate;
 	}
 
 	// load parameters from current data file
@@ -468,14 +468,14 @@ void ViewData::UpdateFileParameters(BOOL bUpdateInterface)
 
 	// OPTION: display entire file	--	(inactif si multirow)
 	long l_first = 0;
-	long l_last = m_pdatDoc->GetDOCchanLength() - 1;
+	long l_last = m_pdatDoc->get_doc_channel_length() - 1;
 
 	if (!options_viewdata->bEntireRecord || options_viewdata->bMultirowDisplay && !b_first_update)
 	{
 		l_first = static_cast<long>(m_time_first_abcissa * m_samplingRate);
 		l_last = static_cast<long>(m_time_last_abcissa * m_samplingRate);
-		if (l_last > m_pdatDoc->GetDOCchanLength() - 1) // last OK?
-			l_last = m_pdatDoc->GetDOCchanLength() - 1; // clip to the end of the file
+		if (l_last > m_pdatDoc->get_doc_channel_length() - 1) // last OK?
+			l_last = m_pdatDoc->get_doc_channel_length() - 1; // clip to the end of the file
 	}
 	m_samplingRate = wave_format->sampling_rate_per_channel; // update sampling rate
 
@@ -661,13 +661,13 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		{
 			if (mdMO->wOption == 0) // vertical cursors
 			{
-				auto ptaglist = m_pdatDoc->GetpVTtags();
+				auto ptaglist = m_pdatDoc->get_vt_tags_list();
 				ptaglist->CopyTagList(&m_ChartDataWnd.m_VTtags);
 				m_ChartDataWnd.m_VTtags.RemoveAllTags();
 			}
 			else if (mdMO->wOption == 1) // horizontal cursors
 			{
-				auto ptaglist = m_pdatDoc->GetpHZtags();
+				auto ptaglist = m_pdatDoc->get_hz_tags_list();
 				ptaglist->CopyTagList(&m_ChartDataWnd.m_HZtags);
 				m_ChartDataWnd.m_HZtags.RemoveAllTags();
 			}
@@ -690,9 +690,9 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		if (m_cursorstate == CURSOR_CROSS)
 		{
 			if (mdMO->wOption == 0)
-				m_ChartDataWnd.m_VTtags.CopyTagList(m_pdatDoc->GetpVTtags());
+				m_ChartDataWnd.m_VTtags.CopyTagList(m_pdatDoc->get_vt_tags_list());
 			else if (mdMO->wOption == 1)
-				m_ChartDataWnd.m_HZtags.CopyTagList(m_pdatDoc->GetpHZtags());
+				m_ChartDataWnd.m_HZtags.CopyTagList(m_pdatDoc->get_hz_tags_list());
 			else if (mdMO->wOption == 3)
 				m_ChartDataWnd.m_HZtags.AddTag(mdMO->wStimulusthresh, mdMO->wStimuluschan);
 			m_ChartDataWnd.Invalidate();
@@ -722,7 +722,7 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			if (mdMO->lLimitRight != mdMO->lLimitLeft)
 				m_ChartDataWnd.m_VTtags.AddLTag(mdMO->lLimitRight, 0);
 		// store new VT tags into document
-			m_pdatDoc->GetpVTtags()->CopyTagList(&m_ChartDataWnd.m_VTtags);
+			m_pdatDoc->get_vt_tags_list()->CopyTagList(&m_ChartDataWnd.m_VTtags);
 			break;
 
 		// ......................  horizontal cursors
@@ -734,7 +734,7 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 				if (mdMO->wLimitInf != mdMO->wLimitSup)
 					m_ChartDataWnd.m_HZtags.AddTag(
 						m_ChartDataWnd.GetChanlistYPixeltoBin(m_channel_selected, mdMO->wLimitInf), m_channel_selected);
-				m_pdatDoc->GetpHZtags()->CopyTagList(&m_ChartDataWnd.m_HZtags);
+				m_pdatDoc->get_hz_tags_list()->CopyTagList(&m_ChartDataWnd.m_HZtags);
 				if (m_ChartDataWnd.m_HZtags.GetNTags() == 2)
 					SetCursorAssociatedWindows();
 				UpdateHZtagsVal();
@@ -1033,7 +1033,7 @@ void ViewData::OnFileScroll(UINT nSBCode, UINT nPos)
 	case SB_THUMBPOSITION: // scroll to pos = nPos
 	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
 		b_result = m_ChartDataWnd.GetDataFromDoc(
-			(nPos * m_pdatDoc->GetDOCchanLength()) / 100L);
+			(nPos * m_pdatDoc->get_doc_channel_length()) / 100L);
 		break;
 	default: // NOP: set position only
 		break;
@@ -1106,10 +1106,10 @@ void ViewData::MeasureProperties(int item)
 	switch (mdMO->wOption)
 	{
 	case 0:
-		m_pdatDoc->GetpVTtags()->CopyTagList(&m_ChartDataWnd.m_VTtags);
+		m_pdatDoc->get_vt_tags_list()->CopyTagList(&m_ChartDataWnd.m_VTtags);
 		break;
 	case 1:
-		m_pdatDoc->GetpHZtags()->CopyTagList(&m_ChartDataWnd.m_HZtags);
+		m_pdatDoc->get_hz_tags_list()->CopyTagList(&m_ChartDataWnd.m_HZtags);
 		break;
 	case 3:
 		mdMO->wStimuluschan = m_ChartDataWnd.m_HZtags.GetChannel(0);
@@ -1251,7 +1251,7 @@ BOOL ViewData::GetFileSeriesIndexFromPage(int page, int& filenumber, long& l_fir
 
 	auto very_last = m_lprintFirst + m_lprintLen;
 	if (options_viewdata->bEntireRecord)
-		very_last = m_pdatDoc->GetDOCchanLength() - 1;
+		very_last = m_pdatDoc->get_doc_channel_length() - 1;
 
 	for (auto row = 0; row < totalrows; row++)
 	{
@@ -1269,7 +1269,7 @@ CString ViewData::GetFileInfos()
 	const CString rc(_T("\n")); // next line
 
 	// document's name, date and time
-	const auto pwave_format = m_pdatDoc->GetpWaveFormat();
+	const auto pwave_format = m_pdatDoc->get_waveformat();
 	if (options_viewdata->bDocName || options_viewdata->bAcqDateTime) // print doc infos?
 	{
 		if (options_viewdata->bDocName) // print file name
@@ -1286,7 +1286,7 @@ CString ViewData::GetFileInfos()
 
 	// document's main comment (print on multiple lines if necessary)
 	if (options_viewdata->bAcqComment)
-		str_comment += pwave_format->GetComments(_T(" ")) + rc;
+		str_comment += pwave_format->get_comments(_T(" ")) + rc;
 
 	return str_comment;
 }
@@ -1384,7 +1384,7 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 			{
 				CString cs;
 				const WORD channb = m_ChartDataWnd.GetChanlistItem(ichan)->GetSourceChan();
-				const auto pchanArray = m_pdatDoc->GetpWavechanArray();
+				const auto pchanArray = m_pdatDoc->get_wavechan_array();
 				const auto pChan = pchanArray->Get_p_channel(channb);
 				cs.Format(_T("headstage=%s gain=%.0f  filter= %s - %i Hz"), (LPCTSTR)pChan->am_csheadstage,
 				          pChan->am_gaintotal, (LPCTSTR)pChan->am_csInputpos, pChan->am_lowpass);
@@ -1472,7 +1472,7 @@ int ViewData::PrintGetNPages()
 			if (len <= 0)
 			{
 				p_dbwave_doc->open_current_data_file();
-				len = m_pdatDoc->GetDOCchanLength();
+				len = m_pdatDoc->get_doc_channel_length();
 				p_dbwave_doc->db_set_data_len(len);
 			}
 			len -= m_lprintFirst;

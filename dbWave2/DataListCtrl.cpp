@@ -560,14 +560,14 @@ void DataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
 		else
 			p_wnd->GetScopeParameters()->crScopeFill = p_wnd->GetColor(15);
 
-		ptr->pdataDoc->ReadDataInfos();
-		ptr->cs_comment = ptr->pdataDoc->GetpWaveFormat()->GetComments(_T(" "));
+		ptr->pdataDoc->read_data_infos();
+		ptr->cs_comment = ptr->pdataDoc->get_waveformat()->get_comments(_T(" "));
 		p_wnd->AttachDataFile(ptr->pdataDoc);
 		p_wnd->load_all_channels(m_data_transform);
 		p_wnd->load_data_within_window(m_b_set_time_span, m_tFirst, m_tLast);
 		p_wnd->adjust_gain(m_b_set_mV_span, m_mV_span);
 
-		ptr->pdataDoc->AcqCloseFile();
+		ptr->pdataDoc->acq_close_file();
 	}
 	plot_data(ptr, p_wnd, iImage);
 }
@@ -625,8 +625,8 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 		int iTab = pParent->m_tabCtrl.GetCurSel();
 		if (iTab < 0)
 			iTab = 0;
-		const auto pspk_list = ptr->pspikeDoc->set_spk_list_as_current(iTab);
-		p_wnd->SetSourceData_spklist_spikedoc(pspk_list, ptr->pspikeDoc);
+		const auto pspk_list = ptr->pspikeDoc->set_spike_list_as_current(iTab);
+		p_wnd->set_source_data(pspk_list, ptr->pspikeDoc);
 		p_wnd->set_plot_mode(m_spike_plot_mode, m_selected_class);
 		long l_first = 0;
 		auto l_last = ptr->pspikeDoc->get_acq_size();
@@ -660,7 +660,7 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 		mem_dc.SetMapMode(p_dc->GetMapMode());
 
 		//if (pdb_doc != nullptr)
-		p_wnd->PlotSingleSpkDataToDC(&mem_dc);
+		p_wnd->plot_single_spk_data_to_dc(&mem_dc);
 
 		CPen pen;
 		pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0)); // black//RGB(0, 0, 0)); // black

@@ -228,7 +228,7 @@ void CWaveFormat::read_v8_and_before(CArchive& ar, WORD version)
 	}
 }
 
-void CWaveFormat::Copy(const CWaveFormat* arg)
+void CWaveFormat::copy(const CWaveFormat* arg)
 {
 	acqtime = arg->acqtime;
 	wversion = arg->wversion;
@@ -275,7 +275,7 @@ void CWaveFormat::Copy(const CWaveFormat* arg)
 	repeat2 = arg->repeat2;
 }
 
-long CWaveFormat::Write(CFile* datafile)
+long CWaveFormat::write(CFile* datafile)
 {
 	const auto p1 = datafile->GetPosition();
 	CArchive ar(datafile, CArchive::store);
@@ -285,7 +285,7 @@ long CWaveFormat::Write(CFile* datafile)
 	return static_cast<long>(p2 - p1);
 }
 
-BOOL CWaveFormat::Read(CFile* datafile)
+BOOL CWaveFormat::read(CFile* datafile)
 {
 	CArchive ar(datafile, CArchive::load);
 	auto flag = TRUE;
@@ -302,27 +302,27 @@ BOOL CWaveFormat::Read(CFile* datafile)
 	return flag;
 }
 
-CString CWaveFormat::GetComments(const CString& p_separator, const BOOL b_explanation) const
+CString CWaveFormat::get_comments(const CString& p_separator, const BOOL b_explanation) const
 {
 	CString cs_out;
-	cs_out += addComments(p_separator, b_explanation, _T("comment1="), cs_comment);
-	cs_out += addComments(p_separator, b_explanation, _T("stim1="), csStimulus);
-	cs_out += addComments(p_separator, b_explanation, _T("conc1= #"), csConcentration);
-	cs_out += addComments(p_separator, b_explanation, _T("stim2="), csStimulus2);
-	cs_out += addComments(p_separator, b_explanation, _T("com2= #"), csConcentration2);
+	cs_out += add_comments(p_separator, b_explanation, _T("comment1="), cs_comment);
+	cs_out += add_comments(p_separator, b_explanation, _T("stim1="), csStimulus);
+	cs_out += add_comments(p_separator, b_explanation, _T("conc1= #"), csConcentration);
+	cs_out += add_comments(p_separator, b_explanation, _T("stim2="), csStimulus2);
+	cs_out += add_comments(p_separator, b_explanation, _T("com2= #"), csConcentration2);
 
-	cs_out += addComments(p_separator, b_explanation, _T("insect="), csInsectname);
-	cs_out += addComments(p_separator, b_explanation, _T("location="), csLocation);
-	cs_out += addComments(p_separator, b_explanation, _T("sensillum="), csSensillum);
-	cs_out += addComments(p_separator, b_explanation, _T("strain="), csStrain);
-	cs_out += addComments(p_separator, b_explanation, _T("sex="), csSex);
-	cs_out += addComments(p_separator, b_explanation, _T("operator="), csOperator);
-	cs_out += addComments(p_separator, b_explanation, _T("comment2="), csMoreComment);
+	cs_out += add_comments(p_separator, b_explanation, _T("insect="), csInsectname);
+	cs_out += add_comments(p_separator, b_explanation, _T("location="), csLocation);
+	cs_out += add_comments(p_separator, b_explanation, _T("sensillum="), csSensillum);
+	cs_out += add_comments(p_separator, b_explanation, _T("strain="), csStrain);
+	cs_out += add_comments(p_separator, b_explanation, _T("sex="), csSex);
+	cs_out += add_comments(p_separator, b_explanation, _T("operator="), csOperator);
+	cs_out += add_comments(p_separator, b_explanation, _T("comment2="), csMoreComment);
 
 	return cs_out;
 }
 
-CString CWaveFormat::addComments(const CString& p_separator, const BOOL b_explanation, const CString& cs_explanation,
+CString CWaveFormat::add_comments(const CString& p_separator, const BOOL b_explanation, const CString& cs_explanation,
                                  const CString& cs_comment)
 {
 	auto cs_out = p_separator;

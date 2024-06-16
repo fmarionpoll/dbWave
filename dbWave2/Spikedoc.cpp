@@ -370,12 +370,12 @@ BOOL CSpikeDoc::OnOpenDocument(const LPCTSTR pszPathName)
 void CSpikeDoc::init_source_doc(const AcqDataDoc* p_document)
 {
 	// load parameters from file
-	const auto wave_format = p_document->GetpWaveFormat();
+	const auto wave_format = p_document->get_waveformat();
 	m_acquisition_time = wave_format->acqtime;
-	m_acquisition_size = p_document->GetDOCchanLength();
+	m_acquisition_size = p_document->get_doc_channel_length();
 	m_acquisition_rate = wave_format->sampling_rate_per_channel;
 	m_acquisition_comment = wave_format->cs_comment;
-	m_wave_format.Copy( wave_format);
+	m_wave_format.copy( wave_format);
 }
 
 CString CSpikeDoc::get_file_infos()
@@ -513,10 +513,10 @@ void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* op
 	switch (options_view_spikes->exportdatatype)
 	{
 	case EXPORT_PSTH: // PSTH
-		build_PSTH(options_view_spikes, sum0, class_index);
+		build_psth(options_view_spikes, sum0, class_index);
 		break;
 	case EXPORT_ISI: // ISI
-		n = build_ISI(options_view_spikes, sum0, class_index);
+		n = build_isi(options_view_spikes, sum0, class_index);
 		cs_dummy.Format(_T("\t%li"), n);
 		shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		break;
@@ -576,7 +576,7 @@ void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* op
 	}
 }
 
-void CSpikeDoc::export_spk_PSTH(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, const CString&
+void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, const CString&
                               cs_file_comment)
 {
 	CString cs_dummy;
@@ -943,7 +943,7 @@ void CSpikeDoc::export_table_title(CSharedFile* shared_file, OPTIONS_VIEWSPIKES*
 		break;
 	case EXPORT_AVERAGE:
 		cs_dummy.Format(_T("\r\ndata:\tN\txi=mean amplitude (mV)\tSum square of amplitudes\r\nn points:\t%i\r\n"),
-		                get_spk_list_current()->get_spike_length());
+		                get_spike_list_current()->get_spike_length());
 		break;
 	case EXPORT_HISTAMPL:
 	case EXPORT_LATENCY:
@@ -1048,7 +1048,7 @@ void CSpikeDoc::export_table_col_headers_data(CSharedFile* shared_file, const OP
 		break;
 	case EXPORT_AVERAGE:
 		{
-			const auto n_points = get_spk_list_current()->get_spike_length();
+			const auto n_points = get_spike_list_current()->get_spike_length();
 			cs_dummy = _T("\tN");
 			shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 			CString cs;
@@ -1194,7 +1194,7 @@ void CSpikeDoc::export_spk_file_comment(CSharedFile* shared_file, const OPTIONS_
 //	*plSum0
 // ATTENTION! no bounds checking performed on plSum0
 
-long CSpikeDoc::build_PSTH(const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, const int class_index)
+long CSpikeDoc::build_psth(const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, const int class_index)
 {
 	// adjust parameters
 	long n = 0;
@@ -1287,7 +1287,7 @@ long CSpikeDoc::build_PSTH(const OPTIONS_VIEWSPIKES* options_view_spikes, long* 
 //	*plSum0
 // ATTENTION! no bounds checking performed on plSum0
 
-long CSpikeDoc::build_ISI(const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, const int class_index)
+long CSpikeDoc::build_isi(const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, const int class_index)
 {
 	const auto spike_list = &spike_list_array[m_current_spike_list];
 
@@ -1729,7 +1729,7 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, OPTIONS_VIEWSP
 	}
 }
 
-SpikeList* CSpikeDoc::set_spk_list_as_current(int spike_list_index)
+SpikeList* CSpikeDoc::set_spike_list_as_current(int spike_list_index)
 {
 	SpikeList* spike_list = nullptr;
 	if (spike_list_array.GetSize() > 0 && spike_list_index >= 0 && spike_list_index < spike_list_array.GetSize())
@@ -1740,14 +1740,14 @@ SpikeList* CSpikeDoc::set_spk_list_as_current(int spike_list_index)
 	return spike_list;
 }
 
-SpikeList* CSpikeDoc::get_spk_list_current()
+SpikeList* CSpikeDoc::get_spike_list_current()
 {
 	if (m_current_spike_list >= 0)
 		return &spike_list_array[m_current_spike_list];
 	return nullptr;
 }
 
-SpikeList* CSpikeDoc::get_spk_list_at(int spike_list_index)
+SpikeList* CSpikeDoc::get_spike_list_at(int spike_list_index)
 {
 	return &spike_list_array[spike_list_index];
 }

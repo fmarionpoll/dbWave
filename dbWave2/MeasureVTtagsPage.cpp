@@ -101,21 +101,21 @@ void CMeasureVTtagsPage::OnCancel()
 	{
 		m_pChartDataWnd->m_VTtags.RemoveAllTags();
 		if (m_pMO->wOption == 1)
-			m_pChartDataWnd->m_HZtags.CopyTagList(m_pdatDoc->GetpHZtags());
+			m_pChartDataWnd->m_HZtags.CopyTagList(m_pdatDoc->get_hz_tags_list());
 	}
 	CPropertyPage::OnCancel();
 }
 
 void CMeasureVTtagsPage::OnOK()
 {
-	auto p_tag_list = m_pdatDoc->GetpVTtags();
+	auto p_tag_list = m_pdatDoc->get_vt_tags_list();
 	p_tag_list->CopyTagList(&m_pChartDataWnd->m_VTtags);
 	m_pMO->b_changed = TRUE;
 	if (m_pMO->wOption != 0)
 	{
 		m_pChartDataWnd->m_VTtags.RemoveAllTags();
 		if (m_pMO->wOption == 1)
-			m_pChartDataWnd->m_HZtags.CopyTagList(m_pdatDoc->GetpHZtags());
+			m_pChartDataWnd->m_HZtags.CopyTagList(m_pdatDoc->get_hz_tags_list());
 	}
 	CPropertyPage::OnOK();
 }
@@ -129,7 +129,7 @@ BOOL CMeasureVTtagsPage::OnInitDialog()
 
 	// save initial state of VTtags
 	//TODO bug here
-	m_pChartDataWnd->m_VTtags.CopyTagList(m_pdatDoc->GetpVTtags());
+	m_pChartDataWnd->m_VTtags.CopyTagList(m_pdatDoc->get_vt_tags_list());
 	m_pChartDataWnd->m_HZtags.RemoveAllTags();
 	m_pChartDataWnd->Invalidate();
 	m_nbtags = m_pChartDataWnd->m_VTtags.GetNTags();
@@ -318,7 +318,7 @@ void CMeasureVTtagsPage::OnAddTags()
 void CMeasureVTtagsPage::OnDeleteSeries()
 {
 	// delete present tags
-	auto p_tags_list = m_pdatDoc->GetpVTtags();
+	auto p_tags_list = m_pdatDoc->get_vt_tags_list();
 	m_pChartDataWnd->m_VTtags.CopyTagList(p_tags_list);
 	m_nbtags = p_tags_list->GetNTags();
 	m_pChartDataWnd->Invalidate();

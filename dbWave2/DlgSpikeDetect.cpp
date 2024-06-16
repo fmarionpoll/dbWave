@@ -50,8 +50,8 @@ BOOL DlgSpikeDetect::OnInitDialog()
 	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->ResetContent();
 	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->ResetContent();
 
-	const auto pwave_format = m_dbDoc->GetpWaveFormat();
-	const auto pchan_array = m_dbDoc->GetpWavechanArray();
+	const auto pwave_format = m_dbDoc->get_waveformat();
+	const auto pchan_array = m_dbDoc->get_wavechan_array();
 	int chanmax = pwave_format->scan_count;
 	m_scancount = chanmax;
 
@@ -66,13 +66,13 @@ BOOL DlgSpikeDetect::OnInitDialog()
 	}
 
 	// load list of transform methods
-	chanmax = m_dbDoc->GetTransfDataNTypes();
+	chanmax = m_dbDoc->get_transforms_count();
 	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->ResetContent();
 	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTTRANSFORM))->ResetContent();
 	for (int i = 0; i < chanmax; i++)
 	{
-		VERIFY(((CComboBox*)GetDlgItem(IDC_DETECTTRANSFORM))->AddString(m_dbDoc->GetTransfDataName(i)) != CB_ERR);
-		VERIFY(((CComboBox*)GetDlgItem(IDC_EXTRACTTRANSFORM))->AddString(m_dbDoc->GetTransfDataName(i)) != CB_ERR);
+		VERIFY(((CComboBox*)GetDlgItem(IDC_DETECTTRANSFORM))->AddString(m_dbDoc->get_transform_name(i)) != CB_ERR);
+		VERIFY(((CComboBox*)GetDlgItem(IDC_EXTRACTTRANSFORM))->AddString(m_dbDoc->get_transform_name(i)) != CB_ERR);
 	}
 
 	// load list of detection parameters

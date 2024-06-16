@@ -103,7 +103,7 @@ public:
 
 	float GetTimeperPixel() const
 	{
-		return static_cast<float>(GetDataSize()) / m_pDataFile->GetpWaveFormat()->sampling_rate_per_channel / static_cast<float>(
+		return static_cast<float>(GetDataSize()) / m_pDataFile->get_waveformat()->sampling_rate_per_channel / static_cast<float>(
 			GetRectWidth());
 	}
 

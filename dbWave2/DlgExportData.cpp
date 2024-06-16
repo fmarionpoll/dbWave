@@ -96,7 +96,7 @@ BOOL DlgExportData::OnInitDialog()
 	GetDlgItem(IDC_TIMEFIRST)->EnableWindow(!iivO.bentireFile);
 	GetDlgItem(IDC_TIMELAST)->EnableWindow(!iivO.bentireFile);
 
-	if (m_dbDoc->m_pDat->GetpVTtags()->GetNTags() < 1)
+	if (m_dbDoc->m_pDat->get_vt_tags_list()->GetNTags() < 1)
 	{
 		m_timefirst = iivO.fTimefirst;
 		m_timelast = iivO.fTimelast;
@@ -104,12 +104,12 @@ BOOL DlgExportData::OnInitDialog()
 	else
 	{
 		AcqDataDoc* pDat = m_dbDoc->m_pDat;
-		m_timefirst = static_cast<float>(pDat->GetpVTtags()->GetTagLVal(0));
-		if (pDat->GetpVTtags()->GetNTags() > 1)
-			m_timelast = static_cast<float>(pDat->GetpVTtags()->GetTagLVal(1));
+		m_timefirst = static_cast<float>(pDat->get_vt_tags_list()->GetTagLVal(0));
+		if (pDat->get_vt_tags_list()->GetNTags() > 1)
+			m_timelast = static_cast<float>(pDat->get_vt_tags_list()->GetTagLVal(1));
 		else
-			m_timelast = static_cast<float>(pDat->GetDOCchanLength());
-		float chrate = pDat->GetpWaveFormat()->sampling_rate_per_channel;
+			m_timelast = static_cast<float>(pDat->get_doc_channel_length());
+		float chrate = pDat->get_waveformat()->sampling_rate_per_channel;
 		m_timefirst /= chrate;
 		m_timelast /= chrate;
 	}
@@ -250,14 +250,14 @@ void DlgExportData::Export()
 
 	// compute some parameters
 	m_pDat = m_dbDoc->m_pDat; // pointer to data document
-	CWaveFormat* pwaveFormat = m_pDat->GetpWaveFormat();
+	CWaveFormat* pwaveFormat = m_pDat->get_waveformat();
 	if (iivO.bentireFile) // if all data, load
 	{
 		// intervals from data file
 		mm_timefirst = 0.f;
 		mm_timelast = pwaveFormat->duration;
 		mm_lFirst = 0;
-		mm_lLast = m_pDat->GetDOCchanLength();
+		mm_lLast = m_pDat->get_doc_channel_length();
 	}
 	else // else, convert time into
 	{
@@ -331,13 +331,13 @@ BOOL DlgExportData::ExportDataAsTextFile()
 	// LINE 3.......... file comment
 
 	csCharBuf.Format(_T("file :\t%s\r\n"), (LPCTSTR)m_filesource);
-	CWaveChanArray* pChanArray = m_pDat->GetpWavechanArray();
-	CWaveFormat* pwaveFormat = m_pDat->GetpWaveFormat();
+	CWaveChanArray* pChanArray = m_pDat->get_wavechan_array();
+	CWaveFormat* pwaveFormat = m_pDat->get_waveformat();
 
 	CString csdate = (pwaveFormat->acqtime).Format("%#d %B %Y %X");
 	cs_dummy.Format(_T("date :\t%s\r\n"), (LPCTSTR)csdate);
 	csCharBuf += cs_dummy;
-	cs_dummy.Format(_T("comment :\t%s\r\n"), (LPCTSTR)pwaveFormat->GetComments(_T("\t")));
+	cs_dummy.Format(_T("comment :\t%s\r\n"), (LPCTSTR)pwaveFormat->get_comments(_T("\t")));
 	csCharBuf += cs_dummy;
 	dataDest.Write(csCharBuf, csCharBuf.GetLength() * sizeof(TCHAR)); // write data
 	csCharBuf.Empty();
@@ -364,7 +364,7 @@ BOOL DlgExportData::ExportDataAsTextFile()
 	for (i = mm_firstchan; i <= mm_lastchan; i++) // loop through all chans
 	{
 		float VoltsperBin; // declare float
-		m_pDat->GetWBVoltsperBin(i, &VoltsperBin, 0); // get value
+		m_pDat->get_volts_per_bin(i, &VoltsperBin, 0); // get value
 		cs_dummy.Format(_T("\t%f"), static_cast<double>(VoltsperBin) * 1000.f); // copy to buffer
 		csCharBuf += cs_dummy;
 	}
@@ -411,7 +411,7 @@ BOOL DlgExportData::ExportDataAsTextFile()
 		// LINE .......... values
 
 		short value;
-		m_pDat->BGetVal(0, -1); // force reading buffer anew
+		m_pDat->get_value_from_buffer(0, -1); // force reading buffer anew
 		// loop over all values
 		for (int ii_time = mm_lFirst; ii_time < mm_lLast; ii_time++)
 		{
@@ -423,7 +423,7 @@ BOOL DlgExportData::ExportDataAsTextFile()
 			for (i = mm_firstchan; i <= mm_lastchan; i++) // loop through all chans
 			{
 				// get value and convert into ascii
-				value = m_pDat->BGetVal(i, ii_time) - mm_binzero;
+				value = m_pDat->get_value_from_buffer(i, ii_time) - mm_binzero;
 				cs_dummy.Format(_T("\t%i"), value);
 				csCharBuf += cs_dummy;
 			}
@@ -454,18 +454,18 @@ BOOL DlgExportData::ExportDataAsSapidFile()
 	dataDest.Write(pdummy, 7); // write dummy data
 
 	short value;
-	//int dummy = m_pDat->BGetVal(0, -1);		// init reading data
+	//int dummy = m_pDat->get_value_from_buffer(0, -1);		// init reading data
 	for (int ii_time = mm_lFirst; ii_time < mm_lLast; ii_time++)
 	{
 		for (auto i = mm_firstchan; i <= mm_lastchan; i++) // loop through all chans
 		{
 			// get value and convert into ascii
-			value = m_pDat->BGetVal(i, ii_time) - mm_binzero;
+			value = m_pDat->get_value_from_buffer(i, ii_time) - mm_binzero;
 			dataDest.Write(&value, sizeof(short));
 		}
 	}
 	// last value is sampling rate
-	value = static_cast<short>(m_pDat->GetpWaveFormat()->sampling_rate_per_channel);
+	value = static_cast<short>(m_pDat->get_waveformat()->sampling_rate_per_channel);
 	dataDest.Write(&value, sizeof(short));
 	dataDest.Flush();
 	dataDest.Close(); // close file
@@ -548,8 +548,8 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 	col--;
 	row++;
 	// date
-	const auto pwaveFormat = m_pDat->GetpWaveFormat();
-	const auto pchanArray = m_pDat->GetpWavechanArray();
+	const auto pwaveFormat = m_pDat->get_waveformat();
+	const auto pchanArray = m_pDat->get_wavechan_array();
 
 	auto date = (pwaveFormat->acqtime).Format(_T("%#d %B %Y %X")); //("%c");
 	save_BIFF(&data_dest, BIFF_CHARS, row, col, "date");
@@ -560,7 +560,7 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 	// comments
 	save_BIFF(&data_dest, BIFF_CHARS, row, col, "comments");
 	col++;
-	date = pwaveFormat->GetComments(_T("\t"));
+	date = pwaveFormat->get_comments(_T("\t"));
 	saveCString_BIFF(&data_dest, row, col, date);
 	col--;
 	row++;
@@ -601,7 +601,7 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 	for (auto i = mm_firstchan; i <= mm_lastchan; i++) // loop through all chans
 	{
 		float voltsper_bin; // declare float
-		m_pDat->GetWBVoltsperBin(i, &voltsper_bin, 0); // get value
+		m_pDat->get_volts_per_bin(i, &voltsper_bin, 0); // get value
 		fdouble = voltsper_bin;
 		save_BIFF(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&fdouble));
 		col++;
@@ -666,7 +666,7 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 		auto ii_time = 0;
 		float voltsper_bin;
 		const double rate = pwaveFormat->sampling_rate_per_channel;
-		auto dummy = m_pDat->BGetVal(0, -1); // init reading data
+		auto dummy = m_pDat->get_value_from_buffer(0, -1); // init reading data
 
 		for (int k = mm_lFirst; k < boutlength; k++)
 		{
@@ -687,8 +687,8 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 
 			for (auto j = j0; j < ncolsperbout; j++)
 			{
-				m_pDat->GetWBVoltsperBin(j - j0, &voltsper_bin, 0);
-				fdouble = (static_cast<double>(m_pDat->BGetVal(j - j0, ii_time)) - static_cast<double>(mm_binzero)) *
+				m_pDat->get_volts_per_bin(j - j0, &voltsper_bin, 0);
+				fdouble = (static_cast<double>(m_pDat->get_value_from_buffer(j - j0, ii_time)) - static_cast<double>(mm_binzero)) *
 					static_cast<double>(voltsper_bin);
 				save_BIFF(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&fdouble));
 				col++;
@@ -797,14 +797,14 @@ BOOL DlgExportData::ExportDataAsdbWaveFile()
 {
 	// create new file
 	auto pDatDest = new ADAcqDataDoc;
-	pDatDest->CreateAcqFile(m_filedest);
+	pDatDest->acq_create_file(m_filedest);
 
 	// load data header and save it into dest file
-	const auto pw_f_dest = pDatDest->GetpWaveFormat();
-	auto pw_c_dest = pDatDest->GetpWavechanArray();
-	const auto pw_f_source = m_pDat->GetpWaveFormat();
-	const auto pw_c_source = m_pDat->GetpWavechanArray();
-	pw_f_dest->Copy(pw_f_source);
+	const auto pw_f_dest = pDatDest->get_waveformat();
+	auto pw_c_dest = pDatDest->get_wavechan_array();
+	const auto pw_f_source = m_pDat->get_waveformat();
+	const auto pw_c_source = m_pDat->get_wavechan_array();
+	pw_f_dest->copy(pw_f_source);
 	pw_c_dest->Copy(pw_c_source);
 
 	const auto nchans = mm_lastchan - mm_firstchan + 1;
@@ -828,13 +828,13 @@ BOOL DlgExportData::ExportDataAsdbWaveFile()
 	auto datlen = 0;
 	pw_f_dest->sample_count = 0;
 	pDatDest->AcqDoc_DataAppendStart();
-	auto dummy = m_pDat->BGetVal(0, -1); // init reading data
+	auto dummy = m_pDat->get_value_from_buffer(0, -1); // init reading data
 
 	for (int ii_time = mm_lFirst; ii_time < mm_lLast; ii_time++)
 	{
 		for (auto i = mm_firstchan; i <= mm_lastchan; i++) // loop through all chans
 		{
-			*pdat = m_pDat->BGetVal(i, ii_time) - mm_binzero;
+			*pdat = m_pDat->get_value_from_buffer(i, ii_time) - mm_binzero;
 			datlen++;
 			pdat++;
 			if (datlen >= LEN)
@@ -852,7 +852,7 @@ BOOL DlgExportData::ExportDataAsdbWaveFile()
 	pDatDest->AcqDoc_DataAppendStop();
 
 	// delete pdataDest object created here
-	pDatDest->AcqCloseFile();
+	pDatDest->acq_close_file();
 
 	delete pDatDest;
 	delete[] p_data;

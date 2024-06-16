@@ -179,7 +179,7 @@ void ViewSpikeSort::OnInitialUpdate()
 	m_itagup = m_chart_measures.m_HZtags.AddTag(spkclassif_->upper_threshold, 0);
 	m_itaglow = m_chart_measures.m_HZtags.AddTag(spkclassif_->lower_threshold, 0);
 
-	m_chart_spike_bars.DisplayAllFiles(false, GetDocument());
+	m_chart_spike_bars.display_all_files(false, GetDocument());
 	m_chart_spike_bars.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
 	m_chart_spike_bars.SetScopeParameters(&(options_view_data_->spksort1bars));
 
@@ -300,8 +300,8 @@ void ViewSpikeSort::update_spike_file()
 	{
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		m_pSpkDoc->SetPathName(GetDocument()->db_get_current_spk_file_name(), FALSE);
-		const int current_index = GetDocument()->get_current_spike_file()->get_spk_list_current_index();
-		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_index);
+		const int current_index = GetDocument()->get_current_spike_file()->get_spike_list_current_index();
+		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_index);
 
 		// update Tab at the bottom
 		m_tabCtrl.InitctrlTabFromSpikeDoc(m_pSpkDoc);
@@ -438,7 +438,7 @@ void ViewSpikeSort::OnSort()
 	auto first_file = current_file;
 	auto last_file = first_file;
 	const auto n_files = pdb_doc->db_get_n_records();
-	const auto current_list = m_pSpkDoc->get_spk_list_current_index();
+	const auto current_list = m_pSpkDoc->get_spike_list_current_index();
 
 	// change indexes if ALL files selected
 	DlgProgress* dlg_progress = nullptr;
@@ -478,7 +478,7 @@ void ViewSpikeSort::OnSort()
 		}
 
 		// load spike list
-		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_list);
+		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_list);
 		if ((nullptr == m_pSpkList) || (0 == m_pSpkList->get_spike_length()))
 			continue;
 
@@ -511,7 +511,7 @@ void ViewSpikeSort::OnSort()
 		delete dlg_progress;
 		pdb_doc->db_set_current_record_position(current_file);
 		m_pSpkDoc = pdb_doc->open_current_spike_file();
-		m_pSpkList = m_pSpkDoc->get_spk_list_current();
+		m_pSpkList = m_pSpkDoc->get_spike_list_current();
 	}
 
 	// refresh data windows
@@ -559,7 +559,7 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
 				spike_index = m_chart_spike_shapes.GetHitSpike();
 			else if (HIWORD(lParam) == IDC_DISPLAYBARS)
-				spike_index = m_chart_spike_bars.GetHitSpike();
+				spike_index = m_chart_spike_bars.get_hit_spike();
 			else if (HIWORD(lParam) == IDC_DISPLAYPARM)
 				spike_index = m_chart_measures.get_hit_spike();
 
@@ -579,7 +579,7 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
 				spike_index = m_chart_spike_shapes.GetHitSpike();
 			else if (HIWORD(lParam) == IDC_DISPLAYBARS)
-				spike_index = m_chart_spike_bars.GetHitSpike();
+				spike_index = m_chart_spike_bars.get_hit_spike();
 			else if (HIWORD(lParam) == IDC_DISPLAYPARM)
 				spike_index = m_chart_measures.get_hit_spike();
 			// if m_bAllFiles, spike_index is global, otherwise it comes from a single file...
@@ -695,9 +695,9 @@ void ViewSpikeSort::clear_flag_all_spikes()
 			pdb_doc->db_set_current_record_position(i_file);
 			m_pSpkDoc = pdb_doc->open_current_spike_file();
 
-			for (auto j = 0; j < m_pSpkDoc->get_spk_list_size(); j++)
+			for (auto j = 0; j < m_pSpkDoc->get_spike_list_size(); j++)
 			{
-				m_pSpkList = m_pSpkDoc->set_spk_list_as_current(j);
+				m_pSpkList = m_pSpkDoc->set_spike_list_as_current(j);
 				m_pSpkList->remove_all_spike_flags();
 			}
 		}
@@ -715,7 +715,7 @@ void ViewSpikeSort::OnMeasure()
 	// set file indexes - assume only one file selected
 	const auto pdb_doc = GetDocument();
 	const int n_files = pdb_doc->db_get_n_records();
-	const auto current_spike_list = m_pSpkDoc->get_spk_list_current_index();
+	const auto current_spike_list = m_pSpkDoc->get_spike_list_current_index();
 	int index_current_file = pdb_doc->db_get_current_record_position(); // index current file
 
 	// change size of arrays and prepare temporary dialog
@@ -740,7 +740,7 @@ void ViewSpikeSort::OnMeasure()
 		// check if this file is ok
 		if (m_pSpkDoc == nullptr)
 			continue;
-		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_spike_list);
+		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_spike_list);
 		if (m_pSpkList == nullptr)
 			continue;
 
@@ -780,7 +780,7 @@ void ViewSpikeSort::OnMeasure()
 		index_current_file = pdb_doc->db_get_current_record_position();
 		pdb_doc->db_set_current_record_position(index_current_file);
 		m_pSpkDoc = pdb_doc->open_current_spike_file();
-		m_pSpkList = m_pSpkDoc->get_spk_list_current();
+		m_pSpkList = m_pSpkDoc->get_spike_list_current();
 	}
 
 	m_chart_spike_shapes.set_source_data(m_pSpkList, GetDocument());
@@ -938,7 +938,7 @@ void ViewSpikeSort::OnFormatGainadjust()
 void ViewSpikeSort::select_spike_from_current_list(const int spike_index)
 {
 	m_chart_spike_shapes.SelectSpikeShape(spike_index);
-	m_chart_spike_bars.SelectSpike(spike_index);
+	m_chart_spike_bars.select_spike(spike_index);
 	m_chart_measures.select_spike(spike_index);
 	m_pSpkList->m_selected_spike = spike_index;
 
@@ -989,7 +989,7 @@ void ViewSpikeSort::OnToolsEdittransformspikes()
 	{
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 		const auto current_list = m_tabCtrl.GetCurSel();
-		m_pSpkDoc->set_spk_list_as_current(current_list);
+		m_pSpkDoc->set_spike_list_as_current(current_list);
 	}
 
 	if (!dlg.m_bartefact && m_spike_index != dlg.m_spike_index)
@@ -1001,7 +1001,7 @@ void ViewSpikeSort::OnToolsEdittransformspikes()
 void ViewSpikeSort::OnSelectAllFiles()
 {
 	m_bAllFiles = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
-	m_chart_spike_bars.DisplayAllFiles(m_bAllFiles, GetDocument());
+	m_chart_spike_bars.display_all_files(m_bAllFiles, GetDocument());
 	m_chart_spike_shapes.DisplayAllFiles(m_bAllFiles, GetDocument());
 	m_chart_measures.display_all_files(m_bAllFiles, GetDocument());
 
@@ -1082,20 +1082,20 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	const auto p_dat_doc = GetDocument()->m_pDat;
 	p_dat_doc->OnOpenDocument(data_file_name);
 	const auto doc_chan = m_pSpkList->get_detection_parameters()->extract_channel; 
-	const auto number_channels = static_cast<int>(p_dat_doc->GetpWaveFormat()->scan_count); 
+	const auto number_channels = static_cast<int>(p_dat_doc->get_waveformat()->scan_count); 
 	const auto method = m_pSpkList->get_detection_parameters()->extract_transform;
 	const auto spike_pre_trigger = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
 	const int offset = (method > 0) ? 1 : number_channels; 
-	const int span = p_dat_doc->GetTransfDataSpan(method); 
+	const int span = p_dat_doc->get_transformed_data_span(method); 
 
 	// pre-load data
 	auto ii_time0 = m_pSpkList->get_spike(0)->get_time(); 
 	auto l_rw_first0 = ii_time0 - spike_length;
 	auto l_rw_last0 = ii_time0 + spike_length;
-	if (!p_dat_doc->LoadRawData(&l_rw_first0, &l_rw_last0, span))
+	if (!p_dat_doc->load_raw_data(&l_rw_first0, &l_rw_last0, span))
 		return;
 
-	auto p_data = p_dat_doc->LoadTransformedData(l_rw_first0, l_rw_last0, method, doc_chan);
+	auto p_data = p_dat_doc->load_transformed_data(l_rw_first0, l_rw_last0, method, doc_chan);
 
 	// loop over all spikes now
 	const auto pre_trigger = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
@@ -1115,13 +1115,13 @@ void ViewSpikeSort::OnToolsAlignspikes()
 		auto l_rw_last = ii_time0 + spike_length; 
 		if (ii_time0 > m_lLast || ii_time0 < m_lFirst)
 			continue;
-		if (!p_dat_doc->LoadRawData(&l_rw_first, &l_rw_last, span))
+		if (!p_dat_doc->load_raw_data(&l_rw_first, &l_rw_last, span))
 			break; 
 
 		// load data only if necessary
 		if (l_rw_first != l_rw_first0 || l_rw_last != l_rw_last0)
 		{
-			p_data = p_dat_doc->LoadTransformedData(l_rw_first, l_rw_last, method, doc_chan);
+			p_data = p_dat_doc->load_transformed_data(l_rw_first, l_rw_last, method, doc_chan);
 			l_rw_last0 = l_rw_last; 
 			l_rw_first0 = l_rw_first;
 		}
@@ -1273,7 +1273,7 @@ void ViewSpikeSort::update_file_scroll()
 
 void ViewSpikeSort::select_spike_list(int current_index)
 {
-	m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_index);
+	m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_index);
 	//GetDocument()->GetCurrent_Spk_Document()->SetSpkList_CurrentIndex(current_index);
 	ASSERT(m_pSpkList != NULL);
 	OnMeasure();
@@ -1597,7 +1597,7 @@ void ViewSpikeSort::OnEnChangeSpikeClass()
 		{
 			m_pSpkDoc->SetModifiedFlag(TRUE);
 			const auto current_list = m_tabCtrl.GetCurSel();
-			auto* spike_list = m_pSpkDoc->set_spk_list_as_current(current_list);
+			auto* spike_list = m_pSpkDoc->set_spike_list_as_current(current_list);
 			spike_list->get_spike(m_spike_index)->set_class_id(m_spike_index_class);
 			update_legends();
 		}

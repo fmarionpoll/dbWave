@@ -41,7 +41,7 @@ void ChartSpike::set_source_data(SpikeList* p_spk_list, CdbWaveDoc* p_document)
 	p_dbwave_doc = p_document;
 	p_spike_doc = p_dbwave_doc->m_pSpk;
 	p_spike_list = p_spk_list;
-	m_selected_spike = -1;
+	spike_selected_.clear();
 }
 
 void ChartSpike::sub_item_draw(CDC& dc, CRect& rect)

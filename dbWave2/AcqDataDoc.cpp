@@ -58,19 +58,19 @@ BOOL AcqDataDoc::OnOpenDocument(CString& sz_path_name)
 	}
 	ASSERT(sz_path_name.Right(3) != _T("del"));
 
-	auto b_found_match = openAcqFile(sz_path_name);
+	auto b_found_match = open_acq_file(sz_path_name);
 	if (b_found_match < 0)
-		b_found_match = importFile(sz_path_name);
+		b_found_match = import_file(sz_path_name);
 
 	return b_found_match;
 }
 
-int AcqDataDoc::importFile(CString& sz_path_name)
+int AcqDataDoc::import_file(CString& sz_path_name)
 {
 	m_pXFile->CloseDataFile();
 	SAFE_DELETE(m_pXFile)
 	CString filename_new = sz_path_name;
-	if (!dlgImportDataFile(filename_new))
+	if (!dlg_import_data_file(filename_new))
 		return FALSE;
 
 	// add "old_" to filename
@@ -78,43 +78,40 @@ int AcqDataDoc::importFile(CString& sz_path_name)
 	const auto count = filename_old.ReverseFind('\\') + 1;
 	filename_old.Insert(count, _T("OLD_"));
 
-	// TODO check if this is right???
-	removeFile(filename_old);
-	renameFile2As1(sz_path_name, filename_old);
-	//removeFile(sz_path_name);
-	//renameFile2As1(sz_path_name, filename_new);
+	// TODO check if this is right
+	remove_file(filename_old);
+	rename_file(sz_path_name, filename_old);
 
 	m_pXFile = new CDataFileAWAVE;
 	ASSERT(m_pXFile != NULL);
-	const int b_found_match = openAcqFile(sz_path_name);
+	const int b_found_match = open_acq_file(sz_path_name);
 	return b_found_match;
 }
 
-void AcqDataDoc::removeFile(CString file1)
+void AcqDataDoc::remove_file(const CString& file1)
 {
 	CFileStatus status;
-	auto b_flag_exist = CFile::GetStatus(file1, status);
-	if (b_flag_exist != 0)
+	if (CFile::GetStatus(file1, status) != 0)
 		CFile::Remove(file1);
 }
 
-void AcqDataDoc::renameFile2As1(CString file1, CString file2)
+void AcqDataDoc::rename_file(const CString& filename_old, const CString& filename_new )
 {
 	try
 	{
-		CFile::Rename(file2, file1);
+		CFile::Rename(filename_old, filename_new);
 	}
 	catch (CFileException* pEx)
 	{
 		CString cs;
 		cs.Format(_T("File not found, cause = %i\n"), pEx->m_cause);
-		cs = file2 + cs;
+		cs = filename_old + cs;
 		AfxMessageBox(cs, MB_OK);
 		pEx->Delete();
 	}
 }
 
-bool AcqDataDoc::dlgImportDataFile(CString& sz_path_name)
+bool AcqDataDoc::dlg_import_data_file(CString& sz_path_name)
 {
 	const auto cs_array = new CStringArray; 
 	ASSERT(cs_array != NULL);
@@ -131,7 +128,7 @@ bool AcqDataDoc::dlgImportDataFile(CString& sz_path_name)
 	return true;
 }
 
-BOOL AcqDataDoc::openAcqFile(CString& cs_filename)
+BOOL AcqDataDoc::open_acq_file(CString& cs_filename)
 {
 	CFileException fe;
 	CFileStatus status;
@@ -157,7 +154,7 @@ BOOL AcqDataDoc::openAcqFile(CString& cs_filename)
 
 	if (m_pXFile == nullptr || m_pXFile->m_idType == DOCTYPE_UNKNOWN)
 	{
-		AllocBUF();
+		alloc_buffer();
 		return false;
 	}
 
@@ -169,7 +166,7 @@ BOOL AcqDataDoc::openAcqFile(CString& cs_filename)
 	const auto b_flag = m_pXFile->ReadDataInfos(m_pWBuf);
 
 	// create buffer
-	AllocBUF();
+	alloc_buffer();
 	m_pXFile->ReadVTtags(m_pWBuf->GetpVTtags());
 	m_pXFile->ReadHZtags(m_pWBuf->GetpHZtags());
 
@@ -188,48 +185,48 @@ BOOL AcqDataDoc::OnNewDocument()
 	{
 		CString cs_dummy;
 		cs_dummy.Empty();
-		CreateAcqFile(cs_dummy);
+		acq_create_file(cs_dummy);
 		ASSERT(m_pWBuf != NULL);
 	}
 	m_pWBuf->create_buffer_with_n_channels(1); // create at least one channel
 	return TRUE;
 }
 
-CString AcqDataDoc::GetDataFileInfos(const OPTIONS_VIEWDATA* pVD) const
+CString AcqDataDoc::get_data_file_infos(const OPTIONS_VIEWDATA* pVD) const
 {
 	const CString sep('\t');
 	CString cs_dummy;
 	auto cs_out = GetPathName();
 	cs_out.MakeLower();
-	const auto p_wave_format = GetpWaveFormat();
+	const auto waveformat = get_waveformat();
 
 	// date and time
 	if (pVD->bacqdate)
-		cs_out += (p_wave_format->acqtime).Format("\t%#d %B %Y");
+		cs_out += (waveformat->acqtime).Format("\t%#d %B %Y");
 	if (pVD->bacqtime)
-		cs_out += (p_wave_format->acqtime).Format("\t%X");
+		cs_out += (waveformat->acqtime).Format("\t%X");
 
 	// file size
 	if (pVD->bfilesize) // file size
 	{
-		cs_dummy.Format(_T("\t%-10li"), GetDOCchanLength());
+		cs_dummy.Format(_T("\t%-10li"), get_doc_channel_length());
 		cs_out += cs_dummy;
-		cs_dummy.Format(_T("\t nchans=%i\t"), p_wave_format->scan_count);
+		cs_dummy.Format(_T("\t nchans=%i\t"), waveformat->scan_count);
 		cs_out += cs_dummy;
 	}
 
 	if (pVD->bacqcomments)
 	{
-		cs_dummy = p_wave_format->GetComments(sep);
+		cs_dummy = waveformat->get_comments(sep);
 		cs_out += cs_dummy;
 	}
 
 	if (pVD->bacqchcomment || pVD->bacqchsetting)
 	{
 		CString cs;
-		for (auto i_chan = 0; i_chan < p_wave_format->scan_count; i_chan++)
+		for (auto i_chan = 0; i_chan < waveformat->scan_count; i_chan++)
 		{
-			const auto p_chan = (GetpWavechanArray())->Get_p_channel(i_chan);
+			const auto p_chan = (get_wavechan_array())->Get_p_channel(i_chan);
 			if (pVD->bacqchcomment)
 				cs_out += sep + p_chan->am_csComment;
 			if (pVD->bacqchsetting)
@@ -246,7 +243,7 @@ CString AcqDataDoc::GetDataFileInfos(const OPTIONS_VIEWDATA* pVD) const
 	return cs_out;
 }
 
-void AcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
+void AcqDataDoc::export_data_file_to_txt_file(CStdioFile* pdataDest)
 {
 	constexpr _TCHAR sep = '\n'; 
 	constexpr _TCHAR sep2 = ',';
@@ -256,7 +253,7 @@ void AcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 	cs_out += sep;
 	pdataDest->WriteString(cs_out);
 
-	const auto p_wave_format = GetpWaveFormat();
+	const auto p_wave_format = get_waveformat();
 	// date and time
 	cs_out = (p_wave_format->acqtime).Format(_T("acqdate= %#d %B %Y"));
 	cs_out += sep;
@@ -270,20 +267,20 @@ void AcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 	cs_out += sep;
 	pdataDest->WriteString(cs_out);
 
-	cs_out.Format(_T("nsamples=%-10li"), GetDOCchanLength());
+	cs_out.Format(_T("nsamples=%-10li"), get_doc_channel_length());
 	cs_out += sep;
 	pdataDest->WriteString(cs_out);
 
 	cs_out.Format(_T("nchans=%i"), p_wave_format->scan_count);
 	pdataDest->WriteString(cs_out);
 
-	cs_out = p_wave_format->GetComments(&sep, TRUE);
+	cs_out = p_wave_format->get_comments(&sep, TRUE);
 	pdataDest->WriteString(cs_out);
 
 	cs_out = sep;
 	for (auto i_chan = 0; i_chan < p_wave_format->scan_count; i_chan++)
 	{
-		const auto p_chan = (GetpWavechanArray())->Get_p_channel(i_chan);
+		const auto p_chan = (get_wavechan_array())->Get_p_channel(i_chan);
 		cs_out += p_chan->am_csComment;
 		if (i_chan < p_wave_format->scan_count - 1)
 			cs_out += sep2;
@@ -291,16 +288,16 @@ void AcqDataDoc::ExportDataFile_to_TXTFile(CStdioFile* pdataDest)
 	pdataDest->WriteString(cs_out);
 
 	// loop to read actual data
-	readDataBlock(0);
+	read_data_block(0);
 	const auto mv_factor = p_wave_format->fullscale_volts / p_wave_format->binspan * 1000.;
-	for (long j = 0; j < GetDOCchanLength(); j++)
+	for (long j = 0; j < get_doc_channel_length(); j++)
 	{
 		CString cs;
 		cs_out = sep;
 		for (auto channel = 0; channel < p_wave_format->scan_count; channel++)
 		{
-			const auto p_chan = (GetpWavechanArray())->Get_p_channel(channel);
-			const auto value = BGetVal(channel, j);
+			const auto p_chan = (get_wavechan_array())->Get_p_channel(channel);
+			const auto value = get_value_from_buffer(channel, j);
 			const auto channel_gain = static_cast<double>(p_chan->am_gainheadstage)
 				* static_cast<double>(p_chan->am_gainAD)
 				* static_cast<double>(p_chan->am_gainpre)
@@ -358,17 +355,17 @@ void AcqDataDoc::instantiate_data_file_object(const int doc_type)
 
 // adjust size of the buffer for data read from file
 // update buffer parameters
-BOOL AcqDataDoc::AdjustBUF(int i_num_elements)
+BOOL AcqDataDoc::adjust_buffer(const int elements_count)
 {
 	if (m_pWBuf == nullptr)
 		m_pWBuf = new CWaveBuf;
 
 	ASSERT(m_pWBuf != NULL);
-	const auto p_wf = GetpWaveFormat();
+	const auto p_wf = get_waveformat();
 	m_lDOCchanLength = p_wf->get_nb_points_sampled_per_channel();
 	m_DOCnbchans = p_wf->scan_count;
 	p_wf->duration = static_cast<float>(m_lDOCchanLength) / p_wf->sampling_rate_per_channel;
-	m_lBUFSize = i_num_elements * p_wf->scan_count;
+	m_lBUFSize = elements_count * p_wf->scan_count;
 
 	m_lBUFchanSize = m_lBUFSize / static_cast<long>(p_wf->scan_count);
 	m_lBUFchanFirst = 0;
@@ -382,13 +379,13 @@ BOOL AcqDataDoc::AdjustBUF(int i_num_elements)
 
 // allocate buffers to read data
 // adjust size of the buffer according to MAX_BUFFER_LENGTH_AS_BYTES
-BOOL AcqDataDoc::AllocBUF()
+BOOL AcqDataDoc::alloc_buffer()
 {
 	if (m_pWBuf == nullptr)
 		m_pWBuf = new CWaveBuf;
 
 	ASSERT(m_pWBuf != NULL); // check object created properly
-	CWaveFormat* pwF = GetpWaveFormat();
+	CWaveFormat* pwF = get_waveformat();
 
 	m_lDOCchanLength = pwF->get_nb_points_sampled_per_channel();
 	m_DOCnbchans = pwF->scan_count;
@@ -411,22 +408,14 @@ BOOL AcqDataDoc::AllocBUF()
 	return m_pWBuf->createWBuffer(m_lBUFchanSize, pwF->scan_count);
 }
 
-// returns the address of the raw data buffer
-// and the number of interleaved channels
-short* AcqDataDoc::LoadRawDataParams(int* nb_channels) const
-{
-	*nb_channels = GetScanCount();
-	return m_pWBuf->get_pointer_to_raw_data_buffer();
-}
-
-BOOL AcqDataDoc::LoadRawData(long* l_first, long* l_last, const int n_span)
+BOOL AcqDataDoc::load_raw_data(long* l_first, long* l_last, const int n_span)
 {
 	auto flag = TRUE;
 
 	if ((*l_first - n_span < m_lBUFchanFirst)
 		|| (*l_last + n_span > m_lBUFchanLast) || !m_bValidReadBuffer)
 	{
-		flag = readDataBlock(*l_first - n_span);
+		flag = read_data_block(*l_first - n_span);
 		m_bValidReadBuffer = TRUE;
 		m_bValidTransfBuffer = FALSE;
 	}
@@ -439,7 +428,7 @@ BOOL AcqDataDoc::LoadRawData(long* l_first, long* l_last, const int n_span)
 	return flag;
 }
 
-BOOL AcqDataDoc::readDataBlock(long l_first)
+BOOL AcqDataDoc::read_data_block(long l_first)
 {
 	// check limits
 	if (l_first < 0)
@@ -460,14 +449,14 @@ BOOL AcqDataDoc::readDataBlock(long l_first)
 
 	// reallocate buffer if needed
 	if (m_pWBuf->GetWBNumElements() != m_lBUFchanSize)
-		AllocBUF();
+		alloc_buffer();
 
 	// read data from file
 	if (m_pXFile != nullptr)
 	{
 		short* p_buffer = m_pWBuf->get_pointer_to_raw_data_buffer();
 		ASSERT(p_buffer != NULL);
-		auto l_size = m_pXFile->ReadAdcData(l_first, m_lBUFSize * sizeof(short), p_buffer, GetpWavechanArray());
+		auto l_size = m_pXFile->ReadAdcData(l_first, m_lBUFSize * sizeof(short), p_buffer, get_wavechan_array());
 
 		// ugly patch: should fail if l_size < m_lBUFSize
 		m_lBUFchanLast = m_lBUFchanFirst + m_lBUFSize / m_DOCnbchans - 1;
@@ -485,22 +474,22 @@ BOOL AcqDataDoc::readDataBlock(long l_first)
 	return FALSE;
 }
 
-void AcqDataDoc::ReadDataInfos()
+void AcqDataDoc::read_data_infos()
 {
 	ASSERT(m_pXFile != NULL);
 	m_pXFile->ReadDataInfos(m_pWBuf);
-	AllocBUF();
+	alloc_buffer();
 }
 
-short AcqDataDoc::BGetVal(const int channel, const long l_index)
+short AcqDataDoc::get_value_from_buffer(const int channel, const long l_index)
 {
 	if ((l_index < m_lBUFchanFirst) || (l_index > m_lBUFchanLast))
-		readDataBlock(l_index);
+		read_data_block(l_index);
 	const int index = l_index - m_lBUFchanFirst;
 	return *(m_pWBuf->get_pointer_to_raw_data_element(channel, index));
 }
 
-short* AcqDataDoc::LoadTransformedData(const long l_first, const long l_last, const int transform_type,
+short* AcqDataDoc::load_transformed_data(const long l_first, const long l_last, const int transform_type,
                                   const int source_channel)
 {
 	const BOOL b_already_done = (m_bValidTransfBuffer
@@ -522,10 +511,10 @@ short* AcqDataDoc::LoadTransformedData(const long l_first, const long l_last, co
 	// ASSERT make sure that all data requested are within the buffer ...
 	ASSERT(!(l_first < m_lBUFchanFirst) && !(l_last > m_lBUFchanLast));
 	if (((l_first - l_span) < m_lBUFchanFirst) || ((l_last + l_span) > m_lBUFchanLast)) // we should never get there
-		readDataBlock(l_first - l_span); // but, just in case
+		read_data_block(l_first - l_span); // but, just in case
 
 	auto n_points = static_cast<int>(l_last - l_first + 1);
-	const int n_channels = GetpWaveFormat()->scan_count;
+	const int n_channels = get_waveformat()->scan_count;
 	ASSERT(source_channel < n_channels); // make sure this is a valid channel
 	const int i_offset = (l_first - m_lBUFchanFirst) * n_channels + source_channel;
 	auto lp_source = m_pWBuf->get_pointer_to_raw_data_buffer() + i_offset;
@@ -617,7 +606,7 @@ short* AcqDataDoc::LoadTransformedData(const long l_first, const long l_last, co
 	return lp_destination;
 }
 
-BOOL AcqDataDoc::BuildTransformedData(const int transform_type, const int source_channel) const
+BOOL AcqDataDoc::build_transformed_data(const int transform_type, const int source_channel) const
 {
 	// make sure that transform buffer is ready
 	if (m_pWBuf->get_pointer_to_transformed_data_buffer() == nullptr)
@@ -626,7 +615,7 @@ BOOL AcqDataDoc::BuildTransformedData(const int transform_type, const int source
 
 	// init parameters
 	auto lp_source = m_pWBuf->get_pointer_to_raw_data_buffer() + source_channel;
-	const int nb_channels = GetpWaveFormat()->scan_count;
+	const int nb_channels = get_waveformat()->scan_count;
 	ASSERT(source_channel < nb_channels);
 
 	// adjust pointers according to n_span - (fringe data) and set flags erase these data at the end
@@ -692,7 +681,7 @@ BOOL AcqDataDoc::BuildTransformedData(const int transform_type, const int source
 	return flag;
 }
 
-BOOL AcqDataDoc::CreateAcqFile(CString& cs_file_name)
+BOOL AcqDataDoc::acq_create_file(CString& cs_file_name)
 {
 	if (!cs_file_name.IsEmpty())
 	{
@@ -718,12 +707,12 @@ BOOL AcqDataDoc::CreateAcqFile(CString& cs_file_name)
 	}
 
 	// create object as file
-	AllocBUF();
+	alloc_buffer();
 
 	return TRUE;
 }
 
-BOOL AcqDataDoc::WriteHZtags(TagList* p_tags)
+BOOL AcqDataDoc::write_HZ_tags(TagList* p_tags)
 {
 	if (p_tags == nullptr)
 		p_tags = m_pWBuf->GetpHZtags();
@@ -732,7 +721,7 @@ BOOL AcqDataDoc::WriteHZtags(TagList* p_tags)
 	return m_pXFile->WriteHZtags(p_tags);
 }
 
-BOOL AcqDataDoc::WriteVTtags(TagList* p_tags)
+BOOL AcqDataDoc::write_VT_tags(TagList* p_tags)
 {
 	if (p_tags == nullptr)
 		p_tags = m_pWBuf->GetpVTtags();
@@ -743,21 +732,21 @@ BOOL AcqDataDoc::WriteVTtags(TagList* p_tags)
 
 
 
-BOOL AcqDataDoc::AcqSaveDataDescriptors() const
+BOOL AcqDataDoc::acq_save_data_descriptors() const
 {
-	const auto flag = m_pXFile->WriteDataInfos(GetpWaveFormat(), GetpWavechanArray());
+	const auto flag = m_pXFile->WriteDataInfos(get_waveformat(), get_wavechan_array());
 	m_pXFile->Flush();
 	return flag;
 }
 
-void AcqDataDoc::AcqDeleteFile() const
+void AcqDataDoc::acq_delete_file() const
 {
 	const auto cs_file_path = m_pXFile->GetFilePath();
 	m_pXFile->CloseDataFile();
 	CFile::Remove(cs_file_path);
 }
 
-void AcqDataDoc::AcqCloseFile() const
+void AcqDataDoc::acq_close_file() const
 {
 	if (m_pXFile != nullptr)
 		m_pXFile->CloseDataFile();
@@ -803,7 +792,7 @@ BOOL AcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i_
 
 	// create new file
 	auto* p_new_doc = new ADAcqDataDoc;
-	if (!p_new_doc->CreateAcqFile(dummy_name))
+	if (!p_new_doc->acq_create_file(dummy_name))
 	{
 		AfxMessageBox(AFX_IDP_FAILED_TO_CREATE_DOC);
 		delete p_new_doc;
@@ -811,16 +800,16 @@ BOOL AcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i_
 	}
 
 	// save data header
-	if (GetpWaveFormat()->scan_count < GetpWavechanArray()->ChanArray_getSize())
+	if (get_waveformat()->scan_count < get_wavechan_array()->ChanArray_getSize())
 	{
-		const auto last_channel = GetpWaveFormat()->scan_count - 1;
-		for (auto i = GetpWavechanArray()->ChanArray_getSize() - 1; i > last_channel; i--)
-			GetpWavechanArray()->ChanArray_removeAt(i);
+		const auto last_channel = get_waveformat()->scan_count - 1;
+		for (auto i = get_wavechan_array()->ChanArray_getSize() - 1; i > last_channel; i--)
+			get_wavechan_array()->ChanArray_removeAt(i);
 	}
 
 	// save data
 	p_new_doc->AcqDoc_DataAppendStart();
-	auto n_samples = GetpWaveFormat()->sample_count;
+	auto n_samples = get_waveformat()->sample_count;
 
 	// position source file index to start of data
 	m_pXFile->Seek(m_pXFile->m_ulOffsetData, CFile::begin);
@@ -855,9 +844,9 @@ BOOL AcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i_
 	// save other objects if exist (tags, others)
 
 	if (m_pWBuf->GetpHZtags()->GetNTags() > 0)
-		p_new_doc->WriteHZtags(m_pWBuf->GetpHZtags());
+		p_new_doc->write_HZ_tags(m_pWBuf->GetpHZtags());
 	if (m_pWBuf->GetpVTtags()->GetNTags() > 0)
-		p_new_doc->WriteVTtags(m_pWBuf->GetpVTtags());
+		p_new_doc->write_VT_tags(m_pWBuf->GetpVTtags());
 
 	// if destination name == source: remove source and rename destination
 	if (b_is_duplicate_name)

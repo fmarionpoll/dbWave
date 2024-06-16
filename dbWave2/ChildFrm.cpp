@@ -638,18 +638,18 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 
 		auto nconsecutivepoints = 0;
 		long l_data_first = 0;
-		const auto l_data_last = p_dat->GetDOCchanLength() - 1;
+		const auto l_data_last = p_dat->get_doc_channel_length() - 1;
 
 		while (l_data_first < l_data_last)
 		{
 			// read a chunk of data
 			auto l_read_write_first = l_data_first;
 			auto l_read_write_last = l_data_last;
-			if (!p_dat->LoadRawData(&l_read_write_first, &l_read_write_last, 0))
+			if (!p_dat->load_raw_data(&l_read_write_first, &l_read_write_last, 0))
 				break; // exit if error reported
 			if (l_read_write_last > l_data_last)
 				l_read_write_last = l_data_last;
-			const auto p_data0 = p_dat->LoadTransformedData(l_data_first, l_read_write_last, 0, 0);
+			const auto p_data0 = p_dat->load_transformed_data(l_data_first, l_read_write_last, 0, 0);
 
 			// compute initial offset (address of first point)
 			// assume that detection is on channel 1

@@ -19,39 +19,39 @@ protected:
 
 	// Helpers
 public:
-	void SetSourceData_spklist_spikedoc(SpikeList* p_spk_list, CSpikeDoc* p_spike_document);
+	void set_source_data(SpikeList* p_spk_list, CSpikeDoc* p_spike_document);
 
-	int GetSelectedSpike() const { return m_selected_spike; }
-	int GetHitSpike() const { return m_hit_spike; }
+	Spike_selected get_selected_spike() const { return spike_selected_; }
+	int get_hit_spike() const { return m_hit_spike; }
 
-	void DisplaySpike(int no_spike, BOOL b_select);
-	void DisplayFlaggedSpikes(BOOL bHighlight);
-	int SelectSpike(int spike_no);
+	void display_spike(const Spike_selected& spike_selected, BOOL b_select);
+	void display_flagged_spikes(BOOL bHighlight);
+	int select_spike(int spike_no);
 
-	void SelectSpikesWithinRect(CRect* pRect, UINT nFlags) const;
-	BOOL IsSpikeWithinRange(int no_spike);
-	void CenterCurve();
-	void MaxGain();
-	void MaxCenter();
+	void select_spikes_within_rect(CRect* pRect, UINT nFlags) const;
+	BOOL is_spike_within_range(int no_spike);
+	void center_curve();
+	void max_gain();
+	void max_center();
 
-	void DisplayAllFiles(BOOL bON, CdbWaveDoc* p_document)
+	void display_all_files(BOOL bON, CdbWaveDoc* p_document)
 	{
 		m_display_all_files = bON;
 		p_dbwave_doc = p_document;
 	}
 
-	void Print(CDC* p_dc, CRect* rect);
+	void Print(CDC* p_dc, const CRect* rect);
 	void PlotDataToDC(CDC* p_dc) override;
 	void plot_spikes(CDC* p_dc) override;
-	void PlotSingleSpkDataToDC(CDC* p_dc);
+	void plot_single_spk_data_to_dc(CDC* p_dc);
 	void ZoomData(CRect* prevRect, CRect* newRect) override;
 
 protected:
 	int hitCurve(CPoint point) override;
-	int hitCurveInDoc(CPoint point);
-	void displayBars(CDC* p_dc, const CRect* rect);
-	void highlightOneBar(int no_spike, CDC* p_dc) const;
-	void displayStimulus(CDC* p_dc, const CRect* rect) const;
+	int hit_curve_in_doc(CPoint point);
+	void display_bars(CDC* p_dc, const CRect* rect);
+	void highlight_one_bar(int no_spike, CDC* p_dc) const;
+	void display_stimulus(CDC* p_dc, const CRect* rect) const;
 
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

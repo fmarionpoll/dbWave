@@ -636,11 +636,11 @@ BOOL SpikeList::init_spike_list(AcqDataDoc* acq_data_doc, SPKDETECTPARM* spk_det
 	auto flag = false;
 	if (acq_data_doc != nullptr)
 	{
-		const auto wave_format = acq_data_doc->GetpWaveFormat();
+		const auto wave_format = acq_data_doc->get_waveformat();
 		m_data_encoding_mode = wave_format->mode_encoding;
 		m_bin_zero = wave_format->binzero;
 		m_sampling_rate = wave_format->sampling_rate_per_channel;
-		flag = acq_data_doc->GetWBVoltsperBin(m_detection_parameters.detect_channel, &m_volts_per_bin);
+		flag = acq_data_doc->get_volts_per_bin(m_detection_parameters.detect_channel, &m_volts_per_bin);
 	}
 
 	if (!flag)

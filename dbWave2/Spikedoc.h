@@ -43,17 +43,17 @@ public:
 	long get_acq_size() const { return m_acquisition_size; }
 	float get_acq_rate() const { return m_acquisition_rate; }
 
-	int get_spk_list_size() const { return spike_list_array.GetSize(); }
-	void set_spk_list_size(int i) { return spike_list_array.SetSize(i); }
-	SpikeList* set_spk_list_as_current(int spike_list_index);
-	SpikeList* get_spk_list_current();
-	SpikeList* get_spk_list_at(int spike_list_index);
-	int get_spk_list_current_index() const { return m_current_spike_list; }
+	int get_spike_list_size() const { return spike_list_array.GetSize(); }
+	void set_spike_list_size(int i) { return spike_list_array.SetSize(i); }
+	SpikeList* set_spike_list_as_current(int spike_list_index);
+	SpikeList* get_spike_list_current();
+	SpikeList* get_spike_list_at(int spike_list_index);
+	int get_spike_list_current_index() const { return m_current_spike_list; }
 
 	int add_spk_list()
 	{
-		spike_list_array.SetSize(get_spk_list_size() + 1);
-		return get_spk_list_size();
+		spike_list_array.SetSize(get_spike_list_size() + 1);
+		return get_spike_list_size();
 	}
 
 	void set_source_filename(const CString& file_name) { m_acquisition_file_name = file_name; }
@@ -61,7 +61,7 @@ public:
 	void set_comment(const CString& comment) { m_comment = comment; }
 
 	void sort_stimulus_array();
-	void export_spk_PSTH(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, const CString& cs_file_comment); // 0
+	void export_spk_psth(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, const CString& cs_file_comment); 
 	void export_spk_amplitude_histogram(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, long* p_hist,
 	                              const CString& cs_file_comment); // 4
 	void export_spk_attributes_one_file(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes); // 1,2,3
@@ -71,7 +71,7 @@ public:
 	void export_table_title(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, int n_files);
 	static void export_table_col_headers_db(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes);
 	void export_table_col_headers_data(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes);
-	void export_spk_amplitude_histogram(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, long* pHist, int spike_list_index, int class_index);
+	void export_spk_amplitude_histogram(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, long* p_hist0, int spike_list_index, int class_index);
 	void export_spk_average_wave(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, double* value, int spike_list_index, int class_index);
 	void export_spk_psth(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, long* sum0, int spike_list_index, int class_index);
 	void export_spk_latencies(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, int intervals_count, int spike_list_index, int class_index);
@@ -80,8 +80,8 @@ public:
 	BOOL OnNewDocument() override;
 	BOOL OnOpenDocument(LPCTSTR pszPathName) override;
 	void clear_data();
-	long build_PSTH(const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, int class_index);
-	long build_ISI(const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, int class_index);
+	long build_psth(const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, int class_index);
+	long build_isi(const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, int class_index);
 	long build_autocorrelation(const OPTIONS_VIEWSPIKES* options_view_spikes, long* sum0, int class_index);
 	long build_psth_autocorrelation(const OPTIONS_VIEWSPIKES* options_view_spikes, long* sum0, int class_index);
 

@@ -36,7 +36,7 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 		{
 			display_buffer(samples_buffer, pixels_left_until_end_of_Display);
 			samples_number -= pixels_left_until_end_of_Display;
-			samples_buffer += (pixels_left_until_end_of_Display * m_pDataFile->GetpWaveFormat()->scan_count);
+			samples_buffer += (pixels_left_until_end_of_Display * m_pDataFile->get_waveformat()->scan_count);
 		}
 		m_lADbufferdone = 0;
 	}
@@ -93,7 +93,7 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 		auto p_data = samples_buffer + channel_number;
 		const auto y_zero = channel_item->GetYzero();
 		const auto y_extent = channel_item->GetYextent();
-		const int n_channels = m_pDataFile->GetpWaveFormat()->scan_count;
+		const int n_channels = m_pDataFile->get_waveformat()->scan_count;
 
 		// only one data point per pixel
 		if (m_dataperpixel > 1)

@@ -1124,6 +1124,9 @@
     <ClInclude Include="DlgOverwriteFileOptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Spike_selected.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\bias.ico">

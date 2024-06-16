@@ -63,7 +63,7 @@ public:
 
 	//------------------- Total : 32 variable members
 protected:
-	static CString addComments(const CString& p_separator, BOOL b_explanation, const CString& cs_explanation,
+	static CString add_comments(const CString& p_separator, BOOL b_explanation, const CString& cs_explanation,
 	                           const CString& cs_comment);
 	void read_v8_and_before(CArchive& ar, WORD version);
 
@@ -71,10 +71,10 @@ public:
 	CWaveFormat();
 	~CWaveFormat() override;
 
-	void Copy(const CWaveFormat* arg);
-	long Write(CFile* datafile);
-	BOOL Read(CFile* datafile);
+	void copy(const CWaveFormat* arg);
+	long write(CFile* datafile);
+	BOOL read(CFile* datafile);
 	void Serialize(CArchive& ar) override;
-	CString GetComments(const CString& p_separator, BOOL b_explanations = FALSE) const;
-	long get_nb_points_sampled_per_channel() {return sample_count / static_cast<long>(scan_count);}
+	CString get_comments(const CString& p_separator, BOOL b_explanations = FALSE) const;
+	long get_nb_points_sampled_per_channel() const {return sample_count / static_cast<long>(scan_count);}
 };

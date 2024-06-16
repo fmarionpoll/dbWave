@@ -137,7 +137,7 @@ void ViewdbWave::OnInitialUpdate()
 		if (p_spk_doc != nullptr)
 		{
 			m_tabCtrl.InitctrlTabFromSpikeDoc(p_spk_doc);
-			m_tabCtrl.SetCurSel(p_spk_doc->get_spk_list_current_index());
+			m_tabCtrl.SetCurSel(p_spk_doc->get_spike_list_current_index());
 		}
 		m_tabCtrl.ShowWindow(p_spk_doc != nullptr ? SW_SHOW : SW_HIDE);
 	}
@@ -254,7 +254,7 @@ void ViewdbWave::updateControls()
 		CSpikeDoc* p_spk_doc = GetDocument()->open_current_spike_file();
 		if (p_spk_doc != nullptr)
 		{
-			const auto spklist_size = p_spk_doc->get_spk_list_size();
+			const auto spklist_size = p_spk_doc->get_spike_list_size();
 			if (m_tabCtrl.GetItemCount() < spklist_size)
 				m_tabCtrl.InitctrlTabFromSpikeDoc(p_spk_doc);
 		}
@@ -361,7 +361,7 @@ LRESULT ViewdbWave::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	switch (wParam)
 	{
 	case HINT_VIEWTABHASCHANGED:
-		GetDocument()->get_current_spike_file()->set_spk_list_as_current(threshold);
+		GetDocument()->get_current_spike_file()->set_spike_list_as_current(threshold);
 		m_dataListCtrl.RefreshDisplay();
 		break;
 
@@ -522,11 +522,11 @@ void ViewdbWave::OnBnClickedDisplaySpikes()
 	if (nrows > 0)
 	{
 		const auto pSpkDoc = m_dataListCtrl.GetVisibleRowsSpikeDocAt(0);
-		if (pSpkDoc->get_spk_list_size() > 1)
+		if (pSpkDoc->get_spike_list_size() > 1)
 		{
 			m_tabCtrl.InitctrlTabFromSpikeDoc(pSpkDoc);
 			m_tabCtrl.ShowWindow(SW_SHOW);
-			m_tabCtrl.SetCurSel(pSpkDoc->get_spk_list_current_index());
+			m_tabCtrl.SetCurSel(pSpkDoc->get_spike_list_current_index());
 			m_tabCtrl.Invalidate();
 		}
 	}

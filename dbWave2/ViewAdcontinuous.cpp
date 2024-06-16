@@ -181,10 +181,10 @@ void ViewADcontinuous::get_acquisition_parameters_from_data_file()
 	const auto pDat = pdbDoc->open_current_data_file();
 	if (pDat != nullptr)
 	{
-		pDat->ReadDataInfos();
-		options_inputdata_->waveFormat.Copy(pDat->GetpWaveFormat());
+		pDat->read_data_infos();
+		options_inputdata_->waveFormat.copy(pDat->get_waveformat());
 		options_inputdata_->chanArray.ChanArray_setSize(options_inputdata_->waveFormat.scan_count);
-		options_inputdata_->chanArray.Copy(pDat->GetpWavechanArray());
+		options_inputdata_->chanArray.Copy(pDat->get_wavechan_array());
 		options_inputdata_->waveFormat.bADwritetofile = m_bADwritetofile;
 	}
 }
@@ -209,9 +209,9 @@ void ViewADcontinuous::OnInitialUpdate()
 
 	// create data file and copy data acquisition parameters into it
 	m_inputDataFile.OnNewDocument(); 
-	m_inputDataFile.GetpWaveFormat()->Copy( &options_inputdata_->waveFormat);
+	m_inputDataFile.get_waveformat()->copy( &options_inputdata_->waveFormat);
 	options_inputdata_->chanArray.ChanArray_setSize(options_inputdata_->waveFormat.scan_count);
-	m_inputDataFile.GetpWavechanArray()->Copy(&options_inputdata_->chanArray);
+	m_inputDataFile.get_wavechan_array()->Copy(&options_inputdata_->chanArray);
 	m_chartDataAD.AttachDataFile(&m_inputDataFile);
 
 	pApp->m_bADcardFound = FindDTOpenLayersBoards();
@@ -342,7 +342,7 @@ void ViewADcontinuous::StopAcquisition()
 void ViewADcontinuous::save_and_close_file()
 {
 	m_inputDataFile.AcqDoc_DataAppendStop();
-	const CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
+	const CWaveFormat* pWFormat = m_inputDataFile.get_waveformat();
 
 	// if burst data acquisition mode ------------------------------------
 	if (m_bhidesubsequent)
@@ -350,7 +350,7 @@ void ViewADcontinuous::save_and_close_file()
 		if (pWFormat->sample_count > 1) // make sure real data have been acquired
 			m_csNameArray.Add(m_szFileName);
 		else
-			m_inputDataFile.AcqDeleteFile();
+			m_inputDataFile.acq_delete_file();
 	}
 
 	// normal data acquisition mode --------------------------------------
@@ -366,7 +366,7 @@ void ViewADcontinuous::save_and_close_file()
 		// if no data or user answered no, erase the data
 		if (IDOK != result)
 		{
-			m_inputDataFile.AcqDeleteFile();
+			m_inputDataFile.acq_delete_file();
 		}
 		else
 		{
@@ -396,8 +396,8 @@ void ViewADcontinuous::UpdateViewDataFinal()
 		ATLTRACE2(_T("error reading current document "));
 		return;
 	}
-	pDocDat->ReadDataInfos();
-	const long length_doc_channel = pDocDat->GetDOCchanLength();
+	pDocDat->read_data_infos();
+	const long length_doc_channel = pDocDat->get_doc_channel_length();
 	m_chartDataAD.AttachDataFile(pDocDat);
 	m_chartDataAD.ResizeChannels(m_chartDataAD.GetRectWidth(), length_doc_channel);
 	m_chartDataAD.GetDataFromDoc(0, length_doc_channel);
@@ -463,7 +463,7 @@ void ViewADcontinuous::InitAcquisitionDisplay()
 		pD->SetYextent(i_extent);
 		pD->SetColor(static_cast<WORD>(i));
 		float doc_volts_per_bin;
-		m_inputDataFile.GetWBVoltsperBin(i, &doc_volts_per_bin);
+		m_inputDataFile.get_volts_per_bin(i, &doc_volts_per_bin);
 		pD->SetDataBinFormat(pWFormat->binzero, pWFormat->binspan);
 		pD->SetDataVoltsFormat(doc_volts_per_bin, pWFormat->fullscale_volts);
 	}
@@ -489,7 +489,7 @@ BOOL ViewADcontinuous::StartAcquisition()
 	m_channel_sweep_start = 0;
 	m_channel_sweep_end = -1;
 	m_chartDataAD.start_display(m_chsweeplength);
-	CWaveFormat* pWFormat = m_inputDataFile.GetpWaveFormat();
+	CWaveFormat* pWFormat = m_inputDataFile.get_waveformat();
 	pWFormat->sample_count = 0; 
 	pWFormat->sampling_rate_per_channel = pWFormat->sampling_rate_per_channel / static_cast<float>(options_inputdata_->iundersample);
 	m_fclockrate = pWFormat->sampling_rate_per_channel * static_cast<float>(pWFormat->scan_count);
@@ -680,7 +680,7 @@ void ViewADcontinuous::OnBnClickedStartstop()
 	{
 		if (StartAcquisition())
 		{
-			if ((m_inputDataFile.GetpWaveFormat())->trig_mode == OLx_TRG_EXTERN)
+			if ((m_inputDataFile.get_waveformat())->trig_mode == OLx_TRG_EXTERN)
 				OnBufferDone_ADC();
 		}
 		else
@@ -776,8 +776,8 @@ BOOL ViewADcontinuous::define_experiment()
 		}
 	}
 	// close current file and open new file to prepare it for adding chunks of data
-	m_inputDataFile.AcqCloseFile();
-	if (!m_inputDataFile.CreateAcqFile(file_name))
+	m_inputDataFile.acq_close_file();
+	if (!m_inputDataFile.acq_create_file(file_name))
 		return FALSE;
 	m_szFileName = file_name;
 	m_inputDataFile.AcqDoc_DataAppendStart();
@@ -920,7 +920,7 @@ void ViewADcontinuous::OnBufferDone_ADC()
 	if (p_buffer_done == nullptr)
 		return;
 
-	CWaveFormat* wave_format = m_inputDataFile.GetpWaveFormat();
+	CWaveFormat* wave_format = m_inputDataFile.get_waveformat();
 	short* pRawDataBuf = ADC_Transfer(p_buffer_done, wave_format);
 	ADC_TransferToFile(wave_format);
 	ADC_TransferToChart(pRawDataBuf, wave_format);
@@ -928,7 +928,7 @@ void ViewADcontinuous::OnBufferDone_ADC()
 
 short* ViewADcontinuous::ADC_Transfer(short* source_data, const CWaveFormat * pWFormat)
 {
-	short* pRawDataBuf = m_inputDataFile.GetpRawDataBUF();
+	short* pRawDataBuf = m_inputDataFile.get_raw_data_buffer();
 
 	m_channel_sweep_start = m_channel_sweep_end + 1;
 	if (m_channel_sweep_start >= m_chsweeplength)
@@ -998,7 +998,7 @@ void ViewADcontinuous::ADC_TransferToFile(CWaveFormat * pWFormat)
 	pWFormat->sample_count += m_bytesweepRefresh / 2;
 	const float duration = static_cast<float>(pWFormat->sample_count) / m_fclockrate;
 
-	short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
+	short* pdataBuf = m_inputDataFile.get_raw_data_buffer();
 	pdataBuf += (m_channel_sweep_start * pWFormat->scan_count);
 
 	if (pWFormat->bADwritetofile)
@@ -1013,7 +1013,7 @@ void ViewADcontinuous::ADC_TransferToFile(CWaveFormat * pWFormat)
 			{
 				if (!StartAcquisition())
 					StopAcquisition();
-				else if ((m_inputDataFile.GetpWaveFormat())->trig_mode == OLx_TRG_EXTERN)
+				else if ((m_inputDataFile.get_waveformat())->trig_mode == OLx_TRG_EXTERN)
 					OnBufferDone_ADC();
 				return;
 			}
@@ -1257,14 +1257,14 @@ void ViewADcontinuous::OnBnClickedWriteToDisk()
 {
 	m_bADwritetofile = TRUE;
 	options_inputdata_->waveFormat.bADwritetofile = m_bADwritetofile;
-	m_inputDataFile.GetpWaveFormat()->bADwritetofile = m_bADwritetofile;
+	m_inputDataFile.get_waveformat()->bADwritetofile = m_bADwritetofile;
 }
 
 void ViewADcontinuous::OnBnClickedOscilloscope()
 {
 	m_bADwritetofile = FALSE;
 	options_inputdata_->waveFormat.bADwritetofile = m_bADwritetofile;
-	m_inputDataFile.GetpWaveFormat()->bADwritetofile = m_bADwritetofile;
+	m_inputDataFile.get_waveformat()->bADwritetofile = m_bADwritetofile;
 }
 
 void ViewADcontinuous::UpdateRadioButtons()
@@ -1321,12 +1321,12 @@ void ViewADcontinuous::InitAcquisitionInputFile()
 
 	m_chsweeplength = static_cast<long>(m_sweepduration * pWFormat->sampling_rate_per_channel / static_cast<float>(options_inputdata_->iundersample));
 	// AD system is changed:  update AD buffers & change encoding: it is changed on-the-fly in the transfer loop
-	m_inputDataFile.GetpWavechanArray()->Copy(&options_inputdata_->chanArray);
-	m_inputDataFile.GetpWaveFormat()->Copy( &options_inputdata_->waveFormat);
+	m_inputDataFile.get_wavechan_array()->Copy(&options_inputdata_->chanArray);
+	m_inputDataFile.get_waveformat()->copy( &options_inputdata_->waveFormat);
 
 	// set sweep length to the nb of data buffers
-	m_inputDataFile.GetpWaveFormat()->sample_count = m_chsweeplength * static_cast<long>(pWFormat->scan_count);
-	m_inputDataFile.AdjustBUF(m_chsweeplength);
+	m_inputDataFile.get_waveformat()->sample_count = m_chsweeplength * static_cast<long>(pWFormat->scan_count);
+	m_inputDataFile.adjust_buffer(m_chsweeplength);
 }
 
 void ViewADcontinuous::OnBnClickedUnzoom()

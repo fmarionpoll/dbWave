@@ -26,10 +26,10 @@ void CSpkListTabCtrl::InitctrlTabFromSpikeDoc(CSpikeDoc* pSpkDoc)
 	auto j = 0;
 	if (pSpkDoc == nullptr) return;
 
-	const auto curr_listsize = pSpkDoc->get_spk_list_size();
+	const auto curr_listsize = pSpkDoc->get_spike_list_size();
 	for (auto i = 0; i < curr_listsize; i++)
 	{
-		auto p_spike_list = pSpkDoc->get_spk_list_at(i);
+		auto p_spike_list = pSpkDoc->get_spike_list_at(i);
 		if (!p_spike_list)
 			continue;
 		CString cs;

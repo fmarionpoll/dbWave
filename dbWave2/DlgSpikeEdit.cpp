@@ -57,7 +57,7 @@ BOOL DlgSpikeEdit::OnInitDialog()
 {
 	CDialog::OnInitDialog(); 
 	m_pAcqDatDoc = m_pdbWaveDoc->m_pDat;
-	m_pSpkList = m_pdbWaveDoc->m_pSpk->get_spk_list_current();
+	m_pSpkList = m_pdbWaveDoc->m_pSpk->get_spike_list_current();
 	if (m_pSpkList == nullptr || m_pSpkList->get_spikes_count() == 0)
 	{
 		EndDialog(FALSE); 
@@ -265,7 +265,7 @@ void DlgSpikeEdit::LoadSourceViewData()
 	m_ChartDataWnd.GetDataFromDoc(source_view_first, source_view_last);
 
 	const auto method = m_pSpkList->get_detection_parameters()->extract_transform;
-	m_pAcqDatDoc->LoadTransformedData(source_view_first, source_view_last, method, m_spikeChan);
+	m_pAcqDatDoc->load_transformed_data(source_view_first, source_view_last, method, m_spikeChan);
 
 	// adjust offset (center spike) : use initial offset from spike
 	CChanlistItem* chan0 = m_ChartDataWnd.GetChanlistItem(0);
@@ -294,8 +294,8 @@ void DlgSpikeEdit::LoadSpikeFromData(int shift)
 		LoadSourceViewData();
 		const auto spike_first = m_iitime - m_spkpretrig;
 
-		auto lp_source = m_pAcqDatDoc->GetpTransfDataBUF();
-		const auto delta = spike_first - m_pAcqDatDoc->GettBUFfirst();
+		auto lp_source = m_pAcqDatDoc->get_transformed_data_buffer();
+		const auto delta = spike_first - m_pAcqDatDoc->get_tBUFfirst();
 		lp_source += delta;
 		pSpike->transfer_data_to_spike_buffer(lp_source, 1, m_spklen);
 		short max, min;

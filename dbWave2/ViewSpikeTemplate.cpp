@@ -186,7 +186,7 @@ void ViewSpikeTemplates::updateFileParameters()
 {
 	const BOOL bfirstupdate = (m_pSpkDoc == nullptr);
 	updateSpikeFile();
-	int icur = m_pSpkDoc->get_spk_list_current_index();
+	int icur = m_pSpkDoc->get_spike_list_current_index();
 	selectSpikeList(icur);
 }
 
@@ -198,8 +198,8 @@ void ViewSpikeTemplates::updateSpikeFile()
 	{
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		m_pSpkDoc->SetPathName(GetDocument()->db_get_current_spk_file_name(), FALSE);
-		int icur = GetDocument()->get_current_spike_file()->get_spk_list_current_index();
-		m_pSpkList = m_pSpkDoc->set_spk_list_as_current(icur);
+		int icur = GetDocument()->get_current_spike_file()->get_spike_list_current_index();
+		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(icur);
 
 		// update Tab at the bottom
 		m_tabCtrl.InitctrlTabFromSpikeDoc(m_pSpkDoc);
@@ -209,7 +209,7 @@ void ViewSpikeTemplates::updateSpikeFile()
 
 void ViewSpikeTemplates::selectSpikeList(int icur)
 {
-	m_pSpkList = m_pSpkDoc->set_spk_list_as_current(icur);
+	m_pSpkList = m_pSpkDoc->set_spike_list_as_current(icur);
 	m_tabCtrl.SetCurSel(icur);
 
 	if (!m_pSpkList->is_class_list_valid())
@@ -570,7 +570,7 @@ void ViewSpikeTemplates::OnEnChangeTolerance()
 
 void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) //, CImageList* pImList)
 {
-	m_pSpkList = m_pSpkDoc->get_spk_list_current();
+	m_pSpkList = m_pSpkDoc->get_spike_list_current();
 
 	// get list of classes
 	pTPList->SetHitRate_Tolerance(&m_hitrate, &m_ktolerance);
@@ -610,7 +610,7 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 	auto last_file = current_file; // index last file in the series
 	// make sure we have the correct spike list here
 	const auto current_list = m_tabCtrl.GetCurSel();
-	m_pSpkDoc->set_spk_list_as_current(current_list);
+	m_pSpkDoc->set_spike_list_as_current(current_list);
 
 	CString cs_comment;
 	CString cs_file_comment = _T("Analyze file: ");
@@ -633,7 +633,7 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 		p_dbwave_doc->SetTitle(cs);
 		pSpkDoc->SetModifiedFlag(FALSE);
 
-		auto pSpkList = pSpkDoc->set_spk_list_as_current(current_list); // load pointer to spike list
+		auto pSpkList = pSpkDoc->set_spike_list_as_current(current_list); // load pointer to spike list
 		if (!pSpkList->is_class_list_valid()) // if class list not valid:
 		{
 			pSpkList->update_class_list(); // rebuild list of classes
@@ -688,7 +688,7 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 
 void ViewSpikeTemplates::OnBuildTemplates()
 {
-	m_pSpkList = m_pSpkDoc->get_spk_list_current();
+	m_pSpkList = m_pSpkDoc->get_spike_list_current();
 
 	// set file indexes
 	auto p_dbwave_doc = GetDocument();
@@ -722,7 +722,7 @@ void ViewSpikeTemplates::OnBuildTemplates()
 			m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
 		}
 
-		const auto spike_list = m_pSpkDoc->set_spk_list_as_current(currentlist);
+		const auto spike_list = m_pSpkDoc->set_spike_list_as_current(currentlist);
 		nspikes = spike_list->get_spikes_count();
 		for (auto i = 0; i < nspikes; i++)
 			m_templList.tAdd(m_pSpkList->get_spike(i)->get_p_data());
@@ -750,7 +750,7 @@ void ViewSpikeTemplates::OnBuildTemplates()
 			p_dbwave_doc->SetTitle(cs);
 		}
 
-		auto spike_list = m_pSpkDoc->set_spk_list_as_current(currentlist);
+		auto spike_list = m_pSpkDoc->set_spike_list_as_current(currentlist);
 		nspikes = spike_list->get_spikes_count();
 
 		// create template CListCtrl
@@ -862,7 +862,7 @@ void ViewSpikeTemplates::sortSpikes()
 			p_dbwave_doc->SetTitle(cs);
 			m_pSpkDoc->SetModifiedFlag(FALSE);
 
-			m_pSpkList = m_pSpkDoc->set_spk_list_as_current(currentlist); // load pointer to spike list
+			m_pSpkList = m_pSpkDoc->set_spike_list_as_current(currentlist); // load pointer to spike list
 			if (!m_pSpkList->is_class_list_valid()) // if class list not valid:
 			{
 				m_pSpkList->update_class_list(); // rebuild list of classes
@@ -954,7 +954,7 @@ void ViewSpikeTemplates::sortSpikes()
 
 	// update display: average and spk form
 	displayAvg(FALSE, &m_avgList);
-	m_pSpkList = m_pSpkDoc->get_spk_list_current();
+	m_pSpkList = m_pSpkDoc->get_spike_list_current();
 	m_ChartSpkWnd_Shape.set_source_data(m_pSpkList, GetDocument());
 	m_ChartSpkWnd_Shape.Invalidate();
 }
@@ -1062,7 +1062,7 @@ void ViewSpikeTemplates::editSpikeClass(int controlID, int controlItem)
 					cs += dbwave_doc->db_get_current_spk_file_name(FALSE);
 					dbwave_doc->SetTitle(cs);
 					m_pSpkDoc->SetModifiedFlag(FALSE);
-					m_pSpkList = m_pSpkDoc->set_spk_list_as_current(current_list);
+					m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_list);
 				}
 
 				// TODO: this should not work - changing SpikeClassID does not change the spike class because UpdateClassList reset classes array to zero
@@ -1199,7 +1199,7 @@ void ViewSpikeTemplates::OnBnClickedDisplaysingleclass()
 
 void ViewSpikeTemplates::OnEnChangeT1()
 {
-	m_pSpkList = m_pSpkDoc->get_spk_list_current();
+	m_pSpkList = m_pSpkDoc->get_spike_list_current();
 
 	if (mm_t1.m_bEntryDone)
 	{
@@ -1225,7 +1225,7 @@ void ViewSpikeTemplates::OnEnChangeT1()
 
 void ViewSpikeTemplates::OnEnChangeT2()
 {
-	m_pSpkList = m_pSpkDoc->get_spk_list_current();
+	m_pSpkList = m_pSpkDoc->get_spike_list_current();
 
 	if (mm_t2.m_bEntryDone)
 	{

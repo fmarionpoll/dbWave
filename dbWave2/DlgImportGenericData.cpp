@@ -507,27 +507,27 @@ void DlgImportGenericData::UpdatePreview()
 	// convert data
 	if (m_filesource != m_fileold)
 	{
-		m_AcqDataFile.openAcqFile(m_filesource);
+		m_AcqDataFile.open_acq_file(m_filesource);
 		m_fileold = m_filesource;
 	}
-	m_AcqDataFile.SetReadingBufferDirty(); // invalidate data buffer
+	m_AcqDataFile.set_reading_buffer_dirty(); // invalidate data buffer
 	UpdateWaveDescriptors(&m_AcqDataFile);
 
 	// display data
 	if (!m_bpreviewON)
 		return;
 
-	int ndocchans = m_AcqDataFile.GetpWaveFormat()->scan_count;
+	int ndocchans = m_AcqDataFile.get_waveformat()->scan_count;
 	m_ChartDataWnd.AttachDataFile(&m_AcqDataFile);
 	CSize lsize = m_ChartDataWnd.GetRectSize();
-	m_ChartDataWnd.ResizeChannels(lsize.cx, m_AcqDataFile.GetDOCchanLength());
+	m_ChartDataWnd.ResizeChannels(lsize.cx, m_AcqDataFile.get_doc_channel_length());
 	if (m_ChartDataWnd.GetChanlistSize() < ndocchans) // add envelopes if necessary
 	{
 		for (int jdocchan = 1; jdocchan < ndocchans; jdocchan++)
 			m_ChartDataWnd.AddChanlistItem(jdocchan, 0);
 	}
 	// load data from document and adjust display
-	m_ChartDataWnd.GetDataFromDoc(0, m_AcqDataFile.GetDOCchanLength() - 1);
+	m_ChartDataWnd.GetDataFromDoc(0, m_AcqDataFile.get_doc_channel_length() - 1);
 	for (int i = 0; i < ndocchans; i++)
 	{
 		int max, min;
@@ -641,10 +641,10 @@ void DlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
 {
 	CFileStatus status;
 	pDataF->m_pXFile->GetStatus(status);
-	pDataF->SetbOffsetToData(m_skipNbytes);
+	pDataF->set_offset_to_data(m_skipNbytes);
 
 	pDataF->m_pWBuf->create_buffer_with_n_channels(piivO->nbChannels);
-	CWaveFormat* pwF = pDataF->GetpWaveFormat();
+	CWaveFormat* pwF = pDataF->get_waveformat();
 
 	// define parameters within CWaveFormat
 	pwF->cs_comment = piivO->title;
@@ -670,7 +670,7 @@ void DlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
 		pwF->binzero = binspan / 2;
 
 	// copy ACQCHAN directly from iivO
-	pDataF->GetpWavechanArray()->Copy(piivO->pwave_chan_array);
+	pDataF->get_wavechan_array()->Copy(piivO->pwave_chan_array);
 
 	// UNUSED PARAMETERS FROM iivO :
 	//			BOOL	bSingleRun;
@@ -688,7 +688,7 @@ void DlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
 	}
 	pwF->sampling_rate_per_channel = piivO->samplingRate;
 	pwF->sample_count = static_cast<long>(lCompteur / 2);
-	m_AcqDataFile.ReadDataInfos();
+	m_AcqDataFile.read_data_infos();
 }
 
 //////////////////////////////////////////////////////////////////////////

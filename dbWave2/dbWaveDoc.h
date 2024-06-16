@@ -6,6 +6,7 @@
 #include "Spikedoc.h"
 #include "AcqDataDoc.h"
 #include "dbWave_structures.h"
+#include "Spike_selected.h"
 
 struct sourceData
 {
@@ -49,9 +50,10 @@ public:
 	BOOL	import_database(CString& filename);
 
 	BOOL	is_extension_recognized_as_data_file(CString string) const;
-	BOOL	is_file_present(CString csFilename) {
+
+	static BOOL	is_file_present(CString& cs_filename) {
 		CFileStatus status;
-		return CFile::GetStatus(csFilename, status);
+		return CFile::GetStatus(cs_filename, status);
 	}
 
 	CWaveFormat* get_wave_format(CString filename, BOOL bIsDatFile);
@@ -62,6 +64,7 @@ public:
 	void	close_current_data_file() const;
 	CSpikeDoc* open_current_spike_file();
 	CSpikeDoc* get_current_spike_file() const { return m_pSpk; }
+	Spike* get_spike(const Spike_selected& spike_selected);
 
 	void	remove_duplicate_files();
 	void	remove_missing_files();
@@ -97,12 +100,12 @@ protected:
 	boolean set_record_spk_classes(sourceData* record);
 	void	set_record_wave_format(sourceData* record);
 	boolean import_file_single(CString& cs_filename, long& m_id, int irecord, CStringArray& csArray, int nColumns,
-		boolean bHeader);
+								boolean bHeader);
 	int		check_files_can_be_opened(CStringArray& file_names_array, CSharedFile* psf, int nColumns, boolean bHeader);
 
 	static int index_2d_array(int iRow, int nColumns, boolean bHeader) { return (iRow + (bHeader ? 1 : 0)) * nColumns; }
-
 	static int get_size_2d_array(const CStringArray& cs_array, int nColumns, boolean bHeader) { return cs_array.GetSize() / nColumns - (bHeader ? 1 : 0); }
+
 	void	remove_row_at(CStringArray& file_name_array, int iRow, int nColumns, boolean bHeader);
 	CSharedFile* file_discarded_message(CSharedFile* pSF, CString cs_filename, int irec);
 	void	get_infos_from_string_array(const sourceData* pRecord, const CStringArray& file_names_array, int const irecord, int nColumns, boolean bHeader);
@@ -141,9 +144,10 @@ public:
 	void	db_delete_current_record();
 	CString db_get_current_dat_file_name(BOOL b_test = FALSE);
 	CString db_get_current_spk_file_name(BOOL b_test = FALSE);
+
 	CString db_set_current_spike_file_name();
 	void	db_set_data_len(long len) const { m_pDB->SetDataLength(len); }
-	long	db_get_data_len();
+	long	db_get_data_len() const;
 	void	db_set_current_record_flag(int flag) const;
 	int		db_get_current_record_flag() const { return m_pDB->m_mainTableSet.m_flag; }
 	void	db_set_paths_relative() const;
@@ -154,6 +158,7 @@ public:
 	long	db_get_current_record_position() const;
 	long	db_get_current_record_id() const;
 	BOOL	db_set_current_record_position(long i_file) const { return m_pDB->SetIndexCurrentFile(i_file); }
+
 	BOOL	db_move_to_id(long record_id) const { return m_pDB->MoveToID(record_id); }
 	BOOL	db_move_first() const { return m_pDB->MoveTo(ID_RECORD_FIRST); }
 	BOOL	db_move_next() const { return m_pDB->MoveTo(ID_RECORD_NEXT); }
