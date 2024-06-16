@@ -17,8 +17,8 @@ protected:
 	int m_index_first_spike = 0;			// index first spike
 	int m_index_last_spike = 0;				// index last spike
 	int m_current_class = 0;				// current class in case of displaying classes
-	int m_selected_spike = -1;				// selected spike (display differently)
-	std::pair <int, int> selected_spike_;
+	// m_selected_spike = -1;				// selected spike (display differently)
+	std::pair <int, int> selected_spike_ = std::make_pair (-1, -1);
 	int m_selected_pen{};
 	int m_hit_spike = -1;					// no of spike selected
 	int m_selected_class{};					// index class selected
