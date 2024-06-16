@@ -60,8 +60,8 @@ void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
 	{
 		if (m_display_all_files)
 		{
-			p_dbwave_doc->db_set_current_record_position(i_file);
-			p_spike_doc = p_dbwave_doc->open_current_spike_file();
+			if (p_dbwave_doc->db_set_current_record_position(i_file))
+				p_spike_doc = p_dbwave_doc->open_current_spike_file();
 		}
 		p_spike_list = p_spike_doc->get_spk_list_current();
 
@@ -306,7 +306,7 @@ void ChartSpikeBar::displayBars(CDC* p_dc, const CRect* rect)
 	const auto y_ve = -rect->Height();
 
 	// draw horizontal line
-	const int baseline = MulDiv(p_spike_list->get_acq_binzero() - y_wo, y_ve, y_we) + y_vo;
+	const int baseline = MulDiv(p_spike_list->get_acq_bin_zero() - y_wo, y_ve, y_we) + y_vo;
 	p_dc->MoveTo(rect->left, baseline);
 	p_dc->LineTo(rect->right, baseline);
 

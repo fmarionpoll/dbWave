@@ -637,12 +637,12 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 			l_last = static_cast<long>(m_tLast * sampling_rate);
 		}
 
-		p_wnd->SetTimeIntervals(l_first, l_last);
+		p_wnd->set_time_intervals(l_first, l_last);
 		if (m_b_set_mV_span)
 		{
-			const auto volts_per_bin = pspk_list->get_acq_voltsper_bin();
+			const auto volts_per_bin = pspk_list->get_acq_volts_per_bin();
 			const auto y_we = static_cast<int>(m_mV_span / 1000.f / volts_per_bin);
-			const auto y_wo = pspk_list->get_acq_binzero();
+			const auto y_wo = pspk_list->get_acq_bin_zero();
 			p_wnd->SetYWExtOrg(y_we, y_wo);
 		}
 		p_wnd->SetBottomComment(m_b_display_file_name, ptr->csSpikefileName);

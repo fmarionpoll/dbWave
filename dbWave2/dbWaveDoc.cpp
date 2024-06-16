@@ -1865,7 +1865,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * pSF)
 					case EXPORT_PSTH: // PSTH
 					case EXPORT_ISI: // ISI
 					case EXPORT_AUTOCORR: // Autocorr
-						m_pSpk->export_spk_PSTH(pSF, options_viewspikes, p_hist0, ispikelist, kclass);
+						m_pSpk->export_spk_psth(pSF, options_viewspikes, p_hist0, ispikelist, kclass);
 						break;
 					default:
 						ATLTRACE2(_T("option selected not implemented: %i /n"), options_viewspikes->exportdatatype);

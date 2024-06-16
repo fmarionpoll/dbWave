@@ -81,7 +81,6 @@ public:
 	void	center_spike_amplitude(int i_first, int i_last, WORD method = 0);
 
 	// Implementation
-public:
 	void	read_version0(CArchive& ar);
 	void	Serialize(CArchive& ar) override;
 

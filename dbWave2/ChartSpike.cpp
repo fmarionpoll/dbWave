@@ -68,7 +68,6 @@ void ChartSpike::plot_spikes(CDC* p_dc)
 	
 }
 
-
 void ChartSpike::sub_item_create(CWnd* parentWnd, const CRect& rect, int i_id, int i_class, CdbWaveDoc* pdbDoc, SpikeList* spike_list)
 {
 	Create(_T(""), WS_CHILD | WS_VISIBLE, rect, parentWnd, i_id);
@@ -76,8 +75,8 @@ void ChartSpike::sub_item_create(CWnd* parentWnd, const CRect& rect, int i_id, i
 
 	set_source_data(spike_list, pdbDoc);
 	set_plot_mode(PLOT_ONECLASSONLY, i_class);
-	SetRangeMode(RANGE_INDEX);
-	SetSpkIndexes(0, n_spikes - 1);
+	set_range_mode(RANGE_INDEX);
+	set_spk_indexes(0, n_spikes - 1);
 	SetbDrawframe(TRUE);
 	SetCursorMaxOnDblClick(m_cursorIndexMax);
 }

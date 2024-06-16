@@ -80,7 +80,7 @@ BOOL DlgSpikeEdit::OnInitDialog()
 	if (m_spike_index < 0) // select at least spike 0
 		m_spike_index = 0;
 
-	m_SpkChartWnd.SetRangeMode(RANGE_ALL); // display mode (lines)
+	m_SpkChartWnd.set_range_mode(RANGE_ALL); // display mode (lines)
 	m_SpkChartWnd.set_plot_mode(PLOT_BLACK, 0); // display also artefacts
 
 	if (m_pAcqDatDoc != nullptr)

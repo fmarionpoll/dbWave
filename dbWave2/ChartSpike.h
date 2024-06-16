@@ -18,6 +18,7 @@ protected:
 	int m_index_last_spike = 0;				// index last spike
 	int m_current_class = 0;				// current class in case of displaying classes
 	int m_selected_spike = -1;				// selected spike (display differently)
+	std::pair <int, int> selected_spike_;
 	int m_selected_pen{};
 	int m_hit_spike = -1;					// no of spike selected
 	int m_selected_class{};					// index class selected
@@ -31,32 +32,32 @@ protected:
 	int get_color_according_to_plot_mode(const Spike* spike, int plot_mode) const;
 
 public:
-	void SetRangeMode(int mode) { m_range_mode = mode; }
-	int GetRangeMode() const { return m_range_mode; }
+	void set_range_mode(int mode) { m_range_mode = mode; }
+	int get_range_mode() const { return m_range_mode; }
 
-	void SetSelClass(int selected_class) { m_selected_class = selected_class; }
-	int GetSelClass() const { return m_selected_class; }
+	void set_selected_class(int selected_class) { m_selected_class = selected_class; }
+	int get_selected_class() const { return m_selected_class; }
 
 	void set_plot_mode(int mode, int selected_class);
-	int GetPlotMode() const { return m_plotmode; }
+	int get_plot_mode() const { return m_plotmode; }
 
-	void SetCurrentClass(int current_class) { m_current_class = current_class; }
-	int GetCurrentClass() const { return m_current_class; }
+	void set_current_class(int current_class) { m_current_class = current_class; }
+	int get_current_class() const { return m_current_class; }
 
-	long GetTimeFirst() const { return m_lFirst; }
-	long GetTimeLast() const { return m_lLast; }
-	void SetTimeIntervals(long l_first, long l_last)
+	long get_time_first() const { return m_lFirst; }
+	long get_time_last() const { return m_lLast; }
+	void set_time_intervals(long l_first, long l_last)
 	{
 		m_lFirst = l_first;
 		m_lLast = l_last;
 	}
 
-	void SetSpkList(SpikeList* p_spk_list) { p_spike_list = p_spk_list; }
-	SpikeList* GetSpkList() const {return p_spike_list; }
+	void set_spike_list(SpikeList* p_spk_list) { p_spike_list = p_spk_list; }
+	SpikeList* get_spike_list() const {return p_spike_list; }
 
 	void set_source_data(SpikeList* p_spk_list, CdbWaveDoc* p_document);
 
-	void SetSpkIndexes(int first, int last) { m_index_first_spike = first, m_index_last_spike = last; }
+	void set_spk_indexes(int first, int last) { m_index_first_spike = first, m_index_last_spike = last; }
 
 	void sub_item_draw(CDC& dc, CRect& rect);
 	void sub_item_create(CWnd* parentWnd, const CRect& rect, int i_id, int i_class, CdbWaveDoc* pdbDoc, SpikeList* spike_list);

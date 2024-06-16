@@ -252,7 +252,7 @@ void ViewSpikeTemplates::selectSpikeList(int icur)
 	m_lLast = m_pSpkDoc->get_acq_size() - 1;
 	m_scrollFilePos_infos.nMin = 0;
 	m_scrollFilePos_infos.nMax = m_lLast;
-	m_ChartSpkWnd_Shape.SetTimeIntervals(m_lFirst, m_lLast);
+	m_ChartSpkWnd_Shape.set_time_intervals(m_lFirst, m_lLast);
 	m_ChartSpkWnd_Shape.Invalidate();
 
 	selectSpike(spikeno);
@@ -300,7 +300,7 @@ void ViewSpikeTemplates::updateLegends()
 	m_timefirst = m_lFirst / m_pSpkDoc->get_acq_rate();
 	m_timelast = (m_lLast + 1) / m_pSpkDoc->get_acq_rate();
 
-	m_ChartSpkWnd_Shape.SetTimeIntervals(m_lFirst, m_lLast);
+	m_ChartSpkWnd_Shape.set_time_intervals(m_lFirst, m_lLast);
 	m_ChartSpkWnd_Shape.Invalidate();
 
 	UpdateData(FALSE);
@@ -1203,7 +1203,7 @@ void ViewSpikeTemplates::OnEnChangeT1()
 
 	if (mm_t1.m_bEntryDone)
 	{
-		const auto delta = m_tunit / m_pSpkList->get_acq_samp_rate();
+		const auto delta = m_tunit / m_pSpkList->get_acq_sampling_rate();
 		
 		mm_t1.OnEnChange(this, m_t1, delta, -delta);
 		// check boundaries
@@ -1229,7 +1229,7 @@ void ViewSpikeTemplates::OnEnChangeT2()
 
 	if (mm_t2.m_bEntryDone)
 	{
-		const auto delta = m_tunit / m_pSpkList->get_acq_samp_rate();
+		const auto delta = m_tunit / m_pSpkList->get_acq_sampling_rate();
 		mm_t2.OnEnChange(this, m_t2, delta, -delta);
 
 		// check boundaries

@@ -97,17 +97,17 @@ void RowItem::set_time_intervals(long l_first, long l_last) const
 {
 	if (chart_spike_shape != nullptr)
 	{
-		chart_spike_shape->SetRangeMode(RANGE_TIMEINTERVALS);
-		chart_spike_shape->SetTimeIntervals(l_first, l_last);
+		chart_spike_shape->set_range_mode(RANGE_TIMEINTERVALS);
+		chart_spike_shape->set_time_intervals(l_first, l_last);
 	}
-	chart_spike_bar->SetRangeMode(RANGE_TIMEINTERVALS);
-	chart_spike_bar->SetTimeIntervals(l_first, l_last);
+	chart_spike_bar->set_range_mode(RANGE_TIMEINTERVALS);
+	chart_spike_bar->set_time_intervals(l_first, l_last);
 }
 
 void RowItem::set_spk_list(SpikeList* p_spike_list) const
 {
-	chart_spike_shape->SetSpkList(p_spike_list);
-	chart_spike_bar->SetSpkList(p_spike_list);
+	chart_spike_shape->set_spike_list(p_spike_list);
+	chart_spike_bar->set_spike_list(p_spike_list);
 }
 
 int RowItem::set_mouse_cursor_type(int cursor_m) const
@@ -140,8 +140,8 @@ void RowItem::set_x_zoom(int x_we, int x_wo) const
 
 void RowItem::get_time_intervals(long& first, long& last) const
 {
-	first = chart_spike_bar->GetTimeFirst();
-	last = chart_spike_bar->GetTimeLast();
+	first = chart_spike_bar->get_time_first();
+	last = chart_spike_bar->get_time_last();
 }
 
 void RowItem::get_zoom_y(int& we, int& wo) const

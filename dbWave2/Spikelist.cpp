@@ -322,7 +322,7 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 	// (4) load spike raw data
 	ar >> w1; 
 	set_spike_length(w1); 
-	m_bin_zero = get_acq_binzero();
+	m_bin_zero = get_acq_bin_zero();
 
 	// loop through all data buffers
 	const auto n_bytes = w1 * sizeof(short);

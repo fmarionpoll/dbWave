@@ -85,8 +85,8 @@ protected:
 	void updateCtrlTab1(int iselect);
 	void setExtentZeroAllDisplay(int extent, int zero);
 	void updateSpikeFile();
-	float convertSpikeIndexToTime(int index) { return index * m_tunit / m_pSpkList->get_acq_samp_rate(); }
-	int convertTimeToSpikeIndex(float time) { return static_cast<int>(time * m_pSpkList->get_acq_samp_rate() / m_tunit); }
+	float convertSpikeIndexToTime(int index) { return index * m_tunit / m_pSpkList->get_acq_sampling_rate(); }
+	int convertTimeToSpikeIndex(float time) { return static_cast<int>(time * m_pSpkList->get_acq_sampling_rate() / m_tunit); }
 
 public:
 	// Generated message map functions

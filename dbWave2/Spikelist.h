@@ -87,18 +87,18 @@ public:
 
 	void change_spike_class_id(int spike_no, int class_id);
 
-	Spike* get_spike(int no) { return m_spikes.GetAt(no); }
+	Spike* get_spike(const int index) { return m_spikes.GetSize() > 0 ? m_spikes.GetAt(index) : nullptr; }
 	int get_spikes_count() const { return m_spikes.GetCount(); }
 
 	WORD get_acq_encoding() const { return m_data_encoding_mode; }
-	float get_acq_samp_rate() const { return m_sampling_rate; }
-	float get_acq_voltsper_bin() const { return m_volts_per_bin; }
-	int get_acq_binzero() const { return m_bin_zero; }
+	float get_acq_sampling_rate() const { return m_sampling_rate; }
+	float get_acq_volts_per_bin() const { return m_volts_per_bin; }
+	int get_acq_bin_zero() const { return m_bin_zero; }
 
-	void set_detection_parameters(SPKDETECTPARM* pSd) { m_detection_parameters = *pSd; }
+	void set_detection_parameters(const SPKDETECTPARM* p_sd) { m_detection_parameters = *p_sd; }
 	SPKDETECTPARM* get_detection_parameters() { return &m_detection_parameters; }
 
-	int add_spike(short* lpsource, int n_channels, long ii_time, int source_channel, int i_class, BOOL bCheck);
+	int add_spike(short* source, int n_channels, long ii_time, int source_channel, int i_class, BOOL b_check);
 
 	int  get_spike_length() const { return m_spike_length; }
 	void set_spike_length(int spike_length) { m_spike_length = spike_length; }

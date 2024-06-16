@@ -172,7 +172,7 @@ void ChartSpikeShape::PlotDataToDC(CDC* p_dc)
 		if (m_bText && m_plotmode == PLOT_ONECLASSONLY)
 		{
 			TCHAR num[10];
-			wsprintf(num, _T("%i"), GetSelClass());
+			wsprintf(num, _T("%i"), get_selected_class());
 			p_dc->TextOut(1, 1, num);
 		}
 
@@ -827,7 +827,7 @@ void ChartSpikeShape::Serialize(CArchive& ar)
 float ChartSpikeShape::GetDisplayMaxMv()
 {
 	getExtents();
-	return (p_spike_list->get_acq_voltsper_bin() * 1000.f * static_cast<float>(m_yWE - m_yWO - p_spike_list->get_acq_binzero()));
+	return (p_spike_list->get_acq_volts_per_bin() * 1000.f * static_cast<float>(m_yWE - m_yWO - p_spike_list->get_acq_bin_zero()));
 }
 
 float ChartSpikeShape::GetDisplayMinMv()
@@ -835,7 +835,7 @@ float ChartSpikeShape::GetDisplayMinMv()
 	if (p_spike_list == nullptr)
 		return 1.f;
 	getExtents();
-	return (p_spike_list->get_acq_voltsper_bin() * 1000.f * static_cast<float>(m_yWO - m_yWE - p_spike_list->get_acq_binzero()));
+	return (p_spike_list->get_acq_volts_per_bin() * 1000.f * static_cast<float>(m_yWO - m_yWE - p_spike_list->get_acq_bin_zero()));
 }
 
 float ChartSpikeShape::GetExtent_mV()
@@ -843,7 +843,7 @@ float ChartSpikeShape::GetExtent_mV()
 	if (p_spike_list == nullptr)
 		return 1.f;
 	getExtents();
-	return (p_spike_list->get_acq_voltsper_bin() * static_cast<float>(m_yWE) * 1000.f);
+	return (p_spike_list->get_acq_volts_per_bin() * static_cast<float>(m_yWE) * 1000.f);
 }
 
 float ChartSpikeShape::GetExtent_ms()
@@ -851,7 +851,7 @@ float ChartSpikeShape::GetExtent_ms()
 	if (p_spike_list == nullptr)
 		return 1.f;
 	getExtents();
-	return (static_cast<float>(1000.0 * m_xWE) / p_spike_list->get_acq_samp_rate());
+	return (static_cast<float>(1000.0 * m_xWE) / p_spike_list->get_acq_sampling_rate());
 }
 
 

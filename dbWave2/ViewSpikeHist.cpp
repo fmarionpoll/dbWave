@@ -1045,7 +1045,7 @@ void ViewSpikeHist::buildData()
 		// m_pvdS->timestart, m_pvdS->timeend
 		// m_pvdS->nbinsISI, m_pvdS->binISI
 		case 2:
-			m_nISI += p_spike_doc_->build_autocorr(m_pvdS, m_pISI, m_spikeclass);
+			m_nISI += p_spike_doc_->build_autocorrelation(m_pvdS, m_pISI, m_spikeclass);
 			break;
 		// -------------------------------------------------------------
 		// PSTH-AUTOCORRELATION DENSITY
@@ -1056,8 +1056,8 @@ void ViewSpikeHist::buildData()
 		case 4:
 			{
 				m_nPSTH += p_spike_doc_->build_PSTH(m_pvdS, m_pPSTH, m_spikeclass);
-				p_spike_doc_->build_autocorr(m_pvdS, m_pISI, m_spikeclass);
-				p_spike_doc_->build_PSTHautocorr(m_pvdS, m_parrayISI, m_spikeclass);
+				p_spike_doc_->build_autocorrelation(m_pvdS, m_pISI, m_spikeclass);
+				p_spike_doc_->build_psth_autocorrelation(m_pvdS, m_parrayISI, m_spikeclass);
 			}
 			break;
 		default:
@@ -1259,7 +1259,7 @@ long ViewSpikeHist::plotHistog(CDC* p_dc, CRect* pdispRect, int nbinshistog, lon
 		if (btype == 0 && p_spike_doc_->m_stimulus_intervals.n_items > 0)
 		{
 			const auto p_spk_list = p_spike_doc_->get_spk_list_current();
-			const auto samprate = p_spk_list->get_acq_samp_rate();
+			const auto samprate = p_spk_list->get_acq_sampling_rate();
 			int iioffset0 = p_spike_doc_->m_stimulus_intervals.GetAt(m_pvdS->istimulusindex);
 			if (m_pvdS->babsolutetime)
 				iioffset0 = 0;
@@ -1394,7 +1394,7 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 
 		// load pointers to spike file and spike list
 		const auto p_spk_list = p_spike_doc_->get_spk_list_current();
-		const auto samprate = p_spk_list->get_acq_samp_rate();
+		const auto samprate = p_spk_list->get_acq_sampling_rate();
 		const auto ii_frame_first = static_cast<long>(m_timefirst * samprate);
 		const auto ii_frame_last = static_cast<long>(m_timelast * samprate);
 		const auto ii_frame_length = ii_frame_last - ii_frame_first;

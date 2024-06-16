@@ -188,8 +188,8 @@ void ViewSpikeDetection::update_legends()
 	m_chart_data_filtered.GetDataFromDoc(l_first, l_last);
 
 	// draw charts
-	m_chart_spike_bar.SetTimeIntervals(l_first, l_last);
-	m_chart_spike_shape.SetTimeIntervals(l_first, l_last);
+	m_chart_spike_bar.set_time_intervals(l_first, l_last);
+	m_chart_spike_shape.set_time_intervals(l_first, l_last);
 	update_spike_shape_window_scale(FALSE);
 
 	// update text abscissa and horizontal scroll position
@@ -654,8 +654,8 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 		// ----------------------------- select bar/display bars or zoom
 	case HINT_CHANGEHZLIMITS: 
-		m_chart_data_filtered.GetDataFromDoc(m_chart_spike_bar.GetTimeFirst(), m_chart_spike_bar.GetTimeLast());
-		m_chart_data_source.GetDataFromDoc(m_chart_spike_bar.GetTimeFirst(), m_chart_spike_bar.GetTimeLast());
+		m_chart_data_filtered.GetDataFromDoc(m_chart_spike_bar.get_time_first(), m_chart_spike_bar.get_time_last());
+		m_chart_data_source.GetDataFromDoc(m_chart_spike_bar.get_time_first(), m_chart_spike_bar.get_time_last());
 		update_legends();
 		break;
 
@@ -1625,7 +1625,7 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 		CString cs;
 		GetDlgItem(IDC_SPIKEWINDOWLENGTH)->GetWindowText(cs);
 		const auto x = static_cast<float>(_ttof(cs)) / 1000.0f;
-		ix_we = static_cast<int>(m_pSpkList->get_acq_samp_rate() * x);
+		ix_we = static_cast<int>(m_pSpkList->get_acq_sampling_rate() * x);
 		if (ix_we == 0)
 			ix_we = m_pSpkList->get_detection_parameters()->extract_n_points;
 		ASSERT(ix_we != 0);
@@ -1636,7 +1636,7 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 		if (!cs.IsEmpty())
 		{
 			const auto y = static_cast<float>(_ttof(cs)) / 1000.0f;
-			iy_we = static_cast<int>(y / m_pSpkList->get_acq_voltsper_bin());
+			iy_we = static_cast<int>(y / m_pSpkList->get_acq_volts_per_bin());
 		}
 		if (iy_we == 0)
 			iy_we = m_chart_spike_shape.GetYWExtent();
@@ -2576,7 +2576,7 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			BarsRect.left = m_rData.left;
 			BarsRect.right = m_rData.right;
 
-			m_chart_spike_bar.SetTimeIntervals(index_first_data_point, l_last);
+			m_chart_spike_bar.set_time_intervals(index_first_data_point, l_last);
 			m_chart_spike_bar.Print(p_dc, &BarsRect);
 		}
 
@@ -2586,7 +2586,7 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		m_rSpike.left += options_view_data->textseparator;
 		m_rSpike.bottom = m_rSpike.top + r_sp_kheight; 
 
-		m_chart_spike_shape.SetTimeIntervals(index_first_data_point, l_last);
+		m_chart_spike_shape.set_time_intervals(index_first_data_point, l_last);
 		m_chart_spike_shape.Print(p_dc, &m_rSpike);
 
 		// restore DC and print comments 
@@ -2665,7 +2665,7 @@ void ViewSpikeDetection::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 
 	m_chart_data_filtered.ResizeChannels(m_npixels0, 0);
 	m_chart_data_filtered.GetDataFromDoc(m_lFirst0, m_lLast0);
-	m_chart_spike_shape.SetTimeIntervals(m_lFirst0, m_lLast0);
+	m_chart_spike_shape.set_time_intervals(m_lFirst0, m_lLast0);
 	update_file_parameters(TRUE);
 
 	m_bIsPrinting = FALSE;
@@ -2996,8 +2996,8 @@ void ViewSpikeDetection::update_detection_controls()
 		m_chart_data_filtered.m_HZtags.SetTagVal(0, detect_threshold);
 
 	// update spike channel displayed
-	m_chart_spike_bar.SetSpkList(m_pSpkList);
-	m_chart_spike_shape.SetSpkList(m_pSpkList);
+	m_chart_spike_bar.set_spike_list(m_pSpkList);
+	m_chart_spike_shape.set_spike_list(m_pSpkList);
 }
 
 void ViewSpikeDetection::OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult)
@@ -3011,7 +3011,7 @@ void ViewSpikeDetection::OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult)
 
 void ViewSpikeDetection::OnToolsEditstimulus()
 {
-	m_pSpkDoc->sort_stim_array();
+	m_pSpkDoc->sort_stimulus_array();
 
 	DlgEditStimArray dlg;
 	dlg.intervals = m_pSpkDoc->m_stimulus_intervals;
