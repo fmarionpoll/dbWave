@@ -26,5 +26,16 @@ public:
 		spike_list_index = -1;
 		spike_index = -1;
 	}
+
+	Spike_selected& operator =(const Spike_selected& arg)
+	{
+		if (this != &arg)
+		{
+			database_position = arg.database_position;
+			spike_list_index = arg.spike_list_index;
+			spike_index = arg.spike_index;
+		}
+		return *this;
+	}
 };
 

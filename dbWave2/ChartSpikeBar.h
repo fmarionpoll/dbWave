@@ -21,12 +21,11 @@ protected:
 public:
 	void set_source_data(SpikeList* p_spk_list, CSpikeDoc* p_spike_document);
 
-	Spike_selected get_selected_spike() const { return spike_selected_; }
 	int get_hit_spike() const { return m_hit_spike; }
 
-	void display_spike(const Spike_selected& spike_selected, BOOL b_select);
+	void display_spike(const Spike* spike, BOOL b_select);
 	void display_flagged_spikes(BOOL bHighlight);
-	int select_spike(int spike_no);
+	void select_spike(const Spike_selected& new_spike_selected);
 
 	void select_spikes_within_rect(CRect* pRect, UINT nFlags) const;
 	BOOL is_spike_within_range(int no_spike);
@@ -50,7 +49,7 @@ protected:
 	int hitCurve(CPoint point) override;
 	int hit_curve_in_doc(CPoint point);
 	void display_bars(CDC* p_dc, const CRect* rect);
-	void highlight_one_bar(int no_spike, CDC* p_dc) const;
+	void highlight_one_bar(const Spike* spike, CDC* p_dc) const;
 	void display_stimulus(CDC* p_dc, const CRect* rect) const;
 
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

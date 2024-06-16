@@ -21,7 +21,6 @@ protected:
 	int m_index_first_spike = 0;			// index first spike
 	int m_index_last_spike = 0;				// index last spike
 	int m_current_class = 0;				// current class in case of displaying classes
-	// m_selected_spike = -1;				// selected spike (display differently)
 	Spike_selected spike_selected_;
 	int m_selected_pen{};
 	int m_hit_spike = -1;					// no of spike selected
@@ -36,6 +35,8 @@ protected:
 	int get_color_according_to_plot_mode(const Spike* spike, int plot_mode) const;
 
 public:
+	Spike_selected get_selected_spike() const { return spike_selected_; }
+
 	void set_range_mode(int mode) { m_range_mode = mode; }
 	int get_range_mode() const { return m_range_mode; }
 

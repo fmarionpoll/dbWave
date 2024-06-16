@@ -19,11 +19,10 @@ protected:
 
 	// Helpers and public procedures
 public:
-	int get_selected_spike() const { return m_selected_spike; }
 	int get_hit_spike() const { return m_hit_spike; }
 
-	int select_spike(const int spike_no);
-	void display_spike(const int spike_no, const BOOL b_select);
+	void select_spike(const Spike_selected& spike_selected);
+	void display_spike(Spike_selected& spike_selected, const BOOL b_select);
 	void move_hz_tag(int index, int new_value);
 	void move_vt_tag(int index, int new_value);
 
@@ -38,13 +37,13 @@ public:
 
 protected:
 	void display_spike(const Spike* spike, CDC* p_dc, const CRect& rect, const CRect& rect1, const long window_duration) const;
-	void draw_selected_spike(int no_spike, int color, CDC* p_dc) const;
+	void draw_selected_spike(Spike* spike, int color, CDC* p_dc) const;
 	int hitCurve(CPoint point) override;
 	int hit_curve_in_doc(CPoint point);
 	boolean is_spike_within_limits( const Spike* spike) const;
-	boolean is_spike_within_range(const int spike_index) const;
+	boolean is_spike_within_range(const Spike_selected& spike_selected) const;
 	void get_extents();
-	void highlight_one_point(int no_spike, CDC* p_dc) const;
+	void highlight_one_point(Spike* spike, CDC* p_dc) const;
 	void display_hz_tags(CDC* p_dc);
 	void display_vt_tags(CDC* p_dc);
 
