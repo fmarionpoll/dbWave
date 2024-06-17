@@ -285,7 +285,7 @@ void ChartWnd::EraseBkgnd(CDC* p_dc)
 	DrawGrid(p_dc);
 }
 
-void ChartWnd::drawGridEvenlySpaced(CDC* p_dc) const
+void ChartWnd::draw_grid_evenly_spaced(CDC* p_dc) const
 {
 	auto rect = m_displayRect;
 	rect.DeflateRect(1, 1);
@@ -341,7 +341,7 @@ void ChartWnd::drawGridEvenlySpaced(CDC* p_dc) const
 	}
 }
 
-void ChartWnd::drawGridFromRuler(CDC* p_dc, const Ruler* pRuler) const
+void ChartWnd::draw_grid_from_ruler(CDC* p_dc, const Ruler* pRuler) const
 {
 	auto rc_client = m_displayRect;
 	rc_client.DeflateRect(1, 1);
@@ -397,7 +397,7 @@ void ChartWnd::drawGridFromRuler(CDC* p_dc, const Ruler* pRuler) const
 	p_dc->SelectObject(p_old_pen);
 }
 
-void ChartWnd::DrawScaleFromRuler(CDC* p_dc, Ruler* pRuler)
+void ChartWnd::draw_scale_from_ruler(CDC* p_dc, Ruler* pRuler)
 {
 	auto rc_client = m_displayRect;
 	rc_client.DeflateRect(1, 1);
@@ -498,24 +498,24 @@ void ChartWnd::DrawScaleFromRuler(CDC* p_dc, Ruler* pRuler)
 	p_dc->SelectObject(p_old_pen);
 }
 
-void ChartWnd::drawGridNicelySpaced(CDC* p_dc)
+void ChartWnd::draw_grid_nicely_spaced(CDC* p_dc)
 {
 	if (m_pXRulerBar == nullptr)
-		DrawScaleFromRuler(p_dc, &m_xRuler);
+		draw_scale_from_ruler(p_dc, &m_xRuler);
 	else
 	{
 		m_pXRulerBar->DrawScalefromRuler(&m_xRuler);
 		m_pXRulerBar->Invalidate();
-		drawGridFromRuler(p_dc, &m_xRuler);
+		draw_grid_from_ruler(p_dc, &m_xRuler);
 	}
 
 	if (m_pYRulerBar == nullptr)
-		DrawScaleFromRuler(p_dc, &m_yRuler);
+		draw_scale_from_ruler(p_dc, &m_yRuler);
 	else
 	{
 		m_pYRulerBar->DrawScalefromRuler(&m_yRuler);
 		m_pYRulerBar->Invalidate();
-		drawGridFromRuler(p_dc, &m_yRuler);
+		draw_grid_from_ruler(p_dc, &m_yRuler);
 	}
 }
 
@@ -535,9 +535,9 @@ void ChartWnd::DrawGrid(CDC* p_dc)
 {
 	// TODO: get major intervals from rulerbar is not nullptr
 	if (m_bNiceGrid)
-		drawGridNicelySpaced(p_dc);
+		draw_grid_nicely_spaced(p_dc);
 	else
-		drawGridEvenlySpaced(p_dc);
+		draw_grid_evenly_spaced(p_dc);
 }
 
 void ChartWnd::SetNxScaleCells(int iCells, int iTicks, int iTickLine)
@@ -753,9 +753,9 @@ void ChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 			}
 			else
 			{
-				const auto lval = static_cast<long>(point.x) * (m_liLast - m_liFirst + 1) / static_cast<long>(
+				const auto lvalue = static_cast<long>(point.x) * (m_liLast - m_liFirst + 1) / static_cast<long>(
 					m_displayRect.Width()) + m_liFirst;
-				m_VTtags.SetTagLVal(m_HCtrapped, lval);
+				m_VTtags.SetTagLVal(m_HCtrapped, lvalue);
 			}
 			postMyMessage(HINT_MOVEVERTTAG, m_HCtrapped);
 		}

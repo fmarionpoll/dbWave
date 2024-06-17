@@ -30,11 +30,6 @@ ChartSpikeBar::~ChartSpikeBar()
 	}
 }
 
-void ChartSpikeBar::plot_spikes(CDC* p_dc)
-{
-	PlotDataToDC(p_dc);
-}
-
 void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
 {
 	if (m_erasebkgnd)
@@ -104,7 +99,7 @@ void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
 		{
 			// select pen and display mode
 			const auto old_pen = p_dc->SelectObject(&m_blackDottedPen);
-			const auto old_ROP2 = p_dc->SetROP2(R2_NOTXORPEN);
+			const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
 
 			// iterate through VT cursor list
 			const int y1 = m_displayRect.bottom;
@@ -118,7 +113,7 @@ void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
 				p_dc->MoveTo(k, y0); // set initial pt
 				p_dc->LineTo(k, y1); // VT line
 			}
-			p_dc->SetROP2(old_ROP2); // restore old display mode
+			p_dc->SetROP2(old_rop2); // restore old display mode
 			p_dc->SelectObject(old_pen);
 		}
 
@@ -406,7 +401,7 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 	prepare_dc(&dc);
 
 	// loop over the array of flagged spikes
-	boolean is_selected_spike_in_this_list = 
+	const boolean is_selected_spike_in_this_list = 
 		(p_dbwave_doc->get_current_spike_file()->get_spike_list_current_index()
 			== spike_selected_.spike_list_index);
 	for (auto i = p_spike_list->get_spike_flag_array_count() - 1; i >= 0; i--)
@@ -487,14 +482,15 @@ void ChartSpikeBar::draw_spike(const Spike* spike, const int color_index)
 {
 	CClientDC dc(this);
 	dc.IntersectClipRect(&m_clientRect);
-	//CClientDC dc(this);
-	//if (m_xWE == 1 || m_yWE == 1)
-	//	return;
-	//m_xWE = m_displayRect.Width();
-	//m_xWO = m_displayRect.left;
-	//dc.IntersectClipRect(&m_clientRect);
-	//prepare_dc(&dc);
-
+	/*
+	CClientDC dc(this);
+	if (m_xWE == 1 || m_yWE == 1)
+		return;
+	m_xWE = m_displayRect.Width();
+	m_xWO = m_displayRect.left;
+	dc.IntersectClipRect(&m_clientRect);
+	prepare_dc(&dc);
+	*/
 	CPen new_pen;
 	constexpr auto pen_size = 0;
 	new_pen.CreatePen(PS_SOLID, pen_size, m_colorTable[color_index]);
@@ -752,7 +748,7 @@ int ChartSpikeBar::hitCurve(const CPoint point)
 	// for y coordinates, conversion is straightforward:
 	const auto mouse_y = MulDiv(point.y - m_yVO, m_yWE, m_yVE) + m_yWO;
 	const auto delta_y = MulDiv(3, m_yWE, m_yVE);
-
+	/*
 	// for x coordinates, the formula is in 2 steps:
 	// 1) time -> relative time: ii_time = (spike_time-m_lFirst) [-offset]
 	// 2) rel time -> logical coordinate(LC): LC = ii_time* m_xWE / len + m_xWO
@@ -762,6 +758,7 @@ int ChartSpikeBar::hitCurve(const CPoint point)
 	// reverse formula: abscissa -> time
 	//		long lSpikeTime  = (abscissa - m_xWO)*len/m_xWE + m_lFirst;
 	// convert device coordinates into logical coordinates
+	*/
 	const auto mouse_x = MulDiv(point.x - m_xVO, m_xWE, m_xVE) + m_xWO;
 	const auto delta_x = MulDiv(3, m_xWE, m_xVE);
 	const auto len_data_displayed = (m_lLast - m_lFirst + 1);

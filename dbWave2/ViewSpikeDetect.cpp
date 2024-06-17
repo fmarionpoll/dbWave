@@ -1481,7 +1481,7 @@ void ViewSpikeDetection::OnBnClickedClearAll()
 	m_spike_index = -1;
 	Spike_selected spike_sel(-1, -1, -1);
 	m_chart_spike_bar.select_spike(spike_sel);
-	m_chart_spike_shape.select_spike_shape(spike_sel);
+	m_chart_spike_shape.select_spike(spike_sel);
 
 	// update spike list
 	for (int i = 0; i < m_pSpkDoc->get_spike_list_size(); i++)
@@ -1508,7 +1508,7 @@ void ViewSpikeDetection::OnClear()
 	m_spike_index = -1;
 	Spike_selected spike_sel(-1, -1, -1);
 	m_chart_spike_bar.select_spike(spike_sel);
-	m_chart_spike_shape.select_spike_shape(spike_sel);
+	m_chart_spike_shape.select_spike(spike_sel);
 
 	m_pSpkList = m_pSpkDoc->get_spike_list_current();
 	m_pSpkList->init_spike_list(GetDocument()->m_pDat, nullptr);

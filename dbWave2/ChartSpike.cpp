@@ -55,17 +55,12 @@ void ChartSpike::sub_item_draw(CDC& dc, CRect& rect)
 
 	// draw actual data
 	SetDisplayAreaSize(rect.Width(), rect.Height());
-	plot_spikes(&dc_mem);
+	PlotDataToDC(&dc_mem); //plot_spikes(&dc_mem);
 
 	// transfer data to DC and clean the memory DC
 	dc.BitBlt(rect.left, rect.top, rect.Width(), rect.Height(), &dc_mem, 0, 0, SRCCOPY);
 	dc_mem.SelectObject(p_old_bmp);
 	dc_mem.DeleteDC(); 
-}
-
-void ChartSpike::plot_spikes(CDC* p_dc)
-{
-	
 }
 
 void ChartSpike::sub_item_create(CWnd* parentWnd, const CRect& rect, int i_id, int i_class, CdbWaveDoc* pdbDoc, SpikeList* spike_list)

@@ -42,7 +42,6 @@ public:
 
 	void Print(CDC* p_dc, const CRect* rect);
 	void PlotDataToDC(CDC* p_dc) override;
-	void plot_spikes(CDC* p_dc) override;
 	void plot_single_spk_data_to_dc(CDC* p_dc);
 	void ZoomData(CRect* prevRect, CRect* newRect) override;
 

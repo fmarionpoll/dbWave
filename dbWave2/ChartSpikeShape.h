@@ -19,9 +19,11 @@ protected:
 	BOOL m_bText = FALSE; // allow text default false
 	int m_n_displayed_spikes{}; // number of spikes displayed
 
-	CArray<CPoint, CPoint> polypoints_; // points displayed with polyline
+	CArray<CPoint, CPoint> polyline_points_; // points displayed with polyline
 
 public:
+	void draw_spike(const Spike* spike);
+
 	void set_text_option(const BOOL b_text) { m_bText = b_text; }
 	BOOL get_text_option() const { return m_bText; }
 
@@ -40,16 +42,13 @@ public:
 
 	// non-inline functions
 	void move_vt_track(int i_track, int new_value);
-
-	void select_spike_shape(const Spike_selected& spike_sel);
-	void draw_spike(const Spike* spike);
-
-	void Print(CDC* p_dc, CRect* rect);
+	void select_spike(const Spike_selected& spike_sel);
 	int display_ex_data(short* p_data, int color = 9);
 	void display_flagged_spikes(BOOL bHighLight);
+
 	void PlotDataToDC(CDC* p_dc) override;
-	void plot_spikes(CDC* p_dc) override;
 	void ZoomData(CRect* rFrom, CRect* rDest) override;
+	void Print(CDC* p_dc, CRect* rect);
 
 protected:
 	void init_polypoint_x_axis();
@@ -59,13 +58,13 @@ protected:
 
 	int hitCurve(CPoint point) override;
 	int hit_curve_in_doc(CPoint point);
+
 	void draw_spike_on_dc(const Spike* spike, CDC* p_dc);
 	void draw_flagged_spikes(CDC* p_dc);
-	void plot_array_to_dc(CDC* p_dc, short* pspk);
+	void plot_array_to_dc(CDC* p_dc, short* p_array);
 
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 
 	DECLARE_MESSAGE_MAP()

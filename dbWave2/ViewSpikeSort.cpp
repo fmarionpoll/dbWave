@@ -941,7 +941,7 @@ void ViewSpikeSort::select_spike_from_current_list(const int spike_index)
 	Spike_selected spike_sel(pDoc->db_get_current_record_position(),
 		pDoc->m_pSpk->get_spike_list_current_index(),
 		spike_index);
-	m_chart_spike_shapes.select_spike_shape(spike_sel);
+	m_chart_spike_shapes.select_spike(spike_sel);
 	m_chart_spike_bars.select_spike(spike_sel);
 	m_chart_measures.select_spike(spike_sel);
 	m_pSpkList->m_selected_spike = spike_index;

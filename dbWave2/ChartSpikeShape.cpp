@@ -25,11 +25,6 @@ ChartSpikeShape::ChartSpikeShape()
 ChartSpikeShape::~ChartSpikeShape()
 = default;
 
-void ChartSpikeShape::plot_spikes(CDC * p_dc)
-{
-	PlotDataToDC(p_dc);
-}
-
 void ChartSpikeShape::PlotDataToDC(CDC * p_dc)
 {
 	if (m_erasebkgnd)
@@ -74,9 +69,9 @@ void ChartSpikeShape::PlotDataToDC(CDC * p_dc)
 		// load resources and prepare context
 		const auto spike_length = p_spike_list->get_spike_length();
 		ASSERT(spike_length > 0);
-		if (polypoints_.GetSize() != spike_length)
+		if (polyline_points_.GetSize() != spike_length)
 		{
-			polypoints_.SetSize(spike_length, 2);
+			polyline_points_.SetSize(spike_length, 2);
 			init_polypoint_x_axis();
 		}
 
@@ -125,7 +120,7 @@ void ChartSpikeShape::PlotDataToDC(CDC * p_dc)
 			// display data
 			p_spike_data = spike->get_p_data();
 			fill_polypoint_y_axis(p_spike_data);
-			p_dc->Polyline(&polypoints_[0], spike_length);
+			p_dc->Polyline(&polyline_points_[0], spike_length);
 		}
 
 		if (m_plotmode == PLOT_ONECLASS || m_plotmode == PLOT_ONECOLOR)
@@ -136,7 +131,7 @@ void ChartSpikeShape::PlotDataToDC(CDC * p_dc)
 			p_dc->SelectObject(&m_penTable[selected_pen_color]);
 			for (auto i_spike = i_last_spike; i_spike >= i_first_spike; i_spike--)
 			{
-				Spike* spike = p_spike_list->get_spike(i_spike);
+				const Spike* spike = p_spike_list->get_spike(i_spike);
 				// skip spike ?
 				if (m_range_mode == RANGE_TIMEINTERVALS
 					&& (spike->get_time() < m_lFirst || spike->get_time() > m_lLast))
@@ -148,19 +143,8 @@ void ChartSpikeShape::PlotDataToDC(CDC * p_dc)
 				// display data
 				p_spike_data = spike->get_p_data();
 				fill_polypoint_y_axis(p_spike_data);
-				p_dc->Polyline(&polypoints_[0], spike_length);
+				p_dc->Polyline(&polyline_points_[0], spike_length);
 			}
-		}
-
-		// display selected spike
-		auto i_select = -1;
-		if (spike_selected_.database_position == i_file && spike_selected_.spike_index >= 0)
-		{
-			if (is_spike_within_range(spike_selected_)) {
-				Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
-				draw_spike_on_dc(spike, p_dc);
-			}
-
 		}
 
 		if (p_spike_list->get_spike_flag_array_count() > 0)
@@ -183,6 +167,14 @@ void ChartSpikeShape::PlotDataToDC(CDC * p_dc)
 
 		// restore resource
 		p_dc->SelectObject(old_pen);
+	}
+
+	// display selected spike
+	auto i_select = -1;
+	if ((spike_selected_.spike_index >= 0) && is_spike_within_range(spike_selected_))
+	{
+		const Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
+		draw_spike_on_dc(spike, p_dc);
 	}
 
 	// restore resources
@@ -221,27 +213,27 @@ void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
 			continue;
 		const Spike* spike = p_dbwave_doc->get_spike(spike_sel);
 		fill_polypoint_y_axis(spike->get_p_data());
-		p_dc->Polyline(&polypoints_[0], p_spike_list->get_spike_length());
+		p_dc->Polyline(&polyline_points_[0], p_spike_list->get_spike_length());
 	}
 
 	p_dc->SelectObject(old_pen);
 	p_dc->RestoreDC(n_saved_dc);
 }
 
-void ChartSpikeShape::display_flagged_spikes(BOOL bHighLight)
+void ChartSpikeShape::display_flagged_spikes(const BOOL bHighLight)
 {
 	if (bHighLight)
 		draw_flagged_spikes(&m_PlotDC);
 	Invalidate();
 }
 
-int ChartSpikeShape::display_ex_data(short* p_data, int color)
+int ChartSpikeShape::display_ex_data(short* p_data, const int color)
 {
 	// prepare array
 	const auto spike_length = p_spike_list->get_spike_length();
-	if (polypoints_.GetSize() != spike_length)
+	if (polyline_points_.GetSize() != spike_length)
 	{
-		polypoints_.SetSize(spike_length, 2);
+		polyline_points_.SetSize(spike_length, 2);
 		init_polypoint_x_axis();
 	}
 
@@ -251,16 +243,17 @@ int ChartSpikeShape::display_ex_data(short* p_data, int color)
 	CPen new_pen(PS_SOLID, 0, m_colorTable[color]);
 	const auto old_pen = dc.SelectObject(&new_pen);
 	fill_polypoint_y_axis(p_data);
-	dc.Polyline(&polypoints_[0], p_spike_list->get_spike_length());
+	dc.Polyline(&polyline_points_[0], p_spike_list->get_spike_length());
 
 	dc.SelectObject(old_pen);
 	return color;
 }
 
-void ChartSpikeShape::select_spike_shape(const Spike_selected & spike_sel)
+void ChartSpikeShape::select_spike(const Spike_selected & spike_sel)
 {
 	spike_selected_ = spike_sel;
-	if (spike_sel.spike_index >= 0) {
+	if (spike_sel.spike_index >= 0) 
+	{
 		const Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
 		draw_spike(spike);
 	}
@@ -297,7 +290,7 @@ void ChartSpikeShape::draw_spike_on_dc(const Spike * spike, CDC * p_dc)
 
 	auto* p_data = spike->get_p_data();
 	fill_polypoint_y_axis(p_data);
-	p_dc->Polyline(&polypoints_[0], p_spike_list->get_spike_length());
+	p_dc->Polyline(&polyline_points_[0], p_spike_list->get_spike_length());
 
 	p_dc->SelectObject(old_pen);
 	p_dc->RestoreDC(n_saved_dc);
@@ -405,11 +398,6 @@ void ChartSpikeShape::OnLButtonDown(UINT nFlags, CPoint point)
 		else
 			postMyMessage(HINT_HITSPIKE, m_hit_spike);
 	}
-}
-
-void ChartSpikeShape::OnMouseMove(UINT nFlags, CPoint point)
-{
-	ChartSpike::OnMouseMove(nFlags, point);
 }
 
 // ZoomData(CRect* rFrom, CRect* rDest)
@@ -561,8 +549,8 @@ void ChartSpikeShape::get_extents()
 		{
 			if (file_index != current_file_index)
 			{
-				p_dbwave_doc->db_set_current_record_position(file_index);
-				p_dbwave_doc->open_current_spike_file();
+				if (p_dbwave_doc->db_set_current_record_position(file_index))
+					p_dbwave_doc->open_current_spike_file();
 				p_spike_list = p_dbwave_doc->m_pSpk->get_spike_list_current();
 			}
 			if (p_spike_list != nullptr)
@@ -601,27 +589,27 @@ void ChartSpikeShape::get_extents_current_spk_list()
 
 void ChartSpikeShape::init_polypoint_x_axis()
 {
-	const auto n_elements = polypoints_.GetSize();
+	const auto n_elements = polyline_points_.GetSize();
 	m_xWE = n_elements + 1;
 	ASSERT(n_elements > 0);
 
 	for (auto i = 0; i < n_elements; i++)
-		polypoints_[i].x = i + 1;
+		polyline_points_[i].x = i + 1;
 }
 
 void ChartSpikeShape::fill_polypoint_y_axis(short* lpSource)
 {
-	auto n_elements = polypoints_.GetSize();
+	auto n_elements = polyline_points_.GetSize();
 	if (n_elements == 0)
 	{
 		n_elements = p_spike_list->get_spike_length();
 		ASSERT(n_elements > 0);
-		polypoints_.SetSize(n_elements, 2);
+		polyline_points_.SetSize(n_elements, 2);
 		init_polypoint_x_axis();
 	}
 
 	for (auto i = 0; i < n_elements; i++, lpSource++)
-		polypoints_[i].y = *lpSource;
+		polyline_points_[i].y = *lpSource;
 }
 
 void ChartSpikeShape::Print(CDC * p_dc, CRect * rect)
@@ -652,13 +640,13 @@ void ChartSpikeShape::Print(CDC * p_dc, CRect * rect)
 	m_xWE = rect->Width() - 2;
 
 	const auto spike_length = p_spike_list->get_spike_length();
-	if (polypoints_.GetSize() != spike_length)
-		polypoints_.SetSize(spike_length, 2);
+	if (polyline_points_.GetSize() != spike_length)
+		polyline_points_.SetSize(spike_length, 2);
 
 	// set mapping mode and viewport
 	const auto n_saved_dc = p_dc->SaveDC();
 	for (auto i = 0; i < spike_length; i++)
-		polypoints_[i].x = rect->left + MulDiv(i, rect->Width(), spike_length);
+		polyline_points_[i].x = rect->left + MulDiv(i, rect->Width(), spike_length);
 
 	int selected_color = BLACK_COLOR;
 	switch (m_plotmode)
@@ -744,24 +732,24 @@ void ChartSpikeShape::Print(CDC * p_dc, CRect * rect)
 	m_yVE = old_y_ve;
 }
 
-void ChartSpikeShape::plot_array_to_dc(CDC * p_dc, short* pspk)
+void ChartSpikeShape::plot_array_to_dc(CDC * p_dc, short* p_array)
 {
-	const auto n_elements = polypoints_.GetSize();
-	for (auto i = 0; i < n_elements; i++, pspk++)
+	const auto n_elements = polyline_points_.GetSize();
+	for (auto i = 0; i < n_elements; i++, p_array++)
 	{
-		auto y = *pspk;
+		auto y = *p_array;
 		y = static_cast<short>(MulDiv(y - m_yWO, m_yVE, m_yWE) + m_yVO);
-		polypoints_[i].y = y;
+		polyline_points_[i].y = y;
 	}
 
 	if (p_dc->m_hAttribDC == nullptr
 		|| (p_dc->GetDeviceCaps(LINECAPS) & LC_POLYLINE))
-		p_dc->Polyline(&polypoints_[0], n_elements);
+		p_dc->Polyline(&polyline_points_[0], n_elements);
 	else
 	{
-		p_dc->MoveTo(polypoints_[0]);
+		p_dc->MoveTo(polyline_points_[0]);
 		for (auto i = 0; i < n_elements; i++)
-			p_dc->LineTo(polypoints_[i]);
+			p_dc->LineTo(polyline_points_[i]);
 	}
 }
 
@@ -780,7 +768,7 @@ void ChartSpikeShape::Serialize(CArchive & ar)
 	if (ar.IsStoring())
 	{
 		ChartSpike::Serialize(ar);
-		polypoints_.Serialize(ar);
+		polyline_points_.Serialize(ar);
 
 		ar << m_range_mode; // display range (time OR storage index)
 		ar << m_lFirst; // time first (real time = index/sampling rate)
@@ -798,7 +786,7 @@ void ChartSpikeShape::Serialize(CArchive & ar)
 	else
 	{
 		ChartSpike::Serialize(ar);
-		polypoints_.Serialize(ar);
+		polyline_points_.Serialize(ar);
 
 		ar >> m_range_mode; // display range (time OR storage index)
 		ar >> m_lFirst; // time first (real time = index/sampling rate)

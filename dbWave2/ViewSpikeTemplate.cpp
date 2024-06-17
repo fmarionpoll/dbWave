@@ -313,7 +313,7 @@ void ViewSpikeTemplates::selectSpike(short spikeno)
 	Spike_selected spike_sel(pDoc->db_get_current_record_position(),
 		pDoc->m_pSpk->get_spike_list_current_index(),
 		spikeno);
-	m_ChartSpkWnd_Shape.select_spike_shape(spike_sel);
+	m_ChartSpkWnd_Shape.select_spike(spike_sel);
 	m_spikeno = spikeno;
 	m_pSpkList->m_selected_spike = spikeno;
 }

@@ -220,10 +220,10 @@ protected:
 	void zoomIn();
 	void zoomOut();
 	void zoomPop();
-	void drawGridEvenlySpaced(CDC* p_dc) const;
-	void drawGridFromRuler(CDC* p_dc, const Ruler* pRuler) const;
-	void drawGridNicelySpaced(CDC* p_dc);
-	void DrawScaleFromRuler(CDC* p_dc, Ruler* scale);
+	void draw_grid_evenly_spaced(CDC* p_dc) const;
+	void draw_grid_from_ruler(CDC* p_dc, const Ruler* pRuler) const;
+	void draw_grid_nicely_spaced(CDC* p_dc);
+	void draw_scale_from_ruler(CDC* p_dc, Ruler* pRuler);
 
 	// Generated message map functions
 protected:
