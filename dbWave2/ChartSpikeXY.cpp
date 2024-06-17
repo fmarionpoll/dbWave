@@ -94,8 +94,8 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 		// display spike selected
 		if (spike_selected_.database_position == index_file && spike_selected_.spike_index >= 0)
 		{
-			Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
-			highlight_one_point(spike, p_dc);
+			const Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
+			highlight_spike(spike);
 		}
 
 		if (p_spike_list->get_spike_flag_array_count() > 0)
@@ -106,7 +106,7 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 			{
 				spike_sel.spike_index = p_spike_list->get_spike_flag_array_at(i);
 				Spike* spike = p_dbwave_doc->get_spike(spike_sel);
-				highlight_one_point(spike, p_dc);
+				highlight_spike(spike);
 			}
 		}
 
@@ -210,74 +210,33 @@ void ChartSpikeXY::display_hz_tags(CDC* p_dc)
 	p_dc->SetROP2(old_rop2);
 }
 
-void ChartSpikeXY::display_spike(Spike* spike, const BOOL b_select)
+void ChartSpikeXY::display_spike(const Spike* spike) 
+{
+	const auto spike_class = spike->get_class_id();
+	int color_index = BLACK_COLOR;
+	switch (m_plotmode)
+	{
+	case PLOT_ONECLASSONLY:
+	case PLOT_ONECLASS:
+		color_index = BLACK_COLOR; 
+		if (spike_class != m_selected_class)
+			color_index = SILVER_COLOR; 
+		break;
+	case PLOT_CLASSCOLORS:
+		color_index = spike_class % 8;
+		break;
+	case PLOT_BLACK:
+	default:
+		break;
+	}
+	draw_spike(spike, color_index);
+}
+
+void ChartSpikeXY::draw_spike(const Spike* spike, const int color)
 {
 	CClientDC dc(this);
 	dc.IntersectClipRect(&m_clientRect);
-	
-	const auto spike_class = spike->get_class_id();
-	int color_index;
-	if (!b_select)
-	{
-		switch (m_plotmode)
-		{
-		case PLOT_ONECLASSONLY:
-		case PLOT_ONECLASS:
-			color_index = BLACK_COLOR; 
-			if (spike_class != m_selected_class)
-				color_index = SILVER_COLOR; 
-			break;
-		case PLOT_CLASSCOLORS:
-			color_index = spike_class % 8;
-			break;
-		case PLOT_BLACK:
-		default:
-			color_index = BLACK_COLOR; 
-			break;
-		}
-	}
-	else
-	{
-		color_index = RED_COLOR;
-		if (m_plotmode == PLOT_CLASSCOLORS)
-		{
-			highlight_one_point(spike, &dc);
-			color_index = spike_class % 8;
-		}
-	}
 
-	// display spike
-	draw_selected_spike(spike, color_index, &dc);
-}
-
-void ChartSpikeXY::highlight_one_point(Spike* spike, CDC* p_dc) const
-{
-	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
-	const auto l_spike_time = spike->get_time();
-	const auto window_duration = m_lLast - m_lFirst + 1;
-	const auto x1 = MulDiv(l_spike_time - m_lFirst, m_xVE, window_duration) + m_xVO;
-	const auto y1 = MulDiv(spike->get_y1() - m_yWO, m_yVE, m_yWE) + m_yVO;
-
-	CPen new_pen;
-	new_pen.CreatePen(PS_SOLID, 1, RGB(196, 2, 51)); //RGB(255, 255, 255));
-	auto* old_pen = p_dc->SelectObject(&new_pen);
-
-	const auto width = m_dot_width * 2 / 3 + 2;
-	CRect rect1(-width, -width, width, width);
-	rect1.OffsetRect(x1 - 1, y1 - 1);
-	p_dc->MoveTo(rect1.left, rect1.top);
-	p_dc->LineTo(rect1.right, rect1.top);
-	p_dc->LineTo(rect1.right, rect1.bottom);
-	p_dc->LineTo(rect1.left, rect1.bottom);
-	p_dc->LineTo(rect1.left, rect1.top);
-
-	// restore resources
-	p_dc->SelectObject(old_pen);
-	p_dc->SetROP2(old_rop2);
-}
-
-void ChartSpikeXY::draw_selected_spike(Spike* spike, const int color, CDC* p_dc) const
-{
 	const auto l_spike_time = spike->get_time();
 	const auto window_duration = m_lLast - m_lFirst + 1;
 	const auto x1 = MulDiv(l_spike_time - m_lFirst, m_xVE, window_duration) + m_xVO;
@@ -285,13 +244,41 @@ void ChartSpikeXY::draw_selected_spike(Spike* spike, const int color, CDC* p_dc)
 	CRect rect(0, 0, m_dot_width, m_dot_width);
 	rect.OffsetRect(x1 - m_dot_width / 2, y1 - m_dot_width / 2);
 
-	const auto background_color = p_dc->GetBkColor();
-	p_dc->MoveTo(x1, y1);
-	p_dc->FillSolidRect(&rect, m_colorTable[color]);
-	p_dc->SetBkColor(background_color);
+	const auto background_color = dc.GetBkColor();
+	dc.MoveTo(x1, y1);
+	dc.FillSolidRect(&rect, m_colorTable[color]);
+	dc.SetBkColor(background_color);
 }
 
-void ChartSpikeXY::move_hz_tag(int index, int new_value)
+void ChartSpikeXY::highlight_spike(const Spike* spike)
+{
+	CClientDC dc(this);
+	dc.IntersectClipRect(&m_clientRect);
+
+	const auto old_rop2 = dc.SetROP2(R2_NOTXORPEN);
+	const auto l_spike_time = spike->get_time();
+	const auto window_duration = m_lLast - m_lFirst + 1;
+	const auto x1 = MulDiv(l_spike_time - m_lFirst, m_xVE, window_duration) + m_xVO;
+	const auto y1 = MulDiv(spike->get_y1() - m_yWO, m_yVE, m_yWE) + m_yVO;
+
+	CPen new_pen;
+	new_pen.CreatePen(PS_SOLID, 1, RGB(196, 2, 51));
+	auto* old_pen = dc.SelectObject(&new_pen);
+	auto* old_brush = dc.SelectStockObject(NULL_BRUSH);
+
+	const auto width = m_dot_width * 2 / 3 + 2;
+	CRect rect1(-width, -width, width, width);
+	int delta = 0;
+	rect1.OffsetRect(x1 - delta, y1 - delta);
+	dc.Rectangle(&rect1);
+
+	// restore resources
+	dc.SelectObject(old_pen);
+	dc.SelectObject(old_brush);
+	dc.SetROP2(old_rop2);
+}
+
+void ChartSpikeXY::move_hz_tag(const int index, const int new_value)
 {
 	m_ptLast.y = MulDiv(m_HZtags.GetValue(index) - m_yWO, m_yVE, m_yWE) + m_yVO;
 	const auto y_pixel = MulDiv(new_value - m_yWO, m_yVE, m_yWE) + m_yVO;
@@ -299,7 +286,7 @@ void ChartSpikeXY::move_hz_tag(int index, int new_value)
 	m_HZtags.SetTagVal(index, new_value);
 }
 
-void ChartSpikeXY::move_vt_tag(int index, int new_value)
+void ChartSpikeXY::move_vt_tag(const int index, const int new_value)
 {
 	m_ptLast.x = MulDiv(m_VTtags.GetValue(index) - m_xWO, m_xVE, m_xWE) + m_xVO;
 	const auto x_pixel = MulDiv(new_value - m_xWO, m_xVE, m_xWE) + m_xVO;
@@ -310,14 +297,17 @@ void ChartSpikeXY::move_vt_tag(int index, int new_value)
 void ChartSpikeXY::select_spike(const Spike_selected& new_spike_selected)
 {
 	if (spike_selected_.spike_index >= 0) {
-		Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
-		display_spike(spike, FALSE);
+		const Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
+		highlight_spike(spike);
+		display_spike(spike);
+
 	}
 
 	spike_selected_ = new_spike_selected;
 	if (spike_selected_.spike_index >= 0) {
-		Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
-		display_spike(spike, TRUE);
+		const Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
+		display_spike(spike);
+		highlight_spike(spike);
 	}
 }
 

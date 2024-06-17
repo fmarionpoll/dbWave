@@ -22,7 +22,9 @@ public:
 	int get_hit_spike() const { return m_hit_spike; }
 
 	void select_spike(const Spike_selected& spike_selected);
-	void display_spike(Spike* spike, const BOOL b_select);
+	void display_spike(const Spike* spike);
+	void highlight_spike(const Spike* spike);
+
 	void move_hz_tag(int index, int new_value);
 	void move_vt_tag(int index, int new_value);
 
@@ -37,13 +39,13 @@ public:
 
 protected:
 	void display_spike(const Spike* spike, CDC* p_dc, const CRect& rect, const CRect& rect1, const long window_duration) const;
-	void draw_selected_spike(Spike* spike, int color, CDC* p_dc) const;
+	void draw_spike(const Spike* spike, int color);
+
 	int hitCurve(CPoint point) override;
 	int hit_curve_in_doc(CPoint point);
 	boolean is_spike_within_limits( const Spike* spike) const;
 
 	void get_extents();
-	void highlight_one_point(Spike* spike, CDC* p_dc) const;
 	void display_hz_tags(CDC* p_dc);
 	void display_vt_tags(CDC* p_dc);
 
