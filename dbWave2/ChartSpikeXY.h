@@ -39,7 +39,7 @@ public:
 
 protected:
 	void display_spike(const Spike* spike, CDC* p_dc, const CRect& rect, const CRect& rect1, const long window_duration) const;
-	void draw_spike(const Spike* spike, int color);
+	void draw_spike(const Spike* spike, int color_index);
 
 	int hitCurve(CPoint point) override;
 	int hit_curve_in_doc(CPoint point);

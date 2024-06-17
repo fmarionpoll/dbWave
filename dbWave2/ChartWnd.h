@@ -42,7 +42,7 @@ public:
 	                    CCreateContext* pContext = nullptr);
 	virtual SCOPESTRUCT* GetScopeParameters();
 	virtual void SetScopeParameters(SCOPESTRUCT* pStruct);
-	virtual int SetMouseCursorType(int cursormode);
+	virtual int set_mouse_cursor_type(int cursor_type);
 	virtual void ZoomData(CRect* prevRect, CRect* newRect);
 	virtual void DisplayVTtags_Value(CDC* p_dc);
 	virtual void DisplayHZtags(CDC* p_dc);
@@ -65,7 +65,7 @@ public:
 	int GetRectHeight() const { return m_displayRect.Height() + 1; }
 	int GetRectWidth() const { return m_displayRect.Width() + 1; }
 	int GetMouseCursorType() const { return m_cursorType; }
-	void SetMouseCursor(int cursorm);
+	void SetMouseCursor(int cursor_type);
 
 	void SetYWExtOrg(int extent, int zero);
 
@@ -207,7 +207,7 @@ protected:
 	void PreSubclassWindow() override;
 	virtual int hitCurve(CPoint point);
 
-	void prepareDC(CDC* p_dc, CPrintInfo* pInfo = nullptr);
+	void prepare_dc(CDC* p_dc, const CPrintInfo* p_info = nullptr);
 	void captureCursor();
 	void releaseCursor();
 	void lbuttonUp_HzTag(UINT nFlags, CPoint point);

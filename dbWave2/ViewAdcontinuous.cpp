@@ -664,7 +664,7 @@ LRESULT ViewADcontinuous::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	if (code == HINT_SETMOUSECURSOR) {
 		if (low_lParam > CURSOR_ZOOM)
 			low_lParam = 0;
-		m_cursorstate = m_chartDataAD.SetMouseCursorType(low_lParam);
+		m_cursorstate = m_chartDataAD.set_mouse_cursor_type(low_lParam);
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursorstate, 0));
 	}
 	else {

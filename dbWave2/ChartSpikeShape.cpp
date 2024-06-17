@@ -42,7 +42,7 @@ void ChartSpikeShape::PlotDataToDC(CDC * p_dc)
 	rect.DeflateRect(1, 1);
 
 	get_extents();
-	prepareDC(p_dc);
+	prepare_dc(p_dc);
 	auto current_file = 0;
 	auto n_files = 1;
 	if (m_display_all_files)
@@ -202,7 +202,7 @@ void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
 
 	// change coordinate settings
 	get_extents();
-	prepareDC(p_dc);
+	prepare_dc(p_dc);
 	p_dc->SetViewportOrg(m_displayRect.left, m_displayRect.Height() / 2);
 	p_dc->SetViewportExt(m_displayRect.right, -m_displayRect.Height());
 
@@ -247,7 +247,7 @@ int ChartSpikeShape::display_ex_data(short* p_data, int color)
 
 	CClientDC dc(this);
 	dc.IntersectClipRect(&m_clientRect);
-	prepareDC(&dc);
+	prepare_dc(&dc);
 	CPen new_pen(PS_SOLID, 0, m_colorTable[color]);
 	const auto old_pen = dc.SelectObject(&new_pen);
 	fill_polypoint_y_axis(p_data);
@@ -286,7 +286,7 @@ void ChartSpikeShape::draw_spike_on_dc(const Spike * spike, CDC * p_dc)
 	p_dc->IntersectClipRect(&rect);
 
 	get_extents();
-	prepareDC(p_dc);
+	prepare_dc(p_dc);
 
 	p_dc->SetViewportOrg(m_displayRect.left, m_displayRect.Height() / 2 + m_displayRect.top);
 	p_dc->SetViewportExt(m_displayRect.Width(), -m_displayRect.Height());

@@ -233,7 +233,7 @@ void ViewSpikes::set_mouse_cursor(short param_value)
 {
 	if (m_ChartDataWnd.GetMouseCursorType() != param_value)
 		set_add_spikes_mode(param_value);
-	m_ChartDataWnd.SetMouseCursorType(param_value);
+	m_ChartDataWnd.set_mouse_cursor_type(param_value);
 	m_spikeClassListBox.SetMouseCursorType(param_value);
 	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(param_value, 0));
 }

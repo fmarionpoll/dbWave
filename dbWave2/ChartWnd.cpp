@@ -564,10 +564,10 @@ void ChartWnd::postMyMessage(int code, int codeparm)
 	GetParent()->PostMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, GetDlgCtrlID()));
 }
 
-void ChartWnd::prepareDC(CDC* p_dc, CPrintInfo* pInfo)
+void ChartWnd::prepare_dc(CDC* p_dc, const CPrintInfo* p_info)
 {
 	p_dc->SetMapMode(MM_ANISOTROPIC);
-	if (pInfo == nullptr)
+	if (p_info == nullptr)
 	{
 		p_dc->SetViewportOrg(m_xVO, m_yVO);
 		p_dc->SetViewportExt(m_xVE, m_yVE);
@@ -578,20 +578,20 @@ void ChartWnd::prepareDC(CDC* p_dc, CPrintInfo* pInfo)
 	}
 }
 
-int ChartWnd::SetMouseCursorType(int cursorm)
+int ChartWnd::set_mouse_cursor_type(const int cursor_type)
 {
 	m_oldcursorType = m_cursorType;
-	ASSERT(NB_CURSORS > cursorm);
-	ASSERT(0 <= cursorm);
-	m_cursorType = cursorm;
+	ASSERT(NB_CURSORS > cursor_type);
+	ASSERT(0 <= cursor_type);
+	m_cursorType = cursor_type;
 	m_currCursor = m_cursor[m_cursorType];
 	m_currCursorMode = m_cursordragmode[m_cursorType];
-	return cursorm;
+	return cursor_type;
 }
 
-void ChartWnd::SetMouseCursor(int cursorm)
+void ChartWnd::SetMouseCursor(const int cursor_type)
 {
-	SetMouseCursorType(cursorm);
+	set_mouse_cursor_type(cursor_type);
 	SetCursor(m_currCursor);
 }
 

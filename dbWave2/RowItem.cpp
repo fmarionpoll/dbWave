@@ -113,8 +113,8 @@ void RowItem::set_spk_list(SpikeList* p_spike_list) const
 int RowItem::set_mouse_cursor_type(int cursor_m) const
 {
 	if (chart_spike_shape != nullptr)
-		chart_spike_shape->SetMouseCursorType(cursor_m);
-	return chart_spike_bar->SetMouseCursorType(cursor_m);
+		chart_spike_shape->set_mouse_cursor_type(cursor_m);
+	return chart_spike_bar->set_mouse_cursor_type(cursor_m);
 }
 
 void RowItem::move_row_out_of_the_way() const

@@ -381,8 +381,9 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 	// display selected spike
 	if (spike_selected_.spike_index >= 0)
 	{
-		Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
-		display_spike(spike, TRUE);
+		const Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
+		display_spike(spike);
+		highlight_spike(spike);
 	}
 	if (p_spike_list->get_spike_flag_array_count() > 0)
 		display_flagged_spikes(TRUE);
@@ -402,7 +403,7 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 	m_xWO = m_displayRect.left;
 
 	dc.IntersectClipRect(&m_clientRect);
-	prepareDC(&dc);
+	prepare_dc(&dc);
 
 	// loop over the array of flagged spikes
 	boolean is_selected_spike_in_this_list = 
@@ -431,7 +432,7 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 				break;
 			case PLOT_CLASSCOLORS:
 				if (is_selected_spike_in_this_list && no_spike == spike_selected_.spike_index)
-					highlight_spike(spike, &dc);
+					highlight_spike(spike);
 				color_index = no_spike_class % NB_COLORS;
 				break;
 			case PLOT_BLACK:
@@ -459,53 +460,40 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 	}
 }
 
-void ChartSpikeBar::display_spike(const Spike* spike, const BOOL b_select)
+void ChartSpikeBar::display_spike(const Spike* spike)
+{
+	int color_index = BLACK_COLOR;
+	const auto spike_class = spike->get_class_id();
+	switch (m_plotmode)
+	{
+	case PLOT_ONECLASSONLY:
+	case PLOT_ONECLASS:
+		if (spike_class != m_selected_class)
+			color_index = SILVER_COLOR;
+		break;
+	case PLOT_CLASSCOLORS:
+		color_index = spike_class % NB_COLORS;
+		break;
+	case PLOT_BLACK:
+	default:
+		color_index = BLACK_COLOR;
+		break;
+	}
+
+	draw_spike(spike, color_index);
+}
+
+void ChartSpikeBar::draw_spike(const Spike* spike, const int color_index)
 {
 	CClientDC dc(this);
-	if (m_xWE == 1 || m_yWE == 1)
-		return;
-	m_xWE = m_displayRect.Width();
-	m_xWO = m_displayRect.left;
 	dc.IntersectClipRect(&m_clientRect);
-	prepareDC(&dc);
-
-	// spike is not selected
-	int color_index = BLACK_COLOR;
-	if (!b_select)
-	{
-		switch (m_plotmode)
-		{
-		case PLOT_ONECLASSONLY:
-		case PLOT_ONECLASS:
-			if (spike->get_class_id() != m_selected_class)
-				color_index = SILVER_COLOR;
-			break;
-		case PLOT_CLASSCOLORS:
-			color_index = spike->get_class_id() % NB_COLORS;
-			break;
-		case PLOT_BLACK:
-		default:
-			color_index = BLACK_COLOR;
-			break;
-		}
-	}
-	// spike is selected
-	else
-	{
-		switch (m_plotmode)
-		{
-		case PLOT_CLASSCOLORS:
-			highlight_spike(spike, &dc);
-			color_index = spike->get_class_id() % NB_COLORS;
-			break;
-		case PLOT_BLACK:
-		case PLOT_ONECLASSONLY:
-		case PLOT_ONECLASS:
-		default:
-			color_index = RED_COLOR;
-			break;
-		}
-	}
+	//CClientDC dc(this);
+	//if (m_xWE == 1 || m_yWE == 1)
+	//	return;
+	//m_xWE = m_displayRect.Width();
+	//m_xWO = m_displayRect.left;
+	//dc.IntersectClipRect(&m_clientRect);
+	//prepare_dc(&dc);
 
 	CPen new_pen;
 	constexpr auto pen_size = 0;
@@ -525,10 +513,13 @@ void ChartSpikeBar::display_spike(const Spike* spike, const BOOL b_select)
 	dc.SelectObject(old_pen);
 }
 
-void ChartSpikeBar::highlight_spike(const Spike* spike, CDC* p_dc) const
+void ChartSpikeBar::highlight_spike(const Spike* spike) 
 {
-	const auto old_rop = p_dc->GetROP2();
-	p_dc->SetROP2(R2_NOTXORPEN);
+	CClientDC dc(this);
+	dc.IntersectClipRect(&m_clientRect);
+
+	const auto old_rop2 = dc.GetROP2();
+	dc.SetROP2(R2_NOTXORPEN);
 
 	const auto l_spike_time = spike->get_time();
 	const auto len = m_lLast - m_lFirst + 1;
@@ -540,33 +531,30 @@ void ChartSpikeBar::highlight_spike(const Spike* spike, CDC* p_dc) const
 
 	CPen new_pen;
 	new_pen.CreatePen(PS_SOLID, 1, RGB(196, 2, 51));
-	const auto old_pen = p_dc->SelectObject(&new_pen);
-	auto* old_brush = p_dc->SelectStockObject(NULL_BRUSH);
-	const CRect rect1(abscissa - 1, max, abscissa + 1, min);
-	p_dc->Rectangle(&rect1);
-	/*p_dc->MoveTo(abscissa - 1, max);
-	p_dc->LineTo(abscissa + 1, max);
-	p_dc->LineTo(abscissa + 1, min);
-	p_dc->LineTo(abscissa - 1, min);
-	p_dc->LineTo(abscissa - 1, max);*/
+	const auto old_pen = dc.SelectObject(&new_pen);
+	auto* old_brush = dc.SelectStockObject(NULL_BRUSH);
+	const CRect rect1(abscissa - 2, max, abscissa + 2, min);
+	dc.Rectangle(&rect1);
 
 	// restore resources
-	p_dc->SelectObject(old_pen);
-	p_dc->SelectObject(old_brush);
-	p_dc->SetROP2(old_rop);
+	dc.SelectObject(old_pen);
+	dc.SelectObject(old_brush);
+	dc.SetROP2(old_rop2);
 }
 
 void ChartSpikeBar::select_spike(const Spike_selected& new_spike_selected)
 {
 	if (spike_selected_.spike_index >= 0) {
 		const Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
-		display_spike(spike, FALSE);
+		highlight_spike(spike);
+		display_spike(spike);
 	}
 
 	spike_selected_ = new_spike_selected;
 	if (spike_selected_.spike_index >= 0) {
 		const Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
-		display_spike(spike, TRUE);
+		display_spike(spike);
+		highlight_spike(spike);
 	}
 }
 

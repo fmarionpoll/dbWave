@@ -93,8 +93,8 @@ protected:
 public:
 	void SetViewMouseCursor(int cursormode)
 	{
-		m_chart_measures.SetMouseCursorType(cursormode);
-		m_chart_spike_shapes.SetMouseCursorType(cursormode);
+		m_chart_measures.set_mouse_cursor_type(cursormode);
+		m_chart_spike_shapes.set_mouse_cursor_type(cursormode);
 	}
 
 	// Overrides

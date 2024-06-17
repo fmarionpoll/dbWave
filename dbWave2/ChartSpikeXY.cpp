@@ -105,7 +105,7 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 			for (auto i = p_spike_list->get_spike_flag_array_count() - 1; i >= 0; i--)
 			{
 				spike_sel.spike_index = p_spike_list->get_spike_flag_array_at(i);
-				Spike* spike = p_dbwave_doc->get_spike(spike_sel);
+				const Spike* spike = p_dbwave_doc->get_spike(spike_sel);
 				highlight_spike(spike);
 			}
 		}
@@ -232,7 +232,7 @@ void ChartSpikeXY::display_spike(const Spike* spike)
 	draw_spike(spike, color_index);
 }
 
-void ChartSpikeXY::draw_spike(const Spike* spike, const int color)
+void ChartSpikeXY::draw_spike(const Spike* spike, const int color_index)
 {
 	CClientDC dc(this);
 	dc.IntersectClipRect(&m_clientRect);
@@ -246,7 +246,7 @@ void ChartSpikeXY::draw_spike(const Spike* spike, const int color)
 
 	const auto background_color = dc.GetBkColor();
 	dc.MoveTo(x1, y1);
-	dc.FillSolidRect(&rect, m_colorTable[color]);
+	dc.FillSolidRect(&rect, m_colorTable[color_index]);
 	dc.SetBkColor(background_color);
 }
 

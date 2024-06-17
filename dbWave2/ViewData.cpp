@@ -683,7 +683,7 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		if (lowp > CURSOR_CROSS)
 			lowp = 0;
 	// change cursor and tell parent that it has changed
-		m_cursorstate = m_ChartDataWnd.SetMouseCursorType(lowp);
+		m_cursorstate = m_ChartDataWnd.set_mouse_cursor_type(lowp);
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursorstate, 0));
 
 	// recall cursors from document if cursorstate = 2
@@ -805,7 +805,7 @@ void ViewData::OnToolsVerticaltags()
 	mdMO->wOption = 0;
 
 	// change cursor and tell parent that it has changed
-	m_cursorstate = m_ChartDataWnd.SetMouseCursorType(CURSOR_CROSS);
+	m_cursorstate = m_ChartDataWnd.set_mouse_cursor_type(CURSOR_CROSS);
 	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursorstate, 0));
 	//MeasureProperties(1);
 }
@@ -814,7 +814,7 @@ void ViewData::OnToolsHorizontalcursors()
 {
 	mdMO->wOption = 1;
 	// change cursor and tell parent that it has changed
-	m_cursorstate = m_ChartDataWnd.SetMouseCursorType(CURSOR_CROSS);
+	m_cursorstate = m_ChartDataWnd.set_mouse_cursor_type(CURSOR_CROSS);
 	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursorstate, 0));
 	//MeasureProperties(0);
 }

@@ -21,21 +21,24 @@ protected:
 public:
 	int get_hit_spike() const { return m_hit_spike; }
 
-	void display_spike(const Spike* spike, BOOL b_select);
-	void display_flagged_spikes(BOOL bHighlight);
 	void select_spike(const Spike_selected& new_spike_selected);
+	void display_spike(const Spike* spike);
+	void highlight_spike(const Spike* spike) ;
 
-	void select_spikes_within_rect(CRect* pRect, UINT nFlags) const;
-	
+	void display_all_files(const BOOL b_on, CdbWaveDoc* p_document)
+	{
+		m_display_all_files = b_on;
+		p_dbwave_doc = p_document;
+	}
+
+	void display_flagged_spikes(BOOL b_high_light);
+
+	void select_spikes_within_rect(CRect* p_rect, UINT n_flags) const;
 	void center_curve();
 	void max_gain();
 	void max_center();
 
-	void display_all_files(BOOL bON, CdbWaveDoc* p_document)
-	{
-		m_display_all_files = bON;
-		p_dbwave_doc = p_document;
-	}
+	
 
 	void Print(CDC* p_dc, const CRect* rect);
 	void PlotDataToDC(CDC* p_dc) override;
@@ -47,7 +50,8 @@ protected:
 	int hitCurve(CPoint point) override;
 	int hit_curve_in_doc(CPoint point);
 	void display_bars(CDC* p_dc, const CRect* rect);
-	void highlight_spike(const Spike* spike, CDC* p_dc) const;
+
+	void draw_spike(const Spike* spike, int color_index);
 	void display_stimulus(CDC* p_dc, const CRect* rect) const;
 
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

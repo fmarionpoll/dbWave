@@ -2,9 +2,9 @@
 #include "ChartSpike.h"
 
 
-constexpr auto DISPLAY_TIMEINTERVAL = 0; // mask: ON: display spikes within spk index range/OFF=within time interval;
-constexpr auto DISPLAY_INDEXRANGE = 1; // mask: ON: display spikes within spk index range/OFF=within time interval;
-constexpr auto DISP_SELECTEDCLASS = 2; // mask: ON: display only selected spike/OFF=all classes
+constexpr auto DISPLAY_TIME_INTERVAL = 0; // mask: ON: display spikes within spk index range/OFF=within time interval;
+constexpr auto DISPLAY_INDEX_RANGE = 1; // mask: ON: display spikes within spk index range/OFF=within time interval;
+constexpr auto DISPLAY_SELECTED_CLASS = 2; // mask: ON: display only selected spike/OFF=all classes
 
 class ChartSpikeShape : public ChartSpike
 {
@@ -22,7 +22,7 @@ protected:
 	CArray<CPoint, CPoint> polypoints_; // points displayed with polyline
 
 public:
-	void set_text_option(BOOL bText) { m_bText = bText; }
+	void set_text_option(const BOOL b_text) { m_bText = b_text; }
 	BOOL get_text_option() const { return m_bText; }
 
 	float get_display_max_mv();
@@ -32,9 +32,9 @@ public:
 
 	int get_hit_spike() const { return m_hit_spike; }
 
-	void display_all_files(BOOL bON, CdbWaveDoc* p_document)
+	void display_all_files(const BOOL b_on, CdbWaveDoc* p_document)
 	{
-		m_display_all_files = bON;
+		m_display_all_files = b_on;
 		p_dbwave_doc = p_document;
 	}
 

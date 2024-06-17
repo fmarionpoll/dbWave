@@ -60,7 +60,7 @@ protected:
 	int m_spikeno = -1;
 
 public:
-	void SetViewMouseCursor(int cursormode) { m_ChartSpkWnd_Shape.SetMouseCursorType(cursormode); }
+	void SetViewMouseCursor(int cursormode) { m_ChartSpkWnd_Shape.set_mouse_cursor_type(cursormode); }
 
 public:
 	BOOL OnMove(UINT nIDMoveCommand) override;
