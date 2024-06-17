@@ -42,7 +42,7 @@ public:
 	void move_vt_track(int i_track, int new_value);
 
 	void select_spike_shape(const Spike_selected& spike_sel);
-	void select_spike_shape(const Spike* spike);
+	void draw_spike(const Spike* spike);
 
 	void Print(CDC* p_dc, CRect* rect);
 	int display_ex_data(short* p_data, int color = 9);
@@ -59,7 +59,7 @@ protected:
 
 	int hitCurve(CPoint point) override;
 	int hit_curve_in_doc(CPoint point);
-	void draw_selected_spike(const Spike* spike, CDC* p_dc);
+	void draw_spike_on_dc(const Spike* spike, CDC* p_dc);
 	void draw_flagged_spikes(CDC* p_dc);
 	void plot_array_to_dc(CDC* p_dc, short* pspk);
 

@@ -47,7 +47,7 @@ protected:
 	int hitCurve(CPoint point) override;
 	int hit_curve_in_doc(CPoint point);
 	void display_bars(CDC* p_dc, const CRect* rect);
-	void highlight_one_bar(const Spike* spike, CDC* p_dc) const;
+	void highlight_spike(const Spike* spike, CDC* p_dc) const;
 	void display_stimulus(CDC* p_dc, const CRect* rect) const;
 
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

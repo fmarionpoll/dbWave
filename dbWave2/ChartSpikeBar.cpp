@@ -431,7 +431,7 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 				break;
 			case PLOT_CLASSCOLORS:
 				if (is_selected_spike_in_this_list && no_spike == spike_selected_.spike_index)
-					highlight_one_bar(spike, &dc);
+					highlight_spike(spike, &dc);
 				color_index = no_spike_class % NB_COLORS;
 				break;
 			case PLOT_BLACK:
@@ -495,7 +495,7 @@ void ChartSpikeBar::display_spike(const Spike* spike, const BOOL b_select)
 		switch (m_plotmode)
 		{
 		case PLOT_CLASSCOLORS:
-			highlight_one_bar(spike, &dc);
+			highlight_spike(spike, &dc);
 			color_index = spike->get_class_id() % NB_COLORS;
 			break;
 		case PLOT_BLACK:
@@ -525,7 +525,7 @@ void ChartSpikeBar::display_spike(const Spike* spike, const BOOL b_select)
 	dc.SelectObject(old_pen);
 }
 
-void ChartSpikeBar::highlight_one_bar(const Spike* spike, CDC* p_dc) const
+void ChartSpikeBar::highlight_spike(const Spike* spike, CDC* p_dc) const
 {
 	const auto old_rop = p_dc->GetROP2();
 	p_dc->SetROP2(R2_NOTXORPEN);
@@ -541,15 +541,18 @@ void ChartSpikeBar::highlight_one_bar(const Spike* spike, CDC* p_dc) const
 	CPen new_pen;
 	new_pen.CreatePen(PS_SOLID, 1, RGB(196, 2, 51));
 	const auto old_pen = p_dc->SelectObject(&new_pen);
-
-	p_dc->MoveTo(abscissa - 1, max);
+	auto* old_brush = p_dc->SelectStockObject(NULL_BRUSH);
+	const CRect rect1(abscissa - 1, max, abscissa + 1, min);
+	p_dc->Rectangle(&rect1);
+	/*p_dc->MoveTo(abscissa - 1, max);
 	p_dc->LineTo(abscissa + 1, max);
 	p_dc->LineTo(abscissa + 1, min);
 	p_dc->LineTo(abscissa - 1, min);
-	p_dc->LineTo(abscissa - 1, max);
+	p_dc->LineTo(abscissa - 1, max);*/
 
 	// restore resources
 	p_dc->SelectObject(old_pen);
+	p_dc->SelectObject(old_brush);
 	p_dc->SetROP2(old_rop);
 }
 

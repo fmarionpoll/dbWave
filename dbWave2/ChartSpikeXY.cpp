@@ -268,7 +268,7 @@ void ChartSpikeXY::highlight_spike(const Spike* spike)
 
 	const auto width = m_dot_width * 2 / 3 + 2;
 	CRect rect1(-width, -width, width, width);
-	int delta = 0;
+	constexpr int delta = 0;
 	rect1.OffsetRect(x1 - delta, y1 - delta);
 	dc.Rectangle(&rect1);
 
