@@ -422,6 +422,9 @@ CSpikeDoc* CdbWaveDoc::open_current_spike_file()
 
 Spike* CdbWaveDoc::get_spike(const Spike_selected& spike_selected)
 {
+	if (spike_selected.spike_index < 0)
+		return nullptr;
+
 	Spike* spike = nullptr;
 	const long current_position = db_get_current_record_position();
 	const boolean flag_different_file = spike_selected.database_position != current_position;

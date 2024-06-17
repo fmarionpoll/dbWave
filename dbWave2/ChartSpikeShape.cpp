@@ -285,8 +285,10 @@ int ChartSpikeShape::display_ex_data(short* p_data, int color)
 void ChartSpikeShape::select_spike_shape(const Spike_selected& spike_sel)
 {
 	spike_selected_ = spike_sel;
-	const Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
-	select_spike_shape(spike);
+	if (spike_sel.spike_index >= 0) {
+		const Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
+		select_spike_shape(spike);
+	}
 }
 
 void ChartSpikeShape::select_spike_shape(const Spike* spike)

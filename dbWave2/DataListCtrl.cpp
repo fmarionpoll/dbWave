@@ -356,10 +356,15 @@ void DataListCtrl::UpdateCache(int index_first, int index_last)
 
 		// create line view and spike superposition
 		row->index = index + index_first;
-		db_wave_doc->db_set_current_record_position(row->index); 
+		if (db_wave_doc->db_set_current_record_position(row->index))
+		{
+			db_wave_doc->open_current_data_file();
+			db_wave_doc->open_current_spike_file();
+		}
 		row->csDatafileName = db_wave_doc->db_get_current_dat_file_name(TRUE);
 		row->csSpikefileName = db_wave_doc->db_get_current_spk_file_name(TRUE);
 		const auto database = db_wave_doc->m_pDB;
+
 		database->GetRecordItemValue(CH_IDINSECT, &desc);
 		row->insectID = desc.lVal;
 
@@ -410,8 +415,13 @@ void DataListCtrl::UpdateCache(int index_first, int index_last)
 	}
 
 	// restore document conditions
-	if (index_current_file >= 0)
-		db_wave_doc->db_set_current_record_position(index_current_file);
+	if (index_current_file >= 0) {
+		if (db_wave_doc->db_set_current_record_position(index_current_file))
+		{
+			db_wave_doc->open_current_data_file();
+			db_wave_doc->open_current_spike_file();
+		}
+	}
 }
 
 void DataListCtrl::set_empty_bitmap(const boolean b_forced_update)
