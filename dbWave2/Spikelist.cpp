@@ -623,7 +623,7 @@ void SpikeList::get_total_max_min_measure()
 	}
 }
 
-BOOL SpikeList::init_spike_list(AcqDataDoc* acq_data_doc, SPKDETECTPARM* spk_detect_parm)
+BOOL SpikeList::init_spike_list(const AcqDataDoc* acq_data_doc, const SPKDETECTPARM* spk_detect_parm)
 {
 	// remove data from spike list
 	erase_data();
@@ -721,14 +721,17 @@ int SpikeList::toggle_spike_flag(int spike_index)
 	return get_spike_flag_array_count();
 }
 
-void SpikeList::set_single_spike_flag(int spike_index)
+void SpikeList::set_single_spike_flag(const int spike_index)
 {
-	if (m_index_flagged_spikes.GetCount() != 1)
+	if (m_index_flagged_spikes.GetCount() != 1) 
+	{
+		m_index_flagged_spikes.RemoveAll();
 		m_index_flagged_spikes.SetSize(1);
+	}
 	m_index_flagged_spikes.SetAt(0, spike_index);
 }
 
-BOOL SpikeList::get_spike_flag(int spike_index)
+BOOL SpikeList::get_spike_flag(const int spike_index)
 {
 	BOOL bFlag = FALSE;
 	// search if spike_index is in the list
@@ -745,11 +748,12 @@ BOOL SpikeList::get_spike_flag(int spike_index)
 
 void SpikeList::remove_all_spike_flags()
 {
-	if (m_index_flagged_spikes.GetCount() > 0) 
+	if (m_index_flagged_spikes.GetCount() > 0) {
 		m_index_flagged_spikes.RemoveAll();
+	}
 }
 
-void SpikeList::flag_range_of_spikes(long l_first, long l_last, BOOL bSet)
+void SpikeList::flag_range_of_spikes(const long l_first, const long l_last, const BOOL b_set)
 {
 	// first clear flags of spikes within the flagged array which fall within limits
 	long l_time;
@@ -762,7 +766,7 @@ void SpikeList::flag_range_of_spikes(long l_first, long l_last, BOOL bSet)
 		m_index_flagged_spikes.RemoveAt(i);
 	}
 	// if bSet was set to FALSE, the job is done
-	if (bSet == FALSE)
+	if (b_set == FALSE)
 		return;
 
 	// then if bSet is ON, search spike file for spikes falling within this range and flag them
@@ -808,7 +812,7 @@ void SpikeList::get_range_of_spike_flagged(long& l_first, long& l_last)
 	l_first = get_spike(m_index_flagged_spikes.GetAt(0))->get_time();
 	l_last = l_first;
 
-	// search if spike no is in the list
+	// search if spike is in the list
 	for (auto i = m_index_flagged_spikes.GetCount() - 1; i >= 0; i--)
 	{
 		const auto l_time = get_spike(m_index_flagged_spikes.GetAt(i))->get_time();

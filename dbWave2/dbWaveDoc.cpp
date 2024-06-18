@@ -434,8 +434,8 @@ Spike* CdbWaveDoc::get_spike(const Spike_selected& spike_selected)
 	SpikeList* p_spike_list = m_pSpk->get_spike_list_at(spike_selected.spike_list_index);
 	spike = p_spike_list->get_spike(spike_selected.spike_index);
 	
-	if (flag_different_file && db_set_current_record_position(current_position))
-		open_current_spike_file();
+	//if (flag_different_file && db_set_current_record_position(current_position))
+	//	open_current_spike_file();
 	return spike;
 }
 

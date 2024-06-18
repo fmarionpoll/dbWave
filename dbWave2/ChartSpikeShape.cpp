@@ -597,7 +597,7 @@ void ChartSpikeShape::init_polypoint_x_axis()
 		polyline_points_[i].x = i + 1;
 }
 
-void ChartSpikeShape::fill_polypoint_y_axis(short* lpSource)
+void ChartSpikeShape::fill_polypoint_y_axis(short* lp_source)
 {
 	auto n_elements = polyline_points_.GetSize();
 	if (n_elements == 0)
@@ -608,11 +608,11 @@ void ChartSpikeShape::fill_polypoint_y_axis(short* lpSource)
 		init_polypoint_x_axis();
 	}
 
-	for (auto i = 0; i < n_elements; i++, lpSource++)
-		polyline_points_[i].y = *lpSource;
+	for (auto i = 0; i < n_elements; i++, lp_source++)
+		polyline_points_[i].y = *lp_source;
 }
 
-void ChartSpikeShape::Print(CDC * p_dc, CRect * rect)
+void ChartSpikeShape::Print(CDC * p_dc, const CRect * rect)
 {
 	// check if there are valid data to display
 	if (p_spike_list == nullptr || p_spike_list->get_spikes_count() == 0)

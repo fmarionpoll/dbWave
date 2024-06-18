@@ -65,7 +65,7 @@ protected:
 	CArray<SpikeClassDescriptor, SpikeClassDescriptor> m_spike_class_descriptors{};
 
 	//  (5) list of spikes flagged
-	CArray<int, int> m_index_flagged_spikes;
+	CArray<int, int> m_index_flagged_spikes {};
 
 	// Operations
 public:
@@ -108,7 +108,7 @@ public:
 
 	void get_total_max_min(BOOL b_recalculate, short* max, short* min);
 
-	BOOL init_spike_list(AcqDataDoc* acq_data_doc, SPKDETECTPARM* spk_detect_parm);
+	BOOL init_spike_list(const AcqDataDoc* acq_data_doc, const SPKDETECTPARM* spk_detect_parm);
 	long update_class_list();
 	void erase_data();
 	void change_all_spike_from_class_id_to_new_class_id(int old_class_ID, int new_class_ID);
@@ -130,7 +130,7 @@ public:
 	void set_single_spike_flag(int spike_index);
 	BOOL get_spike_flag(int spike_index);
 	void remove_all_spike_flags();
-	void flag_range_of_spikes(long l_first, long l_last, BOOL bSet);
+	void flag_range_of_spikes(long l_first, long l_last, BOOL b_set);
 	void select_spikes_within_bounds(int v_min, int v_max, long l_first, long l_last, BOOL b_add);
 	void get_range_of_spike_flagged(long& l_first, long& l_last);
 	BOOL get_spike_flag_array_at(int i) const { return m_index_flagged_spikes.GetAt(i); }

@@ -18,7 +18,6 @@ protected:
 	int m_color_selected_spike = RED_COLOR; // color selected spike (index / color table)
 	BOOL m_bText = FALSE; // allow text default false
 	int m_n_displayed_spikes{}; // number of spikes displayed
-
 	CArray<CPoint, CPoint> polyline_points_; // points displayed with polyline
 
 public:
@@ -31,7 +30,6 @@ public:
 	float get_display_min_mv();
 	float get_extent_m_v();
 	float get_extent_ms();
-
 	int get_hit_spike() const { return m_hit_spike; }
 
 	void display_all_files(const BOOL b_on, CdbWaveDoc* p_document)
@@ -48,11 +46,11 @@ public:
 
 	void PlotDataToDC(CDC* p_dc) override;
 	void ZoomData(CRect* rFrom, CRect* rDest) override;
-	void Print(CDC* p_dc, CRect* rect);
+	void Print(CDC* p_dc, const CRect* rect);
 
 protected:
 	void init_polypoint_x_axis();
-	void fill_polypoint_y_axis(short* lpSource);
+	void fill_polypoint_y_axis(short* lp_source);
 	void get_extents();
 	void get_extents_current_spk_list();
 
