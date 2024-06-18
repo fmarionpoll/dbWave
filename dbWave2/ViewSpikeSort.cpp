@@ -156,8 +156,8 @@ void ViewSpikeSort::OnInitialUpdate()
 
 	// load global parameters
 	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	spkclassif_ = &(p_app->spk_classif);
-	options_view_data_ = &(p_app->options_viewdata);
+	spkclassif_ = &(p_app->spk_classification);
+	options_view_data_ = &(p_app->options_view_data);
 
 	// assign values to controls
 	m_CBparameter.SetCurSel(spkclassif_->iparameter);
@@ -253,13 +253,13 @@ void ViewSpikeSort::OnActivateView(const BOOL bActivate, CView* pActivateView, C
 	{
 		saveCurrentSpkFile();
 		const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-		if (nullptr == p_app->m_psort1spikesMemFile)
+		if (nullptr == p_app->m_p_sort1_spikes_memory_file)
 		{
-			p_app->m_psort1spikesMemFile = new CMemFile;
-			ASSERT(p_app->m_psort1spikesMemFile != NULL);
+			p_app->m_p_sort1_spikes_memory_file = new CMemFile;
+			ASSERT(p_app->m_p_sort1_spikes_memory_file != NULL);
 		}
-		CArchive ar(p_app->m_psort1spikesMemFile, CArchive::store);
-		p_app->m_psort1spikesMemFile->SeekToBegin();
+		CArchive ar(p_app->m_p_sort1_spikes_memory_file, CArchive::store);
+		p_app->m_p_sort1_spikes_memory_file->SeekToBegin();
 		ar.Close();
 	}
 	dbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);

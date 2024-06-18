@@ -176,7 +176,7 @@ void ViewSpikeDetection::OnActivateView(BOOL activate, CView* activated_view, CV
 	{
 		serialize_windows_state(b_save);
 		const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-		p_app->options_viewdata.viewdata = *(m_chart_data_source.GetScopeParameters());
+		p_app->options_view_data.viewdata = *(m_chart_data_source.GetScopeParameters());
 	}
 	dbTableView::OnActivateView(activate, activated_view, de_activated_view);
 }
@@ -601,7 +601,7 @@ void ViewSpikeDetection::OnInitialUpdate()
 {
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	m_pArrayFromApp = &(p_app->spk_detect_array); 
-	options_view_data = &(p_app->options_viewdata); 
+	options_view_data = &(p_app->options_view_data); 
 
 	define_stretch_parameters();
 	m_b_init = TRUE;
@@ -2314,14 +2314,14 @@ void ViewSpikeDetection::serialize_windows_state(const BOOL save, int tab_index)
 	}
 
 	// adjust size of the array
-	if (p_dbWave_app->viewspikesmemfile_ptr_array.GetSize() == 0)
-		p_dbWave_app->viewspikesmemfile_ptr_array.SetSize(1);
+	if (p_dbWave_app->view_spikes_memory_file_ptr_array.GetSize() == 0)
+		p_dbWave_app->view_spikes_memory_file_ptr_array.SetSize(1);
 
-	if (p_dbWave_app->viewspikesmemfile_ptr_array.GetSize() < m_tabCtrl.GetItemCount())
-		p_dbWave_app->viewspikesmemfile_ptr_array.SetSize(m_tabCtrl.GetItemCount());
+	if (p_dbWave_app->view_spikes_memory_file_ptr_array.GetSize() < m_tabCtrl.GetItemCount())
+		p_dbWave_app->view_spikes_memory_file_ptr_array.SetSize(m_tabCtrl.GetItemCount());
 	CMemFile* p_mem_file = nullptr;
-	if (p_dbWave_app->viewspikesmemfile_ptr_array.GetSize() > 0 && p_dbWave_app->viewspikesmemfile_ptr_array.GetSize() > tab_index)
-		p_mem_file = p_dbWave_app->viewspikesmemfile_ptr_array.GetAt(tab_index);
+	if (p_dbWave_app->view_spikes_memory_file_ptr_array.GetSize() > 0 && p_dbWave_app->view_spikes_memory_file_ptr_array.GetSize() > tab_index)
+		p_mem_file = p_dbWave_app->view_spikes_memory_file_ptr_array.GetAt(tab_index);
 
 	// save display parameters
 	if (save)
@@ -2330,7 +2330,7 @@ void ViewSpikeDetection::serialize_windows_state(const BOOL save, int tab_index)
 		{
 			p_mem_file = new CMemFile;
 			ASSERT(p_mem_file != NULL);
-			p_dbWave_app->viewspikesmemfile_ptr_array.SetAt(tab_index, p_mem_file);
+			p_dbWave_app->view_spikes_memory_file_ptr_array.SetAt(tab_index, p_mem_file);
 		}
 		// save data into archive
 		CArchive ar(p_mem_file, CArchive::store);

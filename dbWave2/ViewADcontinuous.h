@@ -60,11 +60,11 @@ protected:
 	HICON m_hBias{ nullptr };
 	HICON m_hZoom{ nullptr };
 	HICON m_hUnZoom{ nullptr };
-	float m_yscaleFactor{ 1 };
+	float m_y_scale_factor_{ 1 };
 	int m_VBarMode{ 0 };
-	CScrollBar m_scrolly;
-	COLORREF m_backgroundColor = GetSysColor(COLOR_BTNFACE);
-	CBrush* m_pBackgroundBrush = new CBrush(m_backgroundColor);
+	CScrollBar m_scroll_y_;
+	COLORREF m_background_color_ = GetSysColor(COLOR_BTNFACE);
+	CBrush* m_p_background_brush_ = new CBrush(m_background_color_);
 
 	void OnGainScroll(UINT nSBCode, UINT nPos);
 	void OnBiasScroll(UINT nSBCode, UINT nPos);
@@ -77,8 +77,8 @@ protected:
 
 	// data	parameters
 protected:
-	BOOL m_bFoundDTOPenLayerDLL{ false };
-	BOOL m_bhidesubsequent{ false };
+	BOOL m_b_found_dt_open_layer_dll_{ false };
+	BOOL m_b_hide_subsequent_{ false };
 
 	ADAcqDataDoc m_inputDataFile;
 	//AcqDataDoc m_outputDataFile;	
@@ -91,18 +91,18 @@ protected:
 	BOOL m_bSimultaneousStart{ false };
 
 	// DT buffer
-	OPTIONS_INPUTDATA* options_inputdata_{ nullptr };
-	OPTIONS_OUTPUTDATA* options_outputdata_{ nullptr };
-	BOOL m_bsimultaneousStartDA{ false };
+	OPTIONS_INPUTDATA* options_input_data_{ nullptr };
+	OPTIONS_OUTPUTDATA* options_output_data_{ nullptr };
+	BOOL m_start_da_simultaneously_{ false };
 
 	// sweep
-	long m_chsweeplength{ 0 };
-	long m_sweeplength{ 1000 };
-	int m_channel_sweep_start{ 0 };
-	int m_channel_sweep_end{ 0 };
-	int m_chsweepRefresh{ 0 };
-	int m_bytesweepRefresh{ 0 };
-	float m_fclockrate{ 10000.f };
+	long m_channel_sweep_length{ 0 };
+	long m_sweep_length_{ 1000 };
+	int m_channel_sweep_start_{ 0 };
+	int m_channel_sweep_end_{ 0 };
+	int m_channel_sweep_refresh_{ 0 };
+	int m_byte_sweep_refresh_{ 0 };
+	float m_clock_rate_{ 10000.f };
 
 	// functions for data acquisition
 	BOOL FindDTOpenLayersBoards();

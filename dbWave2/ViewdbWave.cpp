@@ -79,7 +79,7 @@ void ViewdbWave::OnInitialUpdate()
 	make_controls_stretchable();
 
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	m_options_viewdata = &p_app->options_viewdata;
+	m_options_viewdata = &p_app->options_view_data;
 	m_dataListCtrl.InitColumns(&m_options_viewdata->icolwidth);
 
 	// set how data are displayed
@@ -318,7 +318,7 @@ void ViewdbWave::OnActivateView(BOOL bActivate, CView * pActivateView, CView * p
 		ChartData* pDataChartWnd = m_dataListCtrl.GetDataViewCurrentRecord();
 		if (pDataChartWnd != nullptr)
 		{
-			static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.viewdata = *(pDataChartWnd->GetScopeParameters());
+			static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.viewdata = *(pDataChartWnd->GetScopeParameters());
 		}
 		if (pActivateView != nullptr)
 			static_cast<CChildFrame*>(p_mainframe->MDIGetActive())->m_nStatus = m_nStatus;

@@ -151,9 +151,9 @@ void ViewSpikeTemplates::OnInitialUpdate()
 
 	// load global parameters
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	mdPM = &(p_app->options_viewdata);
-	mdMO = &(p_app->options_viewdata_measure);
-	m_psC = &(p_app->spk_classif);
+	mdPM = &(p_app->options_view_data);
+	mdMO = &(p_app->options_view_data_measure);
+	m_psC = &(p_app->spk_classification);
 	if (m_psC->ptpl != nullptr)
 		m_templList = *static_cast<CTemplateListWnd*>(m_psC->ptpl);
 

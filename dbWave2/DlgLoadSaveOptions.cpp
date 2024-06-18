@@ -93,7 +93,7 @@ BOOL DlgLoadSaveOptions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	// get pointers to variables used in this dialog box
-	pParmFiles = &(static_cast<CdbWaveApp*>(AfxGetApp())->m_csParmFiles);
+	pParmFiles = &(static_cast<CdbWaveApp*>(AfxGetApp())->m_cs_parameter_files);
 	pcomment = &(static_cast<CdbWaveApp*>(AfxGetApp())->m_comment);
 
 	// load data into combobox

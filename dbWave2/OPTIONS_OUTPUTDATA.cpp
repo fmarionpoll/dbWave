@@ -14,21 +14,19 @@ OPTIONS_OUTPUTDATA& OPTIONS_OUTPUTDATA::operator =(const OPTIONS_OUTPUTDATA& arg
 {
 	if (this != &arg)
 	{
-		wversion = arg.wversion;
-		bAllow_outputdata = arg.bAllow_outputdata;
-		csOutputFile = arg.csOutputFile;
-		bPresetWave = arg.bPresetWave;
-		iDAbufferlength = arg.iDAbufferlength;
-		iDAnbuffers = arg.iDAnbuffers;
-		iDATriggermode = arg.iDATriggermode;
-		dDAFrequency_perchan = arg.dDAFrequency_perchan;
-		const int n_channels = arg.outputparms_array.GetSize();
-		outputparms_array.SetSize(n_channels);
+		w_version = arg.w_version;
+		b_allow_output_data = arg.b_allow_output_data;
+		cs_output_file = arg.cs_output_file;
+		b_preset_wave = arg.b_preset_wave;
+		da_buffer_length = arg.da_buffer_length;
+		da_n_buffers = arg.da_n_buffers;
+		da_trigger_mode = arg.da_trigger_mode;
+		da_frequency_per_channel = arg.da_frequency_per_channel;
 
+		const int n_channels = arg.output_parms_array.GetSize();
+		output_parms_array.SetSize(n_channels);
 		for (int i = 0; i < n_channels; i++)
-		{
-			outputparms_array[i] = arg.outputparms_array[i];
-		}
+			output_parms_array[i] = arg.output_parms_array[i];
 	}
 	return *this;
 }
@@ -37,29 +35,28 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		ar << wversion;
+		ar << w_version;
 
 		ar << static_cast<WORD>(1); // CString
-		ar << csOutputFile;
+		ar << cs_output_file;
 
 		ar << static_cast<WORD>(2); // BOOL
-		ar << bAllow_outputdata;
-		ar << bPresetWave;
+		ar << b_allow_output_data;
+		ar << b_preset_wave;
 
 		ar << static_cast<WORD>(3); // int
-		ar << iDAbufferlength;
-		ar << iDAnbuffers;
-		ar << iDATriggermode;
+		ar << da_buffer_length;
+		ar << da_n_buffers;
+		ar << da_trigger_mode;
 
 		ar << static_cast<WORD>(1); // double
-		ar << dDAFrequency_perchan;
+		ar << da_frequency_per_channel;
 
-		const int n_channels = outputparms_array.GetSize();
+		const int n_channels = output_parms_array.GetSize();
 		ar << static_cast<WORD>(n_channels);
 		for (int i = 0; i < n_channels; i++)
-		{
-			outputparms_array.GetAt(i).Serialize(ar);
-		}
+			output_parms_array.GetAt(i).Serialize(ar);
+
 		ar << static_cast<WORD>(0); // no more ...
 	}
 	else
@@ -71,66 +68,64 @@ void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
 		// string parameters
 		ar >> wn;
 		int n = wn;
-		if (n > 0) ar >> csOutputFile;
+		if (n > 0) ar >> cs_output_file;
 		n--;
-		CString csdummy;
+		CString cs_dummy;
 		while (n > 0)
 		{
 			n--;
-			ar >> csdummy;
+			ar >> cs_dummy;
 		}
 
 		// BOOL parameters
 		ar >> wn;
 		n = wn;
-		if (n > 0) ar >> bAllow_outputdata;
+		if (n > 0) ar >> b_allow_output_data;
 		n--;
-		if (n > 0) ar >> bPresetWave;
+		if (n > 0) ar >> b_preset_wave;
 		n--;
-		BOOL bdummy;
+		BOOL b_dummy;
 		while (n > 0)
 		{
 			n--;
-			ar >> bdummy;
+			ar >> b_dummy;
 		}
 
 		// int parameters
 		ar >> wn;
 		n = wn;
-		if (n > 0) ar >> iDAbufferlength;
+		if (n > 0) ar >> da_buffer_length;
 		n--;
-		if (n > 0) ar >> iDAnbuffers;
+		if (n > 0) ar >> da_n_buffers;
 		n--;
-		if (n > 0) ar >> iDATriggermode;
+		if (n > 0) ar >> da_trigger_mode;
 		n--;
-		int idummy;
+		int i_dummy;
 		while (n > 0)
 		{
 			n--;
-			ar >> idummy;
+			ar >> i_dummy;
 		}
 
 		// double parameters
 		ar >> wn;
 		n = wn;
-		if (n > 0) ar >> dDAFrequency_perchan;
+		if (n > 0) ar >> da_frequency_per_channel;
 		n--;
-		double ddummy;
+		double d_dummy;
 		while (n > 0)
 		{
 			n--;
-			ar >> ddummy;
+			ar >> d_dummy;
 		}
 
 		// output_parms
 		ar >> wn;
 		n = wn;
-		if (n > outputparms_array.GetSize())
-			outputparms_array.SetSize(n);
+		if (n > output_parms_array.GetSize())
+			output_parms_array.SetSize(n);
 		for (int i = 0; i < n; i++)
-		{
-			outputparms_array.GetAt(i).Serialize(ar);
-		}
+			output_parms_array.GetAt(i).Serialize(ar);
 
 		// other?
 		ar >> wn;

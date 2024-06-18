@@ -107,19 +107,19 @@ void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_d
 			m_psC->colspikes = m_spikeClassListBox.GetColumnsSpikesWidth();
 			m_psC->coltext = m_spikeClassListBox.GetColumnsTextWidth();
 
-			if (p_app->m_pviewspikesMemFile == nullptr)
+			if (p_app->m_p_view_spikes_memory_file == nullptr)
 			{
-				p_app->m_pviewspikesMemFile = new CMemFile;
-				ASSERT(p_app->m_pviewspikesMemFile != NULL);
+				p_app->m_p_view_spikes_memory_file = new CMemFile;
+				ASSERT(p_app->m_p_view_spikes_memory_file != NULL);
 			}
 
-			CArchive ar(p_app->m_pviewspikesMemFile, CArchive::store);
-			p_app->m_pviewspikesMemFile->SeekToBegin();
+			CArchive ar(p_app->m_p_view_spikes_memory_file, CArchive::store);
+			p_app->m_p_view_spikes_memory_file->SeekToBegin();
 			m_ChartDataWnd.Serialize(ar);
 			ar.Close();
 		}
 
-		p_app->options_viewdata.viewdata = *(m_ChartDataWnd.GetScopeParameters());
+		p_app->options_view_data.viewdata = *(m_ChartDataWnd.GetScopeParameters());
 	}
 	dbTableView::OnActivateView(bActivate, pActivateView, p_deactivate_view);
 }
@@ -474,9 +474,9 @@ void ViewSpikes::OnInitialUpdate()
 
 	// load global parameters
 	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	options_viewdata = &(p_app->options_viewdata); // viewdata options
-	mdMO = &(p_app->options_viewdata_measure); // measure options
-	m_psC = &(p_app->spk_classif); // get address of spike classif parms
+	options_viewdata = &(p_app->options_view_data); // viewdata options
+	mdMO = &(p_app->options_view_data_measure); // measure options
+	m_psC = &(p_app->spk_classification); // get address of spike classif parms
 
 	m_class_destination = m_psC->vdestclass;
 	m_class_source = m_psC->vsourceclass;
@@ -1013,14 +1013,14 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 
 	// save current state of the windows
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	if (p_app->m_pviewspikesMemFile == nullptr)
+	if (p_app->m_p_view_spikes_memory_file == nullptr)
 	{
-		p_app->m_pviewspikesMemFile = new CMemFile;
-		ASSERT(p_app->m_pviewspikesMemFile != NULL);
+		p_app->m_p_view_spikes_memory_file = new CMemFile;
+		ASSERT(p_app->m_p_view_spikes_memory_file != NULL);
 	}
 
-	CArchive ar(p_app->m_pviewspikesMemFile, CArchive::store);
-	p_app->m_pviewspikesMemFile->SeekToBegin();
+	CArchive ar(p_app->m_p_view_spikes_memory_file, CArchive::store);
+	p_app->m_p_view_spikes_memory_file->SeekToBegin();
 	m_ChartDataWnd.Serialize(ar);
 	//spk_bar_wnd_.Serialize(ar);
 	//m_spkShapeView.Serialize(ar);
@@ -1396,10 +1396,10 @@ void ViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	m_spikeClassListBox.Invalidate();
 
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	if (p_app->m_pviewspikesMemFile != nullptr)
+	if (p_app->m_p_view_spikes_memory_file != nullptr)
 	{
-		CArchive ar(p_app->m_pviewspikesMemFile, CArchive::load);
-		p_app->m_pviewspikesMemFile->SeekToBegin();
+		CArchive ar(p_app->m_p_view_spikes_memory_file, CArchive::load);
+		p_app->m_p_view_spikes_memory_file->SeekToBegin();
 		m_ChartDataWnd.Serialize(ar);
 		ar.Close(); // close archive
 	}

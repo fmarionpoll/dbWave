@@ -50,7 +50,7 @@ CdbWaveDoc::~CdbWaveDoc()
 		if (m_clean_database_on_exit_)
 		{
 			const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-			p_app->m_tempMDBfiles.Add(m_dbFilename);
+			p_app->m_temporary_mdb_files.Add(m_dbFilename);
 		}
 }
 
@@ -72,7 +72,7 @@ BOOL CdbWaveDoc::OnNewDocument()
 
 	m_bcallnew = FALSE;
 	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	auto cs_path = p_app->Get_MyDocuments_MydbWavePath();
+	auto cs_path = p_app->get_my_documents_my_dbwave_path();
 	TCHAR sz_entry[MAX_PATH];
 	unsigned long len = MAX_PATH;
 	GetUserName(&sz_entry[0], &len);
@@ -96,7 +96,7 @@ BOOL CdbWaveDoc::OnNewDocument(LPCTSTR lpszPathName)
 	if (cs_name.Find(_T(':')) < 0
 		&& cs_name.Find(_T("\\\\")) < 0)
 	{
-		const auto cs_path = static_cast<CdbWaveApp*>(AfxGetApp())->Get_MyDocuments_MydbWavePath();
+		const auto cs_path = static_cast<CdbWaveApp*>(AfxGetApp())->get_my_documents_my_dbwave_path();
 		cs_name = cs_path + _T('\\') + cs_name;
 	}
 
@@ -379,7 +379,6 @@ AcqDataDoc* CdbWaveDoc::open_current_data_file()
 	}
 
 	// open document; erase object if operation failed
-	//DB_GetCurrentRecordPosition();
 	db_get_current_dat_file_name(TRUE);
 	if (m_current_datafile_name_.IsEmpty()
 		|| !m_pDat->OnOpenDocument(m_current_datafile_name_))
@@ -425,18 +424,13 @@ Spike* CdbWaveDoc::get_spike(const Spike_selected& spike_selected)
 	if (spike_selected.spike_index < 0)
 		return nullptr;
 
-	Spike* spike = nullptr;
 	const long current_position = db_get_current_record_position();
 	const boolean flag_different_file = spike_selected.database_position != current_position;
 	if (flag_different_file && db_set_current_record_position(spike_selected.database_position))
 		open_current_spike_file();
 
 	SpikeList* p_spike_list = m_pSpk->get_spike_list_at(spike_selected.spike_list_index);
-	spike = p_spike_list->get_spike(spike_selected.spike_index);
-	
-	//if (flag_different_file && db_set_current_record_position(current_position))
-	//	open_current_spike_file();
-	return spike;
+	return p_spike_list->get_spike(spike_selected.spike_index);
 }
 
 void CdbWaveDoc::get_max_min_of_all_spikes(BOOL b_all_files, BOOL b_recalculate, short* max, short* min)
@@ -616,7 +610,7 @@ void CdbWaveDoc::export_data_ascii_comments(CSharedFile * p_shared_file)
 	CString cs_file_comment = _T("Analyze file: ");
 	CString cs_dummy;
 	const auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	const auto p_view_data_options = &(p_app->options_viewdata);
+	const auto p_view_data_options = &(p_app->options_view_data);
 	const int index_current = db_get_current_record_position();
 	const int n_files = db_get_n_records();
 
@@ -627,8 +621,9 @@ void CdbWaveDoc::export_data_ascii_comments(CSharedFile * p_shared_file)
 	// loop over all files of the multi-document
 	for (auto i_file = 0; i_file < n_files; i_file++)
 	{
-		// get ith file's comment
-		db_set_current_record_position(i_file);
+		if (!db_set_current_record_position(i_file))
+			continue;
+
 		cs_dummy.Format(_T("%i\t%i\t"), i_file + 1, m_pDB->m_mainTableSet.m_ID);
 		p_shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 
@@ -772,8 +767,8 @@ BOOL CdbWaveDoc::copy_files_to_directory(const CString & path)
 		for (auto i = 0; i < n_records; i++)
 		{
 			cs_buf_temp.Format(_T("%06.6lu"), i);
-			auto cs_dummy = cs_path + cs_buf_temp;
-			cs_dest_path_array.Add(cs_dummy);
+			auto cs_dummy2 = cs_path + cs_buf_temp;
+			cs_dest_path_array.Add(cs_dummy2);
 		}
 	}
 	else
@@ -782,8 +777,8 @@ BOOL CdbWaveDoc::copy_files_to_directory(const CString & path)
 		{
 			auto sub_path = cs_source_path_array.GetAt(i);
 			sub_path = sub_path.Right(sub_path.GetLength() - cs_root_length - 1);
-			auto cs_dummy = cs_path + sub_path;
-			cs_dest_path_array.Add(cs_dummy);
+			auto cs_dummy3 = cs_path + sub_path;
+			cs_dest_path_array.Add(cs_dummy3);
 		}
 	}
 
@@ -802,7 +797,7 @@ BOOL CdbWaveDoc::copy_files_to_directory(const CString & path)
 	const auto destination_database = new_path + new_name;
 
 	// create database and copy all records
-	flag = OnSaveDocument(destination_database);
+	flag = static_cast<boolean>(OnSaveDocument(destination_database));
 	if (!flag)
 		return FALSE;
 
@@ -812,7 +807,7 @@ BOOL CdbWaveDoc::copy_files_to_directory(const CString & path)
 
 	// create new document and open it to update the paths
 	auto* p_new = new CdbWaveDoc;
-	flag = p_new->OnOpenDocument(destination_database);
+	flag = static_cast<boolean>(p_new->OnOpenDocument(destination_database));
 	if (!flag)
 	{
 		delete p_new;
@@ -928,13 +923,14 @@ BOOL CdbWaveDoc::copy_files_to_directory(const CString & path)
 
 		// copy file
 		auto destination_file = path_local + _T("\\") + new_names_array.GetAt(i_file);
-		binary_file_copy(source_file, destination_file);
-
-		// update count
-		if (MulDiv(i_file, 100, n_files) > i_step)
+		if (binary_file_copy(source_file, destination_file))
 		{
-			dlg.StepIt();
-			i_step = MulDiv(i_file, 100, n_files);
+			// update count
+			if (MulDiv(i_file, 100, n_files) > i_step)
+			{
+				dlg.StepIt();
+					i_step = MulDiv(i_file, 100, n_files);
+			}
 		}
 	}
 
@@ -1616,7 +1612,7 @@ void CdbWaveDoc::export_spk_descriptors(CSharedFile * pSF, SpikeList * p_spike_l
 	const CString cs_tab = _T("\t");
 
 	const auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	const auto options_viewspikes = &(p_app->options_viewspikes);
+	const auto options_viewspikes = &(p_app->options_view_spikes);
 
 	const auto cs_file_comment = _T("\r\n") + export_database_data();
 	pSF->Write(cs_file_comment, cs_file_comment.GetLength() * sizeof(TCHAR));
@@ -1658,7 +1654,7 @@ void CdbWaveDoc::export_spk_descriptors(CSharedFile * pSF, SpikeList * p_spike_l
 CString CdbWaveDoc::export_database_data(const int option) const
 {
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	const auto options_viewspikes = &(p_app->options_viewspikes);
+	const auto options_viewspikes = &(p_app->options_view_spikes);
 	CString separator = _T("\t");
 	if (option == 1)
 		separator = _T(" | ");
@@ -1752,7 +1748,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * pSF)
 	}
 
 	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	const auto options_viewspikes = &(p_app->options_viewspikes);
+	const auto options_viewspikes = &(p_app->options_view_spikes);
 
 	const auto i_old_list = m_pSpk->get_spike_list_current_index();
 	m_pSpk->export_table_title(pSF, options_viewspikes, n_files);

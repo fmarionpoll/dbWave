@@ -164,14 +164,14 @@ void CChildFrame::OnUpdateViewCursormodeZoomin(CCmdUI * pCmdUI)
 void CChildFrame::OnOptionsBrowsemode()
 {
 	DlgBrowseFile dlg;
-	dlg.mfBR = &(static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata);
+	dlg.mfBR = &(static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data);
 	dlg.DoModal();
 }
 
 void CChildFrame::OnOptionsPrintmargins()
 {
 	DlgPrintMargins dlg;
-	const auto psource = &(static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata);
+	const auto psource = &(static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data);
 	dlg.mdPM = psource;
 	dlg.DoModal();
 }
@@ -182,7 +182,7 @@ void CChildFrame::OnOptionsLoadsaveoptions()
 	if (IDOK == dlg.DoModal())
 	{
 		const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-		auto p_parm_files = &(p_app->m_csParmFiles);
+		auto p_parm_files = &(p_app->m_cs_parameter_files);
 		p_parm_files->RemoveAll();
 		for (auto i = 0; i < dlg.pFiles.GetSize(); i++)
 			p_parm_files->Add(dlg.pFiles.GetAt(i));
@@ -193,7 +193,7 @@ void CChildFrame::OnToolsExportdatacomments()
 {
 	DlgDataComments dlg;
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	dlg.m_pvO = &(p_app->options_viewdata);
+	dlg.m_pvO = &(p_app->options_view_data);
 	if (IDOK == dlg.DoModal())
 	{
 		UpdateWindow();
@@ -206,7 +206,7 @@ void CChildFrame::OnToolsExportnumberofspikes()
 {
 	DlgExportSpikeInfos dlg;
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	dlg.m_pvdS = &p_app->options_viewspikes;
+	dlg.m_pvdS = &p_app->options_view_spikes;
 	if (IDOK == dlg.DoModal())
 	{
 		UpdateWindow();
@@ -263,9 +263,9 @@ void CChildFrame::exportASCII(int option)
 	case 0: // export CAcqData
 	{
 		auto flag = FALSE;
-		if (p_app->options_viewdata.btoExcel)
+		if (p_app->options_view_data.btoExcel)
 			flag = exportToExcel();
-		if (!p_app->options_viewdata.btoExcel || !flag)
+		if (!p_app->options_view_data.btoExcel || !flag)
 		{
 			CMultiDocTemplate* note_view_template = p_app->m_NoteView_Template;
 			const auto p_dbWave_doc_export = note_view_template->OpenDocumentFile(nullptr);
@@ -279,10 +279,10 @@ void CChildFrame::exportASCII(int option)
 	case 1:
 	{
 		auto flag = FALSE;
-		if (p_app->options_viewspikes.bexporttoExcel)
+		if (p_app->options_view_spikes.bexporttoExcel)
 			flag = exportToExcelAndBuildPivot(option);
 
-		if (!p_app->options_viewspikes.bexporttoExcel || !flag)
+		if (!p_app->options_view_spikes.bexporttoExcel || !flag)
 		{
 			CMultiDocTemplate* note_view_template = p_app->m_NoteView_Template;
 			const auto p_dbWave_doc_export = note_view_template->OpenDocumentFile(nullptr);
@@ -431,7 +431,7 @@ void CChildFrame::OnUpdateViewMenu(CCmdUI * pCmdUI)
 		break;
 
 	case ID_VIEW_ACQUIREDATA:
-		flag = p_app->m_bADcardFound;
+		flag = p_app->m_ad_card_found;
 		break;
 
 	default:
@@ -693,11 +693,11 @@ void CChildFrame::OnRecordGotorecord()
 		return;
 	dlg.m_recordPos = p_dbWave_doc->db_get_current_record_position();
 	dlg.m_recordID = p_dbWave_doc->db_get_current_record_id();
-	dlg.m_bGotoRecordID = static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.bGotoRecordID;
+	dlg.m_bGotoRecordID = static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.bGotoRecordID;
 
 	if (IDOK == dlg.DoModal())
 	{
-		static_cast<CdbWaveApp*>(AfxGetApp())->options_viewdata.bGotoRecordID = dlg.m_bGotoRecordID;
+		static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.bGotoRecordID = dlg.m_bGotoRecordID;
 		if (!dlg.m_bGotoRecordID)
 			p_dbWave_doc->db_set_current_record_position(dlg.m_recordPos);
 		else
@@ -909,7 +909,7 @@ BOOL CChildFrame::exportToExcelAndBuildPivot(int option)
 		cs1 = cs2 + _T("!") + cs1;
 
 		auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-		if (p_app->options_viewspikes.bexportPivot)
+		if (p_app->options_view_spikes.bexportPivot)
 		{
 			CString cs_bin;
 			buildExcelPivot(&o_app, &odata_sheet, cs1, _T("pivot_cnt"), static_cast<short>(-4112), col2);
@@ -961,7 +961,7 @@ void CChildFrame::buildExcelPivot(void* poApp, void* podataSheet, CString csSour
 
 	// get options
 	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	const auto option_view_spikes = &(p_app->options_viewspikes);
+	const auto option_view_spikes = &(p_app->options_view_spikes);
 
 	// add fields to pivot table
 	if (option_view_spikes->bacqcomments)

@@ -217,23 +217,23 @@ int CdbWaveApp::ExitInstance()
 	default_parameters(FALSE);
 	AfxOleTerm(FALSE);
 
-	SAFE_DELETE(m_pviewdataMemFile)
+	SAFE_DELETE(m_p_view_data_memory_file)
 	SAFE_DELETE(m_psf)
 
-	if (viewspikesmemfile_ptr_array.GetSize() != NULL)
+	if (view_spikes_memory_file_ptr_array.GetSize() != NULL)
 	{
-		for (auto i = 0; i < viewspikesmemfile_ptr_array.GetSize(); i++)
-			delete viewspikesmemfile_ptr_array.GetAt(i);
+		for (auto i = 0; i < view_spikes_memory_file_ptr_array.GetSize(); i++)
+			delete view_spikes_memory_file_ptr_array.GetAt(i);
 	}
 
-	SAFE_DELETE(m_pviewspikesMemFile)
-	SAFE_DELETE(m_psort1spikesMemFile)
+	SAFE_DELETE(m_p_view_spikes_memory_file)
+	SAFE_DELETE(m_p_sort1_spikes_memory_file)
 
 	// erase temporary "mdb" files
-	const auto i0 = m_tempMDBfiles.GetCount() - 1;
+	const auto i0 = m_temporary_mdb_files.GetCount() - 1;
 	for (auto i = i0; i >= 0; i--)
 	{
-		auto cs = m_tempMDBfiles.GetAt(i);
+		auto cs = m_temporary_mdb_files.GetAt(i);
 		CFile::Remove(cs);
 	}
 
@@ -307,7 +307,7 @@ void CdbWaveApp::default_parameters(BOOL b_read)
 	if (b_read)
 	{
 		// get list of parameter files (others)
-		m_csParmFiles.RemoveAll();
+		m_cs_parameter_files.RemoveAll();
 		auto i = 0;
 		while (i >= 0)
 		{
@@ -316,30 +316,30 @@ void CdbWaveApp::default_parameters(BOOL b_read)
 			if (dummy.IsEmpty())
 				break;
 			if (dummy.Find(cs_ext) > 0)
-				m_csParmFiles.Add(dummy);
+				m_cs_parameter_files.Add(dummy);
 			i++;
 		}
 		// get default parameter file and load data
-		if (m_csParmFiles.GetSize() <= 0)
-			m_csParmFiles.Add(cs_default_parameters_file);
-		archive_parameter_files(m_csParmFiles[0], b_read);
+		if (m_cs_parameter_files.GetSize() <= 0)
+			m_cs_parameter_files.Add(cs_default_parameters_file);
+		archive_parameter_files(m_cs_parameter_files[0], b_read);
 	}
 	// Save information
 	else
 	{
 		// save default parameter file
-		if (m_csParmFiles.GetSize() <= 0)
-			m_csParmFiles.Add(cs_default_parameters_file);
-		if (!archive_parameter_files(m_csParmFiles[0], b_read))
+		if (m_cs_parameter_files.GetSize() <= 0)
+			m_cs_parameter_files.Add(cs_default_parameters_file);
+		if (!archive_parameter_files(m_cs_parameter_files[0], b_read))
 		{
-			m_csParmFiles[0] = cs_default_parameters_file;
-			archive_parameter_files(m_csParmFiles[0], b_read);
+			m_cs_parameter_files[0] = cs_default_parameters_file;
+			archive_parameter_files(m_cs_parameter_files[0], b_read);
 		}
 		// save profile with locations of parameter files
-		for (auto i = 0; i < m_csParmFiles.GetSize(); i++)
+		for (auto i = 0; i < m_cs_parameter_files.GetSize(); i++)
 		{
 			wsprintf(&szEntry[0], sz_file_entry, i + 1);
-			WriteProfileString(sz_vds, &szEntry[0], m_csParmFiles[i]);
+			WriteProfileString(sz_vds, &szEntry[0], m_cs_parameter_files[i]);
 		}
 	}
 }
@@ -391,20 +391,20 @@ BOOL CdbWaveApp::archive_parameter_files(const CString& filename, const BOOL b_r
 
 void CdbWaveApp::serialize_parameters(int n, CArchive& ar)
 {
-	n--; if (n > 0) stim_detect.Serialize(ar);
+	n--; if (n > 0) stimulus_detect.Serialize(ar);
 	n--; if (n > 0) spk_detect_array.Serialize(ar);
-	n--; if (n > 0) options_viewdata.Serialize(ar);
-	n--; if (n > 0) options_viewspikes.Serialize(ar);
-	n--; if (n > 0) spk_classif.Serialize(ar);
-	n--; if (n > 0) options_viewdata_measure.Serialize(ar);
+	n--; if (n > 0) options_view_data.Serialize(ar);
+	n--; if (n > 0) options_view_spikes.Serialize(ar);
+	n--; if (n > 0) spk_classification.Serialize(ar);
+	n--; if (n > 0) options_view_data_measure.Serialize(ar);
 	n--; if (n > 0) options_import.Serialize(ar);
-	n--; if (n > 0) options_acqdata.Serialize(ar);
-	n--; if (n > 0) options_outputdata.Serialize(ar);
+	n--; if (n > 0) options_acq_data.Serialize(ar);
+	n--; if (n > 0) options_output_data.Serialize(ar);
 }
 
 void CdbWaveApp::SetPrinterOrientation()
 {
-	if (options_viewdata.horzRes <= 0 || options_viewdata.vertRes <= 0)
+	if (options_view_data.horzRes <= 0 || options_view_data.vertRes <= 0)
 		return;
 
 	// Get default printer settings.
@@ -419,7 +419,7 @@ void CdbWaveApp::SetPrinterOrientation()
 		if (p_dev_mode)
 		{
 			// Change printer settings in here.
-			if (options_viewdata.horzRes > options_viewdata.vertRes)
+			if (options_view_data.horzRes > options_view_data.vertRes)
 				p_dev_mode->dmOrientation = DMORIENT_LANDSCAPE;
 			else
 				p_dev_mode->dmOrientation = DMORIENT_PORTRAIT;
@@ -501,7 +501,7 @@ BOOL CdbWaveApp::get_file_names_dlg(int iIDS, LPCSTR szTitle, int* iFilterIndex,
 // TODO here: ask where data are to be saved (call make directory/explore directory)
 // ask for name of a database, then create a directory of the same name where the database will be put
 
-CString CdbWaveApp::Get_MyDocuments_MydbWavePath()
+CString CdbWaveApp::get_my_documents_my_dbwave_path()
 {
 	TCHAR sz_path[MAX_PATH];
 	CString cspath;
@@ -532,11 +532,11 @@ void CdbWaveApp::OnFileOpen()
 	//Spikes (*.spk)|*.spk|
 	//Text (*.txt)|*.txt|
 	//Project (*.prj)|*.prj|
-	get_file_names_dlg(IDS_FILEDESCRIP, nullptr, &options_viewdata.nfilterindex, &filenames);
+	get_file_names_dlg(IDS_FILEDESCRIP, nullptr, &options_view_data.nfilterindex, &filenames);
 	if (filenames.GetSize() == 0)
 		return;
 
-	switch (options_viewdata.nfilterindex)
+	switch (options_view_data.nfilterindex)
 	{
 	case 1: // mdb
 		OpenDocumentFile(filenames[0]);

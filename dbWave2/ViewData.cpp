@@ -140,8 +140,8 @@ void ViewData::OnInitialUpdate()
 
 	// init relation with document, display data, adjust parameters
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	options_viewdata = &(p_app->options_viewdata);
-	mdMO = &(p_app->options_viewdata_measure);
+	options_viewdata = &(p_app->options_view_data);
+	mdMO = &(p_app->options_view_data_measure);
 
 	// set data file
 	dbTableView::OnInitialUpdate();
