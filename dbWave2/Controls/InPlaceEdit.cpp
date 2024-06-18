@@ -99,12 +99,12 @@ BOOL InPlaceEdit::PreTranslateMessage(MSG* pMsg)
 void InPlaceEdit::PostNcDestroy()
 {
 	CEdit::PostNcDestroy();
-	delete this;
+	//delete this;
 }
 
-void InPlaceEdit::OnKillFocus(CWnd* pNewWnd)
+void InPlaceEdit::OnKillFocus(CWnd* p_new_wnd)
 {
-	CEdit::OnKillFocus(pNewWnd);
+	CEdit::OnKillFocus(p_new_wnd);
 
 	CString str;
 	GetWindowText(str);

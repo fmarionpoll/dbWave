@@ -31,7 +31,7 @@ private:
     BOOL    m_bExitOnArrows;
 
 protected:
-    afx_msg void OnKillFocus(CWnd* pNewWnd);
+    afx_msg void OnKillFocus(CWnd* p_new_wnd);
     afx_msg void OnNcDestroy();
     afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
