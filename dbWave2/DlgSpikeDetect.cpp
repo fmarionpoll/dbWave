@@ -59,7 +59,7 @@ BOOL DlgSpikeDetect::OnInitDialog()
 	for (auto i = 0; i < chanmax; i++)
 	{
 		comment.Format(_T("%i"), i); // channel index CString
-		const auto pchan = pchan_array->Get_p_channel(i);
+		const auto pchan = pchan_array->get_p_channel(i);
 		comment += _T(" - ") + pchan->am_csComment;
 		VERIFY(((CComboBox*)GetDlgItem(IDC_DETECTCHAN))->AddString(comment) != CB_ERR);
 		VERIFY(((CComboBox*)GetDlgItem(IDC_EXTRACTCHAN))->AddString(comment) != CB_ERR);
@@ -204,7 +204,7 @@ void DlgSpikeDetect::OnTcnSelchangeParameterstab(NMHDR* pNMHDR, LRESULT* pResult
 	UpdateTabShiftButtons();
 }
 
-void DlgSpikeDetect::SetDlgInterfaceState(int detectWhat)
+void DlgSpikeDetect::SetDlgInterfaceState(int detectWhat) const
 {
 	auto b_spike_detect_items = TRUE;
 	auto b_stim_detect_items = FALSE;
@@ -257,18 +257,18 @@ void DlgSpikeDetect::OnBnClickedDelparambttn()
 	Invalidate();
 }
 
-void DlgSpikeDetect::OnEnChangeDetectthreshold()
+void DlgSpikeDetect::OnEnChangeDetectthreshold() const
 {
 	const int ithreshold = GetDlgItemInt(IDC_DETECTTHRESHOLD);
 	m_pChartDataDetectWnd->MoveHZtagtoVal(0, ithreshold);
 }
 
-void DlgSpikeDetect::OnCbnSelchangeDetectchan()
+void DlgSpikeDetect::OnCbnSelchangeDetectchan() const
 {
 	UpdateSourceView();
 }
 
-void DlgSpikeDetect::UpdateSourceView()
+void DlgSpikeDetect::UpdateSourceView() const
 {
 	const auto icursel = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->GetCurSel();
 	const auto icursel2 = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->GetCurSel();
@@ -280,7 +280,7 @@ void DlgSpikeDetect::UpdateSourceView()
 	m_pChartDataDetectWnd->Invalidate();
 }
 
-void DlgSpikeDetect::OnCbnSelchangeDetecttransform()
+void DlgSpikeDetect::OnCbnSelchangeDetecttransform() const
 {
 	UpdateSourceView();
 }
@@ -295,7 +295,7 @@ void DlgSpikeDetect::OnDeltaposSpin1(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void DlgSpikeDetect::OnCbnSelchangeExtractchan()
+void DlgSpikeDetect::OnCbnSelchangeExtractchan() const
 {
 	UpdateSourceView();
 }
@@ -357,7 +357,7 @@ void DlgSpikeDetect::ExchangeParms(int isource, int idest)
 	UpdateTabShiftButtons();
 }
 
-void DlgSpikeDetect::UpdateTabShiftButtons()
+void DlgSpikeDetect::UpdateTabShiftButtons() const
 {
 	auto b_enable = TRUE;
 	if (m_iDetectParmsDlg < 1)

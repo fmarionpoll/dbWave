@@ -365,23 +365,23 @@ void DataListCtrl::UpdateCache(int index_first, int index_last)
 		row->csSpikefileName = db_wave_doc->db_get_current_spk_file_name(TRUE);
 		const auto database = db_wave_doc->m_pDB;
 
-		database->GetRecordItemValue(CH_IDINSECT, &desc);
+		database->get_record_item_value(CH_IDINSECT, &desc);
 		row->insectID = desc.lVal;
 
 		// column: stim, conc, type = load indirect data from database
-		database->GetRecordItemValue(CH_STIM_ID, &desc);
+		database->get_record_item_value(CH_STIM_ID, &desc);
 		row->csStim1 = desc.csVal;
-		database->GetRecordItemValue(CH_CONC_ID, &desc);
+		database->get_record_item_value(CH_CONC_ID, &desc);
 		row->csConc1 = desc.csVal;
-		database->GetRecordItemValue(CH_STIM2_ID, &desc);
+		database->get_record_item_value(CH_STIM2_ID, &desc);
 		row->csStim2 = desc.csVal;
-		database->GetRecordItemValue(CH_CONC2_ID, &desc);
+		database->get_record_item_value(CH_CONC2_ID, &desc);
 		row->csConc2 = desc.csVal;
 
-		database->GetRecordItemValue(CH_SENSILLUM_ID, &desc);
+		database->get_record_item_value(CH_SENSILLUM_ID, &desc);
 		row->csSensillumname = desc.csVal;
 
-		database->GetRecordItemValue(CH_FLAG, &desc);
+		database->get_record_item_value(CH_FLAG, &desc);
 		row->csFlag.Format(_T("%i"), desc.lVal);
 
 		// column: number of spike = verify that spike file is defined, if yes, load nb spikes
@@ -389,9 +389,9 @@ void DataListCtrl::UpdateCache(int index_first, int index_last)
 			row->csNspk.Empty();
 		else
 		{
-			database->GetRecordItemValue(CH_NSPIKES, &desc);
+			database->get_record_item_value(CH_NSPIKES, &desc);
 			const int n_spikes = desc.lVal;
-			database->GetRecordItemValue(CH_NSPIKECLASSES, &desc);
+			database->get_record_item_value(CH_NSPIKECLASSES, &desc);
 			row->csNspk.Format(_T("%i (%i classes)"), n_spikes, desc.lVal);
 		}
 

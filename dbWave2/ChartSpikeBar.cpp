@@ -135,7 +135,7 @@ void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
 	{
 		if (p_dbwave_doc->db_set_current_record_position(current_file))
 			p_dbwave_doc->open_current_spike_file();
-		p_spike_list = p_dbwave_doc->m_pSpk->get_spike_list_current();
+		p_spike_list = p_dbwave_doc->m_p_spk->get_spike_list_current();
 	}
 }
 
@@ -184,7 +184,7 @@ void ChartSpikeBar::plot_single_spk_data_to_dc(CDC* p_dc)
 	display_bars(p_dc, &m_displayRect);
 
 	if (p_spike_doc == nullptr)
-		p_spike_doc = p_dbwave_doc->m_pSpk;
+		p_spike_doc = p_dbwave_doc->m_p_spk;
 	const CIntervals* p_intervals = &(p_spike_doc->m_stimulus_intervals);
 
 	if (p_intervals->n_items > 0)
@@ -720,7 +720,7 @@ int ChartSpikeBar::hit_curve_in_doc(const CPoint point)
 		{
 			if (p_dbwave_doc->db_set_current_record_position(i_file))
 				p_dbwave_doc->open_current_spike_file();
-			p_spike_list = p_dbwave_doc->m_pSpk->get_spike_list_current();
+			p_spike_list = p_dbwave_doc->m_p_spk->get_spike_list_current();
 		}
 
 		if (p_spike_list == nullptr || p_spike_list->get_spikes_count() == 0)
@@ -736,7 +736,7 @@ int ChartSpikeBar::hit_curve_in_doc(const CPoint point)
 	{
 		if (p_dbwave_doc->db_set_current_record_position(current_file))
 			p_dbwave_doc->open_current_spike_file();
-		p_spike_list = p_dbwave_doc->m_pSpk->get_spike_list_current();
+		p_spike_list = p_dbwave_doc->m_p_spk->get_spike_list_current();
 	}
 
 	return result;
@@ -839,7 +839,7 @@ void ChartSpikeBar::Print(CDC* p_dc, const CRect* rect)
 	const auto n_saved_dc = p_dc->SaveDC(); // save display context
 	display_bars(p_dc, rect);
 
-	if (p_dbwave_doc->m_pSpk->m_stimulus_intervals.n_items > 0)
+	if (p_dbwave_doc->m_p_spk->m_stimulus_intervals.n_items > 0)
 		display_stimulus(p_dc, rect);
 
 	p_dc->RestoreDC(n_saved_dc);

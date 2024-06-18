@@ -183,7 +183,7 @@ void ViewADcontinuous::get_acquisition_parameters_from_data_file()
 	{
 		pDat->read_data_infos();
 		options_input_data_->waveFormat.copy(pDat->get_waveformat());
-		options_input_data_->chanArray.ChanArray_setSize(options_input_data_->waveFormat.scan_count);
+		options_input_data_->chanArray.chan_array_set_size(options_input_data_->waveFormat.scan_count);
 		options_input_data_->chanArray.Copy(pDat->get_wavechan_array());
 		options_input_data_->waveFormat.bADwritetofile = m_bADwritetofile;
 	}
@@ -210,7 +210,7 @@ void ViewADcontinuous::OnInitialUpdate()
 	// create data file and copy data acquisition parameters into it
 	m_inputDataFile.OnNewDocument(); 
 	m_inputDataFile.get_waveformat()->copy( &options_input_data_->waveFormat);
-	options_input_data_->chanArray.ChanArray_setSize(options_input_data_->waveFormat.scan_count);
+	options_input_data_->chanArray.chan_array_set_size(options_input_data_->waveFormat.scan_count);
 	m_inputDataFile.get_wavechan_array()->Copy(&options_input_data_->chanArray);
 	m_chartDataAD.AttachDataFile(&m_inputDataFile);
 
@@ -412,7 +412,7 @@ void ViewADcontinuous::TransferFilesToDatabase()
 	CdbTableMain* pSet = &(pdbDoc->m_pDB->m_mainTableSet);
 	pSet->BuildAndSortIDArrays();
 	pSet->RefreshQuery();
-	pdbDoc->db_set_current_record_position(pdbDoc->m_pDB->GetNRecords() - 1);
+	pdbDoc->db_set_current_record_position(pdbDoc->m_pDB->get_n_records() - 1);
 	pdbDoc->update_all_views_db_wave(nullptr, HINT_DOCMOVERECORD, nullptr);
 }
 
@@ -1038,12 +1038,12 @@ BOOL ViewADcontinuous::InitCyberAmp() const
 {
 	CyberAmp cyberAmp;
 	BOOL cyberAmp_is_present = FALSE;
-	const int n_ad_channels = (options_input_data_->chanArray).ChanArray_getSize();
+	const int n_ad_channels = (options_input_data_->chanArray).chan_array_get_size();
 
 	// test if Cyberamp320 selected
 	for (int i = 0; i < n_ad_channels; i++)
 	{
-		const CWaveChan* p_wave_channel = (options_input_data_->chanArray).Get_p_channel(i);
+		const CWaveChan* p_wave_channel = (options_input_data_->chanArray).get_p_channel(i);
 
 		const int a = p_wave_channel->am_csamplifier.Find(_T("CyberAmp"));
 		const int b = p_wave_channel->am_csamplifier.Find(_T("Axon Instrument"));

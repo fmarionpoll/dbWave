@@ -632,7 +632,7 @@ void CChildFrame::OnToolsRemoveartefactfiles()
 		if (!b_ok)
 			continue;
 
-		auto p_dat = p_dbWave_doc->m_pDat;
+		auto p_dat = p_dbWave_doc->m_p_dat;
 		if (p_dat == nullptr)
 			continue;
 
@@ -1148,7 +1148,7 @@ void CChildFrame::OnToolsCompactdatabase()
 		const auto file_name_new = file_name.Left(ipos) + _T("_new.mdb");
 
 		// compact database and save new file
-		CdbTable::CompactDataBase(file_name, file_name_new);
+		CdbTable::compact_data_base(file_name, file_name_new);
 
 		const auto cs = file_name + _T(" database compacted and saved as ") + file_name_new;
 		AfxMessageBox(cs);

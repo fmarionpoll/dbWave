@@ -158,12 +158,12 @@ void ViewSpikeHist::OnInitialUpdate()
 	dbTableView::OnInitialUpdate();
 
 	const auto p_dbwave_doc = GetDocument();
-	if (p_dbwave_doc->m_pSpk == nullptr)
+	if (p_dbwave_doc->m_p_spk == nullptr)
 	{
-		p_dbwave_doc->m_pSpk = new CSpikeDoc;
-		ASSERT(p_dbwave_doc->m_pSpk != NULL);
+		p_dbwave_doc->m_p_spk = new CSpikeDoc;
+		ASSERT(p_dbwave_doc->m_p_spk != NULL);
 	}
-	p_spike_doc_ = p_dbwave_doc->m_pSpk;
+	p_spike_doc_ = p_dbwave_doc->m_p_spk;
 	p_spike_doc_->get_spike_list_current();
 	buildDataAndDisplay();
 	selectSpkList(p_spike_doc_->get_spike_list_current_index(), TRUE);

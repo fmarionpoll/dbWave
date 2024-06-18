@@ -57,6 +57,6 @@ public:
 	{
 		pwave_chan_array = new (CWaveChanArray);
 		ASSERT(pwave_chan_array != NULL);
-		pwave_chan_array->ChanArray_add();
+		pwave_chan_array->chan_array_add();
 	}
 };

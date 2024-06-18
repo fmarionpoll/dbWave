@@ -96,14 +96,14 @@ BOOL DlgExportData::OnInitDialog()
 	GetDlgItem(IDC_TIMEFIRST)->EnableWindow(!iivO.bentireFile);
 	GetDlgItem(IDC_TIMELAST)->EnableWindow(!iivO.bentireFile);
 
-	if (m_dbDoc->m_pDat->get_vt_tags_list()->GetNTags() < 1)
+	if (m_dbDoc->m_p_dat->get_vt_tags_list()->GetNTags() < 1)
 	{
 		m_timefirst = iivO.fTimefirst;
 		m_timelast = iivO.fTimelast;
 	}
 	else
 	{
-		AcqDataDoc* pDat = m_dbDoc->m_pDat;
+		AcqDataDoc* pDat = m_dbDoc->m_p_dat;
 		m_timefirst = static_cast<float>(pDat->get_vt_tags_list()->GetTagLVal(0));
 		if (pDat->get_vt_tags_list()->GetNTags() > 1)
 			m_timelast = static_cast<float>(pDat->get_vt_tags_list()->GetTagLVal(1));
@@ -249,7 +249,7 @@ void DlgExportData::Export()
 	m_filedest = csPath + m_filedest; // and add path
 
 	// compute some parameters
-	m_pDat = m_dbDoc->m_pDat; // pointer to data document
+	m_pDat = m_dbDoc->m_p_dat; // pointer to data document
 	CWaveFormat* pwaveFormat = m_pDat->get_waveformat();
 	if (iivO.bentireFile) // if all data, load
 	{
@@ -378,7 +378,7 @@ BOOL DlgExportData::ExportDataAsTextFile()
 
 	for (i = mm_firstchan; i <= mm_lastchan; i++)
 	{
-		cs_dummy.Format(_T("\t%s"), (LPCTSTR)pChanArray->Get_p_channel(i)->am_csComment);
+		cs_dummy.Format(_T("\t%s"), (LPCTSTR)pChanArray->get_p_channel(i)->am_csComment);
 		csCharBuf += cs_dummy;
 	}
 
@@ -614,7 +614,7 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 	col++;
 	for (int i = mm_firstchan; i <= mm_lastchan; i++)
 	{
-		CWaveChan* pchan = pchanArray->Get_p_channel(i);
+		CWaveChan* pchan = pchanArray->get_p_channel(i);
 		CString comment = pchan->am_csComment;
 		saveCString_BIFF(&data_dest, row, col, comment);
 		col++;
@@ -814,7 +814,7 @@ BOOL DlgExportData::ExportDataAsdbWaveFile()
 		for (auto i = lastchannel; i > 0; i--)
 		{
 			if (i > mm_lastchan || i < mm_firstchan)
-				pw_c_dest->ChanArray_removeAt(i);
+				pw_c_dest->chan_array_remove_at(i);
 		}
 		ASSERT(nchans == pw_c_dest->ChanArray_getSize());
 		pw_f_dest->scan_count = nchans;

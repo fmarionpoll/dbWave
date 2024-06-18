@@ -39,7 +39,7 @@ void ChartSpike::set_plot_mode(int mode, int selected_class)
 void ChartSpike::set_source_data(SpikeList* p_spk_list, CdbWaveDoc* p_document)
 {
 	p_dbwave_doc = p_document;
-	p_spike_doc = p_dbwave_doc->m_pSpk;
+	p_spike_doc = p_dbwave_doc->m_p_spk;
 	p_spike_list = p_spk_list;
 	spike_selected_.clear();
 }

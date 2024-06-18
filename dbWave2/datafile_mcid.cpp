@@ -53,8 +53,8 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveBuf* pBuf)
 
 	for (UINT i = 0; i < mcidHeader.number_of_channels; i++)
 	{
-		pArray->ChanArray_add();
-		auto pChan = pArray->Get_p_channel(i);
+		pArray->chan_array_add();
+		auto pChan = pArray->get_p_channel(i);
 		pChan->am_csComment = CString(" ");
 		pChan->am_resolutionV = mcidHeader.sensitivity[i] / 2000.;
 		pChan->am_amplifiergain = 1. / pChan->am_resolutionV;

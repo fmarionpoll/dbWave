@@ -67,7 +67,7 @@ public:
 	int m_tBUFsourcechan = 0;
 
 public:
-	long get_tBUFfirst() const { return m_tBUFfirst; }
+	long get_t_buffer_first() const { return m_tBUFfirst; }
 	short get_value_from_buffer(int channel, long l_index);
 	short* load_transformed_data(long l_first, long l_last, int transform_type, int source_channel);
 	BOOL build_transformed_data(int transform_type, int source_channel) const;

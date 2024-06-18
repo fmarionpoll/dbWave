@@ -141,7 +141,7 @@ void DlgImportGenericData::UpdateControlsFromStruct()
 	EnableRunParameters(); // enable dependent dlg items
 	m_samplingrate = piivO->samplingRate; // sampling rate per channel (in Herz)
 	m_nb_AD_channels = piivO->nbChannels; // number of data acquisition channels
-	piivO->pwave_chan_array->ChanArray_setSize(piivO->nbChannels);
+	piivO->pwave_chan_array->chan_array_set_size(piivO->nbChannels);
 
 	int IDC_button = IDC_OFFSETBINARY; // check button concerning data encoding mode
 	if (piivO->encodingMode > 0)
@@ -164,7 +164,7 @@ void DlgImportGenericData::UpdateControlsFromStruct()
 	m_voltageMin = piivO->voltageMin; // set voltage min
 	m_skipNbytes = piivO->skipNbytes; // set "skip n bytes"
 	m_csFileTitle = piivO->title; // file global comment
-	CWaveChan* pChannel = piivO->pwave_chan_array->Get_p_channel(m_adChannelChan - 1);
+	CWaveChan* pChannel = piivO->pwave_chan_array->get_p_channel(m_adChannelChan - 1);
 	m_adChannelGain = static_cast<float>(pChannel->am_gaintotal); // set gain
 	m_adChannelComment = pChannel->am_csComment; // and comment
 
@@ -206,7 +206,7 @@ void DlgImportGenericData::UpdateStructFromControls()
 	piivO->skipNbytes = m_skipNbytes; // set "skip n bytes"
 	piivO->title = m_csFileTitle; // file global comment
 
-	CWaveChan* pChannel = piivO->pwave_chan_array->Get_p_channel(m_adChannelChan - 1);
+	CWaveChan* pChannel = piivO->pwave_chan_array->get_p_channel(m_adChannelChan - 1);
 	pChannel->am_gaintotal = m_adChannelGain; // set gain
 	pChannel->am_amplifiergain = pChannel->am_gaintotal;
 	pChannel->am_gainAD = 1;
@@ -216,7 +216,7 @@ void DlgImportGenericData::UpdateStructFromControls()
 	pChannel->am_csComment = m_adChannelComment; // and comment
 
 	// adjust size of chan descriptors array
-	piivO->pwave_chan_array->ChanArray_setSize(m_nb_AD_channels);
+	piivO->pwave_chan_array->chan_array_set_size(m_nb_AD_channels);
 
 	m_bChanged = FALSE;
 }
@@ -331,7 +331,7 @@ void DlgImportGenericData::OnEnChangeNumberofchannels()
 	if (m_nb_AD_channels != nb_AD_channels)
 	{
 		piivO->nbChannels = m_nb_AD_channels;
-		piivO->pwave_chan_array->ChanArray_setSize(m_nb_AD_channels);
+		piivO->pwave_chan_array->chan_array_set_size(m_nb_AD_channels);
 		static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN1))->SetRange(1, m_nb_AD_channels);
 		if (m_adChannelChan > m_nb_AD_channels) // and update dependent chan no
 		{
@@ -373,15 +373,15 @@ void DlgImportGenericData::OnEnChangeChannelno()
 		previous_channel = m_adChannelChan;
 		UpdateData(TRUE); // load data from controls
 		m_adChannelChan = previous_channel;
-		CWaveChan* pChannel = piivO->pwave_chan_array->Get_p_channel(previous_channel - 1);
+		CWaveChan* pChannel = piivO->pwave_chan_array->get_p_channel(previous_channel - 1);
 		pChannel->am_gaintotal = m_adChannelGain; // set gain
 		pChannel->am_amplifiergain = pChannel->am_gaintotal;
 		pChannel->am_csComment = m_adChannelComment; // and comment
 		// point to new channel: add new descriptors if necessary
-		piivO->pwave_chan_array->ChanArray_setSize(m_nb_AD_channels);
+		piivO->pwave_chan_array->chan_array_set_size(m_nb_AD_channels);
 
 		// load data from new current channel
-		pChannel = piivO->pwave_chan_array->Get_p_channel(m_adChannelChan - 1);
+		pChannel = piivO->pwave_chan_array->get_p_channel(m_adChannelChan - 1);
 		m_adChannelGain = static_cast<float>(pChannel->am_gaintotal); // set gain
 		m_adChannelComment = pChannel->am_csComment; // and comment
 		UpdateData(FALSE);

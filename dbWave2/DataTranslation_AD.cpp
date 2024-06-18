@@ -97,7 +97,7 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_INPUTDATA* pADC_options)
 		for (int i = 0; i < pWFormat->scan_count; i++)
 		{
 			// transfer data from CWaveChan to chanlist of the A/D subsystem
-			CWaveChan* pChannel = (m_pOptions->chanArray).Get_p_channel(i);
+			CWaveChan* pChannel = (m_pOptions->chanArray).get_p_channel(i);
 			if (pChannel->am_adchannel > m_numchansMAX - 1 && pChannel->am_adchannel != 16)
 				pChannel->am_adchannel = m_numchansMAX - 1;
 			SetChannelList(i, pChannel->am_adchannel);

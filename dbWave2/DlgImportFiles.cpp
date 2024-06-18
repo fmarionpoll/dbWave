@@ -221,8 +221,8 @@ BOOL DlgImportFiles::ImportATFFile()
 
 	for (int i = 0; i < m_scan_count; i++)
 	{
-		int ichan = (pTo->get_wavechan_array())->ChanArray_add();
-		CWaveChan* pChannel = (pTo->get_wavechan_array())->Get_p_channel(ichan);
+		int ichan = (pTo->get_wavechan_array())->chan_array_add();
+		CWaveChan* pChannel = (pTo->get_wavechan_array())->get_p_channel(ichan);
 		pChannel->am_gaintotal = static_cast<float>(m_xinstgain);
 		m_dspan[i] = 20000. / m_xinstgain; // span= 20 V max to min
 		m_dbinval[i] = m_dspan[i] / 65536.; // divide voltage span into 2exp16 bins
@@ -282,7 +282,7 @@ line 11-	0	141.144	0.0317383
 			if (xmin > xmax)
 				xmax = xmin;
 			float xtotal = static_cast<float>(xmax * 2.);
-			CWaveChan* pChannel = (pTo->get_wavechan_array())->Get_p_channel(ichan);
+			CWaveChan* pChannel = (pTo->get_wavechan_array())->get_p_channel(ichan);
 			pChannel->am_gaintotal = 20000. / xtotal;
 		}
 
@@ -297,7 +297,7 @@ line 11-	0	141.144	0.0317383
 			i++;
 			AfxExtractSubString(csdummy2, csLine, i, ',');
 			csdummy2.Replace('"', ' ');
-			CWaveChan* pChannel = (pTo->get_wavechan_array())->Get_p_channel(ichan);
+			CWaveChan* pChannel = (pTo->get_wavechan_array())->get_p_channel(ichan);
 			pChannel->am_csComment = csdummy2;
 		}
 
@@ -456,7 +456,7 @@ BOOL DlgImportFiles::GetAcquisitionParameters(AcqDataDoc* pTo)
 	{
 		for (int i = 0; i < m_scan_count; i++)
 		{
-			CWaveChan* pChannel = (pTo->get_wavechan_array())->Get_p_channel(i);
+			CWaveChan* pChannel = (pTo->get_wavechan_array())->get_p_channel(i);
 			m_xinstgain = pChannel->am_gaintotal;
 			m_dspan[i] = 20000. / m_xinstgain; // span= 20 V max to min
 			m_dbinval[i] = m_dspan[i] / 65536.; // divide voltage span into 2exp16 bins

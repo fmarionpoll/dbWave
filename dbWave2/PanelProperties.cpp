@@ -201,7 +201,7 @@ void CPropertiesPanel::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup
 	{
 		auto p_prop = pGroup->GetSubItem(i);
 		const int i_column = p_prop->GetData();
-		p_db->GetRecordItemValue(i_column, &desc);
+		p_db->get_record_item_value(i_column, &desc);
 		p_prop->ResetOriginalValue();
 		switch (p_db->m_mainTableSet.m_desc[i_column].data_code_number)
 		{
@@ -282,7 +282,7 @@ void CPropertiesPanel::UpdateTableFromGroupProp(CMFCPropertyGridProperty* pGroup
 
 		const int icol = p_prop->GetData();
 		const auto prop_val = p_prop->GetValue();
-		auto pdesc = p_database->GetRecordItemDescriptor(icol);
+		auto pdesc = p_database->get_record_item_descriptor(icol);
 		if (pdesc == nullptr)
 			continue;
 
@@ -311,7 +311,7 @@ void CPropertiesPanel::UpdateTableFromGroupProp(CMFCPropertyGridProperty* pGroup
 		default:
 			break;
 		}
-		p_database->SetRecordItemValue(icol, pdesc);
+		p_database->set_record_item_value(icol, pdesc);
 	}
 }
 

@@ -158,8 +158,8 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 
 	for (int i = 0; i < p_WaveFormat->scan_count; i++, p_channels_list++, p_ADgain_list++, p_xgain_list++)
 	{
-		pWavechanArray->ChanArray_add();
-		auto* p_chan = pWavechanArray->Get_p_channel(i);
+		pWavechanArray->chan_array_add();
+		auto* p_chan = pWavechanArray->get_p_channel(i);
 		p_chan->am_adchannel = *p_channels_list;
 		p_chan->am_gainAD = *p_ADgain_list;
 
@@ -274,7 +274,7 @@ void CDataFileATLAB::load_channel_from_cyber(const int channel, char* pcyberchan
 	if (probe.CompareNoCase("none    ") == 0
 		|| (probe.CompareNoCase("0       ") == 0))
 		return;
-	const auto p_chan = m_pArray->Get_p_channel(channel);
+	const auto p_chan = m_pArray->get_p_channel(channel);
 	p_chan->am_csheadstage = probe;
 	p_chan->am_gainheadstage = pcyb->gainprobe;
 	p_chan->am_csamplifier = CString(_T("CyberAmp"));
@@ -324,7 +324,7 @@ CString CDataFileATLAB::get_cyber_a320_filter(const int ncode)
 
 void CDataFileATLAB::init_dummy_chans_info(const int chanlistindex) const
 {
-	auto* p_chan = m_pArray->Get_p_channel(chanlistindex);
+	auto* p_chan = m_pArray->get_p_channel(chanlistindex);
 	p_chan->am_csamplifier = CStringA("Unknown");
 	p_chan->am_csheadstage = p_chan->am_csamplifier;
 	p_chan->am_gainheadstage = 1;

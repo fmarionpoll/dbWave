@@ -135,7 +135,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 		array_get_time_date.wYear, array_get_time_date.ucMon, array_get_time_date.ucDay,
 		array_get_time_date.ucHour, array_get_time_date.ucMin, array_get_time_date.ucSec);
 	pWFormat->scan_count = 0;
-	p_array->ChanArray_removeAll();
+	p_array->chan_array_remove_all();
 	int adcChan = -1;
 
 	for (int cedChan = 1; cedChan < max_chan; cedChan++)
@@ -151,8 +151,8 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 		case CHANTYPE_Adc:
 			{
 				descriptor = "Adc data";
-				const int i = p_array->ChanArray_add();
-				const auto pChan = p_array->Get_p_channel(i);
+				const int i = p_array->chan_array_add();
+				const auto pChan = p_array->get_p_channel(i);
 				read_ChannelParameters(pChan, cedChan);
 				pWFormat->scan_count++;
 				pWFormat->sampling_rate_per_channel = static_cast<float>(1.0 / (static_cast<double>(pChan->am_CEDticksPerSample) * S64GetTimeBase(m_nFid)));
@@ -197,9 +197,9 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 	TagList* pTags = pBuf->GetpVTtags();
 	if (pTags != nullptr && pTags->GetNTags() > 0 && pWFormat->scan_count > 0)
 	{
-		for (int i = 0; i < p_array->ChanArray_getSize(); i++)
+		for (int i = 0; i < p_array->chan_array_get_size(); i++)
 		{
-			const auto pChan = p_array->Get_p_channel(i);
+			const auto pChan = p_array->get_p_channel(i);
 			if (m_ticksPerSample != pChan->am_CEDticksPerSample)
 				m_ticksPerSample = pChan->am_CEDticksPerSample;
 		}
@@ -287,7 +287,7 @@ CString CDataFileFromCEDSpike2::read_FileComment(int nInd) const
 
 long CDataFileFromCEDSpike2::ReadAdcData(long l_First, long nbPointsAllChannels, short* pBuffer, CWaveChanArray* pArray)
 {
-	const int scan_count = pArray->ChanArray_getSize();
+	const int scan_count = pArray->chan_array_get_size();
 	const long long ll_data_n_values = nbPointsAllChannels / scan_count / sizeof(short);
 	int n_values_read = -1;
 
@@ -295,7 +295,7 @@ long CDataFileFromCEDSpike2::ReadAdcData(long l_First, long nbPointsAllChannels,
 
 	for (int channel = 0; channel < scan_count; channel++)
 	{
-		CWaveChan* pChan = pArray->Get_p_channel(channel);
+		CWaveChan* pChan = pArray->get_p_channel(channel);
 		// TODO: create channel buffer
 		const size_t numberBytes = static_cast<int>(ll_data_n_values) * sizeof(short);
 		memset(pBuffer, 0, numberBytes);

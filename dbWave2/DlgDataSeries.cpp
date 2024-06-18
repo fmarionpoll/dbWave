@@ -48,7 +48,7 @@ BOOL DlgDataSeries::OnInitDialog()
 	chanmax = (m_pdbDoc->get_waveformat())->scan_count;
 	const auto pchan_array = m_pdbDoc->get_wavechan_array();
 	for (i = 0; i < chanmax; i++)
-		m_ordinates.AddString(pchan_array->Get_p_channel(i)->am_csComment);
+		m_ordinates.AddString(pchan_array->get_p_channel(i)->am_csComment);
 
 	// doc transferts allowed
 	chanmax = m_pdbDoc->get_transforms_count();

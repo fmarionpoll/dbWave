@@ -63,7 +63,7 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 			if (p_dbwave_doc->db_set_current_record_position(index_file))
 				p_dbwave_doc->open_current_spike_file();
 		}
-		p_spike_list = p_dbwave_doc->m_pSpk->get_spike_list_current();
+		p_spike_list = p_dbwave_doc->m_p_spk->get_spike_list_current();
 
 		// test presence of data
 		if (p_spike_list == nullptr || p_spike_list->get_spikes_count() == 0)
@@ -101,7 +101,7 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 		if (p_spike_list->get_spike_flag_array_count() > 0)
 		{
 			// loop over the array of flagged spikes
-			auto spike_sel = Spike_selected (index_file, p_dbwave_doc->m_pSpk->get_spike_list_current_index(), 0);
+			auto spike_sel = Spike_selected (index_file, p_dbwave_doc->m_p_spk->get_spike_list_current_index(), 0);
 			for (auto i = p_spike_list->get_spike_flag_array_count() - 1; i >= 0; i--)
 			{
 				spike_sel.spike_index = p_spike_list->get_spike_flag_array_at(i);
@@ -125,7 +125,7 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 	{
 		if(p_dbwave_doc->db_set_current_record_position(index_current_file))
 			p_dbwave_doc->open_current_spike_file();
-		p_spike_list = p_dbwave_doc->m_pSpk->get_spike_list_current();
+		p_spike_list = p_dbwave_doc->m_p_spk->get_spike_list_current();
 	}
 }
 
@@ -467,7 +467,7 @@ int ChartSpikeXY::hit_curve_in_doc(CPoint point)
 		{
 			if (p_dbwave_doc->db_set_current_record_position(file_index))
 				p_dbwave_doc->open_current_spike_file();
-			p_spike_list = p_dbwave_doc->m_pSpk->get_spike_list_current();
+			p_spike_list = p_dbwave_doc->m_p_spk->get_spike_list_current();
 		}
 
 		if (p_spike_list == nullptr || p_spike_list->get_spikes_count() == 0)
@@ -485,7 +485,7 @@ int ChartSpikeXY::hit_curve_in_doc(CPoint point)
 	{
 		if (p_dbwave_doc->db_set_current_record_position(current_file_index))
 			p_dbwave_doc->open_current_spike_file();
-		p_spike_list = p_dbwave_doc->m_pSpk->get_spike_list_current();
+		p_spike_list = p_dbwave_doc->m_p_spk->get_spike_list_current();
 	}
 
 	return result;

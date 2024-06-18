@@ -23,12 +23,12 @@ int CWaveBuf::create_buffer_with_n_channels(const int i)
 {
 	// no action if the number of data channels is right
 	if (m_waveFormat.scan_count == i
-		&& m_chanArray.ChanArray_getSize() == i)
+		&& m_chanArray.chan_array_get_size() == i)
 		return i;
 	const auto i_num_elements = m_waveFormat.buffersize / m_waveFormat.scan_count;
 	m_waveFormat.scan_count = static_cast<short>(i);
-	m_chanArray.ChanArray_setSize(i);
-	ASSERT(m_chanArray.ChanArray_getSize() == m_waveFormat.scan_count);
+	m_chanArray.chan_array_set_size(i);
+	ASSERT(m_chanArray.chan_array_get_size() == m_waveFormat.scan_count);
 	createWBuffer(i_num_elements, i);
 	return m_waveFormat.scan_count;
 }
@@ -574,22 +574,22 @@ BOOL CWaveBuf::GetWBVoltsperBin(const int ch_index, float* volts_per_bin, const 
 	auto correction = 1.0f;
 	GetWBcorrectionFactor(mode, &correction);
 
-	if (m_chanArray.Get_p_channel(ch_index)->am_resolutionV == 0)
+	if (m_chanArray.get_p_channel(ch_index)->am_resolutionV == 0)
 	{
-		if (m_chanArray.Get_p_channel(ch_index)->am_gaintotal == 0.)
+		if (m_chanArray.get_p_channel(ch_index)->am_gaintotal == 0.)
 		{
-			m_chanArray.Get_p_channel(ch_index)->am_gaintotal = m_chanArray.Get_p_channel(ch_index)->am_amplifiergain
-				* static_cast<float>(m_chanArray.Get_p_channel(ch_index)->am_gainpre)
-				* static_cast<float>(m_chanArray.Get_p_channel(ch_index)->am_gainpost)
-				* static_cast<float>(m_chanArray.Get_p_channel(ch_index)->am_gainheadstage)
-				* static_cast<float>(m_chanArray.Get_p_channel(ch_index)->am_gainAD);
+			m_chanArray.get_p_channel(ch_index)->am_gaintotal = m_chanArray.get_p_channel(ch_index)->am_amplifiergain
+				* static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_gainpre)
+				* static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_gainpost)
+				* static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_gainheadstage)
+				* static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_gainAD);
 		}
 
-		m_chanArray.Get_p_channel(ch_index)->am_resolutionV = m_waveFormat.fullscale_volts
-			/ static_cast<float>(m_chanArray.Get_p_channel(ch_index)->am_gaintotal)
+		m_chanArray.get_p_channel(ch_index)->am_resolutionV = m_waveFormat.fullscale_volts
+			/ static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_gaintotal)
 			/ static_cast<float>(m_waveFormat.binspan);
 	}
-	*volts_per_bin = static_cast<float>(m_chanArray.Get_p_channel(ch_index)->am_resolutionV / correction);
+	*volts_per_bin = static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_resolutionV / correction);
 	return true;
 }
 

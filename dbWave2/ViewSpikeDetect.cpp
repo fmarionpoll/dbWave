@@ -231,7 +231,7 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 		// file not found: create new object, and create file
 		auto* p_spike = new CSpikeDoc;
 		ASSERT(p_spike != NULL);
-		pdb_doc->m_pSpk = p_spike;
+		pdb_doc->m_p_spk = p_spike;
 		m_pSpkDoc = p_spike;
 		m_pSpkDoc->OnNewDocument();
 		m_pSpkDoc->clear_data();
@@ -240,7 +240,7 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 	}
 	else
 	{
-		m_pSpkDoc = pdb_doc->m_pSpk;
+		m_pSpkDoc = pdb_doc->m_p_spk;
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		m_pSpkDoc->SetPathName(pdb_doc->db_get_current_spk_file_name(), FALSE);
 	}
@@ -265,7 +265,7 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 				m_pSpkDoc->add_spk_list();
 				spike_list_current = m_pSpkDoc->get_spike_list_current();
 			}
-			spike_list_current->init_spike_list(pdb_doc->m_pDat, m_spk_detect_array_current.GetItem(i));
+			spike_list_current->init_spike_list(pdb_doc->m_p_dat, m_spk_detect_array_current.GetItem(i));
 		}
 		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(0);
 		ASSERT(m_pSpkList != nullptr);
@@ -344,7 +344,7 @@ BOOL ViewSpikeDetection::check_detection_settings()
 	}
 
 	// get infos from data file
-	const auto data_file = GetDocument()->m_pDat;
+	const auto data_file = GetDocument()->m_p_dat;
 	data_file->read_data_infos();
 	const auto wave_format = data_file->get_waveformat();
 
@@ -476,7 +476,7 @@ boolean ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 void ViewSpikeDetection::update_combos_detect_and_transforms()
 {
 	const auto db_document = GetDocument();
-	const auto p_data_file = db_document->m_pDat;
+	const auto p_data_file = db_document->m_p_dat;
 	const auto channel_array = p_data_file->get_wavechan_array();
 	const auto wave_format = p_data_file->get_waveformat();
 
@@ -487,7 +487,7 @@ void ViewSpikeDetection::update_combos_detect_and_transforms()
 	for (auto i = 0; i < channel_count; i++)
 	{
 		comment.Format(_T("%i: "), i);
-		comment += channel_array->Get_p_channel(i)->am_csComment;
+		comment += channel_array->get_p_channel(i)->am_csComment;
 		VERIFY(m_CBdetectChan.AddString(comment) != CB_ERR);
 	}
 
@@ -943,7 +943,7 @@ void ViewSpikeDetection::OnFormatSplitcurves()
 
 void ViewSpikeDetection::OnFormatAlldata()
 {
-	const auto l_last = GetDocument()->m_pDat->get_doc_channel_length();
+	const auto l_last = GetDocument()->m_p_dat->get_doc_channel_length();
 	m_chart_data_filtered.ResizeChannels(0, l_last);
 	m_chart_data_filtered.GetDataFromDoc(0, l_last);
 
@@ -989,7 +989,7 @@ void ViewSpikeDetection::update_detection_parameters()
 void ViewSpikeDetection::OnToolsDetectionparameters()
 {
 	DlgSpikeDetect dlg;
-	dlg.m_dbDoc = GetDocument()->m_pDat;
+	dlg.m_dbDoc = GetDocument()->m_p_dat;
 	dlg.m_iDetectParmsDlg = m_i_detect_parameters; // index spk detect parameters currently selected / array
 	dlg.m_pDetectSettingsArray = &m_spk_detect_array_current; // spike detection parameters array
 	dlg.mdPM = options_view_data;
@@ -1045,7 +1045,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 	m_pSpkDoc->SetModifiedFlag(TRUE);
 
 	const auto db_document = GetDocument();
-	const auto data_document = db_document->m_pDat;
+	const auto data_document = db_document->m_p_dat;
 	m_pSpkDoc->set_acq_filename(db_document->db_get_current_dat_file_name());
 	m_pSpkDoc->init_source_doc(data_document);
 
@@ -1054,7 +1054,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 	m_spike_index = -1;
 
 	// check if detection parameters are ok? prevent detection from a channel that does not exist
-	const auto p_dat = db_document->m_pDat;
+	const auto p_dat = db_document->m_p_dat;
 	if (p_dat == nullptr)
 		return;
 	const auto wave_format = p_dat->get_waveformat();
@@ -1097,7 +1097,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 			SPKDETECTPARM* pFC = m_spk_detect_array_current.GetItem(i);
 			ASSERT_VALID(pFC);
 			ASSERT(pFC != NULL);
-			m_pSpkList->init_spike_list(db_document->m_pDat, pFC);
+			m_pSpkList->init_spike_list(db_document->m_p_dat, pFC);
 		}
 		if ((m_spk_detect_array_current.GetItem(i))->detect_what == DETECT_SPIKES)
 		{
@@ -1152,7 +1152,7 @@ int ViewSpikeDetection::detect_stimulus_1(int channel_index)
 	const auto threshold = detect_parameters->detect_threshold_bin;
 	const auto detect_transform = detect_parameters->detect_transform; 
 	const auto source_channel = detect_parameters->detect_channel;
-	const auto data_document = GetDocument()->m_pDat;
+	const auto data_document = GetDocument()->m_p_dat;
 	const auto detect_transform_span = data_document->get_transformed_data_span(detect_transform); 
 
 	// detect mode: 0: ON/OFF (up/down); 1: OFF/ON (down/up); 2: ON/ON (up/up); 3: OFF/OFF (down, down);
@@ -1288,7 +1288,7 @@ int ViewSpikeDetection::detect_method_1(WORD channel_index)
 	const auto post_threshold = spike_detection_parameters->extract_n_points - pre_threshold;
 
 	// get parameters from document
-	const auto p_dat = GetDocument()->m_pDat;
+	const auto p_dat = GetDocument()->m_p_dat;
 	int n_channels = p_dat->get_scan_count();
 	const auto p_buf = p_dat->get_raw_data_buffer();
 	const auto span = p_dat->get_transformed_data_span(detect_transform);
@@ -1487,7 +1487,7 @@ void ViewSpikeDetection::OnBnClickedClearAll()
 	for (int i = 0; i < m_pSpkDoc->get_spike_list_size(); i++)
 	{
 		SpikeList* p_spk_list = m_pSpkDoc->set_spike_list_as_current(i);
-		p_spk_list->init_spike_list(GetDocument()->m_pDat, nullptr);
+		p_spk_list->init_spike_list(GetDocument()->m_p_dat, nullptr);
 	}
 	m_pSpkList = m_pSpkDoc->get_spike_list_current();
 	ASSERT(m_pSpkList != NULL);
@@ -1511,7 +1511,7 @@ void ViewSpikeDetection::OnClear()
 	m_chart_spike_shape.select_spike(spike_sel);
 
 	m_pSpkList = m_pSpkDoc->get_spike_list_current();
-	m_pSpkList->init_spike_list(GetDocument()->m_pDat, nullptr);
+	m_pSpkList->init_spike_list(GetDocument()->m_p_dat, nullptr);
 	highlight_spikes(FALSE);
 
 	if (m_pSpkList->get_detection_parameters()->detect_what == DETECT_STIMULUS)
@@ -1763,7 +1763,7 @@ void ViewSpikeDetection::OnToolsDataseries()
 	// init dialog data
 	DlgDataSeries dlg;
 	dlg.m_pChartDataWnd = &m_chart_data_filtered;
-	dlg.m_pdbDoc = GetDocument()->m_pDat;
+	dlg.m_pdbDoc = GetDocument()->m_p_dat;
 	dlg.m_listindex = 0;
 
 	// invoke dialog box
@@ -1832,7 +1832,7 @@ void ViewSpikeDetection::OnEditCopy()
 			rect_bound.right *= 32;
 			rect_bound.bottom *= 30;
 			const auto p_dc_ref = GetDC();
-			auto cs_title = _T("dbWave\0") + GetDocument()->m_pDat->GetTitle();
+			auto cs_title = _T("dbWave\0") + GetDocument()->m_p_dat->GetTitle();
 			cs_title += _T("\0\0");
 			const auto hm_dc = m_dc.CreateEnhanced(p_dc_ref, nullptr, &rect_bound, cs_title);
 			ASSERT(hm_dc != NULL);
@@ -2113,7 +2113,7 @@ CString ViewSpikeDetection::PrintGetFileInfos()
 	const CString rc(_T("\n")); 
 
 	// document's name, date and time
-	const auto p_data_file = GetDocument()->m_pDat;
+	const auto p_data_file = GetDocument()->m_p_dat;
 	const auto wave_format = p_data_file->get_waveformat();
 	if (options_view_data->bDocName || options_view_data->bAcqDateTime)
 	{
@@ -2218,8 +2218,8 @@ CString ViewSpikeDetection::PrintDataBars(CDC* p_dc, ChartData* pDataChartWnd, c
 			if (options_view_data->bChanSettings)
 			{
 				const auto source_channel = channel_item->GetSourceChan();
-				const auto wave_chan_array = GetDocument()->m_pDat->get_wavechan_array();
-				const auto p_chan = wave_chan_array->Get_p_channel(source_channel);
+				const auto wave_chan_array = GetDocument()->m_p_dat->get_wavechan_array();
+				const auto p_chan = wave_chan_array->get_p_channel(source_channel);
 				cs.Format(_T("headstage=%s  g=%li LP=%i  IN+=%s  IN-=%s"),
 					(LPCTSTR)p_chan->am_csheadstage, static_cast<long>(p_chan->am_gaintotal), p_chan->am_lowpass,
 					(LPCTSTR)p_chan->am_csInputpos, (LPCTSTR)p_chan->am_csInputneg);
@@ -2439,7 +2439,7 @@ int ViewSpikeDetection::PrintGetNPages()
 			if (len <= 0)
 			{
 				p_document->open_current_data_file();
-				len = p_document->m_pDat->get_doc_channel_length();
+				len = p_document->m_p_dat->get_doc_channel_length();
 				const auto len1 = GetDocument()->db_get_data_len() - 1;
 				ASSERT(len == len1);
 				p_document->db_set_data_len(len);
@@ -2950,7 +2950,7 @@ void ViewSpikeDetection::update_detection_settings(int iSelParms)
 		{
 			m_pSpkDoc->add_spk_list();
 			spike_list_current = m_pSpkDoc->get_spike_list_current();
-			spike_list_current->init_spike_list(GetDocument()->m_pDat, p_sd);
+			spike_list_current->init_spike_list(GetDocument()->m_p_dat, p_sd);
 		}
 		else
 			spike_list_current->set_detection_parameters(p_sd);
@@ -2977,7 +2977,7 @@ void ViewSpikeDetection::update_detection_controls()
 
 	// check that spike detection parameters are compatible with current data doc
 	auto detection_channel = detect_parameters->detect_channel;
-	const auto p_dat = GetDocument()->m_pDat;
+	const auto p_dat = GetDocument()->m_p_dat;
 	const int scan_count = p_dat->get_waveformat()->scan_count;
 	if (detection_channel >= scan_count)
 		detection_channel = 0;
@@ -3018,7 +3018,7 @@ void ViewSpikeDetection::OnToolsEditstimulus()
 	DlgEditStimArray dlg;
 	dlg.intervals = m_pSpkDoc->m_stimulus_intervals;
 	dlg.m_sampling_rate = m_samplingRate;
-	dlg.intervals_saved = GetDocument()->m_stimsaved;
+	dlg.intervals_saved = GetDocument()->m_stimulus_saved;
 	;
 	if (IDOK == dlg.DoModal())
 	{
@@ -3051,7 +3051,7 @@ void ViewSpikeDetection::OnEnChangeChanselected2()
 void ViewSpikeDetection::OnCbnSelchangeTransform2()
 {
 	const auto method = m_CBtransform2.GetCurSel(); 
-	const auto data_document = GetDocument()->m_pDat;
+	const auto data_document = GetDocument()->m_p_dat;
 
 	const auto detect_parameters = m_pSpkList->get_detection_parameters();
 	const auto doc_chan = detect_parameters->extract_channel;

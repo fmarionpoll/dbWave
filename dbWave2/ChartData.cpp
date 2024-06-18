@@ -78,9 +78,9 @@ int ChartData::AddChanlistItem(int ns, int mode)
 		const auto pwave_format = m_pDataFile->get_waveformat();
 		p_chan_list_item->SetDataBinFormat(pwave_format->binzero, pwave_format->binspan);
 		p_chan_list_item->SetDataVoltsFormat(voltsperb, pwave_format->fullscale_volts);
-		if (ns >= pchan_array->ChanArray_getSize())
+		if (ns >= pchan_array->chan_array_get_size())
 			ns = 0;
-		const auto pchan = pchan_array->Get_p_channel(ns);
+		const auto pchan = pchan_array->get_p_channel(ns);
 		p_chan_list_item->dl_comment = pchan->am_csComment; 
 		UpdateChanlistMaxSpan(); 
 		if (mode > 0) 
@@ -154,7 +154,7 @@ void ChartData::UpdateChanlistFromDoc()
 		const auto mode = p_ord->GetSourceMode();
 		p_ord->SetDocbufferSpan(m_pDataFile->get_transformed_data_span(mode));
 		const auto pchan_array = m_pDataFile->get_wavechan_array();
-		const auto pchan = pchan_array->Get_p_channel(ns);
+		const auto pchan = pchan_array->get_p_channel(ns);
 		p_chanlist_item->dl_comment = pchan->am_csComment;
 		if (mode > 0)
 			p_chanlist_item->dl_comment = 
@@ -203,7 +203,7 @@ int ChartData::SetChanlistSourceChan(int ichan, int acqchan)
 	const auto mode = p_ord->GetSourceMode();
 	// modify comment
 	const auto pchan_array = m_pDataFile->get_wavechan_array();
-	const auto pchan = pchan_array->Get_p_channel(acqchan);
+	const auto pchan = pchan_array->get_p_channel(acqchan);
 	p_chanlist_item->dl_comment = pchan->am_csComment;
 	if (mode > 0)
 		p_chanlist_item->dl_comment = (m_pDataFile->get_transform_name(mode)).Left(6) + _T(": ") + p_chanlist_item->
@@ -219,9 +219,9 @@ void ChartData::SetChanlistOrdinates(int ichan, int acqchan, int transform)
 	chanlist_item->SetOrdinatesSourceData(acqchan, transform);
 	// modify comment
 	const auto pchanArray = m_pDataFile->get_wavechan_array();
-	if (acqchan >= pchanArray->ChanArray_getSize())
+	if (acqchan >= pchanArray->chan_array_get_size())
 		acqchan = 0;
-	const auto pchan = pchanArray->Get_p_channel(acqchan);
+	const auto pchan = pchanArray->get_p_channel(acqchan);
 	chanlist_item->dl_comment = pchan->am_csComment;
 	if (transform > 0)
 		chanlist_item->dl_comment = (m_pDataFile->get_transform_name(transform)).Left(6) + _T(": ") + chanlist_item->
@@ -295,7 +295,7 @@ int ChartData::SetChanlistTransformMode(int ichan, int imode)
 
 	// modify comment
 	const auto pchan_array = m_pDataFile->get_wavechan_array();
-	const auto pchan = pchan_array->Get_p_channel(ns);
+	const auto pchan = pchan_array->get_p_channel(ns);
 	p_chanlist_item->dl_comment = pchan->am_csComment;
 	if (imode > 0)
 		p_chanlist_item->dl_comment = (m_pDataFile->get_transform_name(imode)).Left(8)

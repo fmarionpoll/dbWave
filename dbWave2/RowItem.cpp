@@ -167,7 +167,7 @@ float RowItem::get_zoom_y_shapes_mv() const
 void RowItem::select_individual_spike(int no_spike) const
 {
 	CdbWaveDoc* pDoc = chart_spike_shape->get_db_wave_doc();
-	Spike_selected spike_sel(pDoc->db_get_current_record_position(), pDoc->m_pSpk->get_spike_list_current_index(), no_spike);
+	Spike_selected spike_sel(pDoc->db_get_current_record_position(), pDoc->m_p_spk->get_spike_list_current_index(), no_spike);
 	if (chart_spike_shape != nullptr)
 		chart_spike_shape->select_spike(spike_sel);
 	return chart_spike_bar->select_spike(spike_sel);

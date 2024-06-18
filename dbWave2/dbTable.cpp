@@ -78,26 +78,26 @@ void CdbTable::set_attached_tables_names()
 
 }
 
-boolean CdbTable::create_relations_with_attached_tables(const CString& csTable)
+boolean CdbTable::create_relations_with_attached_tables(const CString& cs_table)
 {
 	// create relations
 	const long l_attr = dbRelationDontEnforce; //dbRelationUpdateCascade;
-	if (!create_relation_between_associated_table_and_1_column(csTable, CH_INSECT_ID, l_attr, &m_insect_set)) return FALSE;
-	if (!create_relation_between_associated_table_and_1_column(csTable, CH_SENSILLUM_ID, l_attr, &m_sensillum_set)) return FALSE;
-	if (!create_relation_between_associated_table_and_1_column(csTable, CH_OPERATOR_ID, l_attr, &m_operator_set)) return FALSE;
-	if (!create_relation_between_associated_table_and_1_column(csTable, CH_LOCATION_ID, l_attr, &m_locationSet)) return FALSE;
-	if (!create_relation_between_associated_table_and_1_column(csTable, CH_STRAIN_ID, l_attr, &m_strain_set)) return FALSE;
-	if (!create_relation_between_associated_table_and_1_column(csTable, CH_SEX_ID, l_attr, &m_sex_set)) return FALSE;
-	if (!create_relation_between_associated_table_and_1_column(csTable, CH_EXPT_ID, l_attr, &m_expt_set)) return FALSE;
+	if (!create_relation_between_associated_table_and_1_column(cs_table, CH_INSECT_ID, l_attr, &m_insect_set)) return FALSE;
+	if (!create_relation_between_associated_table_and_1_column(cs_table, CH_SENSILLUM_ID, l_attr, &m_sensillum_set)) return FALSE;
+	if (!create_relation_between_associated_table_and_1_column(cs_table, CH_OPERATOR_ID, l_attr, &m_operator_set)) return FALSE;
+	if (!create_relation_between_associated_table_and_1_column(cs_table, CH_LOCATION_ID, l_attr, &m_locationSet)) return FALSE;
+	if (!create_relation_between_associated_table_and_1_column(cs_table, CH_STRAIN_ID, l_attr, &m_strain_set)) return FALSE;
+	if (!create_relation_between_associated_table_and_1_column(cs_table, CH_SEX_ID, l_attr, &m_sex_set)) return FALSE;
+	if (!create_relation_between_associated_table_and_1_column(cs_table, CH_EXPT_ID, l_attr, &m_expt_set)) return FALSE;
 
-	if (!create_relation_between_associated_table_and_2_columns(csTable, CH_PATH_ID, CH_PATH2_ID)) return FALSE;
-	if (!create_relation_between_associated_table_and_2_columns(csTable, CH_STIM_ID, CH_STIM2_ID)) return FALSE;
-	if (!create_relation_between_associated_table_and_2_columns(csTable, CH_CONC_ID, CH_CONC2_ID)) return FALSE;
+	if (!create_relation_between_associated_table_and_2_columns(cs_table, CH_PATH_ID, CH_PATH2_ID)) return FALSE;
+	if (!create_relation_between_associated_table_and_2_columns(cs_table, CH_STIM_ID, CH_STIM2_ID)) return FALSE;
+	if (!create_relation_between_associated_table_and_2_columns(cs_table, CH_CONC_ID, CH_CONC2_ID)) return FALSE;
 
 	return true;
 }
 
-void CdbTable::Attach(CString* cs_data_file_name, CString* cs_spike_file_name)
+void CdbTable::attach(CString* cs_data_file_name, CString* cs_spike_file_name)
 {
 	m_current_data_filename = cs_data_file_name;
 	m_p_current_spike_filename = cs_spike_file_name;
@@ -105,10 +105,10 @@ void CdbTable::Attach(CString* cs_data_file_name, CString* cs_spike_file_name)
 
 CdbTable::~CdbTable()
 {
-	CloseDatabase();
+	close_database();
 }
 
-BOOL CdbTable::CreateMainTable(const CString& csTable)
+BOOL CdbTable::create_main_table(const CString& csTable)
 {
 	CDaoTableDef table_def(this);
 	table_def.Create(csTable);
@@ -248,12 +248,12 @@ BOOL CdbTable::create_relation_between_associated_table_and_1_column(const LPCTS
 	return TRUE;
 }
 
-CString CdbTable::GetDataBasePath()
+CString CdbTable::get_data_base_path()
 {
 	return m_database_path;
 }
 
-void CdbTable::SetDataBasePath()
+void CdbTable::set_data_base_path()
 {
 	const auto filename = GetName();
 	const auto last_slash = filename.ReverseFind('\\');
@@ -276,20 +276,20 @@ void CdbTable::create_associated_tables()
 	m_expt_set.CreateIndextable(_T("expt"), _T("expt"), _T("exptID"), 100, this);
 }
 
-void CdbTable::CreateAllTables()
+void CdbTable::create_all_tables()
 {
-	SetDataBasePath();
+	set_data_base_path();
 	create_associated_tables();
-	CreateMainTable(_T("table"));
+	create_main_table(_T("table"));
 
 	// store links to attached table addresses
 	for (auto column = 0; column < N_TABLE_COLUMNS; column++)
-		GetRecordItemDescriptor(column);
+		get_record_item_descriptor(column);
 }
 
-BOOL CdbTable::OpenTables()
+BOOL CdbTable::open_tables()
 {
-	SetDataBasePath();
+	set_data_base_path();
 
 	// check format of table set
 	CDaoRecordset record_set(this);
@@ -351,16 +351,16 @@ BOOL CdbTable::OpenTables()
 	// open tables
 	try
 	{
-		OpenAssociatedTable(&m_stim_set);
-		OpenAssociatedTable(&m_conc_set);
-		OpenAssociatedTable(&m_operator_set);
-		OpenAssociatedTable(&m_insect_set);
-		OpenAssociatedTable(&m_locationSet);
-		OpenAssociatedTable(&m_path_set);
-		OpenAssociatedTable(&m_sensillum_set);
-		OpenAssociatedTable(&m_sex_set);
-		OpenAssociatedTable(&m_strain_set);
-		OpenAssociatedTable(&m_expt_set);
+		open_associated_table(&m_stim_set);
+		open_associated_table(&m_conc_set);
+		open_associated_table(&m_operator_set);
+		open_associated_table(&m_insect_set);
+		open_associated_table(&m_locationSet);
+		open_associated_table(&m_path_set);
+		open_associated_table(&m_sensillum_set);
+		open_associated_table(&m_sex_set);
+		open_associated_table(&m_strain_set);
+		open_associated_table(&m_expt_set);
 	}
 	catch (CDaoException* e)
 	{
@@ -375,7 +375,7 @@ BOOL CdbTable::OpenTables()
 
 	// store links to attached table addresses
 	for (auto column = 0; column < N_TABLE_COLUMNS; column++)
-		GetRecordItemDescriptor(column);
+		get_record_item_descriptor(column);
 
 	return TRUE;
 }
@@ -477,13 +477,13 @@ void CdbTable::add_column_19_20(CDaoTableDef& table_def, const CString& cs_table
 	table_def.Close();
 }
 
-void CdbTable::OpenAssociatedTable(CdbTableAssociated* p_index_table_set)
+void CdbTable::open_associated_table(CdbTableAssociated* p_index_table_set)
 {
 	p_index_table_set->m_defaultName = GetName();
 	p_index_table_set->Open(dbOpenTable, nullptr, 0);
 }
 
-void CdbTable::CloseDatabase()
+void CdbTable::close_database()
 {
 	if (IsOpen())
 	{
@@ -507,7 +507,7 @@ void CdbTable::CloseDatabase()
 	}
 }
 
-void CdbTable::UpdateAllDatabaseTables()
+void CdbTable::update_all_database_tables()
 {
 	// For each table, call Update() if GetEditMode ()
 	//	= dbEditInProgress (Edit has been called)
@@ -699,13 +699,13 @@ void CdbTable::set_path_absolute()
 	}
 }
 
-void CdbTable::GetCurrentRecord_FileNames()
+void CdbTable::get_current_record_file_names()
 {
-	*m_current_data_filename = GetCurrentRecord_DataFileName();
-	*m_p_current_spike_filename = GetCurrentRecord_SpikeFileName();
+	*m_current_data_filename = get_current_record_data_file_name();
+	*m_p_current_spike_filename = get_current_record_spike_file_name();
 }
 
-CString CdbTable::GetCurrentRecord_DataFileName()
+CString CdbTable::get_current_record_data_file_name()
 {
 	CString filename;
 	filename.Empty();
@@ -716,7 +716,7 @@ CString CdbTable::GetCurrentRecord_DataFileName()
 	return filename;
 }
 
-CString CdbTable::GetCurrentRecord_SpikeFileName()
+CString CdbTable::get_current_record_spike_file_name()
 {
 	CString filename;
 	filename.Empty();
@@ -735,7 +735,7 @@ CString CdbTable::GetCurrentRecord_SpikeFileName()
 	return filename;
 }
 
-BOOL CdbTable::MoveToID(const long record_id)
+BOOL CdbTable::move_to_id(const long record_id)
 {
 	CString str;
 	str.Format(_T("ID=%li"), record_id);
@@ -749,15 +749,15 @@ BOOL CdbTable::MoveToID(const long record_id)
 		DisplayDaoException(e, 36);
 		e->Delete();
 	}
-	GetCurrentRecord_FileNames();
+	get_current_record_file_names();
 	return TRUE;
 }
 
-BOOL CdbTable::MoveTo(UINT nIDMoveCommand)
+BOOL CdbTable::move_to(UINT n_id_move_command)
 {
-	UpdateAllDatabaseTables();
+	update_all_database_tables();
 	auto flag = TRUE;
-	switch (nIDMoveCommand)
+	switch (n_id_move_command)
 	{
 	case ID_RECORD_PREV:
 		m_mainTableSet.MovePrev();
@@ -786,14 +786,14 @@ BOOL CdbTable::MoveTo(UINT nIDMoveCommand)
 		ASSERT(FALSE);
 		break;
 	}
-	GetCurrentRecord_FileNames();
+	get_current_record_file_names();
 	return flag;
 }
 
-BOOL CdbTable::SetIndexCurrentFile(long i_file)
+BOOL CdbTable::set_index_current_file(long i_file)
 {
 	// save any pending edit or add operation
-	UpdateAllDatabaseTables();
+	update_all_database_tables();
 	const int record_count = m_mainTableSet.GetRecordCount();
 	if (i_file < 0 || record_count < 1)
 		return FALSE;
@@ -805,7 +805,7 @@ BOOL CdbTable::SetIndexCurrentFile(long i_file)
 			i_file = record_count - 1;
 		if (i_file != m_mainTableSet.GetAbsolutePosition()) 
 			m_mainTableSet.SetAbsolutePosition(i_file);
-		GetCurrentRecord_FileNames();
+		get_current_record_file_names();
 	}
 	catch (CDaoException* e)
 	{
@@ -824,7 +824,7 @@ BOOL CdbTable::SetIndexCurrentFile(long i_file)
 // DB_ITEMDESC filled
 // flag = FALSE if the column is not found
 
-DB_ITEMDESC* CdbTable::GetRecordItemDescriptor(int column_index)
+DB_ITEMDESC* CdbTable::get_record_item_descriptor(int column_index)
 {
 	const auto p_desc = &m_mainTableSet.m_desc[column_index];
 	p_desc->index = column_index;
@@ -960,15 +960,15 @@ DB_ITEMDESC* CdbTable::GetRecordItemDescriptor(int column_index)
 	return p_desc;
 }
 
-DB_ITEMDESC* CdbTable::GetRecordItemValue(const int column_index)
+DB_ITEMDESC* CdbTable::get_record_item_value(const int column_index)
 {
 	const auto p_desc = &m_mainTableSet.m_desc[column_index];
 	p_desc->index = column_index;
-	GetRecordItemValue(column_index, p_desc);
+	get_record_item_value(column_index, p_desc);
 	return p_desc;
 }
 
-BOOL CdbTable::GetRecordItemValue(const int i_column, DB_ITEMDESC* dbItem_descriptor)
+BOOL CdbTable::get_record_item_value(const int i_column, DB_ITEMDESC* db_item_descriptor)
 {
 	auto flag = TRUE;
 	COleVariant var_value;
@@ -979,29 +979,29 @@ BOOL CdbTable::GetRecordItemValue(const int i_column, DB_ITEMDESC* dbItem_descri
 	{
 	case FIELD_IND_TEXT:
 	case FIELD_IND_FILEPATH:
-		dbItem_descriptor->lVal = var_value.lVal;
-		dbItem_descriptor->csVal = m_mainTableSet.m_desc[i_column].plinkedSet->GetStringFromID(var_value.lVal);
-		if (i_column == CH_EXPT_ID && dbItem_descriptor->csVal.IsEmpty())
+		db_item_descriptor->lVal = var_value.lVal;
+		db_item_descriptor->csVal = m_mainTableSet.m_desc[i_column].plinkedSet->GetStringFromID(var_value.lVal);
+		if (i_column == CH_EXPT_ID && db_item_descriptor->csVal.IsEmpty())
 		{
-			const auto cs = dbItem_descriptor->csVal = GetName();
+			const auto cs = db_item_descriptor->csVal = GetName();
 			const auto left = cs.ReverseFind(_T('\\'));
 			const auto right = cs.ReverseFind(_T('.'));
-			dbItem_descriptor->csVal = cs.Mid(left + 1, right - left - 1);
+			db_item_descriptor->csVal = cs.Mid(left + 1, right - left - 1);
 		}
 		break;
 	case FIELD_LONG:
-		dbItem_descriptor->lVal = var_value.lVal;
+		db_item_descriptor->lVal = var_value.lVal;
 		if (var_value.vt == VT_NULL)
-			dbItem_descriptor->lVal = 0;
+			db_item_descriptor->lVal = 0;
 		break;
 	case FIELD_TEXT:
 		m_mainTableSet.GetFieldValue(m_mainTableSet.m_desc[i_column].header_name, var_value);
-		dbItem_descriptor->csVal = V_BSTRT(&var_value);
+		db_item_descriptor->csVal = V_BSTRT(&var_value);
 		break;
 	case FIELD_DATE:
 	case FIELD_DATE_HMS:
 	case FIELD_DATE_YMD:
-		dbItem_descriptor->oVal = var_value.date;
+		db_item_descriptor->oVal = var_value.date;
 		break;
 	default:
 		flag = FALSE;
@@ -1011,7 +1011,7 @@ BOOL CdbTable::GetRecordItemValue(const int i_column, DB_ITEMDESC* dbItem_descri
 	return flag;
 }
 
-BOOL CdbTable::SetRecordItemValue(const int column_index, DB_ITEMDESC* dbItem_descriptor)
+BOOL CdbTable::set_record_item_value(const int column_index, DB_ITEMDESC* db_item_descriptor)
 {
 	auto flag = TRUE;
 	const int data_code_number = m_column_properties[column_index].format_code_number;
@@ -1019,7 +1019,7 @@ BOOL CdbTable::SetRecordItemValue(const int column_index, DB_ITEMDESC* dbItem_de
 	case FIELD_IND_TEXT:
 	case FIELD_IND_FILEPATH:
 	{
-		long dummy_id = m_mainTableSet.m_desc[column_index].plinkedSet->GetStringInLinkedTable(dbItem_descriptor->csVal);
+		long dummy_id = m_mainTableSet.m_desc[column_index].plinkedSet->GetStringInLinkedTable(db_item_descriptor->csVal);
 		if (dummy_id >= 0)
 		{
 			COleVariant var_value;
@@ -1029,18 +1029,18 @@ BOOL CdbTable::SetRecordItemValue(const int column_index, DB_ITEMDESC* dbItem_de
 	}
 	break;
 	case FIELD_LONG:
-		m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[column_index].header_name, dbItem_descriptor->lVal);
+		m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[column_index].header_name, db_item_descriptor->lVal);
 		break;
 	case FIELD_TEXT:
 	{
-		COleVariant var_value = dbItem_descriptor->csVal;
+		COleVariant var_value = db_item_descriptor->csVal;
 		m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[column_index].header_name, var_value);
 	}
 	break;
 	case FIELD_DATE:
 	case FIELD_DATE_HMS:
 	case FIELD_DATE_YMD:
-		m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[column_index].header_name, dbItem_descriptor->oVal);
+		m_mainTableSet.SetFieldValue(m_mainTableSet.m_desc[column_index].header_name, db_item_descriptor->oVal);
 		break;
 	default:
 		flag = FALSE;
@@ -1050,7 +1050,7 @@ BOOL CdbTable::SetRecordItemValue(const int column_index, DB_ITEMDESC* dbItem_de
 	return flag;
 }
 
-BOOL CdbTable::ImportRecordFromDatabase(CdbTable* p_external_dbTable)
+BOOL CdbTable::import_record_from_database(CdbTable* p_external_db_table)
 {
 	// variables
 	DB_ITEMDESC desc;
@@ -1061,14 +1061,14 @@ BOOL CdbTable::ImportRecordFromDatabase(CdbTable* p_external_dbTable)
 	// copy each field of the source database into current
 	for (auto i = 1; i < m_mainTableSet.m_nFields; i++)
 	{
-		p_external_dbTable->GetRecordItemValue(i, &desc);
-		SetRecordItemValue(i, &desc);
+		p_external_db_table->get_record_item_value(i, &desc);
+		set_record_item_value(i, &desc);
 	}
 	m_mainTableSet.Update();
 	return flag;
 }
 
-void CdbTable::TransferWaveFormatDataToRecord(const CWaveFormat* p_wave_format)
+void CdbTable::transfer_wave_format_data_to_record(const CWaveFormat* p_wave_format)
 {
 	// set time -- o_time
 	COleDateTime o_time;
@@ -1108,21 +1108,21 @@ void CdbTable::TransferWaveFormatDataToRecord(const CWaveFormat* p_wave_format)
 	m_mainTableSet.m_flag = p_wave_format->flag;
 }
 
-void CdbTable::DeleteUnusedEntriesInAccessoryTables()
+void CdbTable::delete_unused_entries_in_accessory_tables()
 {
-	DeleteUnusedEntriesInAttachedTable(&m_operator_set, CH_OPERATOR_ID, -1);
-	DeleteUnusedEntriesInAttachedTable(&m_insect_set, CH_INSECT_ID, -1);
-	DeleteUnusedEntriesInAttachedTable(&m_locationSet, CH_LOCATION_ID, -1);
-	DeleteUnusedEntriesInAttachedTable(&m_sensillum_set, CH_SENSILLUM_ID, -1);
-	DeleteUnusedEntriesInAttachedTable(&m_stim_set, CH_STIM_ID, CH_STIM2_ID);
-	DeleteUnusedEntriesInAttachedTable(&m_conc_set, CH_CONC_ID, CH_CONC2_ID);
-	DeleteUnusedEntriesInAttachedTable(&m_sex_set, CH_SEX_ID, -1);
-	DeleteUnusedEntriesInAttachedTable(&m_strain_set, CH_STRAIN_ID, -1);
-	DeleteUnusedEntriesInAttachedTable(&m_expt_set, CH_EXPT_ID, -1);
-	DeleteUnusedEntriesInAttachedTable(&m_path_set, CH_PATH_ID, CH_PATH2_ID);
+	delete_unused_entries_in_attached_table(&m_operator_set, CH_OPERATOR_ID, -1);
+	delete_unused_entries_in_attached_table(&m_insect_set, CH_INSECT_ID, -1);
+	delete_unused_entries_in_attached_table(&m_locationSet, CH_LOCATION_ID, -1);
+	delete_unused_entries_in_attached_table(&m_sensillum_set, CH_SENSILLUM_ID, -1);
+	delete_unused_entries_in_attached_table(&m_stim_set, CH_STIM_ID, CH_STIM2_ID);
+	delete_unused_entries_in_attached_table(&m_conc_set, CH_CONC_ID, CH_CONC2_ID);
+	delete_unused_entries_in_attached_table(&m_sex_set, CH_SEX_ID, -1);
+	delete_unused_entries_in_attached_table(&m_strain_set, CH_STRAIN_ID, -1);
+	delete_unused_entries_in_attached_table(&m_expt_set, CH_EXPT_ID, -1);
+	delete_unused_entries_in_attached_table(&m_path_set, CH_PATH_ID, CH_PATH2_ID);
 }
 
-void CdbTable::DeleteUnusedEntriesInAttachedTable(CdbTableAssociated* p_index_table, const int index_column1, const int index_column2)
+void CdbTable::delete_unused_entries_in_attached_table(CdbTableAssociated* p_index_table, const int index_column1, const int index_column2)
 {
 	if (p_index_table->IsBOF() && p_index_table->IsEOF())
 		return;
@@ -1145,7 +1145,7 @@ void CdbTable::DeleteUnusedEntriesInAttachedTable(CdbTableAssociated* p_index_ta
 	}
 }
 
-boolean CdbTable::IsRecordTimeUnique(const COleDateTime& data_acquisition_date)
+boolean CdbTable::is_record_time_unique(const COleDateTime& data_acquisition_date)
 {
 	boolean unique = true;
 
@@ -1177,17 +1177,17 @@ boolean CdbTable::IsRecordTimeUnique(const COleDateTime& data_acquisition_date)
 	return unique;
 }
 
-void CdbTable::CompactDataBase(const CString& file_name, const CString& file_name_new)
+void CdbTable::compact_data_base(const CString& file_name, const CString& file_name_new)
 {
 	// compact database and save new file
 	CDaoWorkspace::CompactDatabase(file_name, file_name_new, dbLangGeneral, 0);
 }
 
-boolean CdbTable::GetRecordValueString(int column_index, CString& output_string)
+boolean CdbTable::get_record_value_string(int column_index, CString& output_string)
 {
 	bool b_changed = false;
 	DB_ITEMDESC desc;
-	if (GetRecordItemValue(column_index, &desc))
+	if (get_record_item_value(column_index, &desc))
 	{
 		b_changed = (output_string.Compare(desc.csVal) != 0);
 		output_string = desc.csVal;
@@ -1195,10 +1195,10 @@ boolean CdbTable::GetRecordValueString(int column_index, CString& output_string)
 	return b_changed;
 }
 
-boolean CdbTable::GetRecordValueLong(int column_index, long& value)
+boolean CdbTable::get_record_value_long(int column_index, long& value)
 {
 	DB_ITEMDESC desc;
-	GetRecordItemValue(column_index, &desc);
+	get_record_item_value(column_index, &desc);
 	const boolean b_changed = value != desc.lVal;
 	value = desc.lVal;
 	return b_changed;

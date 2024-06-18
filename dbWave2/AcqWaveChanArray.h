@@ -15,14 +15,14 @@ public:
 	BOOL Read(CFile* datafile);
 
 	void Copy(const CWaveChanArray* arg);
-	CWaveChan* Get_p_channel(int i) const;
+	CWaveChan* get_p_channel(int i) const;
 
-	int ChanArray_add();
-	int ChanArray_add(CWaveChan* arg);
-	int ChanArray_setSize(int i);
-	void ChanArray_insertAt(int i);
-	void ChanArray_removeAt(int i);
-	void ChanArray_removeAll();
-	int ChanArray_getSize() const;
+	int chan_array_add();
+	int chan_array_add(CWaveChan* arg);
+	int chan_array_set_size(int i);
+	void chan_array_insert_at(int i);
+	void chan_array_remove_at(int i);
+	void chan_array_remove_all();
+	int chan_array_get_size() const;
 	void Serialize(CArchive& ar) override;
 };

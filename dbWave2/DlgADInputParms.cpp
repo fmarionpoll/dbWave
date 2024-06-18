@@ -567,7 +567,7 @@ void DlgADInputs::LoadGridWithWavechanData(int col)
 {
 	// select channel and load parameters CComboBox
 	ASSERT(col <= m_pchArray->ChanArray_getSize());
-	const auto p_chan = m_pchArray->Get_p_channel(col - 1);
+	const auto p_chan = m_pchArray->get_p_channel(col - 1);
 
 	// settings for the col
 	GV_ITEM item;
@@ -587,7 +587,7 @@ void DlgADInputs::SaveData()
 	if (m_nacqchans != m_pwFormat->scan_count)
 	{
 		m_pwFormat->scan_count = static_cast<short>(m_nacqchans);
-		m_pchArray->ChanArray_setSize(m_nacqchans);
+		m_pchArray->chan_array_set_size(m_nacqchans);
 		const WORD ch_buffer_size = m_pwFormat->buffersize / m_nacqchans;
 		m_pwFormat->buffersize = ch_buffer_size * m_nacqchans;
 	}
@@ -607,9 +607,9 @@ void DlgADInputs::SaveData()
 void DlgADInputs::SaveGridToWavechanData(int col)
 {
 	// select channel and load parameters CComboBox
-	if (m_pchArray->ChanArray_getSize() < col)
-		m_pchArray->ChanArray_setSize(col);
-	const auto p_chan = m_pchArray->Get_p_channel(col - 1);
+	if (m_pchArray->chan_array_get_size() < col)
+		m_pchArray->chan_array_set_size(col);
+	const auto p_chan = m_pchArray->get_p_channel(col - 1);
 
 	// AD channel comment
 	auto row = 1;
@@ -693,7 +693,7 @@ void DlgADInputs::SetAmplifierParms(int col)
 		return;
 
 	// transfer data into structure
-	const auto p_chan = m_pchArray->Get_p_channel(col - 1);
+	const auto p_chan = m_pchArray->get_p_channel(col - 1);
 
 	if (p_chan->am_csamplifier.Find(_T("CyberAmp")) >= 0
 		|| p_chan->am_csamplifier.Find(_T("Axon")) >= 0)

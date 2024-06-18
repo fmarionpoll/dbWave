@@ -440,7 +440,7 @@ DB_ITEMDESC* DlgdbEditRecord::GetItemDescriptors(int IDC)
 	if (ich >= 0) 
 	{
 		pdesc = &m_pSet->m_desc[ich];
-		p_db->GetRecordItemValue(ich, pdesc);
+		p_db->get_record_item_value(ich, pdesc);
 	}
 
 	return pdesc;

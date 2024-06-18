@@ -530,7 +530,7 @@ BOOL CMeasureResultsPage::MeasureParameters()
 			p_vd->bacqchcomment = FALSE; // acq channel indiv comment
 			p_vd->bacqchsetting = FALSE; // acq chan indiv settings (gain, filter, etc)
 			auto cs = cs_out;
-			cs += m_pdbDoc->m_pDat->get_data_file_infos(p_vd);
+			cs += m_pdbDoc->m_p_dat->get_data_file_infos(p_vd);
 			p_copy += wsprintf(p_copy, _T("%s\r\n"), static_cast<LPCTSTR>(cs));
 
 			// output title for this data set

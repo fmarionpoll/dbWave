@@ -939,7 +939,7 @@ void ViewSpikeSort::select_spike_from_current_list(const int spike_index)
 {
 	CdbWaveDoc* pDoc = m_chart_spike_shapes.get_db_wave_doc();
 	Spike_selected spike_sel(pDoc->db_get_current_record_position(),
-		pDoc->m_pSpk->get_spike_list_current_index(),
+		pDoc->m_p_spk->get_spike_list_current_index(),
 		spike_index);
 	m_chart_spike_shapes.select_spike(spike_sel);
 	m_chart_spike_bars.select_spike(spike_sel);
@@ -1083,7 +1083,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	}
 
 	// get parameters from document
-	const auto p_dat_doc = GetDocument()->m_pDat;
+	const auto p_dat_doc = GetDocument()->m_p_dat;
 	p_dat_doc->OnOpenDocument(data_file_name);
 	const auto doc_chan = m_pSpkList->get_detection_parameters()->extract_channel; 
 	const auto number_channels = static_cast<int>(p_dat_doc->get_waveformat()->scan_count); 

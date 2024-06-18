@@ -379,12 +379,12 @@ void ViewData::OnEditCopy()
 	}
 }
 
-void ViewData::OnUpdateEditCopy(CCmdUI* pCmdUI)
+void ViewData::OnUpdateEditCopy(CCmdUI* pCmdUI) const
 {
 	pCmdUI->Enable(m_ChartDataWnd.IsDefined() != NULL); // if document has data
 }
 
-void ViewData::ADC_OnHardwareChannelsDlg()
+void ViewData::ADC_OnHardwareChannelsDlg() const
 {
 	DlgADInputs dlg;
 	dlg.m_pwFormat = m_pdatDoc->get_waveformat();
@@ -396,7 +396,7 @@ void ViewData::ADC_OnHardwareChannelsDlg()
 	}
 }
 
-void ViewData::ADC_OnHardwareIntervalsDlg()
+void ViewData::ADC_OnHardwareIntervalsDlg() const
 {
 	DlgADIntervals dlg;
 	dlg.m_p_wave_format = m_pdatDoc->get_waveformat();
@@ -451,7 +451,7 @@ void ViewData::UpdateFileParameters(BOOL bUpdateInterface)
 		m_bvalidDoc = FALSE;
 		return;
 	}
-	m_pdatDoc = dbwave_doc->m_pDat;
+	m_pdatDoc = dbwave_doc->m_p_dat;
 	m_pdatDoc->read_data_infos();
 	const auto wave_format = m_pdatDoc->get_waveformat();
 
@@ -1385,7 +1385,7 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 				CString cs;
 				const WORD channb = m_ChartDataWnd.GetChanlistItem(ichan)->GetSourceChan();
 				const auto pchanArray = m_pdatDoc->get_wavechan_array();
-				const auto pChan = pchanArray->Get_p_channel(channb);
+				const auto pChan = pchanArray->get_p_channel(channb);
 				cs.Format(_T("headstage=%s gain=%.0f  filter= %s - %i Hz"), (LPCTSTR)pChan->am_csheadstage,
 				          pChan->am_gaintotal, (LPCTSTR)pChan->am_csInputpos, pChan->am_lowpass);
 				str_comment += cs;

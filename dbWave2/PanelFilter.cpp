@@ -248,7 +248,7 @@ void CFilterPanel::InitFilterList()
 	while (m_noCol[i] > 0)
 	{
 		const auto icol = m_noCol[i];
-		const auto pdesc = p_db->GetRecordItemDescriptor(icol);
+		const auto pdesc = p_db->get_record_item_descriptor(icol);
 		m_htreeitem[i] = m_wndFilterView.InsertItem(CdbTable::m_column_properties[icol].description, TVI_ROOT); //hRoot);
 		//m_htreeitem[i] = m_wndFilterView.InsertItem(p_db->m_column_properties[icol].descriptor, TVI_ROOT); //hRoot);
 		m_wndFilterView.SetItemData(m_htreeitem[i], m_noCol[i]); // save table index into head of the list
@@ -521,7 +521,7 @@ void CFilterPanel::OnApplyFilter()
 		i++;
 
 		const int icol = m_wndFilterView.GetItemData(h_parent);
-		auto pdesc = p_db->GetRecordItemDescriptor(icol);
+		auto pdesc = p_db->get_record_item_descriptor(icol);
 		//if root is checked (or unchecked), it means no item is selected - remove flag
 		const auto state_root = m_wndFilterView.GetCheck(h_parent);
 		if ((state_root == TVCS_CHECKED) || (state_root == TVCS_UNCHECKED))

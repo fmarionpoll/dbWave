@@ -31,11 +31,11 @@ protected:
 	void LoadChanParameters(int chan);
 	void SaveChanParameters(int chan);
 	void DisplayDetectFromChan();
-	void SetDlgInterfaceState(int detectWhat);
-	void UpdateSourceView();
+	void SetDlgInterfaceState(int detectWhat) const;
+	void UpdateSourceView() const;
 	void ExchangeParms(int isource, int idest);
 	void SetTabComment(int i, CString& cs);
-	void UpdateTabShiftButtons();
+	void UpdateTabShiftButtons() const;
 
 	BOOL OnInitDialog() override;
 	void OnOK() override;
@@ -49,11 +49,11 @@ public:
 	afx_msg void OnBnClickedStimradio();
 	afx_msg void OnBnClickedAddparambttn();
 	afx_msg void OnBnClickedDelparambttn();
-	afx_msg void OnEnChangeDetectthreshold();
-	afx_msg void OnCbnSelchangeDetectchan();
-	afx_msg void OnCbnSelchangeDetecttransform();
+	afx_msg void OnEnChangeDetectthreshold() const;
+	afx_msg void OnCbnSelchangeDetectchan() const;
+	afx_msg void OnCbnSelchangeDetecttransform() const;
 	afx_msg void OnDeltaposSpin1(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnCbnSelchangeExtractchan();
+	afx_msg void OnCbnSelchangeExtractchan() const;
 	afx_msg void OnEnChangeComment();
 	afx_msg void OnBnClickedShiftright();
 	afx_msg void OnBnClickedShiftleft();

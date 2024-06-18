@@ -311,7 +311,7 @@ void ViewSpikeTemplates::selectSpike(short spikeno)
 {
 	CdbWaveDoc* pDoc = m_ChartSpkWnd_Shape.get_db_wave_doc();
 	Spike_selected spike_sel(pDoc->db_get_current_record_position(),
-		pDoc->m_pSpk->get_spike_list_current_index(),
+		pDoc->m_p_spk->get_spike_list_current_index(),
 		spikeno);
 	m_ChartSpkWnd_Shape.select_spike(spike_sel);
 	m_spikeno = spikeno;
@@ -747,7 +747,7 @@ void ViewSpikeTemplates::OnBuildTemplates()
 		{
 			p_dbwave_doc->db_set_current_record_position(ifile);
 			p_dbwave_doc->open_current_spike_file();
-			m_pSpkDoc = p_dbwave_doc->m_pSpk;
+			m_pSpkDoc = p_dbwave_doc->m_p_spk;
 			CString cs;
 			cs.Format(_T("%i/%i - "), ifile, lastfile);
 			cs += p_dbwave_doc->db_get_current_spk_file_name(FALSE);

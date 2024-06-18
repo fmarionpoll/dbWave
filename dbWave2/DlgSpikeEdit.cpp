@@ -56,8 +56,8 @@ void DlgSpikeEdit::LoadSpikeParms()
 BOOL DlgSpikeEdit::OnInitDialog()
 {
 	CDialog::OnInitDialog(); 
-	m_pAcqDatDoc = m_pdbWaveDoc->m_pDat;
-	m_pSpkList = m_pdbWaveDoc->m_pSpk->get_spike_list_current();
+	m_pAcqDatDoc = m_pdbWaveDoc->m_p_dat;
+	m_pSpkList = m_pdbWaveDoc->m_p_spk->get_spike_list_current();
 	if (m_pSpkList == nullptr || m_pSpkList->get_spikes_count() == 0)
 	{
 		EndDialog(FALSE); 
@@ -295,7 +295,7 @@ void DlgSpikeEdit::LoadSpikeFromData(int shift)
 		const auto spike_first = m_iitime - m_spkpretrig;
 
 		auto lp_source = m_pAcqDatDoc->get_transformed_data_buffer();
-		const auto delta = spike_first - m_pAcqDatDoc->get_tBUFfirst();
+		const auto delta = spike_first - m_pAcqDatDoc->get_t_buffer_first();
 		lp_source += delta;
 		pSpike->transfer_data_to_spike_buffer(lp_source, 1, m_spklen);
 		short max, min;

@@ -606,7 +606,7 @@ void ChartSpikeHist::BuildHistFromDocument(CdbWaveDoc* p_doc, const BOOL b_all_f
 			p_doc->db_set_current_record_position(i_file);
 			p_doc->open_current_spike_file();
 		}
-		SpikeList* p_spikelist = p_doc->m_pSpk->get_spike_list_current();
+		SpikeList* p_spikelist = p_doc->m_p_spk->get_spike_list_current();
 		if (p_spikelist != nullptr && p_spikelist->get_spikes_count() > 0)
 			buildHistFromSpikeList(p_spikelist, l_first, l_last, max, min, n_bins, bNew);
 	}
