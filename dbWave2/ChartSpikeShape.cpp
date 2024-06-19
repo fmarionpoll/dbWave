@@ -203,7 +203,7 @@ void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
 	const auto old_pen = p_dc->SelectObject(&new_pen);
 
 	// loop through all flagged spikes
-	auto spike_sel = Spike_selected(p_dbwave_doc->db_get_current_record_position(),
+	auto spike_sel = dbSpike(p_dbwave_doc->db_get_current_record_position(),
 		p_dbwave_doc->m_p_spk->get_spike_list_current_index(),
 		0);
 	for (auto i = p_spike_list->get_spike_flag_array_count() - 1; i >= 0; i--)
@@ -249,7 +249,7 @@ int ChartSpikeShape::display_ex_data(short* p_data, const int color)
 	return color;
 }
 
-void ChartSpikeShape::select_spike(const Spike_selected & spike_sel)
+void ChartSpikeShape::select_spike(const dbSpike & spike_sel)
 {
 	spike_selected_ = spike_sel;
 	if (spike_sel.spike_index >= 0) 
@@ -271,7 +271,7 @@ void ChartSpikeShape::draw_spike(const Spike * spike)
 	Invalidate();
 }
 
-void ChartSpikeShape::draw_spike_on_dc(const Spike * spike, CDC * p_dc)
+void ChartSpikeShape::draw_spike_on_dc(const Spike* spike, CDC * p_dc)
 {
 	const auto n_saved_dc = p_dc->SaveDC();
 	auto rect = m_displayRect;

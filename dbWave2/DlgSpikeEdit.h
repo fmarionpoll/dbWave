@@ -48,7 +48,7 @@ protected:
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
-	void LoadSpikeParms();
+	void load_spike_parameters();
 	void LoadSourceViewData();
 	void LoadSpikeFromData(int shift);
 	void UpdateSpikeScroll();

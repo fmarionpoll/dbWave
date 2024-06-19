@@ -6,7 +6,7 @@
 #include "Spikedoc.h"
 #include "AcqDataDoc.h"
 #include "dbWave_structures.h"
-#include "Spike_selected.h"
+#include "dbSpike.h"
 
 struct sourceData
 {
@@ -63,7 +63,7 @@ public:
 	void	close_current_data_file() const;
 	CSpikeDoc* open_current_spike_file();
 	CSpikeDoc* get_current_spike_file() const { return m_p_spk; }
-	Spike* get_spike(const Spike_selected& spike_selected);
+	Spike* get_spike(const dbSpike& spike_coords);
 
 	void	remove_duplicate_files();
 	void	remove_missing_files() const;

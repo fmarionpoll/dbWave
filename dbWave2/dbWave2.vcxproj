@@ -1390,7 +1390,7 @@
     <ClInclude Include="SCOPECHANNEL.h" />
     <ClInclude Include="SCOPESTRUCT.h" />
     <ClInclude Include="SpikeClassDescriptor.h" />
-    <ClInclude Include="Spike_selected.h" />
+    <ClInclude Include="dbSpike.h" />
     <ClInclude Include="SPKCLASSIF.h" />
     <ClInclude Include="SPKDETECTARRAY.h" />
     <ClInclude Include="SPKDETECTPARM.h" />

@@ -419,18 +419,17 @@ CSpikeDoc* CdbWaveDoc::open_current_spike_file()
 	return m_p_spk;
 }
 
-Spike* CdbWaveDoc::get_spike(const Spike_selected& spike_selected)
+Spike* CdbWaveDoc::get_spike(const dbSpike& spike_coords)
 {
-	if (spike_selected.spike_index < 0)
+	if (spike_coords.spike_index < 0)
 		return nullptr;
-
-	const long current_position = db_get_current_record_position();
-	const boolean flag_different_file = spike_selected.database_position != current_position;
-	if (flag_different_file && db_set_current_record_position(spike_selected.database_position))
-		open_current_spike_file();
-
-	SpikeList* p_spike_list = m_p_spk->get_spike_list_at(spike_selected.spike_list_index);
-	return p_spike_list->get_spike(spike_selected.spike_index);
+	TRACE("get_spike from position:%i spike_list %i - spike index %i\n", spike_coords.database_position, spike_coords.spike_list_index, spike_coords.spike_index);
+	if (spike_coords.database_position != db_get_current_record_position()) {
+		if (db_set_current_record_position(spike_coords.database_position))
+			open_current_spike_file();
+	}
+	SpikeList* p_spike_list = m_p_spk->get_spike_list_at(spike_coords.spike_list_index);
+	return p_spike_list->get_spike(spike_coords.spike_index);
 }
 
 void CdbWaveDoc::get_max_min_of_all_spikes(const BOOL b_all_files, const BOOL b_recalculate, short* max, short* min)

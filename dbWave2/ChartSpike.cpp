@@ -76,7 +76,7 @@ void ChartSpike::sub_item_create(CWnd* parentWnd, const CRect& rect, int i_id, i
 	SetCursorMaxOnDblClick(m_cursorIndexMax);
 }
 
-boolean ChartSpike::is_spike_within_range(const Spike_selected& spike_selected) const
+boolean ChartSpike::is_spike_within_range(const dbSpike& spike_selected) const
 {
 	if (m_range_mode == RANGE_INDEX
 		&& (spike_selected.spike_index > m_index_last_spike || spike_selected.spike_index < m_index_first_spike))

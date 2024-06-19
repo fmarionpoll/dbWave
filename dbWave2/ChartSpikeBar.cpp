@@ -538,7 +538,7 @@ void ChartSpikeBar::highlight_spike(const Spike* spike)
 	dc.SetROP2(old_rop2);
 }
 
-void ChartSpikeBar::select_spike(const Spike_selected& new_spike_selected)
+void ChartSpikeBar::select_spike(const dbSpike& new_spike_selected)
 {
 	if (spike_selected_.spike_index >= 0) {
 		const Spike* spike = p_dbwave_doc->get_spike(spike_selected_);

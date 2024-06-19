@@ -4,7 +4,7 @@
 #include "ChartWnd.h"
 #include "dbWaveDoc.h"
 #include "Spikedoc.h"
-#include "Spike_selected.h"
+#include "dbSpike.h"
 #include "Spikelist.h"
 
 
@@ -21,7 +21,7 @@ protected:
 	int m_index_first_spike = 0;			// index first spike
 	int m_index_last_spike = 0;				// index last spike
 	int m_current_class = 0;				// current class in case of displaying classes
-	Spike_selected spike_selected_;
+	dbSpike spike_selected_;
 	int m_selected_pen{};
 	int m_hit_spike = -1;					// no of spike selected
 	int m_selected_class{};					// index class selected
@@ -39,8 +39,8 @@ public:
 	CSpikeDoc* get_spike_doc() const { return p_spike_doc; }
 	CdbWaveDoc* get_db_wave_doc() const { return p_dbwave_doc; }
 
-	Spike_selected* get_selected_spike() { return &spike_selected_; }
-	boolean is_spike_within_range(const Spike_selected& spike_selected) const;
+	dbSpike* get_selected_spike() { return &spike_selected_; }
+	boolean is_spike_within_range(const dbSpike& spike_selected) const;
 
 	void set_range_mode(int mode) { m_range_mode = mode; }
 	int get_range_mode() const { return m_range_mode; }

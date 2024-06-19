@@ -101,7 +101,7 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 		if (p_spike_list->get_spike_flag_array_count() > 0)
 		{
 			// loop over the array of flagged spikes
-			auto spike_sel = Spike_selected (index_file, p_dbwave_doc->m_p_spk->get_spike_list_current_index(), 0);
+			auto spike_sel = dbSpike (index_file, p_dbwave_doc->m_p_spk->get_spike_list_current_index(), 0);
 			for (auto i = p_spike_list->get_spike_flag_array_count() - 1; i >= 0; i--)
 			{
 				spike_sel.spike_index = p_spike_list->get_spike_flag_array_at(i);
@@ -294,7 +294,7 @@ void ChartSpikeXY::move_vt_tag(const int index, const int new_value)
 	m_VTtags.set_tag_val(index, new_value);
 }
 
-void ChartSpikeXY::select_spike(const Spike_selected& new_spike_selected)
+void ChartSpikeXY::select_spike(const dbSpike& new_spike_selected)
 {
 	if (spike_selected_.spike_index >= 0) {
 		const Spike* spike = p_dbwave_doc->get_spike(spike_selected_);

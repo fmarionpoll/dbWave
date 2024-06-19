@@ -938,7 +938,7 @@ void ViewSpikeSort::OnFormatGainadjust()
 void ViewSpikeSort::select_spike_from_current_list(const int spike_index)
 {
 	CdbWaveDoc* pDoc = m_chart_spike_shapes.get_db_wave_doc();
-	Spike_selected spike_sel(pDoc->db_get_current_record_position(),
+	dbSpike spike_sel(pDoc->db_get_current_record_position(),
 		pDoc->m_p_spk->get_spike_list_current_index(),
 		spike_index);
 	m_chart_spike_shapes.select_spike(spike_sel);

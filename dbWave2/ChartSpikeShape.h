@@ -40,7 +40,7 @@ public:
 
 	// non-inline functions
 	void move_vt_track(int i_track, int new_value);
-	void select_spike(const Spike_selected& spike_sel);
+	void select_spike(const dbSpike& spike_sel);
 	int display_ex_data(short* p_data, int color = 9);
 	void display_flagged_spikes(BOOL bHighLight);
 

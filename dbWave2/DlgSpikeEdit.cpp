@@ -40,13 +40,12 @@ BEGIN_MESSAGE_MAP(DlgSpikeEdit, CDialog)
 END_MESSAGE_MAP()
 
 
-void DlgSpikeEdit::LoadSpikeParms()
+void DlgSpikeEdit::load_spike_parameters()
 {
 	const Spike* spike = m_pSpkList->get_spike(m_spike_index); 
 	m_spikeclass = spike->get_class_id(); 
 	m_bartefact = (m_spikeclass < 0);
 	m_iitime = spike->get_time();
-
 	m_SpkChartWnd.draw_spike(spike);
 
 	LoadSourceViewData();
@@ -137,7 +136,7 @@ BOOL DlgSpikeEdit::OnInitDialog()
 	m_yvextent = m_yextent; // ordinates extent
 
 	// display data and init parameters
-	LoadSpikeParms(); // load textual parms and displ source
+	load_spike_parameters(); // load textual parms and displ source
 	m_iitimeold = m_iitime;
 	m_bchanged = FALSE; // no modif yet to spikes
 
@@ -173,7 +172,7 @@ void DlgSpikeEdit::OnEnChangespike_index()
 
 		if (m_spike_index != spike_index) 
 		{
-			LoadSpikeParms();
+			load_spike_parameters();
 			m_iitimeold = m_iitime;
 			UpdateSpikeScroll();
 		}
@@ -399,6 +398,6 @@ void DlgSpikeEdit::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	spike->set_spike_length(m_pSpkList->get_spike_length());
 	spike->offset_spike_data(static_cast<short>(shift));
 
-	LoadSpikeParms();
+	load_spike_parameters();
 	m_bchanged = TRUE;
 }

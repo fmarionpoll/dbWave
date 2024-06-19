@@ -21,7 +21,7 @@ protected:
 public:
 	int get_hit_spike() const { return m_hit_spike; }
 
-	void select_spike(const Spike_selected& spike_selected);
+	void select_spike(const dbSpike& spike_selected);
 	void display_spike(const Spike* spike);
 	void highlight_spike(const Spike* spike);
 

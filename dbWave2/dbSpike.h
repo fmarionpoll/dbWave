@@ -1,19 +1,19 @@
 #pragma once
-class Spike_selected
+class dbSpike
 {
 public:
 	int database_position = -1;
 	int spike_list_index = -1;
 	int spike_index = -1;
 
-	Spike_selected()
+	dbSpike()
 	{
 		database_position = -1;
 		spike_list_index = -1;
 		spike_index = -1;
 	}
 
-	Spike_selected(const int index_spk_file, const int index_spk_list, const int index_spike)
+	dbSpike(const int index_spk_file, const int index_spk_list, const int index_spike)
 	{
 		database_position = index_spk_file;
 		spike_list_index = index_spk_list;
@@ -27,7 +27,7 @@ public:
 		spike_index = -1;
 	}
 
-	Spike_selected& operator =(const Spike_selected& arg)
+	dbSpike& operator =(const dbSpike& arg)
 	{
 		if (this != &arg)
 		{
