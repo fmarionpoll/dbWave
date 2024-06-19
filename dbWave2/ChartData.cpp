@@ -879,7 +879,7 @@ void ChartData::PlotDataToDC(CDC* p_dc)
 		p_dc->MoveTo(m_PolyPoints[0]);
 		p_dc->Polyline(&m_PolyPoints[0], nelements);
 
-		if (m_HZtags.GetNTags() > 0)
+		if (m_HZtags.get_tag_list_size() > 0)
 			display_hz_tags_for_channel(p_dc, ichan, chanlist_item);
 
 		highlight_data(p_dc, ichan);
@@ -889,7 +889,7 @@ void ChartData::PlotDataToDC(CDC* p_dc)
 	p_dc->SelectObject(poldpen);
 	p_dc->RestoreDC(n_saved_dc);
 
-	if (m_VTtags.GetNTags() > 0)
+	if (m_VTtags.get_tag_list_size() > 0)
 		display_vt_tags_long_value(p_dc);
 
 	// temp tag
@@ -912,11 +912,11 @@ void ChartData::display_hz_tags_for_channel(CDC* p_dc, int ichan, const CChanlis
 	const auto wext = pChan->GetYextent();
 	const auto worg = pChan->GetYzero();
 	const auto yVE = m_displayRect.Height();
-	for (auto i = m_HZtags.GetNTags() - 1; i >= 0; i--)
+	for (auto i = m_HZtags.get_tag_list_size() - 1; i >= 0; i--)
 	{
-		if (m_HZtags.GetChannel(i) != ichan)
+		if (m_HZtags.get_channel(i) != ichan)
 			continue;
-		auto k = m_HZtags.GetValue(i);
+		auto k = m_HZtags.get_value(i);
 		k = MulDiv(static_cast<short>(k) - worg, yVE, wext);
 		p_dc->MoveTo(m_displayRect.left, k);
 		p_dc->LineTo(m_displayRect.right, k);
@@ -931,10 +931,10 @@ void ChartData::display_vt_tags_long_value(CDC* p_dc)
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
 	const int y1 = m_displayRect.bottom;
 
-	for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
+	for (auto j = m_VTtags.get_tag_list_size() - 1; j >= 0; j--)
 	{
 		constexpr auto y0 = 0;
-		const auto lk = m_VTtags.GetTagLVal(j);
+		const auto lk = m_VTtags.get_tag_l_val(j);
 		if (lk < m_lxFirst || lk > m_lxLast)
 			continue;
 		const auto k = MulDiv(lk - m_lxFirst, m_displayRect.Width(), m_lxLast - m_lxFirst + 1);
@@ -1050,7 +1050,7 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 		}
 
 		//display associated cursors ------------------------------------------
-		if (m_HZtags.GetNTags() > 0) // print HZ cursors if any?
+		if (m_HZtags.get_tag_list_size() > 0) // print HZ cursors if any?
 		{
 			// select pen and display mode
 			CPen ltgrey_pen(PS_SOLID, 0, m_colorTable[SILVER_COLOR]);
@@ -1058,11 +1058,11 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 			// iterate through HZ cursor list
 			const int x0 = pRect->left;
 			const int x1 = pRect->right;
-			for (auto j = m_HZtags.GetNTags() - 1; j >= 0; j--)
+			for (auto j = m_HZtags.get_tag_list_size() - 1; j >= 0; j--)
 			{
-				if (m_HZtags.GetChannel(j) != ichan) // next tag if not associated with
+				if (m_HZtags.get_channel(j) != ichan) // next tag if not associated with
 					continue; // current channel
-				auto k = m_HZtags.GetValue(j);
+				auto k = m_HZtags.get_value(j);
 				k = MulDiv(k - yzero, yVE, yextent) + yVO;
 				p_dc->MoveTo(x0, k); // set initial pt
 				p_dc->LineTo(x1, k); // HZ line
@@ -1074,7 +1074,7 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 	}
 
 	// display vertical cursors ------------------------------------------------
-	if (m_VTtags.GetNTags() > 0)
+	if (m_VTtags.get_tag_list_size() > 0)
 	{
 		// select pen and display mode
 		CPen ltgrey_pen(PS_SOLID, 0, m_colorTable[SILVER_COLOR]);
@@ -1084,9 +1084,9 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 		const int y1 = pRect->bottom;
 		const int k0 = pRect->left;
 		const int ksize = pRect->right - k0;
-		for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
+		for (auto j = m_VTtags.get_tag_list_size() - 1; j >= 0; j--)
 		{
-			const auto lk = m_VTtags.GetTagLVal(j); // get value
+			const auto lk = m_VTtags.get_tag_l_val(j); // get value
 			if (lk < m_lxFirst || lk > m_lxLast)
 				continue;
 			const int k = k0 + (lk - m_lxFirst) * ksize / (m_lxLast - m_lxFirst + 1);
@@ -1299,18 +1299,18 @@ void ChartData::curve_xor()
 void ChartData::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// convert chan values stored within HZ tags into pixels
-	if (m_HZtags.GetNTags() > 0)
+	if (m_HZtags.get_tag_list_size() > 0)
 	{
-		for (auto icur = 0; icur < m_HZtags.GetNTags(); icur++)
+		for (auto icur = 0; icur < m_HZtags.get_tag_list_size(); icur++)
 		{
 			const auto pixval = GetChanlistBintoYPixel(
-				WORD(m_HZtags.GetChannel(icur)),
-				m_HZtags.GetValue(icur));
-			m_HZtags.SetTagPix(icur, pixval);
+				WORD(m_HZtags.get_channel(icur)),
+				m_HZtags.get_value(icur));
+			m_HZtags.set_tag_pixel(icur, pixval);
 		}
 	}
 
-	if (m_VTtags.GetNTags() > 0)
+	if (m_VTtags.get_tag_list_size() > 0)
 	{
 		m_liFirst = m_lxFirst;
 		m_liLast = m_lxLast;
@@ -1353,7 +1353,7 @@ void ChartData::OnLButtonDown(UINT nFlags, CPoint point)
 	// if horizontal cursor hit -- specific .. deal with variable gain
 	if (m_trackMode == TRACK_HZTAG)
 	{
-		const auto chanlist_item = chanlistitem_ptr_array[m_HZtags.GetChannel(m_HCtrapped)];
+		const auto chanlist_item = chanlistitem_ptr_array[m_HZtags.get_channel(m_HCtrapped)];
 		m_yWE = chanlist_item->GetYextent(); // store extent
 		m_yWO = chanlist_item->GetYzero(); // store zero
 	}
@@ -1400,7 +1400,7 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 			// convert pix into data value and back again
 			const auto lval = static_cast<long>(point.x) * (m_liLast - m_liFirst + 1) / static_cast<long>(m_displayRect.
 				right) + m_liFirst;
-			m_VTtags.SetTagLVal(m_HCtrapped, lval);
+			m_VTtags.set_tag_l_value(m_HCtrapped, lval);
 			point.x = static_cast<int>((lval - m_liFirst) * long(m_displayRect.right) / (m_liLast - m_liFirst + 1));
 			XorVTtag(point.x);
 			postMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
@@ -1526,15 +1526,15 @@ int ChartData::does_cursor_hit_curve(CPoint point)
 
 void ChartData::MoveHZtagtoVal(int i, int val)
 {
-	const auto chan = m_HZtags.GetChannel(i);
+	const auto chan = m_HZtags.get_channel(i);
 	const auto chanlist_item = chanlistitem_ptr_array[chan];
 	m_XORyext = chanlist_item->GetYextent();
 	m_zero = chanlist_item->GetYzero();
-	m_ptLast.y = MulDiv(m_HZtags.GetValue(i) - m_zero, m_yVE, m_XORyext) + m_yVO;
+	m_ptLast.y = MulDiv(m_HZtags.get_value(i) - m_zero, m_yVE, m_XORyext) + m_yVO;
 	CPoint point;
 	point.y = MulDiv(val - m_zero, m_yVE, m_XORyext) + m_yVO;
 	XorHZtag(point.y);
-	m_HZtags.SetTagVal(i, val);
+	m_HZtags.set_tag_val(i, val);
 }
 
 void ChartData::SetHighlightData(const CHighLight& source)

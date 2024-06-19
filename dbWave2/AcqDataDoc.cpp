@@ -137,12 +137,12 @@ BOOL AcqDataDoc::open_acq_file(CString& cs_filename)
 	UINT u_open_flag = (status.m_attribute & 0x01) ? CFile::modeRead : CFile::modeReadWrite;
 	u_open_flag |= CFile::shareDenyNone | CFile::typeBinary;
 
-	int data_types_array[] = {
+	constexpr int data_types_array[] = {
 		DOCTYPE_AWAVE, DOCTYPE_SMR, DOCTYPE_ATLAB, DOCTYPE_ASDSYNTECH, DOCTYPE_MCID, DOCTYPE_UNKNOWN
 	};
-	constexpr int arrSize = std::size(data_types_array);
+	constexpr int array_size = std::size(data_types_array);
 	auto id_type = DOCTYPE_UNKNOWN;
-	for (int id = 0; id < arrSize; id++)
+	for (int id = 0; id < array_size; id++)
 	{
 		delete m_pXFile;
 		instantiate_data_file_object(id);
@@ -154,7 +154,7 @@ BOOL AcqDataDoc::open_acq_file(CString& cs_filename)
 
 	if (m_pXFile == nullptr || m_pXFile->m_idType == DOCTYPE_UNKNOWN)
 	{
-		alloc_buffer();
+		allocate_buffer();
 		return false;
 	}
 
@@ -166,7 +166,7 @@ BOOL AcqDataDoc::open_acq_file(CString& cs_filename)
 	const auto b_flag = m_pXFile->ReadDataInfos(m_pWBuf);
 
 	// create buffer
-	alloc_buffer();
+	allocate_buffer();
 	m_pXFile->ReadVTtags(m_pWBuf->GetpVTtags());
 	m_pXFile->ReadHZtags(m_pWBuf->GetpHZtags());
 
@@ -175,8 +175,6 @@ BOOL AcqDataDoc::open_acq_file(CString& cs_filename)
 
 BOOL AcqDataDoc::OnNewDocument()
 {
-	//if (!CDocument::OnNewDocument())
-	//	return FALSE;
 	DeleteContents();
 	m_strPathName.Empty(); // no path name yet
 	SetModifiedFlag(FALSE); // make clean
@@ -379,7 +377,7 @@ BOOL AcqDataDoc::adjust_buffer(const int elements_count)
 
 // allocate buffers to read data
 // adjust size of the buffer according to MAX_BUFFER_LENGTH_AS_BYTES
-BOOL AcqDataDoc::alloc_buffer()
+BOOL AcqDataDoc::allocate_buffer()
 {
 	if (m_pWBuf == nullptr)
 		m_pWBuf = new CWaveBuf;
@@ -449,7 +447,7 @@ BOOL AcqDataDoc::read_data_block(long l_first)
 
 	// reallocate buffer if needed
 	if (m_pWBuf->GetWBNumElements() != m_lBUFchanSize)
-		alloc_buffer();
+		allocate_buffer();
 
 	// read data from file
 	if (m_pXFile != nullptr)
@@ -478,7 +476,7 @@ void AcqDataDoc::read_data_infos()
 {
 	ASSERT(m_pXFile != NULL);
 	m_pXFile->ReadDataInfos(m_pWBuf);
-	alloc_buffer();
+	allocate_buffer();
 }
 
 short AcqDataDoc::get_value_from_buffer(const int channel, const long l_index)
@@ -707,30 +705,28 @@ BOOL AcqDataDoc::acq_create_file(CString& cs_file_name)
 	}
 
 	// create object as file
-	alloc_buffer();
+	allocate_buffer();
 
 	return TRUE;
 }
 
-BOOL AcqDataDoc::write_HZ_tags(TagList* p_tags)
+BOOL AcqDataDoc::write_hz_tags(TagList* p_tags) const
 {
 	if (p_tags == nullptr)
 		p_tags = m_pWBuf->GetpHZtags();
-	if (p_tags == nullptr || p_tags->GetNTags() == 0)
+	if (p_tags == nullptr || p_tags->get_tag_list_size() == 0)
 		return TRUE;
 	return m_pXFile->WriteHZtags(p_tags);
 }
 
-BOOL AcqDataDoc::write_VT_tags(TagList* p_tags)
+BOOL AcqDataDoc::write_vt_tags(TagList* p_tags) const
 {
 	if (p_tags == nullptr)
 		p_tags = m_pWBuf->GetpVTtags();
-	if (p_tags == nullptr || p_tags->GetNTags() == 0)
+	if (p_tags == nullptr || p_tags->get_tag_list_size() == 0)
 		return TRUE;
 	return m_pXFile->WriteVTtags(p_tags);
 }
-
-
 
 BOOL AcqDataDoc::acq_save_data_descriptors() const
 {
@@ -819,7 +815,7 @@ BOOL AcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i_
 	while (n_samples > 0) // loop until the end of the file
 	{
 		// read data from source file into buffer
-		if (n_samples < m_lBUFSize) // adjust buftempsize
+		if (n_samples < m_lBUFSize) // adjust buf_temp_size
 			l_buf_size = n_samples; // then, store data in temporary buffer
 		const long n_bytes = l_buf_size * sizeof(short);
 		m_pXFile->Read(p_buf, n_bytes);
@@ -839,14 +835,15 @@ BOOL AcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i_
 	}
 
 	// stop appending data, update dependent struct
-	p_new_doc->AcqDoc_DataAppendStop();
+	if (!p_new_doc->AcqDoc_DataAppendStop())
+		return false;
 
 	// save other objects if exist (tags, others)
 
-	if (m_pWBuf->GetpHZtags()->GetNTags() > 0)
-		p_new_doc->write_HZ_tags(m_pWBuf->GetpHZtags());
-	if (m_pWBuf->GetpVTtags()->GetNTags() > 0)
-		p_new_doc->write_VT_tags(m_pWBuf->GetpVTtags());
+	if (m_pWBuf->GetpHZtags()->get_tag_list_size() > 0)
+		p_new_doc->write_hz_tags(m_pWBuf->GetpHZtags());
+	if (m_pWBuf->GetpVTtags()->get_tag_list_size() > 0)
+		p_new_doc->write_vt_tags(m_pWBuf->GetpVTtags());
 
 	// if destination name == source: remove source and rename destination
 	if (b_is_duplicate_name)

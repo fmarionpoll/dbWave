@@ -39,41 +39,41 @@ public:
 
 protected:
 	// parameters related to data display and to document
-	AcqDataDoc* m_pdatDoc = nullptr;
-	BOOL m_bvalidDoc = false;
+	AcqDataDoc* m_p_dat_Doc = nullptr;
+	BOOL m_b_valid_doc_ = false;
 	float m_samplingRate = 1.;
-	int m_cursorstate = 0;
-	int m_VBarpixelratio = 30; 
-	int m_HBarpixelratio = 10; 
-	int m_currentfileindex = 0;
+	int m_cursor_state = 0;
+	int m_VBar_pixel_ratio = 30; 
+	int m_HBar_pixel_ratio = 10; 
+	int m_current_file_index = 0;
 
 	HICON m_hBias = nullptr;
 	HICON m_hZoom = nullptr;
 	int scan_count = 0;
 	float channel_rate = 0.;
 
-	OPTIONS_VIEWDATA* options_viewdata = nullptr;
+	OPTIONS_VIEWDATA* options_view_data = nullptr;
 	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr;
 
 protected:
 	void PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
-	CString ConvertFileIndex(long l_first, long l_last);
+	CString convert_file_index(long l_first, long l_last);
 	void ComputePrinterPageSize();
-	CString GetFileInfos();
+	CString get_file_infos();
 	CString PrintBars(CDC* p_dc, CRect* rect);
-	BOOL GetFileSeriesIndexFromPage(int page, int& filenumber, long& l_first);
-	BOOL PrintGetNextRow(int& filenumber, long& l_first, long& verylast);
-	void SaveModifiedFile();
-	void UpdateFileParameters(BOOL bUpdateInterface = TRUE);
-	void UpdateChannelsDisplayParameters();
-	void ChainDialog(WORD iID);
-	int PrintGetNPages();
+	BOOL get_file_series_index_from_page(int page, int& file_number, long& l_first);
+	BOOL PrintGetNextRow(int& file_number, long& l_first, long& very_last);
+	void save_modified_file();
+	void update_file_parameters(BOOL b_update_interface = TRUE);
+	void update_channels_display_parameters();
+	void chain_dialog(WORD i_id);
+	int print_get_n_pages();
 
 	BOOL m_bCommonScale = false;
 
 protected:
-	ScrollBarEx m_filescroll; // data position within file
-	SCROLLINFO m_filescroll_infos{}; // infos for scrollbar
+	ScrollBarEx m_file_scroll_bar; // data position within file
+	SCROLLINFO m_file_scroll_bar_infos{}; // infos for scrollbar
 	int m_VBarMode = 0; // flag V scrollbar state
 	CScrollBar m_scrolly; // V scrollbar
 
@@ -88,8 +88,8 @@ protected:
 	void UpdateFileScroll();
 	void UpdateLegends(int legends_options);
 	void UpdateHZtagsVal();
-	void SetCursorAssociatedWindows();
-	void UpdateChannel(int channel);
+	void set_cursor_associated_windows();
+	void update_channel(int channel);
 	void MeasureProperties(int item);
 
 	// Overrides
@@ -102,8 +102,8 @@ protected:
 	void OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
 	void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
 
-	void DefineSubClassedItems();
-	void DefineStretchParameters();
+	void define_sub_classed_items();
+	void define_stretch_parameters();
 
 	// Implementation
 public:

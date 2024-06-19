@@ -111,9 +111,9 @@ void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
 		}
 
 		//display cursors
-		if (m_HZtags.GetNTags() > 0)
+		if (m_HZtags.get_tag_list_size() > 0)
 			display_hz_tags(p_dc);
-		if (m_VTtags.GetNTags() > 0)
+		if (m_VTtags.get_tag_list_size() > 0)
 			display_vt_tags(p_dc);
 	}
 
@@ -182,9 +182,9 @@ void ChartSpikeXY::display_vt_tags(CDC* p_dc)
 	// iterate through VT cursor list
 	const auto y0 = m_displayRect.top;
 	const auto y1 = m_displayRect.bottom;
-	for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
+	for (auto j = m_VTtags.get_tag_list_size() - 1; j >= 0; j--)
 	{
-		const auto val = m_VTtags.GetValue(j); // get value
+		const auto val = m_VTtags.get_value(j); // get value
 		const auto pix_x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 		p_dc->MoveTo(pix_x, y0); // set initial pt
 		p_dc->LineTo(pix_x, y1); // VT line
@@ -199,9 +199,9 @@ void ChartSpikeXY::display_hz_tags(CDC* p_dc)
 	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
 	const auto x1 = m_displayRect.left;
 	const auto x2 = m_displayRect.right;
-	for (auto i = m_HZtags.GetNTags() - 1; i >= 0; i--)
+	for (auto i = m_HZtags.get_tag_list_size() - 1; i >= 0; i--)
 	{
-		const auto k = m_HZtags.GetValue(i);
+		const auto k = m_HZtags.get_value(i);
 		const auto y1 = MulDiv(k - m_yWO, m_yVE, m_yWE) + m_yVO;
 		p_dc->MoveTo(x1, y1);
 		p_dc->LineTo(x2, y1);
@@ -280,18 +280,18 @@ void ChartSpikeXY::highlight_spike(const Spike* spike)
 
 void ChartSpikeXY::move_hz_tag(const int index, const int new_value)
 {
-	m_ptLast.y = MulDiv(m_HZtags.GetValue(index) - m_yWO, m_yVE, m_yWE) + m_yVO;
+	m_ptLast.y = MulDiv(m_HZtags.get_value(index) - m_yWO, m_yVE, m_yWE) + m_yVO;
 	const auto y_pixel = MulDiv(new_value - m_yWO, m_yVE, m_yWE) + m_yVO;
 	XorHZtag(y_pixel);
-	m_HZtags.SetTagVal(index, new_value);
+	m_HZtags.set_tag_val(index, new_value);
 }
 
 void ChartSpikeXY::move_vt_tag(const int index, const int new_value)
 {
-	m_ptLast.x = MulDiv(m_VTtags.GetValue(index) - m_xWO, m_xVE, m_xWE) + m_xVO;
+	m_ptLast.x = MulDiv(m_VTtags.get_value(index) - m_xWO, m_xVE, m_xWE) + m_xVO;
 	const auto x_pixel = MulDiv(new_value - m_xWO, m_xVE, m_xWE) + m_xVO;
 	XorVTtag(x_pixel);
-	m_VTtags.SetTagVal(index, new_value);
+	m_VTtags.set_tag_val(index, new_value);
 }
 
 void ChartSpikeXY::select_spike(const Spike_selected& new_spike_selected)
@@ -323,7 +323,7 @@ void ChartSpikeXY::OnLButtonUp(UINT nFlags, CPoint point)
 		{
 			// convert pix into data value
 			const auto val = MulDiv(m_ptLast.x - m_xVO, m_xWE, m_xVE) + m_xWO;
-			m_VTtags.SetTagVal(m_HCtrapped, val);
+			m_VTtags.set_tag_val(m_HCtrapped, val);
 			point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 			XorVTtag(point.x);
 			ChartSpike::OnLButtonUp(nFlags, point);
@@ -371,18 +371,18 @@ void ChartSpikeXY::OnLButtonUp(UINT nFlags, CPoint point)
 void ChartSpikeXY::OnLButtonDown(const UINT nFlags, const CPoint point)
 {
 	// compute pixel position of tags
-	if (m_HZtags.GetNTags() > 0)
+	if (m_HZtags.get_tag_list_size() > 0)
 	{
-		for (auto tag_index = m_HZtags.GetNTags() - 1; tag_index >= 0; tag_index--)
-			m_HZtags.SetTagPix(tag_index, MulDiv(m_HZtags.GetValue(tag_index) - m_yWO, m_yVE, m_yWE) + m_yVO);
+		for (auto tag_index = m_HZtags.get_tag_list_size() - 1; tag_index >= 0; tag_index--)
+			m_HZtags.set_tag_pixel(tag_index, MulDiv(m_HZtags.get_value(tag_index) - m_yWO, m_yVE, m_yWE) + m_yVO);
 	}
-	if (m_VTtags.GetNTags() > 0)
+	if (m_VTtags.get_tag_list_size() > 0)
 	{
-		for (auto tag_index = m_VTtags.GetNTags() - 1; tag_index >= 0; tag_index--)
+		for (auto tag_index = m_VTtags.get_tag_list_size() - 1; tag_index >= 0; tag_index--)
 		{
-			const auto val = m_VTtags.GetValue(tag_index);
+			const auto val = m_VTtags.get_value(tag_index);
 			const auto pix = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
-			m_VTtags.SetTagPix(tag_index, pix);
+			m_VTtags.set_tag_pixel(tag_index, pix);
 		}
 	}
 

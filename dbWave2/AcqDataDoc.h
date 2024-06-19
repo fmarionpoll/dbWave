@@ -29,10 +29,10 @@ class AcqDataDoc : public CDocument
 
 	BOOL open_acq_file(CString& cs_filename);
 protected:
-	bool dlg_import_data_file(CString& sz_path_name);
+	static bool dlg_import_data_file(CString& sz_path_name);
 	int import_file(CString& sz_path_name);
-	void remove_file(const CString& file1);
-	void rename_file(const CString& filename_old, const CString& filename_new);
+	static void remove_file(const CString& file1);
+	static void rename_file(const CString& filename_old, const CString& filename_new);
 
 #ifdef _DEBUG
 	void AssertValid() const override;
@@ -75,8 +75,8 @@ public:
 	short* load_raw_data_parameters(int* channels_count) const;
 
 	// write data
-	BOOL write_HZ_tags(TagList* p_tags);
-	BOOL write_VT_tags(TagList* p_tags);
+	BOOL write_hz_tags(TagList* p_tags) const;
+	BOOL write_vt_tags(TagList* p_tags) const;
 	void acq_delete_file() const;
 	void acq_close_file() const;
 	BOOL acq_save_data_descriptors() const;
@@ -129,7 +129,7 @@ public:
 
 	void set_reading_buffer_dirty() { m_bValidReadBuffer = FALSE; }
 
-	BOOL alloc_buffer();
+	BOOL allocate_buffer();
 	BOOL adjust_buffer(const int elements_count);
 	void read_data_infos();
 

@@ -8,225 +8,221 @@
 
 TagList::TagList()
 {
-	m_version = 1;
+	m_version_ = 1;
 }
 
 TagList::~TagList()
 {
-	RemoveAllTags();
+	remove_all_tags();
 }
 
-int TagList::insertTag(Tag* pcur)
+int TagList::insert_tag(Tag* tag)
 {
-	return tag_ptr_array.Add(pcur);
+	return tag_ptr_array_.Add(tag);
 }
 
-int TagList::AddTag(Tag& arg)
+int TagList::add_tag(Tag& arg)
 {
-	const auto pcur = new Tag;
-	ASSERT(pcur != NULL);
-	*pcur = arg;
-	return insertTag(pcur);
+	const auto tag = new Tag;
+	ASSERT(tag != NULL);
+	*tag = arg;
+	return insert_tag(tag);
 }
 
-int TagList::AddTag(int val, int refChannel)
+int TagList::add_tag(const int val, const int reference_channel)
 {
-	const auto pcur = new Tag(val, refChannel);
-	ASSERT(pcur != NULL);
-	return insertTag(pcur);
+	const auto tag = new Tag(val, reference_channel);
+	ASSERT(tag != NULL);
+	return insert_tag(tag);
 }
 
 // Add a new cursor, with  value and attached channel
-int TagList::AddLTag(long lval, int refchan)
+int TagList::add_l_tag(const long l_val, const int reference_channel)
 {
-	const auto pcur = new Tag(lval, refchan);
-	ASSERT(pcur != NULL);
-	return insertTag(pcur);
+	const auto tag = new Tag(l_val, reference_channel);
+	ASSERT(tag != NULL);
+	return insert_tag(tag);
 }
 
-int TagList::RemoveTag(int itag)
+int TagList::remove_tag(const int tag_index)
 {
-	const auto pcur = tag_ptr_array.GetAt(itag);
-	delete pcur; // delete object pointed at
-	tag_ptr_array.RemoveAt(itag);
-	return tag_ptr_array.GetSize();
+	const auto tag = tag_ptr_array_.GetAt(tag_index);
+	delete tag; 
+	tag_ptr_array_.RemoveAt(tag_index);
+	return tag_ptr_array_.GetSize();
 }
 
-void TagList::RemoveAllTags()
+void TagList::remove_all_tags()
 {
-	const auto pos0 = tag_ptr_array.GetUpperBound();
+	const auto pos0 = tag_ptr_array_.GetUpperBound();
 	if (pos0 >= 0)
 	{
 		for (auto pos = pos0; pos >= 0; pos--)
-			delete tag_ptr_array.GetAt(pos);
-		tag_ptr_array.RemoveAll();
+			delete tag_ptr_array_.GetAt(pos);
+		tag_ptr_array_.RemoveAll();
 	}
 }
 
-int TagList::RemoveChanTags(int refchan)
+int TagList::remove_chan_tags(int reference_channel)
 {
-	for (auto i = tag_ptr_array.GetUpperBound(); i >= 0; i--)
+	for (auto i = tag_ptr_array_.GetUpperBound(); i >= 0; i--)
 	{
-		const auto pcur = tag_ptr_array.GetAt(i);
-		if (pcur != nullptr && pcur->m_refchan == refchan)
+		const auto tag = tag_ptr_array_.GetAt(i);
+		if (tag != nullptr && tag->m_refchan == reference_channel)
 		{
-			delete pcur; // delete object pointed at
-			tag_ptr_array.RemoveAt(i); // remove item
+			delete tag; // delete object pointed at
+			tag_ptr_array_.RemoveAt(i); // remove item
 		}
 	}
-	return tag_ptr_array.GetSize();
+	return tag_ptr_array_.GetSize();
 }
 
-void TagList::SetTagVal(int itag, int newval)
+void TagList::set_tag_val(const int i_tag, const int value)
 {
-	if (tag_ptr_array.GetSize() <= itag)
+	if (tag_ptr_array_.GetSize() <= i_tag)
 	{
-		for (auto i = tag_ptr_array.GetSize(); i <= itag; i++)
-			AddTag(0, 0);
-		ASSERT(tag_ptr_array.GetSize() >= itag);
+		for (auto i = tag_ptr_array_.GetSize(); i <= i_tag; i++)
+			add_tag(0, 0);
+		ASSERT(tag_ptr_array_.GetSize() >= i_tag);
 	}
-	const auto pcur = tag_ptr_array.GetAt(itag);
-	if (pcur != nullptr) // if the cursor exist change the m_value
-		pcur->m_value = newval;
+	const auto p_cur = tag_ptr_array_.GetAt(i_tag);
+	if (p_cur != nullptr) // if the cursor exist change the m_value
+		p_cur->m_value = value;
 }
 
-int TagList::GetValue(int itag)
+int TagList::get_value(const int i_tag)
 {
-	const auto pcur = tag_ptr_array.GetAt(itag);
-	if (pcur != nullptr)
-		return pcur->m_value;
-
+	const auto tag = tag_ptr_array_.GetAt(i_tag);
+	if (tag != nullptr)
+		return tag->m_value;
 	return NULL;
 }
 
-int TagList::GetChannel(int itag)
+int TagList::get_channel(const int tag_index)
 {
-	const auto pcur = tag_ptr_array.GetAt(itag);
-	if (pcur != nullptr)
-		return pcur->m_refchan;
-
+	const auto tag = tag_ptr_array_.GetAt(tag_index);
+	if (tag != nullptr)
+		return tag->m_refchan;
 	return NULL;
 }
 
-void TagList::SetTagChan(int itag, int newchan)
+void TagList::set_tag_chan(const int tag_index, const int channel_index)
 {
-	const auto pcur = tag_ptr_array.GetAt(itag);
-	if (pcur != nullptr) // if the cursor exist change the m_value
-		pcur->m_refchan = newchan;
+	const auto tag = tag_ptr_array_.GetAt(tag_index);
+	if (tag != nullptr) 
+		tag->m_refchan = channel_index;
 }
 
-void TagList::SetTagPix(int itag, int newval)
+void TagList::set_tag_pixel(const int tag_index, const int pixel_value)
 {
-	const auto pcur = tag_ptr_array.GetAt(itag);
-	if (pcur != nullptr) // if the cursor exist change the m_value
-		pcur->m_pixel = newval;
+	const auto tag = tag_ptr_array_.GetAt(tag_index);
+	if (tag != nullptr) 
+		tag->m_pixel = pixel_value;
 }
 
-int TagList::GetTagPix(int itag)
+int TagList::get_tag_pixel(const int tag_index)
 {
-	const auto pcur = tag_ptr_array.GetAt(itag);
-	if (pcur != nullptr)
-		return pcur->m_pixel;
+	const auto tag = tag_ptr_array_.GetAt(tag_index);
+	if (tag != nullptr)
+		return tag->m_pixel;
 	return NULL;
 }
 
-void TagList::SetTagLVal(int itag, long longval)
+void TagList::set_tag_l_value(const int tag_index, const long value)
 {
-	const auto pcur = tag_ptr_array.GetAt(itag);
-	// if the cursor exist change the m_value
-	if (pcur != nullptr)
-		pcur->m_lvalue = longval;
+	const auto tag = tag_ptr_array_.GetAt(tag_index);
+	if (tag != nullptr)
+		tag->m_lvalue = value;
 }
 
-long TagList::GetTagLVal(int itag)
+long TagList::get_tag_l_val(const int tag_index)
 {
-	const auto pcur = tag_ptr_array.GetAt(itag);
-	if (pcur != nullptr)
-		return pcur->m_lvalue;
+	const auto tag = tag_ptr_array_.GetAt(tag_index);
+	if (tag != nullptr)
+		return tag->m_lvalue;
 	return NULL;
 }
 
-void TagList::SetTagComment(int itag, CString comment)
+void TagList::set_tag_comment(const int tag_index, const CString& comment)
 {
-	const auto pcur = tag_ptr_array.GetAt(itag);
-	if (pcur != nullptr) // if the cursor exist change the m_value
-		pcur->m_csComment = comment;
+	const auto tag = tag_ptr_array_.GetAt(tag_index);
+	if (tag != nullptr)
+		tag->m_csComment = comment;
 }
 
-CString TagList::GetTagComment(int itag)
+CString TagList::get_tag_comment(const int tag_index)
 {
-	const auto pcur = tag_ptr_array.GetAt(itag);
+	const auto tag = tag_ptr_array_.GetAt(tag_index);
 	CString cs;
-	if (pcur != nullptr)
-		cs = pcur->m_csComment;
+	if (tag != nullptr)
+		cs = tag->m_csComment;
 	return cs;
 }
 
-int TagList::GetNTags()
+int TagList::get_tag_list_size() const
 {
-	return tag_ptr_array.GetSize();
+	return tag_ptr_array_.GetSize();
 }
 
-Tag* TagList::GetTag(int itag)
+Tag* TagList::get_tag(const int tag_index)
 {
-	if (itag >= 0 && itag < tag_ptr_array.GetSize())
-		return tag_ptr_array.GetAt(itag);
+	if (tag_index >= 0 && tag_index < tag_ptr_array_.GetSize())
+		return tag_ptr_array_.GetAt(tag_index);
 	return nullptr;
 }
 
-void TagList::CopyTagList(TagList* pTList)
+void TagList::copy_tag_list(TagList* p_t_list)
 {
-	if (pTList == this || pTList == nullptr)
+	if (p_t_list == this || p_t_list == nullptr)
 		return;
 
-	//CPtrArray 	m_array;                              // array of cursors
-	RemoveAllTags();
-	const auto nbtags = pTList->tag_ptr_array.GetSize();
-	for (auto i = 0; i < nbtags; i++)
+	remove_all_tags();
+	const auto n_tags = p_t_list->tag_ptr_array_.GetSize();
+	for (auto i = 0; i < n_tags; i++)
 	{
-		const auto ptag = pTList->GetTag(i);
-		if (ptag != nullptr)
+		const auto p_tag = p_t_list->get_tag(i);
+		if (p_tag != nullptr)
 		{
-			const auto pcur = new Tag;
-			ASSERT(pcur != NULL);
-			pcur->m_refchan = ptag->m_refchan;
-			pcur->m_pixel = ptag->m_pixel;
-			pcur->m_value = ptag->m_value;
-			pcur->m_lvalue = ptag->m_lvalue;
-			insertTag(pcur);
+			const auto tag = new Tag;
+			ASSERT(tag != NULL);
+			tag->m_refchan = p_tag->m_refchan;
+			tag->m_pixel = p_tag->m_pixel;
+			tag->m_value = p_tag->m_value;
+			tag->m_lvalue = p_tag->m_lvalue;
+			insert_tag(tag);
 		}
 	}
 }
 
-long TagList::Write(CFile* pdatafile)
+long TagList::Write(CFile* p_data_file)
 {
 	long l_size = sizeof(int);
-	pdatafile->Write(&m_version, l_size);
-	auto nelemts = tag_ptr_array.GetSize();
-	pdatafile->Write(&nelemts, l_size);
+	p_data_file->Write(&m_version_, l_size);
+	const auto n_elements = tag_ptr_array_.GetSize();
+	p_data_file->Write(&n_elements, l_size);
 	l_size += l_size;
 
-	for (auto i = 0; i < nelemts; i++)
+	for (auto i = 0; i < n_elements; i++)
 	{
-		auto ptag = tag_ptr_array.GetAt(i);
-		l_size += ptag->Write(pdatafile);
+		const auto tag = tag_ptr_array_.GetAt(i);
+		l_size += tag->Write(p_data_file);
 	}
 	return l_size;
 }
 
-BOOL TagList::Read(CFile* pdatafile)
+BOOL TagList::Read(CFile* p_data_file)
 {
 	int version;
-	pdatafile->Read(&version, sizeof(int));
-	int nelemts;
-	pdatafile->Read(&nelemts, sizeof(int));
+	p_data_file->Read(&version, sizeof(int));
+	int n_elements;
+	p_data_file->Read(&n_elements, sizeof(int));
 
-	for (auto i = 0; i < nelemts; i++)
+	for (auto i = 0; i < n_elements; i++)
 	{
-		auto ptag = new Tag;
-		ASSERT(ptag != NULL);
-		ptag->Read(pdatafile);
-		tag_ptr_array.Add(ptag);
+		const auto tag = new Tag;
+		ASSERT(tag != NULL);
+		tag->Read(p_data_file);
+		tag_ptr_array_.Add(tag);
 	}
 	return TRUE;
 }

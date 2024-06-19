@@ -158,8 +158,8 @@ ChartWnd::~ChartWnd()
 				DestroyCursor(m_cursor[i]);
 		}
 	}
-	m_HZtags.RemoveAllTags(); 
-	m_VTtags.RemoveAllTags(); 
+	m_HZtags.remove_all_tags(); 
+	m_VTtags.remove_all_tags(); 
 	delete m_tempVTtag;
 
 	// delete array of pens
@@ -663,7 +663,7 @@ void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 			{
 				m_trackMode = TRACK_HZTAG;
 				m_ptLast.x = 0; // set initial coordinates
-				m_ptLast.y = m_HZtags.GetTagPix(m_HCtrapped);
+				m_ptLast.y = m_HZtags.get_tag_pixel(m_HCtrapped);
 				m_ptFirst = m_ptLast;
 				// tell parent that HZtag was selected
 				sendMyMessage(HINT_HITHZTAG, m_HCtrapped);
@@ -687,11 +687,11 @@ void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 			{
 				m_trackMode = TRACK_VTTAG;
 				if (m_bVTtagsLONG)
-					m_ptLast.x = static_cast<int>((m_VTtags.GetTagLVal(m_HCtrapped) - m_liFirst) * long(
+					m_ptLast.x = static_cast<int>((m_VTtags.get_tag_l_val(m_HCtrapped) - m_liFirst) * long(
 						m_displayRect.Width()) / (m_liLast - m_liFirst +
 						1));
 				else
-					m_ptLast.x = m_VTtags.GetTagPix(m_HCtrapped);
+					m_ptLast.x = m_VTtags.get_tag_pixel(m_HCtrapped);
 				m_ptLast.y = 0;
 				// tell parent that VTtag was selected
 				sendMyMessage(HINT_HITVERTTAG, m_HCtrapped);
@@ -734,7 +734,7 @@ void ChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 			m_ptCurr = point;
 			const auto val = MulDiv(point.y - m_yVO, m_yWE, m_yVE) + m_yWO;
 			XorHZtag(point.y);
-			m_HZtags.SetTagVal(m_HCtrapped, val);
+			m_HZtags.set_tag_val(m_HCtrapped, val);
 			postMyMessage(HINT_MOVEHZTAG, m_HCtrapped);
 		}
 		break;
@@ -745,17 +745,17 @@ void ChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 		{
 			XorVTtag(point.x); // move cursor to new pixel
 			m_ptCurr = point;
-			m_VTtags.SetTagPix(m_HCtrapped, point.x);
+			m_VTtags.set_tag_pixel(m_HCtrapped, point.x);
 			if (!m_bVTtagsLONG)
 			{
 				const auto val = MulDiv(point.x - m_xVO, m_xWE, m_xVE) + m_xWO;
-				m_VTtags.SetTagVal(m_HCtrapped, val);
+				m_VTtags.set_tag_val(m_HCtrapped, val);
 			}
 			else
 			{
 				const auto lvalue = static_cast<long>(point.x) * (m_liLast - m_liFirst + 1) / static_cast<long>(
 					m_displayRect.Width()) + m_liFirst;
-				m_VTtags.SetTagLVal(m_HCtrapped, lvalue);
+				m_VTtags.set_tag_l_value(m_HCtrapped, lvalue);
 			}
 			postMyMessage(HINT_MOVEVERTTAG, m_HCtrapped);
 		}
@@ -808,7 +808,7 @@ void ChartWnd::lbuttonUp_HzTag(UINT nFlags, CPoint point)
 {
 	// convert pix into data value
 	const auto val = MulDiv(m_ptLast.y - m_yVO, m_yWE, m_yVE) + m_yWO;
-	m_HZtags.SetTagVal(m_HCtrapped, val);
+	m_HZtags.set_tag_val(m_HCtrapped, val);
 	point.y = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
 	XorHZtag(point.y);
 	OnLButtonUp(nFlags, point);
@@ -942,10 +942,10 @@ int ChartWnd::hitHZtag(int y)
 {
 	auto chit = -1; // horizontal cursor hit
 	const auto jitter = 3; // jitter allowed: 5 pixels total
-	const auto j = m_HZtags.GetNTags();
+	const auto j = m_HZtags.get_tag_list_size();
 	for (auto i = 0; i < j; i++) // loop through all cursors
 	{
-		const auto val = m_HZtags.GetTagPix(i); // get pixel value
+		const auto val = m_HZtags.get_tag_pixel(i); // get pixel value
 		if (val <= y + jitter && val >= y - jitter)
 		{
 			chit = i;
@@ -958,10 +958,10 @@ int ChartWnd::hitHZtag(int y)
 int ChartWnd::hitVTtagLong(long lx)
 {
 	auto chit = -1; // horizontal cursor hit
-	const auto j = m_VTtags.GetNTags();
+	const auto j = m_VTtags.get_tag_list_size();
 	for (auto i = 0; i < j; i++) // loop through all cursors
 	{
-		const auto lval = m_VTtags.GetTagLVal(i);
+		const auto lval = m_VTtags.get_tag_l_val(i);
 		if (lval <= lx + m_liJitter && lval >= lx - m_liJitter)
 		{
 			chit = i;
@@ -975,10 +975,10 @@ int ChartWnd::hitVTtagPix(int x)
 {
 	auto chit = -1; // horizontal cursor hit
 	const auto jitter = 3; // jitter allowed: 5 pixels total
-	const auto j = m_VTtags.GetNTags();
+	const auto j = m_VTtags.get_tag_list_size();
 	for (auto i = 0; i < j; i++) // loop through all cursors
 	{
-		const auto val = m_VTtags.GetTagPix(i);
+		const auto val = m_VTtags.get_tag_pixel(i);
 		if (val <= x + jitter && val >= x - jitter)
 		{
 			chit = i;
@@ -1010,9 +1010,9 @@ void ChartWnd::DisplayVTtags_Value(CDC* p_dc)
 	const auto y0 = MulDiv(0 - m_yVO, m_yWE, m_yVE) + m_yWO;
 	const auto y1 = MulDiv(m_displayRect.bottom - m_yVO, m_yWE, m_yVE) + m_yWO;
 
-	for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
+	for (auto j = m_VTtags.get_tag_list_size() - 1; j >= 0; j--)
 	{
-		const auto k = m_VTtags.GetValue(j);
+		const auto k = m_VTtags.get_value(j);
 		p_dc->MoveTo(k, y0);
 		p_dc->LineTo(k, y1);
 	}
@@ -1025,10 +1025,10 @@ void ChartWnd::DisplayHZtags(CDC* p_dc)
 {
 	const auto pold = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
-	auto oldval = m_HZtags.GetValue(m_HZtags.GetNTags() - 1) - 1;
-	for (auto iTag = m_HZtags.GetNTags() - 1; iTag >= 0; iTag--)
+	auto oldval = m_HZtags.get_value(m_HZtags.get_tag_list_size() - 1) - 1;
+	for (auto iTag = m_HZtags.get_tag_list_size() - 1; iTag >= 0; iTag--)
 	{
-		const auto k = m_HZtags.GetValue(iTag);
+		const auto k = m_HZtags.get_value(iTag);
 		if (k == oldval)
 			continue;
 		p_dc->MoveTo(m_xWO, k);

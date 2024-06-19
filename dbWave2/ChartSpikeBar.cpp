@@ -95,7 +95,7 @@ void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
 			display_stimulus(p_dc, &m_displayRect);
 
 		// display vertical cursors
-		if (m_VTtags.GetNTags() > 0)
+		if (m_VTtags.get_tag_list_size() > 0)
 		{
 			// select pen and display mode
 			const auto old_pen = p_dc->SelectObject(&m_blackDottedPen);
@@ -103,10 +103,10 @@ void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
 
 			// iterate through VT cursor list
 			const int y1 = m_displayRect.bottom;
-			for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
+			for (auto j = m_VTtags.get_tag_list_size() - 1; j >= 0; j--)
 			{
 				constexpr auto y0 = 0;
-				const auto lk = m_VTtags.GetTagLVal(j); // get value
+				const auto lk = m_VTtags.get_tag_l_val(j); // get value
 				if (lk < m_lFirst || lk > m_lLast)
 					continue;
 				const auto k = MulDiv(lk - m_lFirst, m_displayRect.Width() , m_lLast - m_lFirst + 1);
@@ -191,7 +191,7 @@ void ChartSpikeBar::plot_single_spk_data_to_dc(CDC* p_dc)
 		display_stimulus(p_dc, &m_displayRect);
 
 	// display vertical cursors
-	if (m_VTtags.GetNTags() > 0)
+	if (m_VTtags.get_tag_list_size() > 0)
 	{
 		// select pen and display mode
 		const auto old_pen = p_dc->SelectObject(&m_blackDottedPen);
@@ -199,10 +199,10 @@ void ChartSpikeBar::plot_single_spk_data_to_dc(CDC* p_dc)
 
 		// iterate through VT cursor list
 		const int y1 = m_displayRect.bottom;
-		for (auto j = m_VTtags.GetNTags() - 1; j >= 0; j--)
+		for (auto j = m_VTtags.get_tag_list_size() - 1; j >= 0; j--)
 		{
 			constexpr auto y0 = 0;
-			const auto lk = m_VTtags.GetTagLVal(j);
+			const auto lk = m_VTtags.get_tag_l_val(j);
 			if (lk < m_lFirst || lk > m_lLast)
 				continue;
 			const auto k = MulDiv(lk - m_lFirst, m_displayRect.Width(), m_lLast -m_lFirst + 1);

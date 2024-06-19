@@ -151,10 +151,10 @@ void ChartSpikeShape::PlotDataToDC(CDC * p_dc)
 			draw_flagged_spikes(p_dc);
 
 		// display tags
-		if (m_HZtags.GetNTags() > 0)
+		if (m_HZtags.get_tag_list_size() > 0)
 			DisplayHZtags(p_dc);
 
-		if (m_VTtags.GetNTags() > 0)
+		if (m_VTtags.get_tag_list_size() > 0)
 			DisplayVTtags_Value(p_dc);
 
 		// display text
@@ -322,7 +322,7 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		// convert pix into data value and back again
 		const auto val = MulDiv(point.x - m_xVO, m_xWE, m_xVE) + m_xWO;
-		m_VTtags.SetTagVal(m_HCtrapped, val);
+		m_VTtags.set_tag_val(m_HCtrapped, val);
 		point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 		XorVTtag(point.x);
 		ChartSpike::OnLButtonUp(nFlags, point);
@@ -373,10 +373,10 @@ void ChartSpikeShape::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	m_bLmouseDown = TRUE;
 	// call base class to test for horizontal cursor or XORing rectangle
-	if (m_VTtags.GetNTags() > 0)
+	if (m_VTtags.get_tag_list_size() > 0)
 	{
-		for (auto i_tag = m_VTtags.GetNTags() - 1; i_tag >= 0; i_tag--)
-			m_VTtags.SetTagPix(i_tag, MulDiv(m_VTtags.GetValue(i_tag) - m_xWO, m_xVE, m_xWE) + m_xVO);
+		for (auto i_tag = m_VTtags.get_tag_list_size() - 1; i_tag >= 0; i_tag--)
+			m_VTtags.set_tag_pixel(i_tag, MulDiv(m_VTtags.get_value(i_tag) - m_xWO, m_xVE, m_xWE) + m_xVO);
 	}
 
 	// track rectangle or VT_tag?
@@ -756,8 +756,8 @@ void ChartSpikeShape::plot_array_to_dc(CDC * p_dc, short* p_array)
 void ChartSpikeShape::move_vt_track(int i_track, int new_value)
 {
 	CPoint point;
-	m_ptLast.x = MulDiv(m_VTtags.GetValue(i_track) - m_xWO, m_xVE, m_xWE) + m_xVO;
-	m_VTtags.SetTagVal(i_track, new_value);
+	m_ptLast.x = MulDiv(m_VTtags.get_value(i_track) - m_xWO, m_xVE, m_xWE) + m_xVO;
+	m_VTtags.set_tag_val(i_track, new_value);
 	point.x = MulDiv(new_value - m_xWO, m_xVE, m_xWE) + m_xVO;
 	XorVTtag(point.x);
 }

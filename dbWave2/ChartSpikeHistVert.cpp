@@ -123,9 +123,9 @@ void ChartSpikeHistVert::PlotDataToDC(CDC* p_dc)
 
 	// display cursors
 	p_dc->SetBkColor(bkcolor); // restore background color
-	if (m_HZtags.GetNTags() > 0) // display horizontal tags
+	if (m_HZtags.get_tag_list_size() > 0) // display horizontal tags
 		DisplayHZtags(p_dc);
-	if (m_VTtags.GetNTags() > 0) // display vertical tags
+	if (m_VTtags.get_tag_list_size() > 0) // display vertical tags
 		DisplayVTtags_Value(p_dc);
 	p_dc->RestoreDC(n_saved_dc);
 }
@@ -152,18 +152,18 @@ void ChartSpikeHistVert::plotHistogram(CDC* p_dc, CDWordArray* p_dw, int color)
 
 void ChartSpikeHistVert::MoveHZtagtoVal(int i, int val)
 {
-	m_ptLast.y = MulDiv(m_HZtags.GetValue(i) - m_yWO, m_yVE, m_yWE) + m_yVO;
+	m_ptLast.y = MulDiv(m_HZtags.get_value(i) - m_yWO, m_yVE, m_yWE) + m_yVO;
 	const auto j = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
 	XorHZtag(j);
-	m_HZtags.SetTagVal(i, val);
+	m_HZtags.set_tag_val(i, val);
 }
 
 void ChartSpikeHistVert::MoveVTtagtoVal(int itag, int ival)
 {
-	m_ptLast.x = MulDiv(m_VTtags.GetValue(itag) - m_xWO, m_xVE, m_xWE) + m_xVO;
+	m_ptLast.x = MulDiv(m_VTtags.get_value(itag) - m_xWO, m_xVE, m_xWE) + m_xVO;
 	const auto j = MulDiv(ival - m_xWO, m_xVE, m_xWE) + m_xVO;
 	XorVTtag(j);
-	m_VTtags.SetTagVal(itag, ival);
+	m_VTtags.set_tag_val(itag, ival);
 }
 
 void ChartSpikeHistVert::getClassArray(int iclass, CDWordArray*& pDW)
@@ -223,7 +223,7 @@ void ChartSpikeHistVert::OnLButtonUp(UINT nFlags, CPoint point)
 		{
 			// convert pix into data value and back again
 			const auto val = MulDiv(point.x - m_xVO, m_xWE, m_xVE) + m_xWO;
-			m_VTtags.SetTagVal(m_HCtrapped, val);
+			m_VTtags.set_tag_val(m_HCtrapped, val);
 			point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
 			XorVTtag(point.x);
 			ChartSpike::OnLButtonUp(nFlags, point);
@@ -276,16 +276,16 @@ void ChartSpikeHistVert::OnLButtonUp(UINT nFlags, CPoint point)
 void ChartSpikeHistVert::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// compute pixel position of horizontal tags
-	if (m_HZtags.GetNTags() > 0)
+	if (m_HZtags.get_tag_list_size() > 0)
 	{
-		for (auto icur = m_HZtags.GetNTags() - 1; icur >= 0; icur--)
-			m_HZtags.SetTagPix(icur, MulDiv(m_HZtags.GetValue(icur) - m_yWO, m_yVE, m_yWE) + m_yVO);
+		for (auto icur = m_HZtags.get_tag_list_size() - 1; icur >= 0; icur--)
+			m_HZtags.set_tag_pixel(icur, MulDiv(m_HZtags.get_value(icur) - m_yWO, m_yVE, m_yWE) + m_yVO);
 	}
 	// compute pixel position of vertical tags
-	if (m_VTtags.GetNTags() > 0)
+	if (m_VTtags.get_tag_list_size() > 0)
 	{
-		for (auto icur = m_VTtags.GetNTags() - 1; icur >= 0; icur--) // loop through all tags
-			m_VTtags.SetTagPix(icur, MulDiv(m_VTtags.GetValue(icur) - m_xWO, m_xVE, m_xWE) + m_xVO);
+		for (auto icur = m_VTtags.get_tag_list_size() - 1; icur >= 0; icur--) // loop through all tags
+			m_VTtags.set_tag_pixel(icur, MulDiv(m_VTtags.get_value(icur) - m_xWO, m_xVE, m_xWE) + m_xVO);
 	}
 	ChartSpike::OnLButtonDown(nFlags, point);
 	if (m_currCursorMode != 0 || m_HCtrapped >= 0) // do nothing else if mode != 0

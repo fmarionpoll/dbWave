@@ -215,10 +215,10 @@ void DlgEditStimArray::OnBnClickedImportfromdata()
 {
 	intervals.channel_sampling_rate = m_sampling_rate;
 
-	const int n_tags = tag_list->GetNTags();
+	const int n_tags = tag_list->get_tag_list_size();
 	for (int i = 0; i < n_tags; i++)
 	{
-		const long l_interval = tag_list->GetTagLVal(i);
+		const long l_interval = tag_list->get_tag_l_val(i);
 		intervals.Add(l_interval);
 		const float time_interval = static_cast<float>(l_interval) / m_sampling_rate;
 		list_control.add_new_item(i, time_interval);
