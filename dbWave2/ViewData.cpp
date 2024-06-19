@@ -379,12 +379,12 @@ void ViewData::OnEditCopy()
 	}
 }
 
-void ViewData::OnUpdateEditCopy(CCmdUI* pCmdUI) const
+void ViewData::OnUpdateEditCopy(CCmdUI* pCmdUI) 
 {
 	pCmdUI->Enable(m_ChartDataWnd.IsDefined() != NULL); // if document has data
 }
 
-void ViewData::ADC_OnHardwareChannelsDlg() const
+void ViewData::ADC_OnHardwareChannelsDlg() 
 {
 	DlgADInputs dlg;
 	dlg.m_pwFormat = m_pdatDoc->get_waveformat();
@@ -396,7 +396,7 @@ void ViewData::ADC_OnHardwareChannelsDlg() const
 	}
 }
 
-void ViewData::ADC_OnHardwareIntervalsDlg() const
+void ViewData::ADC_OnHardwareIntervalsDlg() 
 {
 	DlgADIntervals dlg;
 	dlg.m_p_wave_format = m_pdatDoc->get_waveformat();

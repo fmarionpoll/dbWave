@@ -115,10 +115,10 @@ public:
 	afx_msg void OnFormatXscale();
 	afx_msg void OnFormatYscale();
 	afx_msg void OnEditCopy();
-	afx_msg void OnUpdateEditCopy(CCmdUI* pCmdUI) const;
+	afx_msg void OnUpdateEditCopy(CCmdUI* pCmdUI);
 	afx_msg void OnToolsDataseries();
-	afx_msg void ADC_OnHardwareChannelsDlg() const;
-	afx_msg void ADC_OnHardwareIntervalsDlg() const;
+	afx_msg void ADC_OnHardwareChannelsDlg();
+	afx_msg void ADC_OnHardwareIntervalsDlg();
 	afx_msg void OnCenterCurve();
 	afx_msg void OnGainAdjustCurve();
 	afx_msg void OnSplitCurves();

@@ -257,13 +257,13 @@ void DlgSpikeDetect::OnBnClickedDelparambttn()
 	Invalidate();
 }
 
-void DlgSpikeDetect::OnEnChangeDetectthreshold() const
+void DlgSpikeDetect::OnEnChangeDetectthreshold() 
 {
 	const int ithreshold = GetDlgItemInt(IDC_DETECTTHRESHOLD);
 	m_pChartDataDetectWnd->MoveHZtagtoVal(0, ithreshold);
 }
 
-void DlgSpikeDetect::OnCbnSelchangeDetectchan() const
+void DlgSpikeDetect::OnCbnSelchangeDetectchan() 
 {
 	UpdateSourceView();
 }
@@ -280,7 +280,7 @@ void DlgSpikeDetect::UpdateSourceView() const
 	m_pChartDataDetectWnd->Invalidate();
 }
 
-void DlgSpikeDetect::OnCbnSelchangeDetecttransform() const
+void DlgSpikeDetect::OnCbnSelchangeDetecttransform() 
 {
 	UpdateSourceView();
 }
@@ -295,7 +295,7 @@ void DlgSpikeDetect::OnDeltaposSpin1(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void DlgSpikeDetect::OnCbnSelchangeExtractchan() const
+void DlgSpikeDetect::OnCbnSelchangeExtractchan() 
 {
 	UpdateSourceView();
 }

@@ -816,7 +816,7 @@ BOOL DlgExportData::ExportDataAsdbWaveFile()
 			if (i > mm_lastchan || i < mm_firstchan)
 				pw_c_dest->chan_array_remove_at(i);
 		}
-		ASSERT(nchans == pw_c_dest->ChanArray_getSize());
+		ASSERT(nchans == pw_c_dest->chan_array_get_size());
 		pw_f_dest->scan_count = nchans;
 	}
 

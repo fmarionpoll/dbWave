@@ -566,7 +566,7 @@ void DlgADInputs::OnCbnSelchangeResolution()
 void DlgADInputs::LoadGridWithWavechanData(int col)
 {
 	// select channel and load parameters CComboBox
-	ASSERT(col <= m_pchArray->ChanArray_getSize());
+	ASSERT(col <= m_pchArray->chan_array_get_size());
 	const auto p_chan = m_pchArray->get_p_channel(col - 1);
 
 	// settings for the col
