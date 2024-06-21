@@ -50,11 +50,11 @@ public:
 	void MoveHZtagtoVal(int itag, int ival);
 
 	void ZoomData(CRect* prevRect, CRect* newRect) override;
-	void PlotDataToDC(CDC* p_dc) override;
+	void plot_data_to_dc(CDC* p_dc) override;
 
 	// implementation
 protected:
-	int hitCurve(CPoint point) override;
+	int hit_curve(CPoint point) override;
 	void reSize_And_Clear_Histograms(int nbins, int max, int min);
 	void getHistogLimits(int ihist);
 	void getClassArray(int iclass, CDWordArray*& pDW);

@@ -441,12 +441,12 @@ void ViewADcontinuous::InitAcquisitionDisplay()
 	const CWaveFormat* pWFormat = &(options_input_data_->waveFormat);
 	m_chartDataAD.AttachDataFile(&m_inputDataFile);
 	m_chartDataAD.ResizeChannels(0, m_channel_sweep_length);
-	if (m_chartDataAD.GetChanlistSize() != pWFormat->scan_count)
+	if (m_chartDataAD.get_channel_list_size() != pWFormat->scan_count)
 	{
-		m_chartDataAD.RemoveAllChanlistItems();
+		m_chartDataAD.remove_all_channel_list_items();
 		for (int j = 0; j < pWFormat->scan_count; j++)
 		{
-			m_chartDataAD.AddChanlistItem(j, 0);
+			m_chartDataAD.add_channel_list_item(j, 0);
 		}
 	}
 
@@ -458,7 +458,7 @@ void ViewADcontinuous::InitAcquisitionDisplay()
 	for (int i = 0; i < pWFormat->scan_count; i++)
 	{
 		constexpr int i_offset = 0;
-		CChanlistItem* pD = m_chartDataAD.GetChanlistItem(i);
+		CChanlistItem* pD = m_chartDataAD.get_channel_list_item(i);
 		pD->SetYzero(i_offset);
 		pD->SetYextent(i_extent);
 		pD->SetColor(static_cast<WORD>(i));
@@ -1111,7 +1111,7 @@ void ViewADcontinuous::SetVBarMode(short bMode)
 
 void ViewADcontinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 {
-	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
+	const CChanlistItem* pChan = m_chartDataAD.get_channel_list_item(0);
 	int y_extent = pChan->GetYextent();
 	const int span = pChan->GetDataBinSpan();
 
@@ -1141,7 +1141,7 @@ void ViewADcontinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 		const int last_channel = pWFormat->scan_count - 1;
 		for (int channel = 0; channel <= last_channel; channel++)
 		{
-			CChanlistItem* ppChan = m_chartDataAD.GetChanlistItem(channel);
+			CChanlistItem* ppChan = m_chartDataAD.get_channel_list_item(channel);
 			ppChan->SetYextent(y_extent);
 		}
 		m_chartDataAD.Invalidate();
@@ -1154,7 +1154,7 @@ void ViewADcontinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 
 void ViewADcontinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 {
-	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
+	const CChanlistItem* pChan = m_chartDataAD.get_channel_list_item(0);
 	int y_zero = pChan->GetYzero();
 	const int span = pChan->GetDataBinSpan() / 2;
 	const int initial = y_zero;
@@ -1191,7 +1191,7 @@ void ViewADcontinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 	const int last_channel = pWFormat->scan_count - 1;
 	for (int i = first_channel; i <= last_channel; i++)
 	{
-		CChanlistItem* pChani = m_chartDataAD.GetChanlistItem(i);
+		CChanlistItem* pChani = m_chartDataAD.get_channel_list_item(i);
 		pChani->SetYzero(y_zero);
 	}
 	m_chartDataAD.Invalidate();
@@ -1202,16 +1202,16 @@ void ViewADcontinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 
 void ViewADcontinuous::UpdateBiasScroll()
 {
-	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
-	m_chartDataAD.UpdateYRuler();
+	const CChanlistItem* pChan = m_chartDataAD.get_channel_list_item(0);
+	m_chartDataAD.update_y_ruler();
 	const int iPos = MulDiv(pChan->GetYzero(), 100, pChan->GetDataBinSpan())+50;
 	m_scroll_y_.SetScrollPos(iPos, TRUE);
 }
 
 void ViewADcontinuous::UpdateGainScroll()
 {
-	const CChanlistItem* pChan = m_chartDataAD.GetChanlistItem(0);
-	m_chartDataAD.UpdateYRuler();
+	const CChanlistItem* pChan = m_chartDataAD.get_channel_list_item(0);
+	m_chartDataAD.update_y_ruler();
 	const int iPos = MulDiv(pChan->GetYextent(), 100, pChan->GetDataBinSpan()) + 50;
 	m_scroll_y_.SetScrollPos(iPos, TRUE);
 }
@@ -1337,7 +1337,7 @@ void ViewADcontinuous::OnBnClickedUnzoom()
 	for (int i = 0; i < pWFormat->scan_count; i++)
 	{
 		constexpr int i_offset = 0;
-		CChanlistItem* pD = m_chartDataAD.GetChanlistItem(i);
+		CChanlistItem* pD = m_chartDataAD.get_channel_list_item(i);
 		pD->SetYzero(i_offset);
 		pD->SetYextent(i_extent);
 	}

@@ -115,7 +115,7 @@ void CMeasureResultsPage::OutputTitle()
 	if (!cs_cols.IsEmpty())
 	{
 		auto channel_first = 0; // assume all data channels
-		auto channel_last = m_pChartDataWnd->GetChanlistSize() - 1; // requested
+		auto channel_last = m_pChartDataWnd->get_channel_list_size() - 1; // requested
 		const auto n_pixels_mv = (m_listResults.GetStringWidth(_T("0.000000")) * 3) / 2;
 
 		if (!m_pMO->bAllChannels) // else if flag set
@@ -196,7 +196,7 @@ void CMeasureResultsPage::GetMaxMin(const int channel, long l_first, const long 
 	short* p_data;
 	int n_channels = m_pdatDoc->get_scan_count();
 	const auto p_buf = m_pdatDoc->get_raw_data_buffer();
-	const CChanlistItem* channel_list_item = m_pChartDataWnd->GetChanlistItem(channel);
+	const CChanlistItem* channel_list_item = m_pChartDataWnd->get_channel_list_item(channel);
 	const auto source_chan = channel_list_item->GetSourceChan();
 	const auto transform_mode = channel_list_item->GetTransformMode();
 	const auto span = m_pdatDoc->get_transformed_data_span(transform_mode);
@@ -260,7 +260,7 @@ void CMeasureResultsPage::GetMaxMin(const int channel, long l_first, const long 
 void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int line, const long l1, const long l2)
 {
 	// get scale factor for channel and sampling rate
-	m_mVperBin = m_pChartDataWnd->GetChanlistItem(channel)->GetVoltsperDataBin() * 1000.0f;
+	m_mVperBin = m_pChartDataWnd->get_channel_list_item(channel)->GetVoltsperDataBin() * 1000.0f;
 	const auto rate = m_pdatDoc->get_waveformat()->sampling_rate_per_channel;
 
 	auto output_column = (m_col - 1) * m_nbdatacols + 1; // output data into column icol
@@ -417,7 +417,7 @@ void CMeasureResultsPage::MeasureFromHZcur(int ichan)
 void CMeasureResultsPage::MeasureBetweenHZ(const int channel, const int line, const int v1, const int v2)
 {
 	// get scale factor for channel and sampling rate
-	m_mVperBin = m_pChartDataWnd->GetChanlistItem(channel)->GetVoltsperDataBin() * 1000.0f;
+	m_mVperBin = m_pChartDataWnd->get_channel_list_item(channel)->GetVoltsperDataBin() * 1000.0f;
 
 	auto column_1 = (m_col - 1) * m_nbdatacols + 1; // output data into column icol
 	auto item = m_listResults.GetItemCount(); // compute which line will receive data
@@ -535,16 +535,16 @@ BOOL CMeasureResultsPage::MeasureParameters()
 
 			// output title for this data set
 			auto i_chan_0 = 0;
-			auto i_chan_1 = m_pChartDataWnd->GetChanlistSize() - 1;
+			auto i_chan_1 = m_pChartDataWnd->get_channel_list_size() - 1;
 			if (!m_pMO->bAllChannels)
 			{
 				i_chan_0 = m_pMO->wSourceChan;
 				i_chan_1 = i_chan_0;
 			}
-			if (i_chan_0 >= m_pChartDataWnd->GetChanlistSize())
+			if (i_chan_0 >= m_pChartDataWnd->get_channel_list_size())
 				i_chan_0 = 0;
-			if (i_chan_1 >= m_pChartDataWnd->GetChanlistSize())
-				i_chan_1 = m_pChartDataWnd->GetChanlistSize() - 1;
+			if (i_chan_1 >= m_pChartDataWnd->get_channel_list_size())
+				i_chan_1 = m_pChartDataWnd->get_channel_list_size() - 1;
 
 			m_col = 1;
 			for (auto i_chan = i_chan_0; i_chan <= i_chan_1; i_chan++)

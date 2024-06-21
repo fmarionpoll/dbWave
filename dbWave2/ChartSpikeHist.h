@@ -52,7 +52,7 @@ public:
 	void ZoomData(CRect* prevRect, CRect* newRect) override;
 
 protected:
-	int hitCurve(CPoint point) override;
+	int hit_curve(CPoint point) override;
 	void reSize_And_Clear_Histograms(int nbins, int max, int min);
 	void getHistogLimits(int ihist);
 	void getExtents();
@@ -64,7 +64,7 @@ protected:
 	                            BOOL bNew);
 
 public:
-	void PlotDataToDC(CDC* p_dc) override;
+	void plot_data_to_dc(CDC* p_dc) override;
 
 protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

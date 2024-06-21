@@ -42,7 +42,7 @@ void ChartSpikeHist::RemoveHistData()
 	}
 }
 
-void ChartSpikeHist::PlotDataToDC(CDC* p_dc)
+void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 {
 	if (m_displayRect.right <= 0 && m_displayRect.bottom <= 0)
 	{
@@ -51,7 +51,7 @@ void ChartSpikeHist::PlotDataToDC(CDC* p_dc)
 		OnSize(SIZE_RESTORED, r.Width(), r.Height());
 	}
 	if (m_erasebkgnd)
-		EraseBkgnd(p_dc);
+		erase_bkgnd(p_dc);
 
 	// load resources
 	CRect rect1;
@@ -295,12 +295,12 @@ void ChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
 
 	// test if mouse hit one histogram
 	// if hit, then tell parent to select corresp histogram (spike)
-	m_hit_spike = hitCurve(point);
+	m_hit_spike = hit_curve(point);
 	if (m_hit_spike >= 0)
 	{
 		// cancel track rect mode
 		m_trackMode = TRACK_OFF; // flag trackrect
-		releaseCursor(); // release cursor capture
+		release_cursor(); // release cursor capture
 		postMyMessage(HINT_HITSPIKE, m_hit_spike);
 	}
 }
@@ -348,7 +348,7 @@ void ChartSpikeHist::OnLButtonDblClk(UINT nFlags, CPoint point)
 	}
 }
 
-int ChartSpikeHist::hitCurve(CPoint point)
+int ChartSpikeHist::hit_curve(CPoint point)
 {
 	auto hitspk = -1;
 	// convert device coordinates into logical coordinates

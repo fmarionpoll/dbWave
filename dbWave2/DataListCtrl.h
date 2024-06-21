@@ -19,44 +19,44 @@ public:
 	DataListCtrl();
 	~DataListCtrl() override;
 
-	void InitColumns(CUIntArray* width_columns = nullptr);
-	void SetCurSel(int record_position);
-	void UpdateCache(int index_first, int index_last);
-	void RefreshDisplay();
-	void ResizeSignalColumn(int n_pixels);
-	void FitColumnsToSize(int n_pixels);
+	void init_columns(CUIntArray* width_columns = nullptr);
+	void set_cur_sel(int record_position);
+	void update_cache(int index_first, int index_last);
+	void refresh_display();
+	void resize_signal_column(int n_pixels);
+	void fit_columns_to_size(int n_pixels);
 
-	void SetTransformMode(int imode) { m_data_transform = imode; }
-	void SetDisplayMode(int imode) { m_display_mode = imode; }
+	void set_transform_mode(const int i_mode) { m_data_transform = i_mode; }
+	void set_display_mode(const int i_mode) { m_display_mode = i_mode; }
 
-	void SetTimeIntervals(float tfirst, float tlast)
+	void set_time_intervals(const float t_first, const float t_last)
 	{
-		m_tFirst = tfirst;
-		m_tLast = tlast;
+		m_tFirst = t_first;
+		m_tLast = t_last;
 	}
 
-	void SetAmplitudeSpan(float mv_span) { m_mV_span = mv_span; } // TODO ; get extent, mode from current line
-	void SetDisplayFileName(boolean flag) { m_b_display_file_name = flag; }
-	void SetAmplitudeAdjustMode(boolean flag) { m_b_set_mV_span = flag; }
-	void SetTimespanAdjustMode(boolean flag) { m_b_set_time_span = flag; }
+	void set_amplitude_span(const float mv_span) { m_mV_span = mv_span; } // TODO ; get extent, mode from current line
+	void set_display_file_name(const boolean flag) { m_b_display_file_name = flag; }
+	void set_amplitude_adjust_mode(const boolean flag) { m_b_set_mV_span = flag; }
+	void set_timespan_adjust_mode(const boolean flag) { m_b_set_time_span = flag; }
 
-	void SetSpikePlotMode(const int spike_plot_mode, const int iclass)
+	void set_spike_plot_mode(const int spike_plot_mode, const int i_class)
 	{
 		m_spike_plot_mode = spike_plot_mode;
-		m_selected_class = iclass;
+		m_selected_class = i_class;
 	}
 
-	int GetDisplayMode() const { return m_display_mode; }
-	float GetTimeFirst() const { return m_tFirst; }
-	float GetTimeLast() const { return m_tLast; }
-	float GetAmplitudeSpan() const { return m_mV_span; }
-	int GetSpikePlotMode() const { return m_spike_plot_mode; }
-	int GetSpikeClass() const { return m_selected_class; }
+	int get_display_mode() const { return m_display_mode; }
+	float get_time_first() const { return m_tFirst; }
+	float get_time_last() const { return m_tLast; }
+	float get_amplitude_span() const { return m_mV_span; }
+	int get_spike_plot_mode() const { return m_spike_plot_mode; }
+	int get_spike_class() const { return m_selected_class; }
 
-	ChartData* GetDataViewCurrentRecord();
-	AcqDataDoc* GetVisibleRowsAcqDataDocAt(int index) { return ptr_rows[index]->pdataDoc; }
-	CSpikeDoc* GetVisibleRowsSpikeDocAt(int index) { return ptr_rows[index]->pspikeDoc; }
-	int GetVisibleRowsSize() { return ptr_rows.GetSize(); }
+	ChartData* get_chart_data_of_current_record();
+	AcqDataDoc* get_visible_rows_acq_data_doc_at(int index) { return ptr_rows[index]->pdataDoc; }
+	CSpikeDoc* get_visible_rows_spike_doc_at(int index) { return ptr_rows[index]->pspikeDoc; }
+	int get_visible_rows_size() const { return ptr_rows.GetSize(); }
 
 protected:
 	CArray<CDataListCtrl_Row*, CDataListCtrl_Row*> ptr_rows;

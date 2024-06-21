@@ -54,8 +54,8 @@ void ChartSpike::sub_item_draw(CDC& dc, CRect& rect)
 	CBitmap* p_old_bmp = dc_mem.SelectObject(&bmp_mem);
 
 	// draw actual data
-	SetDisplayAreaSize(rect.Width(), rect.Height());
-	PlotDataToDC(&dc_mem); //plot_spikes(&dc_mem);
+	set_display_area_size(rect.Width(), rect.Height());
+	plot_data_to_dc(&dc_mem); //plot_spikes(&dc_mem);
 
 	// transfer data to DC and clean the memory DC
 	dc.BitBlt(rect.left, rect.top, rect.Width(), rect.Height(), &dc_mem, 0, 0, SRCCOPY);

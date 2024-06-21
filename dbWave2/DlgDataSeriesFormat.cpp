@@ -36,7 +36,7 @@ void DlgDataSeriesFormat::OnOK()
 
 void DlgDataSeriesFormat::GetParams(int index)
 {
-	CChanlistItem* chan = m_pChartDataWnd->GetChanlistItem(index);
+	CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(index);
 	m_yzero = chan->GetYzero();
 	m_yextent = chan->GetYextent();
 	const auto color = chan->GetColorIndex();
@@ -49,7 +49,7 @@ void DlgDataSeriesFormat::GetParams(int index)
 
 void DlgDataSeriesFormat::SetParams(const int index)
 {
-	CChanlistItem* chan = m_pChartDataWnd->GetChanlistItem(index);
+	CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(index);
 	m_yzero = static_cast<int>((m_maxmv + m_minmv) / (m_mVperbin * 2.0f)) + m_binzero;
 	m_yextent = static_cast<int>((m_maxmv - m_minmv) / m_mVperbin);
 	chan->SetYzero(m_yzero);
@@ -81,9 +81,9 @@ BOOL DlgDataSeriesFormat::OnInitDialog()
 	*/
 
 	// load channel description CComboBox
-	const auto chanmax = m_pChartDataWnd->GetChanlistSize();
+	const auto chanmax = m_pChartDataWnd->get_channel_list_size();
 	for (auto i = 0; i < chanmax; i++)
-		m_listseries.AddString(m_pChartDataWnd->GetChanlistItem(i)->GetComment());
+		m_listseries.AddString(m_pChartDataWnd->get_channel_list_item(i)->GetComment());
 
 	// select...
 	GetParams(m_listindex);

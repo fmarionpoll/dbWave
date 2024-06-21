@@ -553,9 +553,9 @@ void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 	}
 
 	// set detection channel
-	if (m_ChartDataWnd.SetChanlistSourceChan(0, source_data_view) < 0)
+	if (m_ChartDataWnd.set_channel_list_source_channel(0, source_data_view) < 0)
 	{
-		m_ChartDataWnd.RemoveAllChanlistItems();
+		m_ChartDataWnd.remove_all_channel_list_items();
 	}
 	else
 	{
@@ -566,7 +566,7 @@ void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 		{
 			m_bInitSourceView = FALSE;
 			int max, min;
-			CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(0);
+			CChanlistItem* chan = m_ChartDataWnd.get_channel_list_item(0);
 			chan->GetMaxMin(&max, &min);
 			const auto extent = MulDiv(max - min + 1, 11, 10);
 			const auto zero = (max + min) / 2;
@@ -706,9 +706,9 @@ void ViewSpikes::select_spike_list(int current_selection)
 		extract_channel = m_pSpkList->get_detection_parameters()->detect_channel;
 
 	// no data available
-	if (m_ChartDataWnd.SetChanlistSourceChan(0, extract_channel) < 0)
+	if (m_ChartDataWnd.set_channel_list_source_channel(0, extract_channel) < 0)
 	{
-		m_ChartDataWnd.RemoveAllChanlistItems();
+		m_ChartDataWnd.remove_all_channel_list_items();
 	}
 	// data are ok
 	else
@@ -716,7 +716,7 @@ void ViewSpikes::select_spike_list(int current_selection)
 		m_ChartDataWnd.ResizeChannels(m_ChartDataWnd.GetRectWidth(), m_lLast - m_lFirst);
 		m_ChartDataWnd.GetDataFromDoc(m_lFirst, m_lLast);
 		int max, min;
-		CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(0);
+		CChanlistItem* chan = m_ChartDataWnd.get_channel_list_item(0);
 		chan->GetMaxMin(&max, &min);
 		const auto extent = MulDiv(max - min + 1, 11, 10);
 		const auto zero = (max + min) / 2;
@@ -938,7 +938,7 @@ CString ViewSpikes::PrintBars(CDC* p_dc, const CRect* rect)
 	if (options_viewdata->bChansComment || options_viewdata->bVoltageScaleBar || options_viewdata->bChanSettings)
 	{
 		/*
-				int imax = m_sourceView.GetChanlistSize();	// number of data channels
+				int imax = m_sourceView.get_channel_list_size();	// number of data channels
 				for (int ichan=0; ichan< imax; ichan++)		// loop
 				{
 					// boucler sur les commentaires de chan n a chan 0...
@@ -1253,7 +1253,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			m_ChartDataWnd.Print(p_dc, &rw_bars); // print data
 			p_dc->SelectClipRgn(nullptr);
 
-			extent = m_ChartDataWnd.GetChanlistItem(0)->GetYextent();
+			extent = m_ChartDataWnd.get_channel_list_item(0)->GetYextent();
 			rw_bars.top = rw_bars.bottom;
 		}
 
@@ -1455,7 +1455,7 @@ void ViewSpikes::centerDataDisplayOnSpike(const int spike_no)
 	}
 
 	// center curve vertically
-	CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(0);
+	CChanlistItem* chan = m_ChartDataWnd.get_channel_list_item(0);
 	const int doc_channel = m_pSpkList->get_detection_parameters()->extract_channel;
 	short max_data = m_pDataDoc->get_value_from_buffer(doc_channel, spk_first);
 	short min_data = max_data;
@@ -1618,7 +1618,7 @@ void ViewSpikes::OnEditCopy()
 			m_ChartDataWnd.CenterChan(0);
 			m_ChartDataWnd.Print(&mDC, &rw_bars);
 
-			//auto extent = m_ChartDataWnd.GetChanlistItem(0)->GetYextent();
+			//auto extent = m_ChartDataWnd.get_channel_list_item(0)->GetYextent();
 			rw_spikes.OffsetRect(0, r_height);
 			rw_bars.OffsetRect(0, r_height);
 			rw_text.OffsetRect(0, r_height);
@@ -1728,7 +1728,7 @@ void ViewSpikes::setVBarMode(short bMode)
 void ViewSpikes::updateGainScroll()
 {
 	m_scroll_y.SetScrollPos(
-		MulDiv(m_ChartDataWnd.GetChanlistItem(0)->GetYextent(),
+		MulDiv(m_ChartDataWnd.get_channel_list_item(0)->GetYextent(),
 		       100,
 		       YEXTENT_MAX)
 		+ 50,
@@ -1737,7 +1737,7 @@ void ViewSpikes::updateGainScroll()
 
 void ViewSpikes::scrollGain(UINT nSBCode, UINT nPos)
 {
-	int lSize = m_ChartDataWnd.GetChanlistItem(0)->GetYextent();
+	int lSize = m_ChartDataWnd.get_channel_list_item(0)->GetYextent();
 	// get corresponding data
 	switch (nSBCode)
 	{
@@ -1770,7 +1770,7 @@ void ViewSpikes::scrollGain(UINT nSBCode, UINT nPos)
 	// change y extent
 	if (lSize > 0) //&& lSize<=YEXTENT_MAX)
 	{
-		m_ChartDataWnd.GetChanlistItem(0)->SetYextent(lSize);
+		m_ChartDataWnd.get_channel_list_item(0)->SetYextent(lSize);
 		updateLegends(TRUE);
 		m_ChartDataWnd.Invalidate();
 	}
@@ -1781,7 +1781,7 @@ void ViewSpikes::scrollGain(UINT nSBCode, UINT nPos)
 
 void ViewSpikes::updateBiasScroll()
 {
-	CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(0);
+	CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(0);
 	const auto i_pos = (pchan->GetYzero()
 			- pchan->GetDataBinZero())
 		* 100 / static_cast<int>(YZERO_SPAN) + 50;
@@ -1790,7 +1790,7 @@ void ViewSpikes::updateBiasScroll()
 
 void ViewSpikes::scrollBias(UINT nSBCode, UINT nPos)
 {
-	CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(0);
+	CChanlistItem* chan = m_ChartDataWnd.get_channel_list_item(0);
 	auto l_size = chan->GetYzero() - chan->GetDataBinZero();
 	const auto y_extent = chan->GetYextent();
 	// get corresponding data

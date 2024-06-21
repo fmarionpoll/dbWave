@@ -81,7 +81,7 @@ protected:
 	void FillOrdinatesAtscale(BOOL bScale);
 	void GetExtents();
 public:
-	void PlotDataToDC(CDC* p_dc) override;
+	void plot_data_to_dc(CDC* p_dc) override;
 
 	// Generated message map functions
 protected:

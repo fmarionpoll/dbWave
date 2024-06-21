@@ -25,10 +25,10 @@ ChartSpikeShape::ChartSpikeShape()
 ChartSpikeShape::~ChartSpikeShape()
 = default;
 
-void ChartSpikeShape::PlotDataToDC(CDC * p_dc)
+void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 {
 	if (m_erasebkgnd)
-		EraseBkgnd(p_dc);
+		erase_bkgnd(p_dc);
 
 	// display data: trap error conditions
 	const auto n_saved_dc = p_dc->SaveDC();
@@ -312,7 +312,7 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 		if (point.y != m_ptLast.y || point.x != m_ptLast.x)
 			OnMouseMove(nFlags, point);
 		m_trackMode = TRACK_OFF;
-		releaseCursor();
+		release_cursor();
 		ChartSpike::OnLButtonUp(nFlags, point);
 	}
 	break;
@@ -391,7 +391,7 @@ void ChartSpikeShape::OnLButtonDown(UINT nFlags, CPoint point)
 	{
 		// cancel track rect mode
 		m_trackMode = TRACK_OFF;
-		releaseCursor();
+		release_cursor();
 		if (nFlags & MK_SHIFT)
 			postMyMessage(HINT_HITSPIKE_SHIFT, m_hit_spike);
 
@@ -448,7 +448,7 @@ void ChartSpikeShape::OnLButtonDblClk(UINT nFlags, CPoint point)
 		}
 		else
 		{
-			const auto selected_spike = hitCurve(point);
+			const auto selected_spike = hit_curve(point);
 			if (selected_spike > 0)
 				postMyMessage(HINT_DBLCLKSEL, selected_spike);
 		}
@@ -479,7 +479,7 @@ int ChartSpikeShape::hit_curve_in_doc(CPoint point)
 		{
 			continue;
 		}
-		result = hitCurve(point);
+		result = hit_curve(point);
 		if (result >= 0)
 			break;
 	}
@@ -494,7 +494,7 @@ int ChartSpikeShape::hit_curve_in_doc(CPoint point)
 	return result;
 }
 
-int ChartSpikeShape::hitCurve(const CPoint point)
+int ChartSpikeShape::hit_curve(const CPoint point)
 {
 	auto index_spike_hit = -1;
 	// convert device coordinates into logical coordinates

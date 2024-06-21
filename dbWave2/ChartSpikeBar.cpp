@@ -30,10 +30,10 @@ ChartSpikeBar::~ChartSpikeBar()
 	}
 }
 
-void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
+void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 {
 	if (m_erasebkgnd)
-		EraseBkgnd(p_dc);
+		erase_bkgnd(p_dc);
 
 	p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 	auto rect = m_displayRect;
@@ -142,7 +142,7 @@ void ChartSpikeBar::PlotDataToDC(CDC* p_dc)
 void ChartSpikeBar::plot_single_spk_data_to_dc(CDC* p_dc)
 {
 	if (m_erasebkgnd)
-		EraseBkgnd(p_dc);
+		erase_bkgnd(p_dc);
 
 	p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 	auto rect = m_displayRect;
@@ -635,7 +635,7 @@ void ChartSpikeBar::OnLButtonDown(const UINT nFlags, CPoint point)
 	if (m_currCursorMode == 0)
 	{
 		m_track_curve = FALSE;
-		m_hit_spike = hitCurve(point);
+		m_hit_spike = hit_curve(point);
 		// tell parent spike selected
 		if (m_hit_spike >= 0)
 		{
@@ -696,7 +696,7 @@ void ChartSpikeBar::OnLButtonDblClk(UINT nFlags, CPoint point)
 		}
 		else
 		{
-			const auto i_selected_spike = hitCurve(point);
+			const auto i_selected_spike = hit_curve(point);
 			if (i_selected_spike >= 0)
 				postMyMessage(HINT_DBLCLKSEL, i_selected_spike);
 		}
@@ -727,7 +727,7 @@ int ChartSpikeBar::hit_curve_in_doc(const CPoint point)
 		{
 			continue;
 		}
-		result = hitCurve(point);
+		result = hit_curve(point);
 		if (result >= 0)
 			break;
 	}
@@ -742,7 +742,7 @@ int ChartSpikeBar::hit_curve_in_doc(const CPoint point)
 	return result;
 }
 
-int ChartSpikeBar::hitCurve(const CPoint point)
+int ChartSpikeBar::hit_curve(const CPoint point)
 {
 	auto hit_spike = -1;
 	// for y coordinates, conversion is straightforward:

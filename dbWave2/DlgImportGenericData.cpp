@@ -521,17 +521,17 @@ void DlgImportGenericData::UpdatePreview()
 	m_ChartDataWnd.AttachDataFile(&m_AcqDataFile);
 	CSize lsize = m_ChartDataWnd.GetRectSize();
 	m_ChartDataWnd.ResizeChannels(lsize.cx, m_AcqDataFile.get_doc_channel_length());
-	if (m_ChartDataWnd.GetChanlistSize() < ndocchans) // add envelopes if necessary
+	if (m_ChartDataWnd.get_channel_list_size() < ndocchans) // add envelopes if necessary
 	{
 		for (int jdocchan = 1; jdocchan < ndocchans; jdocchan++)
-			m_ChartDataWnd.AddChanlistItem(jdocchan, 0);
+			m_ChartDataWnd.add_channel_list_item(jdocchan, 0);
 	}
 	// load data from document and adjust display
 	m_ChartDataWnd.GetDataFromDoc(0, m_AcqDataFile.get_doc_channel_length() - 1);
 	for (int i = 0; i < ndocchans; i++)
 	{
 		int max, min;
-		CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(i);
+		CChanlistItem* chan = m_ChartDataWnd.get_channel_list_item(i);
 		chan->GetMaxMin(&max, &min);
 		// split curves if requested by options
 		int iextent = MulDiv(max - min + 1, 11, 10);

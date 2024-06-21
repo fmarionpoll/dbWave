@@ -59,7 +59,7 @@ BOOL CMeasureHZtagsPage::GetHZcursorVal(const int index)
 	m_index = index;
 	m_datachannel = m_pChartDataWnd->m_HZtags.get_channel(index);
 	int k = m_pChartDataWnd->m_HZtags.get_value(m_index);
-	m_mvlevel = m_pChartDataWnd->GetChanlistItem(m_datachannel)->ConvertDataBinsToVolts(k) * 1000.f;
+	m_mvlevel = m_pChartDataWnd->get_channel_list_item(m_datachannel)->ConvertDataBinsToVolts(k) * 1000.f;
 
 	return TRUE;
 }
@@ -67,7 +67,7 @@ BOOL CMeasureHZtagsPage::GetHZcursorVal(const int index)
 void CMeasureHZtagsPage::OnCenter()
 {
 	int max, min;
-	CChanlistItem* pchan = m_pChartDataWnd->GetChanlistItem(m_datachannel);
+	CChanlistItem* pchan = m_pChartDataWnd->get_channel_list_item(m_datachannel);
 	pchan->GetMaxMin(&max, &min);
 	const auto val = (max + min) / 2;
 	m_pChartDataWnd->m_HZtags.set_tag_val(m_index, val);
@@ -99,8 +99,8 @@ void CMeasureHZtagsPage::OnEnChangeDatachannel()
 		// update dependent parameters
 		if (m_datachannel < 0)
 			m_datachannel = 0;
-		if (m_datachannel >= m_pChartDataWnd->GetChanlistSize())
-			m_datachannel = m_pChartDataWnd->GetChanlistSize() - 1;
+		if (m_datachannel >= m_pChartDataWnd->get_channel_list_size())
+			m_datachannel = m_pChartDataWnd->get_channel_list_size() - 1;
 		if (m_nbcursors > 0 && m_index >= 0 && m_index < m_nbcursors)
 		{
 			m_pChartDataWnd->m_HZtags.set_tag_chan(m_index, m_datachannel);
@@ -133,7 +133,7 @@ void CMeasureHZtagsPage::OnEnChangeMvlevel()
 		UpdateData(FALSE);
 		if (m_nbcursors > 0 && m_index >= 0 && m_index < m_nbcursors)
 		{
-			const auto val = m_pChartDataWnd->GetChanlistItem(m_datachannel)->ConvertVoltsToDataBins(
+			const auto val = m_pChartDataWnd->get_channel_list_item(m_datachannel)->ConvertVoltsToDataBins(
 				m_mvlevel / 1000.0f);
 			m_pChartDataWnd->m_HZtags.set_tag_val(m_index, val);
 			m_pChartDataWnd->Invalidate();
@@ -144,7 +144,7 @@ void CMeasureHZtagsPage::OnEnChangeMvlevel()
 void CMeasureHZtagsPage::OnAdjust()
 {
 	int max, min;
-	m_pChartDataWnd->GetChanlistItem(m_datachannel)->GetMaxMin(&max, &min);
+	m_pChartDataWnd->get_channel_list_item(m_datachannel)->GetMaxMin(&max, &min);
 	// get nb cursors / m_datachannel
 	auto n_cursors = 0;
 	for (auto i = m_nbcursors - 1; i >= 0; i--)
@@ -170,7 +170,7 @@ void CMeasureHZtagsPage::OnAdjust()
 	}
 	m_pChartDataWnd->Invalidate();
 	val = m_pChartDataWnd->m_HZtags.get_value(m_index);
-	m_mvlevel = m_pChartDataWnd->GetChanlistItem(m_datachannel)->ConvertDataBinsToVolts(val) * 1000.f;
+	m_mvlevel = m_pChartDataWnd->get_channel_list_item(m_datachannel)->ConvertDataBinsToVolts(val) * 1000.f;
 	UpdateData(FALSE);
 }
 

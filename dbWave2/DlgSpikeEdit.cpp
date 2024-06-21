@@ -89,14 +89,14 @@ BOOL DlgSpikeEdit::OnInitDialog()
 		m_ChartDataWnd.AttachDataFile(m_pAcqDatDoc);
 		const auto lvSize = m_ChartDataWnd.GetRectSize();
 		m_ChartDataWnd.ResizeChannels(lvSize.cx, 0); // change nb of pixels
-		m_ChartDataWnd.RemoveAllChanlistItems();
-		m_ChartDataWnd.AddChanlistItem(m_pSpkList->get_detection_parameters()->extract_channel, m_pSpkList->get_detection_parameters()->extract_transform);
+		m_ChartDataWnd.remove_all_channel_list_items();
+		m_ChartDataWnd.add_channel_list_item(m_pSpkList->get_detection_parameters()->extract_channel, m_pSpkList->get_detection_parameters()->extract_transform);
 
 		if (m_pSpkList->get_detection_parameters()->compensate_Baseline)
 		{
-			m_ChartDataWnd.AddChanlistItem(m_pSpkList->get_detection_parameters()->extract_channel, MOVAVG30);
-			m_ChartDataWnd.GetChanlistItem(1)->SetColor(6);
-			m_ChartDataWnd.GetChanlistItem(1)->SetPenWidth(1);
+			m_ChartDataWnd.add_channel_list_item(m_pSpkList->get_detection_parameters()->extract_channel, MOVAVG30);
+			m_ChartDataWnd.get_channel_list_item(1)->SetColor(6);
+			m_ChartDataWnd.get_channel_list_item(1)->SetPenWidth(1);
 			static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(1);
 		}
 		m_intervals_to_highlight_spikes.SetSize(3 + 2); // total size
@@ -226,9 +226,9 @@ void DlgSpikeEdit::OnEnChangeYextent()
 		if (m_yvextent != m_yextent)
 		{
 			m_yextent = m_yvextent;
-			m_ChartDataWnd.GetChanlistItem(0)->SetYextent(m_yextent);
+			m_ChartDataWnd.get_channel_list_item(0)->SetYextent(m_yextent);
 			if (m_pSpkList->get_detection_parameters()->compensate_Baseline)
-				m_ChartDataWnd.GetChanlistItem(1)->SetYextent(m_yextent);
+				m_ChartDataWnd.get_channel_list_item(1)->SetYextent(m_yextent);
 			m_SpkChartWnd.SetYWExtOrg(m_yextent, m_yzero);
 			m_ChartDataWnd.Invalidate();
 			m_SpkChartWnd.Invalidate();
@@ -260,20 +260,20 @@ void DlgSpikeEdit::LoadSourceViewData()
 	// get data from doc
 	m_spikeChan = spike->get_source_channel();
 
-	m_ChartDataWnd.SetChanlistSourceChan(0, m_spikeChan);
+	m_ChartDataWnd.set_channel_list_source_channel(0, m_spikeChan);
 	m_ChartDataWnd.GetDataFromDoc(source_view_first, source_view_last);
 
 	const auto method = m_pSpkList->get_detection_parameters()->extract_transform;
 	m_pAcqDatDoc->load_transformed_data(source_view_first, source_view_last, method, m_spikeChan);
 
 	// adjust offset (center spike) : use initial offset from spike
-	CChanlistItem* chan0 = m_ChartDataWnd.GetChanlistItem(0);
+	CChanlistItem* chan0 = m_ChartDataWnd.get_channel_list_item(0);
 	chan0->SetYzero(m_yzero + spike->get_amplitude_offset());
 	chan0->SetYextent(m_yextent);
 
 	if (m_pSpkList->get_detection_parameters()->compensate_Baseline)
 	{
-		CChanlistItem* chan1 = m_ChartDataWnd.GetChanlistItem(1);
+		CChanlistItem* chan1 = m_ChartDataWnd.get_channel_list_item(1);
 		chan1->SetYzero(m_yzero + spike->get_amplitude_offset());
 		chan1->SetYextent(m_yextent);
 	}

@@ -44,7 +44,7 @@ public:
 	int display_ex_data(short* p_data, int color = 9);
 	void display_flagged_spikes(BOOL bHighLight);
 
-	void PlotDataToDC(CDC* p_dc) override;
+	void plot_data_to_dc(CDC* p_dc) override;
 	void ZoomData(CRect* rFrom, CRect* rDest) override;
 	void Print(CDC* p_dc, const CRect* rect);
 
@@ -54,7 +54,7 @@ protected:
 	void get_extents();
 	void get_extents_current_spk_list();
 
-	int hitCurve(CPoint point) override;
+	int hit_curve(CPoint point) override;
 	int hit_curve_in_doc(CPoint point);
 
 	void draw_spike_on_dc(const Spike* spike, CDC* p_dc);

@@ -123,7 +123,7 @@ void DataListCtrl::resize_ptr_array(int n_items)
 	}
 }
 
-void DataListCtrl::InitColumns(CUIntArray* width_columns)
+void DataListCtrl::init_columns(CUIntArray* width_columns)
 {
 	if (width_columns != nullptr)
 	{
@@ -167,17 +167,17 @@ void DataListCtrl::OnGetDisplayInfo(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 		first_array = item_index;
 		last_array = first_array + GetCountPerPage() - 1;
-		UpdateCache(first_array, last_array);
+		update_cache(first_array, last_array);
 	}
 	// item after last visible item? iItem becomes last visible (scroll down)
 	else if (item_index > last_array)
 	{
 		last_array = item_index;
 		first_array = last_array - GetCountPerPage() + 1;
-		UpdateCache(first_array, last_array);
+		update_cache(first_array, last_array);
 	}
 	else if (ptr_rows.GetSize() == 0)
-		UpdateCache(first_array, last_array);
+		update_cache(first_array, last_array);
 
 	// now, the requested item is in the cache
 	// get data from database
@@ -231,7 +231,7 @@ void DataListCtrl::OnGetDisplayInfo(NMHDR* pNMHDR, LRESULT* pResult)
 		item->iImage = i_cache_index;
 }
 
-void DataListCtrl::SetCurSel(int record_position)
+void DataListCtrl::set_cur_sel(int record_position)
 {
 	// get current item which has the focus
 	constexpr auto flag = LVNI_FOCUSED | LVNI_ALL;
@@ -254,7 +254,7 @@ void DataListCtrl::SetCurSel(int record_position)
 // create objects if necessary
 // scroll or load new data
 
-void DataListCtrl::UpdateCache(int index_first, int index_last)
+void DataListCtrl::update_cache(int index_first, int index_last)
 {
 	// adjust number of items in the array and adjust index_first and index_last
 	const auto inb_visible = index_last - index_first + 1;
@@ -448,7 +448,7 @@ void DataListCtrl::set_empty_bitmap(const boolean b_forced_update)
 	mem_dc.Rectangle(&rect_data);
 }
 
-void DataListCtrl::RefreshDisplay()
+void DataListCtrl::refresh_display()
 {
 	if (ptr_rows.GetSize() == NULL)
 		return;
@@ -519,20 +519,20 @@ void DataListCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 }
 
-ChartData* DataListCtrl::GetDataViewCurrentRecord()
+ChartData* DataListCtrl::get_chart_data_of_current_record()
 {
 	const UINT n_selected_items = GetSelectedCount();
-	int nItem = -1;
+	int n_item = -1;
 	ChartData* ptr = nullptr;
 
-	// Update all of the selected items.
+	// get ptr of first item selected
 	if (n_selected_items > 0)
 	{
-		nItem = GetNextItem(nItem, LVNI_SELECTED);
-		ASSERT(nItem != -1);
-		nItem -= GetTopIndex();
-		if (nItem >= 0 && nItem < ptr_rows.GetSize())
-			ptr = ptr_rows.GetAt(nItem)->pDataChartWnd;
+		n_item = GetNextItem(n_item, LVNI_SELECTED);
+		ASSERT(n_item != -1);
+		n_item -= GetTopIndex();
+		if (n_item >= 0 && n_item < ptr_rows.GetSize())
+			ptr = ptr_rows.GetAt(n_item)->pDataChartWnd;
 	}
 	return ptr;
 }
@@ -558,7 +558,7 @@ void DataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
 	}
 	if (ptr->csDatafileName.IsEmpty() || !ptr->pdataDoc->OnOpenDocument(ptr->csDatafileName))
 	{
-		p_wnd->RemoveAllChanlistItems();
+		p_wnd->remove_all_channel_list_items();
 		auto comment = _T("File name: ") + ptr->csDatafileName;
 		comment += _T(" -- data not available");
 		p_wnd->SetString(comment);
@@ -598,7 +598,7 @@ void DataListCtrl::plot_data(const CDataListCtrl_Row* ptr, ChartData* p_wnd, int
 	mem_dc.SelectObject(&bitmap_plot);
 	mem_dc.SetMapMode(p_dc->GetMapMode());
 
-	p_wnd->PlotDataToDC(&mem_dc);
+	p_wnd->plot_data_to_dc(&mem_dc);
 	CPen pen;
 	pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0)); // black//RGB(0, 0, 0)); // black
 	mem_dc.MoveTo(1, 0);
@@ -685,7 +685,7 @@ void DataListCtrl::display_empty_wnd(CDataListCtrl_Row* ptr, int iImage)
 	m_image_list.Replace(iImage, m_p_empty_bitmap, nullptr);
 }
 
-void DataListCtrl::ResizeSignalColumn(const int n_pixels)
+void DataListCtrl::resize_signal_column(const int n_pixels)
 {
 	m_column_width[CTRL_COL_CURVE] = n_pixels;
 	m_image_list.DeleteImageList();
@@ -700,10 +700,10 @@ void DataListCtrl::ResizeSignalColumn(const int n_pixels)
 		SAFE_DELETE(ptr->pDataChartWnd)
 		SAFE_DELETE(ptr->pSpikeChartWnd)
 	}
-	RefreshDisplay();
+	refresh_display();
 }
 
-void DataListCtrl::FitColumnsToSize(int n_pixels)
+void DataListCtrl::fit_columns_to_size(int n_pixels)
 {
 	// compute width of fixed columns
 	auto fixed_width = 0;
@@ -716,6 +716,6 @@ void DataListCtrl::FitColumnsToSize(int n_pixels)
 	if (signal_column_width != m_column_width[CTRL_COL_CURVE] && signal_column_width > 2)
 	{
 		SetColumnWidth(CTRL_COL_CURVE, signal_column_width);
-		ResizeSignalColumn(signal_column_width);
+		resize_signal_column(signal_column_width);
 	}
 }

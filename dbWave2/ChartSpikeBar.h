@@ -41,12 +41,12 @@ public:
 	
 
 	void Print(CDC* p_dc, const CRect* rect);
-	void PlotDataToDC(CDC* p_dc) override;
+	void plot_data_to_dc(CDC* p_dc) override;
 	void plot_single_spk_data_to_dc(CDC* p_dc);
 	void ZoomData(CRect* prevRect, CRect* newRect) override;
 
 protected:
-	int hitCurve(CPoint point) override;
+	int hit_curve(CPoint point) override;
 	int hit_curve_in_doc(CPoint point);
 	void display_bars(CDC* p_dc, const CRect* rect);
 

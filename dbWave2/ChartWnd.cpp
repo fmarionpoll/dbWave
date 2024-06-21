@@ -147,7 +147,7 @@ ChartWnd::ChartWnd()
 
 ChartWnd::~ChartWnd()
 {
-	DestroyWindow();
+	CWnd::DestroyWindow();
 
 	m_countcurs--;
 	if (m_countcurs == 0)
@@ -207,7 +207,7 @@ BOOL ChartWnd::Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, 
 void ChartWnd::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
-	SetDisplayAreaSize(cx, cy);
+	set_display_area_size(cx, cy);
 	// force DC to redraw
 	if (m_PlotDC.GetSafeHdc())
 		m_PlotDC.DeleteDC();
@@ -215,7 +215,7 @@ void ChartWnd::OnSize(UINT nType, int cx, int cy)
 	Invalidate();
 }
 
-void ChartWnd::SetDisplayAreaSize(int cx, int cy)
+void ChartWnd::set_display_area_size(int cx, int cy)
 {
 	// update coordinates
 	m_clientRect.bottom = cy;
@@ -239,7 +239,7 @@ void ChartWnd::PlotToBitmap(CDC* p_dc)
 	                         p_dc->GetDeviceCaps(BITSPIXEL), nullptr);
 	m_PlotDC.CreateCompatibleDC(p_dc);
 	const auto pold_plot_bitmap = m_PlotDC.SelectObject(&bitmap_plot);
-	PlotDataToDC(&m_PlotDC);
+	plot_data_to_dc(&m_PlotDC);
 	p_dc->BitBlt(0, 0, m_displayRect.right, m_displayRect.bottom, &m_PlotDC, 0, 0, SRCCOPY);
 	m_PlotDC.SelectObject(pold_plot_bitmap);
 }
@@ -250,16 +250,16 @@ void ChartWnd::OnPaint()
 	dc.IntersectClipRect(&m_clientRect);
 
 	if (!m_bUseDIB)
-		PlotDataToDC(&dc);
+		plot_data_to_dc(&dc);
 	else
 		PlotToBitmap(&dc);
 }
 
-void ChartWnd::PlotDataToDC(CDC* p_dc)
+void ChartWnd::plot_data_to_dc(CDC* p_dc)
 {
 }
 
-void ChartWnd::EraseBkgnd(CDC* p_dc)
+void ChartWnd::erase_bkgnd(CDC* p_dc)
 {
 	// erase background around m_displayRect (assume only left and bottom areas)
 	if (m_bNiceGrid)
@@ -554,12 +554,12 @@ void ChartWnd::SetNyScaleCells(int iCells, int iTicks, int iTickLine)
 	m_scopestruct.iYTickLine = iTickLine;
 }
 
-void ChartWnd::sendMyMessage(int code, int codeparm)
+void ChartWnd::sendMyMessage(int code, int codeparm) const
 {
 	GetParent()->SendMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, GetDlgCtrlID()));
 }
 
-void ChartWnd::postMyMessage(int code, int codeparm)
+void ChartWnd::postMyMessage(int code, int codeparm) const
 {
 	GetParent()->PostMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, GetDlgCtrlID()));
 }
@@ -601,7 +601,7 @@ void ChartWnd::SetYWExtOrg(int extent, int zero)
 	m_yWO = zero;
 }
 
-void ChartWnd::captureCursor()
+void ChartWnd::capture_cursor()
 {
 	SetCapture();
 	auto rect_limit = m_displayRect;
@@ -609,13 +609,13 @@ void ChartWnd::captureCursor()
 	ClipCursor(rect_limit);
 }
 
-void ChartWnd::releaseCursor()
+void ChartWnd::release_cursor()
 {
 	ReleaseCapture();
 	ClipCursor(nullptr);
 }
 
-BOOL ChartWnd::OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message)
+BOOL ChartWnd::OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message) const
 {
 	SetCursor(m_currCursor);
 	return TRUE;
@@ -714,7 +714,7 @@ void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		}
 
 		// limit the tracking to the client area of the view
-		captureCursor();
+		capture_cursor();
 	}
 }
 
@@ -784,7 +784,7 @@ void ChartWnd::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (m_trackMode != TRACK_OFF)
 	{
-		releaseCursor();
+		release_cursor();
 		if (m_trackMode == TRACK_RECT && m_currCursorMode)
 			invertTracker(point);
 		m_trackMode = TRACK_OFF;
@@ -825,7 +825,7 @@ void ChartWnd::OnRButtonDown(UINT nFlags, CPoint point)
 		m_ptLast = point;
 		m_trackMode = TRACK_RECT; // flag trackrect
 		invertTracker(point); // invert rectangle
-		captureCursor();
+		capture_cursor();
 		break;
 	case CURSOR_VERTICAL:
 	default:
@@ -840,7 +840,7 @@ void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 	{
 	case TRACK_RECT:
 		{
-			releaseCursor();
+			release_cursor();
 			// skip too small a rectangle (5 pixels?)
 			CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
 			const short jitter = 3;
@@ -887,7 +887,7 @@ void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 		break;
 
 	default:
-		releaseCursor();
+		release_cursor();
 		zoomOut();
 		break;
 	}
@@ -1147,10 +1147,10 @@ void ChartWnd::PlotToBitmap(CBitmap* pBitmap)
 	CDC mem_dc;
 	mem_dc.CreateCompatibleDC(&dc);
 	mem_dc.SelectObject(pBitmap);
-	PlotDataToDC(&mem_dc);
+	plot_data_to_dc(&mem_dc);
 }
 
-int ChartWnd::hitCurve(CPoint point)
+int ChartWnd::hit_curve(CPoint point)
 {
 	return 0;
 }

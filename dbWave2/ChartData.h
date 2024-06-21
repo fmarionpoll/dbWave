@@ -83,40 +83,40 @@ protected:
 
 	// ChanList operations
 public:
-	int		GetChanlistSize() const { return chanlistitem_ptr_array.GetSize(); }
-	void	RemoveAllChanlistItems();
-	int		AddChanlistItem(int ns, int mode);
-	int		RemoveChanlistItem(int ichan);
-	CChanlistItem* GetChanlistItem(int i) const { return chanlistitem_ptr_array.GetAt(i); }
+	int		get_channel_list_size() const { return chanlistitem_ptr_array.GetSize(); }
+	void	remove_all_channel_list_items();
+	int		add_channel_list_item(int ns, int mode);
+	int		remove_channel_list_item(int i_chan);
+	CChanlistItem* get_channel_list_item(int item) const { return chanlistitem_ptr_array.GetAt(item); }
 
-	int		SetChanlistTransformMode(int i, int imode);
-	int		SetChanlistSourceChan(int ichan, int acqchan);
-	void	SetChanlistOrdinates(int i, int chan, int transform);
-	void	SetChanlistVoltsExtent(int ichan, const float* pvalue);
-	void	SetChanlistVoltsZero(int ichan, const float* pvalue);
+	int		set_channel_list_transform_mode(int item, int i_mode);
+	int		set_channel_list_source_channel(int i_channel, int acq_channel);
+	void	set_channel_list_y(int i, int chan, int transform);
+	void	set_channel_list_volts_extent(int i_chan, const float* p_value);
+	void	set_channel_list_volts_zero(int i_chan, const float* p_value);
 
-	float GetChanlistVoltsperPixel(int i) const
+	float get_channel_list_volts_per_pixel(const int item) const
 	{
-		const CChanlistItem* pchan = GetChanlistItem(i);
-		return (static_cast<float>(pchan->GetYextent()) * pchan->GetVoltsperDataBin() / static_cast<float>(-m_yVE));
+		const CChanlistItem* channel_item = get_channel_list_item(item);
+		return (static_cast<float>(channel_item->GetYextent()) * channel_item->GetVoltsperDataBin() / static_cast<float>(-m_yVE));
 	}
 
-	float GetTimeperPixel() const
+	float get_time_per_pixel() const
 	{
 		return static_cast<float>(GetDataSize()) / m_pDataFile->get_waveformat()->sampling_rate_per_channel / static_cast<float>(
 			GetRectWidth());
 	}
 
-	int GetChanlistBintoYPixel(int chan, int bin)
+	int get_channel_list_bin_to_y_pixel(int chan, int bin)
 	{
 		return MulDiv(bin - chanlistitem_ptr_array[chan]->GetYzero(), m_yVE,
 		              chanlistitem_ptr_array[chan]->GetYextent()) + m_yVO;
 	}
 
-	int GetChanlistYPixeltoBin(int chan, int ypixel_relative_to_top_clientwindow)
+	int get_channel_list_y_pixels_to_bin(const int chan, const int y_pixel_relative_to_top_client_window)
 	{
 		return chanlistitem_ptr_array[chan]->GetYzero() + 
-				MulDiv(ypixel_relative_to_top_clientwindow - m_yVO,
+				MulDiv(y_pixel_relative_to_top_client_window - m_yVO,
 					chanlistitem_ptr_array[chan]->GetYextent(), 
 					m_yVE);
 	}
@@ -126,7 +126,7 @@ public:
 	void	AutoZoomChan(int i) const;
 	void	CenterChan(int i) const;
 	void	MaxgainChan(int i) const;
-	void	SplitChans() const;
+	void	split_channels() const;
 	void	UpdateChanlistFromDoc();
 	void	UpdateChanlistMaxSpan();
 	void	UpdateGainSettings(int i);
@@ -134,9 +134,9 @@ public:
 	void	SetHighlightData(const CHighLight& source);
 	void	SetTrackSpike(BOOL btrackspike, int tracklen, int trackoffset, int trackchannel);
 	void	MoveHZtagtoVal(int itag, int ival);
-	void	UpdateXRuler();
-	void	UpdateYRuler();
-	void	PlotDataToDC(CDC* p_dc) override;
+	void	update_x_ruler();
+	void	update_y_ruler();
+	void	plot_data_to_dc(CDC* p_dc) override;
 	void	ZoomData(CRect* prevRect, CRect* newRect) override;
 
 	void	Print(CDC* p_dc, CRect* rect, BOOL bCenterline = FALSE);

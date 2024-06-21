@@ -274,7 +274,7 @@ void DlgSpikeDetect::UpdateSourceView() const
 	const auto icursel2 = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->GetCurSel();
 	// TODO not used??
 	//int icursel3 = ((CComboBox*) GetDlgItem(IDC_EXTRACTCHAN))->GetCurSel();
-	m_pChartDataDetectWnd->SetChanlistOrdinates(0, icursel, icursel2);
+	m_pChartDataDetectWnd->set_channel_list_y(0, icursel, icursel2);
 	m_pChartDataDetectWnd->GetDataFromDoc();
 	m_pChartDataDetectWnd->AutoZoomChan(0);
 	m_pChartDataDetectWnd->Invalidate();
@@ -289,7 +289,7 @@ void DlgSpikeDetect::OnDeltaposSpin1(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto p_nm_up_down = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
 	int ithreshold = GetDlgItemInt(IDC_DETECTTHRESHOLD);
-	ithreshold -= MulDiv(m_pChartDataDetectWnd->GetChanlistItem(0)->GetYextent(), p_nm_up_down->iDelta, 10);
+	ithreshold -= MulDiv(m_pChartDataDetectWnd->get_channel_list_item(0)->GetYextent(), p_nm_up_down->iDelta, 10);
 	SetDlgItemInt(IDC_DETECTTHRESHOLD, ithreshold);
 
 	*pResult = 0;

@@ -150,7 +150,7 @@ void ViewData::OnInitialUpdate()
 	m_ChartDataWnd.SetScopeParameters(&(options_view_data->viewdata));
 	constexpr int legends_options = UPD_ABCISSA | CHG_XSCALE | UPD_ORDINATES | CHG_YSCALE;
 	m_bCommonScale = TRUE;
-	m_comboSelectChan.SetCurSel(m_ChartDataWnd.GetChanlistSize());
+	m_comboSelectChan.SetCurSel(m_ChartDataWnd.get_channel_list_size());
 	UpdateLegends(legends_options);
 }
 
@@ -198,7 +198,7 @@ void ViewData::UpdateLegends(int legends_options)
 	if (legends_options & UPD_YSCALE)
 		legends_options |= CHG_YBAR;
 	if (legends_options & CHG_YBAR)
-		UpdateYZero(m_channel_selected, m_ChartDataWnd.GetChanlistItem(m_channel_selected)->GetYzero());
+		UpdateYZero(m_channel_selected, m_ChartDataWnd.get_channel_list_item(m_channel_selected)->GetYzero());
 
 	UpdateData(FALSE);
 }
@@ -221,8 +221,8 @@ void ViewData::OnClickedGain()
 void ViewData::update_channel(const int channel)
 {
 	m_channel_selected = channel;
-	if (m_channel_selected > m_ChartDataWnd.GetChanlistSize() - 1) 
-		m_channel_selected = m_ChartDataWnd.GetChanlistSize() - 1; 
+	if (m_channel_selected > m_ChartDataWnd.get_channel_list_size() - 1) 
+		m_channel_selected = m_ChartDataWnd.get_channel_list_size() - 1; 
 	else if (m_channel_selected < 0) 
 		m_channel_selected = 0;
 
@@ -480,7 +480,7 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 	m_samplingRate = wave_format->sampling_rate_per_channel; // update sampling rate
 
 	// display all channels
-	auto chan_list_size = m_ChartDataWnd.GetChanlistSize();
+	auto chan_list_size = m_ChartDataWnd.get_channel_list_size();
 	
 	// display all channels (TRUE) / no : loop through all doc channels & add if necessary
 	if (options_view_data->bAllChannels || chan_list_size == 0)
@@ -490,15 +490,15 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 			auto b_present = FALSE;
 			for (auto j = chan_list_size - 1; j >= 0; j--)
 			{
-				if ((b_present = (m_ChartDataWnd.GetChanlistItem(j)->GetSourceChan() == doc_channel)))
+				if ((b_present = (m_ChartDataWnd.get_channel_list_item(j)->GetSourceChan() == doc_channel)))
 					break;
 			}
 			if (!b_present)
 			{
-				m_ChartDataWnd.AddChanlistItem(doc_channel, 0);
+				m_ChartDataWnd.add_channel_list_item(doc_channel, 0);
 				chan_list_size++;
 			}
-			m_ChartDataWnd.GetChanlistItem(doc_channel)->SetColor(static_cast<WORD>(doc_channel));
+			m_ChartDataWnd.get_channel_list_item(doc_channel)->SetColor(static_cast<WORD>(doc_channel));
 		}
 	}
 
@@ -513,11 +513,11 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 
 	// fill combo
 	m_comboSelectChan.ResetContent();
-	for (auto i = 0; i < m_ChartDataWnd.GetChanlistSize(); i++)
+	for (auto i = 0; i < m_ChartDataWnd.get_channel_list_size(); i++)
 	{
 		CString cs;
 		cs.Format(_T("channel %i - "), i);
-		cs = cs + m_ChartDataWnd.GetChanlistItem(i)->GetComment();
+		cs = cs + m_ChartDataWnd.get_channel_list_item(i)->GetComment();
 		m_comboSelectChan.AddString(cs);
 	}
 	if (scan_count > 1)
@@ -527,7 +527,7 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 	if (!m_bCommonScale)
 		m_comboSelectChan.SetCurSel(0);
 	else
-		m_comboSelectChan.SetCurSel(m_ChartDataWnd.GetChanlistSize());
+		m_comboSelectChan.SetCurSel(m_ChartDataWnd.get_channel_list_size());
 
 	// done
 	if (b_update_interface)
@@ -540,7 +540,7 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 
 void ViewData::update_channels_display_parameters()
 {
-	const auto n_line_view_channels = m_ChartDataWnd.GetChanlistSize();
+	const auto n_line_view_channels = m_ChartDataWnd.get_channel_list_size();
 	int max;
 	int min;
 	if (!m_bCommonScale)
@@ -548,7 +548,7 @@ void ViewData::update_channels_display_parameters()
 		for (auto i = 0; i < n_line_view_channels; i++)
 		{
 			// keep final gain constant even if amplifier gain has changed
-			const CChanlistItem* chan_list_item = m_ChartDataWnd.GetChanlistItem(i);
+			const CChanlistItem* chan_list_item = m_ChartDataWnd.get_channel_list_item(i);
 			chan_list_item->GetMaxMin(&max, &min);
 			auto y_extent = chan_list_item->GetYextent();
 			auto y_zero = chan_list_item->GetYzero();
@@ -566,7 +566,7 @@ void ViewData::update_channels_display_parameters()
 	else
 	{
 		constexpr auto chan_0 = 0;
-		const CChanlistItem* p_chan0 = m_ChartDataWnd.GetChanlistItem(chan_0);
+		const CChanlistItem* p_chan0 = m_ChartDataWnd.get_channel_list_item(chan_0);
 		auto y_extent = p_chan0->GetYextent();
 		auto y_zero = p_chan0->GetYzero();
 		if (options_view_data->bMaximizeGain)
@@ -576,7 +576,7 @@ void ViewData::update_channels_display_parameters()
 			for (auto i = 0; i < n_line_view_channels; i++)
 			{
 				// keep final gain constant even if ampli gain changed
-				const CChanlistItem* p_chan = m_ChartDataWnd.GetChanlistItem(i);
+				const CChanlistItem* p_chan = m_ChartDataWnd.get_channel_list_item(i);
 				p_chan->GetMaxMin(&max, &min);
 				const auto max_chan_i = p_chan->ConvertDataBinsToVolts(max);
 				const auto min_chan_i = p_chan->ConvertDataBinsToVolts(min);
@@ -625,7 +625,7 @@ void ViewData::UpdateHZtagsVal()
 	if (m_ChartDataWnd.m_HZtags.get_tag_list_size() > 1)
 		itag = 1;
 	const auto v2 = m_ChartDataWnd.m_HZtags.get_value(itag);
-	const auto mv_per_bin = m_ChartDataWnd.GetChanlistItem(m_channel_selected)->GetVoltsperDataBin() * 1000.0f;
+	const auto mv_per_bin = m_ChartDataWnd.get_channel_list_item(m_channel_selected)->GetVoltsperDataBin() * 1000.0f;
 	m_first_Hz_cursor = static_cast<float>(v1) * mv_per_bin;
 	m_second_Hz_cursor = static_cast<float>(v2) * mv_per_bin;
 	m_difference_second_minus_first = m_first_Hz_cursor - m_second_Hz_cursor;
@@ -727,12 +727,12 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		// ......................  horizontal cursors
 		case 1: // if no HZcursors, take those of rectangle or limits of lineview
 			{
-				CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(m_channel_selected);
-				m_ChartDataWnd.m_HZtags.add_tag(m_ChartDataWnd.GetChanlistYPixeltoBin(m_channel_selected, mdMO->wLimitSup),
+				CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
+				m_ChartDataWnd.m_HZtags.add_tag(m_ChartDataWnd.get_channel_list_y_pixels_to_bin(m_channel_selected, mdMO->wLimitSup),
 				                               m_channel_selected);
 				if (mdMO->wLimitInf != mdMO->wLimitSup)
 					m_ChartDataWnd.m_HZtags.add_tag(
-						m_ChartDataWnd.GetChanlistYPixeltoBin(m_channel_selected, mdMO->wLimitInf), m_channel_selected);
+						m_ChartDataWnd.get_channel_list_y_pixels_to_bin(m_channel_selected, mdMO->wLimitInf), m_channel_selected);
 				m_p_dat_Doc->get_hz_tags_list()->copy_tag_list(&m_ChartDataWnd.m_HZtags);
 				if (m_ChartDataWnd.m_HZtags.get_tag_list_size() == 2)
 					set_cursor_associated_windows();
@@ -879,7 +879,7 @@ void ViewData::UpdateGainScroll()
 {
 	m_scrolly.SetScrollPos(
 		MulDiv(
-			m_ChartDataWnd.GetChanlistItem(m_channel_selected)->GetYextent(),
+			m_ChartDataWnd.get_channel_list_item(m_channel_selected)->GetYextent(),
 			100,
 			YEXTENT_MAX)
 		+ 50,
@@ -888,7 +888,7 @@ void ViewData::UpdateGainScroll()
 
 void ViewData::OnGainScroll(UINT nSBCode, UINT nPos)
 {
-	int yExtent = m_ChartDataWnd.GetChanlistItem(m_channel_selected)->GetYextent();
+	int yExtent = m_ChartDataWnd.get_channel_list_item(m_channel_selected)->GetYextent();
 	// get corresponding data
 	switch (nSBCode)
 	{
@@ -923,7 +923,7 @@ void ViewData::OnGainScroll(UINT nSBCode, UINT nPos)
 
 void ViewData::UpdateBiasScroll()
 {
-	CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(m_channel_selected);
+	CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
 	const auto i_pos = (pchan->GetYzero() - pchan->GetDataBinZero())
 		* 100 / static_cast<int>(YZERO_SPAN) + 50;
 	m_scrolly.SetScrollPos(i_pos, TRUE);
@@ -932,7 +932,7 @@ void ViewData::UpdateBiasScroll()
 
 void ViewData::OnBiasScroll(UINT nSBCode, UINT nPos)
 {
-	CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(m_channel_selected);
+	CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
 	auto l_size = pchan->GetYzero() - pchan->GetDataBinZero();
 	const auto yextent = pchan->GetYextent();
 	// get corresponding data
@@ -971,7 +971,7 @@ void ViewData::OnCenterCurve()
 	m_ChartDataWnd.CenterChan(m_channel_selected);
 	m_ChartDataWnd.Invalidate();
 
-	CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(m_channel_selected);
+	CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
 	const auto yextent = pchan->GetYextent();
 	UpdateYExtent(m_channel_selected, yextent);
 	const auto yzero = pchan->GetYzero();
@@ -983,7 +983,7 @@ void ViewData::OnGainAdjustCurve()
 	m_ChartDataWnd.MaxgainChan(m_channel_selected);
 	m_ChartDataWnd.Invalidate();
 
-	CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(m_channel_selected);
+	CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
 	const auto yextent = pchan->GetYextent();
 	UpdateYExtent(m_channel_selected, yextent);
 	const auto yzero = pchan->GetYzero();
@@ -993,7 +993,7 @@ void ViewData::OnGainAdjustCurve()
 
 void ViewData::OnSplitCurves()
 {
-	const auto nchans = m_ChartDataWnd.GetChanlistSize(); // nb of data channels
+	const auto nchans = m_ChartDataWnd.get_channel_list_size(); // nb of data channels
 	const auto pxheight = m_ChartDataWnd.GetRectHeight(); // height of the display area
 	const auto pxoffset = pxheight / nchans; // height for each channel
 	auto pxzero = (pxheight - pxoffset) / 2; // center first curve at
@@ -1002,7 +1002,7 @@ void ViewData::OnSplitCurves()
 	int max, min;
 	for (auto i = 0; i < nchans; i++)
 	{
-		CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(i);
+		CChanlistItem* chan = m_ChartDataWnd.get_channel_list_item(i);
 		chan->GetMaxMin(&max, &min);
 		const auto iextent = MulDiv(max - min + 1, 100 * nchans, 100);
 		const auto ibias = MulDiv(pxzero, iextent, pxheight); // convert pixel into bins
@@ -1338,7 +1338,7 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 	// comments, bar value and chan settings for each channel
 	if (options_view_data->bChansComment || options_view_data->bVoltageScaleBar || options_view_data->bChanSettings)
 	{
-		const auto imax = m_ChartDataWnd.GetChanlistSize(); // number of data channels
+		const auto imax = m_ChartDataWnd.get_channel_list_size(); // number of data channels
 		for (auto ichan = 0; ichan < imax; ichan++) // loop
 		{
 			// boucler sur les commentaires de chan n a chan 0...
@@ -1348,7 +1348,7 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 			{
 				cs_unit = _T(" V"); // provisional unit
 				auto z = static_cast<float>(m_ChartDataWnd.GetRectHeight()) / 5
-					* m_ChartDataWnd.GetChanlistVoltsperPixel(ichan);
+					* m_ChartDataWnd.get_channel_list_volts_per_pixel(ichan);
 				auto x = m_ChartDataWnd.ChangeUnit(z, &cs_unit, &x_scale_factor); // convert
 
 				// approximate
@@ -1374,7 +1374,7 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 			if (options_view_data->bChansComment)
 			{
 				str_comment += tab;
-				str_comment += m_ChartDataWnd.GetChanlistItem(ichan)->GetComment();
+				str_comment += m_ChartDataWnd.get_channel_list_item(ichan)->GetComment();
 			}
 			str_comment += rc;
 
@@ -1382,7 +1382,7 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 			if (options_view_data->bChanSettings)
 			{
 				CString cs;
-				const WORD channb = m_ChartDataWnd.GetChanlistItem(ichan)->GetSourceChan();
+				const WORD channb = m_ChartDataWnd.get_channel_list_item(ichan)->GetSourceChan();
 				const auto pchanArray = m_p_dat_Doc->get_wavechan_array();
 				const auto pChan = pchanArray->get_p_channel(channb);
 				cs.Format(_T("headstage=%s gain=%.0f  filter= %s - %i Hz"), (LPCTSTR)pChan->am_csheadstage,
@@ -1693,7 +1693,7 @@ void ViewData::UpdateFileScroll()
 void ViewData::OnCbnSelchangeCombochan()
 {
 	const auto ichan = m_comboSelectChan.GetCurSel();
-	if (ichan < m_ChartDataWnd.GetChanlistSize())
+	if (ichan < m_ChartDataWnd.get_channel_list_size())
 	{
 		m_bCommonScale = FALSE;
 		update_channel(ichan);
@@ -1702,7 +1702,7 @@ void ViewData::OnCbnSelchangeCombochan()
 	{
 		m_bCommonScale = TRUE;
 		m_channel_selected = 0;
-		CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(0);
+		CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(0);
 		const auto yextent = pchan->GetYextent();
 		UpdateYExtent(0, yextent);
 		const auto yzero = pchan->GetYzero();
@@ -1712,22 +1712,22 @@ void ViewData::OnCbnSelchangeCombochan()
 
 void ViewData::UpdateYExtent(int ichan, int yextent)
 {
-	CChanlistItem* pchan = m_ChartDataWnd.GetChanlistItem(ichan);
+	CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(ichan);
 	pchan->SetYextent(yextent);
-	if (m_comboSelectChan.GetCurSel() == m_ChartDataWnd.GetChanlistSize())
+	if (m_comboSelectChan.GetCurSel() == m_ChartDataWnd.get_channel_list_size())
 	{
 		const auto yVoltsextent = pchan->GetVoltsperDataBin() * yextent;
-		m_ChartDataWnd.SetChanlistVoltsExtent(-1, &yVoltsextent);
+		m_ChartDataWnd.set_channel_list_volts_extent(-1, &yVoltsextent);
 	}
 }
 
 void ViewData::UpdateYZero(int ichan, int ybias)
 {
-	CChanlistItem* chan = m_ChartDataWnd.GetChanlistItem(ichan);
+	CChanlistItem* chan = m_ChartDataWnd.get_channel_list_item(ichan);
 	chan->SetYzero(ybias);
-	if (m_comboSelectChan.GetCurSel() == m_ChartDataWnd.GetChanlistSize())
+	if (m_comboSelectChan.GetCurSel() == m_ChartDataWnd.get_channel_list_size())
 	{
 		const auto yVoltsextent = chan->GetVoltsperDataBin() * ybias;
-		m_ChartDataWnd.SetChanlistVoltsZero(-1, &yVoltsextent);
+		m_ChartDataWnd.set_channel_list_volts_zero(-1, &yVoltsextent);
 	}
 }

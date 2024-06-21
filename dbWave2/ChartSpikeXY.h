@@ -34,14 +34,14 @@ public:
 		p_dbwave_doc = p_document;
 	}
 
-	void PlotDataToDC(CDC* p_dc) override;
+	void plot_data_to_dc(CDC* p_dc) override;
 	void ZoomData(CRect* rect_from, CRect* rect_dest) override;
 
 protected:
 	void display_spike(const Spike* spike, CDC* p_dc, const CRect& rect, const CRect& rect1, const long window_duration) const;
 	void draw_spike(const Spike* spike, int color_index);
 
-	int hitCurve(CPoint point) override;
+	int hit_curve(CPoint point) override;
 	int hit_curve_in_doc(CPoint point);
 	boolean is_spike_within_limits( const Spike* spike) const;
 

@@ -15,7 +15,7 @@ void ChartDataAD::start_display(int points_per_channel)
 
 	// clear window before acquiring data
 	CClientDC dc(this);
-	EraseBkgnd(&dc);
+	erase_bkgnd(&dc);
 
 	// print comment
 	dc.SelectObject(GetStockObject(DEFAULT_GUI_FONT));

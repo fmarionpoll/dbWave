@@ -23,10 +23,10 @@ ChartSpikeXY::ChartSpikeXY()
 ChartSpikeXY::~ChartSpikeXY()
 = default;
 
-void ChartSpikeXY::PlotDataToDC(CDC* p_dc)
+void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 {
 	if (m_erasebkgnd)
-		EraseBkgnd(p_dc);
+		erase_bkgnd(p_dc);
 
 	p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 	auto rect = m_displayRect;
@@ -400,7 +400,7 @@ void ChartSpikeXY::OnLButtonDown(const UINT nFlags, const CPoint point)
 	{
 		// cancel track rect mode
 		m_trackMode = TRACK_OFF; 
-		releaseCursor(); // release cursor capture
+		release_cursor(); // release cursor capture
 		if (nFlags & MK_SHIFT)
 			postMyMessage(HINT_HITSPIKE_SHIFT, m_hit_spike);
 
@@ -474,7 +474,7 @@ int ChartSpikeXY::hit_curve_in_doc(CPoint point)
 		{
 			continue;
 		}
-		result = hitCurve(point);
+		result = hit_curve(point);
 		if (result >= 0) {
 			current_file_index = file_index;
 			break;
@@ -491,7 +491,7 @@ int ChartSpikeXY::hit_curve_in_doc(CPoint point)
 	return result;
 }
 
-int ChartSpikeXY::hitCurve(const CPoint point)
+int ChartSpikeXY::hit_curve(const CPoint point)
 {
 	// abscissa
 	const auto time_frame = (m_lLast - m_lFirst + 1);

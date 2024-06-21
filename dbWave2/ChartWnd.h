@@ -46,9 +46,9 @@ public:
 	virtual void ZoomData(CRect* prevRect, CRect* newRect);
 	virtual void DisplayVTtags_Value(CDC* p_dc);
 	virtual void DisplayHZtags(CDC* p_dc);
-	virtual void PlotDataToDC(CDC* p_dc);
+	virtual void plot_data_to_dc(CDC* p_dc);
 
-	void EraseBkgnd(CDC* p_dc);
+	void erase_bkgnd(CDC* p_dc);
 	void PlotToBitmap(CDC* p_dc);
 	COLORREF GetColor(const int color_index) const { return m_colorTable[color_index]; }
 	void SetColorTableAt(int color_index, COLORREF ccolor) { m_colorTable[color_index] = ccolor; }
@@ -59,7 +59,7 @@ public:
 	int NiceUnit(float y);
 
 	void SetbUseDIB(BOOL bsetPlot); // use DIB or not
-	void SetDisplayAreaSize(int cx, int cy); // set size of the display area
+	void set_display_area_size(int cx, int cy); // set size of the display area
 
 	CSize GetRectSize() const { return {m_displayRect.Width() + 1, m_displayRect.Height() + 1}; }
 	int GetRectHeight() const { return m_displayRect.Height() + 1; }
@@ -205,14 +205,14 @@ protected:
 
 protected:
 	void PreSubclassWindow() override;
-	virtual int hitCurve(CPoint point);
+	virtual int hit_curve(CPoint point);
 
 	void prepare_dc(CDC* p_dc, const CPrintInfo* p_info = nullptr);
-	void captureCursor();
-	void releaseCursor();
+	void capture_cursor();
+	static void release_cursor();
 	void lbuttonUp_HzTag(UINT nFlags, CPoint point);
-	void sendMyMessage(int code, int codeparm);
-	void postMyMessage(int code, int codeparm);
+	void sendMyMessage(int code, int codeparm) const;
+	void postMyMessage(int code, int codeparm) const;
 	void invertTracker(CPoint point); // invert rectangle when mouse-left is down
 	int hitHZtag(int y); // test if point is on an horizontal tag line
 	int hitVTtagPix(int x); // test if point is on a vertical tag line
@@ -230,7 +230,7 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnEraseBkgnd(CDC* p_dc);
 	afx_msg void OnPaint();
-	afx_msg BOOL OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message);
+	afx_msg BOOL OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message) const;
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

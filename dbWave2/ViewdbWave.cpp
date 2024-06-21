@@ -80,28 +80,28 @@ void ViewdbWave::OnInitialUpdate()
 
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	m_options_viewdata = &p_app->options_view_data;
-	m_dataListCtrl.InitColumns(&m_options_viewdata->icolwidth);
+	m_dataListCtrl.init_columns(&m_options_viewdata->icolwidth);
 
 	// set how data are displayed
 	m_amplitudespan = m_options_viewdata->mVspan;
-	m_dataListCtrl.SetAmplitudeSpan(m_options_viewdata->mVspan);
+	m_dataListCtrl.set_amplitude_span(m_options_viewdata->mVspan);
 
 	CheckDlgButton(IDC_CHECKFILENAME, m_options_viewdata->bDisplayFileName);
-	m_dataListCtrl.SetDisplayFileName(m_options_viewdata->bDisplayFileName);
+	m_dataListCtrl.set_display_file_name(m_options_viewdata->bDisplayFileName);
 
 	m_timefirst = m_options_viewdata->tFirst;
 	m_timelast = m_options_viewdata->tLast;
 	if (m_timefirst != 0.f && m_timelast != 0.f)
-		m_dataListCtrl.SetTimeIntervals(m_timefirst, m_timelast);
+		m_dataListCtrl.set_time_intervals(m_timefirst, m_timelast);
 
 	CheckDlgButton(IDC_CHECK1, m_options_viewdata->bsetTimeSpan);
 	GetDlgItem(IDC_TIMEFIRST)->EnableWindow(m_options_viewdata->bsetTimeSpan);
 	GetDlgItem(IDC_TIMELAST)->EnableWindow(m_options_viewdata->bsetTimeSpan);
-	m_dataListCtrl.SetTimespanAdjustMode(m_options_viewdata->bsetTimeSpan);
+	m_dataListCtrl.set_timespan_adjust_mode(m_options_viewdata->bsetTimeSpan);
 
 	CheckDlgButton(IDC_CHECK2, m_options_viewdata->bsetmVSpan);
 	GetDlgItem(IDC_AMPLITUDESPAN)->EnableWindow(m_options_viewdata->bsetmVSpan);
-	m_dataListCtrl.SetAmplitudeAdjustMode(m_options_viewdata->bsetmVSpan);
+	m_dataListCtrl.set_amplitude_adjust_mode(m_options_viewdata->bsetmVSpan);
 
 	m_dataListCtrl.SetExtendedStyle
 	(m_dataListCtrl.GetExtendedStyle()
@@ -111,7 +111,7 @@ void ViewdbWave::OnInitialUpdate()
 		| LVS_EX_SUBITEMIMAGES);
 
 	// set display mode of m_dataListCtrl
-	m_dataListCtrl.SetDisplayMode(m_options_viewdata->displaymode);
+	m_dataListCtrl.set_display_mode(m_options_viewdata->displaymode);
 	switch (m_options_viewdata->displaymode)
 	{
 	case 1:
@@ -127,7 +127,7 @@ void ViewdbWave::OnInitialUpdate()
 
 	// select the proper record
 	fillListBox();
-	m_dataListCtrl.UpdateCache(-3, -3);
+	m_dataListCtrl.update_cache(-3, -3);
 	updateControls();
 
 	// init display controls
@@ -171,11 +171,11 @@ void ViewdbWave::display_data()
 	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(FALSE);
 	GetDlgItem(IDC_FILTERCHECK)->EnableWindow(TRUE);
 	m_options_viewdata->displaymode = 1;
-	m_dataListCtrl.SetDisplayMode(m_options_viewdata->displaymode);
+	m_dataListCtrl.set_display_mode(m_options_viewdata->displaymode);
 
 	static_cast<CButton*>(GetDlgItem(IDC_FILTERCHECK))->SetCheck(m_options_viewdata->bFilterDat);
 	m_dattransform = m_options_viewdata->bFilterDat ? 13 : 0;
-	m_dataListCtrl.SetTransformMode(m_dattransform);
+	m_dataListCtrl.set_transform_mode(m_dattransform);
 	m_tabCtrl.ShowWindow(SW_HIDE);
 }
 
@@ -192,12 +192,12 @@ void ViewdbWave::display_spikes()
 
 	// display all spike classes
 	m_options_viewdata->displaymode = 2;
-	m_dataListCtrl.SetDisplayMode(m_options_viewdata->displaymode);
+	m_dataListCtrl.set_display_mode(m_options_viewdata->displaymode);
 	if (m_options_viewdata->bDisplayAllClasses)
 	{
 		static_cast<CButton*>(GetDlgItem(IDC_RADIOALLCLASSES))->SetCheck(BST_CHECKED);
 		static_cast<CButton*>(GetDlgItem(IDC_RADIOONECLASS))->SetCheck(BST_UNCHECKED);
-		m_dataListCtrl.SetSpikePlotMode(PLOT_BLACK, m_spikeclass);
+		m_dataListCtrl.set_spike_plot_mode(PLOT_BLACK, m_spikeclass);
 	}
 	else
 	{
@@ -205,7 +205,7 @@ void ViewdbWave::display_spikes()
 		static_cast<CButton*>(GetDlgItem(IDC_RADIOONECLASS))->SetCheck(BST_CHECKED);
 		m_spikeclass = m_options_viewdata->spikeclass;
 		mm_spikeclass.EnableWindow(TRUE);
-		m_dataListCtrl.SetSpikePlotMode(PLOT_ONECLASSONLY, m_spikeclass);
+		m_dataListCtrl.set_spike_plot_mode(PLOT_ONECLASSONLY, m_spikeclass);
 	}
 }
 
@@ -221,7 +221,7 @@ void ViewdbWave::display_nothing()
 	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(FALSE);
 
 	m_options_viewdata->displaymode = 0;
-	m_dataListCtrl.SetDisplayMode(m_options_viewdata->displaymode);
+	m_dataListCtrl.set_display_mode(m_options_viewdata->displaymode);
 	m_tabCtrl.ShowWindow(SW_HIDE);
 }
 
@@ -232,7 +232,7 @@ void ViewdbWave::OnSize(const UINT n_type, const int cx, const int cy)
 	{
 		CRect rect;
 		m_dataListCtrl.GetClientRect(&rect);
-		m_dataListCtrl.FitColumnsToSize(rect.Width());
+		m_dataListCtrl.fit_columns_to_size(rect.Width());
 	}
 }
 
@@ -246,7 +246,7 @@ void ViewdbWave::updateControls()
 
 	const int i_file = dbWaveDoc->db_get_current_record_position();
 
-	m_dataListCtrl.SetCurSel(i_file);
+	m_dataListCtrl.set_cur_sel(i_file);
 	m_dataListCtrl.EnsureVisible(i_file, FALSE);
 
 	if (m_options_viewdata->displaymode == 2)
@@ -297,8 +297,8 @@ void ViewdbWave::OnClickMedianFilter()
 		m_dattransform = 13;
 	else
 		m_dattransform = 0;
-	m_dataListCtrl.SetTransformMode(m_dattransform);
-	m_dataListCtrl.RefreshDisplay();
+	m_dataListCtrl.set_transform_mode(m_dattransform);
+	m_dataListCtrl.refresh_display();
 }
 
 void ViewdbWave::OnActivateView(BOOL bActivate, CView * pActivateView, CView * pDeactiveView)
@@ -315,7 +315,7 @@ void ViewdbWave::OnActivateView(BOOL bActivate, CView * pActivateView, CView * p
 	}
 	else
 	{
-		ChartData* pDataChartWnd = m_dataListCtrl.GetDataViewCurrentRecord();
+		ChartData* pDataChartWnd = m_dataListCtrl.get_chart_data_of_current_record();
 		if (pDataChartWnd != nullptr)
 		{
 			static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.viewdata = *(pDataChartWnd->GetScopeParameters());
@@ -362,7 +362,7 @@ LRESULT ViewdbWave::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	{
 	case HINT_VIEWTABHASCHANGED:
 		GetDocument()->get_current_spike_file()->set_spike_list_as_current(threshold);
-		m_dataListCtrl.RefreshDisplay();
+		m_dataListCtrl.refresh_display();
 		break;
 
 	default:
@@ -427,14 +427,14 @@ void ViewdbWave::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
 	break;
 
 	case HINT_REPLACEVIEW:
-		m_dataListCtrl.UpdateCache(-2, -2);
+		m_dataListCtrl.update_cache(-2, -2);
 		updateControls();
 		break;
 
 	case HINT_REQUERY:
 		fillListBox();
 	case HINT_DOCHASCHANGED:
-		m_dataListCtrl.UpdateCache(-1, -1);
+		m_dataListCtrl.update_cache(-1, -1);
 	case HINT_DOCMOVERECORD:
 	default:
 		updateControls();
@@ -509,19 +509,19 @@ void ViewdbWave::OnLvnColumnclickListctrl(NMHDR * pNMHDR, LRESULT * pResult)
 void ViewdbWave::OnBnClickedData()
 {
 	display_data();
-	m_dataListCtrl.RefreshDisplay();
+	m_dataListCtrl.refresh_display();
 }
 
 void ViewdbWave::OnBnClickedDisplaySpikes()
 {
 	display_spikes();
-	m_dataListCtrl.RefreshDisplay();
+	m_dataListCtrl.refresh_display();
 
 	// update tab control
-	const int nrows = m_dataListCtrl.GetVisibleRowsSize();
+	const int nrows = m_dataListCtrl.get_visible_rows_size();
 	if (nrows > 0)
 	{
-		const auto pSpkDoc = m_dataListCtrl.GetVisibleRowsSpikeDocAt(0);
+		const auto pSpkDoc = m_dataListCtrl.get_visible_rows_spike_doc_at(0);
 		if (pSpkDoc->get_spike_list_size() > 1)
 		{
 			m_tabCtrl.InitctrlTabFromSpikeDoc(pSpkDoc);
@@ -530,13 +530,13 @@ void ViewdbWave::OnBnClickedDisplaySpikes()
 			m_tabCtrl.Invalidate();
 		}
 	}
-	m_dataListCtrl.RefreshDisplay();
+	m_dataListCtrl.refresh_display();
 }
 
 void ViewdbWave::OnBnClickedDisplayNothing()
 {
 	display_nothing();
-	m_dataListCtrl.RefreshDisplay();
+	m_dataListCtrl.refresh_display();
 }
 
 void ViewdbWave::OnEnChangeTimefirst()
@@ -548,8 +548,8 @@ void ViewdbWave::OnEnChangeTimefirst()
 	m_options_viewdata->tFirst = m_timefirst;
 	if (m_timefirst > m_timelast)
 		m_timefirst = 0.f;
-	m_dataListCtrl.SetTimeIntervals(m_timefirst, m_timelast);
-	m_dataListCtrl.RefreshDisplay();
+	m_dataListCtrl.set_time_intervals(m_timefirst, m_timelast);
+	m_dataListCtrl.refresh_display();
 }
 
 void ViewdbWave::OnEnChangeTimelast()
@@ -559,8 +559,8 @@ void ViewdbWave::OnEnChangeTimelast()
 
 	mm_timelast.OnEnChange(this, m_timelast, 1.f, -1.f);
 	m_options_viewdata->tLast = m_timelast;
-	m_dataListCtrl.SetTimeIntervals(m_timefirst, m_timelast);
-	m_dataListCtrl.RefreshDisplay();
+	m_dataListCtrl.set_time_intervals(m_timefirst, m_timelast);
+	m_dataListCtrl.refresh_display();
 }
 
 void ViewdbWave::OnEnChangeAmplitudespan()
@@ -571,30 +571,30 @@ void ViewdbWave::OnEnChangeAmplitudespan()
 	mm_amplitudespan.OnEnChange(this, m_amplitudespan, 1.f, -1.f);
 	UpdateData(FALSE);
 	m_options_viewdata->mVspan = m_amplitudespan;
-	m_dataListCtrl.SetAmplitudeSpan(m_amplitudespan);
-	m_dataListCtrl.RefreshDisplay();
+	m_dataListCtrl.set_amplitude_span(m_amplitudespan);
+	m_dataListCtrl.refresh_display();
 }
 
 void ViewdbWave::OnBnClickedCheckfilename()
 {
 	m_options_viewdata->bDisplayFileName = IsDlgButtonChecked(IDC_CHECKFILENAME);
-	m_dataListCtrl.SetDisplayFileName(m_options_viewdata->bDisplayFileName);
-	m_dataListCtrl.RefreshDisplay();
+	m_dataListCtrl.set_display_file_name(m_options_viewdata->bDisplayFileName);
+	m_dataListCtrl.refresh_display();
 }
 
 void ViewdbWave::OnHdnEndtrackListctrl(NMHDR * pNMHDR, LRESULT * pResult)
 {
 	const auto phdr = reinterpret_cast<LPNMHEADER>(pNMHDR);
 	if (phdr->iItem == CTRL_COL_CURVE)
-		m_dataListCtrl.ResizeSignalColumn(phdr->pitem->cxy);
+		m_dataListCtrl.resize_signal_column(phdr->pitem->cxy);
 	*pResult = 0;
 }
 
 void ViewdbWave::OnBnClickedCheck2()
 {
 	m_options_viewdata->bsetmVSpan = IsDlgButtonChecked(IDC_CHECK2);
-	m_dataListCtrl.SetAmplitudeAdjustMode(m_options_viewdata->bsetmVSpan);
-	m_dataListCtrl.RefreshDisplay();
+	m_dataListCtrl.set_amplitude_adjust_mode(m_options_viewdata->bsetmVSpan);
+	m_dataListCtrl.refresh_display();
 	GetDlgItem(IDC_AMPLITUDESPAN)->EnableWindow(m_options_viewdata->bsetmVSpan);
 }
 
@@ -610,11 +610,11 @@ void ViewdbWave::OnBnClickedCheck1()
 			m_options_viewdata->tLast = m_timelast;
 			UpdateData(FALSE);
 		}
-		m_dataListCtrl.SetTimeIntervals(m_timefirst, m_timelast);
+		m_dataListCtrl.set_time_intervals(m_timefirst, m_timelast);
 	}
 	// update data display
-	m_dataListCtrl.SetTimespanAdjustMode(m_options_viewdata->bsetTimeSpan);
-	m_dataListCtrl.RefreshDisplay();
+	m_dataListCtrl.set_timespan_adjust_mode(m_options_viewdata->bsetTimeSpan);
+	m_dataListCtrl.refresh_display();
 	GetDlgItem(IDC_TIMEFIRST)->EnableWindow(m_options_viewdata->bsetTimeSpan);
 	GetDlgItem(IDC_TIMELAST)->EnableWindow(m_options_viewdata->bsetTimeSpan);
 }
@@ -623,16 +623,16 @@ void ViewdbWave::OnBnClickedRadioallclasses()
 {
 	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(FALSE);
 	m_options_viewdata->bDisplayAllClasses = TRUE;
-	m_dataListCtrl.SetSpikePlotMode(PLOT_BLACK, m_spikeclass);
-	m_dataListCtrl.RefreshDisplay();
+	m_dataListCtrl.set_spike_plot_mode(PLOT_BLACK, m_spikeclass);
+	m_dataListCtrl.refresh_display();
 }
 
 void ViewdbWave::OnBnClickedRadiooneclass()
 {
 	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(TRUE);
 	m_options_viewdata->bDisplayAllClasses = FALSE;
-	m_dataListCtrl.SetSpikePlotMode(PLOT_ONECLASSONLY, m_spikeclass);
-	m_dataListCtrl.RefreshDisplay();
+	m_dataListCtrl.set_spike_plot_mode(PLOT_ONECLASSONLY, m_spikeclass);
+	m_dataListCtrl.refresh_display();
 }
 
 void ViewdbWave::OnEnChangeSpikeclass()
@@ -643,6 +643,6 @@ void ViewdbWave::OnEnChangeSpikeclass()
 	mm_spikeclass.OnEnChange(this, m_spikeclass, 1, -1);
 	m_options_viewdata->spikeclass = m_spikeclass;
 	UpdateData(FALSE);
-	m_dataListCtrl.SetSpikePlotMode(PLOT_ONECLASSONLY, m_spikeclass);
-	m_dataListCtrl.RefreshDisplay();
+	m_dataListCtrl.set_spike_plot_mode(PLOT_ONECLASSONLY, m_spikeclass);
+	m_dataListCtrl.refresh_display();
 }
