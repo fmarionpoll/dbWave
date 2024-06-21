@@ -50,13 +50,13 @@ public:
 
 	void erase_bkgnd(CDC* p_dc);
 	void PlotToBitmap(CDC* p_dc);
-	COLORREF GetColor(const int color_index) const { return m_colorTable[color_index]; }
-	void SetColorTableAt(int color_index, COLORREF ccolor) { m_colorTable[color_index] = ccolor; }
+	static COLORREF GetColor(const int color_index) { return m_colorTable[color_index]; }
+	static void SetColorTableAt(int color_index, COLORREF ccolor) { m_colorTable[color_index] = ccolor; }
 	void SetString(CString cs) { m_csEmpty = cs; }
 	int FindColorIndex(COLORREF color_ref);
 
 	float ChangeUnit(float xVal, CString* xUnit, float* xScalefactor);
-	int NiceUnit(float y);
+	static int NiceUnit(float y);
 
 	void SetbUseDIB(BOOL bsetPlot); // use DIB or not
 	void set_display_area_size(int cx, int cy); // set size of the display area
@@ -211,8 +211,8 @@ protected:
 	void capture_cursor();
 	static void release_cursor();
 	void lbuttonUp_HzTag(UINT nFlags, CPoint point);
-	void sendMyMessage(int code, int codeparm) const;
-	void postMyMessage(int code, int codeparm) const;
+	void send_my_message(int code, int codeparm) const;
+	void post_my_message(int code, int codeparm) const;
 	void invertTracker(CPoint point); // invert rectangle when mouse-left is down
 	int hitHZtag(int y); // test if point is on an horizontal tag line
 	int hitVTtagPix(int x); // test if point is on a vertical tag line
@@ -230,7 +230,7 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnEraseBkgnd(CDC* p_dc);
 	afx_msg void OnPaint();
-	afx_msg BOOL OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message) const;
+	afx_msg BOOL OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

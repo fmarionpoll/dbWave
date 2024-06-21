@@ -554,12 +554,12 @@ void ChartWnd::SetNyScaleCells(int iCells, int iTicks, int iTickLine)
 	m_scopestruct.iYTickLine = iTickLine;
 }
 
-void ChartWnd::sendMyMessage(int code, int codeparm) const
+void ChartWnd::send_my_message(int code, int codeparm) const
 {
 	GetParent()->SendMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, GetDlgCtrlID()));
 }
 
-void ChartWnd::postMyMessage(int code, int codeparm) const
+void ChartWnd::post_my_message(int code, int codeparm) const
 {
 	GetParent()->PostMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, GetDlgCtrlID()));
 }
@@ -615,7 +615,7 @@ void ChartWnd::release_cursor()
 	ClipCursor(nullptr);
 }
 
-BOOL ChartWnd::OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message) const
+BOOL ChartWnd::OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message) 
 {
 	SetCursor(m_currCursor);
 	return TRUE;
@@ -626,7 +626,7 @@ void ChartWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 	int newcursor = m_cursorType + 1;
 	if (newcursor >= m_cursorIndexMax)
 		newcursor = 0;
-	postMyMessage(HINT_SETMOUSECURSOR, newcursor);
+	post_my_message(HINT_SETMOUSECURSOR, newcursor);
 }
 
 void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
@@ -653,7 +653,7 @@ void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		case 0: // arrow (default)
 		case CURSOR_CROSS: // cross (measure mode) (2)
 			if (nFlags & MK_CONTROL)
-				postMyMessage(HINT_LMOUSEBUTTONDOW_CTRL, MAKELONG(point.x, point.y));
+				post_my_message(HINT_LMOUSEBUTTONDOW_CTRL, MAKELONG(point.x, point.y));
 
 			m_trackMode = TRACK_RECT; // flag trackrect
 
@@ -666,7 +666,7 @@ void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 				m_ptLast.y = m_HZtags.get_tag_pixel(m_HCtrapped);
 				m_ptFirst = m_ptLast;
 				// tell parent that HZtag was selected
-				sendMyMessage(HINT_HITHZTAG, m_HCtrapped);
+				send_my_message(HINT_HITHZTAG, m_HCtrapped);
 				break;
 			}
 
@@ -694,7 +694,7 @@ void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 					m_ptLast.x = m_VTtags.get_tag_pixel(m_HCtrapped);
 				m_ptLast.y = 0;
 				// tell parent that VTtag was selected
-				sendMyMessage(HINT_HITVERTTAG, m_HCtrapped);
+				send_my_message(HINT_HITVERTTAG, m_HCtrapped);
 				break;
 			}
 			break;
@@ -735,7 +735,7 @@ void ChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 			const auto val = MulDiv(point.y - m_yVO, m_yWE, m_yVE) + m_yWO;
 			XorHZtag(point.y);
 			m_HZtags.set_tag_val(m_HCtrapped, val);
-			postMyMessage(HINT_MOVEHZTAG, m_HCtrapped);
+			post_my_message(HINT_MOVEHZTAG, m_HCtrapped);
 		}
 		break;
 
@@ -757,7 +757,7 @@ void ChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 					m_displayRect.Width()) + m_liFirst;
 				m_VTtags.set_tag_l_value(m_HCtrapped, lvalue);
 			}
-			postMyMessage(HINT_MOVEVERTTAG, m_HCtrapped);
+			post_my_message(HINT_MOVEVERTTAG, m_HCtrapped);
 		}
 		break;
 
@@ -812,7 +812,7 @@ void ChartWnd::lbuttonUp_HzTag(UINT nFlags, CPoint point)
 	point.y = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
 	XorHZtag(point.y);
 	OnLButtonUp(nFlags, point);
-	postMyMessage(HINT_CHANGEHZTAG, m_HCtrapped);
+	post_my_message(HINT_CHANGEHZTAG, m_HCtrapped);
 }
 
 void ChartWnd::OnRButtonDown(UINT nFlags, CPoint point)
@@ -858,9 +858,9 @@ void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 			}
 		}
 		if (m_cursorType == CURSOR_CROSS)
-			postMyMessage(HINT_RMOUSEBUTTONUP, NULL);
+			post_my_message(HINT_RMOUSEBUTTONUP, NULL);
 		else
-			postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
+			post_my_message(HINT_SETMOUSECURSOR, m_oldcursorType);
 		break;
 
 	case TRACK_OFF:
@@ -880,7 +880,7 @@ void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 				Invalidate();
 			}
 			else
-				postMyMessage(HINT_WINDOWPROPSCHANGED, NULL);
+				post_my_message(HINT_WINDOWPROPSCHANGED, NULL);
 			m_bAllowProps = TRUE;
 			delete parms_old;
 		}

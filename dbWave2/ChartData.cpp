@@ -768,7 +768,7 @@ void ChartData::ZoomData(CRect* r1, CRect* r2)
 		ResizeChannels(0, l_last - l_first + 1);
 		GetDataFromDoc(l_first, l_last);
 	}
-	postMyMessage(HINT_VIEWSIZECHANGED, NULL);
+	post_my_message(HINT_VIEWSIZECHANGED, NULL);
 }
 
 void ChartData::update_x_ruler()
@@ -1345,7 +1345,7 @@ void ChartData::OnLButtonDown(UINT nFlags, CPoint point)
 			m_curTrack = m_zero; // use m_curTrack to store zero
 
 			curve_xor(); // xor curve
-			postMyMessage(HINT_HITCHANNEL, m_hitcurve); // tell parent chan selected
+			post_my_message(HINT_HITCHANNEL, m_hitcurve); // tell parent chan selected
 			return;
 		}
 	}
@@ -1386,7 +1386,7 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 			const auto chanlist_item = chanlistitem_ptr_array[m_hitcurve];
 			chanlist_item->SetYzero(m_zero);
 			m_trackMode = TRACK_OFF;
-			postMyMessage(HINT_HITCHANNEL, m_hitcurve);
+			post_my_message(HINT_HITCHANNEL, m_hitcurve);
 			Invalidate();
 		}
 		break;
@@ -1403,7 +1403,7 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 			m_VTtags.set_tag_l_value(m_HCtrapped, lval);
 			point.x = static_cast<int>((lval - m_liFirst) * long(m_displayRect.right) / (m_liLast - m_liFirst + 1));
 			XorVTtag(point.x);
-			postMyMessage(HINT_CHANGEVERTTAG, m_HCtrapped);
+			post_my_message(HINT_CHANGEVERTTAG, m_HCtrapped);
 			m_trackMode = TRACK_OFF;
 		}
 		break;
@@ -1438,10 +1438,10 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 				}
 				else
 					zoomIn();
-				postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
+				post_my_message(HINT_SETMOUSECURSOR, m_oldcursorType);
 				break;
 			case CURSOR_CROSS:
-				postMyMessage(HINT_DEFINEDRECT, NULL);
+				post_my_message(HINT_DEFINEDRECT, NULL);
 				break;
 			default:
 				break;

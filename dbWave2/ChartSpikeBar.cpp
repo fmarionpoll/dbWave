@@ -585,7 +585,7 @@ void ChartSpikeBar::OnLButtonUp(const UINT n_flags, const CPoint point)
 {
 	if (!m_bLmouseDown)
 	{
-		postMyMessage(HINT_DROPPED, NULL);
+		post_my_message(HINT_DROPPED, NULL);
 		return;
 	}
 	ChartSpike::OnLButtonUp(n_flags, point);
@@ -595,7 +595,7 @@ void ChartSpikeBar::OnLButtonUp(const UINT n_flags, const CPoint point)
 	if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 	{
 		if (m_cursorType != CURSOR_ZOOM)
-			postMyMessage(HINT_HITAREA, NULL);
+			post_my_message(HINT_HITAREA, NULL);
 		else
 			zoomIn();
 		return; // exit: mouse movement was too small
@@ -610,7 +610,7 @@ void ChartSpikeBar::OnLButtonUp(const UINT n_flags, const CPoint point)
 		{
 			auto rect = GetDefinedRect();
 			select_spikes_within_rect(&rect, n_flags);
-			postMyMessage(HINT_SELECTSPIKES, NULL);
+			post_my_message(HINT_SELECTSPIKES, NULL);
 		}
 		break;
 
@@ -619,7 +619,7 @@ void ChartSpikeBar::OnLButtonUp(const UINT n_flags, const CPoint point)
 		m_ZoomFrom = rect_in;
 		m_ZoomTo = rect_out;
 		m_iUndoZoom = 1;
-		postMyMessage(HINT_SETMOUSECURSOR, m_oldcursorType);
+		post_my_message(HINT_SETMOUSECURSOR, m_oldcursorType);
 		break;
 
 	default:
@@ -640,11 +640,11 @@ void ChartSpikeBar::OnLButtonDown(const UINT nFlags, CPoint point)
 		if (m_hit_spike >= 0)
 		{
 			if (nFlags & MK_SHIFT)
-				postMyMessage(HINT_HITSPIKE_SHIFT, m_hit_spike);
+				post_my_message(HINT_HITSPIKE_SHIFT, m_hit_spike);
 			else if (nFlags & MK_CONTROL)
-				postMyMessage(HINT_HITSPIKE_CTRL, m_hit_spike);
+				post_my_message(HINT_HITSPIKE_CTRL, m_hit_spike);
 			else
-				postMyMessage(HINT_HITSPIKE, m_hit_spike);
+				post_my_message(HINT_HITSPIKE, m_hit_spike);
 			return;
 		}
 	}
@@ -681,7 +681,7 @@ void ChartSpikeBar::ZoomData(CRect* rFrom, CRect* rDest)
 	l_size = l_size * rDest->Width() / rFrom->Width();
 	m_lLast = m_lFirst + l_size - 1;
 
-	postMyMessage(HINT_CHANGEHZLIMITS, NULL);
+	post_my_message(HINT_CHANGEHZLIMITS, NULL);
 }
 
 void ChartSpikeBar::OnLButtonDblClk(UINT nFlags, CPoint point)
@@ -692,13 +692,13 @@ void ChartSpikeBar::OnLButtonDblClk(UINT nFlags, CPoint point)
 	{
 		if (spike_selected_.spike_index >= 0)
 		{
-			postMyMessage(HINT_DBLCLKSEL, spike_selected_.spike_index);
+			post_my_message(HINT_DBLCLKSEL, spike_selected_.spike_index);
 		}
 		else
 		{
 			const auto i_selected_spike = hit_curve(point);
 			if (i_selected_spike >= 0)
-				postMyMessage(HINT_DBLCLKSEL, i_selected_spike);
+				post_my_message(HINT_DBLCLKSEL, i_selected_spike);
 		}
 	}
 }
