@@ -20,81 +20,83 @@ protected:
 public:
 	enum { IDD = IDD_VIEWSPKSORT1 };
 
-	CComboBox m_CBparameter;
+	CComboBox m_combo_parameter;
 
 	float m_t1 = 0.f;
 	float m_t2 = 0.f;
 	float m_time_unit = 1000.f; // 1=s, 1000f=ms, 1e6=us
-	float limit_lower_threshold_ = 0.f;
-	float limit_upper_threshold_ = 1.f;
+	float limit_lower_threshold = 0.f;
+	float limit_upper_threshold = 1.f;
 	int m_source_class = 0;
 	int m_destination_class = 0;
-	float m_timeFirst = 0.f;
-	float m_timeLast = 0.f;
-	float m_mVMax = 0.f;
-	float m_mVMin = 0.f;
-	BOOL m_bAllFiles = false;
+	float m_time_first = 0.f;
+	float m_time_last = 0.f;
+	float m_mv_max = 0.f;
+	float m_mv_min = 0.f;
+	float m_mv_bin = 0.01f;
+
+	BOOL m_b_all_files = false;
 	int m_spike_index = -1;
 	int m_spike_index_class = 0;
-	float m_txyright = 1.f;
-	float m_txyleft = 0.f;
-	float m_mV_bin = 0.01f;
+	float m_t_xy_right = 1.f;
+	float m_t_xy_left = 0.f;
+	
 
 	// Attributes
 protected:
-	ChartSpikeHist m_chart_histogram; 
-	ChartSpikeXY m_chart_measures; 
-	ChartSpikeShape m_chart_spike_shapes; 
-	ChartSpikeBar m_chart_spike_bars; 
+	ChartSpikeHist chart_histogram_; 
+	ChartSpikeXY chart_xt_measures_; 
+	ChartSpikeShape chart_spike_shape_; 
+	ChartSpikeBar chart_spike_bar_; 
 
-	CEditCtrl mm_t1;
-	CEditCtrl mm_t2;
-	CEditCtrl mm_limitlower;
-	CEditCtrl mm_limitupper;
-	CEditCtrl mm_source_class;
-	CEditCtrl mm_destination_class;
-	CEditCtrl mm_timeFirst;
-	CEditCtrl mm_timeLast;
-	CEditCtrl mm_mVMin;
-	CEditCtrl mm_mVMax;
-	CEditCtrl mm_spike_index;
-	CEditCtrl mm_spike_index_class;
-	CEditCtrl mm_txyright;
-	CEditCtrl mm_txyleft;
-	CEditCtrl mm_mV_bin;
+	CEditCtrl mm_t1_;
+	CEditCtrl mm_t2_;
+	CEditCtrl mm_limit_lower_;
+	CEditCtrl mm_limit_upper_;
+	CEditCtrl mm_source_class_;
+	CEditCtrl mm_destination_class_;
+	CEditCtrl mm_time_first_;
+	CEditCtrl mm_time_last_;
+	CEditCtrl mm_mv_min_;
+	CEditCtrl mm_mv_max_;
+	CEditCtrl mm_spike_index_;
+	CEditCtrl mm_spike_index_class_;
+	CEditCtrl mm_t_xy_right_;
+	CEditCtrl mm_t_xy_left_;
+	CEditCtrl mm_mv_bin_;
 
-	ScrollBarEx m_file_scroll; 
-	SCROLLINFO m_file_scroll_infos{}; 
+	ScrollBarEx m_file_scroll_; 
+	SCROLLINFO m_file_scroll_infos_{}; 
 
-	SPKCLASSIF* spkclassif_{};
+	SPKCLASSIF* spike_classification_parameters_{};
 	OPTIONS_VIEWDATA* options_view_data_{};
 
-	int m_itaglow{};
-	int m_itagup{};
-	int m_ixyright{};
-	int m_ixyleft{};
+	int m_i_tag_low_{};
+	int m_i_tag_up_{};
+	int m_i_xy_right_{};
+	int m_i_xy_left_{};
 
-	int m_spkhist_upper_threshold{};
-	int m_spkhist_lower_threshold{};
-	int m_spkform_tag_left{};
-	int m_spkform_tag_right{};
+	int m_spk_hist_upper_threshold_{};
+	int m_spk_hist_lower_threshold_{};
+	int m_spk_form_tag_left_{};
+	int m_spk_form_tag_right_{};
 
-	float m_vunit = 1000.f; // 1=V, 1000f=mV, 1e6=uV
-	float m_delta{};
-	int m_parmmax{}; // max of array m_measure_y1
-	int m_parmmin{}; // min of array m_measure_y1
-	BOOL m_bvalidextrema = false; // tells if m_parmmax & m_parmmin are valid
-	long m_lFirst{}; // display first
-	long m_lLast{}; // display last
-	BOOL m_bMeasureDone = false; // flag m_measure_y1 valid
-	int m_divAmplitudeBy = 1; // value to adjust changes in amplitude / filter(s)
+	float mv_unit_ = 1000.f; // 1=V, 1000f=mV, 1e6=uV
+	float m_delta_{};
+	int m_measure_y1_max_{}; // max of array m_measure_y1
+	int m_measure_y1_min_{}; // min of array m_measure_y1
+	BOOL b_valid_extrema_ = false; // tells if m_measure_y1_max_ & m_measure_y1_min_ are valid
+	long m_l_first_{}; // display first
+	long m_l_last_{}; // display last
+	BOOL m_b_measure_done_ = false; // flag m_measure_y1 valid
+	int m_div_amplitude_by_ = 1; // value to adjust changes in amplitude / filter(s)
 
 	// Operations
 public:
-	void SetViewMouseCursor(int cursormode)
+	void SetViewMouseCursor(const int cursor_mode)
 	{
-		m_chart_measures.set_mouse_cursor_type(cursormode);
-		m_chart_spike_shapes.set_mouse_cursor_type(cursormode);
+		chart_xt_measures_.set_mouse_cursor_type(cursor_mode);
+		chart_spike_shape_.set_mouse_cursor_type(cursor_mode);
 	}
 
 	// Overrides
@@ -114,7 +116,7 @@ protected:
 	void select_spike_from_current_list(int spike_index);
 	void update_gain();
 	void update_file_scroll();
-	void scroll_file(UINT nSBCode, UINT nPos);
+	void scroll_file(UINT n_sb_code, UINT n_pos);
 	void select_spike_list(int current_index);
 	void activate_mode4();
 	void build_histogram();

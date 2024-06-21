@@ -22,10 +22,10 @@ ViewSpikes::ViewSpikes() : dbTableView(IDD)
 
 ViewSpikes::~ViewSpikes()
 {
-	m_psC->vdestclass = m_class_destination;
-	m_psC->vsourceclass = m_class_source;
-	m_psC->bresetzoom = m_b_reset_zoom;
-	m_psC->fjitter_ms = m_jitter_ms;
+	m_psC->v_dest_class = m_class_destination;
+	m_psC->v_source_class = m_class_source;
+	m_psC->b_reset_zoom = m_b_reset_zoom;
+	m_psC->f_jitter_ms = m_jitter_ms;
 }
 
 void ViewSpikes::DoDataExchange(CDataExchange* pDX)
@@ -102,10 +102,10 @@ void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_d
 		{
 			saveCurrentSpkFile();
 			// save column parameters
-			m_psC->colseparator = m_spikeClassListBox.GetColumnsSeparatorWidth();
-			m_psC->rowheight = m_spikeClassListBox.GetRowHeight();
-			m_psC->colspikes = m_spikeClassListBox.GetColumnsSpikesWidth();
-			m_psC->coltext = m_spikeClassListBox.GetColumnsTextWidth();
+			m_psC->col_separator = m_spikeClassListBox.GetColumnsSeparatorWidth();
+			m_psC->row_height = m_spikeClassListBox.GetRowHeight();
+			m_psC->col_spikes = m_spikeClassListBox.GetColumnsSpikesWidth();
+			m_psC->col_text = m_spikeClassListBox.GetColumnsTextWidth();
 
 			if (p_app->m_p_view_spikes_memory_file == nullptr)
 			{
@@ -478,32 +478,32 @@ void ViewSpikes::OnInitialUpdate()
 	mdMO = &(p_app->options_view_data_measure); // measure options
 	m_psC = &(p_app->spk_classification); // get address of spike classif parms
 
-	m_class_destination = m_psC->vdestclass;
-	m_class_source = m_psC->vsourceclass;
-	m_b_reset_zoom = m_psC->bresetzoom;
-	m_jitter_ms = m_psC->fjitter_ms;
+	m_class_destination = m_psC->v_dest_class;
+	m_class_source = m_psC->v_source_class;
+	m_b_reset_zoom = m_psC->b_reset_zoom;
+	m_jitter_ms = m_psC->f_jitter_ms;
 
 	// adjust size of the row and cols with text, spikes, and bars
 	CRect rect;
 	GetDlgItem(IDC_LISTCLASSES)->GetWindowRect(&rect);
-	m_spikeClassListBox.SetRowHeight(m_psC->rowheight);
+	m_spikeClassListBox.SetRowHeight(m_psC->row_height);
 	CRect rect2;
 	GetDlgItem(IDC_DISPLAYDAT)->GetWindowRect(&rect2);
 	const int left_col_width = rect2.left - rect.left - 2;
 	m_spikeClassListBox.SetLeftColumnWidth(left_col_width);
-	if (m_psC->coltext < 0)
+	if (m_psC->col_text < 0)
 	{
-		m_psC->colspikes = m_psC->rowheight;
-		m_psC->coltext = left_col_width - 2 * m_psC->colseparator - m_psC->colspikes;
-		if (m_psC->coltext < 20)
+		m_psC->col_spikes = m_psC->row_height;
+		m_psC->col_text = left_col_width - 2 * m_psC->col_separator - m_psC->col_spikes;
+		if (m_psC->col_text < 20)
 		{
-			const auto half = left_col_width - m_psC->colseparator;
-			m_psC->colspikes = half;
-			m_psC->coltext = half;
+			const auto half = left_col_width - m_psC->col_separator;
+			m_psC->col_spikes = half;
+			m_psC->col_text = half;
 		}
 	}
-	m_psC->coltext = left_col_width - m_psC->colspikes - 2 * m_psC->colseparator;
-	m_spikeClassListBox.SetColumnsWidth(m_psC->colspikes, m_psC->colseparator);
+	m_psC->col_text = left_col_width - m_psC->col_spikes - 2 * m_psC->col_separator;
+	m_spikeClassListBox.SetColumnsWidth(m_psC->col_spikes, m_psC->col_separator);
 	m_spikeClassListBox.SetCursorMaxOnDblClick(3);
 
 	// init relation with document, display data, adjust parameters
@@ -1914,8 +1914,8 @@ void ViewSpikes::OnFormatCentercurve()
 
 	// loop over all spikes of the list
 	const int n_spikes = m_pSpkList->get_spikes_count();
-	const auto i_t1 = m_psC->ileft;
-	const auto i_t2 = m_psC->iright;
+	const auto i_t1 = m_psC->i_left;
+	const auto i_t2 = m_psC->i_right;
 	for (int i_spike = 0; i_spike < n_spikes; i_spike++)
 	{
 		Spike* spike = m_pSpkList->get_spike(i_spike);

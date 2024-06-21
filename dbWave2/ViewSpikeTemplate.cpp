@@ -73,9 +73,9 @@ void ViewSpikeTemplates::OnDestroy()
 {
 	if (m_templList.GetNtemplates() != 0)
 	{
-		if (m_psC->ptpl == nullptr)
+		if (m_psC->p_template == nullptr)
 			m_psC->CreateTPL();
-		*static_cast<CTemplateListWnd*>(m_psC->ptpl) = m_templList;
+		*static_cast<CTemplateListWnd*>(m_psC->p_template) = m_templList;
 	}
 	dbTableView::OnDestroy();
 }
@@ -94,7 +94,7 @@ void ViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		{
 		case HINT_DOCHASCHANGED: // file has changed?
 		case HINT_DOCMOVERECORD:
-			updateFileParameters();
+			update_file_parameters();
 			break;
 		case HINT_CLOSEFILEMODIFIED: // close modified file: save
 			saveCurrentSpkFile();
@@ -154,8 +154,8 @@ void ViewSpikeTemplates::OnInitialUpdate()
 	mdPM = &(p_app->options_view_data);
 	mdMO = &(p_app->options_view_data_measure);
 	m_psC = &(p_app->spk_classification);
-	if (m_psC->ptpl != nullptr)
-		m_templList = *static_cast<CTemplateListWnd*>(m_psC->ptpl);
+	if (m_psC->p_template != nullptr)
+		m_templList = *static_cast<CTemplateListWnd*>(m_psC->p_template);
 
 	// set ctrlTab values and extend its size
 	CString cs = _T("Create");
@@ -170,27 +170,26 @@ void ViewSpikeTemplates::OnInitialUpdate()
 	rect.bottom += 200;
 	m_tab1Ctrl.MoveWindow(&rect, TRUE);
 
-	m_hitrate = m_psC->hitrate;
-	m_hitratesort = m_psC->hitratesort;
-	m_ktolerance = m_psC->ktolerance;
+	m_hitrate = m_psC->hit_rate;
+	m_hitratesort = m_psC->hit_rate_sort;
+	m_ktolerance = m_psC->k_tolerance;
 
 	m_ChartSpkWnd_Shape.set_plot_mode(PLOT_ONECLASS, 0);
-	m_spkformtagleft = m_ChartSpkWnd_Shape.m_VTtags.add_tag(m_psC->kleft, 0);
-	m_spkformtagright = m_ChartSpkWnd_Shape.m_VTtags.add_tag(m_psC->kright, 0);
+	m_spkformtagleft = m_ChartSpkWnd_Shape.m_VTtags.add_tag(m_psC->k_left, 0);
+	m_spkformtagright = m_ChartSpkWnd_Shape.m_VTtags.add_tag(m_psC->k_right, 0);
 
-	updateFileParameters();
+	update_file_parameters();
 	updateCtrlTab1(0);
 }
 
-void ViewSpikeTemplates::updateFileParameters()
+void ViewSpikeTemplates::update_file_parameters()
 {
-	const BOOL bfirstupdate = (m_pSpkDoc == nullptr);
-	updateSpikeFile();
-	int icur = m_pSpkDoc->get_spike_list_current_index();
-	selectSpikeList(icur);
+	update_spike_file();
+	const int index_current = m_pSpkDoc->get_spike_list_current_index();
+	select_spike_list(index_current);
 }
 
-void ViewSpikeTemplates::updateSpikeFile()
+void ViewSpikeTemplates::update_spike_file()
 {
 	m_pSpkDoc = GetDocument()->open_current_spike_file();
 
@@ -207,10 +206,10 @@ void ViewSpikeTemplates::updateSpikeFile()
 	}
 }
 
-void ViewSpikeTemplates::selectSpikeList(int icur)
+void ViewSpikeTemplates::select_spike_list(const int index_current)
 {
-	m_pSpkList = m_pSpkDoc->set_spike_list_as_current(icur);
-	m_tabCtrl.SetCurSel(icur);
+	m_pSpkList = m_pSpkDoc->set_spike_list_as_current(index_current);
+	m_tabCtrl.SetCurSel(index_current);
 
 	if (!m_pSpkList->is_class_list_valid())
 	{
@@ -226,7 +225,7 @@ void ViewSpikeTemplates::selectSpikeList(int icur)
 	{
 		// set source class to the class of the selected spike
 		m_spikenoclass = m_pSpkList->get_spike(spikeno)->get_class_id();
-		m_psC->sourceclass = m_spikenoclass;
+		m_psC->source_class = m_spikenoclass;
 	}
 
 	ASSERT(m_spikenoclass < 32768);
@@ -235,13 +234,13 @@ void ViewSpikeTemplates::selectSpikeList(int icur)
 
 	// prepare display source spikes
 	m_ChartSpkWnd_Shape.set_source_data(m_pSpkList, GetDocument());
-	if (m_psC->kleft == 0 && m_psC->kright == 0)
+	if (m_psC->k_left == 0 && m_psC->k_right == 0)
 	{
-		m_psC->kleft = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
-		m_psC->kright = m_psC->kleft + m_pSpkList->get_detection_parameters()->detect_refractory_period;
+		m_psC->k_left = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
+		m_psC->k_right = m_psC->k_left + m_pSpkList->get_detection_parameters()->detect_refractory_period;
 	}
-	m_t1 = convertSpikeIndexToTime(m_psC->kleft);
-	m_t2 = convertSpikeIndexToTime(m_psC->kright);
+	m_t1 = convertSpikeIndexToTime(m_psC->k_left);
+	m_t2 = convertSpikeIndexToTime(m_psC->k_right);
 
 	if (!m_bDisplaySingleClass)
 		m_ChartSpkWnd_Shape.set_plot_mode(PLOT_BLACK, 0);
@@ -337,19 +336,19 @@ LRESULT ViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_CHANGEVERTTAG:
 		if (shortValue == m_spkformtagleft)
 		{
-			m_psC->kleft = m_ChartSpkWnd_Shape.m_VTtags.get_value(m_spkformtagleft);
-			m_t1 = convertSpikeIndexToTime(m_psC->kleft);
+			m_psC->k_left = m_ChartSpkWnd_Shape.m_VTtags.get_value(m_spkformtagleft);
+			m_t1 = convertSpikeIndexToTime(m_psC->k_left);
 			mm_t1.m_bEntryDone = TRUE;
 			OnEnChangeT1();
 		}
 		else if (shortValue == m_spkformtagright)
 		{
-			m_psC->kright = m_ChartSpkWnd_Shape.m_VTtags.get_value(m_spkformtagright);
-			m_t2 = convertSpikeIndexToTime(m_psC->kright);
+			m_psC->k_right = m_ChartSpkWnd_Shape.m_VTtags.get_value(m_spkformtagright);
+			m_t2 = convertSpikeIndexToTime(m_psC->k_right);
 			mm_t2.m_bEntryDone = TRUE;
 			OnEnChangeT2();
 		}
-		m_templList.SetTemplateLength(0, m_psC->kleft, m_psC->kright);
+		m_templList.SetTemplateLength(0, m_psC->k_left, m_psC->k_right);
 		m_templList.Invalidate();
 		break;
 
@@ -541,8 +540,8 @@ void ViewSpikeTemplates::OnEnChangeHitrate()
 	{
 		mm_hitrate.OnEnChange(this, m_hitrate, 1, -1);
 
-		if (m_psC->hitrate != m_hitrate)
-			m_psC->hitrate = m_hitrate;
+		if (m_psC->hit_rate != m_hitrate)
+			m_psC->hit_rate = m_hitrate;
 		UpdateData(FALSE);
 	}
 }
@@ -553,8 +552,8 @@ void ViewSpikeTemplates::OnEnChangeHitrateSort()
 	{
 		mm_hitratesort.OnEnChange(this, m_hitratesort, 1, -1);
 
-		if (m_psC->hitratesort != m_hitratesort)
-			m_psC->hitratesort = m_hitratesort;
+		if (m_psC->hit_rate_sort != m_hitratesort)
+			m_psC->hit_rate_sort = m_hitratesort;
 		UpdateData(FALSE);
 	}
 }
@@ -566,8 +565,8 @@ void ViewSpikeTemplates::OnEnChangeTolerance()
 		mm_ktolerance.OnEnChange(this, m_ktolerance, 1.f, -1.f);
 		if (m_ktolerance < 0)
 			m_ktolerance = -m_ktolerance;
-		if (m_psC->ktolerance != m_ktolerance)
-			m_psC->ktolerance = m_ktolerance;
+		if (m_psC->k_tolerance != m_ktolerance)
+			m_psC->k_tolerance = m_ktolerance;
 		UpdateData(FALSE);
 	}
 }
@@ -578,7 +577,7 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 
 	// get list of classes
 	pTPList->SetHitRate_Tolerance(&m_hitrate, &m_ktolerance);
-	int tpllen = m_psC->kright - m_psC->kleft + 1;
+	int tpllen = m_psC->k_right - m_psC->k_left + 1;
 
 	// define and attach to ImageList to CListCtrl; create 1 item by default
 	if (pTPList->GetImageList(LVSIL_NORMAL) != &pTPList->m_imageList)
@@ -708,7 +707,7 @@ void ViewSpikeTemplates::OnBuildTemplates()
 
 	// add as many forms as we have classes
 	m_templList.DeleteAllItems(); // reinit all templates to zero
-	m_templList.SetTemplateLength(m_pSpkList->get_spike_length(), m_psC->kleft, m_psC->kright);
+	m_templList.SetTemplateLength(m_pSpkList->get_spike_length(), m_psC->k_left, m_psC->k_right);
 	m_templList.SetHitRate_Tolerance(&m_hitrate, &m_ktolerance);
 
 	// compute global std
@@ -1174,14 +1173,14 @@ void ViewSpikeTemplates::OnEnChangeIfirstsortedclass()
 void ViewSpikeTemplates::OnTcnSelchangeTab2(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto icursel = m_tabCtrl.GetCurSel();
-	selectSpikeList(icursel);
+	select_spike_list(icursel);
 	*pResult = 0;
 }
 
 void ViewSpikeTemplates::OnNMClickTab2(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto icursel = m_tabCtrl.GetCurSel();
-	selectSpikeList(icursel);
+	select_spike_list(icursel);
 	*pResult = 0;
 }
 
@@ -1219,9 +1218,9 @@ void ViewSpikeTemplates::OnEnChangeT1()
 		const int it1 = convertTimeToSpikeIndex(m_t1);
 		if (it1 != m_ChartSpkWnd_Shape.m_VTtags.get_value(m_spkformtagleft))
 		{
-			m_psC->kleft = it1;
-			m_ChartSpkWnd_Shape.move_vt_track(m_spkformtagleft, m_psC->kleft);
-			m_pSpkList->m_imaxmin1SL = m_psC->kleft;
+			m_psC->k_left = it1;
+			m_ChartSpkWnd_Shape.move_vt_track(m_spkformtagleft, m_psC->k_left);
+			m_pSpkList->m_imaxmin1SL = m_psC->k_left;
 		}
 		UpdateData(FALSE);
 	}
@@ -1248,9 +1247,9 @@ void ViewSpikeTemplates::OnEnChangeT2()
 		const int it2 = convertTimeToSpikeIndex(m_t2);
 		if (it2 != m_ChartSpkWnd_Shape.m_VTtags.get_value(m_spkformtagright))
 		{
-			m_psC->kright = it2;
-			m_ChartSpkWnd_Shape.move_vt_track(m_spkformtagright, m_psC->kright);
-			m_pSpkList->m_imaxmin2SL = m_psC->kright;
+			m_psC->k_right = it2;
+			m_ChartSpkWnd_Shape.move_vt_track(m_spkformtagright, m_psC->k_right);
+			m_pSpkList->m_imaxmin2SL = m_psC->k_right;
 		}
 		UpdateData(FALSE);
 	}

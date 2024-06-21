@@ -6,79 +6,79 @@
 
 IMPLEMENT_SERIAL(SPKCLASSIF, CObject, 0 /* schema number*/)
 
-SPKCLASSIF::SPKCLASSIF() : bChanged(0), nintparms(0), nfloatparms(0)
+SPKCLASSIF::SPKCLASSIF() : b_changed(0), n_int_parameters(0), n_float_parameters(0)
 {
-	wversion = 2;
-	dataTransform = 0; // data transform method (0=raw data)
-	iparameter = 0; // type of parameter measured
-	ileft = 10; // position of first cursor
-	iright = 40; // position of second cursor
+	w_version = 2;
+	data_transform = 0; // data transform method (0=raw data)
+	i_parameter = 0; // type of parameter measured
+	i_left = 10; // position of first cursor
+	i_right = 40; // position of second cursor
 	lower_threshold = 0; // second threshold
 	upper_threshold = 10; // first threshold
-	ixyleft = 10;
-	ixyright = 40;
-	sourceclass = 0; // source class
-	destclass = 0; // destination class
-	hitrate = 50;
-	hitratesort = 75;
-	ktolerance = 1.96f;
-	kleft = 10;
-	kright = 40;
-	rowheight = 100; // height of the spike row within spikeview
-	coltext = -1;
-	colspikes = 100; // width of the spikes within one row
-	colseparator = 5;
-	ptpl = nullptr;
-	mvmin = 0.f;
-	mvmax = 2.f;
-	vdestclass = 1;
-	vsourceclass = 0;
-	fjitter_ms = 1.f;
-	bresetzoom = TRUE;
+	i_xy_left = 10;
+	i_xy_right = 40;
+	source_class = 0; // source class
+	dest_class = 0; // destination class
+	hit_rate = 50;
+	hit_rate_sort = 75;
+	k_tolerance = 1.96f;
+	k_left = 10;
+	k_right = 40;
+	row_height = 100; // height of the spike row within spikeview
+	col_text = -1;
+	col_spikes = 100; // width of the spikes within one row
+	col_separator = 5;
+	p_template = nullptr;
+	mv_min = 0.f;
+	mv_max = 2.f;
+	v_dest_class = 1;
+	v_source_class = 0;
+	f_jitter_ms = 1.f;
+	b_reset_zoom = TRUE;
 }
 
 SPKCLASSIF::~SPKCLASSIF()
 {
-	if (ptpl)
-		delete static_cast<CTemplateListWnd*>(ptpl);
+	if (p_template)
+		delete static_cast<CTemplateListWnd*>(p_template);
 }
 
 SPKCLASSIF& SPKCLASSIF::operator =(const SPKCLASSIF& arg)
 {
 	if (this != &arg)
 	{
-		dataTransform = arg.dataTransform; // transform mode
-		iparameter = arg.iparameter; // type of parameter measured
-		ileft = arg.ileft; // position of first cursor
-		iright = arg.iright; // position of second cursor
+		data_transform = arg.data_transform; // transform mode
+		i_parameter = arg.i_parameter; // type of parameter measured
+		i_left = arg.i_left; // position of first cursor
+		i_right = arg.i_right; // position of second cursor
 		lower_threshold = arg.lower_threshold; // second threshold
 		upper_threshold = arg.upper_threshold; // first threshold
-		ixyright = arg.ixyright;
-		ixyleft = arg.ixyleft;
-		sourceclass = arg.sourceclass; // source class
-		destclass = arg.destclass; // destination class
+		i_xy_right = arg.i_xy_right;
+		i_xy_left = arg.i_xy_left;
+		source_class = arg.source_class; // source class
+		dest_class = arg.dest_class; // destination class
 
-		hitrate = arg.hitrate;
-		hitratesort = arg.hitratesort;
-		ktolerance = arg.ktolerance;
-		kleft = arg.kleft;
-		kright = arg.kright;
-		rowheight = arg.rowheight;
-		coltext = arg.coltext;
-		colspikes = arg.colspikes;
-		colseparator = arg.colseparator;
-		vsourceclass = arg.vsourceclass; // source class
-		vdestclass = arg.vdestclass; // destination class
-		bresetzoom = arg.bresetzoom;
-		fjitter_ms = arg.fjitter_ms;
+		hit_rate = arg.hit_rate;
+		hit_rate_sort = arg.hit_rate_sort;
+		k_tolerance = arg.k_tolerance;
+		k_left = arg.k_left;
+		k_right = arg.k_right;
+		row_height = arg.row_height;
+		col_text = arg.col_text;
+		col_spikes = arg.col_spikes;
+		col_separator = arg.col_separator;
+		v_source_class = arg.v_source_class; // source class
+		v_dest_class = arg.v_dest_class; // destination class
+		b_reset_zoom = arg.b_reset_zoom;
+		f_jitter_ms = arg.f_jitter_ms;
 
-		mvmin = arg.mvmin;
-		mvmax = arg.mvmax;
+		mv_min = arg.mv_min;
+		mv_max = arg.mv_max;
 
-		if (arg.ptpl != nullptr)
+		if (arg.p_template != nullptr)
 		{
-			ptpl = new (CTemplateListWnd);
-			*static_cast<CTemplateListWnd*>(ptpl) = *static_cast<CTemplateListWnd*>(arg.ptpl);
+			p_template = new (CTemplateListWnd);
+			*static_cast<CTemplateListWnd*>(p_template) = *static_cast<CTemplateListWnd*>(arg.p_template);
 		}
 	}
 	return *this;
@@ -86,47 +86,47 @@ SPKCLASSIF& SPKCLASSIF::operator =(const SPKCLASSIF& arg)
 
 void SPKCLASSIF::Serialize(CArchive& ar)
 {
-	BOOL btplIspresent = FALSE;
+	BOOL b_tpl_is_present = FALSE;
 	if (ar.IsStoring())
 	{
-		wversion = 2;
-		ar << wversion;
-		ar << static_cast<WORD>(dataTransform);
-		ar << static_cast<WORD>(iparameter);
-		ar << static_cast<WORD>(ileft);
-		ar << static_cast<WORD>(iright);
+		w_version = 2;
+		ar << w_version;
+		ar << static_cast<WORD>(data_transform);
+		ar << static_cast<WORD>(i_parameter);
+		ar << static_cast<WORD>(i_left);
+		ar << static_cast<WORD>(i_right);
 		ar << static_cast<WORD>(lower_threshold);
 		ar << static_cast<WORD>(upper_threshold);
-		const auto dummy = static_cast<WORD>(0);
+		constexpr auto dummy = static_cast<WORD>(0);
 		ar << dummy;
 		ar << dummy;
 
-		nfloatparms = 4;
-		ar << nfloatparms;
-		ar << ktolerance; // 1
-		ar << mvmin;
-		ar << mvmax;
-		ar << fjitter_ms;
+		n_float_parameters = 4;
+		ar << n_float_parameters;
+		ar << k_tolerance; // 1
+		ar << mv_min;
+		ar << mv_max;
+		ar << f_jitter_ms;
 
-		nintparms = 16;
-		ar << nintparms;
-		ar << kleft; // 1
-		ar << kright; // 2
-		ar << rowheight; // 3
-		ar << hitrate; // 4
-		ar << hitratesort; // 5
-		btplIspresent = ptpl != nullptr; // test if templatelist is present
-		ar << btplIspresent; // 6
-		ar << coltext; // 7
-		ar << colspikes; // 8
-		ar << colseparator; // 9
-		ar << sourceclass; // 10
-		ar << destclass; // 11
-		ar << vsourceclass; // 12
-		ar << vdestclass; // 13
-		ar << bresetzoom; // 14
-		ar << ixyright; // 15
-		ar << ixyleft; // 16
+		n_int_parameters = 16;
+		ar << n_int_parameters;
+		ar << k_left; // 1
+		ar << k_right; // 2
+		ar << row_height; // 3
+		ar << hit_rate; // 4
+		ar << hit_rate_sort; // 5
+		b_tpl_is_present = p_template != nullptr; // test if template_list is present
+		ar << b_tpl_is_present; // 6
+		ar << col_text; // 7
+		ar << col_spikes; // 8
+		ar << col_separator; // 9
+		ar << source_class; // 10
+		ar << dest_class; // 11
+		ar << v_source_class; // 12
+		ar << v_dest_class; // 13
+		ar << b_reset_zoom; // 14
+		ar << i_xy_right; // 15
+		ar << i_xy_left; // 16
 	}
 	else
 	{
@@ -136,169 +136,169 @@ void SPKCLASSIF::Serialize(CArchive& ar)
 		// version 1
 		WORD w1;
 		ar >> w1;
-		dataTransform = w1;
+		data_transform = w1;
 		ar >> w1;
-		iparameter = w1;
+		i_parameter = w1;
 		ar >> w1;
-		ileft = w1;
+		i_left = w1;
 		ar >> w1;
-		iright = w1;
+		i_right = w1;
 		ar >> w1;
 		lower_threshold = w1;
 		ar >> w1;
 		upper_threshold = w1;
 		ar >> w1;
-		sourceclass = w1; // dummy in v4
+		source_class = w1; // dummy in v4
 		ar >> w1;
-		destclass = w1; // dummy in v4
+		dest_class = w1; // dummy in v4
 
 		// version 2
 		if (version > 1)
 		{
 			// float parameters
-			int nfparms;
-			ar >> nfparms;
-			if (nfparms > 0)
+			int n_temp_float_parameters = 0;
+			ar >> n_temp_float_parameters;
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> ktolerance;
-				nfparms--;
+				ar >> k_tolerance;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> mvmin;
-				nfparms--;
+				ar >> mv_min;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> mvmax;
-				nfparms--;
+				ar >> mv_max;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> fjitter_ms;
-				nfparms--;
+				ar >> f_jitter_ms;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
 				float dummy;
 				do
 				{
 					ar >> dummy;
-					nfparms--;
-				} while (nfparms > 0);
+					n_temp_float_parameters--;
+				} while (n_temp_float_parameters > 0);
 			}
-			ASSERT(nfparms == 0);
+			ASSERT(n_temp_float_parameters == 0);
 
 			// int parameters
-			ar >> nfparms;
-			if (nfparms > 0)
+			ar >> n_temp_float_parameters;
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> kleft;
-				nfparms--;
+				ar >> k_left;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> kright;
-				nfparms--;
+				ar >> k_right;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> rowheight;
-				nfparms--;
+				ar >> row_height;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> hitrate;
-				nfparms--;
+				ar >> hit_rate;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> hitratesort;
-				nfparms--;
+				ar >> hit_rate_sort;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> btplIspresent;
-				nfparms--;
+				ar >> b_tpl_is_present;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> coltext;
-				nfparms--;
+				ar >> col_text;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> colspikes;
-				nfparms--;
+				ar >> col_spikes;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> colseparator;
-				nfparms--;
+				ar >> col_separator;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> sourceclass;
-				nfparms--;
+				ar >> source_class;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> destclass;
-				nfparms--;
+				ar >> dest_class;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> vsourceclass;
-				nfparms--;
+				ar >> v_source_class;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> vdestclass;
-				nfparms--;
+				ar >> v_dest_class;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> bresetzoom;
-				nfparms--;
+				ar >> b_reset_zoom;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> ixyright;
-				nfparms--;
+				ar >> i_xy_right;
+				n_temp_float_parameters--;
 			}
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
-				ar >> ixyleft;
-				nfparms--;
+				ar >> i_xy_left;
+				n_temp_float_parameters--;
 			}
 
-			if (nfparms > 0)
+			if (n_temp_float_parameters > 0)
 			{
 				int dummy;
 				do
 				{
 					ar >> dummy;
-					nfparms--;
-				} while (nfparms > 0);
+					n_temp_float_parameters--;
+				} while (n_temp_float_parameters > 0);
 			}
-			ASSERT(nfparms == 0);
+			ASSERT(n_temp_float_parameters == 0);
 
-			if (!btplIspresent && ptpl != nullptr)
-				delete static_cast<CTemplateListWnd*>(ptpl);
+			if (!b_tpl_is_present && p_template != nullptr)
+				delete static_cast<CTemplateListWnd*>(p_template);
 		}
 	}
 
 	// serialize templates
-	if (btplIspresent)
+	if (b_tpl_is_present)
 	{
-		if (ptpl == nullptr)
-			ptpl = new (CTemplateListWnd);
-		static_cast<CTemplateListWnd*>(ptpl)->Serialize(ar);
+		if (p_template == nullptr)
+			p_template = new (CTemplateListWnd);
+		static_cast<CTemplateListWnd*>(p_template)->Serialize(ar);
 	}
 }
 
 
 void SPKCLASSIF::CreateTPL()
 {
-	ptpl = new (CTemplateListWnd);
+	p_template = new (CTemplateListWnd);
 }

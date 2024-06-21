@@ -73,18 +73,18 @@ protected:
 protected:
 	void defineSubClassedItems();
 	void defineStretchParameters();
-	void updateFileParameters(); // reset parameters for new file
+	void update_file_parameters(); // reset parameters for new file
 	void updateTemplates();
 	void updateLegends();
 	void selectSpike(short spikeno);
 	void updateScrollBar();
-	void selectSpikeList(int icur);
+	void select_spike_list(int index_current);
 	void editSpikeClass(int controlID, int controlItem);
 	void displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList); //, CImageList* pImList);
 	void sortSpikes();
 	void updateCtrlTab1(int iselect);
 	void setExtentZeroAllDisplay(int extent, int zero);
-	void updateSpikeFile();
+	void update_spike_file();
 	float convertSpikeIndexToTime(int index) { return index * m_tunit / m_pSpkList->get_acq_sampling_rate(); }
 	int convertTimeToSpikeIndex(float time) { return static_cast<int>(time * m_pSpkList->get_acq_sampling_rate() / m_tunit); }
 

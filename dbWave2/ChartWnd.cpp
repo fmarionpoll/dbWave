@@ -540,26 +540,26 @@ void ChartWnd::DrawGrid(CDC* p_dc)
 		draw_grid_evenly_spaced(p_dc);
 }
 
-void ChartWnd::SetNxScaleCells(int iCells, int iTicks, int iTickLine)
+void ChartWnd::SetNxScaleCells(const int iCells, const int iTicks, const int iTickLine)
 {
 	m_scopestruct.iXCells = iCells;
 	m_scopestruct.iXTicks = iTicks;
 	m_scopestruct.iXTickLine = iTickLine;
 }
 
-void ChartWnd::SetNyScaleCells(int iCells, int iTicks, int iTickLine)
+void ChartWnd::SetNyScaleCells(const int iCells, const int iTicks, const int iTickLine)
 {
 	m_scopestruct.iYCells = iCells;
 	m_scopestruct.iYTicks = iTicks;
 	m_scopestruct.iYTickLine = iTickLine;
 }
 
-void ChartWnd::send_my_message(int code, int codeparm) const
+void ChartWnd::send_my_message(const int code, const int codeparm) const
 {
 	GetParent()->SendMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, GetDlgCtrlID()));
 }
 
-void ChartWnd::post_my_message(int code, int codeparm) const
+void ChartWnd::post_my_message(const int code, const int codeparm) const
 {
 	GetParent()->PostMessage(WM_MYMESSAGE, code, MAKELONG(codeparm, GetDlgCtrlID()));
 }
@@ -595,7 +595,7 @@ void ChartWnd::SetMouseCursor(const int cursor_type)
 	SetCursor(m_currCursor);
 }
 
-void ChartWnd::SetYWExtOrg(int extent, int zero)
+void ChartWnd::SetYWExtOrg(const int extent, const int zero)
 {
 	m_yWE = extent;
 	m_yWO = zero;

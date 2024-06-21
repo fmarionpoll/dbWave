@@ -40,28 +40,28 @@ public:
 	int GetHistMaxPos() const { return m_imax; }
 	DWORD GetHistMax() const { return m_lmax; }
 
-	void BuildHistFromDocument(CdbWaveDoc* p_document, BOOL b_all_files, long l_first, long l_last, int max, int min,
-	                           int nbins, BOOL bNew);
+	void build_hist_from_document(CdbWaveDoc* p_document, BOOL b_all_files, long l_first, long l_last, int max, int min,
+	                           int n_bins, BOOL b_new);
 
-	void RemoveHistData();
-	LPTSTR ExportAscii(LPTSTR lp); // export ascii data
+	void delete_histogram_data();
+	LPTSTR export_ascii(LPTSTR lp); // export ascii data
 	void MoveVTtagtoVal(int itag, int ival);
-	void MoveHZtagtoVal(int itag, int ival);
+	void MoveHZtagtoVal(int tag_index, int value);
 
 	
 	void ZoomData(CRect* prevRect, CRect* newRect) override;
 
 protected:
 	int hit_curve(CPoint point) override;
-	void reSize_And_Clear_Histograms(int nbins, int max, int min);
-	void getHistogLimits(int ihist);
-	void getExtents();
-	void plotHistogram(CDC* p_dc, CDWordArray* p_dw, int color);
+	void resize_and_clear_histograms(int n_bins, int max, int min);
+	void get_histogram_limits(int i_hist);
+	void get_extents();
+	void plot_histogram(CDC* p_dc, const CDWordArray* p_dw, int color) const;
 
-	void getClassArray(int iclass, CDWordArray*& pDW);
-	CDWordArray* initClassArray(int nbins, int spike_class);
-	void buildHistFromSpikeList(SpikeList* p_spk_list, long l_first, long l_last, int max, int min, int nbins,
-	                            BOOL bNew);
+	void getClassArray(int i_class, CDWordArray*& p_dw);
+	CDWordArray* init_class_array(int n_bins, int spike_class);
+	void build_hist_from_spike_list(SpikeList* p_spk_list, long l_first, long l_last, int max, int min, int n_bins,
+	                            BOOL b_new);
 
 public:
 	void plot_data_to_dc(CDC* p_dc) override;
@@ -69,7 +69,7 @@ public:
 protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonDblClk(UINT n_flags, CPoint point);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 
 	DECLARE_MESSAGE_MAP()

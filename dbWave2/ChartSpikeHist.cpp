@@ -29,10 +29,10 @@ ChartSpikeHist::ChartSpikeHist()
 
 ChartSpikeHist::~ChartSpikeHist()
 {
-	RemoveHistData();
+	delete_histogram_data();
 }
 
-void ChartSpikeHist::RemoveHistData()
+void ChartSpikeHist::delete_histogram_data()
 {
 	if (histogram_ptr_array.GetSize() > 0) 
 	{
@@ -58,7 +58,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	GetWindowRect(rect1);
 	m_yVO = rect1.Height();
 
-	getExtents();
+	get_extents();
 	if (m_lmax == 0)
 	{
 		p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
@@ -109,7 +109,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 			}
 		}
 
-		plotHistogram(p_dc, p_dw, color);
+		plot_histogram(p_dc, p_dw, color);
 	}
 
 	// plot selected class (one histogram)
@@ -120,7 +120,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 		getClassArray(m_selected_class, p_dw);
 		if (p_dw != nullptr)
 		{
-			plotHistogram(p_dc, p_dw, color);
+			plot_histogram(p_dc, p_dw, color);
 		}
 	}
 
@@ -133,31 +133,31 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	p_dc->RestoreDC(n_saved_dc);
 }
 
-void ChartSpikeHist::plotHistogram(CDC* p_dc, CDWordArray* p_dw, int color)
+void ChartSpikeHist::plot_histogram(CDC* p_dc, const CDWordArray* p_dw, const int color) const
 {
-	CRect rect_histog;
-	rect_histog.left = m_abcissaminval - m_binsize;
-	rect_histog.right = m_abcissaminval;
-	rect_histog.bottom = 0;
+	CRect rect_histogram;
+	rect_histogram.left = m_abcissaminval - m_binsize;
+	rect_histogram.right = m_abcissaminval;
+	rect_histogram.bottom = 0;
 	for (auto i = 1; i < p_dw->GetSize(); i++)
 	{
-		rect_histog.left += m_binsize;
-		rect_histog.right += m_binsize;
-		rect_histog.top = static_cast<int>(p_dw->GetAt(i));
-		if (rect_histog.top > 0)
+		rect_histogram.left += m_binsize;
+		rect_histogram.right += m_binsize;
+		rect_histogram.top = static_cast<int>(p_dw->GetAt(i));
+		if (rect_histogram.top > 0)
 		{
-			p_dc->MoveTo(rect_histog.left, rect_histog.bottom);
-			p_dc->FillSolidRect(rect_histog, m_colorTable[color]);
+			p_dc->MoveTo(rect_histogram.left, rect_histogram.bottom);
+			p_dc->FillSolidRect(rect_histogram, m_colorTable[color]);
 		}
 	}
 }
 
-void ChartSpikeHist::MoveHZtagtoVal(int i, int val)
+void ChartSpikeHist::MoveHZtagtoVal(const int tag_index, const int value)
 {
-	m_ptLast.y = MulDiv(m_HZtags.get_value(i) - m_yWO, m_yVE, m_yWE) + m_yVO;
-	const auto j = MulDiv(val - m_yWO, m_yVE, m_yWE) + m_yVO;
+	m_ptLast.y = MulDiv(m_HZtags.get_value(tag_index) - m_yWO, m_yVE, m_yWE) + m_yVO;
+	const auto j = MulDiv(value - m_yWO, m_yVE, m_yWE) + m_yVO;
 	XorHZtag(j);
-	m_HZtags.set_tag_val(i, val);
+	m_HZtags.set_tag_val(tag_index, value);
 }
 
 void ChartSpikeHist::MoveVTtagtoVal(int itag, int ival)
@@ -168,27 +168,27 @@ void ChartSpikeHist::MoveVTtagtoVal(int itag, int ival)
 	m_VTtags.set_tag_val(itag, ival);
 }
 
-void ChartSpikeHist::getClassArray(int iclass, CDWordArray*& pDW)
+void ChartSpikeHist::getClassArray(const int i_class, CDWordArray*& p_dw)
 {
 	// test if pDW at 0 position is the right one
-	if ((nullptr != pDW) && (static_cast<int>(pDW->GetAt(0)) == iclass))
+	if ((nullptr != p_dw) && (static_cast<int>(p_dw->GetAt(0)) == i_class))
 		return;
 
 	// not found, scan the array
-	pDW = nullptr;
+	p_dw = nullptr;
 	for (auto i = 1; i < histogram_ptr_array.GetSize(); i++)
 	{
-		if (static_cast<int>((histogram_ptr_array[i])->GetAt(0)) == iclass)
+		if (static_cast<int>((histogram_ptr_array[i])->GetAt(0)) == i_class)
 		{
-			pDW = histogram_ptr_array[i];
+			p_dw = histogram_ptr_array[i];
 			break;
 		}
 	}
 }
 
-LPTSTR ChartSpikeHist::ExportAscii(LPTSTR lp)
+LPTSTR ChartSpikeHist::export_ascii(LPTSTR lp)
 {
-	// print all ordinates line-by-line, differnt classes on same line
+	// print all ordinates line-by-line, different classes on same line
 	lp += wsprintf(lp, _T("Histogram\nn_bins=%i\nnclasses=%i"), m_nbins, histogram_ptr_array.GetSize());
 	lp += wsprintf(lp, _T("\nmax=%i\nmin=%i"), m_abcissamaxval, m_abcissaminval);
 	// export classes & points
@@ -294,12 +294,12 @@ void ChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
 		return; // or any tag hit (VT, HZ) detected
 
 	// test if mouse hit one histogram
-	// if hit, then tell parent to select corresp histogram (spike)
+	// if hit, then tell parent to select histogram (spike)
 	m_hit_spike = hit_curve(point);
 	if (m_hit_spike >= 0)
 	{
 		// cancel track rect mode
-		m_trackMode = TRACK_OFF; // flag trackrect
+		m_trackMode = TRACK_OFF; // flag track_rect
 		release_cursor(); // release cursor capture
 		post_my_message(HINT_HITSPIKE, m_hit_spike);
 	}
@@ -337,10 +337,10 @@ void ChartSpikeHist::ZoomData(CRect* rFrom, CRect* rDest)
 	post_my_message(HINT_CHANGEZOOM, 0);
 }
 
-void ChartSpikeHist::OnLButtonDblClk(UINT nFlags, CPoint point)
+void ChartSpikeHist::OnLButtonDblClk(const UINT n_flags, const CPoint point)
 {
 	if (m_hit_spike < 0)
-		ChartSpike::OnLButtonDblClk(nFlags, point);
+		ChartSpike::OnLButtonDblClk(n_flags, point);
 	else
 	{
 		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), BN_DOUBLECLICKED),
@@ -348,14 +348,14 @@ void ChartSpikeHist::OnLButtonDblClk(UINT nFlags, CPoint point)
 	}
 }
 
-int ChartSpikeHist::hit_curve(CPoint point)
+int ChartSpikeHist::hit_curve(const CPoint point)
 {
-	auto hitspk = -1;
+	auto hit_spk = -1;
 	// convert device coordinates into logical coordinates
-	const auto deltax = MulDiv(3, m_xWE, m_xVE);
+	const auto delta_x = MulDiv(3, m_xWE, m_xVE);
 	const auto mouse_x = MulDiv(point.x - m_xVO, m_xWE, m_xVE) + m_xWO;
-	auto mouse_x1 = mouse_x - deltax;
-	auto mouse_x2 = mouse_x - deltax;
+	auto mouse_x1 = mouse_x - delta_x;
+	auto mouse_x2 = mouse_x - delta_x;
 	if (mouse_x1 < 1)
 		mouse_x1 = 1;
 	if (mouse_x1 > m_nbins)
@@ -365,33 +365,33 @@ int ChartSpikeHist::hit_curve(CPoint point)
 	if (mouse_x2 > m_nbins)
 		mouse_x2 = m_nbins;
 
-	const auto deltay = MulDiv(3, m_yWE, m_yVE);
-	const auto mouse_y = static_cast<DWORD>(MulDiv(point.y - m_yVO, m_yWE, m_yVE)) + m_yWO + deltay;
+	const auto delta_y = MulDiv(3, m_yWE, m_yVE);
+	const auto mouse_y = static_cast<DWORD>(MulDiv(point.y - m_yVO, m_yWE, m_yVE)) + m_yWO + delta_y;
 
 	// test selected histogram first (foreground)
-	auto ihist = 1;
-	CDWordArray* pDW = nullptr;
+	const CDWordArray* p_dw = nullptr;
 	if (m_plotmode == PLOT_ONECLASS || m_plotmode == PLOT_ONECLASSONLY)
 	{
-		// get array corresp to m_selected_class as well as histogram index
+		auto i_hist = 1;
+		// get array corresponding to m_selected_class as well as histogram index
 		for (auto i = 1; i < histogram_ptr_array.GetSize(); i++)
 		{
 			if (static_cast<int>((histogram_ptr_array[i])->GetAt(0)) == m_selected_class)
 			{
-				pDW = histogram_ptr_array[i];
-				ihist = i;
+				p_dw = histogram_ptr_array[i];
+				i_hist = i;
 				break;
 			}
 		}
 		//
-		if (pDW != nullptr)
+		if (p_dw != nullptr)
 		{
 			for (auto i = mouse_x1; i < mouse_x2; i++)
 			{
-				const auto iww = pDW->GetAt(i - 1);
+				const auto iww = p_dw->GetAt(i - 1);
 				if (mouse_y <= iww)
 				{
-					hitspk = ihist;
+					hit_spk = i_hist;
 					break;
 				}
 			}
@@ -399,33 +399,33 @@ int ChartSpikeHist::hit_curve(CPoint point)
 	}
 
 	// test other histograms
-	if (m_plotmode != PLOT_ONECLASSONLY && hitspk < 0)
+	if (m_plotmode != PLOT_ONECLASSONLY && hit_spk < 0)
 	{
-		for (auto jhist = 1; jhist < histogram_ptr_array.GetSize() && hitspk < 0; jhist++)
+		for (auto j_hist = 1; j_hist < histogram_ptr_array.GetSize() && hit_spk < 0; j_hist++)
 		{
-			pDW = histogram_ptr_array.GetAt(jhist);
-			if (m_plotmode == PLOT_ONECLASS && static_cast<int>(pDW->GetAt(0)) == m_selected_class)
+			p_dw = histogram_ptr_array.GetAt(j_hist);
+			if (m_plotmode == PLOT_ONECLASS && static_cast<int>(p_dw->GetAt(0)) == m_selected_class)
 				continue;
 			for (auto i = mouse_x1; i <= mouse_x2; i++)
 			{
-				const auto iww = pDW->GetAt(i - 1);
+				const auto iww = p_dw->GetAt(i - 1);
 				if (mouse_y <= iww)
 				{
-					hitspk = jhist;
+					hit_spk = j_hist;
 					break;
 				}
 			}
 		}
 	}
-	return hitspk;
+	return hit_spk;
 }
 
-void ChartSpikeHist::getExtents()
+void ChartSpikeHist::get_extents()
 {
 	if (m_yWE == 1) // && m_yWO == 0)
 	{
 		if (m_lmax == 0)
-			getHistogLimits(0);
+			get_histogram_limits(0);
 		m_yWE = static_cast<int>(m_lmax);
 		m_yWO = 0;
 	}
@@ -437,9 +437,9 @@ void ChartSpikeHist::getExtents()
 	}
 }
 
-void ChartSpikeHist::getHistogLimits(int ihist)
+void ChartSpikeHist::get_histogram_limits(const int i_hist)
 {
-	// for some unknown reason, m_pHistarray is set at zero when arriving here
+	// for some unknown reason, m_p_Hist_array is set at zero when arriving here
 	if (histogram_ptr_array.GetSize() <= 0)
 	{
 		const auto p_dw = new (CDWordArray); // init array
@@ -447,13 +447,11 @@ void ChartSpikeHist::getHistogLimits(int ihist)
 		histogram_ptr_array.Add(p_dw); // save pointer to this new array
 		ASSERT(histogram_ptr_array.GetSize() > 0);
 	}
-	const auto p_dw = histogram_ptr_array[ihist];
+	const auto p_dw = histogram_ptr_array[i_hist];
 	if (p_dw->GetSize() <= 1)
 		return;
-	// Recherche de l'indice min et max de l'histograme
-	// En dessous de min toutes les cases du tableau sont
-	// à zéro. Au dela de max toute les cases du tableau sont à zéro.
 
+	// get index of minimal value
 	m_ifirst = 1; // search first interval with data
 	while (m_ifirst <= m_nbins && p_dw->GetAt(m_ifirst) == 0)
 		m_ifirst++;
@@ -462,13 +460,13 @@ void ChartSpikeHist::getHistogLimits(int ihist)
 	while (p_dw->GetAt(m_ilast) == 0 && m_ilast > m_ifirst)
 		m_ilast--;
 
-	// Récuperation de l'indice du maximum
+	// get index of maximum value
 	m_imax = m_ifirst; // index first pt
 	m_lmax = 0; // max
 	for (auto i = m_ifirst; i <= m_ilast; i++)
 	{
-		const auto dwitem = p_dw->GetAt(i);
-		if (dwitem > m_lmax)
+		const auto dw_item = p_dw->GetAt(i);
+		if (dw_item > m_lmax)
 		{
 			m_imax = i;
 			m_lmax = p_dw->GetAt(i);
@@ -476,18 +474,17 @@ void ChartSpikeHist::getHistogLimits(int ihist)
 	}
 }
 
-void ChartSpikeHist::reSize_And_Clear_Histograms(int n_bins, int max, int min)
+void ChartSpikeHist::resize_and_clear_histograms(const int n_bins, const int max, const int min)
 {
-	m_binsize = (max - min + 1) / n_bins + 1; // set bin size
-	m_abcissaminval = min; // set min
-	m_abcissamaxval = min + n_bins * m_binsize; // set max
+	m_binsize = (max - min + 1) / n_bins + 1; 
+	m_abcissaminval = min;
+	m_abcissamaxval = min + n_bins * m_binsize; 
 
 	m_nbins = n_bins;
 	for (auto j = histogram_ptr_array.GetUpperBound(); j >= 0; j--)
 	{
-		auto p_dw = histogram_ptr_array[j];
+		const auto p_dw = histogram_ptr_array[j];
 		p_dw->SetSize(n_bins + 1);
-		// erase all data from histogram
 		for (auto i = 1; i <= n_bins; i++)
 			p_dw->SetAt(i, 0);
 	}
@@ -499,9 +496,9 @@ void ChartSpikeHist::OnSize(UINT nType, int cx, int cy)
 	m_yVO = cy;
 }
 
-CDWordArray* ChartSpikeHist::initClassArray(int n_bins, int spike_class)
+CDWordArray* ChartSpikeHist::init_class_array(const int n_bins, const int spike_class)
 {
-	auto p_dw = new (CDWordArray); // init array
+	auto p_dw = new (CDWordArray);
 	ASSERT(p_dw != NULL);
 	histogram_ptr_array.Add(p_dw); // save pointer to this new array
 	p_dw->SetSize(n_bins + 1);
@@ -511,12 +508,12 @@ CDWordArray* ChartSpikeHist::initClassArray(int n_bins, int spike_class)
 	return p_dw;
 }
 
-void ChartSpikeHist::buildHistFromSpikeList(SpikeList* p_spk_list, long l_first, long l_last, int max, int min,
-                                             int n_bins, BOOL bNew)
+void ChartSpikeHist::build_hist_from_spike_list(SpikeList* p_spk_list, const long l_first, const long l_last, const int max, const int min,
+                                                const int n_bins, const BOOL b_new)
 {
 	// erase data and arrays if bnew:
-	if (bNew)
-		RemoveHistData();
+	if (b_new)
+		delete_histogram_data();
 
 	if (histogram_ptr_array.GetSize() <= 0)
 	{
@@ -532,7 +529,7 @@ void ChartSpikeHist::buildHistFromSpikeList(SpikeList* p_spk_list, long l_first,
 	}
 
 	if (n_bins != m_nbins || p_dword_array->GetSize() != (n_bins + 1))
-		reSize_And_Clear_Histograms(n_bins, max, min);
+		resize_and_clear_histograms(n_bins, max, min);
 
 	CDWordArray* p_dw = nullptr;
 	auto n_spikes = p_spk_list->get_spikes_count();
@@ -557,7 +554,7 @@ void ChartSpikeHist::buildHistFromSpikeList(SpikeList* p_spk_list, long l_first,
 		const auto spike_class = spike_element->get_class_id();
 		getClassArray(spike_class, p_dw);
 		if (p_dw == nullptr)
-			p_dw = initClassArray(n_bins, spike_class);
+			p_dw = init_class_array(n_bins, spike_class);
 
 		if (p_dw != nullptr)
 		{
@@ -565,7 +562,7 @@ void ChartSpikeHist::buildHistFromSpikeList(SpikeList* p_spk_list, long l_first,
 			p_dw->SetAt(index, dw_data);
 		}
 	}
-	getHistogLimits(0);
+	get_histogram_limits(0);
 }
 
 // 	BuildHistFromDocument()
@@ -579,14 +576,14 @@ void ChartSpikeHist::buildHistFromSpikeList(SpikeList* p_spk_list, long l_first,
 //		int n_bins			= number of bins -> bin size
 //		BOOL bNew=TRUE		= erase old data (TRUE) or add to old value (FALSE)
 
-void ChartSpikeHist::BuildHistFromDocument(CdbWaveDoc* p_doc, const BOOL b_all_files, const long l_first, const long l_last, 
-											int max, int min, int n_bins, BOOL bNew)
+void ChartSpikeHist::build_hist_from_document(CdbWaveDoc* p_doc, const BOOL b_all_files, const long l_first, const long l_last,
+                                              const int max, const int min, const int n_bins, BOOL b_new)
 {
-	// erase data and arrays if bnew:
-	if (bNew)
+	// erase data and arrays if b_new:
+	if (b_new)
 	{
-		RemoveHistData();
-		bNew = false;
+		delete_histogram_data();
+		b_new = false;
 	}
 
 	auto current_file = 0;
@@ -603,17 +600,17 @@ void ChartSpikeHist::BuildHistFromDocument(CdbWaveDoc* p_doc, const BOOL b_all_f
 	{
 		if (b_all_files)
 		{
-			p_doc->db_set_current_record_position(i_file);
-			p_doc->open_current_spike_file();
+			if (p_doc->db_set_current_record_position(i_file))
+				p_doc->open_current_spike_file();
 		}
-		SpikeList* p_spikelist = p_doc->m_p_spk->get_spike_list_current();
-		if (p_spikelist != nullptr && p_spikelist->get_spikes_count() > 0)
-			buildHistFromSpikeList(p_spikelist, l_first, l_last, max, min, n_bins, bNew);
+		SpikeList* p_spike_list = p_doc->m_p_spk->get_spike_list_current();
+		if (p_spike_list != nullptr && p_spike_list->get_spikes_count() > 0)
+			build_hist_from_spike_list(p_spike_list, l_first, l_last, max, min, n_bins, b_new);
 	}
 
 	if (b_all_files)
 	{
-		p_doc->db_set_current_record_position(current_file);
-		p_doc->open_current_spike_file();
+		if (p_doc->db_set_current_record_position(current_file))
+			p_doc->open_current_spike_file();
 	}
 }
