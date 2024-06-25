@@ -183,8 +183,11 @@ void ChartSpikeBar::plot_single_spk_data_to_dc(CDC* p_dc)
 
 	display_bars(p_dc, &m_displayRect);
 
-	if (p_spike_doc == nullptr)
+	if (p_spike_doc == nullptr) {
 		p_spike_doc = p_dbwave_doc->m_p_spk;
+		if (p_spike_doc == nullptr)
+			return;
+	}
 	const CIntervals* p_intervals = &(p_spike_doc->m_stimulus_intervals);
 
 	if (p_intervals->n_items > 0)
