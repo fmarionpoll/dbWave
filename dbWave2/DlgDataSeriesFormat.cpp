@@ -55,11 +55,11 @@ void DlgDataSeriesFormat::SetParams(const int index)
 	chan->SetYzero(m_yzero);
 	chan->SetYextent(m_yextent);
 	const auto ccolor = m_colorbutton.GetColor();
-	auto icolor = m_pChartDataWnd->FindColorIndex(ccolor);
+	auto icolor = m_pChartDataWnd->find_color_index(ccolor);
 	if (icolor < 0)
 	{
 		icolor = NB_COLORS - 1;
-		m_pChartDataWnd->SetColorTableAt(icolor, ccolor);
+		m_pChartDataWnd->set_color_table_at(icolor, ccolor);
 	}
 	chan->SetColor(icolor);
 }

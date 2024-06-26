@@ -519,6 +519,9 @@
     <ClCompile Include="DlgOverwriteFileOptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CNiceUnit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCell.h">
@@ -1125,6 +1128,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dbSpike.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CNiceUnit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

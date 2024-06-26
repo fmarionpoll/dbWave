@@ -87,7 +87,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 		auto selected_pen_color = BLACK_COLOR;
 		if (m_plotmode == PLOT_ONECLASS || m_plotmode == PLOT_ONECOLOR)
 			selected_pen_color = SILVER_COLOR;
-		const auto old_pen = p_dc->SelectObject(&m_penTable[selected_pen_color]);
+		const auto old_pen = p_dc->SelectObject(&pen_table_[selected_pen_color]);
 
 		for (auto i_spike = i_last_spike; i_spike >= i_first_spike; i_spike--)
 		{
@@ -108,7 +108,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 				break;
 			case PLOT_CLASSCOLORS:
 				selected_pen_color = spike_class % NB_COLORS;
-				p_dc->SelectObject(&m_penTable[selected_pen_color]);
+				p_dc->SelectObject(&pen_table_[selected_pen_color]);
 				break;
 			case PLOT_ONECLASS:
 				if (spike_class == m_selected_class)
@@ -128,7 +128,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			selected_pen_color = m_colorselected;
 			if (m_plotmode == PLOT_ONECOLOR)
 				selected_pen_color = m_selected_class % NB_COLORS;
-			p_dc->SelectObject(&m_penTable[selected_pen_color]);
+			p_dc->SelectObject(&pen_table_[selected_pen_color]);
 			for (auto i_spike = i_last_spike; i_spike >= i_first_spike; i_spike--)
 			{
 				const Spike* spike = p_spike_list->get_spike(i_spike);
@@ -152,10 +152,10 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 
 		// display tags
 		if (m_HZtags.get_tag_list_size() > 0)
-			DisplayHZtags(p_dc);
+			display_horizontal_tags(p_dc);
 
 		if (m_VTtags.get_tag_list_size() > 0)
-			DisplayVTtags_Value(p_dc);
+			display_vertical_tags(p_dc);
 
 		// display text
 		if (m_bText && m_plotmode == PLOT_ONECLASSONLY)
@@ -199,7 +199,7 @@ void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
 	p_dc->SetViewportExt(m_displayRect.right, -m_displayRect.Height());
 
 	constexpr auto pen_size = 1;
-	CPen new_pen(PS_SOLID, pen_size, m_colorTable[m_color_selected_spike]);
+	CPen new_pen(PS_SOLID, pen_size, color_table_[m_color_selected_spike]);
 	const auto old_pen = p_dc->SelectObject(&new_pen);
 
 	// loop through all flagged spikes
@@ -240,7 +240,7 @@ int ChartSpikeShape::display_ex_data(short* p_data, const int color)
 	CClientDC dc(this);
 	dc.IntersectClipRect(&m_clientRect);
 	prepare_dc(&dc);
-	CPen new_pen(PS_SOLID, 0, m_colorTable[color]);
+	CPen new_pen(PS_SOLID, 0, color_table_[color]);
 	const auto old_pen = dc.SelectObject(&new_pen);
 	fill_polypoint_y_axis(p_data);
 	dc.Polyline(&polyline_points_[0], p_spike_list->get_spike_length());
@@ -261,7 +261,7 @@ void ChartSpikeShape::select_spike(const dbSpike & spike_sel)
 
 void ChartSpikeShape::draw_spike(const Spike * spike)
 {
-	if (!m_bUseDIB) {
+	if (!b_use_dib_) {
 		CClientDC dc(this);
 		draw_spike_on_dc(spike, &dc);
 	}
@@ -285,7 +285,7 @@ void ChartSpikeShape::draw_spike_on_dc(const Spike* spike, CDC * p_dc)
 	p_dc->SetViewportExt(m_displayRect.Width(), -m_displayRect.Height());
 
 	constexpr auto pen_size = 2;
-	CPen new_pen(PS_SOLID, pen_size, m_colorTable[m_color_selected_spike]);
+	CPen new_pen(PS_SOLID, pen_size, color_table_[m_color_selected_spike]);
 	auto* old_pen = p_dc->SelectObject(&new_pen);
 
 	auto* p_data = spike->get_p_data();
@@ -338,7 +338,7 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 		constexpr auto jitter = 3;
 		if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 		{
-			if (m_cursorType != CURSOR_ZOOM)
+			if (cursor_type_ != CURSOR_ZOOM)
 				post_my_message(HINT_HITAREA, NULL);
 			else
 				zoom_in();
@@ -347,7 +347,7 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 
 		// perform action according to cursor type
 		auto rect_in = m_displayRect;
-		switch (m_cursorType)
+		switch (cursor_type_)
 		{
 		case 0:
 			rect_out = rect_in;
@@ -359,7 +359,7 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 			m_ZoomFrom = rect_in;
 			m_ZoomTo = rect_out;
 			m_iUndoZoom = 1;
-			post_my_message(HINT_SETMOUSECURSOR, m_oldcursorType);
+			post_my_message(HINT_SETMOUSECURSOR, old_cursor_type_);
 			break;
 		default:
 			break;
@@ -381,7 +381,7 @@ void ChartSpikeShape::OnLButtonDown(UINT nFlags, CPoint point)
 
 	// track rectangle or VT_tag?
 	ChartSpike::OnLButtonDown(nFlags, point);
-	if (m_currCursorMode != 0 || m_HCtrapped >= 0)
+	if (current_cursor_mode_ != 0 || m_HCtrapped >= 0)
 		return;
 
 	// test if mouse hit one spike
@@ -663,7 +663,7 @@ void ChartSpikeShape::Print(CDC * p_dc, const CRect * rect)
 		break;
 	}
 
-	const auto old_pen = p_dc->SelectObject(&m_penTable[selected_color]);
+	const auto old_pen = p_dc->SelectObject(&pen_table_[selected_color]);
 	auto spike_index_last = p_spike_list->get_spikes_count() - 1;
 	auto spike_index_first = 0;
 	if (m_range_mode == RANGE_INDEX)
@@ -697,7 +697,7 @@ void ChartSpikeShape::Print(CDC * p_dc, const CRect * rect)
 	// display selected class if requested by option
 	if (m_plotmode == PLOT_ONECLASS)
 	{
-		p_dc->SelectObject(&m_penTable[m_colorselected]);
+		p_dc->SelectObject(&pen_table_[m_colorselected]);
 		for (auto spike_index = spike_index_last; spike_index >= spike_index_first; spike_index--)
 		{
 			Spike* spike = p_spike_list->get_spike(spike_index);
@@ -716,7 +716,7 @@ void ChartSpikeShape::Print(CDC * p_dc, const CRect * rect)
 	// display selected spike
 	if (spike_selected_.spike_index >= 0 && is_spike_within_range(spike_selected_))
 	{
-		CPen new_pen(PS_SOLID, 0, m_colorTable[m_color_selected_spike]);
+		CPen new_pen(PS_SOLID, 0, color_table_[m_color_selected_spike]);
 		p_dc->SelectObject(&new_pen);
 		Spike* spike = p_dbwave_doc->get_spike(spike_selected_);
 		plot_array_to_dc(p_dc, spike->get_p_data());

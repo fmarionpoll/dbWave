@@ -120,7 +120,7 @@ CTemplateWnd::CTemplateWnd() : m_power(0), m_pMax0(nullptr), m_pMin0(nullptr)
 	m_bValid = FALSE;
 	m_ktolerance = 1.96f;
 	m_globalstd = 0.f;
-	m_bUseDIB = TRUE;
+	b_use_dib_ = TRUE;
 	m_classID = 0;
 }
 
@@ -165,7 +165,7 @@ void CTemplateWnd::plot_data_to_dc(CDC* p_dc)
 	FillOrdinatesAtscale(FALSE);
 
 	// plot area between max and min in grey
-	const auto old_pen = p_dc->SelectObject(&m_penTable[SILVER_COLOR]);
+	const auto old_pen = p_dc->SelectObject(&pen_table_[SILVER_COLOR]);
 	const auto pold_b = static_cast<CBrush*>(p_dc->SelectStockObject(LTGRAY_BRUSH));
 	p_dc->Polygon(&m_ptsArea[0], m_tpllen * 2 + 1);
 	p_dc->SelectObject(pold_b);

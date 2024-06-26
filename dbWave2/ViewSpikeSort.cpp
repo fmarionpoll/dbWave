@@ -804,7 +804,7 @@ void ViewSpikeSort::update_gain()
 	const auto y_wo = static_cast<int>((m_mv_max + m_mv_min) / 2 /delta);
 
 	chart_xt_measures_.set_yw_ext_org(y_we, y_wo);
-	chart_histogram_.SetXWExtOrg(y_we, y_wo);// -y_we / 2);
+	chart_histogram_.set_xw_ext_org(y_we, y_wo);// -y_we / 2);
 
 	// get max min and center accordingly
 	short max, min;
@@ -847,8 +847,8 @@ void ViewSpikeSort::OnFormatAlldata()
 	// spikes: center spikes horizontally and adjust hz size of display
 
 	const auto x_we = m_pSpkList->get_spike_length();
-	if (x_we != chart_spike_shape_.GetXWExtent() || 0 != chart_spike_shape_.GetXWOrg())
-		chart_spike_shape_.SetXWExtOrg(x_we, 0);
+	if (x_we != chart_spike_shape_.get_xw_extent() || 0 != chart_spike_shape_.get_xw_org())
+		chart_spike_shape_.set_xw_ext_org(x_we, 0);
 
 	// change spk_hist_wnd_
 	if (calculate_histogram)
@@ -884,8 +884,8 @@ void ViewSpikeSort::OnFormatCentercurve()
 	short max, min;
 	m_pSpkList->get_total_max_min(TRUE, &max, &min);
 	const auto middle = (max + min) / 2;
-	chart_spike_shape_.set_yw_ext_org(chart_spike_shape_.GetYWExtent(), middle);
-	chart_spike_bar_.set_yw_ext_org(chart_spike_shape_.GetYWExtent(), middle);
+	chart_spike_shape_.set_yw_ext_org(chart_spike_shape_.get_yw_extent(), middle);
+	chart_spike_bar_.set_yw_ext_org(chart_spike_shape_.get_yw_extent(), middle);
 
 	update_legends();
 }
@@ -926,7 +926,7 @@ void ViewSpikeSort::OnFormatGainadjust()
 	// update display
 	chart_xt_measures_.set_yw_ext_org(y_we, y_wo);
 	const auto y_max = static_cast<int>(chart_histogram_.GetHistMax());
-	chart_histogram_.SetXWExtOrg(y_we, y_wo - y_we / 2);
+	chart_histogram_.set_xw_ext_org(y_we, y_wo - y_we / 2);
 	chart_histogram_.set_yw_ext_org(MulDiv(y_max, 10, 8), 0);
 
 	// update edit controls
@@ -966,10 +966,10 @@ void ViewSpikeSort::select_spike_from_current_list(const int spike_index)
 void ViewSpikeSort::OnToolsEdittransformspikes()
 {
 	DlgSpikeEdit dlg;
-	dlg.m_yextent = chart_spike_shape_.GetYWExtent();
-	dlg.m_yzero = chart_spike_shape_.GetYWOrg();
-	dlg.m_xextent = chart_spike_shape_.GetXWExtent();
-	dlg.m_xzero = chart_spike_shape_.GetXWOrg();
+	dlg.m_yextent = chart_spike_shape_.get_yw_extent();
+	dlg.m_yzero = chart_spike_shape_.get_yw_org();
+	dlg.m_xextent = chart_spike_shape_.get_xw_extent();
+	dlg.m_xzero = chart_spike_shape_.get_xw_org();
 	dlg.m_spike_index = m_spike_index;
 	dlg.m_parent = this;
 	dlg.m_pdbWaveDoc = GetDocument();

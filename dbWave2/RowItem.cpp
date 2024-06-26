@@ -135,7 +135,7 @@ void RowItem::set_y_zoom(int y_we, int y_wo) const
 void RowItem::set_x_zoom(int x_we, int x_wo) const
 {
 	if (chart_spike_shape != nullptr)
-		chart_spike_shape->SetXWExtOrg(x_we, x_wo);
+		chart_spike_shape->set_xw_ext_org(x_we, x_wo);
 }
 
 void RowItem::get_time_intervals(long& first, long& last) const
@@ -146,16 +146,16 @@ void RowItem::get_time_intervals(long& first, long& last) const
 
 void RowItem::get_zoom_y(int& we, int& wo) const
 {
-	we = chart_spike_bar->GetYWExtent();
-	wo = chart_spike_bar->GetYWOrg();
+	we = chart_spike_bar->get_yw_extent();
+	wo = chart_spike_bar->get_yw_org();
 }
 
 void RowItem::get_zoom_x_shapes(int& we, int& wo) const
 {
 	if (chart_spike_shape == nullptr) return;
 
-	we = chart_spike_shape->GetXWExtent();
-	wo = chart_spike_shape->GetXWOrg();
+	we = chart_spike_shape->get_xw_extent();
+	wo = chart_spike_shape->get_xw_org();
 }
 
 float RowItem::get_zoom_y_shapes_mv() const

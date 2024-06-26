@@ -141,8 +141,8 @@ int CTemplateListWnd::InsertTemplate(int i, int classID)
 	// init parameters
 	p_wnd->SetTemplateLength(m_tpllen);
 	p_wnd->set_yw_ext_org(m_yextent, m_yzero);
-	p_wnd->SetXWExtOrg(m_tpright - m_tpleft + 1, m_tpleft);
-	p_wnd->SetbDrawframe(TRUE);
+	p_wnd->set_xw_ext_org(m_tpright - m_tpleft + 1, m_tpleft);
+	p_wnd->set_b_draw_frame(TRUE);
 	p_wnd->set_b_use_dib(FALSE);
 	p_wnd->m_ktolerance = m_ktolerance;
 	p_wnd->m_globalstd = m_globalstd;
@@ -198,8 +198,8 @@ int CTemplateListWnd::InsertTemplateData(int i, int classID)
 	// init parameters
 	p_wnd->SetTemplateLength(m_tpllen);
 	p_wnd->set_yw_ext_org(m_yextent, m_yzero);
-	p_wnd->SetXWExtOrg(m_tpright - m_tpleft + 1, m_tpleft);
-	p_wnd->SetbDrawframe(TRUE);
+	p_wnd->set_xw_ext_org(m_tpright - m_tpleft + 1, m_tpleft);
+	p_wnd->set_b_draw_frame(TRUE);
 	p_wnd->set_b_use_dib(FALSE);
 	p_wnd->m_ktolerance = m_ktolerance;
 	p_wnd->m_globalstd = m_globalstd;
@@ -413,7 +413,7 @@ void CTemplateListWnd::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
 	rect.bottom -= 2;
 
 	auto p_spike_element = reinterpret_cast<CTemplateWnd*>(GetItemData(item.iItem));
-	p_spike_element->SetbDrawframe((LVIS_SELECTED == GetItemState(item.iItem, LVIS_SELECTED)));
+	p_spike_element->set_b_draw_frame((LVIS_SELECTED == GetItemState(item.iItem, LVIS_SELECTED)));
 
 	CRect rect2;
 	p_spike_element->GetWindowRect(&rect2);

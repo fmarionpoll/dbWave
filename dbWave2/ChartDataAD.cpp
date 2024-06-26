@@ -49,7 +49,7 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 	const auto bitmap_old = dc_mem.SelectObject(&bitmap_plot);
 	const auto dc_old = dc_mem.SaveDC();
 	CDC* p_dc = &dc;
-	if (m_bUseDIB)
+	if (b_use_dib_)
 		p_dc = &dc_mem;
 
 	// get first and last pixels of the interval to display
@@ -69,7 +69,7 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 		rect.left = 1;
 	rect.DeflateRect(0, 1);
 	p_dc->IntersectClipRect(rect);
-	p_dc->FillSolidRect(&rect, m_scopestruct.crScopeFill);
+	p_dc->FillSolidRect(&rect, scope_structure_.crScopeFill);
 
 	auto* ppen_old = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 
@@ -85,7 +85,7 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 		// load channel descriptors
 		const auto channel_item = chanlistitem_ptr_array[channel_number];
 		CPen temp_pen;
-		temp_pen.CreatePen(PS_SOLID, 0, m_colorTable[channel_item->GetColorIndex()]);
+		temp_pen.CreatePen(PS_SOLID, 0, color_table_[channel_item->GetColorIndex()]);
 		p_dc->SelectObject(&temp_pen);
 
 		// compute max min and plot array
@@ -146,7 +146,7 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 	p_dc->SetViewportOrg(0, 0);
 	p_dc->SetWindowOrg(0, 0);
 
-	if (m_bUseDIB)
+	if (b_use_dib_)
 		dc.BitBlt(rect.left, rect.top,
 			rect.Width(), rect.Height(),
 			&dc_mem,

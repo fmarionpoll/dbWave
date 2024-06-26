@@ -352,7 +352,7 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 		default:
 			break;
 		}
-		p_dc->SelectObject(&m_penTable[pen_color]);
+		p_dc->SelectObject(&pen_table_[pen_color]);
 
 		// and draw spike: compute abscissa & draw from max to min
 		const auto llk = MulDiv((l_spike_time - m_lFirst), rect_width, len);
@@ -441,7 +441,7 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 		}
 
 		CPen new_pen;
-		new_pen.CreatePen(PS_SOLID, pen_size, m_colorTable[color_index]);
+		new_pen.CreatePen(PS_SOLID, pen_size, color_table_[color_index]);
 		const auto old_pen = dc.SelectObject(&new_pen);
 
 		// display data
@@ -496,7 +496,7 @@ void ChartSpikeBar::draw_spike(const Spike* spike, const int color_index)
 	*/
 	CPen new_pen;
 	constexpr auto pen_size = 0;
-	new_pen.CreatePen(PS_SOLID, pen_size, m_colorTable[color_index]);
+	new_pen.CreatePen(PS_SOLID, pen_size, color_table_[color_index]);
 	const auto old_pen = dc.SelectObject(&new_pen);
 
 	// display data
@@ -597,7 +597,7 @@ void ChartSpikeBar::OnLButtonUp(const UINT n_flags, const CPoint point)
 	constexpr auto jitter = 5;
 	if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 	{
-		if (m_cursorType != CURSOR_ZOOM)
+		if (cursor_type_ != CURSOR_ZOOM)
 			post_my_message(HINT_HITAREA, NULL);
 		else
 			zoom_in();
@@ -606,12 +606,12 @@ void ChartSpikeBar::OnLButtonUp(const UINT n_flags, const CPoint point)
 
 	// perform action according to cursor type
 	auto rect_in = m_displayRect;
-	switch (m_cursorType)
+	switch (cursor_type_)
 	{
 	case 0:
 		if (m_hit_spike < 0)
 		{
-			auto rect = GetDefinedRect();
+			auto rect = get_defined_rect();
 			select_spikes_within_rect(&rect, n_flags);
 			post_my_message(HINT_SELECTSPIKES, NULL);
 		}
@@ -622,7 +622,7 @@ void ChartSpikeBar::OnLButtonUp(const UINT n_flags, const CPoint point)
 		m_ZoomFrom = rect_in;
 		m_ZoomTo = rect_out;
 		m_iUndoZoom = 1;
-		post_my_message(HINT_SETMOUSECURSOR, m_oldcursorType);
+		post_my_message(HINT_SETMOUSECURSOR, old_cursor_type_);
 		break;
 
 	default:
@@ -635,7 +635,7 @@ void ChartSpikeBar::OnLButtonDown(const UINT nFlags, CPoint point)
 	m_bLmouseDown = TRUE;
 
 	// detect bar hit: test if curve hit -- specific to SpikeBarButton
-	if (m_currCursorMode == 0)
+	if (current_cursor_mode_ == 0)
 	{
 		m_track_curve = FALSE;
 		m_hit_spike = hit_curve(point);

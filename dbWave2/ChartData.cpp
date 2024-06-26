@@ -308,15 +308,15 @@ int ChartData::set_channel_list_transform_mode(int ichan, int i_mode)
 SCOPESTRUCT* ChartData::get_scope_parameters()
 {
 	const auto n_channels = chanlistitem_ptr_array.GetSize();
-	m_scopestruct.channels.SetSize(n_channels);
+	scope_structure_.channels.SetSize(n_channels);
 	for (auto i = 0; i < n_channels; i++)
 	{
 		const auto p_chanlist_item = chanlistitem_ptr_array[i];
-		m_scopestruct.channels[i].izero = p_chanlist_item->GetYzero();
-		m_scopestruct.channels[i].iextent = p_chanlist_item->GetYextent();
+		scope_structure_.channels[i].izero = p_chanlist_item->GetYzero();
+		scope_structure_.channels[i].iextent = p_chanlist_item->GetYextent();
 	}
 
-	return &m_scopestruct;
+	return &scope_structure_;
 }
 
 void ChartData::set_scope_parameters(SCOPESTRUCT* pStruct)
@@ -847,7 +847,7 @@ void ChartData::plot_data_to_dc(CDC* p_dc)
 	auto nelements = 0;
 
 	constexpr auto color = BLACK_COLOR;
-	const auto poldpen = p_dc->SelectObject(&m_penTable[color]);
+	const auto poldpen = p_dc->SelectObject(&pen_table_[color]);
 
 	// display loop:
 	for (auto ichan = chanlistitem_ptr_array.GetUpperBound(); ichan >= 0; ichan--) // scan all channels
@@ -855,7 +855,7 @@ void ChartData::plot_data_to_dc(CDC* p_dc)
 		const auto chanlist_item = chanlistitem_ptr_array[ichan];
 		const auto wext = chanlist_item->GetYextent();
 		const auto worg = chanlist_item->GetYzero();
-		p_dc->SelectObject(&m_penTable[chanlist_item->GetColorIndex()]);
+		p_dc->SelectObject(&pen_table_[chanlist_item->GetColorIndex()]);
 		if (chanlist_item->GetPenWidth() == 0)
 			continue;
 
@@ -972,7 +972,7 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 	adjust_display_rect(pRect);
 	erase_background(p_dc);
 	// clip curves
-	if (m_scopestruct.bClipRect)
+	if (scope_structure_.bClipRect)
 		p_dc->IntersectClipRect(m_displayRect);
 	else
 		p_dc->SelectClipRgn(nullptr);
@@ -1005,7 +1005,7 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 	auto pX = chanlistitem_ptr_array[0]->pEnvelopeAbcissa;
 	const BOOL b_poly_line = (p_dc->m_hAttribDC == nullptr) || (p_dc->GetDeviceCaps(LINECAPS) & LC_POLYLINE);
 	auto color = BLACK_COLOR;
-	const auto poldpen = p_dc->SelectObject(&m_penTable[color]);
+	const auto poldpen = p_dc->SelectObject(&pen_table_[color]);
 
 	// display loop:
 	for (auto ichan = chanlistitem_ptr_array.GetUpperBound(); ichan >= 0; ichan--) // scan all channels
@@ -1031,7 +1031,7 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 		if (chanlist_item->GetColorIndex() != color)
 		{
 			color = chanlist_item->GetColorIndex();
-			p_dc->SelectObject(&m_penTable[color]);
+			p_dc->SelectObject(&pen_table_[color]);
 		}
 		// transform ordinates ------------------------------------------------
 		for (auto j = 0; j < nelements; j++)
@@ -1053,7 +1053,7 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 		if (m_HZtags.get_tag_list_size() > 0) // print HZ cursors if any?
 		{
 			// select pen and display mode
-			CPen ltgrey_pen(PS_SOLID, 0, m_colorTable[SILVER_COLOR]);
+			CPen ltgrey_pen(PS_SOLID, 0, color_table_[SILVER_COLOR]);
 			const auto pold_pen = p_dc->SelectObject(&ltgrey_pen);
 			// iterate through HZ cursor list
 			const int x0 = pRect->left;
@@ -1077,7 +1077,7 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 	if (m_VTtags.get_tag_list_size() > 0)
 	{
 		// select pen and display mode
-		CPen ltgrey_pen(PS_SOLID, 0, m_colorTable[SILVER_COLOR]);
+		CPen ltgrey_pen(PS_SOLID, 0, color_table_[SILVER_COLOR]);
 		const auto poldp = p_dc->SelectObject(&ltgrey_pen);
 		// iterate through VT cursor list
 		const int y0 = pRect->top;
@@ -1274,13 +1274,13 @@ void ChartData::curve_xor()
 	const auto p_dc = GetDC();
 	const auto n_saved_dc = p_dc->SaveDC();
 	CPen temp_pen;
-	temp_pen.CreatePen(PS_SOLID, 0, m_colorTable[SILVER_COLOR]);
+	temp_pen.CreatePen(PS_SOLID, 0, color_table_[SILVER_COLOR]);
 	const auto poldpen = p_dc->SelectObject(&temp_pen);
 	p_dc->IntersectClipRect(&m_displayRect);
 
 	p_dc->SetMapMode(MM_ANISOTROPIC);
 	p_dc->SetViewportOrg(m_displayRect.left, m_yVO);
-	p_dc->SetViewportExt(GetRectWidth(), m_yVE);
+	p_dc->SetViewportExt(get_rect_width(), m_yVE);
 	p_dc->SetWindowExt(m_XORxext, m_XORyext);
 	p_dc->SetWindowOrg(0, 0);
 
@@ -1321,7 +1321,7 @@ void ChartData::OnLButtonDown(UINT nFlags, CPoint point)
 
 	// if cursor mode = 0 and no tag hit detected, mouse mode=track rect
 	// test curve hit -- specific to lineview, if hit curve, track curve instead
-	if (m_currCursorMode == 0 && m_HCtrapped < 0) // test if cursor hits a curve
+	if (current_cursor_mode_ == 0 && m_HCtrapped < 0) // test if cursor hits a curve
 	{
 		m_trackMode = TRACK_RECT;
 		m_hitcurve = does_cursor_hit_curve(point);
@@ -1417,7 +1417,7 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 
 			// perform action according to cursor type
 			auto rect_in = m_displayRect;
-			switch (m_cursorType)
+			switch (cursor_type_)
 			{
 			case 0: // if no cursor, no curve track, then move display
 				if (b_rect_ok)
@@ -1438,7 +1438,7 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 				}
 				else
 					zoom_in();
-				post_my_message(HINT_SETMOUSECURSOR, m_oldcursorType);
+				post_my_message(HINT_SETMOUSECURSOR, old_cursor_type_);
 				break;
 			case CURSOR_CROSS:
 				post_my_message(HINT_DEFINEDRECT, NULL);
@@ -1464,7 +1464,7 @@ int ChartData::does_cursor_hit_curve(CPoint point)
 	int index1 = point.x - m_cxjitter;
 	auto index2 = index1 + m_cxjitter;
 	if (index1 < 0) index1 = 0; 
-	if (index2 > (GetRectWidth() - 1)) index2 = GetRectWidth() - 1;
+	if (index2 > (get_rect_width() - 1)) index2 = get_rect_width() - 1;
 
 	// convert index1 into Envelope indexes
 	index1 = index1 * m_dataperpixel; // start from
@@ -1750,7 +1750,7 @@ void ChartData::adjust_gain(const boolean set_mV_span, const float mV_span) cons
 
 void ChartData::load_data_within_window(const boolean set_time_span, const float t_first, const float t_last)
 {
-	const auto n_pixels = GetRectWidth();
+	const auto n_pixels = get_rect_width();
 	long l_first = 0;
 	long l_last = m_pDataFile->get_doc_channel_length() - 1;
 	if (set_time_span)

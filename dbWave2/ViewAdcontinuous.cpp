@@ -399,7 +399,7 @@ void ViewADcontinuous::UpdateViewDataFinal()
 	pDocDat->read_data_infos();
 	const long length_doc_channel = pDocDat->get_doc_channel_length();
 	m_chartDataAD.AttachDataFile(pDocDat);
-	m_chartDataAD.ResizeChannels(m_chartDataAD.GetRectWidth(), length_doc_channel);
+	m_chartDataAD.ResizeChannels(m_chartDataAD.get_rect_width(), length_doc_channel);
 	m_chartDataAD.GetDataFromDoc(0, length_doc_channel);
 }
 

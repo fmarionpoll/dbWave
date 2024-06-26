@@ -519,7 +519,7 @@ void DlgImportGenericData::UpdatePreview()
 
 	int ndocchans = m_AcqDataFile.get_waveformat()->scan_count;
 	m_ChartDataWnd.AttachDataFile(&m_AcqDataFile);
-	CSize lsize = m_ChartDataWnd.GetRectSize();
+	CSize lsize = m_ChartDataWnd.get_rect_size();
 	m_ChartDataWnd.ResizeChannels(lsize.cx, m_AcqDataFile.get_doc_channel_length());
 	if (m_ChartDataWnd.get_channel_list_size() < ndocchans) // add envelopes if necessary
 	{

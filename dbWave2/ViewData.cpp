@@ -12,6 +12,7 @@
 #include "DlgADInputParms.h"
 #include "ViewData.h"
 
+#include "CNiceUnit.h"
 #include "DlgCopyAs.h"
 #include "DlgDataSeries.h"
 #include "DlgDataSeriesFormat.h"
@@ -292,7 +293,7 @@ void ViewData::OnEditCopy()
 			m_ChartDataWnd.GetWindowRect(&old_rect);
 
 			CRect rect(0, 0, options_view_data->hzResolution, options_view_data->vtResolution);
-			m_npixels0 = m_ChartDataWnd.GetRectWidth();
+			m_npixels0 = m_ChartDataWnd.get_rect_width();
 
 			// create metafile
 			CMetaFileDC m_dc;
@@ -706,7 +707,7 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_DEFINEDRECT:
 		{
-			const auto rect = m_ChartDataWnd.GetDefinedRect();
+			const auto rect = m_ChartDataWnd.get_defined_rect();
 			mdMO->wLimitSup = static_cast<WORD>(rect.top);
 			mdMO->wLimitInf = static_cast<WORD>(rect.bottom);
 			mdMO->lLimitLeft = m_ChartDataWnd.GetDataOffsetfromPixel(rect.left);
@@ -994,7 +995,7 @@ void ViewData::OnGainAdjustCurve()
 void ViewData::OnSplitCurves()
 {
 	const auto nchans = m_ChartDataWnd.get_channel_list_size(); // nb of data channels
-	const auto pxheight = m_ChartDataWnd.GetRectHeight(); // height of the display area
+	const auto pxheight = m_ChartDataWnd.get_rect_height(); // height of the display area
 	const auto pxoffset = pxheight / nchans; // height for each channel
 	auto pxzero = (pxheight - pxoffset) / 2; // center first curve at
 
@@ -1225,7 +1226,7 @@ CString ViewData::convert_file_index(long l_first, long l_last)
 	TCHAR sz_value[64]; // buffer to receive ascii represent of values
 	const auto psz_value = sz_value;
 	float x_scale_factor; // scale factor returned by changeunit
-	auto x = m_ChartDataWnd.ChangeUnit(static_cast<float>(l_first) / m_samplingRate, &csUnit, &x_scale_factor);
+	auto x = CNiceUnit::change_unit(static_cast<float>(l_first) / m_samplingRate, &csUnit, &x_scale_factor);
 	auto fraction = static_cast<int>((x - static_cast<int>(x)) * static_cast<float>(1000.)); // separate fractional part
 	wsprintf(psz_value, _T("time = %i.%03.3i - "), static_cast<int>(x), fraction); // print value
 	CString cs_comment = psz_value; // save ascii to string
@@ -1308,9 +1309,9 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 	auto ybar_end = bar_origin;
 
 	// same len ratio as displayed on viewdata
-	const auto horz_bar = m_ChartDataWnd.m_xRuler.GetScaleUnitPixels(m_ChartDataWnd.GetRectWidth());
+	const auto horz_bar = m_ChartDataWnd.m_xRuler.GetScaleUnitPixels(m_ChartDataWnd.get_rect_width());
 	ASSERT(horz_bar > 0);
-	const auto vert_bar = m_ChartDataWnd.m_yRuler.GetScaleUnitPixels(m_ChartDataWnd.GetRectHeight());
+	const auto vert_bar = m_ChartDataWnd.m_yRuler.GetScaleUnitPixels(m_ChartDataWnd.get_rect_height());
 	ASSERT(vert_bar > 0);
 
 	auto cs_comment = convert_file_index(m_ChartDataWnd.GetDataFirstIndex(), m_ChartDataWnd.GetDataLastIndex());
@@ -1347,15 +1348,15 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 			if (options_view_data->bVoltageScaleBar) // bar scale value
 			{
 				cs_unit = _T(" V"); // provisional unit
-				auto z = static_cast<float>(m_ChartDataWnd.GetRectHeight()) / 5
+				auto z = static_cast<float>(m_ChartDataWnd.get_rect_height()) / 5
 					* m_ChartDataWnd.get_channel_list_volts_per_pixel(ichan);
-				auto x = m_ChartDataWnd.ChangeUnit(z, &cs_unit, &x_scale_factor); // convert
+				auto x = CNiceUnit::change_unit(z, &cs_unit, &x_scale_factor); // convert
 
 				// approximate
 				auto j = static_cast<int>(x); // get int value
 				if ((static_cast<double>(x) - j) > 0.5) // increment integer if diff > 0.5
 					j++;
-				auto k = m_ChartDataWnd.nice_unit(x); // compare with nice unit abs
+				auto k = CNiceUnit::nice_unit(x); // compare with nice unit abs
 				if (j > 750) // there is a gap between 500 and 1000
 					k = 1000;
 				if (MulDiv(100, abs(k - j), j) <= 1) // keep nice unit if difference is less= than 1 %
@@ -1363,7 +1364,7 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 				if (k >= 1000)
 				{
 					z = static_cast<float>(k) * x_scale_factor;
-					j = static_cast<int>(m_ChartDataWnd.ChangeUnit(z, &cs_unit, &x_scale_factor)); // convert
+					j = static_cast<int>(CNiceUnit::change_unit(z, &cs_unit, &x_scale_factor)); // convert
 				}
 				wsprintf(sz_value, _T("bar = %i %s "), j, static_cast<LPCTSTR>(cs_unit)); // store value into comment
 				cs_comment += sz_value;
@@ -1501,7 +1502,7 @@ void ViewData::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	m_bIsPrinting = TRUE;
 	m_lFirst0 = m_ChartDataWnd.GetDataFirstIndex();
 	m_lLast0 = m_ChartDataWnd.GetDataLastIndex();
-	m_npixels0 = m_ChartDataWnd.GetRectWidth();
+	m_npixels0 = m_ChartDataWnd.get_rect_width();
 
 	//---------------------init objects-------------------------------------
 	memset(&m_logFont, 0, sizeof(LOGFONT)); // prepare font

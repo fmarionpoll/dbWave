@@ -127,9 +127,9 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	// display cursors
 	p_dc->SetBkColor(background_color); // restore background color
 	if (m_HZtags.get_tag_list_size() > 0) // display horizontal tags
-		DisplayHZtags(p_dc);
+		display_horizontal_tags(p_dc);
 	if (m_VTtags.get_tag_list_size() > 0) // display vertical tags
-		DisplayVTtags_Value(p_dc);
+		display_vertical_tags(p_dc);
 	p_dc->RestoreDC(n_saved_dc);
 }
 
@@ -147,7 +147,7 @@ void ChartSpikeHist::plot_histogram(CDC* p_dc, const CDWordArray* p_dw, const in
 		if (rect_histogram.top > 0)
 		{
 			p_dc->MoveTo(rect_histogram.left, rect_histogram.bottom);
-			p_dc->FillSolidRect(rect_histogram, m_colorTable[color]);
+			p_dc->FillSolidRect(rect_histogram, color_table_[color]);
 		}
 	}
 }
@@ -243,7 +243,7 @@ void ChartSpikeHist::OnLButtonUp(UINT nFlags, CPoint point)
 			const int jitter = 3;
 			if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 			{
-				if (m_cursorType != CURSOR_ZOOM)
+				if (cursor_type_ != CURSOR_ZOOM)
 					post_my_message(HINT_HITAREA, NULL);
 				else
 					zoom_in();
@@ -252,7 +252,7 @@ void ChartSpikeHist::OnLButtonUp(UINT nFlags, CPoint point)
 
 			// perform action according to cursor type
 			auto rect_in = m_displayRect;
-			switch (m_cursorType)
+			switch (cursor_type_)
 			{
 			case 0:
 				rect_out = rect_in;
@@ -290,7 +290,7 @@ void ChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
 			m_VTtags.set_tag_pixel(icur, MulDiv(m_VTtags.get_value(icur) - m_xWO, m_xVE, m_xWE) + m_xVO);
 	}
 	ChartSpike::OnLButtonDown(nFlags, point);
-	if (m_currCursorMode != 0 || m_HCtrapped >= 0) // do nothing else if mode != 0
+	if (current_cursor_mode_ != 0 || m_HCtrapped >= 0) // do nothing else if mode != 0
 		return; // or any tag hit (VT, HZ) detected
 
 	// test if mouse hit one histogram

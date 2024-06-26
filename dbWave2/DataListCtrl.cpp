@@ -548,7 +548,7 @@ void DataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
 		ptr->pDataChartWnd->set_b_use_dib(FALSE);
 	}
 	const auto p_wnd = ptr->pDataChartWnd;
-	p_wnd->SetString(ptr->cs_comment);
+	p_wnd->set_string(ptr->cs_comment);
 
 	// open data document
 	if (ptr->pdataDoc == nullptr)
@@ -561,14 +561,14 @@ void DataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
 		p_wnd->remove_all_channel_list_items();
 		auto comment = _T("File name: ") + ptr->csDatafileName;
 		comment += _T(" -- data not available");
-		p_wnd->SetString(comment);
+		p_wnd->set_string(comment);
 	}
 	else
 	{
 		if (ptr->csNspk.IsEmpty())
-			p_wnd->get_scope_parameters()->crScopeFill = p_wnd->GetColor(2);
+			p_wnd->get_scope_parameters()->crScopeFill = p_wnd->get_color(2);
 		else
-			p_wnd->get_scope_parameters()->crScopeFill = p_wnd->GetColor(15);
+			p_wnd->get_scope_parameters()->crScopeFill = p_wnd->get_color(15);
 
 		ptr->pdataDoc->read_data_infos();
 		ptr->cs_comment = ptr->pdataDoc->get_waveformat()->get_comments(_T(" "));
@@ -585,7 +585,7 @@ void DataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
 
 void DataListCtrl::plot_data(const CDataListCtrl_Row* ptr, ChartData* p_wnd, int iImage)
 {
-	p_wnd->SetBottomComment(m_b_display_file_name, ptr->csDatafileName);
+	p_wnd->set_bottom_comment(m_b_display_file_name, ptr->csDatafileName);
 	CRect client_rect;
 	p_wnd->GetClientRect(&client_rect);
 
@@ -655,7 +655,7 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 			const auto y_wo = pspk_list->get_acq_bin_zero();
 			p_wnd->set_yw_ext_org(y_we, y_wo);
 		}
-		p_wnd->SetBottomComment(m_b_display_file_name, ptr->csSpikefileName);
+		p_wnd->set_bottom_comment(m_b_display_file_name, ptr->csSpikefileName);
 
 		CRect client_rect;
 		p_wnd->GetClientRect(&client_rect);

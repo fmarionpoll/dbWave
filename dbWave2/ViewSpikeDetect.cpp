@@ -6,6 +6,7 @@
 #include "dbWave.h"
 #include "ViewSpikeDetect.h"
 
+#include "CNiceUnit.h"
 #include "DlgCopyAs.h"
 #include "DlgDataSeries.h"
 #include "DlgProgress.h"
@@ -698,7 +699,7 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_DEFINEDRECT:
 		if (m_cursor_state == CURSOR_CROSS)
 		{
-			const auto rect = m_chart_data_filtered.GetDefinedRect();
+			const auto rect = m_chart_data_filtered.get_defined_rect();
 			int l_limit_left = m_chart_data_filtered.GetDataOffsetfromPixel(rect.left);
 			int l_limit_right = m_chart_data_filtered.GetDataOffsetfromPixel(rect.right);
 			if (l_limit_left > l_limit_right)
@@ -895,7 +896,7 @@ void ViewSpikeDetection::OnFormatYscaleCentercurve()
 	m_chart_spike_bar.center_curve();
 	m_chart_spike_bar.Invalidate();
 
-	m_chart_spike_shape.set_yw_ext_org(m_chart_spike_bar.GetYWExtent(), m_chart_spike_bar.GetYWOrg());
+	m_chart_spike_shape.set_yw_ext_org(m_chart_spike_bar.get_yw_extent(), m_chart_spike_bar.get_yw_org());
 	update_spike_shape_window_scale(TRUE);
 	m_chart_spike_shape.Invalidate();
 }
@@ -914,8 +915,8 @@ void ViewSpikeDetection::OnFormatYscaleGainadjust()
 	m_chart_spike_bar.max_center();
 	m_chart_spike_bar.Invalidate();
 
-	m_chart_spike_shape.set_yw_ext_org(m_chart_spike_bar.GetYWExtent(), m_chart_spike_bar.GetYWOrg());
-	m_chart_spike_shape.SetXWExtOrg(m_pSpkList->get_spike_length(), 0);
+	m_chart_spike_shape.set_yw_ext_org(m_chart_spike_bar.get_yw_extent(), m_chart_spike_bar.get_yw_org());
+	m_chart_spike_shape.set_xw_ext_org(m_pSpkList->get_spike_length(), 0);
 	update_spike_shape_window_scale(FALSE);
 	m_chart_spike_shape.Invalidate();
 }
@@ -934,7 +935,7 @@ void ViewSpikeDetection::OnFormatSplitcurves()
 	m_chart_spike_bar.max_center();
 	m_chart_spike_bar.Invalidate();
 
-	m_chart_spike_shape.set_yw_ext_org(m_chart_spike_bar.GetYWExtent(), m_chart_spike_bar.GetYWOrg());
+	m_chart_spike_shape.set_yw_ext_org(m_chart_spike_bar.get_yw_extent(), m_chart_spike_bar.get_yw_org());
 	m_chart_spike_shape.Invalidate();
 
 	update_spike_shape_window_scale(FALSE);
@@ -951,10 +952,10 @@ void ViewSpikeDetection::OnFormatAlldata()
 	m_chart_data_source.GetDataFromDoc(0, l_last);
 
 	const auto x_we = m_pSpkList->get_spike_length();
-	if (x_we != m_chart_spike_shape.GetXWExtent() || 0 != m_chart_spike_shape.GetXWOrg())
-		m_chart_spike_shape.SetXWExtOrg(x_we, 0);
+	if (x_we != m_chart_spike_shape.get_xw_extent() || 0 != m_chart_spike_shape.get_xw_org())
+		m_chart_spike_shape.set_xw_ext_org(x_we, 0);
 	m_chart_spike_bar.center_curve();
-	m_chart_spike_shape.set_yw_ext_org(m_chart_spike_bar.GetYWExtent(), m_chart_spike_bar.GetYWOrg());
+	m_chart_spike_shape.set_yw_ext_org(m_chart_spike_bar.get_yw_extent(), m_chart_spike_bar.get_yw_org());
 
 	update_legends();
 }
@@ -1127,17 +1128,17 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 
 	// center spikes, change nb spikes and update content of draw buttons
 	if (options_view_data->bMaximizeGain
-		|| m_chart_spike_bar.GetYWExtent() == 0
-		|| m_chart_spike_bar.GetYWOrg() == 0
-		|| m_chart_spike_shape.GetYWExtent() == 0
-		|| m_chart_spike_shape.GetYWOrg() == 0)
+		|| m_chart_spike_bar.get_yw_extent() == 0
+		|| m_chart_spike_bar.get_yw_org() == 0
+		|| m_chart_spike_shape.get_yw_extent() == 0
+		|| m_chart_spike_shape.get_yw_org() == 0)
 	{
 		m_chart_spike_bar.max_center();
-		m_chart_spike_shape.set_yw_ext_org(m_chart_spike_bar.GetYWExtent(), m_chart_spike_bar.GetYWOrg());
+		m_chart_spike_shape.set_yw_ext_org(m_chart_spike_bar.get_yw_extent(), m_chart_spike_bar.get_yw_org());
 		int spike_length = 60;
 		if (m_pSpkList != nullptr)
 			spike_length = m_pSpkList->get_spike_length();
-		m_chart_spike_shape.SetXWExtOrg(spike_length, 0);
+		m_chart_spike_shape.set_xw_ext_org(spike_length, 0);
 		update_spike_shape_window_scale(FALSE);
 	}
 
@@ -1403,10 +1404,10 @@ int ViewSpikeDetection::detect_method_1(WORD channel_index)
 void ViewSpikeDetection::OnToolsEdittransformspikes()
 {
 	DlgSpikeEdit dlg; // dialog box
-	dlg.m_yextent = m_chart_spike_shape.GetYWExtent();
-	dlg.m_yzero = m_chart_spike_shape.GetYWOrg(); 
-	dlg.m_xextent = m_chart_spike_shape.GetXWExtent(); 
-	dlg.m_xzero = m_chart_spike_shape.GetXWOrg(); 
+	dlg.m_yextent = m_chart_spike_shape.get_yw_extent();
+	dlg.m_yzero = m_chart_spike_shape.get_yw_org(); 
+	dlg.m_xextent = m_chart_spike_shape.get_xw_extent(); 
+	dlg.m_xzero = m_chart_spike_shape.get_xw_org(); 
 	dlg.m_spike_index = m_spike_index; 
 	m_pSpkList->remove_all_spike_flags();
 	dlg.m_pdbWaveDoc = GetDocument();
@@ -1440,16 +1441,16 @@ void ViewSpikeDetection::OnFormatXscale()
 	else if (pFocus != nullptr && m_chart_spike_bar.m_hWnd == pFocus->m_hWnd)
 	{
 		dlg.m_xparam = FALSE;
-		dlg.m_yzero = m_chart_spike_bar.GetYWOrg();
-		dlg.m_yextent = m_chart_spike_bar.GetYWExtent();
+		dlg.m_yzero = m_chart_spike_bar.get_yw_org();
+		dlg.m_yextent = m_chart_spike_bar.get_yw_extent();
 		dlg.m_bDisplaybars = TRUE;
 	}
 	else
 	{
-		dlg.m_xzero = m_chart_spike_shape.GetXWOrg();
-		dlg.m_xextent = m_chart_spike_shape.GetXWExtent();
-		dlg.m_yzero = m_chart_spike_shape.GetYWOrg();
-		dlg.m_yextent = m_chart_spike_shape.GetYWExtent();
+		dlg.m_xzero = m_chart_spike_shape.get_xw_org();
+		dlg.m_xextent = m_chart_spike_shape.get_xw_extent();
+		dlg.m_yzero = m_chart_spike_shape.get_yw_org();
+		dlg.m_yextent = m_chart_spike_shape.get_yw_extent();
 		dlg.m_bDisplayspikes = TRUE;
 	}
 
@@ -1470,7 +1471,7 @@ void ViewSpikeDetection::OnFormatXscale()
 		if (dlg.m_bDisplayspikes)
 		{
 			m_chart_spike_shape.set_yw_ext_org(dlg.m_yextent, dlg.m_yzero);
-			m_chart_spike_shape.SetXWExtOrg(dlg.m_xextent, dlg.m_xzero);
+			m_chart_spike_shape.set_xw_ext_org(dlg.m_xextent, dlg.m_xzero);
 			m_chart_spike_shape.Invalidate();
 		}
 	}
@@ -1631,7 +1632,7 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 		if (ix_we == 0)
 			ix_we = m_pSpkList->get_detection_parameters()->extract_n_points;
 		ASSERT(ix_we != 0);
-		m_chart_spike_shape.SetXWExtOrg(ix_we, m_chart_spike_shape.GetXWOrg());
+		m_chart_spike_shape.set_xw_ext_org(ix_we, m_chart_spike_shape.get_xw_org());
 		
 		// set amplitude
 		GetDlgItem(IDC_SPIKEWINDOWAMPLITUDE)->GetWindowText(cs);
@@ -1641,13 +1642,13 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 			iy_we = static_cast<int>(y / m_pSpkList->get_acq_volts_per_bin());
 		}
 		if (iy_we == 0)
-			iy_we = m_chart_spike_shape.GetYWExtent();
-		m_chart_spike_shape.set_yw_ext_org(iy_we, m_chart_spike_shape.GetYWOrg());
+			iy_we = m_chart_spike_shape.get_yw_extent();
+		m_chart_spike_shape.set_yw_ext_org(iy_we, m_chart_spike_shape.get_yw_org());
 	}
 	else
 	{
-		ix_we = m_chart_spike_shape.GetXWExtent();
-		iy_we = m_chart_spike_shape.GetYWExtent();
+		ix_we = m_chart_spike_shape.get_xw_extent();
+		iy_we = m_chart_spike_shape.get_yw_extent();
 	}
 
 	if (ix_we != NULL && iy_we != NULL)
@@ -1824,7 +1825,7 @@ void ViewSpikeDetection::OnEditCopy()
 			m_chart_data_source.GetWindowRect(&old_rect2);
 
 			const CRect rect(0, 0, options_view_data->hzResolution, options_view_data->vtResolution);
-			m_npixels0 = m_chart_data_filtered.GetRectWidth();
+			m_npixels0 = m_chart_data_filtered.get_rect_width();
 
 			// create meta file
 			CMetaFileDC m_dc;
@@ -1874,11 +1875,11 @@ void ViewSpikeDetection::OnEditCopy()
 			// define display sizes - dataview & datadetect are same, spkshape & spkbar = as on screen
 			auto data_rect = rect;
 			data_rect.top -= -3 * line_height;
-			const auto rect_spike_width = MulDiv(m_chart_spike_shape.GetRectWidth(), data_rect.Width(),
-				m_chart_spike_shape.GetRectWidth() + m_chart_data_filtered.GetRectWidth());
-			const auto rect_data_height = MulDiv(m_chart_data_filtered.GetRectHeight(), data_rect.Height(),
-				m_chart_data_filtered.GetRectHeight() * 2 + m_chart_spike_bar.
-				GetRectHeight());
+			const auto rect_spike_width = MulDiv(m_chart_spike_shape.get_rect_width(), data_rect.Width(),
+				m_chart_spike_shape.get_rect_width() + m_chart_data_filtered.get_rect_width());
+			const auto rect_data_height = MulDiv(m_chart_data_filtered.get_rect_height(), data_rect.Height(),
+				m_chart_data_filtered.get_rect_height() * 2 + m_chart_spike_bar.
+				get_rect_height());
 			const auto separator = rect_spike_width / 10;
 
 			// display curves : data
@@ -2036,7 +2037,7 @@ CString ViewSpikeDetection::PrintConvertFileIndex(const long l_first, const long
 	CString cs_unit = _T(" s");
 	CString cs_comment;
 	float x_scale_factor;
-	const auto x1 = m_chart_data_filtered.ChangeUnit(static_cast<float>(l_first) / m_samplingRate, &cs_unit,
+	const auto x1 = CNiceUnit::change_unit(static_cast<float>(l_first) / m_samplingRate, &cs_unit,
 		&x_scale_factor);
 	const auto fraction1 = static_cast<int>((x1 - static_cast<int>(x1)) * static_cast<float>(1000.));
 	// separate fractional part
@@ -2143,8 +2144,8 @@ CString ViewSpikeDetection::PrintDataBars(CDC* p_dc, ChartData* pDataChartWnd, c
 	const auto p_old_brush = static_cast<CBrush*>(p_dc->SelectStockObject(BLACK_BRUSH));
 	CString cs_unit; 
 	const CPoint bar_origin(-10, -10); // bar origin at 10,10 pts on the left lower corner of the rectangle
-	auto i_horizontal_bar = pDataChartWnd->GetRectWidth() / 10; // initial horizontal bar length 1/10th of display rect
-	auto i_vertical_bar = pDataChartWnd->GetRectHeight() / 3; // initial vertical bar height 1/3rd  of display rect
+	auto i_horizontal_bar = pDataChartWnd->get_rect_width() / 10; // initial horizontal bar length 1/10th of display rect
+	auto i_vertical_bar = pDataChartWnd->get_rect_height() / 3; // initial vertical bar height 1/3rd  of display rect
 
 	auto str_comment = PrintConvertFileIndex(pDataChartWnd->GetDataFirstIndex(), pDataChartWnd->GetDataLastIndex());
 
@@ -2156,15 +2157,15 @@ CString ViewSpikeDetection::PrintDataBars(CDC* p_dc, ChartData* pDataChartWnd, c
 		const auto time_per_pixel = pDataChartWnd->get_time_per_pixel();
 		const auto z = time_per_pixel * static_cast<float>(i_horizontal_bar); // convert 1/10 of the length of the data displayed into time
 		float x_scale_factor;
-		const auto x = pDataChartWnd->ChangeUnit(z, &cs_unit, &x_scale_factor); // convert time into a scaled time
-		const auto k = pDataChartWnd->nice_unit(x); // convert the (scaled) time value into time expressed as an integral
+		const auto x = CNiceUnit::change_unit(z, &cs_unit, &x_scale_factor); // convert time into a scaled time
+		const auto k = CNiceUnit::nice_unit(x); // convert the (scaled) time value into time expressed as an integral
 		i_horizontal_bar = static_cast<int>((static_cast<float>(k) * x_scale_factor) / time_per_pixel);
 		// compute how much pixels it makes
 		// print out the scale and units
 		cs.Format(_T("horz bar = %i %s"), k, (LPCTSTR)cs_unit);
 		str_comment += cs + rc;
 		// draw horizontal line
-		i_horizontal_bar = MulDiv(i_horizontal_bar, rect->Width(), pDataChartWnd->GetRectWidth());
+		i_horizontal_bar = MulDiv(i_horizontal_bar, rect->Width(), pDataChartWnd->get_rect_width());
 		p_dc->MoveTo(rect->left + bar_origin.x, rect->bottom - bar_origin.y);
 		p_dc->LineTo(rect->left + bar_origin.x + i_horizontal_bar, rect->bottom - bar_origin.y);
 	}
@@ -2176,13 +2177,13 @@ CString ViewSpikeDetection::PrintDataBars(CDC* p_dc, ChartData* pDataChartWnd, c
 	// convert bar size into voltage units and back into pixels
 	const auto volts_per_pixel = pDataChartWnd->get_channel_list_volts_per_pixel(0);
 	const auto z_volts = volts_per_pixel * static_cast<float>(i_vertical_bar); // convert 1/3 of the height into voltage
-	const auto z_scale = pDataChartWnd->ChangeUnit(z_volts, &cs_unit, &y_scale_factor);
-	const auto z_nice = static_cast<float>(pDataChartWnd->nice_unit(z_scale));
+	const auto z_scale = CNiceUnit::change_unit(z_volts, &cs_unit, &y_scale_factor);
+	const auto z_nice = static_cast<float>(CNiceUnit::nice_unit(z_scale));
 	i_vertical_bar = static_cast<int>(z_nice * y_scale_factor / volts_per_pixel); // compute how much pixels it makes
 
 	if (options_view_data->bVoltageScaleBar)
 	{
-		i_vertical_bar = MulDiv(i_vertical_bar, rect->Height(), pDataChartWnd->GetRectHeight());
+		i_vertical_bar = MulDiv(i_vertical_bar, rect->Height(), pDataChartWnd->get_rect_height());
 		p_dc->MoveTo(rect->left + bar_origin.x, rect->bottom - bar_origin.y);
 		p_dc->LineTo(rect->left + bar_origin.x, rect->bottom - bar_origin.y - i_vertical_bar);
 	}
@@ -2203,7 +2204,7 @@ CString ViewSpikeDetection::PrintDataBars(CDC* p_dc, ChartData* pDataChartWnd, c
 			{
 				const auto z = static_cast<float>(i_vertical_bar) * pDataChartWnd->get_channel_list_volts_per_pixel(channel_index);
 				const auto x = z / y_scale_factor;
-				const auto j = pDataChartWnd->nice_unit(x);
+				const auto j = CNiceUnit::nice_unit(x);
 				cs.Format(_T("vert bar = %i %s "), j, (LPCTSTR)cs_unit); 
 				str_comment += cs;
 			}
@@ -2470,7 +2471,7 @@ void ViewSpikeDetection::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	m_bIsPrinting = TRUE;
 	m_lFirst0 = m_chart_data_filtered.GetDataFirstIndex();
 	m_lLast0 = m_chart_data_filtered.GetDataLastIndex();
-	m_npixels0 = m_chart_data_filtered.GetRectWidth();
+	m_npixels0 = m_chart_data_filtered.get_rect_width();
 	PrintCreateFont();
 	p_dc->SetBkMode(TRANSPARENT);
 }
@@ -2866,8 +2867,8 @@ void ViewSpikeDetection::OnEnChangeSpkWndAmplitude()
 			m_spkWndAmplitude = y_old;
 			MessageBeep(-1);
 		}
-		const auto y_we = static_cast<int>(static_cast<float>(m_chart_spike_shape.GetYWExtent()) * m_spkWndAmplitude / y_old);
-		m_chart_spike_shape.set_yw_ext_org(y_we, m_chart_spike_shape.GetYWOrg());
+		const auto y_we = static_cast<int>(static_cast<float>(m_chart_spike_shape.get_yw_extent()) * m_spkWndAmplitude / y_old);
+		m_chart_spike_shape.set_yw_ext_org(y_we, m_chart_spike_shape.get_yw_org());
 		m_chart_spike_shape.set_y_scale_unit_value(m_spkWndAmplitude);
 		m_chart_spike_shape.Invalidate();
 
@@ -2893,8 +2894,8 @@ void ViewSpikeDetection::OnEnChangeSpkWndLength()
 			MessageBeep(-1);
 			m_spkWndDuration = xold;
 		}
-		const auto x_we = static_cast<int>(static_cast<float>(m_chart_spike_shape.GetXWExtent()) * m_spkWndDuration / xold);
-		m_chart_spike_shape.SetXWExtOrg(x_we, m_chart_spike_shape.GetXWOrg());
+		const auto x_we = static_cast<int>(static_cast<float>(m_chart_spike_shape.get_xw_extent()) * m_spkWndDuration / xold);
+		m_chart_spike_shape.set_xw_ext_org(x_we, m_chart_spike_shape.get_xw_org());
 		m_chart_spike_shape.set_x_scale_unit_value(m_spkWndDuration);
 		m_chart_spike_shape.Invalidate();
 
@@ -3093,8 +3094,8 @@ void ViewSpikeDetection::OnCbnSelchangeTransform2()
 	short max, min;
 	m_pSpkList->get_total_max_min(TRUE, &max, &min);
 	const auto middle = (max + min) / 2;
-	m_chart_spike_shape.set_yw_ext_org(m_chart_spike_shape.GetYWExtent(), middle);
-	m_chart_spike_bar.set_yw_ext_org(m_chart_spike_shape.GetYWExtent(), middle);
+	m_chart_spike_shape.set_yw_ext_org(m_chart_spike_shape.get_yw_extent(), middle);
+	m_chart_spike_bar.set_yw_ext_org(m_chart_spike_shape.get_yw_extent(), middle);
 	update_spike_shape_window_scale(FALSE);
 
 	highlight_spikes(TRUE);

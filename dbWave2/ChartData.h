@@ -104,7 +104,7 @@ public:
 	float get_time_per_pixel() const
 	{
 		return static_cast<float>(GetDataSize()) / m_pDataFile->get_waveformat()->sampling_rate_per_channel / static_cast<float>(
-			GetRectWidth());
+			get_rect_width());
 	}
 
 	int get_channel_list_bin_to_y_pixel(int chan, int bin)

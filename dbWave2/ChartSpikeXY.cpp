@@ -168,7 +168,7 @@ void ChartSpikeXY::display_spike(const Spike* spike, CDC* p_dc, const CRect& rec
 	const auto y1 = MulDiv(spike->get_y1() - m_yWO, m_yVE, m_yWE) + m_yVO;
 	rect_i.OffsetRect(x1, y1);
 	p_dc->MoveTo(x1, y1);
-	p_dc->FillSolidRect(&rect_i, m_colorTable[selected_brush]);
+	p_dc->FillSolidRect(&rect_i, color_table_[selected_brush]);
 }
 
 void ChartSpikeXY::display_vt_tags(CDC* p_dc)
@@ -246,7 +246,7 @@ void ChartSpikeXY::draw_spike(const Spike* spike, const int color_index)
 
 	const auto background_color = dc.GetBkColor();
 	dc.MoveTo(x1, y1);
-	dc.FillSolidRect(&rect, m_colorTable[color_index]);
+	dc.FillSolidRect(&rect, color_table_[color_index]);
 	dc.SetBkColor(background_color);
 }
 
@@ -338,7 +338,7 @@ void ChartSpikeXY::OnLButtonUp(UINT nFlags, CPoint point)
 			constexpr auto jitter = 3;
 			if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 			{
-				if (m_cursorType != CURSOR_ZOOM)
+				if (cursor_type_ != CURSOR_ZOOM)
 					post_my_message(HINT_HITAREA, NULL);
 				else
 					zoom_in();
@@ -347,7 +347,7 @@ void ChartSpikeXY::OnLButtonUp(UINT nFlags, CPoint point)
 
 			// perform action according to cursor type
 			auto rect_in = m_displayRect;
-			switch (m_cursorType)
+			switch (cursor_type_)
 			{
 			case 0:
 				rect_out = rect_in;
@@ -388,7 +388,7 @@ void ChartSpikeXY::OnLButtonDown(const UINT nFlags, const CPoint point)
 
 	// track rectangle or HZ tag?
 	ChartSpike::OnLButtonDown(nFlags, point);
-	if (m_currCursorMode != 0 || m_HCtrapped >= 0) // do nothing else if mode != 0
+	if (current_cursor_mode_ != 0 || m_HCtrapped >= 0) // do nothing else if mode != 0
 	{
 		if (m_trackMode == TRACK_HZTAG || m_trackMode == TRACK_VTTAG)
 			return; // or any tag hit (VT, HZ) detected

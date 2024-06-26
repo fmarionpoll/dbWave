@@ -231,7 +231,7 @@ void ViewSpikes::OnLButtonDown(UINT nFlags, CPoint point)
 
 void ViewSpikes::set_mouse_cursor(short param_value)
 {
-	if (m_ChartDataWnd.GetMouseCursorType() != param_value)
+	if (m_ChartDataWnd.get_mouse_cursor_type() != param_value)
 		set_add_spikes_mode(param_value);
 	m_ChartDataWnd.set_mouse_cursor_type(param_value);
 	m_spikeClassListBox.SetMouseCursorType(param_value);
@@ -559,7 +559,7 @@ void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 	}
 	else
 	{
-		m_ChartDataWnd.ResizeChannels(m_ChartDataWnd.GetRectWidth(), m_lLast - m_lFirst);
+		m_ChartDataWnd.ResizeChannels(m_ChartDataWnd.get_rect_width(), m_lLast - m_lFirst);
 		m_ChartDataWnd.GetDataFromDoc(m_lFirst, m_lLast);
 
 		if (m_bInitSourceView)
@@ -713,7 +713,7 @@ void ViewSpikes::select_spike_list(int current_selection)
 	// data are ok
 	else
 	{
-		m_ChartDataWnd.ResizeChannels(m_ChartDataWnd.GetRectWidth(), m_lLast - m_lFirst);
+		m_ChartDataWnd.ResizeChannels(m_ChartDataWnd.get_rect_width(), m_lLast - m_lFirst);
 		m_ChartDataWnd.GetDataFromDoc(m_lFirst, m_lLast);
 		int max, min;
 		CChanlistItem* chan = m_ChartDataWnd.get_channel_list_item(0);
@@ -1672,7 +1672,7 @@ void ViewSpikes::OnEditCopy()
 	if (m_pDataDoc != nullptr)
 	{
 		m_ChartDataWnd.GetDataFromDoc(m_lFirst, m_lLast);
-		m_ChartDataWnd.ResizeChannels(m_ChartDataWnd.GetRectWidth(), m_lLast - m_lFirst);
+		m_ChartDataWnd.ResizeChannels(m_ChartDataWnd.get_rect_width(), m_lLast - m_lFirst);
 		m_ChartDataWnd.Invalidate();
 	}
 }

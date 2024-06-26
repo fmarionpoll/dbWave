@@ -41,53 +41,50 @@ public:
 	virtual BOOL Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID,
 	                    CCreateContext* pContext = nullptr);
 	virtual SCOPESTRUCT* get_scope_parameters();
-	virtual void set_scope_parameters(SCOPESTRUCT* pStruct);
+	virtual void set_scope_parameters(SCOPESTRUCT* p_struct);
 	virtual int set_mouse_cursor_type(int cursor_type);
-	virtual void zoom_data(CRect* prevRect, CRect* newRect);
-	virtual void DisplayVTtags_Value(CDC* p_dc);
-	virtual void DisplayHZtags(CDC* p_dc);
+	virtual void zoom_data(CRect* prev_rect, CRect* new_rect);
+	virtual void display_vertical_tags(CDC* p_dc);
+	virtual void display_horizontal_tags(CDC* p_dc);
 	virtual void plot_data_to_dc(CDC* p_dc);
 
 	void erase_background(CDC* p_dc);
 	void PlotToBitmap(CDC* p_dc);
-	static COLORREF GetColor(const int color_index) { return m_colorTable[color_index]; }
-	static void SetColorTableAt(int color_index, COLORREF ccolor) { m_colorTable[color_index] = ccolor; }
-	void SetString(CString cs) { m_csEmpty = cs; }
-	int FindColorIndex(COLORREF color_ref);
+	static COLORREF get_color(const int color_index) { return color_table_[color_index]; }
+	static void set_color_table_at(const int color_index, const COLORREF color_ref) { color_table_[color_index] = color_ref; }
+	int find_color_index(COLORREF color_ref);
 
-	float ChangeUnit(float xVal, CString* xUnit, float* xScalefactor);
-	static int nice_unit(float y);
+	void set_string(const CString& cs) { m_csEmpty = cs; }
 
 	void set_b_use_dib(BOOL b_set_plot); // use DIB or not
 	void set_display_area_size(int cx, int cy); // set size of the display area
 
-	CSize GetRectSize() const { return {m_displayRect.Width() + 1, m_displayRect.Height() + 1}; }
-	int GetRectHeight() const { return m_displayRect.Height() + 1; }
-	int GetRectWidth() const { return m_displayRect.Width() + 1; }
-	int GetMouseCursorType() const { return m_cursorType; }
+	CSize get_rect_size() const { return {m_displayRect.Width() + 1, m_displayRect.Height() + 1}; }
+	int get_rect_height() const { return m_displayRect.Height() + 1; }
+	int get_rect_width() const { return m_displayRect.Width() + 1; }
+	int get_mouse_cursor_type() const { return cursor_type_; }
 	void set_mouse_cursor(int cursor_type);
 
 	void set_yw_ext_org(int extent, int zero);
-
-	void SetXWExtOrg(int extent, int zero)
+	void set_xw_ext_org(const int extent, const int zero)
 	{
 		m_xWE = extent;
 		m_xWO = zero;
 	}
 
-	int GetYWExtent() const { return m_yWE; }
-	int GetYWOrg() const { return m_yWO; }
-	int GetXWExtent() const { return m_xWE; }
-	int GetXWOrg() const { return m_xWO; }
+	int get_yw_extent() const { return m_yWE; }
+	int get_yw_org() const { return m_yWO; }
+	int get_xw_extent() const { return m_xWE; }
+	int get_xw_org() const { return m_xWO; }
 
-	void set_nx_scale_cells(int iCells, int iTicks = 0, int iTickLine = 0);
-	void set_ny_scale_cells(int iCells, int iTicks = 0, int iTickLine = 0);
-	int get_nx_scale_cells() const { return m_scopestruct.iXCells; }
-	int get_ny_scale_cells() const { return m_scopestruct.iYCells; }
+	auto set_nx_scale_cells(int i_cells, int i_ticks = 0, int i_tick_line = 0) -> void;
+	void set_ny_scale_cells(int i_cells, int i_ticks = 0, int i_tick_line = 0);
+	int get_nx_scale_cells() const { return scope_structure_.iXCells; }
+	int get_ny_scale_cells() const { return scope_structure_.iYCells; }
 	void set_x_scale_unit_value(float x);
 	void set_y_scale_unit_value(float y);
-	void attach_external_x_ruler(RulerBar* pXRuler) { m_pXRulerBar = pXRuler; }
-	void attach_external_y_ruler(RulerBar* pYRuler) { m_pYRulerBar = pYRuler; }
+	void attach_external_x_ruler(RulerBar* p_x_ruler) { m_pXRulerBar = p_x_ruler; }
+	void attach_external_y_ruler(RulerBar* p_y_ruler) { m_pYRulerBar = p_y_ruler; }
 
 	void xor_vertical_tag(int x_point);
 	void xor_temp_vertical_tag(int x_point);
@@ -100,29 +97,25 @@ public:
 	}
 
 	void ReflectMouseMoveMessg(HWND hwnd) { m_hwndReflect = hwnd; }
-	void set_cursor_max_on_dbl_click(int imax) { m_cursorIndexMax = imax; }
+	void set_cursor_max_on_dbl_click(const int imax) { cursor_index_max_ = imax; }
 	void plot_to_bitmap(CBitmap* p_bitmap);
-
 	void draw_grid(CDC* p_dc);
 	void adjust_display_rect(CRect* rect);
-
-	BOOL GetbDrawframe() const { return m_scopestruct.bDrawframe; }
-	void SetbDrawframe(BOOL flag) { m_scopestruct.bDrawframe = flag; }
-	CRect GetDefinedRect() { return CRect(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y); }
-
-	void SetBottomComment(BOOL flag, CString cs)
+	BOOL get_b_draw_frame() const { return scope_structure_.bDrawframe; }
+	void set_b_draw_frame(BOOL flag) { scope_structure_.bDrawframe = flag; }
+	CRect get_defined_rect() const { return {m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y}; }
+	void set_bottom_comment(const BOOL flag, const CString& cs)
 	{
 		m_csBottomComment = cs;
 		m_bBottomComment = flag;
 	}
 
-public:
 	Ruler m_xRuler{};
 	Ruler m_yRuler{};
 	CFont m_hFont{};
 	BOOL m_bNiceGrid = false;
-	int m_abcissaheight = 10;
-	int m_ordinateswidth = 25;
+	int abscissa_height = 10;
+	int ordinates_width = 25;
 	RulerBar* m_pXRulerBar = nullptr;
 	RulerBar* m_pYRulerBar = nullptr;
 
@@ -133,29 +126,24 @@ public:
 
 	// Implementation
 protected:
-	static int m_countcurs; // objects counter
-	static HCURSOR m_cursor[NB_CURSORS]; // array with cursor handles
-	static int m_cursordragmode[NB_CURSORS]; // cursor mode: 0=invert rect; 1=catch object
-	int m_cursorIndexMax = NB_CURSORS;
-	int m_cursorType = 0; // current cursor
-	int m_oldcursorType = 0;
-	HCURSOR m_currCursor{}; // handle to current cursor
-	int m_currCursorMode = 0; // current cursor drag mode
+	static int cursors_count_; // objects counter
+	static HCURSOR cursors_[NB_CURSORS]; // array with cursor handles
+	static int cursors_drag_mode_[NB_CURSORS]; // cursor mode: 0=invert rect; 1=catch object
+	int cursor_index_max_ = NB_CURSORS;
+	int cursor_type_ = 0; // current cursor
+	int old_cursor_type_ = 0;
+	HCURSOR current_cursor_{}; // handle to current cursor
+	int current_cursor_mode_ = 0; // current cursor drag mode
+	static COLORREF color_table_[NB_COLORS]; // array with colorref
 
-	static COLORREF m_colorTable[NB_COLORS]; // array with colorref
-	static TCHAR csUnit[];
-	static int dUnitsPower[];
-	static int dmaxIndex;
-	static int dniceIntervals[];
-
-	CPen m_penTable[NB_COLORS]; // table with CPen objects (same colors as color table
+	CPen pen_table_[NB_COLORS]; // table with CPen objects (same colors as color table
 	BOOL m_bLmouseDown = false;
-	BOOL m_bUseDIB = false;
+	BOOL b_use_dib_ = false;
 	CDC m_PlotDC{};
 	CWordArray m_arrayMark{};
 	CPen m_blackDottedPen{};
 	CString m_csEmpty;
-	SCOPESTRUCT m_scopestruct{};
+	SCOPESTRUCT scope_structure_{};
 
 	int m_plotmode = 0;
 	int m_colorbackgr = SILVER_COLOR;

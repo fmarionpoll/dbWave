@@ -87,7 +87,7 @@ BOOL DlgSpikeEdit::OnInitDialog()
 		VERIFY(m_ChartDataWnd.SubclassDlgItem(IDC_DISPLAREA_buttn, this));
 		m_ChartDataWnd.set_b_use_dib(FALSE);
 		m_ChartDataWnd.AttachDataFile(m_pAcqDatDoc);
-		const auto lvSize = m_ChartDataWnd.GetRectSize();
+		const auto lvSize = m_ChartDataWnd.get_rect_size();
 		m_ChartDataWnd.ResizeChannels(lvSize.cx, 0); // change nb of pixels
 		m_ChartDataWnd.remove_all_channel_list_items();
 		m_ChartDataWnd.add_channel_list_item(m_pSpkList->get_detection_parameters()->extract_channel, m_pSpkList->get_detection_parameters()->extract_transform);

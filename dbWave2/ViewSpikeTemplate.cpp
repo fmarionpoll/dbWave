@@ -274,8 +274,8 @@ void ViewSpikeTemplates::updateTemplates()
 			m_templList.SetImageList(&m_templList.m_imageList, LVSIL_NORMAL);
 		}
 		SetDlgItemInt(IDC_NTEMPLATES, m_templList.GetNtemplates());
-		int extent = m_ChartSpkWnd_Shape.GetYWExtent();
-		int zero = m_ChartSpkWnd_Shape.GetYWOrg();
+		int extent = m_ChartSpkWnd_Shape.get_yw_extent();
+		int zero = m_ChartSpkWnd_Shape.get_yw_org();
 		m_templList.SetYWExtOrg(extent, zero);
 		m_templList.UpdateTemplateLegends("t");
 		m_templList.Invalidate();
@@ -355,7 +355,7 @@ LRESULT ViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_CHANGEHZLIMITS:
 	case HINT_CHANGEZOOM:
 	case HINT_VIEWSIZECHANGED:
-		setExtentZeroAllDisplay(m_ChartSpkWnd_Shape.GetYWExtent(), m_ChartSpkWnd_Shape.GetYWOrg());
+		setExtentZeroAllDisplay(m_ChartSpkWnd_Shape.get_yw_extent(), m_ChartSpkWnd_Shape.get_yw_org());
 		updateLegends();
 		break;
 
@@ -498,7 +498,7 @@ void ViewSpikeTemplates::OnFormatAlldata()
 	// spikes: center spikes horizontally and adjust hz size of display
 	const short x_wo = 0;
 	const short x_we = m_pSpkList->get_spike_length();
-	m_ChartSpkWnd_Shape.SetXWExtOrg(x_we, x_wo);
+	m_ChartSpkWnd_Shape.set_xw_ext_org(x_we, x_wo);
 	updateLegends();
 }
 
@@ -516,7 +516,7 @@ void ViewSpikeTemplates::OnFormatCentercurve()
 {
 	short maxval, minval;
 	GetDocument()->get_max_min_of_all_spikes(m_bAllFiles, TRUE, &maxval, &minval);
-	const auto extent = m_ChartSpkWnd_Shape.GetYWExtent();
+	const auto extent = m_ChartSpkWnd_Shape.get_yw_extent();
 	const auto zero = (maxval + minval) / 2;
 	setExtentZeroAllDisplay(extent, zero);
 }
@@ -594,8 +594,8 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 	pTPList->SetTemplateLength(spikelen, 0, spikelen - 1);
 	pTPList->SetHitRate_Tolerance(&m_hitrate, &m_ktolerance);
 
-	int zero = m_ChartSpkWnd_Shape.GetYWOrg();
-	int extent = m_ChartSpkWnd_Shape.GetYWExtent();
+	int zero = m_ChartSpkWnd_Shape.get_yw_org();
+	int extent = m_ChartSpkWnd_Shape.get_yw_extent();
 	if (zero == 0 && extent == 0)
 	{
 		short valuemax, valuemin;

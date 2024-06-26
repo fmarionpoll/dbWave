@@ -8,7 +8,7 @@
 #define new DEBUG_NEW
 #endif
 
-COLORREF ChartWnd::m_colorTable[] =
+COLORREF ChartWnd::color_table_[] =
 {
 	RGB(0, 0, 0), // 0 black
 	RGB(128, 0, 128), // 1 purple
@@ -29,115 +29,59 @@ COLORREF ChartWnd::m_colorTable[] =
 	RGB(1, 1, 1) // 16 dummy
 };
 
-HCURSOR ChartWnd::m_cursor[NB_CURSORS];
-int ChartWnd::m_cursordragmode[NB_CURSORS];
-int ChartWnd::m_countcurs = 0;
+HCURSOR ChartWnd::cursors_[NB_CURSORS];
+int ChartWnd::cursors_drag_mode_[NB_CURSORS];
+int ChartWnd::cursors_count_ = 0;
 
-TCHAR ChartWnd::csUnit[] = {_T("GM  mµpf  ")};
-int ChartWnd::dUnitsPower[] = {9, 6, 0, 0, -3, -6, -9, -12, 0};
-int ChartWnd::dmaxIndex = 8;
-int ChartWnd::dniceIntervals[] = {1, 5, 10, 20, 25, 30, 40, 50, 75, 100, 200, 250, 300, 400, 500, 0};
-
-int ChartWnd::FindColorIndex(COLORREF color_ref)
+int ChartWnd::find_color_index(COLORREF color_ref)
 {
 	auto color_index = -1;
 	for (auto i = 0; i < NB_COLORS; i++)
-		if (color_ref == m_colorTable[i])
+		if (color_ref == color_table_[i])
 			color_index = i;
 	return color_index;
-}
-
-int ChartWnd::nice_unit(float x_val)
-{
-	auto i = 0;
-	const auto ival = static_cast<int>(x_val);
-	do
-	{
-		if (ival <= dniceIntervals[i])
-		{
-			i++;
-			break;
-		}
-		i++;
-	}
-	while (dniceIntervals[i] > 0);
-	return dniceIntervals[i - 1];
-}
-
-float ChartWnd::ChangeUnit(float xVal, CString* xUnit, float* xScalefactor)
-{
-	// avoid division by zero error
-	if (xVal == 0)
-	{
-		*xScalefactor = 1.0f;
-		xUnit->SetAt(0, ' ');
-		return 0.0f;
-	}
-
-	// take absolute value of xVal and save sign
-	short i;
-	short isign = 1;
-	if (xVal < 0)
-	{
-		isign = -1;
-		xVal = -xVal;
-	}
-	// get power of 10 of the value
-	const auto iprec = static_cast<short>(log10(xVal)); // log10 of value (upper limit)
-	if (iprec <= 0 && xVal < 1.) // perform extra checking if iprec <= 0
-		i = 4 - iprec / 3; // change equation if Units values change
-	else
-		i = 3 - iprec / 3; // change equation if Units values change
-	if (i > dmaxIndex) // clip to max index
-		i = dmaxIndex;
-	else if (i < 0) // or clip to min index
-		i = 0;
-	// return data
-	*xScalefactor = static_cast<float>(pow(10.0f, dUnitsPower[i])); // convert & store
-	xUnit->SetAt(0, csUnit[i]); // replace character corresp to unit
-	return xVal * isign / *xScalefactor; // return value/scale_factor
 }
 
 IMPLEMENT_SERIAL(ChartWnd, CWnd, 1)
 
 ChartWnd::ChartWnd()
 {
-	if (m_countcurs == 0)
+	if (cursors_count_ == 0)
 	{
 		short j = 0;
-		m_cursor[j] = ::LoadCursor(nullptr, IDC_ARROW);
-		m_cursordragmode[j] = 0;
+		cursors_[j] = ::LoadCursor(nullptr, IDC_ARROW);
+		cursors_drag_mode_[j] = 0;
 		j++;
-		m_cursor[j] = AfxGetApp()->LoadCursor(IDC_CZOOM);
-		m_cursordragmode[j] = 1;
+		cursors_[j] = AfxGetApp()->LoadCursor(IDC_CZOOM);
+		cursors_drag_mode_[j] = 1;
 		j++;
-		m_cursor[j] = AfxGetApp()->LoadCursor(IDC_CCROSS);
-		m_cursordragmode[j] = 1;
+		cursors_[j] = AfxGetApp()->LoadCursor(IDC_CCROSS);
+		cursors_drag_mode_[j] = 1;
 		j++;
-		m_cursor[j] = AfxGetApp()->LoadCursor(IDC_CCROSS);
-		m_cursordragmode[j] = 1;
+		cursors_[j] = AfxGetApp()->LoadCursor(IDC_CCROSS);
+		cursors_drag_mode_[j] = 1;
 
 		j++;
-		m_cursor[j] = AfxGetApp()->LoadCursor(IDC_SPLITHORIZONTAL);
-		m_cursordragmode[j] = 1;
+		cursors_[j] = AfxGetApp()->LoadCursor(IDC_SPLITHORIZONTAL);
+		cursors_drag_mode_[j] = 1;
 		j++;
-		m_cursor[j] = AfxGetApp()->LoadCursor(IDC_SPLITVERTICAL);
-		m_cursordragmode[j] = 1;
+		cursors_[j] = AfxGetApp()->LoadCursor(IDC_SPLITVERTICAL);
+		cursors_drag_mode_[j] = 1;
 	}
-	m_countcurs++;
+	cursors_count_++;
 
-	set_mouse_cursor(0);
+	set_mouse_cursor_type(0);
 
 	m_clientRect = CRect(0, 0, 10, 10); // minimal size of the button
 	adjust_display_rect(&m_clientRect);
 
 	m_cxjitter = GetSystemMetrics(SM_CXDOUBLECLK);
 	m_cyjitter = GetSystemMetrics(SM_CYDOUBLECLK);
-	m_blackDottedPen.CreatePen(PS_DOT, 0, m_colorTable[BLACK_COLOR]);
+	m_blackDottedPen.CreatePen(PS_DOT, 0, color_table_[BLACK_COLOR]);
 
 	// set colored CPen objects
 	for (int i = 0; i < NB_COLORS; i++)
-		m_penTable[i].CreatePen(PS_SOLID, 0, m_colorTable[i]);
+		pen_table_[i].CreatePen(PS_SOLID, 0, color_table_[i]);
 
 	m_xRuler.m_is_horizontal = TRUE;
 	m_yRuler.m_is_horizontal = FALSE;
@@ -149,13 +93,13 @@ ChartWnd::~ChartWnd()
 {
 	CWnd::DestroyWindow();
 
-	m_countcurs--;
-	if (m_countcurs == 0)
+	cursors_count_--;
+	if (cursors_count_ == 0)
 	{
 		for (auto i = 1; i < NB_CURSORS; i++) // elmt 0: global object cursor
 		{
-			if (nullptr != m_cursor[i])
-				DestroyCursor(m_cursor[i]);
+			if (nullptr != cursors_[i])
+				DestroyCursor(cursors_[i]);
 		}
 	}
 	m_HZtags.remove_all_tags(); 
@@ -163,7 +107,7 @@ ChartWnd::~ChartWnd()
 	delete m_tempVTtag;
 
 	// delete array of pens
-	for (auto& i : m_penTable)
+	for (auto& i : pen_table_)
 		i.DeleteObject();
 }
 
@@ -249,7 +193,7 @@ void ChartWnd::OnPaint()
 	CPaintDC dc(this);
 	dc.IntersectClipRect(&m_clientRect);
 
-	if (!m_bUseDIB)
+	if (!b_use_dib_)
 		plot_data_to_dc(&dc);
 	else
 		PlotToBitmap(&dc);
@@ -274,7 +218,7 @@ void ChartWnd::erase_background(CDC* p_dc)
 	}
 	// erase display area
 	CBrush brush;
-	brush.CreateSolidBrush(m_scopestruct.crScopeFill);
+	brush.CreateSolidBrush(scope_structure_.crScopeFill);
 	const auto p_old_brush = p_dc->SelectObject(&brush);
 	const auto p_old_pen = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 	p_dc->Rectangle(&m_displayRect);
@@ -291,28 +235,28 @@ void ChartWnd::draw_grid_evenly_spaced(CDC* p_dc) const
 	rect.DeflateRect(1, 1);
 
 	// Standard grid is 8 high by 10 wide
-	CPen pen_scale(PS_SOLID, 1, m_scopestruct.crScopeGrid);
+	CPen pen_scale(PS_SOLID, 1, scope_structure_.crScopeGrid);
 	const auto pen_old = p_dc->SelectObject(&pen_scale);
-	const auto i_x_ticks = m_scopestruct.iXCells * m_scopestruct.iXTicks;
-	const auto i_y_ticks = m_scopestruct.iYCells * m_scopestruct.iYTicks;
+	const auto i_x_ticks = scope_structure_.iXCells * scope_structure_.iXTicks;
+	const auto i_y_ticks = scope_structure_.iYCells * scope_structure_.iYTicks;
 
 	// do the grid lines
-	for (auto i = 1; i < m_scopestruct.iXCells; i++)
+	for (auto i = 1; i < scope_structure_.iXCells; i++)
 	{
-		p_dc->MoveTo(i * rect.right / m_scopestruct.iXCells, 0);
-		p_dc->LineTo(i * rect.right / m_scopestruct.iXCells, rect.bottom);
+		p_dc->MoveTo(i * rect.right / scope_structure_.iXCells, 0);
+		p_dc->LineTo(i * rect.right / scope_structure_.iXCells, rect.bottom);
 	}
-	for (auto i = 1; i < m_scopestruct.iYCells; i++)
+	for (auto i = 1; i < scope_structure_.iYCells; i++)
 	{
-		p_dc->MoveTo(0, i * rect.bottom / m_scopestruct.iYCells);
-		p_dc->LineTo(rect.right, i * rect.bottom / m_scopestruct.iYCells);
+		p_dc->MoveTo(0, i * rect.bottom / scope_structure_.iYCells);
+		p_dc->LineTo(rect.right, i * rect.bottom / scope_structure_.iYCells);
 	}
 
 	// Put tick marks on the axis lines
 	for (auto i = 1; i < i_x_ticks; i++)
 	{
 		constexpr auto i_tick_width = 2;
-		const int y = rect.bottom - rect.bottom * m_scopestruct.iXTickLine / m_scopestruct.iYCells;
+		const int y = rect.bottom - rect.bottom * scope_structure_.iXTickLine / scope_structure_.iYCells;
 		p_dc->MoveTo(i * rect.right / i_x_ticks, y - i_tick_width);
 		p_dc->LineTo(i * rect.right / i_x_ticks, y + i_tick_width);
 	}
@@ -320,23 +264,23 @@ void ChartWnd::draw_grid_evenly_spaced(CDC* p_dc) const
 	for (auto i = 1; i < i_y_ticks; i++)
 	{
 		constexpr auto i_tick_height = 2;
-		const int x = rect.right * m_scopestruct.iYTickLine / m_scopestruct.iXCells;
+		const int x = rect.right * scope_structure_.iYTickLine / scope_structure_.iXCells;
 		p_dc->MoveTo(x - i_tick_height, i * rect.bottom / i_y_ticks);
 		p_dc->LineTo(x + i_tick_height, i * rect.bottom / i_y_ticks);
 	}
 	p_dc->SelectObject(pen_old);
 
 	// if grids, draw scale text (dummy)
-	if (m_scopestruct.iXCells > 1 && m_scopestruct.iYCells > 1)
+	if (scope_structure_.iXCells > 1 && scope_structure_.iYCells > 1)
 	{
 		// convert value into text
 		CString cs;
-		cs.Format(_T("%.3f mV; %.3f ms"), static_cast<double>(m_scopestruct.yScaleUnitValue), static_cast<double>(m_scopestruct.xScaleUnitValue));
+		cs.Format(_T("%.3f mV; %.3f ms"), static_cast<double>(scope_structure_.yScaleUnitValue), static_cast<double>(scope_structure_.xScaleUnitValue));
 		const auto text_length = cs.GetLength();
 		// plot text
 		p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 		rect.DeflateRect(1, 1);
-		p_dc->SetTextColor(m_scopestruct.crScopeGrid);
+		p_dc->SetTextColor(scope_structure_.crScopeGrid);
 		p_dc->DrawText(cs, text_length, rect, DT_LEFT | DT_BOTTOM | DT_SINGLELINE);
 	}
 }
@@ -351,7 +295,7 @@ void ChartWnd::draw_grid_from_ruler(CDC* p_dc, const Ruler* pRuler) const
 		return;
 
 	CPen a_pen2;
-	a_pen2.CreatePen(PS_SOLID, 1, m_scopestruct.crScopeGrid);
+	a_pen2.CreatePen(PS_SOLID, 1, scope_structure_.crScopeGrid);
 	const auto p_old_pen = p_dc->SelectObject(&a_pen2);
 
 	// draw ticks and legends
@@ -408,9 +352,9 @@ void ChartWnd::draw_scale_from_ruler(CDC* p_dc, Ruler* pRuler)
 
 	CPen a_pen1;
 	CPen a_pen2;
-	a_pen1.CreatePen(PS_SOLID, 1, m_scopestruct.crScopeGrid);
+	a_pen1.CreatePen(PS_SOLID, 1, scope_structure_.crScopeGrid);
 	const auto p_old_pen = p_dc->SelectObject(&a_pen1);
-	a_pen2.CreatePen(PS_SOLID, 1, m_scopestruct.crScopeGrid);
+	a_pen2.CreatePen(PS_SOLID, 1, scope_structure_.crScopeGrid);
 	/*auto p_old_font = */
 	p_dc->SelectObject(&m_hFont);
 	CString str;
@@ -525,9 +469,9 @@ void ChartWnd::adjust_display_rect(CRect* pRect)
 	if (m_bNiceGrid)
 	{
 		if (m_pYRulerBar == nullptr)
-			m_displayRect.left += m_ordinateswidth;
+			m_displayRect.left += ordinates_width;
 		if (m_pXRulerBar == nullptr)
-			m_displayRect.bottom -= m_abcissaheight;
+			m_displayRect.bottom -= abscissa_height;
 	}
 }
 
@@ -540,18 +484,18 @@ void ChartWnd::draw_grid(CDC* p_dc)
 		draw_grid_evenly_spaced(p_dc);
 }
 
-void ChartWnd::set_nx_scale_cells(const int iCells, const int iTicks, const int iTickLine)
+void ChartWnd::set_nx_scale_cells(const int i_cells, const int i_ticks, const int i_tick_line)
 {
-	m_scopestruct.iXCells = iCells;
-	m_scopestruct.iXTicks = iTicks;
-	m_scopestruct.iXTickLine = iTickLine;
+	scope_structure_.iXCells = i_cells;
+	scope_structure_.iXTicks = i_ticks;
+	scope_structure_.iXTickLine = i_tick_line;
 }
 
-void ChartWnd::set_ny_scale_cells(const int iCells, const int iTicks, const int iTickLine)
+void ChartWnd::set_ny_scale_cells(const int i_cells, const int i_ticks, const int i_tick_line)
 {
-	m_scopestruct.iYCells = iCells;
-	m_scopestruct.iYTicks = iTicks;
-	m_scopestruct.iYTickLine = iTickLine;
+	scope_structure_.iYCells = i_cells;
+	scope_structure_.iYTicks = i_ticks;
+	scope_structure_.iYTickLine = i_tick_line;
 }
 
 void ChartWnd::send_my_message(const int code, const int code_parameter) const
@@ -580,19 +524,19 @@ void ChartWnd::prepare_dc(CDC* p_dc, const CPrintInfo* p_info)
 
 int ChartWnd::set_mouse_cursor_type(const int cursor_type)
 {
-	m_oldcursorType = m_cursorType;
+	old_cursor_type_ = cursor_type_;
 	ASSERT(NB_CURSORS > cursor_type);
 	ASSERT(0 <= cursor_type);
-	m_cursorType = cursor_type;
-	m_currCursor = m_cursor[m_cursorType];
-	m_currCursorMode = m_cursordragmode[m_cursorType];
+	cursor_type_ = cursor_type;
+	current_cursor_ = cursors_[cursor_type_];
+	current_cursor_mode_ = cursors_drag_mode_[cursor_type_];
 	return cursor_type;
 }
 
 void ChartWnd::set_mouse_cursor(const int cursor_type)
 {
 	set_mouse_cursor_type(cursor_type);
-	SetCursor(m_currCursor);
+	SetCursor(current_cursor_);
 }
 
 void ChartWnd::set_yw_ext_org(const int extent, const int zero)
@@ -617,14 +561,14 @@ void ChartWnd::release_cursor()
 
 BOOL ChartWnd::OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message) 
 {
-	SetCursor(m_currCursor);
+	SetCursor(current_cursor_);
 	return TRUE;
 }
 
 void ChartWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	int newcursor = m_cursorType + 1;
-	if (newcursor >= m_cursorIndexMax)
+	int newcursor = cursor_type_ + 1;
+	if (newcursor >= cursor_index_max_)
 		newcursor = 0;
 	post_my_message(HINT_SETMOUSECURSOR, newcursor);
 }
@@ -647,7 +591,7 @@ void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		m_ptCurr = point;
 
 		// take action according to cursor mode
-		switch (m_cursorType)
+		switch (cursor_type_)
 		{
 		// track horizontal & VT cursors if mouse HIT
 		case 0: // arrow (default)
@@ -785,7 +729,7 @@ void ChartWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	if (m_trackMode != TRACK_OFF)
 	{
 		release_cursor();
-		if (m_trackMode == TRACK_RECT && m_currCursorMode)
+		if (m_trackMode == TRACK_RECT && current_cursor_mode_)
 			invert_tracker(point);
 		m_trackMode = TRACK_OFF;
 	}
@@ -817,7 +761,7 @@ void ChartWnd::left_button_up_horizontal_tag(UINT nFlags, CPoint point)
 
 void ChartWnd::OnRButtonDown(UINT nFlags, CPoint point)
 {
-	switch (m_cursorType)
+	switch (cursor_type_)
 	{
 	case CURSOR_ZOOM:
 	case CURSOR_CROSS: // tracking type
@@ -843,7 +787,7 @@ void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 			release_cursor();
 			// skip too small a rectangle (5 pixels?)
 			CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
-			const short jitter = 3;
+			constexpr short jitter = 3;
 			if (rect_out.Height() < jitter && rect_out.Width() < jitter)
 			{
 				zoom_out();
@@ -857,10 +801,10 @@ void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 				m_iUndoZoom = -1;
 			}
 		}
-		if (m_cursorType == CURSOR_CROSS)
+		if (cursor_type_ == CURSOR_CROSS)
 			post_my_message(HINT_RMOUSEBUTTONUP, NULL);
 		else
-			post_my_message(HINT_SETMOUSECURSOR, m_oldcursorType);
+			post_my_message(HINT_SETMOUSECURSOR, old_cursor_type_);
 		break;
 
 	case TRACK_OFF:
@@ -868,7 +812,7 @@ void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 		if (m_bAllowProps)
 		{
 			const auto parms_old = new SCOPESTRUCT();
-			*parms_old = m_scopestruct;
+			*parms_old = scope_structure_;
 			DlgChartProps dlg;
 			dlg.m_pscope = this;
 			m_bAllowProps = FALSE; // inhibit properties
@@ -876,7 +820,7 @@ void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 			// if Cancel or Escape or anything else: restore previous values
 			if (IDOK != dlg.DoModal())
 			{
-				m_scopestruct = *parms_old;
+				scope_structure_ = *parms_old;
 				Invalidate();
 			}
 			else
@@ -894,7 +838,7 @@ void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 	m_trackMode = TRACK_OFF;
 }
 
-void ChartWnd::zoom_data(CRect* prevRect, CRect* newRect)
+void ChartWnd::zoom_data(CRect* prev_rect, CRect* new_rect)
 {
 }
 
@@ -1003,7 +947,7 @@ void ChartWnd::invert_tracker(CPoint point)
 	m_ptLast = point;
 }
 
-void ChartWnd::DisplayVTtags_Value(CDC* p_dc)
+void ChartWnd::display_vertical_tags(CDC* p_dc)
 {
 	const auto oldp = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
@@ -1021,7 +965,7 @@ void ChartWnd::DisplayVTtags_Value(CDC* p_dc)
 	p_dc->SetROP2(nold_rop);
 }
 
-void ChartWnd::DisplayHZtags(CDC* p_dc)
+void ChartWnd::display_horizontal_tags(CDC* p_dc)
 {
 	const auto pold = p_dc->SelectObject(&m_blackDottedPen);
 	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
@@ -1091,19 +1035,19 @@ void ChartWnd::xor_temp_vertical_tag(const int x_point)
 
 SCOPESTRUCT* ChartWnd::get_scope_parameters()
 {
-	return &m_scopestruct;
+	return &scope_structure_;
 }
 
-void ChartWnd::set_scope_parameters(SCOPESTRUCT* pStruct)
+void ChartWnd::set_scope_parameters(SCOPESTRUCT* p_struct)
 {
-	m_scopestruct = *pStruct;
+	scope_structure_ = *p_struct;
 }
 
 // bsetPlot:   TRUE=use DIB array to draw curves FALSE: do not use it
 // bsetSelect: TRUE=use a separate bitmap to draw selected curve
 void ChartWnd::set_b_use_dib(const BOOL b_set_plot)
 {
-	m_bUseDIB = b_set_plot;
+	b_use_dib_ = b_set_plot;
 }
 
 void ChartWnd::Serialize(CArchive& ar)
@@ -1138,7 +1082,7 @@ void ChartWnd::Serialize(CArchive& ar)
 		ar >> m_yVO;
 		ar >> m_yVE;
 	}
-	m_scopestruct.Serialize(ar);
+	scope_structure_.Serialize(ar);
 }
 
 void ChartWnd::plot_to_bitmap(CBitmap* p_bitmap)
@@ -1157,10 +1101,10 @@ int ChartWnd::hit_curve(CPoint point)
 
 void ChartWnd::set_x_scale_unit_value(float x)
 {
-	m_scopestruct.xScaleUnitValue = x;
+	scope_structure_.xScaleUnitValue = x;
 }
 
 void ChartWnd::set_y_scale_unit_value(float y)
 {
-	m_scopestruct.yScaleUnitValue = y;
+	scope_structure_.yScaleUnitValue = y;
 }

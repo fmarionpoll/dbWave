@@ -782,6 +782,7 @@
     <ClCompile Include="ADAcqDataDoc.cpp" />
     <ClCompile Include="ChartDataAD.cpp" />
     <ClCompile Include="ChartSpike.cpp" />
+    <ClCompile Include="CNiceUnit.cpp" />
     <ClCompile Include="Controls\GridComboEdit.cpp" />
     <ClCompile Include="Controls\InPlaceEdit.cpp" />
     <ClCompile Include="DlgOverwriteFileOptions.cpp" />
@@ -1366,6 +1367,7 @@
     <ClInclude Include="CDTBoardParameters.h" />
     <ClInclude Include="ChartDataAD.h" />
     <ClInclude Include="ChartSpike.h" />
+    <ClInclude Include="CNiceUnit.h" />
     <ClInclude Include="Controls\GridComboEdit.h" />
     <ClInclude Include="Controls\InPlaceEdit.h" />
     <ClInclude Include="DlgOverwriteFileOptions.h" />
