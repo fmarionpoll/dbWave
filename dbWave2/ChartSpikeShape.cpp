@@ -19,7 +19,7 @@ END_MESSAGE_MAP()
 ChartSpikeShape::ChartSpikeShape()
 {
 	set_b_use_dib(FALSE);
-	m_csEmpty = _T("no spikes (spikeshape)");
+	cs_empty_ = _T("no spikes (spikeshape)");
 }
 
 ChartSpikeShape::~ChartSpikeShape()
@@ -27,13 +27,13 @@ ChartSpikeShape::~ChartSpikeShape()
 
 void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 {
-	if (m_erasebkgnd)
+	if (b_erase_background_)
 		erase_background(p_dc);
 
 	// display data: trap error conditions
 	const auto n_saved_dc = p_dc->SaveDC();
 	p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
-	auto rect = m_displayRect;
+	auto rect = m_display_rect_;
 	rect.DeflateRect(1, 1);
 
 	get_extents();
@@ -60,7 +60,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 		{
 			if (!m_display_all_files)
 			{
-				p_dc->DrawText(m_csEmpty, m_csEmpty.GetLength(), rect, DT_LEFT);
+				p_dc->DrawText(cs_empty_, cs_empty_.GetLength(), rect, DT_LEFT);
 				return;
 			}
 			continue;
@@ -85,7 +85,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			i_first_spike = m_index_first_spike;
 		}
 		auto selected_pen_color = BLACK_COLOR;
-		if (m_plotmode == PLOT_ONECLASS || m_plotmode == PLOT_ONECOLOR)
+		if (plot_mode_ == PLOT_ONECLASS || plot_mode_ == PLOT_ONECOLOR)
 			selected_pen_color = SILVER_COLOR;
 		const auto old_pen = p_dc->SelectObject(&pen_table_[selected_pen_color]);
 
@@ -100,7 +100,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 
 			// select pen according to class
 			const auto spike_class = spike->get_class_id();
-			switch (m_plotmode)
+			switch (plot_mode_)
 			{
 			case PLOT_ONECLASSONLY:
 				if (spike_class != m_selected_class)
@@ -123,10 +123,10 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			p_dc->Polyline(&polyline_points_[0], spike_length);
 		}
 
-		if (m_plotmode == PLOT_ONECLASS || m_plotmode == PLOT_ONECOLOR)
+		if (plot_mode_ == PLOT_ONECLASS || plot_mode_ == PLOT_ONECOLOR)
 		{
-			selected_pen_color = m_colorselected;
-			if (m_plotmode == PLOT_ONECOLOR)
+			selected_pen_color = index_color_selected_;
+			if (plot_mode_ == PLOT_ONECOLOR)
 				selected_pen_color = m_selected_class % NB_COLORS;
 			p_dc->SelectObject(&pen_table_[selected_pen_color]);
 			for (auto i_spike = i_last_spike; i_spike >= i_first_spike; i_spike--)
@@ -151,14 +151,14 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			draw_flagged_spikes(p_dc);
 
 		// display tags
-		if (m_HZtags.get_tag_list_size() > 0)
+		if (horizontal_tags.get_tag_list_size() > 0)
 			display_horizontal_tags(p_dc);
 
-		if (m_VTtags.get_tag_list_size() > 0)
+		if (vertical_tags.get_tag_list_size() > 0)
 			display_vertical_tags(p_dc);
 
 		// display text
-		if (m_bText && m_plotmode == PLOT_ONECLASSONLY)
+		if (m_bText && plot_mode_ == PLOT_ONECLASSONLY)
 		{
 			TCHAR num[10];
 			wsprintf(num, _T("%i"), get_selected_class());
@@ -195,8 +195,8 @@ void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
 	// change coordinate settings
 	get_extents();
 	prepare_dc(p_dc);
-	p_dc->SetViewportOrg(m_displayRect.left, m_displayRect.Height() / 2);
-	p_dc->SetViewportExt(m_displayRect.right, -m_displayRect.Height());
+	p_dc->SetViewportOrg(m_display_rect_.left, m_display_rect_.Height() / 2);
+	p_dc->SetViewportExt(m_display_rect_.right, -m_display_rect_.Height());
 
 	constexpr auto pen_size = 1;
 	CPen new_pen(PS_SOLID, pen_size, color_table_[m_color_selected_spike]);
@@ -223,7 +223,7 @@ void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
 void ChartSpikeShape::display_flagged_spikes(const BOOL bHighLight)
 {
 	if (bHighLight)
-		draw_flagged_spikes(&m_PlotDC);
+		draw_flagged_spikes(&plot_dc_);
 	Invalidate();
 }
 
@@ -238,7 +238,7 @@ int ChartSpikeShape::display_ex_data(short* p_data, const int color)
 	}
 
 	CClientDC dc(this);
-	dc.IntersectClipRect(&m_clientRect);
+	dc.IntersectClipRect(&m_client_rect_);
 	prepare_dc(&dc);
 	CPen new_pen(PS_SOLID, 0, color_table_[color]);
 	const auto old_pen = dc.SelectObject(&new_pen);
@@ -265,8 +265,8 @@ void ChartSpikeShape::draw_spike(const Spike * spike)
 		CClientDC dc(this);
 		draw_spike_on_dc(spike, &dc);
 	}
-	else if (m_PlotDC.GetSafeHdc()) {
-		draw_spike_on_dc(spike, &m_PlotDC);
+	else if (plot_dc_.GetSafeHdc()) {
+		draw_spike_on_dc(spike, &plot_dc_);
 	}
 	Invalidate();
 }
@@ -274,15 +274,15 @@ void ChartSpikeShape::draw_spike(const Spike * spike)
 void ChartSpikeShape::draw_spike_on_dc(const Spike* spike, CDC * p_dc)
 {
 	const auto n_saved_dc = p_dc->SaveDC();
-	auto rect = m_displayRect;
+	auto rect = m_display_rect_;
 	p_dc->DPtoLP(rect);
 	p_dc->IntersectClipRect(&rect);
 
 	get_extents();
 	prepare_dc(p_dc);
 
-	p_dc->SetViewportOrg(m_displayRect.left, m_displayRect.Height() / 2 + m_displayRect.top);
-	p_dc->SetViewportExt(m_displayRect.Width(), -m_displayRect.Height());
+	p_dc->SetViewportOrg(m_display_rect_.left, m_display_rect_.Height() / 2 + m_display_rect_.top);
+	p_dc->SetViewportExt(m_display_rect_.Width(), -m_display_rect_.Height());
 
 	constexpr auto pen_size = 2;
 	CPen new_pen(PS_SOLID, pen_size, color_table_[m_color_selected_spike]);
@@ -298,20 +298,20 @@ void ChartSpikeShape::draw_spike_on_dc(const Spike* spike, CDC * p_dc)
 
 void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	if (!m_bLmouseDown)
+	if (!b_left_mouse_button_down_)
 	{
 		post_my_message(HINT_DROPPED, NULL);
 		return;
 	}
 
-	switch (m_trackMode)
+	switch (track_mode_)
 	{
 	case TRACK_BASELINE:
 		// curve was tracked
 	{
-		if (point.y != m_ptLast.y || point.x != m_ptLast.x)
+		if (point.y != m_pt_last_.y || point.x != m_pt_last_.x)
 			OnMouseMove(nFlags, point);
-		m_trackMode = TRACK_OFF;
+		track_mode_ = TRACK_OFF;
 		release_cursor();
 		ChartSpike::OnLButtonUp(nFlags, point);
 	}
@@ -321,12 +321,12 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 		// vertical tag was tracked
 	{
 		// convert pix into data value and back again
-		const auto val = MulDiv(point.x - m_xVO, m_xWE, m_xVE) + m_xWO;
-		m_VTtags.set_tag_val(m_HCtrapped, val);
-		point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
+		const auto val = MulDiv(point.x - m_x_vo_, m_x_we_, m_x_ve_) + m_x_wo_;
+		vertical_tags.set_tag_val(hc_trapped_, val);
+		point.x = MulDiv(val - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_;
 		xor_vertical_tag(point.x);
 		ChartSpike::OnLButtonUp(nFlags, point);
-		post_my_message(HINT_CHANGEVERTTAG, m_HCtrapped);
+		post_my_message(HINT_CHANGEVERTTAG, hc_trapped_);
 	}
 	break;
 
@@ -334,7 +334,7 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		// none of those: zoom data or  offset display
 		ChartSpike::OnLButtonUp(nFlags, point);
-		CRect rect_out(m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y);
+		CRect rect_out(m_pt_first_.x, m_pt_first_.y, m_pt_last_.x, m_pt_last_.y);
 		constexpr auto jitter = 3;
 		if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 		{
@@ -346,19 +346,19 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 		}
 
 		// perform action according to cursor type
-		auto rect_in = m_displayRect;
+		auto rect_in = m_display_rect_;
 		switch (cursor_type_)
 		{
 		case 0:
 			rect_out = rect_in;
-			rect_out.OffsetRect(m_ptFirst.x - m_ptLast.x, m_ptFirst.y - m_ptLast.y);
+			rect_out.OffsetRect(m_pt_first_.x - m_pt_last_.x, m_pt_first_.y - m_pt_last_.y);
 			post_my_message(HINT_DEFINEDRECT, NULL);
 			break;
 		case CURSOR_ZOOM:
 			zoom_data(&rect_in, &rect_out);
-			m_ZoomFrom = rect_in;
-			m_ZoomTo = rect_out;
-			m_iUndoZoom = 1;
+			rect_zoom_from_ = rect_in;
+			rect_zoom_to_ = rect_out;
+			i_undo_zoom_ = 1;
 			post_my_message(HINT_SETMOUSECURSOR, old_cursor_type_);
 			break;
 		default:
@@ -371,17 +371,17 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 
 void ChartSpikeShape::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	m_bLmouseDown = TRUE;
+	b_left_mouse_button_down_ = TRUE;
 	// call base class to test for horizontal cursor or XORing rectangle
-	if (m_VTtags.get_tag_list_size() > 0)
+	if (vertical_tags.get_tag_list_size() > 0)
 	{
-		for (auto i_tag = m_VTtags.get_tag_list_size() - 1; i_tag >= 0; i_tag--)
-			m_VTtags.set_tag_pixel(i_tag, MulDiv(m_VTtags.get_value(i_tag) - m_xWO, m_xVE, m_xWE) + m_xVO);
+		for (auto i_tag = vertical_tags.get_tag_list_size() - 1; i_tag >= 0; i_tag--)
+			vertical_tags.set_tag_pixel(i_tag, MulDiv(vertical_tags.get_value(i_tag) - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_);
 	}
 
 	// track rectangle or VT_tag?
 	ChartSpike::OnLButtonDown(nFlags, point);
-	if (current_cursor_mode_ != 0 || m_HCtrapped >= 0)
+	if (current_cursor_mode_ != 0 || hc_trapped_ >= 0)
 		return;
 
 	// test if mouse hit one spike
@@ -390,7 +390,7 @@ void ChartSpikeShape::OnLButtonDown(UINT nFlags, CPoint point)
 	if (m_hit_spike >= 0)
 	{
 		// cancel track rect mode
-		m_trackMode = TRACK_OFF;
+		track_mode_ = TRACK_OFF;
 		release_cursor();
 		if (nFlags & MK_SHIFT)
 			post_my_message(HINT_HITSPIKE_SHIFT, m_hit_spike);
@@ -418,18 +418,18 @@ void ChartSpikeShape::zoom_data(CRect * rFrom, CRect * rDest)
 	rDest->NormalizeRect();
 
 	// change y gain & y offset
-	const auto y_we = m_yWE; // save previous window extent
-	m_yWE = MulDiv(m_yWE, rDest->Height(), rFrom->Height());
-	m_yWO = m_yWO
-		- MulDiv(rFrom->top - m_yVO, m_yWE, m_yVE)
-		+ MulDiv(rDest->top - m_yVO, y_we, m_yVE);
+	const auto y_we = m_y_we_; // save previous window extent
+	m_y_we_ = MulDiv(m_y_we_, rDest->Height(), rFrom->Height());
+	m_y_wo_ = m_y_wo_
+		- MulDiv(rFrom->top - m_y_vo_, m_y_we_, m_y_ve_)
+		+ MulDiv(rDest->top - m_y_vo_, y_we, m_y_ve_);
 
 	// change index of first and last pt displayed
-	const auto x_we = m_xWE; // save previous window extent
-	m_xWE = MulDiv(m_xWE, rDest->Width(), rFrom->Width());
-	m_xWO = m_xWO
-		- MulDiv(rFrom->left - m_xVO, m_xWE, m_xVE)
-		+ MulDiv(rDest->left - m_xVO, x_we, m_xVE);
+	const auto x_we = m_x_we_; // save previous window extent
+	m_x_we_ = MulDiv(m_x_we_, rDest->Width(), rFrom->Width());
+	m_x_wo_ = m_x_wo_
+		- MulDiv(rFrom->left - m_x_vo_, m_x_we_, m_x_ve_)
+		+ MulDiv(rDest->left - m_x_vo_, x_we, m_x_ve_);
 
 	// display
 	Invalidate();
@@ -498,11 +498,11 @@ int ChartSpikeShape::hit_curve(const CPoint point)
 {
 	auto index_spike_hit = -1;
 	// convert device coordinates into logical coordinates
-	const auto mouse_x = MulDiv(point.x - m_xVO, m_xWE, m_xVE) + m_xWO;
+	const auto mouse_x = MulDiv(point.x - m_x_vo_, m_x_we_, m_x_ve_) + m_x_wo_;
 	if (mouse_x < 0 || mouse_x > p_spike_list->get_spike_length())
 		return index_spike_hit;
-	const auto mouse_y = MulDiv(point.y - m_yVO, m_yWE, m_yVE) + m_yWO;
-	const auto delta_y = MulDiv(3, m_yWE, m_yVE);
+	const auto mouse_y = MulDiv(point.y - m_y_vo_, m_y_we_, m_y_ve_) + m_y_wo_;
+	const auto delta_y = MulDiv(3, m_y_we_, m_y_ve_);
 
 	// loop through all spikes
 	auto index_last_spike = p_spike_list->get_spikes_count() - 1;
@@ -518,7 +518,7 @@ int ChartSpikeShape::hit_curve(const CPoint point)
 			&& (p_spike_list->get_spike(spike_index)->get_time() < m_lFirst
 				|| p_spike_list->get_spike(spike_index)->get_time() > m_lLast))
 			continue;
-		if (m_plotmode == PLOT_ONECLASSONLY
+		if (plot_mode_ == PLOT_ONECLASSONLY
 			&& p_spike_list->get_spike(spike_index)->get_class_id() != m_selected_class)
 			continue;
 
@@ -543,7 +543,7 @@ void ChartSpikeShape::get_extents()
 		file_last = p_dbwave_doc->db_get_n_records() - 1;
 	}
 
-	if (m_yWE == 1 || m_yWE == 0)
+	if (m_y_we_ == 1 || m_y_we_ == 0)
 	{
 		for (auto file_index = file_first; file_index <= file_last; file_index++)
 		{
@@ -556,7 +556,7 @@ void ChartSpikeShape::get_extents()
 			if (p_spike_list != nullptr)
 			{
 				get_extents_current_spk_list();
-				if (m_yWE != 0)
+				if (m_y_we_ != 0)
 					break;
 			}
 		}
@@ -572,25 +572,25 @@ void ChartSpikeShape::get_extents()
 
 void ChartSpikeShape::get_extents_current_spk_list()
 {
-	if (m_yWE == 1 || m_yWE == 0)
+	if (m_y_we_ == 1 || m_y_we_ == 0)
 	{
 		short value_max, value_min;
 		p_spike_list->get_total_max_min(TRUE, &value_max, &value_min);
-		m_yWE = MulDiv((value_max - value_min), 10, 9) + 1;
-		m_yWO = value_max / 2 + value_min / 2;
+		m_y_we_ = MulDiv((value_max - value_min), 10, 9) + 1;
+		m_y_wo_ = value_max / 2 + value_min / 2;
 	}
 
-	if (m_xWE <= 1)
+	if (m_x_we_ <= 1)
 	{
-		m_xWE = p_spike_list->get_spike_length();
-		m_xWO = 0;
+		m_x_we_ = p_spike_list->get_spike_length();
+		m_x_wo_ = 0;
 	}
 }
 
 void ChartSpikeShape::init_polypoint_x_axis()
 {
 	const auto n_elements = polyline_points_.GetSize();
-	m_xWE = n_elements + 1;
+	m_x_we_ = n_elements + 1;
 	ASSERT(n_elements > 0);
 
 	for (auto i = 0; i < n_elements; i++)
@@ -618,26 +618,26 @@ void ChartSpikeShape::Print(CDC * p_dc, const CRect * rect)
 	if (p_spike_list == nullptr || p_spike_list->get_spikes_count() == 0)
 		return;
 
-	const auto old_y_vo = m_yVO;
-	const auto old_y_ve = m_yVE;
-	const auto old_x_extent = m_xWE;
-	const auto old_x_origin = m_xWO;
+	const auto old_y_vo = m_y_vo_;
+	const auto old_y_ve = m_y_ve_;
+	const auto old_x_extent = m_x_we_;
+	const auto old_x_origin = m_x_wo_;
 
 	// size of the window
-	m_yVO = rect->Height() / 2 + rect->top;
-	m_yVE = -rect->Height();
+	m_y_vo_ = rect->Height() / 2 + rect->top;
+	m_y_ve_ = -rect->Height();
 
 	// check initial conditions
-	if (m_yWE == 1)
+	if (m_y_we_ == 1)
 	{
 		short value_max, value_min;
 		p_spike_list->get_total_max_min(TRUE, &value_max, &value_min);
-		m_yWE = value_max - value_min + 1;
-		m_yWO = (value_max + value_min) / 2;
+		m_y_we_ = value_max - value_min + 1;
+		m_y_wo_ = (value_max + value_min) / 2;
 	}
 
-	m_xWO = rect->left;
-	m_xWE = rect->Width() - 2;
+	m_x_wo_ = rect->left;
+	m_x_we_ = rect->Width() - 2;
 
 	const auto spike_length = p_spike_list->get_spike_length();
 	if (polyline_points_.GetSize() != spike_length)
@@ -649,15 +649,15 @@ void ChartSpikeShape::Print(CDC * p_dc, const CRect * rect)
 		polyline_points_[i].x = rect->left + MulDiv(i, rect->Width(), spike_length);
 
 	int selected_color = BLACK_COLOR;
-	switch (m_plotmode)
+	switch (plot_mode_)
 	{
 		//case PLOT_BLACK:			selpen = BLACK_COLOR; break;
 		//case PLOT_ONECLASSONLY:	selpen = BLACK_COLOR; break;
 	case PLOT_ONECLASS:
-		selected_color = m_colorbackgr;
+		selected_color = index_color_background_;
 		break;
 	case PLOT_ALLGREY:
-		selected_color = m_colorbackgr;
+		selected_color = index_color_background_;
 		break;
 	default:
 		break;
@@ -686,18 +686,18 @@ void ChartSpikeShape::Print(CDC * p_dc, const CRect * rect)
 		}
 
 		const auto spike_class = p_spike_list->get_spike(spike_index)->get_class_id();
-		if (m_plotmode == PLOT_ONECLASSONLY && spike_class != m_selected_class)
+		if (plot_mode_ == PLOT_ONECLASSONLY && spike_class != m_selected_class)
 			continue;
-		if (m_plotmode == PLOT_ONECLASS && spike_class == m_selected_class)
+		if (plot_mode_ == PLOT_ONECLASS && spike_class == m_selected_class)
 			continue;
 
 		plot_array_to_dc(p_dc, spike->get_p_data());
 	}
 
 	// display selected class if requested by option
-	if (m_plotmode == PLOT_ONECLASS)
+	if (plot_mode_ == PLOT_ONECLASS)
 	{
-		p_dc->SelectObject(&pen_table_[m_colorselected]);
+		p_dc->SelectObject(&pen_table_[index_color_selected_]);
 		for (auto spike_index = spike_index_last; spike_index >= spike_index_first; spike_index--)
 		{
 			Spike* spike = p_spike_list->get_spike(spike_index);
@@ -726,10 +726,10 @@ void ChartSpikeShape::Print(CDC * p_dc, const CRect * rect)
 	p_dc->SelectObject(old_pen);
 	p_dc->RestoreDC(n_saved_dc);
 
-	m_xWE = old_x_extent;
-	m_xWO = old_x_origin;
-	m_yVO = old_y_vo;
-	m_yVE = old_y_ve;
+	m_x_we_ = old_x_extent;
+	m_x_wo_ = old_x_origin;
+	m_y_vo_ = old_y_vo;
+	m_y_ve_ = old_y_ve;
 }
 
 void ChartSpikeShape::plot_array_to_dc(CDC * p_dc, short* p_array)
@@ -738,7 +738,7 @@ void ChartSpikeShape::plot_array_to_dc(CDC * p_dc, short* p_array)
 	for (auto i = 0; i < n_elements; i++, p_array++)
 	{
 		auto y = *p_array;
-		y = static_cast<short>(MulDiv(y - m_yWO, m_yVE, m_yWE) + m_yVO);
+		y = static_cast<short>(MulDiv(y - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_);
 		polyline_points_[i].y = y;
 	}
 
@@ -756,9 +756,9 @@ void ChartSpikeShape::plot_array_to_dc(CDC * p_dc, short* p_array)
 void ChartSpikeShape::move_vt_track(int i_track, int new_value)
 {
 	CPoint point;
-	m_ptLast.x = MulDiv(m_VTtags.get_value(i_track) - m_xWO, m_xVE, m_xWE) + m_xVO;
-	m_VTtags.set_tag_val(i_track, new_value);
-	point.x = MulDiv(new_value - m_xWO, m_xVE, m_xWE) + m_xVO;
+	m_pt_last_.x = MulDiv(vertical_tags.get_value(i_track) - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_;
+	vertical_tags.set_tag_val(i_track, new_value);
+	point.x = MulDiv(new_value - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_;
 	xor_vertical_tag(point.x);
 }
 
@@ -806,7 +806,7 @@ void ChartSpikeShape::Serialize(CArchive & ar)
 float ChartSpikeShape::get_display_max_mv()
 {
 	get_extents();
-	return (p_spike_list->get_acq_volts_per_bin() * 1000.f * static_cast<float>(m_yWE - m_yWO - p_spike_list->get_acq_bin_zero()));
+	return (p_spike_list->get_acq_volts_per_bin() * 1000.f * static_cast<float>(m_y_we_ - m_y_wo_ - p_spike_list->get_acq_bin_zero()));
 }
 
 float ChartSpikeShape::get_display_min_mv()
@@ -814,7 +814,7 @@ float ChartSpikeShape::get_display_min_mv()
 	if (p_spike_list == nullptr)
 		return 1.f;
 	get_extents();
-	return (p_spike_list->get_acq_volts_per_bin() * 1000.f * static_cast<float>(m_yWO - m_yWE - p_spike_list->get_acq_bin_zero()));
+	return (p_spike_list->get_acq_volts_per_bin() * 1000.f * static_cast<float>(m_y_wo_ - m_y_we_ - p_spike_list->get_acq_bin_zero()));
 }
 
 float ChartSpikeShape::get_extent_m_v()
@@ -822,7 +822,7 @@ float ChartSpikeShape::get_extent_m_v()
 	if (p_spike_list == nullptr)
 		return 1.f;
 	get_extents();
-	return (p_spike_list->get_acq_volts_per_bin() * static_cast<float>(m_yWE) * 1000.f);
+	return (p_spike_list->get_acq_volts_per_bin() * static_cast<float>(m_y_we_) * 1000.f);
 }
 
 float ChartSpikeShape::get_extent_ms()
@@ -830,7 +830,7 @@ float ChartSpikeShape::get_extent_ms()
 	if (p_spike_list == nullptr)
 		return 1.f;
 	get_extents();
-	return (static_cast<float>(1000.0 * m_xWE) / p_spike_list->get_acq_sampling_rate());
+	return (static_cast<float>(1000.0 * m_x_we_) / p_spike_list->get_acq_sampling_rate());
 }
 
 

@@ -90,16 +90,16 @@ void CMeasureOptionsPage::OnSinglechannel()
 
 void CMeasureOptionsPage::OnVerticaltags()
 {
-	m_pChartDataWnd->m_HZtags.remove_all_tags();
-	m_pChartDataWnd->m_VTtags.copy_tag_list(m_pdatDoc->get_vt_tags_list());
+	m_pChartDataWnd->horizontal_tags.remove_all_tags();
+	m_pChartDataWnd->vertical_tags.copy_tag_list(m_pdatDoc->get_vt_tags_list());
 	m_pChartDataWnd->Invalidate();
 	ShowLimitsParms(FALSE);
 }
 
 void CMeasureOptionsPage::OnHorizontaltags()
 {
-	m_pChartDataWnd->m_VTtags.remove_all_tags();
-	m_pChartDataWnd->m_HZtags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
+	m_pChartDataWnd->vertical_tags.remove_all_tags();
+	m_pChartDataWnd->horizontal_tags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
 	m_pChartDataWnd->Invalidate();
 	ShowLimitsParms(FALSE);
 }
@@ -130,13 +130,13 @@ void CMeasureOptionsPage::SaveOptions()
 	{
 	case IDC_VERTICALTAGS:
 		i_id = 0;
-		m_pChartDataWnd->m_HZtags.remove_all_tags();
-		m_pChartDataWnd->m_VTtags.copy_tag_list(m_pdatDoc->get_vt_tags_list());
+		m_pChartDataWnd->horizontal_tags.remove_all_tags();
+		m_pChartDataWnd->vertical_tags.copy_tag_list(m_pdatDoc->get_vt_tags_list());
 		break;
 	case IDC_HORIZONTALTAGS:
 		i_id = 1;
-		m_pChartDataWnd->m_VTtags.remove_all_tags();
-		m_pChartDataWnd->m_HZtags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
+		m_pChartDataWnd->vertical_tags.remove_all_tags();
+		m_pChartDataWnd->horizontal_tags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
 		break;
 	case IDC_RECTANGLETAG: i_id = 2;
 		break;

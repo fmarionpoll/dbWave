@@ -49,7 +49,7 @@ public:
 	int get_selected_class() const { return m_selected_class; }
 
 	void set_plot_mode(int mode, int selected_class);
-	int get_plot_mode() const { return m_plotmode; }
+	int get_plot_mode() const { return plot_mode_; }
 
 	void set_current_class(int current_class) { m_current_class = current_class; }
 	int get_current_class() const { return m_current_class; }

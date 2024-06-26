@@ -170,7 +170,7 @@ void ViewSpikes::set_add_spikes_mode(int mouse_cursor_type)
 	auto hWnd = GetSafeHwnd();
 	if (!m_b_add_spike_mode)
 		hWnd = nullptr;
-	m_ChartDataWnd.ReflectMouseMoveMessg(hWnd);
+	m_ChartDataWnd.reflect_mouse_move_message(hWnd);
 	m_spikeClassListBox.ReflectBarsMouseMoveMessg(hWnd);
 	m_ChartDataWnd.SetTrackSpike(m_b_add_spike_mode, m_pspkDP->extract_n_points, m_pspkDP->detect_pre_threshold,
 	                             m_pspkDP->extract_channel);
@@ -657,7 +657,7 @@ void ViewSpikes::updateLegends(BOOL bUpdateInterface)
 	auto hwnd = GetSafeHwnd();
 	if (!m_b_add_spike_mode)
 		hwnd = nullptr;
-	m_ChartDataWnd.ReflectMouseMoveMessg(hwnd);
+	m_ChartDataWnd.reflect_mouse_move_message(hwnd);
 	m_spikeClassListBox.ReflectBarsMouseMoveMessg(hwnd);
 	m_ChartDataWnd.SetTrackSpike(m_b_add_spike_mode, m_pspkDP->extract_n_points, m_pspkDP->detect_pre_threshold,
 	                             m_pspkDP->extract_channel);

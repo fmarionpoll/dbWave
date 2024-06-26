@@ -413,9 +413,9 @@ boolean ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 		m_chart_data_filtered.add_channel_list_item(0, 0);
 		CChanlistItem* channel_item = m_chart_data_filtered.get_channel_list_item(0);
 		channel_item->SetColor(0);
-		m_chart_data_filtered.m_HZtags.remove_all_tags();
+		m_chart_data_filtered.horizontal_tags.remove_all_tags();
 		m_p_detect_parameters->detect_threshold_bin = channel_item->ConvertVoltsToDataBins(m_p_detect_parameters->detect_threshold_mv / 1000.f);
-		m_chart_data_filtered.m_HZtags.add_tag(m_p_detect_parameters->detect_threshold_bin, 0);
+		m_chart_data_filtered.horizontal_tags.add_tag(m_p_detect_parameters->detect_threshold_bin, 0);
 	}
 
 	//add all channels to detection window
@@ -614,8 +614,8 @@ void ViewSpikeDetection::OnInitialUpdate()
 	dbTableView::OnInitialUpdate();
 
 	// load file data
-	if (m_chart_data_filtered.m_HZtags.get_tag_list_size() < 1)
-		m_chart_data_filtered.m_HZtags.add_tag(0, 0);
+	if (m_chart_data_filtered.horizontal_tags.get_tag_list_size() < 1)
+		m_chart_data_filtered.horizontal_tags.add_tag(0, 0);
 
 	update_file_parameters(TRUE);
 	m_chart_data_filtered.set_scope_parameters(&(options_view_data->viewdata));
@@ -644,10 +644,10 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 		// ----------------------------- move horizontal cursor / source data
 	case HINT_MOVEHZTAG:
-		m_p_detect_parameters->detect_threshold_bin = m_chart_data_filtered.m_HZtags.get_value(threshold);
+		m_p_detect_parameters->detect_threshold_bin = m_chart_data_filtered.horizontal_tags.get_value(threshold);
 		m_thresholdval = m_chart_data_filtered.get_channel_list_item(0)
 			->ConvertDataBinsToVolts(
-				m_chart_data_filtered.m_HZtags.get_value(threshold)) * 1000.f;
+				m_chart_data_filtered.horizontal_tags.get_value(threshold)) * 1000.f;
 		m_p_detect_parameters->detect_threshold_mv = m_thresholdval;
 		mm_thresholdval.m_bEntryDone = TRUE;
 		OnEnChangeThresholdval();
@@ -731,9 +731,9 @@ LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	{
 		int lvalue = m_pSpkDoc->m_stimulus_intervals.GetAt(threshold);
 		if (i_id == m_chart_data_filtered.GetDlgCtrlID())
-			lvalue = m_chart_data_filtered.m_VTtags.get_tag_l_val(threshold);
+			lvalue = m_chart_data_filtered.vertical_tags.get_tag_l_val(threshold);
 		else if (i_id == m_chart_data_source.GetDlgCtrlID())
-			lvalue = m_chart_data_source.m_VTtags.get_tag_l_val(threshold);
+			lvalue = m_chart_data_source.vertical_tags.get_tag_l_val(threshold);
 
 		m_pSpkDoc->m_stimulus_intervals.SetAt(threshold, lvalue);
 		update_VT_tags();
@@ -1962,8 +1962,8 @@ void ViewSpikeDetection::update_combo_box()
 	m_chart_data_filtered.set_channel_list_y(0, m_p_detect_parameters->detect_channel, m_p_detect_parameters->detect_transform);
 	m_p_detect_parameters->detect_threshold_bin = m_chart_data_filtered.get_channel_list_item(0)->ConvertVoltsToDataBins(
 		m_thresholdval / 1000.f);
-	m_chart_data_filtered.m_HZtags.set_tag_chan(0, 0);
-	m_chart_data_filtered.m_HZtags.set_tag_val(0, m_p_detect_parameters->detect_threshold_bin);
+	m_chart_data_filtered.horizontal_tags.set_tag_chan(0, 0);
+	m_chart_data_filtered.horizontal_tags.set_tag_val(0, m_p_detect_parameters->detect_threshold_bin);
 	m_p_detect_parameters->detect_threshold_mv = m_thresholdval;
 }
 
@@ -1982,18 +1982,18 @@ void ViewSpikeDetection::update_legend_detection_wnd()
 
 void ViewSpikeDetection::update_VT_tags()
 {
-	m_chart_spike_bar.m_VTtags.remove_all_tags();
-	m_chart_data_filtered.m_VTtags.remove_all_tags();
-	m_chart_data_source.m_VTtags.remove_all_tags();
+	m_chart_spike_bar.vertical_tags.remove_all_tags();
+	m_chart_data_filtered.vertical_tags.remove_all_tags();
+	m_chart_data_source.vertical_tags.remove_all_tags();
 	if (m_pSpkDoc->m_stimulus_intervals.n_items == 0)
 		return;
 
 	for (auto i = 0; i < m_pSpkDoc->m_stimulus_intervals.GetSize(); i++)
 	{
 		const int cx = m_pSpkDoc->m_stimulus_intervals.GetAt(i);
-		m_chart_spike_bar.m_VTtags.add_l_tag(cx, 0);
-		m_chart_data_filtered.m_VTtags.add_l_tag(cx, 0);
-		m_chart_data_source.m_VTtags.add_l_tag(cx, 0);
+		m_chart_spike_bar.vertical_tags.add_l_tag(cx, 0);
+		m_chart_data_filtered.vertical_tags.add_l_tag(cx, 0);
+		m_chart_data_source.vertical_tags.add_l_tag(cx, 0);
 	}
 }
 
@@ -2993,10 +2993,10 @@ void ViewSpikeDetection::update_detection_controls()
 
 	const auto detect_threshold = detect_parameters->detect_threshold_bin;
 	m_thresholdval = channel_item->ConvertDataBinsToVolts(detect_threshold) * 1000.f;
-	if (m_chart_data_filtered.m_HZtags.get_tag_list_size() < 1)
-		m_chart_data_filtered.m_HZtags.add_tag(detect_threshold, 0);
+	if (m_chart_data_filtered.horizontal_tags.get_tag_list_size() < 1)
+		m_chart_data_filtered.horizontal_tags.add_tag(detect_threshold, 0);
 	else
-		m_chart_data_filtered.m_HZtags.set_tag_val(0, detect_threshold);
+		m_chart_data_filtered.horizontal_tags.set_tag_val(0, detect_threshold);
 
 	// update spike channel displayed
 	m_chart_spike_bar.set_spike_list(m_pSpkList);

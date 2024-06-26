@@ -8,7 +8,7 @@ constexpr auto RANGE_ALL = 0;
 constexpr auto RANGE_TIMEINTERVALS = 1;
 constexpr auto RANGE_INDEX = 2;
 
-// display parameters: m_plotmode
+// display parameters: plot_mode_
 constexpr auto PLOT_BLACK = 0;
 constexpr auto PLOT_ONECLASSONLY = 1;
 constexpr auto PLOT_ONECLASS = 2;
@@ -38,8 +38,8 @@ public:
 	DECLARE_SERIAL(ChartWnd)
 	void Serialize(CArchive& archive) override;
 
-	virtual BOOL Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID,
-	                    CCreateContext* pContext = nullptr);
+	virtual BOOL Create(LPCTSTR lpsz_window_name, DWORD dw_style, const RECT& rect, CWnd* p_parent_wnd, UINT n_id,
+	                    CCreateContext* p_context = nullptr);
 	virtual SCOPESTRUCT* get_scope_parameters();
 	virtual void set_scope_parameters(SCOPESTRUCT* p_struct);
 	virtual int set_mouse_cursor_type(int cursor_type);
@@ -52,30 +52,30 @@ public:
 	void PlotToBitmap(CDC* p_dc);
 	static COLORREF get_color(const int color_index) { return color_table_[color_index]; }
 	static void set_color_table_at(const int color_index, const COLORREF color_ref) { color_table_[color_index] = color_ref; }
-	int find_color_index(COLORREF color_ref);
+	static int find_color_index(COLORREF color_ref);
 
-	void set_string(const CString& cs) { m_csEmpty = cs; }
+	void set_string(const CString& cs) { cs_empty_ = cs; }
 
 	void set_b_use_dib(BOOL b_set_plot); // use DIB or not
 	void set_display_area_size(int cx, int cy); // set size of the display area
 
-	CSize get_rect_size() const { return {m_displayRect.Width() + 1, m_displayRect.Height() + 1}; }
-	int get_rect_height() const { return m_displayRect.Height() + 1; }
-	int get_rect_width() const { return m_displayRect.Width() + 1; }
+	CSize get_rect_size() const { return {m_display_rect_.Width() + 1, m_display_rect_.Height() + 1}; }
+	int get_rect_height() const { return m_display_rect_.Height() + 1; }
+	int get_rect_width() const { return m_display_rect_.Width() + 1; }
 	int get_mouse_cursor_type() const { return cursor_type_; }
 	void set_mouse_cursor(int cursor_type);
 
 	void set_yw_ext_org(int extent, int zero);
 	void set_xw_ext_org(const int extent, const int zero)
 	{
-		m_xWE = extent;
-		m_xWO = zero;
+		m_x_we_ = extent;
+		m_x_wo_ = zero;
 	}
 
-	int get_yw_extent() const { return m_yWE; }
-	int get_yw_org() const { return m_yWO; }
-	int get_xw_extent() const { return m_xWE; }
-	int get_xw_org() const { return m_xWO; }
+	int get_yw_extent() const { return m_y_we_; }
+	int get_yw_org() const { return m_y_wo_; }
+	int get_xw_extent() const { return m_x_we_; }
+	int get_xw_org() const { return m_x_wo_; }
 
 	auto set_nx_scale_cells(int i_cells, int i_ticks = 0, int i_tick_line = 0) -> void;
 	void set_ny_scale_cells(int i_cells, int i_ticks = 0, int i_tick_line = 0);
@@ -83,8 +83,8 @@ public:
 	int get_ny_scale_cells() const { return scope_structure_.iYCells; }
 	void set_x_scale_unit_value(float x);
 	void set_y_scale_unit_value(float y);
-	void attach_external_x_ruler(RulerBar* p_x_ruler) { m_pXRulerBar = p_x_ruler; }
-	void attach_external_y_ruler(RulerBar* p_y_ruler) { m_pYRulerBar = p_y_ruler; }
+	void attach_external_x_ruler(RulerBar* p_x_ruler) { x_ruler_bar = p_x_ruler; }
+	void attach_external_y_ruler(RulerBar* p_y_ruler) { y_ruler_bar = p_y_ruler; }
 
 	void xor_vertical_tag(int x_point);
 	void xor_temp_vertical_tag(int x_point);
@@ -92,104 +92,104 @@ public:
 
 	void reset_xor_tag()
 	{
-		m_ptLast.x = -1;
-		m_ptLast.y = -1;
+		m_pt_last_.x = -1;
+		m_pt_last_.y = -1;
 	}
 
-	void ReflectMouseMoveMessg(HWND hwnd) { m_hwndReflect = hwnd; }
+	void reflect_mouse_move_message(const HWND h_window) { m_hwnd_reflect_ = h_window; }
 	void set_cursor_max_on_dbl_click(const int imax) { cursor_index_max_ = imax; }
 	void plot_to_bitmap(CBitmap* p_bitmap);
 	void draw_grid(CDC* p_dc);
-	void adjust_display_rect(CRect* rect);
+	void adjust_display_rect(const CRect* rect);
 	BOOL get_b_draw_frame() const { return scope_structure_.bDrawframe; }
-	void set_b_draw_frame(BOOL flag) { scope_structure_.bDrawframe = flag; }
-	CRect get_defined_rect() const { return {m_ptFirst.x, m_ptFirst.y, m_ptLast.x, m_ptLast.y}; }
+	void set_b_draw_frame(const BOOL flag) { scope_structure_.bDrawframe = flag; }
+	CRect get_defined_rect() const { return {m_pt_first_.x, m_pt_first_.y, m_pt_last_.x, m_pt_last_.y}; }
 	void set_bottom_comment(const BOOL flag, const CString& cs)
 	{
-		m_csBottomComment = cs;
-		m_bBottomComment = flag;
+		cs_bottom_comment = cs;
+		b_bottom_comment = flag;
 	}
 
-	Ruler m_xRuler{};
-	Ruler m_yRuler{};
-	CFont m_hFont{};
-	BOOL m_bNiceGrid = false;
+	Ruler x_ruler{};
+	Ruler y_ruler{};
+	CFont h_font{};
+	BOOL b_nice_grid = false;
 	int abscissa_height = 10;
 	int ordinates_width = 25;
-	RulerBar* m_pXRulerBar = nullptr;
-	RulerBar* m_pYRulerBar = nullptr;
+	RulerBar* x_ruler_bar = nullptr;
+	RulerBar* y_ruler_bar = nullptr;
 
-	TagList m_HZtags{}; // List of horizontal tag lines
-	TagList m_VTtags{}; // List of vertical tag lines
-	CString m_csBottomComment{};
-	BOOL m_bBottomComment = false;
+	TagList horizontal_tags{}; 
+	TagList vertical_tags{}; 
+	CString cs_bottom_comment{};
+	BOOL b_bottom_comment = false;
 
 	// Implementation
 protected:
-	static int cursors_count_; // objects counter
-	static HCURSOR cursors_[NB_CURSORS]; // array with cursor handles
+	static int cursors_count_; 
+	static HCURSOR cursors_[NB_CURSORS]; 
 	static int cursors_drag_mode_[NB_CURSORS]; // cursor mode: 0=invert rect; 1=catch object
 	int cursor_index_max_ = NB_CURSORS;
-	int cursor_type_ = 0; // current cursor
+	int cursor_type_ = 0; 
 	int old_cursor_type_ = 0;
-	HCURSOR current_cursor_{}; // handle to current cursor
+	HCURSOR handle_current_cursor_{}; 
 	int current_cursor_mode_ = 0; // current cursor drag mode
-	static COLORREF color_table_[NB_COLORS]; // array with colorref
+	static COLORREF color_table_[NB_COLORS]; // array with color ref
 
 	CPen pen_table_[NB_COLORS]; // table with CPen objects (same colors as color table
-	BOOL m_bLmouseDown = false;
+	BOOL b_left_mouse_button_down_ = false;
 	BOOL b_use_dib_ = false;
-	CDC m_PlotDC{};
-	CWordArray m_arrayMark{};
-	CPen m_blackDottedPen{};
-	CString m_csEmpty;
+	CDC plot_dc_{};
+	CWordArray array_mark_{};
+	CPen black_dotted_pen_{};
+	CString cs_empty_;
 	SCOPESTRUCT scope_structure_{};
 
-	int m_plotmode = 0;
-	int m_colorbackgr = SILVER_COLOR;
-	int m_colorselected = BLACK_COLOR;
-	BOOL m_erasebkgnd = TRUE; // erase background (flag)
-	BOOL m_bVTtagsLONG = FALSE; // flag: TRUE if VTtags are defined as long
-	long m_liFirst = 0; // file position of first left pixel
-	long m_liLast = 0; // file position of last right pixel
-	long m_liJitter{}; // file position range corresponding mouse jitter
+	int plot_mode_ = 0;
+	int index_color_background_ = SILVER_COLOR;
+	int index_color_selected_ = BLACK_COLOR;
+	BOOL b_erase_background_ = TRUE; // erase background (flag)
+	BOOL b_vertical_tags_as_long_ = FALSE; // flag: TRUE if VT tags are defined as long
+	long file_position_first_left_pixel_ = 0; // file position of first left pixel
+	long file_position_last_right_pixel_ = 0; // file position of last right pixel
+	long file_position_equivalent_to_mouse_jitter_{}; // file position range corresponding mouse jitter
 
 	// plotting options - parameters for PLOT_WITHINBOUNDS
-	int m_plotwithin_mode{};
-	int m_lowerlimit{};
-	int m_upperlimit{};
-	int m_color_withinlimits{};
-	int m_color_outsidelimits{};
+	int plot_within_mode_{};
+	int lower_limit_{};
+	int upper_limit_{};
+	int color_index_within_limits_{};
+	int color_index_outside_limits_{};
 
 	// mouse tracking modes
-	int m_HCtrapped{}; // cursor index trapped by the mouse
-	int m_trackMode = TRACK_OFF;
+	int hc_trapped_{}; // cursor index trapped by the mouse
+	int track_mode_ = TRACK_OFF;
 
-	int m_xWO = 0; // x origin, extent / window & view
-	int m_xWE = 1;
-	int m_xVO = 0;
-	int m_xVE = 1;
-	int m_yWO = 0; // y origin, extent / window & view
-	int m_yWE = 1;
-	int m_yVO = 0;
-	int m_yVE = 1;
+	int m_x_wo_ = 0; // x origin, extent / window & view
+	int m_x_we_ = 1;
+	int m_x_vo_ = 0;
+	int m_x_ve_ = 1;
+	int m_y_wo_ = 0; // y origin, extent / window & view
+	int m_y_we_ = 1;
+	int m_y_vo_ = 0;
+	int m_y_ve_ = 1;
 
-	int m_curTrack{}; // threshold  tracked
-	CPoint m_ptFirst{};
-	CPoint m_ptCurr{};
-	CPoint m_ptLast{};
-	CRect m_clientRect{};
-	CRect m_displayRect{};
+	int m_cur_track_{}; // threshold  tracked
+	CPoint m_pt_first_{};
+	CPoint m_pt_curr_{};
+	CPoint m_pt_last_{};
+	CRect m_client_rect_{};
+	CRect m_display_rect_{};
 
-	int m_cxjitter; // mouse horizontal hitter
-	int m_cyjitter; // mouse vertical jitter
-	CRect m_ZoomFrom; // temp rect
-	CRect m_ZoomTo; // temp rect
-	int m_iUndoZoom = 0; // 1: rect+ stored; -1: rect- stored; 0: none stored (not implemented)
+	int cx_jitter_; // mouse horizontal hitter
+	int cy_jitter_; // mouse vertical jitter
+	CRect rect_zoom_from_; // temp rect
+	CRect rect_zoom_to_; // temp rect
+	int i_undo_zoom_ = 0; // 1: rect+ stored; -1: rect- stored; 0: none stored (not implemented)
 
-	BOOL m_bAllowProps = true;
-	HWND m_hwndReflect = nullptr;
-	Tag* m_tempVTtag = nullptr;
+	BOOL m_b_allow_props_ = true;
+	HWND m_hwnd_reflect_ = nullptr;
+	Tag* m_temp_vertical_tag_ = nullptr;
 
 protected:
 	void PreSubclassWindow() override;
@@ -209,13 +209,13 @@ protected:
 	void zoom_out();
 	void zoom_pop();
 	void draw_grid_evenly_spaced(CDC* p_dc) const;
-	void draw_grid_from_ruler(CDC* p_dc, const Ruler* pRuler) const;
+	void draw_grid_from_ruler(CDC* p_dc, const Ruler* p_ruler) const;
 	void draw_grid_nicely_spaced(CDC* p_dc);
-	void draw_scale_from_ruler(CDC* p_dc, Ruler* pRuler);
+	void draw_scale_from_ruler(CDC* p_dc, const Ruler* p_ruler);
 
 	// Generated message map functions
 protected:
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnSize(UINT n_type, int cx, int cy);
 	afx_msg BOOL OnEraseBkgnd(CDC* p_dc);
 	afx_msg void OnPaint();
 	afx_msg BOOL OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message);

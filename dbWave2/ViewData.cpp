@@ -135,7 +135,7 @@ void ViewData::OnInitialUpdate()
 	m_ADC_xRulerBar.AttachScopeWnd(&m_ChartDataWnd, TRUE);
 	m_ChartDataWnd.attach_external_x_ruler(&m_ADC_xRulerBar);
 	m_ChartDataWnd.attach_external_y_ruler(&m_ADC_yRulerBar);
-	m_ChartDataWnd.m_bNiceGrid = TRUE;
+	m_ChartDataWnd.b_nice_grid = TRUE;
 
 	define_stretch_parameters();
 
@@ -232,10 +232,10 @@ void ViewData::update_channel(const int channel)
 	else 
 	{
 		if (m_cursor_state == CURSOR_CROSS && mdMO->wOption == 1
-			&& m_ChartDataWnd.m_HZtags.get_tag_list_size() > 0)
+			&& m_ChartDataWnd.horizontal_tags.get_tag_list_size() > 0)
 		{
-			for (auto i = 0; i < m_ChartDataWnd.m_HZtags.get_tag_list_size(); i++)
-				m_ChartDataWnd.m_HZtags.set_tag_chan(i, m_channel_selected);
+			for (auto i = 0; i < m_ChartDataWnd.horizontal_tags.get_tag_list_size(); i++)
+				m_ChartDataWnd.horizontal_tags.set_tag_chan(i, m_channel_selected);
 			UpdateHZtagsVal();
 			m_ChartDataWnd.Invalidate();
 		}
@@ -333,20 +333,20 @@ void ViewData::OnEditCopy()
 			comments += content;
 			m_dc.TextOut(x_column, y_pixels_row, comments);
 			y_pixels_row += line_height;
-			comments.Format(_T("Vertical bar (ch. 0) = %g mV"), m_ChartDataWnd.m_yRuler.GetScaleIncrement());
+			comments.Format(_T("Vertical bar (ch. 0) = %g mV"), m_ChartDataWnd.y_ruler.GetScaleIncrement());
 			m_dc.TextOut(x_column, y_pixels_row, comments);
 			y_pixels_row += line_height;
-			comments.Format(_T("Horizontal bar = %g s"), m_ChartDataWnd.m_xRuler.GetScaleIncrement());
+			comments.Format(_T("Horizontal bar = %g s"), m_ChartDataWnd.x_ruler.GetScaleIncrement());
 			m_dc.TextOut(x_column, y_pixels_row, comments);
 			y_pixels_row += line_height;
 
 			// bars
 			const auto p_old_brush = static_cast<CBrush*>(m_dc.SelectStockObject(BLACK_BRUSH));
 			m_dc.MoveTo(0, y_pixels_row);
-			const auto bottom = m_ChartDataWnd.m_yRuler.GetScaleUnitPixels(rect.Height());
+			const auto bottom = m_ChartDataWnd.y_ruler.GetScaleUnitPixels(rect.Height());
 			m_dc.LineTo(0, y_pixels_row - bottom);
 			m_dc.MoveTo(0, y_pixels_row);
-			const auto left = m_ChartDataWnd.m_xRuler.GetScaleUnitPixels(rect.Width());
+			const auto left = m_ChartDataWnd.x_ruler.GetScaleUnitPixels(rect.Width());
 			m_dc.LineTo(left, y_pixels_row);
 
 			m_dc.SelectObject(p_old_brush);
@@ -601,7 +601,7 @@ void ViewData::set_cursor_associated_windows()
 {
 	auto n_cmd_show = SW_HIDE;
 	if (m_cursor_state == CURSOR_CROSS && mdMO->wOption == 1
-		&& m_ChartDataWnd.m_HZtags.get_tag_list_size() > 0)
+		&& m_ChartDataWnd.horizontal_tags.get_tag_list_size() > 0)
 		n_cmd_show = SW_SHOW;
 
 	// change windows state: edit windows
@@ -619,13 +619,13 @@ void ViewData::set_cursor_associated_windows()
 
 void ViewData::UpdateHZtagsVal()
 {
-	if (m_ChartDataWnd.m_HZtags.get_tag_list_size() <= 0)
+	if (m_ChartDataWnd.horizontal_tags.get_tag_list_size() <= 0)
 		return;
-	const auto v1 = m_ChartDataWnd.m_HZtags.get_value(0);
+	const auto v1 = m_ChartDataWnd.horizontal_tags.get_value(0);
 	auto itag = 0;
-	if (m_ChartDataWnd.m_HZtags.get_tag_list_size() > 1)
+	if (m_ChartDataWnd.horizontal_tags.get_tag_list_size() > 1)
 		itag = 1;
-	const auto v2 = m_ChartDataWnd.m_HZtags.get_value(itag);
+	const auto v2 = m_ChartDataWnd.horizontal_tags.get_value(itag);
 	const auto mv_per_bin = m_ChartDataWnd.get_channel_list_item(m_channel_selected)->GetVoltsperDataBin() * 1000.0f;
 	m_first_Hz_cursor = static_cast<float>(v1) * mv_per_bin;
 	m_second_Hz_cursor = static_cast<float>(v2) * mv_per_bin;
@@ -662,20 +662,20 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			if (mdMO->wOption == 0) // vertical cursors
 			{
 				const auto p_tag_list = m_p_dat_Doc->get_vt_tags_list();
-				p_tag_list->copy_tag_list(&m_ChartDataWnd.m_VTtags);
-				m_ChartDataWnd.m_VTtags.remove_all_tags();
+				p_tag_list->copy_tag_list(&m_ChartDataWnd.vertical_tags);
+				m_ChartDataWnd.vertical_tags.remove_all_tags();
 			}
 			else if (mdMO->wOption == 1) // horizontal cursors
 			{
 				const auto p_tag_list = m_p_dat_Doc->get_hz_tags_list();
-				p_tag_list->copy_tag_list(&m_ChartDataWnd.m_HZtags);
-				m_ChartDataWnd.m_HZtags.remove_all_tags();
+				p_tag_list->copy_tag_list(&m_ChartDataWnd.horizontal_tags);
+				m_ChartDataWnd.horizontal_tags.remove_all_tags();
 			}
 			else if (mdMO->wOption == 3) // detect stimulus
 			{
-				mdMO->wStimuluschan = m_ChartDataWnd.m_HZtags.get_channel(0);
-				mdMO->wStimulusthresh = m_ChartDataWnd.m_HZtags.get_value(0);
-				m_ChartDataWnd.m_HZtags.remove_all_tags();
+				mdMO->wStimuluschan = m_ChartDataWnd.horizontal_tags.get_channel(0);
+				mdMO->wStimulusthresh = m_ChartDataWnd.horizontal_tags.get_value(0);
+				m_ChartDataWnd.horizontal_tags.remove_all_tags();
 			}
 			m_ChartDataWnd.Invalidate();
 		}
@@ -690,11 +690,11 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		if (m_cursor_state == CURSOR_CROSS)
 		{
 			if (mdMO->wOption == 0)
-				m_ChartDataWnd.m_VTtags.copy_tag_list(m_p_dat_Doc->get_vt_tags_list());
+				m_ChartDataWnd.vertical_tags.copy_tag_list(m_p_dat_Doc->get_vt_tags_list());
 			else if (mdMO->wOption == 1)
-				m_ChartDataWnd.m_HZtags.copy_tag_list(m_p_dat_Doc->get_hz_tags_list());
+				m_ChartDataWnd.horizontal_tags.copy_tag_list(m_p_dat_Doc->get_hz_tags_list());
 			else if (mdMO->wOption == 3)
-				m_ChartDataWnd.m_HZtags.add_tag(mdMO->wStimulusthresh, mdMO->wStimuluschan);
+				m_ChartDataWnd.horizontal_tags.add_tag(mdMO->wStimulusthresh, mdMO->wStimuluschan);
 			m_ChartDataWnd.Invalidate();
 		}
 		set_cursor_associated_windows();
@@ -718,24 +718,24 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		{
 		// ......................  vertical tags
 		case 0: // if no VTtags, then take those of rectangle, or limits of lineview
-			m_ChartDataWnd.m_VTtags.add_l_tag(mdMO->lLimitLeft, 0);
+			m_ChartDataWnd.vertical_tags.add_l_tag(mdMO->lLimitLeft, 0);
 			if (mdMO->lLimitRight != mdMO->lLimitLeft)
-				m_ChartDataWnd.m_VTtags.add_l_tag(mdMO->lLimitRight, 0);
+				m_ChartDataWnd.vertical_tags.add_l_tag(mdMO->lLimitRight, 0);
 		// store new VT tags into document
-			m_p_dat_Doc->get_vt_tags_list()->copy_tag_list(&m_ChartDataWnd.m_VTtags);
+			m_p_dat_Doc->get_vt_tags_list()->copy_tag_list(&m_ChartDataWnd.vertical_tags);
 			break;
 
 		// ......................  horizontal cursors
 		case 1: // if no HZcursors, take those of rectangle or limits of lineview
 			{
 				CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
-				m_ChartDataWnd.m_HZtags.add_tag(m_ChartDataWnd.get_channel_list_y_pixels_to_bin(m_channel_selected, mdMO->wLimitSup),
+				m_ChartDataWnd.horizontal_tags.add_tag(m_ChartDataWnd.get_channel_list_y_pixels_to_bin(m_channel_selected, mdMO->wLimitSup),
 				                               m_channel_selected);
 				if (mdMO->wLimitInf != mdMO->wLimitSup)
-					m_ChartDataWnd.m_HZtags.add_tag(
+					m_ChartDataWnd.horizontal_tags.add_tag(
 						m_ChartDataWnd.get_channel_list_y_pixels_to_bin(m_channel_selected, mdMO->wLimitInf), m_channel_selected);
-				m_p_dat_Doc->get_hz_tags_list()->copy_tag_list(&m_ChartDataWnd.m_HZtags);
-				if (m_ChartDataWnd.m_HZtags.get_tag_list_size() == 2)
+				m_p_dat_Doc->get_hz_tags_list()->copy_tag_list(&m_ChartDataWnd.horizontal_tags);
+				if (m_ChartDataWnd.horizontal_tags.get_tag_list_size() == 2)
 					set_cursor_associated_windows();
 				UpdateHZtagsVal();
 			}
@@ -755,7 +755,7 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_CHANGEHZTAG: // horizontal tag has changed 	lowp = tag nb
 		if (mdMO->wOption == 3)
-			mdMO->wStimulusthresh = m_ChartDataWnd.m_HZtags.get_value(0);
+			mdMO->wStimulusthresh = m_ChartDataWnd.horizontal_tags.get_value(0);
 		else
 			UpdateHZtagsVal();
 		break;
@@ -1106,14 +1106,14 @@ void ViewData::MeasureProperties(int item)
 	switch (mdMO->wOption)
 	{
 	case 0:
-		m_p_dat_Doc->get_vt_tags_list()->copy_tag_list(&m_ChartDataWnd.m_VTtags);
+		m_p_dat_Doc->get_vt_tags_list()->copy_tag_list(&m_ChartDataWnd.vertical_tags);
 		break;
 	case 1:
-		m_p_dat_Doc->get_hz_tags_list()->copy_tag_list(&m_ChartDataWnd.m_HZtags);
+		m_p_dat_Doc->get_hz_tags_list()->copy_tag_list(&m_ChartDataWnd.horizontal_tags);
 		break;
 	case 3:
-		mdMO->wStimuluschan = m_ChartDataWnd.m_HZtags.get_channel(0);
-		mdMO->wStimulusthresh = m_ChartDataWnd.m_HZtags.get_value(0);
+		mdMO->wStimuluschan = m_ChartDataWnd.horizontal_tags.get_channel(0);
+		mdMO->wStimulusthresh = m_ChartDataWnd.horizontal_tags.get_value(0);
 		break;
 	default: break;
 	}
@@ -1309,9 +1309,9 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 	auto ybar_end = bar_origin;
 
 	// same len ratio as displayed on viewdata
-	const auto horz_bar = m_ChartDataWnd.m_xRuler.GetScaleUnitPixels(m_ChartDataWnd.get_rect_width());
+	const auto horz_bar = m_ChartDataWnd.x_ruler.GetScaleUnitPixels(m_ChartDataWnd.get_rect_width());
 	ASSERT(horz_bar > 0);
-	const auto vert_bar = m_ChartDataWnd.m_yRuler.GetScaleUnitPixels(m_ChartDataWnd.get_rect_height());
+	const auto vert_bar = m_ChartDataWnd.y_ruler.GetScaleUnitPixels(m_ChartDataWnd.get_rect_height());
 	ASSERT(vert_bar > 0);
 
 	auto cs_comment = convert_file_index(m_ChartDataWnd.GetDataFirstIndex(), m_ChartDataWnd.GetDataLastIndex());
@@ -1324,7 +1324,7 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 
 		// read text from control edit
 		CString cs;
-		cs.Format(_T(" bar= %g"), m_ChartDataWnd.m_xRuler.GetScaleIncrement());
+		cs.Format(_T(" bar= %g"), m_ChartDataWnd.x_ruler.GetScaleIncrement());
 		cs_comment += cs;
 		str_comment += cs_comment + rc;
 	}

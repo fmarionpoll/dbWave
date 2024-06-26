@@ -32,7 +32,7 @@ int ChartSpike::get_color_according_to_plot_mode(const Spike* spike, int plot_mo
 
 void ChartSpike::set_plot_mode(int mode, int selected_class)
 {
-	m_plotmode = mode;
+	plot_mode_ = mode;
 	m_selected_class = selected_class;
 }
 
@@ -91,7 +91,7 @@ boolean ChartSpike::is_spike_within_range(const dbSpike& spike_selected) const
 		&& (ii_time < m_lFirst || ii_time > m_lLast))
 		return false;
 
-	if (m_plotmode == PLOT_ONECLASSONLY
+	if (plot_mode_ == PLOT_ONECLASSONLY
 		&& spike->get_class_id() != m_selected_class)
 		return false;
 

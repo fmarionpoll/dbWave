@@ -145,7 +145,7 @@ void ViewADcontinuous::AttachControls()
 	m_AD_xRulerBar.AttachScopeWnd(&m_chartDataAD, TRUE);
 	m_chartDataAD.attach_external_x_ruler(&m_AD_xRulerBar);
 	m_chartDataAD.attach_external_y_ruler(&m_AD_yRulerBar);
-	m_chartDataAD.m_bNiceGrid = TRUE;
+	m_chartDataAD.b_nice_grid = TRUE;
 
 	m_stretch.AttachParent(this);
 	m_stretch.newProp(IDC_DISPLAYDATA, XLEQ_XREQ, YTEQ_YBEQ);

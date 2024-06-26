@@ -175,8 +175,8 @@ void ViewSpikeTemplates::OnInitialUpdate()
 	m_ktolerance = m_psC->k_tolerance;
 
 	m_ChartSpkWnd_Shape.set_plot_mode(PLOT_ONECLASS, 0);
-	m_spkformtagleft = m_ChartSpkWnd_Shape.m_VTtags.add_tag(m_psC->k_left, 0);
-	m_spkformtagright = m_ChartSpkWnd_Shape.m_VTtags.add_tag(m_psC->k_right, 0);
+	m_spkformtagleft = m_ChartSpkWnd_Shape.vertical_tags.add_tag(m_psC->k_left, 0);
+	m_spkformtagright = m_ChartSpkWnd_Shape.vertical_tags.add_tag(m_psC->k_right, 0);
 
 	update_file_parameters();
 	updateCtrlTab1(0);
@@ -336,14 +336,14 @@ LRESULT ViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_CHANGEVERTTAG:
 		if (shortValue == m_spkformtagleft)
 		{
-			m_psC->k_left = m_ChartSpkWnd_Shape.m_VTtags.get_value(m_spkformtagleft);
+			m_psC->k_left = m_ChartSpkWnd_Shape.vertical_tags.get_value(m_spkformtagleft);
 			m_t1 = convertSpikeIndexToTime(m_psC->k_left);
 			mm_t1.m_bEntryDone = TRUE;
 			OnEnChangeT1();
 		}
 		else if (shortValue == m_spkformtagright)
 		{
-			m_psC->k_right = m_ChartSpkWnd_Shape.m_VTtags.get_value(m_spkformtagright);
+			m_psC->k_right = m_ChartSpkWnd_Shape.vertical_tags.get_value(m_spkformtagright);
 			m_t2 = convertSpikeIndexToTime(m_psC->k_right);
 			mm_t2.m_bEntryDone = TRUE;
 			OnEnChangeT2();
@@ -1216,7 +1216,7 @@ void ViewSpikeTemplates::OnEnChangeT1()
 			m_t1 = m_t2 - delta;
 
 		const int it1 = convertTimeToSpikeIndex(m_t1);
-		if (it1 != m_ChartSpkWnd_Shape.m_VTtags.get_value(m_spkformtagleft))
+		if (it1 != m_ChartSpkWnd_Shape.vertical_tags.get_value(m_spkformtagleft))
 		{
 			m_psC->k_left = it1;
 			m_ChartSpkWnd_Shape.move_vt_track(m_spkformtagleft, m_psC->k_left);
@@ -1245,7 +1245,7 @@ void ViewSpikeTemplates::OnEnChangeT2()
 			m_t2 = t_max;
 		// change display if necessary
 		const int it2 = convertTimeToSpikeIndex(m_t2);
-		if (it2 != m_ChartSpkWnd_Shape.m_VTtags.get_value(m_spkformtagright))
+		if (it2 != m_ChartSpkWnd_Shape.vertical_tags.get_value(m_spkformtagright))
 		{
 			m_psC->k_right = it2;
 			m_ChartSpkWnd_Shape.move_vt_track(m_spkformtagright, m_psC->k_right);

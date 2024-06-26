@@ -40,7 +40,7 @@ public:
 	long	GetLineSize() const { return m_lxLine; } // size of line increment used to browse through doc
 	long	GetDocumentLast() const { return m_lxVeryLast; } // index of document's last pt
 	long	GetDataOffsetfromPixel(int pix) const {
-				return static_cast<long>(pix) * (m_lxLast - m_lxFirst + 1) / static_cast<long>(m_displayRect.right) + m_lxFirst; }
+				return static_cast<long>(pix) * (m_lxLast - m_lxFirst + 1) / static_cast<long>(m_display_rect_.right) + m_lxFirst; }
 
 	void UpdatePageLineSize(); // update page and line size parameters
 
@@ -98,7 +98,7 @@ public:
 	float get_channel_list_volts_per_pixel(const int item) const
 	{
 		const CChanlistItem* channel_item = get_channel_list_item(item);
-		return (static_cast<float>(channel_item->GetYextent()) * channel_item->GetVoltsperDataBin() / static_cast<float>(-m_yVE));
+		return (static_cast<float>(channel_item->GetYextent()) * channel_item->GetVoltsperDataBin() / static_cast<float>(-m_y_ve_));
 	}
 
 	float get_time_per_pixel() const
@@ -109,16 +109,16 @@ public:
 
 	int get_channel_list_bin_to_y_pixel(int chan, int bin)
 	{
-		return MulDiv(bin - chanlistitem_ptr_array[chan]->GetYzero(), m_yVE,
-		              chanlistitem_ptr_array[chan]->GetYextent()) + m_yVO;
+		return MulDiv(bin - chanlistitem_ptr_array[chan]->GetYzero(), m_y_ve_,
+		              chanlistitem_ptr_array[chan]->GetYextent()) + m_y_vo_;
 	}
 
 	int get_channel_list_y_pixels_to_bin(const int chan, const int y_pixel_relative_to_top_client_window)
 	{
 		return chanlistitem_ptr_array[chan]->GetYzero() + 
-				MulDiv(y_pixel_relative_to_top_client_window - m_yVO,
+				MulDiv(y_pixel_relative_to_top_client_window - m_y_vo_,
 					chanlistitem_ptr_array[chan]->GetYextent(), 
-					m_yVE);
+					m_y_ve_);
 	}
 
 	SCOPESTRUCT* get_scope_parameters() override;

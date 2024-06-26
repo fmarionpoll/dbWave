@@ -11,7 +11,7 @@ public:
 	~ChartSpikeXY() override;
 
 protected:
-	int m_dot_width = 6;
+	int dot_width_ = 6;
 	long x_max_ = 0;
 	long x_min_ = 0;
 	int y_max_ = 0;

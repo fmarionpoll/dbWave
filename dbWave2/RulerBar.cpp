@@ -49,9 +49,9 @@ void RulerBar::DrawScalefromRuler(Ruler* pRuler)
 		else if (m_pChartDataWnd != nullptr)
 		{
 			if (m_rcClient.Height() > m_rcClient.Width())
-				m_pRuler = &m_pChartDataWnd->m_yRuler;
+				m_pRuler = &m_pChartDataWnd->y_ruler;
 			else
-				m_pRuler = &m_pChartDataWnd->m_xRuler;
+				m_pRuler = &m_pChartDataWnd->x_ruler;
 			pRuler = m_pRuler;
 		}
 		else

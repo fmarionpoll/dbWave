@@ -427,7 +427,7 @@ void SpikeClassListBox::ReflectBarsMouseMoveMessg(const HWND hwnd)
 	for (auto i = 0; i < GetCount(); i++)
 	{
 		const auto row_item = get_row_item(i);
-		row_item->get_chart_bars()->ReflectMouseMoveMessg(hwnd);
+		row_item->get_chart_bars()->reflect_mouse_move_message(hwnd);
 		if (hwnd != nullptr)
 			row_item->get_chart_bars()->set_mouse_cursor_type(CURSOR_CROSS);
 	}
