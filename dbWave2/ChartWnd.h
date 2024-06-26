@@ -40,15 +40,15 @@ public:
 
 	virtual BOOL Create(LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID,
 	                    CCreateContext* pContext = nullptr);
-	virtual SCOPESTRUCT* GetScopeParameters();
-	virtual void SetScopeParameters(SCOPESTRUCT* pStruct);
+	virtual SCOPESTRUCT* get_scope_parameters();
+	virtual void set_scope_parameters(SCOPESTRUCT* pStruct);
 	virtual int set_mouse_cursor_type(int cursor_type);
-	virtual void ZoomData(CRect* prevRect, CRect* newRect);
+	virtual void zoom_data(CRect* prevRect, CRect* newRect);
 	virtual void DisplayVTtags_Value(CDC* p_dc);
 	virtual void DisplayHZtags(CDC* p_dc);
 	virtual void plot_data_to_dc(CDC* p_dc);
 
-	void erase_bkgnd(CDC* p_dc);
+	void erase_background(CDC* p_dc);
 	void PlotToBitmap(CDC* p_dc);
 	static COLORREF GetColor(const int color_index) { return m_colorTable[color_index]; }
 	static void SetColorTableAt(int color_index, COLORREF ccolor) { m_colorTable[color_index] = ccolor; }
@@ -56,18 +56,18 @@ public:
 	int FindColorIndex(COLORREF color_ref);
 
 	float ChangeUnit(float xVal, CString* xUnit, float* xScalefactor);
-	static int NiceUnit(float y);
+	static int nice_unit(float y);
 
-	void SetbUseDIB(BOOL bsetPlot); // use DIB or not
+	void set_b_use_dib(BOOL b_set_plot); // use DIB or not
 	void set_display_area_size(int cx, int cy); // set size of the display area
 
 	CSize GetRectSize() const { return {m_displayRect.Width() + 1, m_displayRect.Height() + 1}; }
 	int GetRectHeight() const { return m_displayRect.Height() + 1; }
 	int GetRectWidth() const { return m_displayRect.Width() + 1; }
 	int GetMouseCursorType() const { return m_cursorType; }
-	void SetMouseCursor(int cursor_type);
+	void set_mouse_cursor(int cursor_type);
 
-	void SetYWExtOrg(int extent, int zero);
+	void set_yw_ext_org(int extent, int zero);
 
 	void SetXWExtOrg(int extent, int zero)
 	{
@@ -80,31 +80,31 @@ public:
 	int GetXWExtent() const { return m_xWE; }
 	int GetXWOrg() const { return m_xWO; }
 
-	void SetNxScaleCells(int iCells, int iTicks = 0, int iTickLine = 0);
-	void SetNyScaleCells(int iCells, int iTicks = 0, int iTickLine = 0);
-	int GetNxScaleCells() { return m_scopestruct.iXCells; }
-	int GetNyScaleCells() { return m_scopestruct.iYCells; }
-	void SetxScaleUnitValue(float x);
-	void SetyScaleUnitValue(float y);
-	void AttachExternalXRuler(RulerBar* pXRuler) { m_pXRulerBar = pXRuler; }
-	void AttachExternalYRuler(RulerBar* pYRuler) { m_pYRulerBar = pYRuler; }
+	void set_nx_scale_cells(int iCells, int iTicks = 0, int iTickLine = 0);
+	void set_ny_scale_cells(int iCells, int iTicks = 0, int iTickLine = 0);
+	int get_nx_scale_cells() const { return m_scopestruct.iXCells; }
+	int get_ny_scale_cells() const { return m_scopestruct.iYCells; }
+	void set_x_scale_unit_value(float x);
+	void set_y_scale_unit_value(float y);
+	void attach_external_x_ruler(RulerBar* pXRuler) { m_pXRulerBar = pXRuler; }
+	void attach_external_y_ruler(RulerBar* pYRuler) { m_pYRulerBar = pYRuler; }
 
-	void XorVTtag(int xpoint);
-	void XorTempVTtag(int xpoint);
-	void XorHZtag(int ypoint);
+	void xor_vertical_tag(int x_point);
+	void xor_temp_vertical_tag(int x_point);
+	void xor_horizontal_tag(int y_point);
 
-	void ResetXortag()
+	void reset_xor_tag()
 	{
 		m_ptLast.x = -1;
 		m_ptLast.y = -1;
 	}
 
 	void ReflectMouseMoveMessg(HWND hwnd) { m_hwndReflect = hwnd; }
-	void SetCursorMaxOnDblClick(int imax) { m_cursorIndexMax = imax; }
-	void PlotToBitmap(CBitmap* pBitmap);
+	void set_cursor_max_on_dbl_click(int imax) { m_cursorIndexMax = imax; }
+	void plot_to_bitmap(CBitmap* p_bitmap);
 
-	void DrawGrid(CDC* p_dc);
-	void AdjustDisplayRect(CRect* rect);
+	void draw_grid(CDC* p_dc);
+	void adjust_display_rect(CRect* rect);
 
 	BOOL GetbDrawframe() const { return m_scopestruct.bDrawframe; }
 	void SetbDrawframe(BOOL flag) { m_scopestruct.bDrawframe = flag; }
@@ -210,16 +210,16 @@ protected:
 	void prepare_dc(CDC* p_dc, const CPrintInfo* p_info = nullptr);
 	void capture_cursor();
 	static void release_cursor();
-	void lbuttonUp_HzTag(UINT nFlags, CPoint point);
-	void send_my_message(int code, int codeparm) const;
-	void post_my_message(int code, int codeparm) const;
-	void invertTracker(CPoint point); // invert rectangle when mouse-left is down
-	int hitHZtag(int y); // test if point is on an horizontal tag line
-	int hitVTtagPix(int x); // test if point is on a vertical tag line
-	int hitVTtagLong(long lx); // test if point is on a vertical tag line
-	void zoomIn();
-	void zoomOut();
-	void zoomPop();
+	void left_button_up_horizontal_tag(UINT nFlags, CPoint point);
+	void send_my_message(int code, int code_parameter) const;
+	void post_my_message(int code, int code_parameter) const;
+	void invert_tracker(CPoint point); // invert rectangle when mouse-left is down
+	int hit_horizontal_tag(int y); // test if point is on an horizontal tag line
+	int hit_vertical_tag_pixel(int x); // test if point is on a vertical tag line
+	int hit_vertical_tag_long(long lx); // test if point is on a vertical tag line
+	void zoom_in();
+	void zoom_out();
+	void zoom_pop();
 	void draw_grid_evenly_spaced(CDC* p_dc) const;
 	void draw_grid_from_ruler(CDC* p_dc, const Ruler* pRuler) const;
 	void draw_grid_nicely_spaced(CDC* p_dc);

@@ -17,7 +17,7 @@ END_MESSAGE_MAP()
 
 ChartSpikeBar::ChartSpikeBar()
 {
-	SetbUseDIB(FALSE);
+	set_b_use_dib(FALSE);
 	m_csEmpty = _T("no spikes (spikebar)");
 }
 
@@ -33,7 +33,7 @@ ChartSpikeBar::~ChartSpikeBar()
 void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 {
 	if (m_erasebkgnd)
-		erase_bkgnd(p_dc);
+		erase_background(p_dc);
 
 	p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 	auto rect = m_displayRect;
@@ -142,7 +142,7 @@ void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 void ChartSpikeBar::plot_single_spk_data_to_dc(CDC* p_dc)
 {
 	if (m_erasebkgnd)
-		erase_bkgnd(p_dc);
+		erase_background(p_dc);
 
 	p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 	auto rect = m_displayRect;
@@ -235,7 +235,7 @@ void ChartSpikeBar::display_stimulus(CDC* p_dc, const CRect* rect) const
 	CPen blue_pen;
 	blue_pen.CreatePen(PS_SOLID, 0, RGB(0, 0, 255));
 	const auto old_pen = p_dc->SelectObject(&blue_pen);
-	const int top = rect->bottom - m_bar_height + 2;
+	const int top = rect->bottom - bar_height_ + 2;
 	const int bottom = rect->bottom - 3;
 	const auto display_width = rect->Width();
 
@@ -600,7 +600,7 @@ void ChartSpikeBar::OnLButtonUp(const UINT n_flags, const CPoint point)
 		if (m_cursorType != CURSOR_ZOOM)
 			post_my_message(HINT_HITAREA, NULL);
 		else
-			zoomIn();
+			zoom_in();
 		return; // exit: mouse movement was too small
 	}
 
@@ -618,7 +618,7 @@ void ChartSpikeBar::OnLButtonUp(const UINT n_flags, const CPoint point)
 		break;
 
 	case CURSOR_ZOOM:
-		ZoomData(&rect_in, &rect_out);
+		zoom_data(&rect_in, &rect_out);
 		m_ZoomFrom = rect_in;
 		m_ZoomTo = rect_out;
 		m_iUndoZoom = 1;
@@ -655,7 +655,7 @@ void ChartSpikeBar::OnLButtonDown(const UINT nFlags, CPoint point)
 }
 
 //---------------------------------------------------------------------------
-// ZoomData()
+// zoom_data()
 // convert pixels to logical pts and reverse to adjust curve to the
 // rectangle selected
 // lp to dp: d = (l -wo)*ve/we + vo
@@ -664,7 +664,7 @@ void ChartSpikeBar::OnLButtonDown(const UINT nFlags, CPoint point)
 // with ordinates: wo=zero, we=y_extent, ve=rect.height/2, vo = -rect.GetRectHeight()/2
 //---------------------------------------------------------------------------
 
-void ChartSpikeBar::ZoomData(CRect* rFrom, CRect* rDest)
+void ChartSpikeBar::zoom_data(CRect* rFrom, CRect* rDest)
 {
 	rFrom->NormalizeRect();
 	rDest->NormalizeRect();

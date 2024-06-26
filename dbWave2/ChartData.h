@@ -121,8 +121,8 @@ public:
 					m_yVE);
 	}
 
-	SCOPESTRUCT* GetScopeParameters() override;
-	void	SetScopeParameters(SCOPESTRUCT* pStruct) override;
+	SCOPESTRUCT* get_scope_parameters() override;
+	void	set_scope_parameters(SCOPESTRUCT* pStruct) override;
 	void	AutoZoomChan(int i) const;
 	void	CenterChan(int i) const;
 	void	MaxgainChan(int i) const;
@@ -137,7 +137,7 @@ public:
 	void	update_x_ruler();
 	void	update_y_ruler();
 	void	plot_data_to_dc(CDC* p_dc) override;
-	void	ZoomData(CRect* prevRect, CRect* newRect) override;
+	void	zoom_data(CRect* prevRect, CRect* newRect) override;
 
 	void	Print(CDC* p_dc, CRect* rect, BOOL bCenterline = FALSE);
 

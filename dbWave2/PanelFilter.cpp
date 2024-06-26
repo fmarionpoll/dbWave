@@ -211,7 +211,7 @@ void CFilterPanel::InitFilterList()
 		return;
 	m_pDocOld = m_pDoc;
 
-	auto p_db = m_pDoc->m_pDB;
+	auto p_db = m_pDoc->db_table;
 	ASSERT(p_db);
 
 	// setup dialog box
@@ -327,7 +327,7 @@ void CFilterPanel::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 {
 	CString cs; // to construct insect and sensillum number (for example)
 	CString str; // to store FindFirst filter
-	auto p_set = &m_pDoc->m_pDB->m_mainTableSet;
+	auto p_set = &m_pDoc->db_table->m_mainTableSet;
 	const auto cscolhead = pdesc->header_name;
 	const auto array_size = pdesc->liArray.GetSize();
 	if (pdesc->b_array_filter)
@@ -367,7 +367,7 @@ void CFilterPanel::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 	ASSERT(!str2.IsEmpty());
 
 	auto plinked_set = pdesc->plinkedSet;
-	auto p_set = &m_pDoc->m_pDB->m_mainTableSet;
+	auto p_set = &m_pDoc->db_table->m_mainTableSet;
 	if (pdesc->b_array_filter)
 		return;
 
@@ -408,7 +408,7 @@ void CFilterPanel::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 	CString cs; // to construct date
 	const auto cscolhead = pdesc->header_name;
 	CString str; // to construct filter
-	auto p_maintable_set = &m_pDoc->m_pDB->m_mainTableSet;
+	auto p_maintable_set = &m_pDoc->db_table->m_mainTableSet;
 	const auto array_size = p_maintable_set->m_desc[CH_ACQDATE_DAY].tiArray.GetSize();
 
 	if (pdesc->b_array_filter)
@@ -512,7 +512,7 @@ void CFilterPanel::OnApplyFilter()
 {
 	if (!m_pDoc)
 		return;
-	auto p_db = m_pDoc->m_pDB;
+	auto p_db = m_pDoc->db_table;
 
 	auto i = 0;
 	while (m_noCol[i] > 0)
@@ -563,7 +563,7 @@ void CFilterPanel::OnApplyFilter()
 
 void CFilterPanel::OnSortRecords()
 {
-	auto p_database = m_pDoc->m_pDB;
+	auto p_database = m_pDoc->db_table;
 	ASSERT(p_database);
 	const auto p_combo = static_cast<CMFCToolBarComboBoxButton*>(m_wndToolBar.GetButton(3));
 	ASSERT(ID_RECORD_SORT == m_wndToolBar.GetItemID(3));

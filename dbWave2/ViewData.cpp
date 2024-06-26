@@ -132,8 +132,8 @@ void ViewData::OnInitialUpdate()
 
 	m_ADC_yRulerBar.AttachScopeWnd(&m_ChartDataWnd, FALSE);
 	m_ADC_xRulerBar.AttachScopeWnd(&m_ChartDataWnd, TRUE);
-	m_ChartDataWnd.AttachExternalXRuler(&m_ADC_xRulerBar);
-	m_ChartDataWnd.AttachExternalYRuler(&m_ADC_yRulerBar);
+	m_ChartDataWnd.attach_external_x_ruler(&m_ADC_xRulerBar);
+	m_ChartDataWnd.attach_external_y_ruler(&m_ADC_yRulerBar);
 	m_ChartDataWnd.m_bNiceGrid = TRUE;
 
 	define_stretch_parameters();
@@ -147,7 +147,7 @@ void ViewData::OnInitialUpdate()
 	dbTableView::OnInitialUpdate();
 	update_file_parameters(TRUE); 
 
-	m_ChartDataWnd.SetScopeParameters(&(options_view_data->viewdata));
+	m_ChartDataWnd.set_scope_parameters(&(options_view_data->viewdata));
 	constexpr int legends_options = UPD_ABCISSA | CHG_XSCALE | UPD_ORDINATES | CHG_YSCALE;
 	m_bCommonScale = TRUE;
 	m_comboSelectChan.SetCurSel(m_ChartDataWnd.get_channel_list_size());
@@ -308,7 +308,7 @@ void ViewData::OnEditCopy()
 			m_dc.SetAttribDC(attrib_dc.GetSafeHdc()); // from current screen
 
 			const auto old_scope_struct= new SCOPESTRUCT();
-			SCOPESTRUCT* new_scope_struct = m_ChartDataWnd.GetScopeParameters();
+			SCOPESTRUCT* new_scope_struct = m_ChartDataWnd.get_scope_parameters();
 			*old_scope_struct = *new_scope_struct;
 			new_scope_struct->bDrawframe = options_view_data->bFrameRect;
 			new_scope_struct->bClipRect = options_view_data->bClipRect;
@@ -766,7 +766,7 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_WINDOWPROPSCHANGED:
-		options_view_data->viewdata = *(m_ChartDataWnd.GetScopeParameters());
+		options_view_data->viewdata = *(m_ChartDataWnd.get_scope_parameters());
 		break;
 	default:
 		break;
@@ -1355,7 +1355,7 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 				auto j = static_cast<int>(x); // get int value
 				if ((static_cast<double>(x) - j) > 0.5) // increment integer if diff > 0.5
 					j++;
-				auto k = m_ChartDataWnd.NiceUnit(x); // compare with nice unit abs
+				auto k = m_ChartDataWnd.nice_unit(x); // compare with nice unit abs
 				if (j > 750) // there is a gap between 500 and 1000
 					k = 1000;
 				if (MulDiv(100, abs(k - j), j) <= 1) // keep nice unit if difference is less= than 1 %
@@ -1542,7 +1542,7 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		very_last = GetDocument()->db_get_data_len() - 1;
 
 	SCOPESTRUCT oldparms;
-	SCOPESTRUCT* p_newparms = m_ChartDataWnd.GetScopeParameters();
+	SCOPESTRUCT* p_newparms = m_ChartDataWnd.get_scope_parameters();
 	oldparms = *p_newparms;
 	p_newparms->bDrawframe = options_view_data->bFrameRect;
 	p_newparms->bClipRect = options_view_data->bClipRect;

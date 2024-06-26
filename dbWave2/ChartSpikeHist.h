@@ -49,7 +49,7 @@ public:
 	void MoveHZtagtoVal(int tag_index, int value);
 
 	
-	void ZoomData(CRect* prevRect, CRect* newRect) override;
+	void zoom_data(CRect* prevRect, CRect* newRect) override;
 
 protected:
 	int hit_curve(CPoint point) override;

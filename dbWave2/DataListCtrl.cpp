@@ -363,7 +363,7 @@ void DataListCtrl::update_cache(int index_first, int index_last)
 		}
 		row->csDatafileName = db_wave_doc->db_get_current_dat_file_name(TRUE);
 		row->csSpikefileName = db_wave_doc->db_get_current_spk_file_name(TRUE);
-		const auto database = db_wave_doc->m_pDB;
+		const auto database = db_wave_doc->db_table;
 
 		database->get_record_item_value(CH_IDINSECT, &desc);
 		row->insectID = desc.lVal;
@@ -545,7 +545,7 @@ void DataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
 		ptr->pDataChartWnd = new ChartData;
 		ASSERT(ptr->pDataChartWnd != NULL);
 		ptr->pDataChartWnd->Create(_T("DATAWND"), WS_CHILD, CRect(0, 0, m_image_width, m_image_height), this, iImage * 100);
-		ptr->pDataChartWnd->SetbUseDIB(FALSE);
+		ptr->pDataChartWnd->set_b_use_dib(FALSE);
 	}
 	const auto p_wnd = ptr->pDataChartWnd;
 	p_wnd->SetString(ptr->cs_comment);
@@ -566,9 +566,9 @@ void DataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
 	else
 	{
 		if (ptr->csNspk.IsEmpty())
-			p_wnd->GetScopeParameters()->crScopeFill = p_wnd->GetColor(2);
+			p_wnd->get_scope_parameters()->crScopeFill = p_wnd->GetColor(2);
 		else
-			p_wnd->GetScopeParameters()->crScopeFill = p_wnd->GetColor(15);
+			p_wnd->get_scope_parameters()->crScopeFill = p_wnd->GetColor(15);
 
 		ptr->pdataDoc->read_data_infos();
 		ptr->cs_comment = ptr->pdataDoc->get_waveformat()->get_comments(_T(" "));
@@ -614,7 +614,7 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 		ptr->pSpikeChartWnd = new ChartSpikeBar;
 		ASSERT(ptr->pSpikeChartWnd != NULL);
 		ptr->pSpikeChartWnd->Create(_T("SPKWND"), WS_CHILD, CRect(0, 0, m_image_width, m_image_height), this, ptr->index * 1000);
-		ptr->pSpikeChartWnd->SetbUseDIB(FALSE);
+		ptr->pSpikeChartWnd->set_b_use_dib(FALSE);
 	}
 	const auto p_wnd = ptr->pSpikeChartWnd;
 
@@ -653,7 +653,7 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 			const auto volts_per_bin = pspk_list->get_acq_volts_per_bin();
 			const auto y_we = static_cast<int>(m_mV_span / 1000.f / volts_per_bin);
 			const auto y_wo = pspk_list->get_acq_bin_zero();
-			p_wnd->SetYWExtOrg(y_we, y_wo);
+			p_wnd->set_yw_ext_org(y_we, y_wo);
 		}
 		p_wnd->SetBottomComment(m_b_display_file_name, ptr->csSpikefileName);
 

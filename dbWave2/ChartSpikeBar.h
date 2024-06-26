@@ -12,10 +12,9 @@ public:
 	void Serialize(CArchive& archive) override;
 
 protected:
-	BOOL display_acquisition_data = FALSE;			// FALSE=bars; TRUE=spikes
-	int m_bar_height = 10;
+	BOOL display_acquisition_data_ = FALSE;			// FALSE=bars; TRUE=spikes
+	int bar_height_ = 10;
 	CDWordArray* p_envelope_ = nullptr; 
-
 
 	// Helpers
 public:
@@ -38,12 +37,10 @@ public:
 	void max_gain();
 	void max_center();
 
-	
-
 	void Print(CDC* p_dc, const CRect* rect);
 	void plot_data_to_dc(CDC* p_dc) override;
 	void plot_single_spk_data_to_dc(CDC* p_dc);
-	void ZoomData(CRect* prevRect, CRect* newRect) override;
+	void zoom_data(CRect* prevRect, CRect* newRect) override;
 
 protected:
 	int hit_curve(CPoint point) override;

@@ -29,22 +29,22 @@ protected:
 	CString		m_current_datafile_name_;
 	CString		m_current_spike_file_name_;
 
-	BOOL		m_b_call_new = true;
-	CStringArray m_names_of_files_to_delete;
-	BOOL		m_clean_database_on_exit_ = false;
-	BOOL		m_bTranspose = false;
+	BOOL		b_call_new_ = true;
+	CStringArray names_of_files_to_delete_;
+	BOOL		clean_database_on_exit_ = false;
+	BOOL		transpose_ = false;
 
 public:
 	AcqDataDoc* m_p_dat = nullptr;
 	CSpikeDoc* m_p_spk = nullptr;
-	HMENU		m_hMyMenu = nullptr;
-	CIntervals	m_stimulus_saved;
+	HMENU		h_my_menu = nullptr;
+	CIntervals	stimulus_saved;
 
-	CdbTable*	m_pDB = nullptr;
-	BOOL		m_validTables = false;
-	CDWordArray m_selectedRecords;
-	CString		m_dbFilename;
-	CString		m_ProposedDataPathName;
+	CdbTable*	db_table = nullptr;
+	BOOL		valid_tables = false;
+	CDWordArray selected_records;
+	CString		db_filename;
+	CString		proposed_data_path_name;
 
 	void	import_file_list(CStringArray& file_list, int n_columns = 1, boolean b_header = false);
 	BOOL	import_database(const CString& filename) const;
@@ -77,7 +77,7 @@ public:
 	void	get_max_min_of_all_spikes(BOOL b_all_files, BOOL b_recalculate, short* max, short* min);
 	CSize	get_max_min_of_single_spike(BOOL b_all);
 
-	void	set_clean_db_on_exit(BOOL bClear) { m_clean_database_on_exit_ = bClear; }
+	void	set_clean_db_on_exit(BOOL bClear) { clean_database_on_exit_ = bClear; }
 
 	void	export_data_ascii_comments(CSharedFile* p_shared_file);
 	void	export_number_of_spikes(CSharedFile* p_sf);
@@ -135,17 +135,17 @@ public:
 #endif
 
 	// DAO database functions
-	long	db_get_n_records() const { return m_pDB->get_n_records(); }
-	CdbTableMain* db_get_recordset() const { return &m_pDB->m_mainTableSet; }
+	long	db_get_n_records() const { return db_table->get_n_records(); }
+	CdbTableMain* db_get_recordset() const { return &db_table->m_mainTableSet; }
 	void	db_delete_current_record();
 	CString db_get_current_dat_file_name(BOOL b_test = FALSE);
 	CString db_get_current_spk_file_name(BOOL b_test = FALSE);
 
 	CString db_set_current_spike_file_name();
-	void	db_set_data_len(long len) const { m_pDB->set_data_length(len); }
+	void	db_set_data_len(long len) const { db_table->set_data_length(len); }
 	long	db_get_data_len() const;
 	void	db_set_current_record_flag(int flag) const;
-	int		db_get_current_record_flag() const { return m_pDB->m_mainTableSet.m_flag; }
+	int		db_get_current_record_flag() const { return db_table->m_mainTableSet.m_flag; }
 	void	db_set_paths_relative() const;
 	void	db_set_paths_absolute() const;
 	void	db_transfer_dat_path_to_spk_path() const;
@@ -153,16 +153,16 @@ public:
 
 	long	db_get_current_record_position() const;
 	long	db_get_current_record_id() const;
-	BOOL	db_set_current_record_position(const long i_file) const { return m_pDB->set_index_current_file(i_file); }
+	BOOL	db_set_current_record_position(const long i_file) const { return db_table->set_index_current_file(i_file); }
 
-	BOOL	db_move_to_id(long record_id) const { return m_pDB->move_to_id(record_id); }
-	BOOL	db_move_first() const { return m_pDB->move_to(ID_RECORD_FIRST); }
-	BOOL	db_move_next() const { return m_pDB->move_to(ID_RECORD_NEXT); }
-	BOOL	db_move_prev() const { return m_pDB->move_to(ID_RECORD_PREV); }
-	BOOL	db_move_last() const { return m_pDB->move_to(ID_RECORD_LAST); }
+	BOOL	db_move_to_id(long record_id) const { return db_table->move_to_id(record_id); }
+	BOOL	db_move_first() const { return db_table->move_to(ID_RECORD_FIRST); }
+	BOOL	db_move_next() const { return db_table->move_to(ID_RECORD_NEXT); }
+	BOOL	db_move_prev() const { return db_table->move_to(ID_RECORD_PREV); }
+	BOOL	db_move_last() const { return db_table->move_to(ID_RECORD_LAST); }
 	void	db_refresh_query() const {
-		if (m_pDB->m_mainTableSet.IsBOF()) m_pDB->m_mainTableSet.SetFieldNull(nullptr);
-		m_pDB->m_mainTableSet.RefreshQuery();
+		if (db_table->m_mainTableSet.IsBOF()) db_table->m_mainTableSet.SetFieldNull(nullptr);
+		db_table->m_mainTableSet.RefreshQuery();
 	}
 
 protected:

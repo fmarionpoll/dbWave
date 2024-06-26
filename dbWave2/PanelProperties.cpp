@@ -192,7 +192,7 @@ void CPropertiesPanel::UpdatePropList()
 
 void CPropertiesPanel::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup) const
 {
-	auto p_db = m_pDoc->m_pDB;
+	auto p_db = m_pDoc->db_table;
 	DB_ITEMDESC desc;
 	const auto n_sub_items = pGroup->GetSubItemsCount();
 	CdbTableAssociated* p2linkedSet;
@@ -255,7 +255,7 @@ void CPropertiesPanel::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup
 
 void CPropertiesPanel::UpdateTableFromProp()
 {
-	auto p_database = m_pDoc->m_pDB;
+	auto p_database = m_pDoc->db_table;
 	auto p_maintable_set = &p_database->m_mainTableSet;
 	m_bchangedProperty = FALSE; // reseet flag
 	p_maintable_set->Edit();
@@ -271,7 +271,7 @@ void CPropertiesPanel::UpdateTableFromProp()
 
 void CPropertiesPanel::UpdateTableFromGroupProp(CMFCPropertyGridProperty* pGroup)
 {
-	auto p_database = m_pDoc->m_pDB;
+	auto p_database = m_pDoc->db_table;
 	const auto nsubitems = pGroup->GetSubItemsCount();
 
 	for (auto i = 0; i < nsubitems; i++)
@@ -341,7 +341,7 @@ void CPropertiesPanel::InitPropList()
 	m_wndPropList.MarkModifiedProperties(TRUE, TRUE);
 
 	// get pointer to database specific object which contains recordsets
-	auto p_database = m_pDoc->m_pDB;
+	auto p_database = m_pDoc->db_table;
 	auto m__i_id = ID_BASE;
 
 	// ------------------------------------------------------
@@ -402,7 +402,7 @@ void CPropertiesPanel::InitPropList()
 
 int CPropertiesPanel::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int icol0)
 {
-	auto p_database = m_pDoc->m_pDB;
+	auto p_database = m_pDoc->db_table;
 	/*int nrecords = */
 	p_database->m_mainTableSet.GetNRecords();
 	const int icol1 = sizeof(m_noCol) / sizeof(int);

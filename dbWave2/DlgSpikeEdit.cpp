@@ -85,7 +85,7 @@ BOOL DlgSpikeEdit::OnInitDialog()
 	if (m_pAcqDatDoc != nullptr)
 	{
 		VERIFY(m_ChartDataWnd.SubclassDlgItem(IDC_DISPLAREA_buttn, this));
-		m_ChartDataWnd.SetbUseDIB(FALSE);
+		m_ChartDataWnd.set_b_use_dib(FALSE);
 		m_ChartDataWnd.AttachDataFile(m_pAcqDatDoc);
 		const auto lvSize = m_ChartDataWnd.GetRectSize();
 		m_ChartDataWnd.ResizeChannels(lvSize.cx, 0); // change nb of pixels
@@ -229,7 +229,7 @@ void DlgSpikeEdit::OnEnChangeYextent()
 			m_ChartDataWnd.get_channel_list_item(0)->SetYextent(m_yextent);
 			if (m_pSpkList->get_detection_parameters()->compensate_Baseline)
 				m_ChartDataWnd.get_channel_list_item(1)->SetYextent(m_yextent);
-			m_SpkChartWnd.SetYWExtOrg(m_yextent, m_yzero);
+			m_SpkChartWnd.set_yw_ext_org(m_yextent, m_yzero);
 			m_ChartDataWnd.Invalidate();
 			m_SpkChartWnd.Invalidate();
 		}

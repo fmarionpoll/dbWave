@@ -23,7 +23,7 @@ END_MESSAGE_MAP()
 
 ChartSpikeHist::ChartSpikeHist()
 {
-	SetbUseDIB(FALSE);
+	set_b_use_dib(FALSE);
 	m_csEmpty = _T("no \n_spikes (spikehist)");
 }
 
@@ -51,7 +51,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 		OnSize(SIZE_RESTORED, r.Width(), r.Height());
 	}
 	if (m_erasebkgnd)
-		erase_bkgnd(p_dc);
+		erase_background(p_dc);
 
 	// load resources
 	CRect rect1;
@@ -156,7 +156,7 @@ void ChartSpikeHist::MoveHZtagtoVal(const int tag_index, const int value)
 {
 	m_ptLast.y = MulDiv(m_HZtags.get_value(tag_index) - m_yWO, m_yVE, m_yWE) + m_yVO;
 	const auto j = MulDiv(value - m_yWO, m_yVE, m_yWE) + m_yVO;
-	XorHZtag(j);
+	xor_horizontal_tag(j);
 	m_HZtags.set_tag_val(tag_index, value);
 }
 
@@ -164,7 +164,7 @@ void ChartSpikeHist::MoveVTtagtoVal(int itag, int ival)
 {
 	m_ptLast.x = MulDiv(m_VTtags.get_value(itag) - m_xWO, m_xVE, m_xWE) + m_xVO;
 	const auto j = MulDiv(ival - m_xWO, m_xVE, m_xWE) + m_xVO;
-	XorVTtag(j);
+	xor_vertical_tag(j);
 	m_VTtags.set_tag_val(itag, ival);
 }
 
@@ -217,7 +217,7 @@ void ChartSpikeHist::OnLButtonUp(UINT nFlags, CPoint point)
 	switch (m_trackMode)
 	{
 	case TRACK_HZTAG:
-		lbuttonUp_HzTag(nFlags, point);
+		left_button_up_horizontal_tag(nFlags, point);
 		break;
 
 	case TRACK_VTTAG:
@@ -227,7 +227,7 @@ void ChartSpikeHist::OnLButtonUp(UINT nFlags, CPoint point)
 			const auto val = MulDiv(point.x - m_xVO, m_xWE, m_xVE) + m_xWO;
 			m_VTtags.set_tag_val(m_HCtrapped, val);
 			point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
-			XorVTtag(point.x);
+			xor_vertical_tag(point.x);
 			ChartSpike::OnLButtonUp(nFlags, point);
 			post_my_message(HINT_CHANGEVERTTAG, m_HCtrapped);
 		}
@@ -246,7 +246,7 @@ void ChartSpikeHist::OnLButtonUp(UINT nFlags, CPoint point)
 				if (m_cursorType != CURSOR_ZOOM)
 					post_my_message(HINT_HITAREA, NULL);
 				else
-					zoomIn();
+					zoom_in();
 				break; // exit: mouse movement was too small
 			}
 
@@ -257,10 +257,10 @@ void ChartSpikeHist::OnLButtonUp(UINT nFlags, CPoint point)
 			case 0:
 				rect_out = rect_in;
 				rect_out.OffsetRect(m_ptFirst.x - m_ptLast.x, m_ptFirst.y - m_ptLast.y);
-				ZoomData(&rect_in, &rect_out);
+				zoom_data(&rect_in, &rect_out);
 				break;
 			case CURSOR_ZOOM: // zoom operation
-				ZoomData(&rect_in, &rect_out);
+				zoom_data(&rect_in, &rect_out);
 				m_ZoomFrom = rect_in;
 				m_ZoomTo = rect_out;
 				m_iUndoZoom = 1;
@@ -305,7 +305,7 @@ void ChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 }
 
-// ZoomData
+// zoom_data
 // convert pixels to logical pts and reverse to adjust curve to the
 // rectangle selected
 // lp to dp: d = (l -wo)*ve/we + vo
@@ -313,7 +313,7 @@ void ChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
 // wo= window origin; we= window extent; vo=viewport origin, ve=viewport extent
 // with ordinates: wo=zero, we=yextent, ve=rect.height/2, vo = -rect.GetRectHeight()/2
 
-void ChartSpikeHist::ZoomData(CRect* rFrom, CRect* rDest)
+void ChartSpikeHist::zoom_data(CRect* rFrom, CRect* rDest)
 {
 	rFrom->NormalizeRect();
 	rDest->NormalizeRect();

@@ -523,7 +523,7 @@ void ViewSpikeTemplates::OnFormatCentercurve()
 
 void ViewSpikeTemplates::setExtentZeroAllDisplay(int extent, int zero)
 {
-	m_ChartSpkWnd_Shape.SetYWExtOrg(extent, zero);
+	m_ChartSpkWnd_Shape.set_yw_ext_org(extent, zero);
 	m_templList.SetYWExtOrg(extent, zero);
 	m_avgList.SetYWExtOrg(extent, zero);
 	m_avgAllList.SetYWExtOrg(extent, zero);
@@ -602,7 +602,7 @@ void ViewSpikeTemplates::displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList) /
 		m_pSpkList->get_total_max_min(TRUE, &valuemax, &valuemin);
 		extent = valuemax - valuemin;
 		zero = (valuemax + valuemin) / 2;
-		m_ChartSpkWnd_Shape.SetYWExtOrg(extent, zero);
+		m_ChartSpkWnd_Shape.set_yw_ext_org(extent, zero);
 	}
 	pTPList->SetYWExtOrg(extent, zero);
 

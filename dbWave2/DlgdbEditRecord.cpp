@@ -83,7 +83,7 @@ END_MESSAGE_MAP()
 BOOL DlgdbEditRecord::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	m_pSet = &m_pdbDoc->m_pDB->m_mainTableSet;
+	m_pSet = &m_pdbDoc->db_table->m_mainTableSet;
 	PopulateControls();
 	// TODO? disable controls corresponding to a filtered field
 	UpdateData(FALSE);
@@ -93,7 +93,7 @@ BOOL DlgdbEditRecord::OnInitDialog()
 
 void DlgdbEditRecord::PopulateControls()
 {
-	auto p_db = m_pdbDoc->m_pDB;
+	auto p_db = m_pdbDoc->db_table;
 	// fill combo boxes associated with a secondary table
 	PopulateCombo_WithText(p_db->m_stim_set, m_ctlstim, m_pSet->m_stim_ID);
 	PopulateCombo_WithText(p_db->m_conc_set, m_ctlconc, m_pSet->m_conc_ID);
@@ -189,7 +189,7 @@ void DlgdbEditRecord::UpdateDatabaseFromDialog()
 	// update combo boxes associated with a secondary table
 	m_pSet->Edit();
 
-	CdbTable* p_database = m_pdbDoc->m_pDB;
+	CdbTable* p_database = m_pdbDoc->db_table;
 	UpdateSetFromCombo(p_database->m_stim_set, m_ctlstim, m_pSet->m_stim_ID);
 	UpdateSetFromCombo(p_database->m_conc_set, m_ctlconc, m_pSet->m_conc_ID);
 	UpdateSetFromCombo(p_database->m_stim_set, m_ctlstim2, m_pSet->m_stim2_ID);
@@ -355,7 +355,7 @@ DB_ITEMDESC* DlgdbEditRecord::GetItemDescriptors(int IDC)
 {
 	DB_ITEMDESC* pdesc = nullptr;
 	const auto p_dbwave_doc = m_pdbDoc;
-	auto p_db = p_dbwave_doc->m_pDB;
+	auto p_db = p_dbwave_doc->db_table;
 	int ich;
 	switch (IDC)
 	{

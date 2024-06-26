@@ -305,7 +305,7 @@ int ChartData::set_channel_list_transform_mode(int ichan, int i_mode)
 	return i_mode;
 }
 
-SCOPESTRUCT* ChartData::GetScopeParameters()
+SCOPESTRUCT* ChartData::get_scope_parameters()
 {
 	const auto n_channels = chanlistitem_ptr_array.GetSize();
 	m_scopestruct.channels.SetSize(n_channels);
@@ -319,7 +319,7 @@ SCOPESTRUCT* ChartData::GetScopeParameters()
 	return &m_scopestruct;
 }
 
-void ChartData::SetScopeParameters(SCOPESTRUCT* pStruct)
+void ChartData::set_scope_parameters(SCOPESTRUCT* pStruct)
 {
 	const auto nchannels_struct = pStruct->channels.GetSize();
 	const auto nchannels_chanlist = chanlistitem_ptr_array.GetSize();
@@ -734,7 +734,7 @@ void ChartData::UpdatePageLineSize()
 		m_lxLine = 1;
 }
 
-void ChartData::ZoomData(CRect* r1, CRect* r2)
+void ChartData::zoom_data(CRect* r1, CRect* r2)
 {
 	r1->NormalizeRect();
 	r2->NormalizeRect();
@@ -801,7 +801,7 @@ void ChartData::plot_data_to_dc(CDC* p_dc)
 		return;
 
 	if (m_erasebkgnd)
-		erase_bkgnd(p_dc);
+		erase_background(p_dc);
 
 	if (m_bNiceGrid) 
 	{
@@ -969,8 +969,8 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 	// prepare DC
 	const auto previousmapping = p_dc->SetMapMode(MM_TEXT); // change map mode to text (1 pixel = 1 logical point)
 	m_clientRect = *pRect; //CRect(0,0, pRect->GetRectWidth(), pRect->GetRectHeight());
-	AdjustDisplayRect(pRect);
-	erase_bkgnd(p_dc);
+	adjust_display_rect(pRect);
+	erase_background(p_dc);
 	// clip curves
 	if (m_scopestruct.bClipRect)
 		p_dc->IntersectClipRect(m_displayRect);
@@ -1101,7 +1101,7 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 	p_dc->RestoreDC(n_saved_dc); // restore DC
 	p_dc->SetMapMode(previousmapping); // restore map mode
 	m_clientRect = old_rect;
-	AdjustDisplayRect(&m_clientRect);
+	adjust_display_rect(&m_clientRect);
 }
 
 BOOL ChartData::CopyAsText(int ioption, int iunit, int nabcissa)
@@ -1392,7 +1392,7 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 		break;
 
 	case TRACK_HZTAG:
-		lbuttonUp_HzTag(nFlags, point);
+		left_button_up_horizontal_tag(nFlags, point);
 		break;
 
 	case TRACK_VTTAG:
@@ -1402,7 +1402,7 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 				right) + m_liFirst;
 			m_VTtags.set_tag_l_value(m_HCtrapped, lval);
 			point.x = static_cast<int>((lval - m_liFirst) * long(m_displayRect.right) / (m_liLast - m_liFirst + 1));
-			XorVTtag(point.x);
+			xor_vertical_tag(point.x);
 			post_my_message(HINT_CHANGEVERTTAG, m_HCtrapped);
 			m_trackMode = TRACK_OFF;
 		}
@@ -1422,22 +1422,22 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 			case 0: // if no cursor, no curve track, then move display
 				if (b_rect_ok)
 				{
-					invertTracker(point);
+					invert_tracker(point);
 					rect_out = rect_in;
 					rect_out.OffsetRect(m_ptFirst.x - m_ptLast.x, m_ptFirst.y - m_ptLast.y);
-					ZoomData(&rect_in, &rect_out);
+					zoom_data(&rect_in, &rect_out);
 				}
 				break;
 			case CURSOR_ZOOM: // zoom operation
 				if (b_rect_ok)
 				{
-					ZoomData(&rect_in, &rect_out);
+					zoom_data(&rect_in, &rect_out);
 					m_ZoomFrom = rect_in;
 					m_ZoomTo = rect_out;
 					m_iUndoZoom = 1;
 				}
 				else
-					zoomIn();
+					zoom_in();
 				post_my_message(HINT_SETMOUSECURSOR, m_oldcursorType);
 				break;
 			case CURSOR_CROSS:
@@ -1533,7 +1533,7 @@ void ChartData::MoveHZtagtoVal(int i, int val)
 	m_ptLast.y = MulDiv(m_HZtags.get_value(i) - m_zero, m_yVE, m_XORyext) + m_yVO;
 	CPoint point;
 	point.y = MulDiv(val - m_zero, m_yVE, m_XORyext) + m_yVO;
-	XorHZtag(point.y);
+	xor_horizontal_tag(point.y);
 	m_HZtags.set_tag_val(i, val);
 }
 

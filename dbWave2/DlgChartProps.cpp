@@ -43,7 +43,7 @@ END_MESSAGE_MAP()
 BOOL DlgChartProps::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	SCOPESTRUCT* pStruct = m_pscope->GetScopeParameters();
+	SCOPESTRUCT* pStruct = m_pscope->get_scope_parameters();
 	m_xcells = pStruct->iXCells;
 	m_ycells = pStruct->iYCells;
 	m_xyticks = pStruct->iXTicks;
@@ -77,9 +77,9 @@ void DlgChartProps::OnEnChangeXCells()
 
 		if (m_xcells != x_cells)
 		{
-			SCOPESTRUCT* pStruct = m_pscope->GetScopeParameters();
+			SCOPESTRUCT* pStruct = m_pscope->get_scope_parameters();
 			pStruct->xScaleUnitValue = pStruct->xScaleUnitValue * x_cells / m_xcells;
-			m_pscope->SetNxScaleCells(m_xcells, m_xyticks, m_xytickline);
+			m_pscope->set_nx_scale_cells(m_xcells, m_xyticks, m_xytickline);
 			m_pscope->Invalidate();
 		}
 		UpdateData(FALSE);
@@ -96,9 +96,9 @@ void DlgChartProps::OnEnChangeYCells()
 		if (m_ycells < 1) m_ycells = 1;
 		if (m_ycells != y_cells)
 		{
-			SCOPESTRUCT* pStruct = m_pscope->GetScopeParameters();
+			SCOPESTRUCT* pStruct = m_pscope->get_scope_parameters();
 			pStruct->yScaleUnitValue = pStruct->yScaleUnitValue * y_cells / m_ycells;
-			m_pscope->SetNyScaleCells(m_ycells, m_xyticks, m_xytickline);
+			m_pscope->set_ny_scale_cells(m_ycells, m_xyticks, m_xytickline);
 			m_pscope->Invalidate();
 		}
 		UpdateData(FALSE);
@@ -117,9 +117,9 @@ void DlgChartProps::OnEnChangeXYTicks()
 		if (m_xyticks != xy_ticks)
 		{
 			if (m_xcells > 0)
-				m_pscope->SetNxScaleCells(m_xcells, m_xyticks, m_xytickline);
+				m_pscope->set_nx_scale_cells(m_xcells, m_xyticks, m_xytickline);
 			if (m_ycells > 0)
-				m_pscope->SetNyScaleCells(m_ycells, m_xyticks, m_xytickline);
+				m_pscope->set_ny_scale_cells(m_ycells, m_xyticks, m_xytickline);
 			m_pscope->Invalidate();
 		}
 		UpdateData(FALSE);
@@ -137,9 +137,9 @@ void DlgChartProps::OnEnChangeXYTicksLine()
 		if (m_xytickline != xy_tick_line)
 		{
 			if (m_xcells > 0)
-				m_pscope->SetNxScaleCells(m_xcells, m_xyticks, m_xytickline);
+				m_pscope->set_nx_scale_cells(m_xcells, m_xyticks, m_xytickline);
 			if (m_ycells > 0)
-				m_pscope->SetNyScaleCells(m_ycells, m_xyticks, m_xytickline);
+				m_pscope->set_ny_scale_cells(m_ycells, m_xyticks, m_xytickline);
 			m_pscope->Invalidate();
 		}
 		UpdateData(FALSE);
@@ -151,7 +151,7 @@ void DlgChartProps::OnBackgroundColor()
 	CColorDialog dlg(m_crScopeFill, CC_RGBINIT, nullptr);
 	if (IDOK != dlg.DoModal())
 		return;
-	(m_pscope->GetScopeParameters())->crScopeFill = dlg.GetColor();
+	(m_pscope->get_scope_parameters())->crScopeFill = dlg.GetColor();
 	m_pscope->Invalidate();
 }
 
@@ -160,6 +160,6 @@ void DlgChartProps::OnGridColor()
 	CColorDialog dlg(m_crScopeGrid, CC_RGBINIT, nullptr);
 	if (IDOK != dlg.DoModal())
 		return;
-	(m_pscope->GetScopeParameters())->crScopeGrid = dlg.GetColor();
+	(m_pscope->get_scope_parameters())->crScopeGrid = dlg.GetColor();
 	m_pscope->Invalidate();
 }

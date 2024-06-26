@@ -143,7 +143,7 @@ void CTemplateWnd::DeleteArrays()
 void CTemplateWnd::plot_data_to_dc(CDC* p_dc)
 {
 	if (m_erasebkgnd)
-		erase_bkgnd(p_dc);
+		erase_background(p_dc);
 
 	if (m_tpllen == 0)
 		return;

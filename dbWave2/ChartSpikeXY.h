@@ -35,7 +35,7 @@ public:
 	}
 
 	void plot_data_to_dc(CDC* p_dc) override;
-	void ZoomData(CRect* rect_from, CRect* rect_dest) override;
+	void zoom_data(CRect* rect_from, CRect* rect_dest) override;
 
 protected:
 	void display_spike(const Spike* spike, CDC* p_dc, const CRect& rect, const CRect& rect1, const long window_duration) const;

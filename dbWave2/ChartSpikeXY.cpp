@@ -16,7 +16,7 @@ END_MESSAGE_MAP()
 
 ChartSpikeXY::ChartSpikeXY()
 {
-	SetbUseDIB(FALSE);
+	set_b_use_dib(FALSE);
 	m_csEmpty = _T("no spikes (spikexp)");
 }
 
@@ -26,7 +26,7 @@ ChartSpikeXY::~ChartSpikeXY()
 void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 {
 	if (m_erasebkgnd)
-		erase_bkgnd(p_dc);
+		erase_background(p_dc);
 
 	p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 	auto rect = m_displayRect;
@@ -282,7 +282,7 @@ void ChartSpikeXY::move_hz_tag(const int index, const int new_value)
 {
 	m_ptLast.y = MulDiv(m_HZtags.get_value(index) - m_yWO, m_yVE, m_yWE) + m_yVO;
 	const auto y_pixel = MulDiv(new_value - m_yWO, m_yVE, m_yWE) + m_yVO;
-	XorHZtag(y_pixel);
+	xor_horizontal_tag(y_pixel);
 	m_HZtags.set_tag_val(index, new_value);
 }
 
@@ -290,7 +290,7 @@ void ChartSpikeXY::move_vt_tag(const int index, const int new_value)
 {
 	m_ptLast.x = MulDiv(m_VTtags.get_value(index) - m_xWO, m_xVE, m_xWE) + m_xVO;
 	const auto x_pixel = MulDiv(new_value - m_xWO, m_xVE, m_xWE) + m_xVO;
-	XorVTtag(x_pixel);
+	xor_vertical_tag(x_pixel);
 	m_VTtags.set_tag_val(index, new_value);
 }
 
@@ -316,7 +316,7 @@ void ChartSpikeXY::OnLButtonUp(UINT nFlags, CPoint point)
 	switch (m_trackMode)
 	{
 	case TRACK_HZTAG:
-		lbuttonUp_HzTag(nFlags, point);
+		left_button_up_horizontal_tag(nFlags, point);
 		break;
 
 	case TRACK_VTTAG:
@@ -325,7 +325,7 @@ void ChartSpikeXY::OnLButtonUp(UINT nFlags, CPoint point)
 			const auto val = MulDiv(m_ptLast.x - m_xVO, m_xWE, m_xVE) + m_xWO;
 			m_VTtags.set_tag_val(m_HCtrapped, val);
 			point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
-			XorVTtag(point.x);
+			xor_vertical_tag(point.x);
 			ChartSpike::OnLButtonUp(nFlags, point);
 			post_my_message(HINT_CHANGEVERTTAG, m_HCtrapped);
 		}
@@ -341,7 +341,7 @@ void ChartSpikeXY::OnLButtonUp(UINT nFlags, CPoint point)
 				if (m_cursorType != CURSOR_ZOOM)
 					post_my_message(HINT_HITAREA, NULL);
 				else
-					zoomIn();
+					zoom_in();
 				return; // exit: mouse movement was too small
 			}
 
@@ -352,10 +352,10 @@ void ChartSpikeXY::OnLButtonUp(UINT nFlags, CPoint point)
 			case 0:
 				rect_out = rect_in;
 				rect_out.OffsetRect(m_ptFirst.x - m_ptLast.x, m_ptFirst.y - m_ptLast.y);
-				ZoomData(&rect_in, &rect_out);
+				zoom_data(&rect_in, &rect_out);
 				break;
 			case CURSOR_ZOOM: // zoom operation
-				ZoomData(&rect_in, &rect_out);
+				zoom_data(&rect_in, &rect_out);
 				m_ZoomFrom = rect_in;
 				m_ZoomTo = rect_out;
 				m_iUndoZoom = 1;
@@ -410,7 +410,7 @@ void ChartSpikeXY::OnLButtonDown(const UINT nFlags, const CPoint point)
 }
 
 //---------------------------------------------------------------------------
-// ZoomData()
+// zoom_data()
 // convert pixels to logical pts and reverse to adjust curve to the
 // rectangle selected
 // lp to dp: d = (l -wo)*ve/we + vo
@@ -419,7 +419,7 @@ void ChartSpikeXY::OnLButtonDown(const UINT nFlags, const CPoint point)
 // with ordinates: wo=zero, we= y extent, ve=rect.height/2, vo = -rect.GetRectHeight()/2
 //---------------------------------------------------------------------------
 
-void ChartSpikeXY::ZoomData(CRect* rect_from, CRect* rect_dest)
+void ChartSpikeXY::zoom_data(CRect* rect_from, CRect* rect_dest)
 {
 	rect_from->NormalizeRect(); // make sure that rect is not inverted
 	rect_dest->NormalizeRect();

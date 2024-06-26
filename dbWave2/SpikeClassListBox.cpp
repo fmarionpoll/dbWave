@@ -408,7 +408,7 @@ void SpikeClassListBox::XorTempVTtag(int x_point) const
 	for (auto i = 0; i < GetCount(); i++)
 	{
 		const auto row_item = get_row_item(i);
-		row_item->get_chart_bars()->XorTempVTtag(x_point);
+		row_item->get_chart_bars()->xor_temp_vertical_tag(x_point);
 	}
 }
 
@@ -417,7 +417,7 @@ void SpikeClassListBox::ResetBarsXortag() const
 	for (int i = 0; i < GetCount(); i++)
 	{
 		const auto row_item = get_row_item(i);
-		row_item->get_chart_bars()->ResetXortag();
+		row_item->get_chart_bars()->reset_xor_tag();
 	}
 }
 

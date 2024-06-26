@@ -11,11 +11,11 @@ void ChartDataAD::start_display(int points_per_channel)
 	const auto envelope = envelope_ptr_array.GetAt(0);
 	envelope->FillEnvelopeWithAbcissaEx(1, m_displayRect.right - 1, points_per_channel);
 	envelope->ExportToAbcissa(m_PolyPoints);
-	SetbUseDIB(FALSE);
+	set_b_use_dib(FALSE);
 
 	// clear window before acquiring data
 	CClientDC dc(this);
-	erase_bkgnd(&dc);
+	erase_background(&dc);
 
 	// print comment
 	dc.SelectObject(GetStockObject(DEFAULT_GUI_FONT));

@@ -128,8 +128,8 @@ void RowItem::move_row_out_of_the_way() const
 void RowItem::set_y_zoom(int y_we, int y_wo) const
 {
 	if (chart_spike_shape != nullptr)
-		chart_spike_shape->SetYWExtOrg(y_we, y_wo);
-	chart_spike_bar->SetYWExtOrg(y_we, y_wo);
+		chart_spike_shape->set_yw_ext_org(y_we, y_wo);
+	chart_spike_bar->set_yw_ext_org(y_we, y_wo);
 }
 
 void RowItem::set_x_zoom(int x_we, int x_wo) const

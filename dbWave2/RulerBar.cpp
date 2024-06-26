@@ -276,7 +276,7 @@ void RulerBar::OnLButtonUp(UINT nFlags, CPoint point)
 					newrect.bottom -= delta;
 				else
 					newrect.top += delta;
-				m_pChartDataWnd->ZoomData(&prevrect, &newrect);
+				m_pChartDataWnd->zoom_data(&prevrect, &newrect);
 				m_pChartDataWnd->Invalidate();
 			}
 			else

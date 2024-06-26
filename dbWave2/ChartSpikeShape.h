@@ -45,7 +45,7 @@ public:
 	void display_flagged_spikes(BOOL bHighLight);
 
 	void plot_data_to_dc(CDC* p_dc) override;
-	void ZoomData(CRect* rFrom, CRect* rDest) override;
+	void zoom_data(CRect* rFrom, CRect* rDest) override;
 	void Print(CDC* p_dc, const CRect* rect);
 
 protected:

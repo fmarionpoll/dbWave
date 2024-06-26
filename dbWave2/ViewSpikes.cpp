@@ -119,7 +119,7 @@ void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_d
 			ar.Close();
 		}
 
-		p_app->options_view_data.viewdata = *(m_ChartDataWnd.GetScopeParameters());
+		p_app->options_view_data.viewdata = *(m_ChartDataWnd.get_scope_parameters());
 	}
 	dbTableView::OnActivateView(bActivate, pActivateView, p_deactivate_view);
 }
@@ -200,7 +200,7 @@ void ViewSpikes::OnMouseMove(UINT nFlags, CPoint point)
 		else
 			m_ptVT = -1;
 		m_bdummy = TRUE;
-		m_ChartDataWnd.XorTempVTtag(m_ptVT);
+		m_ChartDataWnd.xor_temp_vertical_tag(m_ptVT);
 		m_spikeClassListBox.XorTempVTtag(m_ptVT);
 	}
 	dbTableView::OnMouseMove(nFlags, point);
@@ -299,7 +299,7 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_WINDOWPROPSCHANGED:
-		options_viewdata->spkviewdata = *m_ChartDataWnd.GetScopeParameters();
+		options_viewdata->spkviewdata = *m_ChartDataWnd.get_scope_parameters();
 		break;
 
 	case HINT_HITSPIKE_SHIFT:
@@ -507,8 +507,8 @@ void ViewSpikes::OnInitialUpdate()
 	m_spikeClassListBox.SetCursorMaxOnDblClick(3);
 
 	// init relation with document, display data, adjust parameters
-	m_ChartDataWnd.SetScopeParameters(&(options_viewdata->viewdata));
-	m_ChartDataWnd.SetCursorMaxOnDblClick(3);
+	m_ChartDataWnd.set_scope_parameters(&(options_viewdata->viewdata));
+	m_ChartDataWnd.set_cursor_max_on_dbl_click(3);
 
 	updateFileParameters(TRUE);
 	if (m_b_add_spike_mode)
@@ -532,7 +532,7 @@ void ViewSpikes::updateDataFile(BOOL bUpdateInterface)
 	if (m_pDataDoc == nullptr)
 		return;
 
-	m_ChartDataWnd.SetbUseDIB(FALSE);
+	m_ChartDataWnd.set_b_use_dib(FALSE);
 	m_ChartDataWnd.AttachDataFile(m_pDataDoc);
 
 	const auto detect = m_pSpkList->get_detection_parameters();

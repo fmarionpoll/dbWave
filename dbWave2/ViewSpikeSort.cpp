@@ -169,22 +169,22 @@ void ViewSpikeSort::OnInitialUpdate()
 
 	chart_spike_shape_.display_all_files(false, GetDocument());
 	chart_spike_shape_.set_plot_mode(PLOT_ONECOLOR, m_source_class);
-	chart_spike_shape_.SetScopeParameters(&(options_view_data_->spksort1spk));
+	chart_spike_shape_.set_scope_parameters(&(options_view_data_->spksort1spk));
 	m_spk_form_tag_left_ = chart_spike_shape_.m_VTtags.add_tag(spike_classification_parameters_->i_left, 0);
 	m_spk_form_tag_right_ = chart_spike_shape_.m_VTtags.add_tag(spike_classification_parameters_->i_right, 0);
 
 	chart_xt_measures_.display_all_files(false, GetDocument());
 	chart_xt_measures_.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
-	chart_xt_measures_.SetScopeParameters(&(options_view_data_->spksort1parms));
+	chart_xt_measures_.set_scope_parameters(&(options_view_data_->spksort1parms));
 	m_i_tag_up_ = chart_xt_measures_.m_HZtags.add_tag(spike_classification_parameters_->upper_threshold, 0);
 	m_i_tag_low_ = chart_xt_measures_.m_HZtags.add_tag(spike_classification_parameters_->lower_threshold, 0);
 
 	chart_spike_bar_.display_all_files(false, GetDocument());
 	chart_spike_bar_.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
-	chart_spike_bar_.SetScopeParameters(&(options_view_data_->spksort1bars));
+	chart_spike_bar_.set_scope_parameters(&(options_view_data_->spksort1bars));
 
 	chart_histogram_.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
-	chart_histogram_.SetScopeParameters(&(options_view_data_->spksort1hist));
+	chart_histogram_.set_scope_parameters(&(options_view_data_->spksort1hist));
 
 	// display tag lines at proper places
 	m_spk_hist_upper_threshold_ = chart_histogram_.m_VTtags.add_tag(spike_classification_parameters_->upper_threshold, 0);
@@ -215,8 +215,8 @@ void ViewSpikeSort::activate_mode4()
 			m_t_xy_right = static_cast<float>(spike_classification_parameters_->i_xy_right) / delta;
 			m_t_xy_left = static_cast<float>(spike_classification_parameters_->i_xy_left) / delta;
 		}
-		chart_xt_measures_.SetNxScaleCells(2, 0, 0);
-		chart_xt_measures_.GetScopeParameters()->crScopeGrid = RGB(128, 128, 128);
+		chart_xt_measures_.set_nx_scale_cells(2, 0, 0);
+		chart_xt_measures_.get_scope_parameters()->crScopeGrid = RGB(128, 128, 128);
 
 		if (nullptr != m_pSpkList)
 		{
@@ -231,7 +231,7 @@ void ViewSpikeSort::activate_mode4()
 	else
 	{
 		chart_xt_measures_.m_VTtags.remove_all_tags();
-		chart_xt_measures_.SetNxScaleCells(0, 0, 0);
+		chart_xt_measures_.set_nx_scale_cells(0, 0, 0);
 	}
 	GetDlgItem(IDC_STATICRIGHT)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_STATICLEFT)->ShowWindow(n_cmd_show);
@@ -669,10 +669,10 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		break;
 
 	case HINT_WINDOWPROPSCHANGED:
-		options_view_data_->spksort1spk = *chart_spike_shape_.GetScopeParameters();
-		options_view_data_->spksort1parms = *chart_xt_measures_.GetScopeParameters();
-		options_view_data_->spksort1hist = *chart_histogram_.GetScopeParameters();
-		options_view_data_->spksort1bars = *chart_spike_bar_.GetScopeParameters();
+		options_view_data_->spksort1spk = *chart_spike_shape_.get_scope_parameters();
+		options_view_data_->spksort1parms = *chart_xt_measures_.get_scope_parameters();
+		options_view_data_->spksort1hist = *chart_histogram_.get_scope_parameters();
+		options_view_data_->spksort1bars = *chart_spike_bar_.get_scope_parameters();
 		break;
 
 	case HINT_VIEWTABHASCHANGED:
@@ -692,13 +692,14 @@ void ViewSpikeSort::clear_flag_all_spikes()
 		const auto pdb_doc = GetDocument();
 		for (auto i_file = 0; i_file < pdb_doc->db_get_n_records(); i_file++)
 		{
-			pdb_doc->db_set_current_record_position(i_file);
-			m_pSpkDoc = pdb_doc->open_current_spike_file();
+			if (pdb_doc->db_set_current_record_position(i_file)) {
+				m_pSpkDoc = pdb_doc->open_current_spike_file();
 
-			for (auto j = 0; j < m_pSpkDoc->get_spike_list_size(); j++)
-			{
-				m_pSpkList = m_pSpkDoc->set_spike_list_as_current(j);
-				m_pSpkList->remove_all_spike_flags();
+				for (auto j = 0; j < m_pSpkDoc->get_spike_list_size(); j++)
+				{
+					m_pSpkList = m_pSpkDoc->set_spike_list_as_current(j);
+					m_pSpkList->remove_all_spike_flags();
+				}
 			}
 		}
 	}
@@ -731,15 +732,13 @@ void ViewSpikeSort::OnMeasure()
 	// loop over all selected files (or only one file currently selected)
 	for (auto i_file = first_file; i_file <= last_file; i_file++)
 	{
-		// check if user wants to continue
-		//if (m_bAllfiles)
-		//{
-		pdb_doc->db_set_current_record_position(i_file);
+		if (!pdb_doc->db_set_current_record_position(i_file))
+			continue;
+
 		m_pSpkDoc = pdb_doc->open_current_spike_file();
-		//}
-		// check if this file is ok
 		if (m_pSpkDoc == nullptr)
 			continue;
+
 		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_spike_list);
 		if (m_pSpkList == nullptr)
 			continue;
@@ -775,14 +774,14 @@ void ViewSpikeSort::OnMeasure()
 		m_pSpkDoc->OnSaveDocument(pdb_doc->db_get_current_spk_file_name(FALSE));
 	}
 
-	if (m_b_all_files)
-	{
-		index_current_file = pdb_doc->db_get_current_record_position();
-		if (pdb_doc->db_set_current_record_position(index_current_file)) {
-			m_pSpkDoc = pdb_doc->open_current_spike_file();
-			m_pSpkList = m_pSpkDoc->get_spike_list_current();
-		}
-	}
+	//if (m_b_all_files)
+	//{
+	//	index_current_file = pdb_doc->db_get_current_record_position();
+	//	if (pdb_doc->db_set_current_record_position(index_current_file)) {
+	//		m_pSpkDoc = pdb_doc->open_current_spike_file();
+	//		m_pSpkList = m_pSpkDoc->get_spike_list_current();
+	//	}
+	//}
 
 	chart_spike_shape_.set_source_data(m_pSpkList, GetDocument());
 	chart_spike_bar_.set_source_data(m_pSpkList, GetDocument());
@@ -804,15 +803,15 @@ void ViewSpikeSort::update_gain()
 	const auto y_we = static_cast<int>((m_mv_max - m_mv_min) / delta);
 	const auto y_wo = static_cast<int>((m_mv_max + m_mv_min) / 2 /delta);
 
-	chart_xt_measures_.SetYWExtOrg(y_we, y_wo);
+	chart_xt_measures_.set_yw_ext_org(y_we, y_wo);
 	chart_histogram_.SetXWExtOrg(y_we, y_wo);// -y_we / 2);
 
 	// get max min and center accordingly
 	short max, min;
 	m_pSpkList->get_total_max_min(FALSE, &max, &min);
 	const auto middle = (max + min) / 2;
-	chart_spike_shape_.SetYWExtOrg(y_we, middle);
-	chart_spike_bar_.SetYWExtOrg(y_we, middle);
+	chart_spike_shape_.set_yw_ext_org(y_we, middle);
+	chart_spike_bar_.set_yw_ext_org(y_we, middle);
 
 	chart_xt_measures_.Invalidate();
 	chart_histogram_.Invalidate();
@@ -885,8 +884,8 @@ void ViewSpikeSort::OnFormatCentercurve()
 	short max, min;
 	m_pSpkList->get_total_max_min(TRUE, &max, &min);
 	const auto middle = (max + min) / 2;
-	chart_spike_shape_.SetYWExtOrg(chart_spike_shape_.GetYWExtent(), middle);
-	chart_spike_bar_.SetYWExtOrg(chart_spike_shape_.GetYWExtent(), middle);
+	chart_spike_shape_.set_yw_ext_org(chart_spike_shape_.GetYWExtent(), middle);
+	chart_spike_bar_.set_yw_ext_org(chart_spike_shape_.GetYWExtent(), middle);
 
 	update_legends();
 }
@@ -904,8 +903,8 @@ void ViewSpikeSort::OnFormatGainadjust()
 
 	auto y_we = MulDiv(maxvalue - minvalue + 1, 10, 9);
 	auto y_wo = (maxvalue + minvalue) / 2;
-	chart_spike_shape_.SetYWExtOrg(y_we, y_wo);
-	chart_spike_bar_.SetYWExtOrg(y_we, y_wo);
+	chart_spike_shape_.set_yw_ext_org(y_we, y_wo);
+	chart_spike_bar_.set_yw_ext_org(y_we, y_wo);
 	//chart_spike_bar_.MaxCenter();
 
 	// adjust gain for spk_hist_wnd_ and XYp: data = computed values
@@ -925,10 +924,10 @@ void ViewSpikeSort::OnFormatGainadjust()
 	y_wo = (maxvalue + minvalue) / 2;
 
 	// update display
-	chart_xt_measures_.SetYWExtOrg(y_we, y_wo);
+	chart_xt_measures_.set_yw_ext_org(y_we, y_wo);
 	const auto y_max = static_cast<int>(chart_histogram_.GetHistMax());
 	chart_histogram_.SetXWExtOrg(y_we, y_wo - y_we / 2);
-	chart_histogram_.SetYWExtOrg(MulDiv(y_max, 10, 8), 0);
+	chart_histogram_.set_yw_ext_org(MulDiv(y_max, 10, 8), 0);
 
 	// update edit controls
 	m_mv_max = static_cast<float>(maxvalue) * delta;

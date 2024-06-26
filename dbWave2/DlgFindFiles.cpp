@@ -32,7 +32,7 @@ BOOL DlgFindFiles::OnInitDialog()
 	m_pfilenames->RemoveAll();
 	m_path = static_cast<CdbWaveApp*>(AfxGetApp())->options_import.path;
 	if (m_pdbDoc)
-		m_path = m_pdbDoc->m_ProposedDataPathName;
+		m_path = m_pdbDoc->proposed_data_path_name;
 	m_mfcbrowsecontrol.SetWindowTextW(m_path);
 
 	// hide yet undefined infos

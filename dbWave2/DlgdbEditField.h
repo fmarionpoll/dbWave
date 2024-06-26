@@ -39,12 +39,12 @@ protected:
 
 		const auto bookmark_current = m_pMainTable->GetBookmark();
 
-		const auto u_selected_count = m_pdbDoc->m_selectedRecords.GetSize();
+		const auto u_selected_count = m_pdbDoc->selected_records.GetSize();
 		ASSERT(u_selected_count > 0);
 
 		for (auto i = 0; i < u_selected_count; i++)
 		{
-			const long n_item = m_pdbDoc->m_selectedRecords.GetAt(i);
+			const long n_item = m_pdbDoc->selected_records.GetAt(i);
 			m_pMainTable->SetAbsolutePosition(n_item);
 			ModifyCurrent();
 		}

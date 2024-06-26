@@ -23,8 +23,8 @@ CTemplateListWnd::~CTemplateListWnd()
 {
 	for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
 	{
-		const auto templatewnd_ptr = templatewnd_ptr_array.GetAt(i);
-		delete templatewnd_ptr;
+		const auto template_wnd_ptr = templatewnd_ptr_array.GetAt(i);
+		delete template_wnd_ptr;
 	}
 	templatewnd_ptr_array.RemoveAll();
 }
@@ -140,10 +140,10 @@ int CTemplateListWnd::InsertTemplate(int i, int classID)
 
 	// init parameters
 	p_wnd->SetTemplateLength(m_tpllen);
-	p_wnd->SetYWExtOrg(m_yextent, m_yzero);
+	p_wnd->set_yw_ext_org(m_yextent, m_yzero);
 	p_wnd->SetXWExtOrg(m_tpright - m_tpleft + 1, m_tpleft);
 	p_wnd->SetbDrawframe(TRUE);
-	p_wnd->SetbUseDIB(FALSE);
+	p_wnd->set_b_use_dib(FALSE);
 	p_wnd->m_ktolerance = m_ktolerance;
 	p_wnd->m_globalstd = m_globalstd;
 
@@ -197,10 +197,10 @@ int CTemplateListWnd::InsertTemplateData(int i, int classID)
 
 	// init parameters
 	p_wnd->SetTemplateLength(m_tpllen);
-	p_wnd->SetYWExtOrg(m_yextent, m_yzero);
+	p_wnd->set_yw_ext_org(m_yextent, m_yzero);
 	p_wnd->SetXWExtOrg(m_tpright - m_tpleft + 1, m_tpleft);
 	p_wnd->SetbDrawframe(TRUE);
-	p_wnd->SetbUseDIB(FALSE);
+	p_wnd->set_b_use_dib(FALSE);
 	p_wnd->m_ktolerance = m_ktolerance;
 	p_wnd->m_globalstd = m_globalstd;
 
@@ -605,7 +605,7 @@ void CTemplateListWnd::SetYWExtOrg(int extent, int zero)
 	for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
 	{
 		CTemplateWnd* ptemplate = GetTemplateWnd(i);
-		ptemplate->SetYWExtOrg(extent, zero);
+		ptemplate->set_yw_ext_org(extent, zero);
 	}
 }
 

@@ -454,7 +454,7 @@ void CChildFrame::replaceView(CRuntimeClass * pViewClass, HMENU hmenu)
 	if (p_dbWave_doc == nullptr)
 		return;
 
-	p_dbWave_doc->m_hMyMenu = hmenu;
+	p_dbWave_doc->h_my_menu = hmenu;
 
 	CSize size;
 	CRect rect;

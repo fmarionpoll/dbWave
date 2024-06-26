@@ -49,7 +49,7 @@ public:
 	void MoveVTtagtoVal(int itag, int ival);
 	void MoveHZtagtoVal(int itag, int ival);
 
-	void ZoomData(CRect* prevRect, CRect* newRect) override;
+	void zoom_data(CRect* prevRect, CRect* newRect) override;
 	void plot_data_to_dc(CDC* p_dc) override;
 
 	// implementation

@@ -18,7 +18,7 @@ END_MESSAGE_MAP()
 
 ChartSpikeShape::ChartSpikeShape()
 {
-	SetbUseDIB(FALSE);
+	set_b_use_dib(FALSE);
 	m_csEmpty = _T("no spikes (spikeshape)");
 }
 
@@ -28,7 +28,7 @@ ChartSpikeShape::~ChartSpikeShape()
 void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 {
 	if (m_erasebkgnd)
-		erase_bkgnd(p_dc);
+		erase_background(p_dc);
 
 	// display data: trap error conditions
 	const auto n_saved_dc = p_dc->SaveDC();
@@ -324,7 +324,7 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 		const auto val = MulDiv(point.x - m_xVO, m_xWE, m_xVE) + m_xWO;
 		m_VTtags.set_tag_val(m_HCtrapped, val);
 		point.x = MulDiv(val - m_xWO, m_xVE, m_xWE) + m_xVO;
-		XorVTtag(point.x);
+		xor_vertical_tag(point.x);
 		ChartSpike::OnLButtonUp(nFlags, point);
 		post_my_message(HINT_CHANGEVERTTAG, m_HCtrapped);
 	}
@@ -341,7 +341,7 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 			if (m_cursorType != CURSOR_ZOOM)
 				post_my_message(HINT_HITAREA, NULL);
 			else
-				zoomIn();
+				zoom_in();
 			return;
 		}
 
@@ -355,7 +355,7 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 			post_my_message(HINT_DEFINEDRECT, NULL);
 			break;
 		case CURSOR_ZOOM:
-			ZoomData(&rect_in, &rect_out);
+			zoom_data(&rect_in, &rect_out);
 			m_ZoomFrom = rect_in;
 			m_ZoomTo = rect_out;
 			m_iUndoZoom = 1;
@@ -400,7 +400,7 @@ void ChartSpikeShape::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 }
 
-// ZoomData(CRect* rFrom, CRect* rDest)
+// zoom_data(CRect* rFrom, CRect* rDest)
 //
 // max and min of rFrom should fit in rDest (same logical coordinates)
 // then one can write the 4 equations:
@@ -412,7 +412,7 @@ void ChartSpikeShape::OnLButtonDown(UINT nFlags, CPoint point)
 // from (1)-(2) = (3)-(4) one get WE2
 // from (1)=(3)               get WO2
 
-void ChartSpikeShape::ZoomData(CRect * rFrom, CRect * rDest)
+void ChartSpikeShape::zoom_data(CRect * rFrom, CRect * rDest)
 {
 	rFrom->NormalizeRect(); // make sure that rect is not inverted
 	rDest->NormalizeRect();
@@ -759,7 +759,7 @@ void ChartSpikeShape::move_vt_track(int i_track, int new_value)
 	m_ptLast.x = MulDiv(m_VTtags.get_value(i_track) - m_xWO, m_xVE, m_xWE) + m_xVO;
 	m_VTtags.set_tag_val(i_track, new_value);
 	point.x = MulDiv(new_value - m_xWO, m_xVE, m_xWE) + m_xVO;
-	XorVTtag(point.x);
+	xor_vertical_tag(point.x);
 }
 
 void ChartSpikeShape::Serialize(CArchive & ar)

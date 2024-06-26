@@ -72,7 +72,7 @@ void ViewdbWave::OnInitialUpdate()
 {
 	// init document and dbTableView
 	const auto dbwavedoc = GetDocument();
-	m_pSet = &dbwavedoc->m_pDB->m_mainTableSet;
+	m_pSet = &dbwavedoc->db_table->m_mainTableSet;
 	dbTableView::OnInitialUpdate();
 
 	subclass_dialog_controls();
@@ -318,7 +318,7 @@ void ViewdbWave::OnActivateView(BOOL bActivate, CView * pActivateView, CView * p
 		ChartData* pDataChartWnd = m_dataListCtrl.get_chart_data_of_current_record();
 		if (pDataChartWnd != nullptr)
 		{
-			static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.viewdata = *(pDataChartWnd->GetScopeParameters());
+			static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.viewdata = *(pDataChartWnd->get_scope_parameters());
 		}
 		if (pActivateView != nullptr)
 			static_cast<CChildFrame*>(p_mainframe->MDIGetActive())->m_nStatus = m_nStatus;
@@ -381,19 +381,19 @@ void ViewdbWave::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
 	case HINT_GETSELECTEDRECORDS:
 	{
 		const auto p_document = GetDocument();
-		p_document->m_selectedRecords.RemoveAll();
+		p_document->selected_records.RemoveAll();
 		const int selected_count = static_cast<int>(m_dataListCtrl.GetSelectedCount());
 
 		// Update all of the selected items.
 		if (selected_count > 0)
 		{
-			p_document->m_selectedRecords.SetSize(selected_count);
+			p_document->selected_records.SetSize(selected_count);
 			auto n_item = -1;
 			for (int i = 0; i < selected_count; i++)
 			{
 				n_item = m_dataListCtrl.GetNextItem(n_item, LVNI_SELECTED);
 				ASSERT(n_item != -1);
-				p_document->m_selectedRecords.SetAt(i, n_item);
+				p_document->selected_records.SetAt(i, n_item);
 			}
 		}
 	}
@@ -402,7 +402,7 @@ void ViewdbWave::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
 	case HINT_SETSELECTEDRECORDS:
 	{
 		const auto p_document = GetDocument();
-		const UINT u_selected_count = p_document->m_selectedRecords.GetSize();
+		const UINT u_selected_count = p_document->selected_records.GetSize();
 
 		// clear previous selection in the CListCtrl if any
 		auto item = -1;
@@ -418,7 +418,7 @@ void ViewdbWave::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
 		{
 			for (UINT i = 0; i < u_selected_count; i++)
 			{
-				item = static_cast<int>(p_document->m_selectedRecords.GetAt(i));
+				item = static_cast<int>(p_document->selected_records.GetAt(i));
 				m_dataListCtrl.SetItemState(item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 			}
 		}
@@ -479,23 +479,23 @@ void ViewdbWave::OnLvnColumnclickListctrl(NMHDR * pNMHDR, LRESULT * pResult)
 	const auto pdb_doc = GetDocument();
 	switch (pNMLV->iSubItem)
 	{
-	case CTRL_COL_CURVE: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_DATALEN].header_name;
+	case CTRL_COL_CURVE: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_DATALEN].header_name;
 		break; // datalen
-	case CTRL_COL_INDEX: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_ID].header_name;
+	case CTRL_COL_INDEX: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_ID].header_name;
 		break; // ID
-	case CTRL_COL_SENSI: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_SENSILLUM_ID].header_name;
+	case CTRL_COL_SENSI: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_SENSILLUM_ID].header_name;
 		break; // sensillum_ID
-	case CTRL_COL_STIM1: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_STIM_ID].header_name;
+	case CTRL_COL_STIM1: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_STIM_ID].header_name;
 		break; // stim_ID
-	case CTRL_COL_CONC1: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_CONC_ID].header_name;
+	case CTRL_COL_CONC1: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_CONC_ID].header_name;
 		break; // conc_ID
-	case CTRL_COL_STIM2: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_STIM2_ID].header_name;
+	case CTRL_COL_STIM2: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_STIM2_ID].header_name;
 		break; // stim2_ID
-	case CTRL_COL_CONC2: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_CONC2_ID].header_name;
+	case CTRL_COL_CONC2: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_CONC2_ID].header_name;
 		break; // conc2_ID
-	case CTRL_COL_NBSPK: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_NSPIKES].header_name;
+	case CTRL_COL_NBSPK: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_NSPIKES].header_name;
 		break; // nspikes
-	case CTRL_COL_FLAG: cs = pdb_doc->m_pDB->m_mainTableSet.m_desc[CH_FLAG].header_name;
+	case CTRL_COL_FLAG: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_FLAG].header_name;
 		break; // flag
 	default:
 		break;

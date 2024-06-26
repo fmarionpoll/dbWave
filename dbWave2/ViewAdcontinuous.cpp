@@ -143,8 +143,8 @@ void ViewADcontinuous::AttachControls()
 
 	m_AD_yRulerBar.AttachScopeWnd(&m_chartDataAD, FALSE);
 	m_AD_xRulerBar.AttachScopeWnd(&m_chartDataAD, TRUE);
-	m_chartDataAD.AttachExternalXRuler(&m_AD_xRulerBar);
-	m_chartDataAD.AttachExternalYRuler(&m_AD_yRulerBar);
+	m_chartDataAD.attach_external_x_ruler(&m_AD_xRulerBar);
+	m_chartDataAD.attach_external_y_ruler(&m_AD_yRulerBar);
 	m_chartDataAD.m_bNiceGrid = TRUE;
 
 	m_stretch.AttachParent(this);
@@ -409,10 +409,10 @@ void ViewADcontinuous::TransferFilesToDatabase()
 	pdbDoc->import_file_list(m_csNameArray); // add file name(s) to the list of records in the database
 	m_csNameArray.RemoveAll(); // clear file names
 
-	CdbTableMain* pSet = &(pdbDoc->m_pDB->m_mainTableSet);
+	CdbTableMain* pSet = &(pdbDoc->db_table->m_mainTableSet);
 	pSet->BuildAndSortIDArrays();
 	pSet->RefreshQuery();
-	pdbDoc->db_set_current_record_position(pdbDoc->m_pDB->get_n_records() - 1);
+	pdbDoc->db_set_current_record_position(pdbDoc->db_table->get_n_records() - 1);
 	pdbDoc->update_all_views_db_wave(nullptr, HINT_DOCMOVERECORD, nullptr);
 }
 
