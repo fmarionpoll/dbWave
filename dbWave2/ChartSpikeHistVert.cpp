@@ -296,9 +296,7 @@ void ChartSpikeHistVert::OnLButtonDown(UINT nFlags, CPoint point)
 	m_hit_spike = hit_curve(point);
 	if (m_hit_spike >= 0)
 	{
-		// cancel track rect mode
-		track_mode_ = TRACK_OFF; // flag trackrect
-		release_cursor(); // release cursor capture
+		release_cursor();
 		post_my_message(HINT_HITSPIKE, m_hit_spike);
 	}
 }

@@ -311,7 +311,6 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		if (point.y != m_pt_last_.y || point.x != m_pt_last_.x)
 			OnMouseMove(nFlags, point);
-		track_mode_ = TRACK_OFF;
 		release_cursor();
 		ChartSpike::OnLButtonUp(nFlags, point);
 	}
@@ -389,8 +388,6 @@ void ChartSpikeShape::OnLButtonDown(UINT nFlags, CPoint point)
 	m_hit_spike = hit_curve_in_doc(point);
 	if (m_hit_spike >= 0)
 	{
-		// cancel track rect mode
-		track_mode_ = TRACK_OFF;
 		release_cursor();
 		if (nFlags & MK_SHIFT)
 			post_my_message(HINT_HITSPIKE_SHIFT, m_hit_spike);

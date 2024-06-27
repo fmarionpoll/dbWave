@@ -6,7 +6,7 @@
 #define new DEBUG_NEW
 #endif
 
-// TODO loop through files when m_ballfiles is true: display and spike hit
+// TODO loop through files when m_b_all_files is true: display and spike hit
 
 BEGIN_MESSAGE_MAP(ChartSpikeXY, ChartSpike)
 	ON_WM_LBUTTONUP()
@@ -391,16 +391,14 @@ void ChartSpikeXY::OnLButtonDown(const UINT nFlags, const CPoint point)
 	if (current_cursor_mode_ != 0 || hc_trapped_ >= 0) // do nothing else if mode != 0
 	{
 		if (track_mode_ == TRACK_HZTAG || track_mode_ == TRACK_VTTAG)
-			return; // or any tag hit (VT, HZ) detected
+			return; 
 	}
 
 	// test if mouse hit a spike
 	m_hit_spike = hit_curve_in_doc(point);
 	if (m_hit_spike >= 0)
 	{
-		// cancel track rect mode
-		track_mode_ = TRACK_OFF; 
-		release_cursor(); // release cursor capture
+		release_cursor(); 
 		if (nFlags & MK_SHIFT)
 			post_my_message(HINT_HITSPIKE_SHIFT, m_hit_spike);
 
@@ -415,7 +413,8 @@ void ChartSpikeXY::OnLButtonDown(const UINT nFlags, const CPoint point)
 // rectangle selected
 // lp to dp: d = (l -wo)*ve/we + vo
 // dp to lp: l = (d -vo)*we/ve + wo
-// wo= window origin; we= window extent; vo=viewport origin, ve=viewport extent
+// with:
+// wo = window origin; we= window extent; vo=viewport origin, ve=viewport extent
 // with ordinates: wo=zero, we= y extent, ve=rect.height/2, vo = -rect.GetRectHeight()/2
 //---------------------------------------------------------------------------
 

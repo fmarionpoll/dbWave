@@ -555,6 +555,7 @@ void ChartWnd::capture_cursor()
 
 void ChartWnd::release_cursor()
 {
+	track_mode_ = TRACK_OFF;
 	ReleaseCapture();
 	ClipCursor(nullptr);
 }
