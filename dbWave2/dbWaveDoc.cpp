@@ -85,13 +85,13 @@ BOOL CdbWaveDoc::OnNewDocument()
 // TODO here: ask where data are to be saved (call make directory/explore directory)
 // ask for name of a database, then create a directory of the same name where the database will be put
 
-BOOL CdbWaveDoc::OnNewDocument(LPCTSTR lpszPathName)
+BOOL CdbWaveDoc::OnNewDocument(LPCTSTR lpsz_path_name)
 {
 	if (b_call_new_ && !COleDocument::OnNewDocument())
 		return FALSE;
 	b_call_new_ = TRUE;
 
-	CString cs_name = lpszPathName;
+	CString cs_name = lpsz_path_name;
 	cs_name += _T(".mdb");
 	if (cs_name.Find(_T(':')) < 0
 		&& cs_name.Find(_T("\\\\")) < 0)
@@ -419,7 +419,7 @@ CSpikeDoc* CdbWaveDoc::open_current_spike_file()
 	return m_p_spk;
 }
 
-Spike* CdbWaveDoc::get_spike(const dbSpike& spike_coords)
+Spike* CdbWaveDoc::get_spike(const db_spike& spike_coords)
 {
 	if (spike_coords.spike_index < 0)
 		return nullptr;

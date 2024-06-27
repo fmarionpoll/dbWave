@@ -624,7 +624,7 @@ void ViewSpikeDetection::OnInitialUpdate()
 	m_chart_data_source.Invalidate();
 }
 
-LRESULT ViewSpikeDetection::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam)
 {
 	int threshold = LOWORD(lParam);
 	const int i_id = HIWORD(lParam);
@@ -1480,7 +1480,7 @@ void ViewSpikeDetection::OnFormatXscale()
 void ViewSpikeDetection::OnBnClickedClearAll()
 {
 	m_spike_index = -1;
-	dbSpike spike_sel(-1, -1, -1);
+	db_spike spike_sel(-1, -1, -1);
 	m_chart_spike_bar.select_spike(spike_sel);
 	m_chart_spike_shape.select_spike(spike_sel);
 
@@ -1507,7 +1507,7 @@ void ViewSpikeDetection::OnBnClickedClearAll()
 void ViewSpikeDetection::OnClear()
 {
 	m_spike_index = -1;
-	dbSpike spike_sel(-1, -1, -1);
+	db_spike spike_sel(-1, -1, -1);
 	m_chart_spike_bar.select_spike(spike_sel);
 	m_chart_spike_shape.select_spike(spike_sel);
 
@@ -1896,7 +1896,7 @@ void ViewSpikeDetection::OnEditCopy()
 			auto rect_bars = data_rect;
 			rect_bars.top = data_rect.bottom + separator;
 			rect_bars.bottom = rect.bottom - 2 * line_height;
-			m_chart_spike_bar.Print(&m_dc, &rect_bars);
+			m_chart_spike_bar.print(&m_dc, &rect_bars);
 
 			// display spike shapes
 			auto rect_spikes = rect; // compute output rectangle
@@ -1904,7 +1904,7 @@ void ViewSpikeDetection::OnEditCopy()
 			rect_spikes.right = rect.left + rect_spike_width;
 			rect_spikes.bottom = rect.bottom - 2 * line_height;
 			rect_spikes.top = rect_spikes.bottom - rect_bars.Height();
-			m_chart_spike_shape.Print(&m_dc, &rect_spikes);
+			m_chart_spike_shape.print(&m_dc, &rect_spikes);
 			comments = PrintSpkShapeBars(&m_dc, &rect_spikes, TRUE);
 
 			auto rect_comment = rect;
@@ -2580,7 +2580,7 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			BarsRect.right = m_rData.right;
 
 			m_chart_spike_bar.set_time_intervals(index_first_data_point, l_last);
-			m_chart_spike_bar.Print(p_dc, &BarsRect);
+			m_chart_spike_bar.print(p_dc, &BarsRect);
 		}
 
 		// print spike shape within a square (same width as height) 
@@ -2590,7 +2590,7 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		m_rSpike.bottom = m_rSpike.top + r_sp_kheight; 
 
 		m_chart_spike_shape.set_time_intervals(index_first_data_point, l_last);
-		m_chart_spike_shape.Print(p_dc, &m_rSpike);
+		m_chart_spike_shape.print(p_dc, &m_rSpike);
 
 		// restore DC and print comments 
 		p_dc->RestoreDC(old_dc); 

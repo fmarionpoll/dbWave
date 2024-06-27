@@ -19,9 +19,7 @@ protected:
 
 	// Helpers and public procedures
 public:
-	int get_hit_spike() const { return m_hit_spike; }
-
-	void select_spike(const dbSpike& spike_selected);
+	void select_spike(const db_spike& spike_selected);
 	void display_spike(const Spike* spike);
 	void highlight_spike(const Spike* spike);
 
@@ -30,8 +28,8 @@ public:
 
 	void display_all_files(BOOL bON, CdbWaveDoc* p_document)
 	{
-		m_display_all_files = bON;
-		p_dbwave_doc = p_document;
+		display_all_files_ = bON;
+		dbwave_doc_ = p_document;
 	}
 
 	void plot_data_to_dc(CDC* p_dc) override;
@@ -42,7 +40,7 @@ protected:
 	void draw_spike(const Spike* spike, int color_index);
 
 	int hit_curve(CPoint point) override;
-	int hit_curve_in_doc(CPoint point);
+	db_spike hit_curve_in_doc(CPoint point);
 	boolean is_spike_within_limits( const Spike* spike) const;
 
 	void get_extents();

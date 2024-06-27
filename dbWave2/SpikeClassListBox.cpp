@@ -37,7 +37,7 @@ void SpikeClassListBox::MeasureItem(LPMEASUREITEMSTRUCT lpMIS)
 void SpikeClassListBox::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 {
 	const auto row_item = reinterpret_cast<RowItem*>(lpDIS->itemData);
-	row_item->DrawItem(lpDIS);
+	row_item->draw_item(lpDIS);
 }
 
 
@@ -111,7 +111,7 @@ RowItem* SpikeClassListBox::add_row_item(int class_id, int i_id)
 {
 	const auto row_item = new(RowItem);
 	ASSERT(row_item != NULL);
-	row_item->CreateItem(this, m_dbwave_doc, m_spike_list, class_id, i_id, &context);
+	row_item->create_item(this, m_dbwave_doc, m_spike_list, class_id, i_id, &context);
 	AddString(reinterpret_cast<LPTSTR>(row_item));
 	return row_item;
 }

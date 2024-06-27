@@ -309,7 +309,7 @@ void ViewSpikeTemplates::updateLegends()
 void ViewSpikeTemplates::selectSpike(short spikeno)
 {
 	CdbWaveDoc* pDoc = m_ChartSpkWnd_Shape.get_db_wave_doc();
-	dbSpike spike_sel(pDoc->db_get_current_record_position(),
+	db_spike spike_sel(pDoc->db_get_current_record_position(),
 		pDoc->m_p_spk->get_spike_list_current_index(),
 		spikeno);
 	m_ChartSpkWnd_Shape.select_spike(spike_sel);

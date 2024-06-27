@@ -86,10 +86,10 @@ protected:
 	int m_measure_y1_max_{}; // max of array m_measure_y1
 	int m_measure_y1_min_{}; // min of array m_measure_y1
 	BOOL b_valid_extrema_ = false; // tells if m_measure_y1_max_ & m_measure_y1_min_ are valid
-	long m_l_first_{}; // display first
-	long m_l_last_{}; // display last
-	BOOL m_b_measure_done_ = false; // flag m_measure_y1 valid
-	int m_div_amplitude_by_ = 1; // value to adjust changes in amplitude / filter(s)
+	long l_first_{}; // display first
+	long l_last_{}; // display last
+	BOOL b_measure_done_ = false; // flag m_measure_y1 valid
+	int div_amplitude_by_ = 1; // value to adjust changes in amplitude / filter(s)
 
 	// Operations
 public:
@@ -113,7 +113,7 @@ protected:
 	void update_file_parameters();
 	void update_spike_file();
 	void update_legends();
-	void select_spike_from_current_list(int spike_index);
+	void select_spike(db_spike& spike_sel);
 	void update_gain();
 	void update_file_scroll();
 	void scroll_file(UINT n_sb_code, UINT n_pos);

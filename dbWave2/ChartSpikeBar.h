@@ -18,16 +18,14 @@ protected:
 
 	// Helpers
 public:
-	int get_hit_spike() const { return m_hit_spike; }
-
-	void select_spike(const dbSpike& new_spike_selected);
+	void select_spike(const db_spike& new_spike_selected);
 	void display_spike(const Spike* spike);
 	void highlight_spike(const Spike* spike) ;
 
 	void display_all_files(const BOOL b_on, CdbWaveDoc* p_document)
 	{
-		m_display_all_files = b_on;
-		p_dbwave_doc = p_document;
+		display_all_files_ = b_on;
+		dbwave_doc_ = p_document;
 	}
 
 	void display_flagged_spikes(BOOL b_high_light);
@@ -37,14 +35,14 @@ public:
 	void max_gain();
 	void max_center();
 
-	void Print(CDC* p_dc, const CRect* rect);
+	void print(CDC* p_dc, const CRect* rect);
 	void plot_data_to_dc(CDC* p_dc) override;
 	void plot_single_spk_data_to_dc(CDC* p_dc);
-	void zoom_data(CRect* prevRect, CRect* newRect) override;
+	void zoom_data(CRect* prev_rect, CRect* new_rect) override;
 
 protected:
 	int hit_curve(CPoint point) override;
-	int hit_curve_in_doc(CPoint point);
+	db_spike hit_curve_in_doc(CPoint point);
 	void display_bars(CDC* p_dc, const CRect* rect);
 
 	void draw_spike(const Spike* spike, int color_index);

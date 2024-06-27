@@ -36,7 +36,7 @@ protected:
 
 public:
 	AcqDataDoc* m_p_dat = nullptr;
-	CSpikeDoc* m_p_spk = nullptr;
+	CSpikeDoc*	m_p_spk = nullptr;
 	HMENU		h_my_menu = nullptr;
 	CIntervals	stimulus_saved;
 
@@ -57,13 +57,14 @@ public:
 
 	CWaveFormat* get_wave_format(CString filename, BOOL is_dat_file);
 
-	BOOL	OnNewDocument(LPCTSTR lpszPathName);
+	BOOL	OnNewDocument(LPCTSTR lpsz_path_name);
 	AcqDataDoc* open_current_data_file();
 	AcqDataDoc* get_current_dat_document() const { return m_p_dat; }
 	void	close_current_data_file() const;
+
 	CSpikeDoc* open_current_spike_file();
 	CSpikeDoc* get_current_spike_file() const { return m_p_spk; }
-	Spike* get_spike(const dbSpike& spike_coords);
+	Spike* get_spike(const db_spike& spike_coords);
 
 	void	remove_duplicate_files();
 	void	remove_missing_files() const;

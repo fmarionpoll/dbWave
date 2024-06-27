@@ -303,7 +303,7 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_HITSPIKE_SHIFT:
-		select_spike(param_value);
+		select_spike(xx);
 		break;
 
 	default:
