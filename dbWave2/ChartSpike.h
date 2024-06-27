@@ -43,6 +43,7 @@ public:
 	db_spike get_hit_spike() const { return spike_hit_; }
 	db_spike get_selected_spike() const { return spike_selected_; }
 	boolean is_spike_within_range(const db_spike& spike_selected) const;
+	db_spike hit_curve_in_doc(CPoint point);
 
 	void set_range_mode(const int mode) { range_mode_ = mode; }
 	int get_range_mode() const { return range_mode_; }

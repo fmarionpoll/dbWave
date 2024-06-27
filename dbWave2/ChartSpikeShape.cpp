@@ -385,15 +385,15 @@ void ChartSpikeShape::OnLButtonDown(UINT nFlags, CPoint point)
 
 	// test if mouse hit one spike
 	// if hit, then tell parent to select corresponding spike
-	spike_hit_ = hit_curve_in_doc(point);
+	dbwave_doc_->set_spike_hit(spike_hit_ = hit_curve_in_doc(point));
 	if (spike_hit_.spike_index >= 0)
 	{
 		release_cursor();
 		if (nFlags & MK_SHIFT)
-			post_my_message(HINT_HITSPIKE_SHIFT, nullptr);
+			post_my_message(HINT_HITSPIKE_SHIFT, NULL);
 
 		else
-			post_my_message(HINT_HITSPIKE, hit_spike_);
+			post_my_message(HINT_HITSPIKE, NULL);
 	}
 }
 
@@ -450,33 +450,6 @@ void ChartSpikeShape::OnLButtonDblClk(UINT nFlags, CPoint point)
 				post_my_message(HINT_DBLCLKSEL, selected_spike);
 		}
 	}
-}
-
-db_spike ChartSpikeShape::hit_curve_in_doc(const CPoint point)
-{
-	const long n_files = display_all_files_ ? dbwave_doc_->db_get_n_records() :  1;
-	db_spike result (1, -1, -1);
-
-	for (long i_file = 0; i_file < n_files; i_file++)
-	{
-		if (display_all_files_)
-		{
-			if (dbwave_doc_->db_set_current_record_position(i_file))
-				dbwave_doc_->open_current_spike_file();
-			p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
-		}
-		if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() == 0)
-			continue;
-
-		result.database_position = dbwave_doc_->db_get_current_record_position();
-		result.spike_list_index = dbwave_doc_->m_p_spk->get_spike_list_current_index();
-
-		result.spike_index = hit_curve(point);
-		if (result.spike_index >= 0)
-			break;
-	}
-
-	return result;
 }
 
 int ChartSpikeShape::hit_curve(const CPoint point)

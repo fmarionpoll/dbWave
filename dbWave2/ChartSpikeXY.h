@@ -40,7 +40,6 @@ protected:
 	void draw_spike(const Spike* spike, int color_index);
 
 	int hit_curve(CPoint point) override;
-	db_spike hit_curve_in_doc(CPoint point);
 	boolean is_spike_within_limits( const Spike* spike) const;
 
 	void get_extents();

@@ -554,13 +554,13 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		update_legends();
 		break;
 
-	case HINT_HITSPIKE: // -------------  spike is selected or deselected
+	case HINT_HITSPIKE:
 		{
 			if (m_pSpkList->get_spike_flag_array_count() > 0)
 				clear_flag_all_spikes();
 			db_spike spike_index;
 			if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
-				spike_index = chart_spike_shape_.get_hit_spike();
+				spike_index = chart_spike_shape_.get_hit_spike(); XX
 			else if (HIWORD(lParam) == IDC_DISPLAYBARS)
 				spike_index = chart_spike_bar_.get_hit_spike();
 			else if (HIWORD(lParam) == IDC_DISPLAYPARM)

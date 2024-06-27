@@ -54,7 +54,6 @@ protected:
 	void get_extents_current_spk_list();
 
 	int hit_curve(CPoint point) override;
-	db_spike hit_curve_in_doc(CPoint point);
 
 	void draw_spike_on_dc(const Spike* spike, CDC* p_dc);
 	void draw_flagged_spikes(CDC* p_dc);

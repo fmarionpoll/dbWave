@@ -293,11 +293,11 @@ void ChartSpikeHistVert::OnLButtonDown(UINT nFlags, CPoint point)
 
 	// test if mouse hit one histogram
 	// if hit, then tell parent to select corresp histogram (spike)
-	hit_spike_ = hit_curve(point);
+	dbwave_doc_->set_spike_hit(spike_hit_ = hit_curve_in_doc(point));
 	if (spike_hit_.spike_index >= 0)
 	{
 		release_cursor();
-		post_my_message(HINT_HITSPIKE, hit_spike_);
+		post_my_message(HINT_HITSPIKE, NULL);
 	}
 }
 

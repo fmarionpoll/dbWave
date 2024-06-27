@@ -448,7 +448,7 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_HITSPIKE:
-		SelectSpike(threshold);
+		SelectSpike(threshold); XX
 		break;
 
 	case HINT_CHANGEZOOM:

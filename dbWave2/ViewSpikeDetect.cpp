@@ -660,8 +660,8 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 		update_legends();
 		break;
 
-	case HINT_HITSPIKE: // spike is selected or deselected
-		select_spike_no(threshold, FALSE);
+	case HINT_HITSPIKE:
+		select_spike_no(threshold, FALSE); XX
 		update_spike_display();
 		break;
 
@@ -763,7 +763,7 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 
 	case HINT_HITSPIKE_SHIFT: // spike is selected or deselected
 	{
-		long l_first;
+		long l_first; XX
 		long l_last;
 		m_pSpkList->get_range_of_spike_flagged(l_first, l_last);
 		const auto l_time = m_pSpkList->get_spike(threshold)->get_time();
@@ -777,7 +777,7 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 	break;
 
 	case HINT_HITSPIKE_CTRL: // add/remove selected spike to/from the group of spikes selected
-		select_spike_no(threshold, TRUE);
+		select_spike_no(threshold, TRUE); XX
 		update_spike_display();
 		break;
 

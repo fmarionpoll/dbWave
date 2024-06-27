@@ -76,7 +76,7 @@ protected:
 	void update_file_parameters(); // reset parameters for new file
 	void updateTemplates();
 	void updateLegends();
-	void selectSpike(short spikeno);
+	void select_spike(int spike_no);
 	void updateScrollBar();
 	void select_spike_list(int index_current);
 	void editSpikeClass(int controlID, int controlItem);

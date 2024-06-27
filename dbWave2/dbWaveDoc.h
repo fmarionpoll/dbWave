@@ -8,7 +8,7 @@
 #include "dbWave_structures.h"
 #include "dbSpike.h"
 
-struct sourceData
+struct source_data
 {
 	CString cs_dat_file{};
 	CString cs_spk_file{};
@@ -26,13 +26,14 @@ protected:
 	DECLARE_DYNCREATE(CdbWaveDoc)
 
 protected:
-	CString		m_current_datafile_name_;
-	CString		m_current_spike_file_name_;
+	CString		current_datafile_name_;
+	CString		current_spike_file_name_;
 
 	BOOL		b_call_new_ = true;
 	CStringArray names_of_files_to_delete_;
 	BOOL		clean_database_on_exit_ = false;
 	BOOL		transpose_ = false;
+	db_spike	spike_hit_{};
 
 public:
 	AcqDataDoc* m_p_dat = nullptr;
@@ -57,14 +58,16 @@ public:
 
 	CWaveFormat* get_wave_format(CString filename, BOOL is_dat_file);
 
-	BOOL	OnNewDocument(LPCTSTR lpsz_path_name);
-	AcqDataDoc* open_current_data_file();
+	BOOL		OnNewDocument(LPCTSTR lpsz_path_name);
 	AcqDataDoc* get_current_dat_document() const { return m_p_dat; }
-	void	close_current_data_file() const;
+	AcqDataDoc* open_current_data_file();
+	void		close_current_data_file() const;
 
-	CSpikeDoc* open_current_spike_file();
-	CSpikeDoc* get_current_spike_file() const { return m_p_spk; }
-	Spike* get_spike(const db_spike& spike_coords);
+	CSpikeDoc*	open_current_spike_file();
+	CSpikeDoc*	get_current_spike_file() const { return m_p_spk; }
+	void		set_spike_hit(const db_spike& spike_hit) { spike_hit_ = spike_hit; }
+	db_spike	get_spike_hit() const { return spike_hit_ ; }
+	Spike*		get_spike(const db_spike& spike_coords);
 
 	void	remove_duplicate_files();
 	void	remove_missing_files() const;
@@ -92,10 +95,10 @@ public:
 	BOOL	copy_files_to_directory(const CString& path);
 
 protected:
-	sourceData get_wave_format_from_either_file(CString cs_filename);
-	void	set_record_file_names(const sourceData* record) const;
-	boolean set_record_spk_classes(const sourceData* record) const;
-	void	set_record_wave_format(const sourceData* record) const;
+	source_data get_wave_format_from_either_file(CString cs_filename);
+	void	set_record_file_names(const source_data* record) const;
+	boolean set_record_spk_classes(const source_data* record) const;
+	void	set_record_wave_format(const source_data* record) const;
 	boolean import_file_single(const CString& cs_filename, long& m_id, int i_record, const CStringArray& cs_array, int n_columns,
 	                           boolean b_header);
 	CString get_full_path_name_without_extension() const;
@@ -107,7 +110,7 @@ protected:
 	static int get_size_2d_array(const CStringArray& cs_array, int nColumns, boolean bHeader) { return cs_array.GetSize() / nColumns - (bHeader ? 1 : 0); }
 	static void	remove_row_at(CStringArray& file_name_array, int i_row, int n_columns, boolean b_header);
 	static CSharedFile* file_discarded_message(CSharedFile* p_sf, const CString& cs_filename, int i_record);
-	static void	get_infos_from_string_array(const sourceData* p_record, const CStringArray& file_names_array, int const i_record, int n_columns, boolean b_header);
+	static void	get_infos_from_string_array(const source_data* p_record, const CStringArray& file_names_array, int const i_record, int n_columns, boolean b_header);
 	static int	find_column_associated_to_header(const CString& text);
 	static void	remove_file_from_disk(const CString& file_name);
 	static CString get_path_directory(const CString& full_name);
@@ -143,7 +146,7 @@ public:
 	CString db_get_current_spk_file_name(BOOL b_test = FALSE);
 
 	CString db_set_current_spike_file_name();
-	void	db_set_data_len(long len) const { db_table->set_data_length(len); }
+	void	db_set_data_len(const long len) const { db_table->set_data_length(len); }
 	long	db_get_data_len() const;
 	void	db_set_current_record_flag(int flag) const;
 	int		db_get_current_record_flag() const { return db_table->m_mainTableSet.m_flag; }
@@ -156,7 +159,7 @@ public:
 	long	db_get_current_record_id() const;
 	BOOL	db_set_current_record_position(const long i_file) const { return db_table->set_index_current_file(i_file); }
 
-	BOOL	db_move_to_id(long record_id) const { return db_table->move_to_id(record_id); }
+	BOOL	db_move_to_id(const long record_id) const { return db_table->move_to_id(record_id); }
 	BOOL	db_move_first() const { return db_table->move_to(ID_RECORD_FIRST); }
 	BOOL	db_move_next() const { return db_table->move_to(ID_RECORD_NEXT); }
 	BOOL	db_move_prev() const { return db_table->move_to(ID_RECORD_PREV); }

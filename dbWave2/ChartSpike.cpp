@@ -97,3 +97,30 @@ boolean ChartSpike::is_spike_within_range(const db_spike& spike_selected) const
 
 	return true;
 }
+
+db_spike ChartSpike::hit_curve_in_doc(const CPoint point)
+{
+	const long n_files = display_all_files_ ? dbwave_doc_->db_get_n_records() : 1;
+	db_spike result(1, -1, -1);
+
+	for (long i_file = 0; i_file < n_files; i_file++)
+	{
+		if (display_all_files_)
+		{
+			if (dbwave_doc_->db_set_current_record_position(i_file))
+				dbwave_doc_->open_current_spike_file();
+			p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
+		}
+		if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() == 0)
+			continue;
+
+		result.database_position = dbwave_doc_->db_get_current_record_position();
+		result.spike_list_index = dbwave_doc_->m_p_spk->get_spike_list_current_index();
+
+		result.spike_index = hit_curve(point);
+		if (result.spike_index >= 0)
+			break;
+	}
+
+	return result;
+}

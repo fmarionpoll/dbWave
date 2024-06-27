@@ -42,7 +42,6 @@ public:
 
 protected:
 	int hit_curve(CPoint point) override;
-	db_spike hit_curve_in_doc(CPoint point);
 	void display_bars(CDC* p_dc, const CRect* rect);
 
 	void draw_spike(const Spike* spike, int color_index);

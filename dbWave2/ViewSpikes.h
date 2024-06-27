@@ -57,7 +57,7 @@ protected:
 	int m_VBarMode = 0; 
 	CScrollBar m_scroll_y; 
 
-	AcqDataDoc* m_pDataDoc = nullptr; 
+	AcqDataDoc* p_data_doc_ = nullptr; 
 
 	BOOL m_bInitSourceView = true;
 	int m_lFirst = 0;
@@ -74,28 +74,27 @@ protected:
 	BOOL m_bdummy = TRUE;
 
 	// Implementation
-protected:
-	void updateFileParameters(BOOL bUpdateInterface = TRUE);
-	void updateLegends(BOOL bUpdateInterface);
-	void updateDataFile(BOOL bUpdateInterface);
-	void updateSpikeFile(BOOL bUpdateInterface);
-	void updateGainScroll();
-	void updateBiasScroll();
-	void adjust_y_zoom_to_max_min(BOOL bForceSearchMaxMin);
-	void select_spike(int spike_no);
-	void defineSubClassedItems();
-	void defineStretchParameters();
-	void zoomOnPresetInterval(int iistart);
-	void scrollGain(UINT nSBCode, UINT nPos);
-	void scrollBias(UINT nSBCode, UINT nPos);
-	void setVBarMode(short bMode);
+	void update_file_parameters(BOOL b_update_interface = TRUE);
+	void update_legends(BOOL b_update_interface);
+	void update_data_file(BOOL b_update_interface);
+	void update_spike_file(BOOL b_update_interface);
+	void update_gain_scroll();
+	void update_bias_scroll();
+	void adjust_y_zoom_to_max_min(BOOL b_force_search_max_min);
+	void select_spike(const db_spike& spike_selected);
+	void define_sub_classed_items();
+	void define_stretch_parameters();
+	void zoom_on_preset_interval(int ii_start);
+	void scroll_gain(UINT nSBCode, UINT nPos);
+	void scroll_bias(UINT nSBCode, UINT nPos);
+	void set_v_bar_mode(short bMode);
 	BOOL add_spike_to_list(long ii_time, BOOL check_if_spike_nearby);
 	void set_add_spikes_mode(int mouse_cursor_type);
 	void select_spike_list(int current_selection);
-	void setTrackRectangle();
-	void scrollFile(UINT nSBCode, UINT nPos);
-	void updateFileScroll();
-	void centerDataDisplayOnSpike(int spike_no);
+	void set_track_rectangle();
+	void scroll_file(UINT nSBCode, UINT nPos);
+	void update_file_scroll();
+	void center_data_display_on_spike(int spike_no);
 	void set_mouse_cursor(short param_value);
 	void change_zoom(LPARAM lParam);
 

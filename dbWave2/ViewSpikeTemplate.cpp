@@ -92,11 +92,11 @@ void ViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	{
 		switch (LOWORD(lHint))
 		{
-		case HINT_DOCHASCHANGED: // file has changed?
+		case HINT_DOCHASCHANGED: 
 		case HINT_DOCMOVERECORD:
 			update_file_parameters();
 			break;
-		case HINT_CLOSEFILEMODIFIED: // close modified file: save
+		case HINT_CLOSEFILEMODIFIED:
 			saveCurrentSpkFile();
 			break;
 		case HINT_REPLACEVIEW:
@@ -133,7 +133,7 @@ void ViewSpikeTemplates::defineSubClassedItems()
 
 void ViewSpikeTemplates::defineStretchParameters()
 {
-	m_stretch.AttachParent(this); // attach formview pointer
+	m_stretch.AttachParent(this); // attach form_view pointer
 	m_stretch.newProp(IDC_LIST1, SZEQ_XLEQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_LIST2, XLEQ_XREQ, YTEQ_YBEQ);
 	m_stretch.newProp(IDC_LIST3, XLEQ_XREQ, YTEQ_YBEQ);
@@ -197,12 +197,12 @@ void ViewSpikeTemplates::update_spike_file()
 	{
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		m_pSpkDoc->SetPathName(GetDocument()->db_get_current_spk_file_name(), FALSE);
-		int icur = GetDocument()->get_current_spike_file()->get_spike_list_current_index();
-		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(icur);
+		const int index_current_spike_list = GetDocument()->get_current_spike_file()->get_spike_list_current_index();
+		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(index_current_spike_list);
 
 		// update Tab at the bottom
 		m_tabCtrl.InitctrlTabFromSpikeDoc(m_pSpkDoc);
-		m_tabCtrl.SetCurSel(icur);
+		m_tabCtrl.SetCurSel(index_current_spike_list);
 	}
 }
 
@@ -254,7 +254,7 @@ void ViewSpikeTemplates::select_spike_list(const int index_current)
 	m_ChartSpkWnd_Shape.set_time_intervals(m_lFirst, m_lLast);
 	m_ChartSpkWnd_Shape.Invalidate();
 
-	selectSpike(spikeno);
+	select_spike(spikeno);
 	updateLegends();
 
 	displayAvg(FALSE, &m_avgList);
@@ -296,8 +296,8 @@ void ViewSpikeTemplates::updateLegends()
 	if (m_lFirst > m_lLast)
 		m_lFirst = m_lLast - 120;
 
-	m_timefirst = m_lFirst / m_pSpkDoc->get_acq_rate();
-	m_timelast = (m_lLast + 1) / m_pSpkDoc->get_acq_rate();
+	m_timefirst = static_cast<float>(m_lFirst) / m_pSpkDoc->get_acq_rate();
+	m_timelast = static_cast<float>(m_lLast + 1) / m_pSpkDoc->get_acq_rate();
 
 	m_ChartSpkWnd_Shape.set_time_intervals(m_lFirst, m_lLast);
 	m_ChartSpkWnd_Shape.Invalidate();
@@ -306,15 +306,15 @@ void ViewSpikeTemplates::updateLegends()
 	updateScrollBar();
 }
 
-void ViewSpikeTemplates::selectSpike(short spikeno)
+void ViewSpikeTemplates::select_spike(const int spike_no)
 {
-	CdbWaveDoc* pDoc = m_ChartSpkWnd_Shape.get_db_wave_doc();
+	const CdbWaveDoc* pDoc = m_ChartSpkWnd_Shape.get_db_wave_doc();
 	db_spike spike_sel(pDoc->db_get_current_record_position(),
 		pDoc->m_p_spk->get_spike_list_current_index(),
-		spikeno);
+		spike_no);
 	m_ChartSpkWnd_Shape.select_spike(spike_sel);
-	m_spikeno = spikeno;
-	m_pSpkList->m_selected_spike = spikeno;
+	m_spikeno = spike_no;
+	m_pSpkList->m_selected_spike = spike_no;
 }
 
 LRESULT ViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
@@ -330,7 +330,7 @@ LRESULT ViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_HITSPIKE:
-		selectSpike(shortValue);
+		select_spike(shortValue); XX
 		break;
 
 	case HINT_CHANGEVERTTAG:

@@ -638,16 +638,15 @@ void ChartSpikeBar::OnLButtonDown(const UINT nFlags, CPoint point)
 	if (current_cursor_mode_ == 0)
 	{
 		track_curve_ = FALSE;
-		spike_hit_ = hit_curve_in_doc(point);
-		// tell parent spike selected
+		dbwave_doc_->set_spike_hit(spike_hit_ = hit_curve_in_doc(point));
 		if (spike_hit_.spike_index >= 0)
 		{
 			if (nFlags & MK_SHIFT)
-				post_my_message(HINT_HITSPIKE_SHIFT, nullptr);
+				post_my_message(HINT_HITSPIKE_SHIFT, NULL);
 			else if (nFlags & MK_CONTROL)
-				post_my_message(HINT_HITSPIKE_CTRL, hit_spike_);
+				post_my_message(HINT_HITSPIKE_CTRL, NULL);
 			else
-				post_my_message(HINT_HITSPIKE, hit_spike_);
+				post_my_message(HINT_HITSPIKE, NULL);
 			return;
 		}
 	}
@@ -704,45 +703,6 @@ void ChartSpikeBar::OnLButtonDblClk(UINT nFlags, CPoint point)
 				post_my_message(HINT_DBLCLKSEL, i_selected_spike);
 		}
 	}
-}
-
-db_spike ChartSpikeBar::hit_curve_in_doc(const CPoint point)
-{
-	long n_files = 1;
-	long current_file = 0;
-	if (display_all_files_)
-	{
-		n_files = dbwave_doc_->db_get_n_records();
-		current_file = dbwave_doc_->db_get_current_record_position();
-	}
-
-	int result = -1;
-	for (long i_file = 0; i_file < n_files; i_file++)
-	{
-		if (display_all_files_)
-		{
-			if (dbwave_doc_->db_set_current_record_position(i_file))
-				dbwave_doc_->open_current_spike_file();
-			p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
-		}
-
-		if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() == 0)
-		{
-			continue;
-		}
-		result = hit_curve(point);
-		if (result >= 0)
-			break;
-	}
-
-	if (display_all_files_ && result < 0)
-	{
-		if (dbwave_doc_->db_set_current_record_position(current_file))
-			dbwave_doc_->open_current_spike_file();
-		p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
-	}
-
-	return result;
 }
 
 int ChartSpikeBar::hit_curve(const CPoint point)
