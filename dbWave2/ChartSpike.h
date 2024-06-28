@@ -26,8 +26,8 @@ protected:
 
 	int selected_pen_{};
 	int selected_class_{};					// index class selected
-	BOOL track_curve_ = false;				// track curve ?
-	BOOL display_all_files_ = false;		// display data from all files in CdbWaveDoc*
+	boolean track_curve_ = false;			// track curve ?
+	boolean display_all_files_ = false;		// display data from all files in CdbWaveDoc*
 
 	SpikeList* p_spike_list_ = nullptr;
 	CSpikeDoc* p_spike_doc_ = nullptr;

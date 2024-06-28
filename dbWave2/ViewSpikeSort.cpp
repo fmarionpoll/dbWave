@@ -558,15 +558,15 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 		{
 			if (m_pSpkList->get_spike_flag_array_count() > 0)
 				clear_flag_all_spikes();
-			db_spike spike_index;
+			db_spike spike_hit = GetDocument()->get_spike_hit();
 			if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
-				spike_index = chart_spike_shape_.get_hit_spike(); XX
+				spike_hit = chart_spike_shape_.get_hit_spike();
 			else if (HIWORD(lParam) == IDC_DISPLAYBARS)
-				spike_index = chart_spike_bar_.get_hit_spike();
+				spike_hit = chart_spike_bar_.get_hit_spike();
 			else if (HIWORD(lParam) == IDC_DISPLAYPARM)
-				spike_index = chart_xt_measures_.get_hit_spike();
+				spike_hit = chart_xt_measures_.get_hit_spike();
 
-			select_spike(spike_index);
+			select_spike(spike_hit);
 		}
 		break;
 

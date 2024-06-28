@@ -53,7 +53,7 @@ public:
 	int GetXWExtent() const; 
 	int GetXWOrg() const; 
 
-	int SelectSpike(int spike_no);
+	int select_spike(db_spike& spike_selected);
 	void ChangeSpikeClass(int spike_no, int new_class_id);
 	int SetMouseCursorType(int cursor_m) const;
 	void XorTempVTtag(int x_point) const;

@@ -151,7 +151,7 @@ void SpikeClassListBox::SetSpkList(SpikeList* p_spike_list)
 	}
 }
 
-int SpikeClassListBox::SelectSpike(int spike_no)
+int SpikeClassListBox::select_spike(db_spike& spike_selected)
 {
 	/*
 	BOOL bAll = TRUE;
@@ -166,39 +166,39 @@ int SpikeClassListBox::SelectSpike(int spike_no)
 	int spki=0;
 ;*/
 
-	const auto b_multiple_selection = FALSE;
+	const auto b_multiple_selection = false;
 	auto cla = 0;
 
 	// select spike
-	if (spike_no >= 0)
+	if (spike_selected.spike_index >= 0)
 	{
 		// get address of spike parameters
-		const auto p_spike_element = m_spike_list->get_spike(spike_no);
+		const auto p_spike_element = m_spike_list->get_spike(spike_selected.spike_index);
 		cla = p_spike_element->get_class_id();
 
 		// multiple selection
 		if (false)
 		{
-			auto nflaggedspikes = m_spike_list->toggle_spike_flag(spike_no);
+			auto nflaggedspikes = m_spike_list->toggle_spike_flag(spike_selected.spike_index);
 			if (m_spike_list->get_spike_flag_array_count() < 1)
-				spike_no = -1;
+				spike_selected.spike_index = -1;
 		}
 		// single selection
-		m_spike_list->set_single_spike_flag(spike_no);
+		m_spike_list->set_single_spike_flag(spike_selected.spike_index);
 	}
 	// un-select all spikes
 	else
 		m_spike_list->remove_all_spike_flags();
 
 	// select corresponding row
-	if (spike_no >= 0)
+	if (spike_selected.spike_index >= 0)
 	{
 		for (auto i = 0; i < GetCount(); i++) // search row where this class is stored
 		{
 			const auto row_item = get_row_item(i); 
 			if (row_item->get_class_id() == cla)
 			{
-				SetCurSel(i); // select corresponding row
+				SetCurSel(i);
 				break;
 			}
 		}
@@ -206,10 +206,10 @@ int SpikeClassListBox::SelectSpike(int spike_no)
 	Invalidate();
 
 	// return spike selected
-	auto spike_selected = 0;
-	if (spike_no > 0)
-		spike_selected = spike_no;
-	return spike_selected;
+	auto spike_sel = 0;
+	if (spike_selected.spike_index > 0)
+		spike_sel = spike_selected.spike_index;
+	return spike_sel;
 }
 
 int SpikeClassListBox::SetMouseCursorType(int cursor_m) const
@@ -448,7 +448,10 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_HITSPIKE:
-		SelectSpike(threshold); XX
+		{
+			db_spike spike_hit = m_dbwave_doc->get_spike_hit();
+			select_spike(spike_hit);
+		}
 		break;
 
 	case HINT_CHANGEZOOM:

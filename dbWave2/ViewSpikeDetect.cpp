@@ -661,8 +661,11 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 		break;
 
 	case HINT_HITSPIKE:
-		select_spike_no(threshold, FALSE); XX
-		update_spike_display();
+		{
+			db_spike spike_hit = GetDocument()->get_spike_hit();
+			select_spike_no(spike_hit, FALSE); 
+			update_spike_display();
+		}
 		break;
 
 	case HINT_DBLCLKSEL:
@@ -728,57 +731,61 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 		//case HINT_HITVERTTAG:	 //11	// vertical tag hit				lowp = tag index
 		//case HINT_MOVEVERTTAG: //12	// vertical tag has moved 		lowp = new pixel / selected tag
 	case HINT_CHANGEVERTTAG: //13
-	{
-		int lvalue = m_pSpkDoc->m_stimulus_intervals.GetAt(threshold);
-		if (i_id == m_chart_data_filtered.GetDlgCtrlID())
-			lvalue = m_chart_data_filtered.vertical_tags.get_tag_l_val(threshold);
-		else if (i_id == m_chart_data_source.GetDlgCtrlID())
-			lvalue = m_chart_data_source.vertical_tags.get_tag_l_val(threshold);
+		{
+			int lvalue = m_pSpkDoc->m_stimulus_intervals.GetAt(threshold);
+			if (i_id == m_chart_data_filtered.GetDlgCtrlID())
+				lvalue = m_chart_data_filtered.vertical_tags.get_tag_l_val(threshold);
+			else if (i_id == m_chart_data_source.GetDlgCtrlID())
+				lvalue = m_chart_data_source.vertical_tags.get_tag_l_val(threshold);
 
-		m_pSpkDoc->m_stimulus_intervals.SetAt(threshold, lvalue);
-		update_VT_tags();
+			m_pSpkDoc->m_stimulus_intervals.SetAt(threshold, lvalue);
+			update_VT_tags();
 
-		m_chart_spike_bar.Invalidate();
-		m_chart_data_filtered.Invalidate();
-		m_chart_data_source.Invalidate();
-		m_pSpkDoc->SetModifiedFlag(TRUE);
-	}
-	break;
+			m_chart_spike_bar.Invalidate();
+			m_chart_data_filtered.Invalidate();
+			m_chart_data_source.Invalidate();
+			m_pSpkDoc->SetModifiedFlag(TRUE);
+		}
+		break;
 
 	case WM_LBUTTONDOWN:
 	case HINT_LMOUSEBUTTONDOW_CTRL:
-	{
-		const int cx = LOWORD(lParam);
-		const int l_limit_left = m_chart_data_filtered.GetDataOffsetfromPixel(cx);
-		m_pSpkDoc->m_stimulus_intervals.SetAtGrow(m_pSpkDoc->m_stimulus_intervals.n_items, l_limit_left);
-		m_pSpkDoc->m_stimulus_intervals.n_items++;
-		update_VT_tags();
+		{
+			const int cx = LOWORD(lParam);
+			const int l_limit_left = m_chart_data_filtered.GetDataOffsetfromPixel(cx);
+			m_pSpkDoc->m_stimulus_intervals.SetAtGrow(m_pSpkDoc->m_stimulus_intervals.n_items, l_limit_left);
+			m_pSpkDoc->m_stimulus_intervals.n_items++;
+			update_VT_tags();
 
-		m_chart_spike_bar.Invalidate();
-		m_chart_data_filtered.Invalidate();
-		m_chart_data_source.Invalidate();
-		m_pSpkDoc->SetModifiedFlag(TRUE);
-	}
-	break;
+			m_chart_spike_bar.Invalidate();
+			m_chart_data_filtered.Invalidate();
+			m_chart_data_source.Invalidate();
+			m_pSpkDoc->SetModifiedFlag(TRUE);
+		}
+		break;
 
 	case HINT_HITSPIKE_SHIFT: // spike is selected or deselected
-	{
-		long l_first; XX
-		long l_last;
-		m_pSpkList->get_range_of_spike_flagged(l_first, l_last);
-		const auto l_time = m_pSpkList->get_spike(threshold)->get_time();
-		if (l_time < l_first)
-			l_first = l_time;
-		if (l_time > l_last)
-			l_last = l_time;
-		m_pSpkList->flag_range_of_spikes(l_first, l_last, TRUE);
-		update_spike_display();
-	}
-	break;
+		{
+			//db_spike spike_hit = GetDocument()->get_spike_hit();
+			long l_first; 
+			long l_last;
+			m_pSpkList->get_range_of_spike_flagged(l_first, l_last);
+			const auto l_time = m_pSpkList->get_spike(threshold)->get_time();
+			if (l_time < l_first)
+				l_first = l_time;
+			if (l_time > l_last)
+				l_last = l_time;
+			m_pSpkList->flag_range_of_spikes(l_first, l_last, TRUE);
+			update_spike_display();
+		}
+		break;
 
 	case HINT_HITSPIKE_CTRL: // add/remove selected spike to/from the group of spikes selected
-		select_spike_no(threshold, TRUE); XX
-		update_spike_display();
+		{
+			db_spike spike_hit = GetDocument()->get_spike_hit();
+			select_spike_no(spike_hit, TRUE);
+			update_spike_display();
+		}
 		break;
 
 	case HINT_HITCHANNEL: // change channel if different
@@ -1417,7 +1424,8 @@ void ViewSpikeDetection::OnToolsEdittransformspikes()
 	dlg.DoModal();
 
 	m_spike_index = dlg.m_spike_index;
-	select_spike_no(m_spike_index, FALSE);
+	db_spike spike_sel(-1, -1, m_spike_index);
+	select_spike_no(spike_sel, FALSE);
 	update_spike_display();
 	if (dlg.m_bchanged)
 		m_pSpkDoc->SetModifiedFlag(TRUE);
@@ -1539,7 +1547,8 @@ void ViewSpikeDetection::OnEnChangeSpikeno()
 			m_spike_index = m_pSpkList->get_spikes_count() - 1;
 
 		// update spike num and center display on the selected spike
-		select_spike_no(m_spike_index, FALSE);
+		db_spike spike_sel(-1, -1, m_spike_index);
+		select_spike_no(spike_sel, FALSE);
 		update_spike_display();
 	}
 }
@@ -1577,7 +1586,8 @@ void ViewSpikeDetection::OnArtefact()
 	m_p_detect_parameters = m_spk_detect_array_current.GetItem(i_sel_parameters);
 	m_pSpkList = m_pSpkDoc->set_spike_list_as_current(i_sel_parameters);
 
-	select_spike_no(m_spike_index, FALSE);
+	db_spike spike_sel(-1, -1, m_spike_index);
+	select_spike_no(spike_sel, FALSE);
 	update_spike_display();
 	update_number_of_spikes();
 }
@@ -1670,27 +1680,27 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 	SetDlgItemText(IDC_SPIKEWINDOWLENGTH, dummy2);
 }
 
-void ViewSpikeDetection::select_spike_no(int spike_index, BOOL bMultipleSelection)
+void ViewSpikeDetection::select_spike_no(db_spike& spike_sel, BOOL bMultipleSelection)
 {
-	if (spike_index >= 0)
+	if (spike_sel.spike_index >= 0)
 	{
 		m_pSpkList = m_pSpkDoc->get_spike_list_current();
-		const auto p_spike_element = m_pSpkList->get_spike(spike_index);
+		const auto p_spike_element = m_pSpkList->get_spike(spike_sel.spike_index);
 		m_bartefact = (p_spike_element->get_class_id() < 0);
 		if (bMultipleSelection)
 		{
-			m_pSpkList->toggle_spike_flag(spike_index);
+			m_pSpkList->toggle_spike_flag(spike_sel.spike_index);
 			if (m_pSpkList->get_spike_flag_array_count() < 1)
-				spike_index = -1;
-			if (m_spike_index == spike_index)
-				spike_index = 0;
+				spike_sel.spike_index = -1;
+			if (m_spike_index == spike_sel.spike_index)
+				spike_sel.spike_index = 0;
 		}
 		else
 		{
-			m_pSpkList->set_single_spike_flag(spike_index);
+			m_pSpkList->set_single_spike_flag(spike_sel.spike_index);
 			m_pSpkList->m_selected_spike = m_spike_index;
 		}
-		m_spike_index = spike_index;
+		m_spike_index = spike_sel.spike_index;
 		align_display_to_current_spike();
 	}
 	else

@@ -18,49 +18,49 @@ public:
 
 	float m_t1 = 0.f;
 	float m_t2 = 6.f;
-	float m_tunit = 1000.f; // 1=s, 1000f=ms, 1e6=us
-	float m_timefirst = 0.;
-	float m_timelast = 0.;
-	int m_hitrate = 0;
-	float m_ktolerance = 0.;
-	int m_spikenoclass = 0;
-	int m_hitratesort = 0;
-	int m_ifirstsortedclass = 0;
-	BOOL m_bAllFiles = false;
-	BOOL m_ballTempl = false;
-	BOOL m_ballSort = false;
-	BOOL m_bDisplaySingleClass = false;
-	CTabCtrl m_tab1Ctrl{};
+	float t_unit = 1000.f; // 1=s, 1000f=ms, 1e6=us
+	float time_first = 0.;
+	float time_last = 0.;
+	int hit_rate = 0;
+	float k_tolerance = 0.;
+	int spike_no_class = 0;
+	int hit_rate_sort = 0;
+	int i_first_sorted_class = 0;
+	BOOL m_b_all_files = false;
+	BOOL b_all_templates = false;
+	BOOL b_all_sort = false;
+	BOOL b_display_single_class = false;
+	CTabCtrl m_tab1_ctrl{};
 
 protected:
-	CEditCtrl mm_t1;
-	CEditCtrl mm_t2;
-	CEditCtrl mm_hitrate;
-	CEditCtrl mm_hitratesort;
-	CEditCtrl mm_ktolerance;
-	CEditCtrl mm_spikenoclass;
-	CEditCtrl mm_timefirst; // first abscissa value
-	CEditCtrl mm_timelast; // last abscissa value
-	CEditCtrl mm_ifirstsortedclass;
+	CEditCtrl mm_t1_;
+	CEditCtrl mm_t2_;
+	CEditCtrl mm_hit_rate_;
+	CEditCtrl mm_hit_rate_sort_;
+	CEditCtrl mm_k_tolerance_;
+	CEditCtrl mm_spike_no_class_;
+	CEditCtrl mm_time_first_; // first abscissa value
+	CEditCtrl mm_time_last_; // last abscissa value
+	CEditCtrl mm_i_first_sorted_class_;
 
-	CTemplateListWnd m_avgList{};
-	CTemplateListWnd m_templList{};
-	CTemplateListWnd m_avgAllList{};
+	CTemplateListWnd m_avg_list_{};
+	CTemplateListWnd m_template_list_{};
+	CTemplateListWnd m_avg_all_list_{};
 
-	ChartSpikeShape m_ChartSpkWnd_Shape; // all spikes in displayspikes
+	ChartSpikeShape m_chart_spk_wnd_shape_;
 
-	OPTIONS_VIEWDATA* mdPM = nullptr; // view data options
-	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr; // measure options
-	SPKCLASSIF* m_psC = nullptr; // sort parameters
-	SCROLLINFO m_scrollFilePos_infos{};
-	long m_lFirst = 0;
-	long m_lLast = 0;
-	int m_spkformtagleft = 0;
-	int m_spkformtagright = 0;
-	int m_spikeno = -1;
+	OPTIONS_VIEWDATA* options_view_data_ = nullptr; 
+	OPTIONS_VIEWDATAMEASURE* options_view_data_measure_ = nullptr; 
+	SPKCLASSIF* spike_classification_parameters_ = nullptr; 
+	SCROLLINFO scroll_file_pos_infos_{};
+	long l_first_ = 0;
+	long l_last_ = 0;
+	int spk_form_tag_left_ = 0;
+	int spk_form_tag_right_ = 0;
+	int spike_no_ = -1;
 
 public:
-	void SetViewMouseCursor(int cursormode) { m_ChartSpkWnd_Shape.set_mouse_cursor_type(cursormode); }
+	void set_view_mouse_cursor(const int cursor_mode) { m_chart_spk_wnd_shape_.set_mouse_cursor_type(cursor_mode); }
 
 public:
 	BOOL OnMove(UINT nIDMoveCommand) override;
@@ -71,22 +71,28 @@ protected:
 
 	// Implementation
 protected:
-	void defineSubClassedItems();
-	void defineStretchParameters();
+	void define_sub_classed_items();
+	void define_stretch_parameters();
 	void update_file_parameters(); // reset parameters for new file
-	void updateTemplates();
-	void updateLegends();
-	void select_spike(int spike_no);
-	void updateScrollBar();
+	void update_templates();
+	void update_legends();
+	void select_spike(db_spike& spike_sel);
+	void update_scrollbar();
 	void select_spike_list(int index_current);
-	void editSpikeClass(int controlID, int controlItem);
-	void displayAvg(BOOL ballfiles, CTemplateListWnd* pTPList); //, CImageList* pImList);
-	void sortSpikes();
-	void updateCtrlTab1(int iselect);
-	void setExtentZeroAllDisplay(int extent, int zero);
+	void edit_spike_class(int control_id, int control_item);
+	void display_avg(boolean b_all_files, CTemplateListWnd* template_list); 
+	void sort_spikes();
+	void update_ctrl_tab1(int i_select);
+	void set_extent_zero_all_display(int extent, int zero);
 	void update_spike_file();
-	float convertSpikeIndexToTime(int index) { return index * m_tunit / m_pSpkList->get_acq_sampling_rate(); }
-	int convertTimeToSpikeIndex(float time) { return static_cast<int>(time * m_pSpkList->get_acq_sampling_rate() / m_tunit); }
+	float convert_spike_index_to_time(const int index) const
+	{
+		return static_cast<float>(index) * t_unit / m_pSpkList->get_acq_sampling_rate();
+	}
+	int convert_time_to_spike_index(const float time) const
+	{
+		return static_cast<int>(time * m_pSpkList->get_acq_sampling_rate() / t_unit);
+	}
 
 public:
 	// Generated message map functions

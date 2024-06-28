@@ -34,44 +34,44 @@ public:
 
 	// Attributes
 protected:
-	ChartData m_ChartDataWnd;
-	SpikeClassListBox m_spikeClassListBox;
-	int m_max_classes = 1;
+	ChartData chart_data_wnd_;
+	SpikeClassListBox spike_class_listbox_;
+	int max_classes_ = 1;
 
-	CEditCtrl mm_spike_index;
-	CEditCtrl mm_spike_class;
-	CEditCtrl mm_time_first; 
-	CEditCtrl mm_time_last; 
-	CEditCtrl mm_zoom;
-	CEditCtrl mm_class_source;
-	CEditCtrl mm_class_destination;
-	CEditCtrl mm_jitter_ms;
+	CEditCtrl mm_spike_index_;
+	CEditCtrl mm_spike_class_;
+	CEditCtrl mm_time_first_; 
+	CEditCtrl mm_time_last_; 
+	CEditCtrl mm_zoom_;
+	CEditCtrl mm_class_source_;
+	CEditCtrl mm_class_destination_;
+	CEditCtrl mm_jitter_ms_;
 
-	ScrollBarEx m_file_scroll; 
-	SCROLLINFO m_file_scroll_infos{}; 
+	ScrollBarEx file_scrollbar_; 
+	SCROLLINFO file_scroll_infos_{}; 
 
-	int m_zoom_factor = 1; 
-	HICON m_hBias = nullptr;
-	HICON m_hZoom = nullptr;
-	float m_y_scale_factor = 0.f; 
-	int m_VBarMode = 0; 
-	CScrollBar m_scroll_y; 
+	int zoom_factor_ = 1; 
+	HICON h_bias_ = nullptr;
+	HICON h_zoom_ = nullptr;
+	float y_scale_factor_ = 0.f; 
+	int v_bar_mode_ = 0; 
+	CScrollBar scrollbar_y_; 
 
 	AcqDataDoc* p_data_doc_ = nullptr; 
 
-	BOOL m_bInitSourceView = true;
-	int m_lFirst = 0;
-	int m_lLast = -1;
+	BOOL b_init_source_view_ = true;
+	int l_first_ = 0;
+	int l_last_ = -1;
 
-	CDWordArray m_highlighted_intervals;
-	BOOL m_b_add_spike_mode = false;
+	CDWordArray highlighted_intervals_;
+	boolean b_add_spike_mode_ = false;
 
-	int m_yWE = 1;
-	int m_yWO = 0;
-	int m_ptVT = -1;
-	CRect m_rectVTtrack = CRect(0, 0, 0, 0);
-	float m_jitter = 0.f;
-	BOOL m_bdummy = TRUE;
+	int y_we_ = 1;
+	int y_wo_ = 0;
+	int pt_vt_ = -1;
+	CRect rect_vt_track_ = CRect(0, 0, 0, 0);
+	float jitter_ = 0.f;
+	boolean b_dummy_ = true;
 
 	// Implementation
 	void update_file_parameters(BOOL b_update_interface = TRUE);
@@ -81,7 +81,7 @@ protected:
 	void update_gain_scroll();
 	void update_bias_scroll();
 	void adjust_y_zoom_to_max_min(BOOL b_force_search_max_min);
-	void select_spike(const db_spike& spike_selected);
+	void select_spike(db_spike& spike_selected);
 	void define_sub_classed_items();
 	void define_stretch_parameters();
 	void zoom_on_preset_interval(int ii_start);
@@ -112,10 +112,10 @@ protected:
 	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_deactivate_view) override;
 
 	// page format printing parameters (pixel unit)
-	OPTIONS_VIEWDATA* options_viewdata = nullptr; // view data options
-	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr; // measure options
-	SPKCLASSIF* m_psC = nullptr;
-	SPKDETECTPARM* m_pspkDP = nullptr; // spike detection parameters
+	OPTIONS_VIEWDATA* options_view_data_ = nullptr; 
+	OPTIONS_VIEWDATAMEASURE* options_view_data_measure_ = nullptr; 
+	SPKCLASSIF* spk_classification_parameters_ = nullptr;
+	SPKDETECTPARM* spk_detection_parameters_ = nullptr; 
 
 protected:
 	void PrintFileBottomPage(CDC* p_dc, const CPrintInfo* pInfo);
@@ -124,7 +124,7 @@ protected:
 	CString PrintGetFileInfos();
 	CString PrintBars(CDC* p_dc, const CRect* rect);
 	long PrintGetFileSeriesIndexFromPage(int page, int* file);
-	float PrintChangeUnit(float xVal, CString* xUnit, float* xScalefactor);
+	float PrintChangeUnit(float x_val, CString* x_unit, float* x_scalefactor);
 
 protected:
 	// Generated message map functions

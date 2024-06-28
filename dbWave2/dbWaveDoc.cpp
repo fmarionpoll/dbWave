@@ -1471,7 +1471,7 @@ BOOL CdbWaveDoc::import_data_files_from_another_data_base(const CString & other_
 boolean CdbWaveDoc::file_exists(const CString & file_name)
 {
 	CFileStatus status;
-	return CFile::GetStatus(file_name, status);
+	return static_cast<boolean>(CFile::GetStatus(file_name, status));
 }
 
 void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
@@ -1498,17 +1498,20 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 		// process data file
 		if (!current_datafile_name_.IsEmpty())
 		{
-			const auto pDat = open_current_data_file();
-			ASSERT(pDat != nullptr);
-			wave_format = pDat->get_waveformat();
-			if (update_waveformat_from_database(wave_format))
-				pDat->acq_save_data_descriptors();
+			const auto p_dat = open_current_data_file();
+			ASSERT(p_dat != nullptr);
+			wave_format = p_dat->get_waveformat();
+			if (update_waveformat_from_database(wave_format)) {
+				if (!p_dat->acq_save_data_descriptors()) {
+					AfxMessageBox(_T("Error saving data descriptors\n"), MB_OK);
+				}
+			}
 		}
 		// process spike file
 		if (!current_spike_file_name_.IsEmpty())
 		{
-			const auto pSpk = open_current_spike_file();
-			ASSERT(pSpk != nullptr);
+			const auto p_spk = open_current_spike_file();
+			ASSERT(p_spk != nullptr);
 			wave_format = &(m_p_spk->m_wave_format);
 			if (update_waveformat_from_database(wave_format))
 				m_p_spk->OnSaveDocument(current_spike_file_name_);
@@ -1520,10 +1523,10 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 	DlgProgress dlg;
 	dlg.Create();
 	dlg.SetStep(1);
-	auto istep = 0;
-	CString cscomment;
-	const auto nfiles = db_get_n_records();
-	auto ifile = 1;
+	auto i_step = 0;
+	CString cs_comment;
+	const auto n_files = db_get_n_records();
+	auto i_file = 1;
 
 	// got to the first pRecord
 	db_table->m_mainTableSet.MoveFirst();
@@ -1536,8 +1539,8 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 		if (dlg.CheckCancelButton())
 			if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 				break;
-		cscomment.Format(_T("Processing file [%i / %i]"), ifile, nfiles);
-		dlg.SetStatus(cscomment);
+		cs_comment.Format(_T("Processing file [%i / %i]"), i_file, n_files);
+		dlg.SetStatus(cs_comment);
 
 		CWaveFormat* p_wave_format;
 		// process data file
@@ -1547,7 +1550,10 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 			ASSERT(pDat != nullptr);
 			p_wave_format = m_p_dat->get_waveformat();
 			if (update_waveformat_from_database(p_wave_format))
-				m_p_dat->acq_save_data_descriptors();
+			{
+				if (!m_p_dat->acq_save_data_descriptors())
+					AfxMessageBox(_T("Error saving data descriptors\n"), MB_OK);
+			}
 		}
 		// process spike file
 		if (!current_spike_file_name_.IsEmpty())
@@ -1560,11 +1566,11 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 		}
 		// move to next pRecord
 		db_table->m_mainTableSet.MoveNext();
-		ifile++;
-		if (MulDiv(ifile, 100, nfiles) > istep)
+		i_file++;
+		if (MulDiv(i_file, 100, n_files) > i_step)
 		{
 			dlg.StepIt();
-			istep = MulDiv(ifile, 100, nfiles);
+			i_step = MulDiv(i_file, 100, n_files);
 		}
 	}
 	db_table->m_mainTableSet.MoveFirst();
