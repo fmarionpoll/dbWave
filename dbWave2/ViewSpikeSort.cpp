@@ -536,7 +536,7 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 	case HINT_SETMOUSECURSOR: // ------------- change mouse cursor (all 3 items)
 		if (CURSOR_ZOOM < shortValue)
 			shortValue = 0;
-		SetViewMouseCursor(shortValue);
+		set_view_mouse_cursor(shortValue);
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(shortValue, 0));
 		break;
 
@@ -559,13 +559,6 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 			if (m_pSpkList->get_spike_flag_array_count() > 0)
 				clear_flag_all_spikes();
 			db_spike spike_hit = GetDocument()->get_spike_hit();
-			if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
-				spike_hit = chart_spike_shape_.get_hit_spike();
-			else if (HIWORD(lParam) == IDC_DISPLAYBARS)
-				spike_hit = chart_spike_bar_.get_hit_spike();
-			else if (HIWORD(lParam) == IDC_DISPLAYPARM)
-				spike_hit = chart_xt_measures_.get_hit_spike();
-
 			select_spike(spike_hit);
 		}
 		break;

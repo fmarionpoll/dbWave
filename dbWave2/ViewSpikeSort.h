@@ -93,7 +93,7 @@ protected:
 
 	// Operations
 public:
-	void SetViewMouseCursor(const int cursor_mode)
+	void set_view_mouse_cursor(const int cursor_mode)
 	{
 		chart_xt_measures_.set_mouse_cursor_type(cursor_mode);
 		chart_spike_shape_.set_mouse_cursor_type(cursor_mode);
