@@ -81,12 +81,12 @@ BEGIN_MESSAGE_MAP(ViewSpikes, dbTableView)
 	ON_EN_CHANGE(IDC_EDIT5, &ViewSpikes::OnEnChangeDestclass)
 	ON_EN_CHANGE(IDC_JITTER, &ViewSpikes::OnEnChangeJitter)
 
-	ON_BN_CLICKED(IDC_ZOOM_ON_OFF, &ViewSpikes::on_zoom)
 	ON_BN_CLICKED(IDC_GAIN_button, &ViewSpikes::OnGAINbutton)
 	ON_BN_CLICKED(IDC_BIAS_button, &ViewSpikes::OnBIASbutton)
 	ON_BN_CLICKED(IDC_ARTEFACT, &ViewSpikes::OnArtefact)
 
 	ON_BN_CLICKED(IDC_SAMECLASS, &ViewSpikes::OnBnClickedSameclass)
+	ON_BN_CLICKED(IDC_ZOOM_ON_OFF, &ViewSpikes::on_zoom)
 END_MESSAGE_MAP()
 
 void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_deactivate_view)
@@ -902,7 +902,7 @@ CString ViewSpikes::print_get_file_infos()
 	return str_comment;
 }
 
-CString ViewSpikes::print_bars(CDC* p_dc, const CRect* rect)
+CString ViewSpikes::print_bars(CDC* p_dc, const CRect* rect) const
 {
 	CString str_comment;
 	const CString rc(_T("\n"));
@@ -1156,7 +1156,8 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 		p_info->SetMaxPage(n_pages);
 	}
 
-	p_dbwave_doc->db_set_current_record_position(m_file0);
+	if (!p_dbwave_doc->db_set_current_record_position(m_file0))
+		AfxMessageBox(_T("database error repositioning record\n"), MB_OK);
 	return flag;
 }
 
@@ -1429,8 +1430,8 @@ void ViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	}
 }
 
-static char vs_units[] = {"GM  mµpf  "};  
-static int vs_units_power[] = {9, 6, 0, 0, -3, -6, -9, -12, 0};
+char vs_units[] = {"GM  mµpf  "};  
+int vs_units_power[] = {9, 6, 0, 0, -3, -6, -9, -12, 0};
 constexpr int vs_max_index = 8; 
 
 float ViewSpikes::print_change_unit(float x_val, CString* x_unit, float* x_scale_factor)
@@ -1450,9 +1451,9 @@ float ViewSpikes::print_change_unit(float x_val, CString* x_unit, float* x_scale
 	}
 	const auto ip_rec = static_cast<short> (floor(std::log10(x_val))); 
 	if (ip_rec <= 0 && x_val < 1.) 
-		i = 4 - ip_rec / 3; 
+		i = static_cast<short>(4 - ip_rec / 3); 
 	else
-		i = 3 - ip_rec / 3;
+		i = static_cast<short>(3 - ip_rec / 3);
 
 	if (i > vs_max_index) 
 		i = vs_max_index;
@@ -1534,24 +1535,24 @@ void ViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		chart_data_wnd_.CenterChan(0);
 }
 
-void ViewSpikes::scroll_file(UINT nSBCode, UINT nPos)
+void ViewSpikes::scroll_file(const UINT n_sb_code, const UINT n_pos)
 {
 	// get corresponding data
-	switch (nSBCode)
+	switch (n_sb_code)
 	{
-	case SB_LEFT: // scroll to the start
-	case SB_LINELEFT: // scroll one line left
-	case SB_LINERIGHT: // scroll one line right
-	case SB_PAGELEFT: // scroll one page left
-	case SB_PAGERIGHT: // scroll one page right
-	case SB_RIGHT: // scroll to end right
-		chart_data_wnd_.ScrollDataFromDoc(nSBCode);
+	case SB_LEFT: 
+	case SB_LINELEFT: 
+	case SB_LINERIGHT: 
+	case SB_PAGELEFT: 
+	case SB_PAGERIGHT: 
+	case SB_RIGHT: 
+		chart_data_wnd_.ScrollDataFromDoc(static_cast<WORD>(n_sb_code));
 		break;
-	case SB_THUMBPOSITION: // scroll to pos = nPos
-	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
-		chart_data_wnd_.GetDataFromDoc(MulDiv(nPos, chart_data_wnd_.GetDocumentLast(), 100));
+	case SB_THUMBPOSITION: 
+	case SB_THUMBTRACK: 
+		chart_data_wnd_.GetDataFromDoc(MulDiv(static_cast<int>(n_pos), chart_data_wnd_.GetDocumentLast(), 100));
 		break;
-	default: // NOP: set position only
+	default:
 		break;
 	}
 }
@@ -1608,7 +1609,7 @@ void ViewSpikes::OnEditCopy()
 
 		// print comments : set font
 		m_pOldFont = nullptr;
-		const auto oldsize = options_view_data_->fontsize;
+		const auto old_size = options_view_data_->fontsize;
 		options_view_data_->fontsize = 10;
 		memset(&m_logFont, 0, sizeof(LOGFONT)); 
 		lstrcpy(m_logFont.lfFaceName, _T("Arial")); 
@@ -1617,7 +1618,7 @@ void ViewSpikes::OnEditCopy()
 		m_fontPrint.CreateFontIndirect(&m_logFont);
 		mDC.SetBkMode(TRANSPARENT);
 
-		options_view_data_->fontsize = oldsize;
+		options_view_data_->fontsize = old_size;
 		m_pOldFont = mDC.SelectObject(&m_fontPrint);
 
 		CString comments;
@@ -1642,7 +1643,7 @@ void ViewSpikes::OnEditCopy()
 			chart_data_wnd_.CenterChan(0);
 			chart_data_wnd_.Print(&mDC, &rw_bars);
 
-			//auto extent = m_ChartDataWnd.get_channel_list_item(0)->GetYextent();
+			//auto extent = m_ChartDataWnd.get_channel_list_item(0)->Get_Y_extent();
 			rw_spikes.OffsetRect(0, r_height);
 			rw_bars.OffsetRect(0, r_height);
 			rw_text.OffsetRect(0, r_height);
@@ -1664,7 +1665,7 @@ void ViewSpikes::OnEditCopy()
 			mDC.SelectObject(m_pOldFont);
 		m_fontPrint.DeleteObject();
 
-		// restore oldpen
+		// restore old_pen
 		mDC.SelectObject(old_pen);
 		ReleaseDC(p_dc_ref);
 
@@ -1673,20 +1674,18 @@ void ViewSpikes::OnEditCopy()
 		ASSERT(h_emf_tmp != NULL);
 		if (OpenClipboard())
 		{
-			EmptyClipboard(); // prepare clipboard
-			SetClipboardData(CF_ENHMETAFILE, h_emf_tmp); // put data
-			CloseClipboard(); // close clipboard
+			EmptyClipboard(); 
+			SetClipboardData(CF_ENHMETAFILE, h_emf_tmp); 
+			CloseClipboard();
 		}
 		else
 		{
 			// Someone else has the Clipboard open...
-			DeleteEnhMetaFile(h_emf_tmp); // delete data
-			MessageBeep(0); // tell user something is wrong!
+			DeleteEnhMetaFile(h_emf_tmp); 
+			MessageBeep(0); 
 			AfxMessageBox(IDS_CANNOT_ACCESS_CLIPBOARD, NULL, MB_OK | MB_ICONEXCLAMATION);
 		}
-
-		// restore initial conditions
-		p_dc_ref->RestoreDC(old_dc); // restore Display context
+		p_dc_ref->RestoreDC(old_dc); 
 	}
 
 	// restore screen in previous state
@@ -1747,10 +1746,10 @@ void ViewSpikes::OnBIASbutton()
 	set_v_bar_mode(BAR_BIAS);
 }
 
-void ViewSpikes::set_v_bar_mode(short bMode)
+void ViewSpikes::set_v_bar_mode(const short b_mode)
 {
-	if (bMode == BAR_BIAS)
-		v_bar_mode_ = bMode;
+	if (b_mode == BAR_BIAS)
+		v_bar_mode_ = b_mode;
 	else
 		v_bar_mode_ = BAR_GAIN;
 	update_bias_scroll();
@@ -1766,11 +1765,11 @@ void ViewSpikes::update_gain_scroll()
 		TRUE);
 }
 
-void ViewSpikes::scroll_gain(UINT nSBCode, UINT nPos)
+void ViewSpikes::scroll_gain(const UINT n_sb_code, const UINT n_pos)
 {
 	int l_size = chart_data_wnd_.get_channel_list_item(0)->GetYextent();
 	// get corresponding data
-	switch (nSBCode)
+	switch (n_sb_code)
 	{
 	// .................scroll to the start
 	case SB_LEFT: l_size = YEXTENT_MIN;
@@ -1792,7 +1791,7 @@ void ViewSpikes::scroll_gain(UINT nSBCode, UINT nPos)
 		break;
 	// .................scroll to pos = nPos or drag scroll box -- pos = nPos
 	case SB_THUMBPOSITION:
-	case SB_THUMBTRACK: l_size = MulDiv(static_cast<int>(nPos) - 50, YEXTENT_MAX, 100);
+	case SB_THUMBTRACK: l_size = MulDiv(static_cast<int>(n_pos) - 50, YEXTENT_MAX, 100);
 		break;
 	// .................NOP: set position only
 	default: break;
@@ -1864,23 +1863,23 @@ void ViewSpikes::scroll_bias(UINT nSBCode, UINT nPos)
 		update_bias_scroll();
 }
 
-void ViewSpikes::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void ViewSpikes::OnVScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar* p_scroll_bar)
 {
-	if (pScrollBar != nullptr)
+	if (p_scroll_bar != nullptr)
 	{
 		// CViewData scroll: vertical scroll bar
 		switch (v_bar_mode_)
 		{
 		case BAR_GAIN:
-			scroll_gain(nSBCode, nPos);
+			scroll_gain(n_sb_code, n_pos);
 			break;
 		case BAR_BIAS:
-			scroll_bias(nSBCode, nPos);
+			scroll_bias(n_sb_code, n_pos);
 		default:
 			break;
 		}
 	}
-	dbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
+	dbTableView::OnVScroll(n_sb_code, n_pos, p_scroll_bar);
 }
 
 void ViewSpikes::OnArtefact()
@@ -1899,7 +1898,6 @@ void ViewSpikes::OnArtefact()
 		// if not artefact: if spike has negative class, set to positive value
 		else if (spk_class < 0)
 			spk_class = -(spk_class + 1);
-		//m_pSpkList->get_spike(m_spike_index)->set_class_id(spk_class);
 		spike_class_listbox_.ChangeSpikeClass(m_spike_index, spk_class);
 	}
 	CheckDlgButton(IDC_ARTEFACT, m_b_artefact);
@@ -2110,5 +2108,4 @@ void ViewSpikes::OnEnChangeNOspike()
 			UpdateData(FALSE);
 	}
 }
-
 

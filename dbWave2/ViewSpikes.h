@@ -85,14 +85,14 @@ protected:
 	void select_spike(db_spike& spike_selected);
 	void define_sub_classed_items();
 	void define_stretch_parameters();
-	void scroll_gain(UINT nSBCode, UINT nPos);
+	void scroll_gain(UINT n_sb_code, UINT n_pos);
 	void scroll_bias(UINT nSBCode, UINT nPos);
-	void set_v_bar_mode(short bMode);
+	void set_v_bar_mode(short b_mode);
 	BOOL add_spike_to_list(long ii_time, BOOL check_if_spike_nearby);
 	void set_add_spikes_mode(int mouse_cursor_type);
 	void select_spike_list(int current_selection);
 	void set_track_rectangle();
-	void scroll_file(UINT nSBCode, UINT nPos);
+	void scroll_file(UINT n_sb_code, UINT n_pos);
 	void update_file_scroll();
 	void center_data_display_on_spike(int spike_no);
 	void set_mouse_cursor(short param_value);
@@ -124,7 +124,7 @@ protected:
 	CString print_convert_file_index(long l_first, long l_last) const;
 	void print_compute_page_size();
 	CString print_get_file_infos();
-	CString print_bars(CDC* p_dc, const CRect* rect);
+	CString print_bars(CDC* p_dc, const CRect* rect) const;
 	long print_get_file_series_index_from_page(int page, int* file);
 	static float print_change_unit(float x_val, CString* x_unit, float* x_scale_factor);
 
@@ -150,10 +150,9 @@ protected:
 
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnEditCopy();
-	afx_msg void on_zoom();
 	afx_msg void OnGAINbutton();
 	afx_msg void OnBIASbutton();
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnVScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
 	afx_msg void OnArtefact();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
@@ -163,4 +162,6 @@ protected:
 	afx_msg void OnBnClickedSameclass();
 
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void on_zoom();
 };
