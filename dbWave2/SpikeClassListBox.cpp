@@ -23,50 +23,50 @@ END_MESSAGE_MAP()
 
 SpikeClassListBox::SpikeClassListBox()
 {
-	context.m_brush_background.CreateSolidBrush(context.m_color_background);
+	context_.m_brush_background.CreateSolidBrush(context_.m_color_background);
 }
 
 SpikeClassListBox::~SpikeClassListBox()
 = default;
 
-void SpikeClassListBox::MeasureItem(LPMEASUREITEMSTRUCT lpMIS)
+void SpikeClassListBox::MeasureItem(const LPMEASUREITEMSTRUCT lp_mis)
 {
-	lpMIS->itemHeight = context.m_row_height;
+	lp_mis->itemHeight = context_.m_row_height;
 }
 
-void SpikeClassListBox::DrawItem(LPDRAWITEMSTRUCT lpDIS)
+void SpikeClassListBox::DrawItem(const LPDRAWITEMSTRUCT lp_dis)
 {
-	const auto row_item = reinterpret_cast<RowItem*>(lpDIS->itemData);
-	row_item->draw_item(lpDIS);
+	const auto row_item = reinterpret_cast<RowItem*>(lp_dis->itemData);
+	row_item->draw_item(lp_dis);
 }
 
 
-void SpikeClassListBox::DeleteItem(LPDELETEITEMSTRUCT lpDI)
+void SpikeClassListBox::DeleteItem(const LPDELETEITEMSTRUCT lp_di)
 {
-	const auto item = reinterpret_cast<RowItem*>(lpDI->itemData);
+	const auto item = reinterpret_cast<RowItem*>(lp_di->itemData);
 	delete item;
 }
 
-void SpikeClassListBox::SetRowHeight(int row_height)
+void SpikeClassListBox::set_row_height(const int row_height)
 {
-	context.m_row_height = row_height;
+	context_.m_row_height = row_height;
 	for (auto n_index = 0; n_index < GetCount(); n_index++)
 		SetItemHeight(n_index, row_height);
 }
 
-void SpikeClassListBox::SetLeftColumnWidth(int left_width)
+void SpikeClassListBox::set_left_column_width(const int row_width)
 {
-	context.m_left_column_width = left_width;
+	context_.m_left_column_width = row_width;
 }
 
-void SpikeClassListBox::SetColumnsWidth(int width_spikes, int width_separator)
+void SpikeClassListBox::set_columns_width(const int width_spikes, const int width_separator)
 {
-	context.m_widthSpikes = width_spikes;
-	context.m_widthSeparator = width_separator;
-	context.m_widthText = context.m_left_column_width - width_spikes - 2 * width_separator;
+	context_.m_widthSpikes = width_spikes;
+	context_.m_widthSeparator = width_separator;
+	context_.m_widthText = context_.m_left_column_width - width_spikes - 2 * width_separator;
 	CRect rect;
 	GetClientRect(rect);
-	context.m_widthBars = rect.Width() - context.m_left_column_width;
+	context_.m_widthBars = rect.Width() - context_.m_left_column_width;
 }
 
 int SpikeClassListBox::CompareItem(LPCOMPAREITEMSTRUCT lpCIS)
@@ -83,40 +83,40 @@ int SpikeClassListBox::CompareItem(LPCOMPAREITEMSTRUCT lpCIS)
 	return result;
 }
 
-void SpikeClassListBox::set_source_data(SpikeList* pSList, CdbWaveDoc* pdbDoc) // TODO
+void SpikeClassListBox::set_source_data(SpikeList* p_s_list, CdbWaveDoc* pdb_doc) // TODO
 {
 	// erase content of the list box
 	SetRedraw(FALSE);
 	ResetContent();
 
-	m_dbwave_doc = pdbDoc;
-	m_spike_list = pSList;
-	if (pSList == nullptr || pdbDoc == nullptr)
+	m_dbwave_doc_ = pdb_doc;
+	m_spike_list_ = p_s_list;
+	if (p_s_list == nullptr || pdb_doc == nullptr)
 		return;
-	m_spike_doc = pdbDoc->m_p_spk;
+	m_spike_doc_ = pdb_doc->m_p_spk;
 	
 	// add as many windows as necessary; store pointer into listbox
 	auto i_id = 0;
 	const int n_classes = count_classes_in_current_spike_list();
 	for (auto i_row = 0; i_row < n_classes; i_row++)
 	{
-		const int class_id = m_spike_list->get_class_id(i_row);
+		const int class_id = m_spike_list_->get_class_id(i_row);
 		add_row_item(class_id, i_id); 
 		i_id += 2;
 	}
 	SetRedraw(TRUE);
 }
 
-RowItem* SpikeClassListBox::add_row_item(int class_id, int i_id)
+RowItem* SpikeClassListBox::add_row_item(const int class_id, const int i_id)
 {
 	const auto row_item = new(RowItem);
 	ASSERT(row_item != NULL);
-	row_item->create_item(this, m_dbwave_doc, m_spike_list, class_id, i_id, &context);
+	row_item->create_item(this, m_dbwave_doc_, m_spike_list_, class_id, i_id, &context_);
 	AddString(reinterpret_cast<LPTSTR>(row_item));
 	return row_item;
 }
 
-void SpikeClassListBox::SetTimeIntervals(long l_first, long l_last)
+void SpikeClassListBox::set_time_intervals(const long l_first, const long l_last)
 {
 	m_lFirst = l_first;
 	m_lLast = l_last;
@@ -129,13 +129,13 @@ void SpikeClassListBox::SetTimeIntervals(long l_first, long l_last)
 
 int SpikeClassListBox::count_classes_in_current_spike_list() const
 {
-	m_spike_list->update_class_list();
-	return m_spike_list->get_classes_count();
+	m_spike_list_->update_class_list();
+	return m_spike_list_->get_classes_count();
 }
 
-void SpikeClassListBox::SetSpkList(SpikeList* p_spike_list)
+void SpikeClassListBox::set_spk_list(SpikeList* p_spike_list)
 {
-	m_spike_list = p_spike_list;
+	m_spike_list_ = p_spike_list;
 
 	if (count_classes_in_current_spike_list() == GetCount())
 	{
@@ -166,29 +166,29 @@ int SpikeClassListBox::select_spike(db_spike& spike_selected)
 	int spki=0;
 ;*/
 
-	const auto b_multiple_selection = false;
+	constexpr auto b_multiple_selection = false;
 	auto cla = 0;
 
 	// select spike
 	if (spike_selected.spike_index >= 0)
 	{
 		// get address of spike parameters
-		const auto p_spike_element = m_spike_list->get_spike(spike_selected.spike_index);
+		const auto p_spike_element = m_spike_list_->get_spike(spike_selected.spike_index);
 		cla = p_spike_element->get_class_id();
 
 		// multiple selection
-		if (false)
-		{
-			auto nflaggedspikes = m_spike_list->toggle_spike_flag(spike_selected.spike_index);
-			if (m_spike_list->get_spike_flag_array_count() < 1)
-				spike_selected.spike_index = -1;
-		}
+		//if (false)
+		//{
+		//	auto nflaggedspikes = m_spike_list_->toggle_spike_flag(spike_selected.spike_index);
+		//	if (m_spike_list_->get_spike_flag_array_count() < 1)
+		//		spike_selected.spike_index = -1;
+		//}
 		// single selection
-		m_spike_list->set_single_spike_flag(spike_selected.spike_index);
+		m_spike_list_->set_single_spike_flag(spike_selected.spike_index);
 	}
 	// un-select all spikes
 	else
-		m_spike_list->remove_all_spike_flags();
+		m_spike_list_->remove_all_spike_flags();
 
 	// select corresponding row
 	if (spike_selected.spike_index >= 0)
@@ -212,7 +212,7 @@ int SpikeClassListBox::select_spike(db_spike& spike_selected)
 	return spike_sel;
 }
 
-int SpikeClassListBox::SetMouseCursorType(int cursor_m) const
+int SpikeClassListBox::set_mouse_cursor_type(const int cursor_m) const
 {
 	auto old_cursor = 0;
 	for (auto i = 0; i < GetCount(); i++)
@@ -226,7 +226,7 @@ int SpikeClassListBox::SetMouseCursorType(int cursor_m) const
 void SpikeClassListBox::OnSize(UINT nType, int cx, int cy)
 {
 	CListBox::OnSize(nType, cx, cy);
-	context.m_widthBars = cx - context.m_left_column_width;
+	context_.m_widthBars = cx - context_.m_left_column_width;
 	// move all windows out of the way to prevent displaying old rows
 	for (auto i = 0; i < GetCount(); i++)
 	{
@@ -235,7 +235,7 @@ void SpikeClassListBox::OnSize(UINT nType, int cx, int cy)
 	}
 }
 
-void SpikeClassListBox::SetYzoom(int y_we, int y_wo) const
+void SpikeClassListBox::set_y_zoom(int y_we, int y_wo) const
 {
 	for (auto i = 0; i < GetCount(); i++)
 	{
@@ -244,7 +244,7 @@ void SpikeClassListBox::SetYzoom(int y_we, int y_wo) const
 	}
 }
 
-void SpikeClassListBox::SetXzoom(int x_we, int x_wo) const
+void SpikeClassListBox::set_x_zoom(int x_we, int x_wo) const
 {
 	for (auto i = 0; i < GetCount(); i++)
 	{
@@ -253,7 +253,7 @@ void SpikeClassListBox::SetXzoom(int x_we, int x_wo) const
 	}
 }
 
-int SpikeClassListBox::GetYWExtent() const
+int SpikeClassListBox::get_yw_extent() const
 {
 	ASSERT(GetCount() > 0);
 	const auto row_item = get_row_item(0);
@@ -262,7 +262,7 @@ int SpikeClassListBox::GetYWExtent() const
 	return we;
 }
 
-int SpikeClassListBox::GetYWOrg() const
+int SpikeClassListBox::get_yw_org() const
 {
 	ASSERT(GetCount() > 0);
 	const auto row_item = get_row_item(0);
@@ -271,7 +271,7 @@ int SpikeClassListBox::GetYWOrg() const
 	return wo;
 }
 
-int SpikeClassListBox::GetXWExtent() const
+int SpikeClassListBox::get_xw_extent() const
 {
 	ASSERT(GetCount() > 0);
 	const auto row_item = get_row_item(0);
@@ -280,7 +280,7 @@ int SpikeClassListBox::GetXWExtent() const
 	return we;
 }
 
-int SpikeClassListBox::GetXWOrg() const
+int SpikeClassListBox::get_xw_org() const
 {
 	ASSERT(GetCount() > 0);
 	const auto row_item = get_row_item(0);
@@ -289,7 +289,7 @@ int SpikeClassListBox::GetXWOrg() const
 	return wo;
 }
 
-float SpikeClassListBox::GetExtent_mV() const
+float SpikeClassListBox::get_extent_mv() const
 {
 	ASSERT(GetCount() > 0);
 	const auto row_item = get_row_item(0);
@@ -300,9 +300,9 @@ float SpikeClassListBox::GetExtent_mV() const
 
 HBRUSH SpikeClassListBox::CtlColor(CDC* p_dc, UINT nCtlColor)
 {
-	p_dc->SetTextColor(context.m_color_text);
-	p_dc->SetBkColor(context.m_color_background);
-	return context.m_brush_background;
+	p_dc->SetTextColor(context_.m_color_text);
+	p_dc->SetBkColor(context_.m_color_background);
+	return context_.m_brush_background;
 }
 
 int SpikeClassListBox::get_row_index_of_spike_class(int spike_class) const
@@ -320,16 +320,16 @@ int SpikeClassListBox::get_row_index_of_spike_class(int spike_class) const
 	return row_index;
 }
 
-void SpikeClassListBox::remove_spike_from_row(int spike_no) 
+void SpikeClassListBox::remove_spike_from_row(const int spike_no) 
 {
-	const auto current_class = m_spike_list->get_spike(spike_no)->get_class_id();
+	const auto current_class = m_spike_list_->get_spike(spike_no)->get_class_id();
 	const int row_index = get_row_index_of_spike_class(current_class);
 	if (row_index < 0)
 		return;
 
 	const auto row_item = get_row_item(row_index);
 	row_item->select_individual_spike(-1);
-	const auto n_spikes = m_spike_list->decrement_class_id_n_items(current_class);
+	const auto n_spikes = m_spike_list_->decrement_class_id_n_items(current_class);
 	if (n_spikes > 0)
 		row_item->update_string(current_class, n_spikes);
 	else
@@ -338,34 +338,34 @@ void SpikeClassListBox::remove_spike_from_row(int spike_no)
 	}
 }
 
-void SpikeClassListBox::add_spike_to_row(int spike_no)
+void SpikeClassListBox::add_spike_to_row(const int spike_no)
 {
-	const auto class_id = m_spike_list->get_spike(spike_no)->get_class_id();
+	const auto class_id = m_spike_list_->get_spike(spike_no)->get_class_id();
 
 	int row_index = get_row_index_of_spike_class(class_id);
 	int n_spikes = 1;
 	if (row_index < 0)
 	{
-		m_spike_list->add_class_id(class_id);
+		m_spike_list_->add_class_id(class_id);
 		
 		const auto l_first = m_lFirst;
 		const auto l_last = m_lLast;
-		set_source_data(m_spike_list, m_dbwave_doc);
-		SetTimeIntervals(l_first, l_last);
+		set_source_data(m_spike_list_, m_dbwave_doc_);
+		set_time_intervals(l_first, l_last);
 		row_index = get_row_index_of_spike_class(class_id);
 		if (row_index < 0)
 			return;
 	}
 	else
-		n_spikes = m_spike_list->increment_class_id_n_items(class_id);
+		n_spikes = m_spike_list_->increment_class_id_n_items(class_id);
 
 	const auto row_item = get_row_item(row_index);
 	row_item->update_string(class_id, n_spikes);
 }
 
-void SpikeClassListBox::ChangeSpikeClass(int spike_no, int new_class_id)
+void SpikeClassListBox::change_spike_class(const int spike_no, const int new_class_id)
 {
-	m_spike_list->change_spike_class_id(spike_no, new_class_id);
+	m_spike_list_->change_spike_class_id(spike_no, new_class_id);
 	update_rows_from_spike_list();
 }
 
@@ -376,7 +376,7 @@ void SpikeClassListBox::update_rows_from_spike_list()
 
 	for (auto i_class = 0; i_class < n_classes; i_class++)
 	{
-		const int spike_list_class_id = m_spike_list->get_class_id(i_class);
+		const int spike_list_class_id = m_spike_list_->get_class_id(i_class);
 		if (i_class < n_row_items) 
 			get_row_item(i_class)->set_class_id(spike_list_class_id);
 		else
@@ -395,7 +395,7 @@ void SpikeClassListBox::update_rows_from_spike_list()
 	SetRedraw(TRUE);
 }
 
-void SpikeClassListBox::PrintItem(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* rect3, int i) const
+void SpikeClassListBox::print_item(CDC* p_dc, CRect* rect1, const CRect* rect2, const CRect* rect3, const int i) const
 {
 	if ((i < 0) || (i > GetCount() - 1))
 		return;
@@ -403,7 +403,7 @@ void SpikeClassListBox::PrintItem(CDC* p_dc, CRect* rect1, CRect* rect2, CRect* 
 	row_item->print(p_dc, rect1, rect2, rect3);
 }
 
-void SpikeClassListBox::XorTempVTtag(int x_point) const
+void SpikeClassListBox::xor_temp_vt_tag(const int x_point) const
 {
 	for (auto i = 0; i < GetCount(); i++)
 	{
@@ -412,7 +412,7 @@ void SpikeClassListBox::XorTempVTtag(int x_point) const
 	}
 }
 
-void SpikeClassListBox::ResetBarsXortag() const
+void SpikeClassListBox::reset_bars_xor_tag() const
 {
 	for (int i = 0; i < GetCount(); i++)
 	{
@@ -421,14 +421,14 @@ void SpikeClassListBox::ResetBarsXortag() const
 	}
 }
 
-void SpikeClassListBox::ReflectBarsMouseMoveMessg(const HWND hwnd)
+void SpikeClassListBox::reflect_bar_mouse_move_message(const HWND h_wnd)
 {
-	m_hwnd_bars_reflect = hwnd;
+	h_wnd_bars_reflect_ = h_wnd;
 	for (auto i = 0; i < GetCount(); i++)
 	{
 		const auto row_item = get_row_item(i);
-		row_item->get_chart_bars()->reflect_mouse_move_message(hwnd);
-		if (hwnd != nullptr)
+		row_item->get_chart_bars()->reflect_mouse_move_message(h_wnd);
+		if (h_wnd != nullptr)
 			row_item->get_chart_bars()->set_mouse_cursor_type(CURSOR_CROSS);
 	}
 }
@@ -440,7 +440,7 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	switch (wParam)
 	{
 	case HINT_SETMOUSECURSOR:
-		SetMouseCursorType(threshold);
+		set_mouse_cursor_type(threshold);
 		break;
 
 	case HINT_CHANGEHZLIMITS:
@@ -449,7 +449,7 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_HITSPIKE:
 		{
-			db_spike spike_hit = m_dbwave_doc->get_spike_hit();
+			db_spike spike_hit = m_dbwave_doc_->get_spike_hit();
 			select_spike(spike_hit);
 		}
 		break;
@@ -474,7 +474,7 @@ void SpikeClassListBox::set_horizontal_limits(const int row_selected)
 {
 	const auto row_item = get_row_item(row_selected);
 	row_item->get_time_intervals(m_lFirst, m_lLast);
-	SetTimeIntervals(m_lFirst, m_lLast);
+	set_time_intervals(m_lFirst, m_lLast);
 }
 
 void SpikeClassListBox::set_y_zoom(const int row_selected) const
@@ -482,30 +482,30 @@ void SpikeClassListBox::set_y_zoom(const int row_selected) const
 	const auto* row_item = get_row_item(row_selected);
 	int y_we, y_wo;
 	row_item->get_zoom_y(y_we, y_wo);
-	SetYzoom(y_we, y_wo);
+	set_y_zoom(y_we, y_wo);
 }
 
-void SpikeClassListBox::set_class_of_dropped_spike(const int row_selected)
+void SpikeClassListBox::set_class_of_dropped_spike(const int row_selected) const
 {
 	const auto row_item = get_row_item(row_selected);
 	if (row_item != nullptr)
 	{
 		const int new_class_id = row_item->get_class_id();
-		m_spike_list->change_class_of_flagged_spikes(new_class_id);
+		m_spike_list_->change_class_of_flagged_spikes(new_class_id);
 	}
 }
 
 void SpikeClassListBox::OnMouseMove(const UINT nFlags, CPoint point)
 {
-	if (m_hwnd_bars_reflect != nullptr && point.x >= (context.m_widthText + context.m_widthSpikes))
+	if (h_wnd_bars_reflect_ != nullptr && point.x >= (context_.m_widthText + context_.m_widthSpikes))
 	{
 		// convert coordinates
 		CRect rect0, rect1;
 		GetWindowRect(&rect1);
-		::GetWindowRect(m_hwnd_bars_reflect, &rect0);
+		::GetWindowRect(h_wnd_bars_reflect_, &rect0);
 
 		// reflect mouse move message
-		::SendMessage(m_hwnd_bars_reflect, WM_MOUSEMOVE, nFlags,
+		::SendMessage(h_wnd_bars_reflect_, WM_MOUSEMOVE, nFlags,
 		              MAKELPARAM(point.x + (rect1.left - rect0.left),
 		                         point.y + (rect1.top - rect0.top)));
 	}
@@ -515,13 +515,13 @@ void SpikeClassListBox::OnMouseMove(const UINT nFlags, CPoint point)
 
 void SpikeClassListBox::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	if (m_hwnd_bars_reflect != nullptr && point.x >= (context.m_widthText + context.m_widthSpikes))
+	if (h_wnd_bars_reflect_ != nullptr && point.x >= (context_.m_widthText + context_.m_widthSpikes))
 	{
 		// convert coordinates and reflect move message
 		CRect rect0, rect1;
 		GetWindowRect(&rect1);
-		::GetWindowRect(m_hwnd_bars_reflect, &rect0);
-		::SendMessage(m_hwnd_bars_reflect, WM_LBUTTONUP, nFlags,
+		::GetWindowRect(h_wnd_bars_reflect_, &rect0);
+		::SendMessage(h_wnd_bars_reflect_, WM_LBUTTONUP, nFlags,
 		              MAKELPARAM(point.x + (rect1.left - rect0.left),
 		                         point.y + (rect1.top - rect0.top)));
 	}
@@ -534,14 +534,14 @@ void SpikeClassListBox::OnRButtonUp(UINT nFlags, CPoint point)
 	CListBox::OnRButtonUp(nFlags, point);
 
 	DlgListBClaSize dlg;
-	dlg.m_rowheight = GetRowHeight();
-	dlg.m_textcol = GetColumnsTextWidth();
-	dlg.m_superpcol = GetColumnsSpikesWidth();
-	dlg.m_intercolspace = GetColumnsSeparatorWidth();
+	dlg.m_rowheight = get_row_height();
+	dlg.m_textcol = get_columns_text_width();
+	dlg.m_superpcol = get_columns_spikes_width();
+	dlg.m_intercolspace = get_columns_separator_width();
 	if (IDOK == dlg.DoModal())
 	{
-		SetRowHeight(dlg.m_rowheight);
-		SetColumnsWidth(dlg.m_superpcol, dlg.m_intercolspace);
+		set_row_height(dlg.m_rowheight);
+		set_columns_width(dlg.m_superpcol, dlg.m_intercolspace);
 		Invalidate();
 	}
 }

@@ -103,10 +103,10 @@ void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_d
 		{
 			saveCurrentSpkFile();
 			// save column parameters
-			spk_classification_parameters_->col_separator = spike_class_listbox_.GetColumnsSeparatorWidth();
-			spk_classification_parameters_->row_height = spike_class_listbox_.GetRowHeight();
-			spk_classification_parameters_->col_spikes = spike_class_listbox_.GetColumnsSpikesWidth();
-			spk_classification_parameters_->col_text = spike_class_listbox_.GetColumnsTextWidth();
+			spk_classification_parameters_->col_separator = spike_class_listbox_.get_columns_separator_width();
+			spk_classification_parameters_->row_height = spike_class_listbox_.get_row_height();
+			spk_classification_parameters_->col_spikes = spike_class_listbox_.get_columns_spikes_width();
+			spk_classification_parameters_->col_text = spike_class_listbox_.get_columns_text_width();
 
 			if (p_app->m_p_view_spikes_memory_file == nullptr)
 			{
@@ -168,11 +168,11 @@ void ViewSpikes::set_add_spikes_mode(int mouse_cursor_type)
 	GetDlgItem(IDC_JITTER)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_JITTERSTATIC)->ShowWindow(n_cmd_show);
 
-	auto hWnd = GetSafeHwnd();
+	auto h_wnd = GetSafeHwnd();
 	if (!b_add_spike_mode_)
-		hWnd = nullptr;
-	chart_data_wnd_.reflect_mouse_move_message(hWnd);
-	spike_class_listbox_.ReflectBarsMouseMoveMessg(hWnd);
+		h_wnd = nullptr;
+	chart_data_wnd_.reflect_mouse_move_message(h_wnd);
+	spike_class_listbox_.reflect_bar_mouse_move_message(h_wnd);
 	chart_data_wnd_.SetTrackSpike(b_add_spike_mode_, spk_detection_parameters_->extract_n_points, spk_detection_parameters_->detect_pre_threshold,
 	                             spk_detection_parameters_->extract_channel);
 
@@ -202,7 +202,7 @@ void ViewSpikes::OnMouseMove(UINT nFlags, CPoint point)
 			pt_vt_ = -1;
 		b_dummy_ = TRUE;
 		chart_data_wnd_.xor_temp_vertical_tag(pt_vt_);
-		spike_class_listbox_.XorTempVTtag(pt_vt_);
+		spike_class_listbox_.xor_temp_vt_tag(pt_vt_);
 	}
 	dbTableView::OnMouseMove(nFlags, point);
 }
@@ -230,12 +230,13 @@ void ViewSpikes::OnLButtonDown(UINT nFlags, CPoint point)
 	dbTableView::OnLButtonDown(nFlags, point);
 }
 
-void ViewSpikes::set_mouse_cursor(short param_value)
+void ViewSpikes::set_mouse_cursor(const short param_value)
 {
 	if (chart_data_wnd_.get_mouse_cursor_type() != param_value)
 		set_add_spikes_mode(param_value);
+
 	chart_data_wnd_.set_mouse_cursor_type(param_value);
-	if(!spike_class_listbox_.SetMouseCursorType(param_value))
+	if(!spike_class_listbox_.set_mouse_cursor_type(param_value))
 		AfxMessageBox(_T("Error in changing mouse cursor\n"), MB_OK);
 	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(param_value, 0));
 }
@@ -249,8 +250,8 @@ void ViewSpikes::change_zoom(LPARAM lParam)
 	}
 	else if (HIWORD(lParam) == IDC_LISTCLASSES) //TODO [does not work! HIWORD(lParam)==1]
 	{
-		l_first_ = spike_class_listbox_.GetTimeFirst();
-		l_last_ = spike_class_listbox_.GetTimeLast();
+		l_first_ = spike_class_listbox_.get_time_first();
+		l_last_ = spike_class_listbox_.get_time_last();
 	}
 	update_legends(TRUE);
 }
@@ -498,11 +499,11 @@ void ViewSpikes::OnInitialUpdate()
 	// adjust size of the row and cols with text, spikes, and bars
 	CRect rect;
 	GetDlgItem(IDC_LISTCLASSES)->GetWindowRect(&rect);
-	spike_class_listbox_.SetRowHeight(spk_classification_parameters_->row_height);
+	spike_class_listbox_.set_row_height(spk_classification_parameters_->row_height);
 	CRect rect2;
 	GetDlgItem(IDC_DISPLAYDAT)->GetWindowRect(&rect2);
 	const int left_col_width = rect2.left - rect.left - 2;
-	spike_class_listbox_.SetLeftColumnWidth(left_col_width);
+	spike_class_listbox_.set_left_column_width(left_col_width);
 	if (spk_classification_parameters_->col_text < 0)
 	{
 		spk_classification_parameters_->col_spikes = spk_classification_parameters_->row_height;
@@ -515,8 +516,8 @@ void ViewSpikes::OnInitialUpdate()
 		}
 	}
 	spk_classification_parameters_->col_text = left_col_width - spk_classification_parameters_->col_spikes - 2 * spk_classification_parameters_->col_separator;
-	spike_class_listbox_.SetColumnsWidth(spk_classification_parameters_->col_spikes, spk_classification_parameters_->col_separator);
-	spike_class_listbox_.SetCursorMaxOnDblClick(3);
+	spike_class_listbox_.set_columns_width(spk_classification_parameters_->col_spikes, spk_classification_parameters_->col_separator);
+	spike_class_listbox_.set_cursor_max_on_dbl_click(3);
 
 	// init relation with document, display data, adjust parameters
 	chart_data_wnd_.set_scope_parameters(&(options_view_data_->viewdata));
@@ -641,7 +642,7 @@ void ViewSpikes::update_spike_file(BOOL b_update_interface)
 			else if (l_last_ > m_pSpkDoc->get_acq_size() - 1 || l_last_ <= l_first_)
 				l_last_ = m_pSpkDoc->get_acq_size() - 1; 
 
-			spike_class_listbox_.SetTimeIntervals(l_first_, l_last_);
+			spike_class_listbox_.set_time_intervals(l_first_, l_last_);
 			adjust_y_zoom_to_max_min(false);
 		}
 	}
@@ -670,14 +671,14 @@ void ViewSpikes::update_legends(const BOOL b_update_interface)
 	if (!b_add_spike_mode_)
 		h_safe_wnd = nullptr;
 	chart_data_wnd_.reflect_mouse_move_message(h_safe_wnd);
-	spike_class_listbox_.ReflectBarsMouseMoveMessg(h_safe_wnd);
+	spike_class_listbox_.reflect_bar_mouse_move_message(h_safe_wnd);
 	chart_data_wnd_.SetTrackSpike(b_add_spike_mode_, spk_detection_parameters_->extract_n_points, spk_detection_parameters_->detect_pre_threshold,
 	                             spk_detection_parameters_->extract_channel);
 
 	// update spike bars & forms CListBox
-	if (l_first_ != spike_class_listbox_.GetTimeFirst()
-		|| l_last_ != spike_class_listbox_.GetTimeLast())
-		spike_class_listbox_.SetTimeIntervals(l_first_, l_last_);
+	if (l_first_ != spike_class_listbox_.get_time_first()
+		|| l_last_ != spike_class_listbox_.get_time_last())
+		spike_class_listbox_.set_time_intervals(l_first_, l_last_);
 
 	// update text abscissa and horizontal scroll position
 	m_time_first = static_cast<float>(l_first_) / m_pSpkDoc->get_acq_rate();
@@ -699,7 +700,7 @@ void ViewSpikes::adjust_y_zoom_to_max_min(const BOOL b_force_search_max_min)
 		y_we_ = MulDiv(max - min + 1, 10, 8);
 		y_wo_ = (max + min) / 2;
 	}
-	spike_class_listbox_.SetYzoom(y_we_, y_wo_);
+	spike_class_listbox_.set_y_zoom(y_we_, y_wo_);
 }
 
 void ViewSpikes::select_spike_list(int current_selection)
@@ -707,7 +708,7 @@ void ViewSpikes::select_spike_list(int current_selection)
 	m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_selection);
 	ASSERT(m_pSpkList != NULL);
 
-	spike_class_listbox_.SetSpkList(m_pSpkList);
+	spike_class_listbox_.set_spk_list(m_pSpkList);
 
 	spike_class_listbox_.Invalidate();
 	spk_detection_parameters_ = m_pSpkList->get_detection_parameters();
@@ -742,17 +743,17 @@ void ViewSpikes::select_spike_list(int current_selection)
 void ViewSpikes::OnToolsEdittransformspikes()
 {
 	// return if no spike shape
-	if (spike_class_listbox_.GetXWExtent() == 0) 
+	if (spike_class_listbox_.get_xw_extent() == 0) 
 		return;
 	// save time frame to restore it on return
-	const auto l_first = spike_class_listbox_.GetTimeFirst();
-	const auto l_last = spike_class_listbox_.GetTimeLast();
+	const auto l_first = spike_class_listbox_.get_time_first();
+	const auto l_last = spike_class_listbox_.get_time_last();
 
 	DlgSpikeEdit dlg;
-	dlg.m_yextent = spike_class_listbox_.GetYWExtent(); 
-	dlg.m_yzero = spike_class_listbox_.GetYWOrg(); 
-	dlg.m_xextent = spike_class_listbox_.GetXWExtent(); 
-	dlg.m_xzero = spike_class_listbox_.GetXWOrg();
+	dlg.m_yextent = spike_class_listbox_.get_yw_extent(); 
+	dlg.m_yzero = spike_class_listbox_.get_yw_org(); 
+	dlg.m_xextent = spike_class_listbox_.get_xw_extent(); 
+	dlg.m_xzero = spike_class_listbox_.get_xw_org();
 	dlg.m_spike_index = m_spike_index; 
 	dlg.m_parent = this;
 	dlg.m_pdbWaveDoc = GetDocument();
@@ -916,8 +917,8 @@ CString ViewSpikes::print_bars(CDC* p_dc, const CRect* rect) const
 	const CSize bar_size(5, 5); 
 
 	///// time abscissa ///////////////////////////
-	const int ii_first = spike_class_listbox_.GetTimeFirst();
-	const int ii_last = spike_class_listbox_.GetTimeLast();
+	const int ii_first = spike_class_listbox_.get_time_first();
+	const int ii_last = spike_class_listbox_.get_time_last();
 	auto cs_comment = print_convert_file_index(ii_first, ii_last);
 
 	///// horizontal time bar ///////////////////////////
@@ -1055,8 +1056,8 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 		m_nbrowsperpage = 1;
 
 	// compute number of rows according to multiple row flag
-	m_lprintFirst = spike_class_listbox_.GetTimeFirst();
-	m_lprintLen = spike_class_listbox_.GetTimeLast() - m_lprintFirst + 1;
+	m_lprintFirst = spike_class_listbox_.get_time_first();
+	m_lprintLen = spike_class_listbox_.get_time_last() - m_lprintFirst + 1;
 
 	// make sure the number of classes per file is known
 	const auto p_dbwave_doc = GetDocument();
@@ -1142,8 +1143,8 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 		m_nfiles = 1;
 		if (options_view_data_->bMultirowDisplay)
 		{
-			const auto l_first0 = spike_class_listbox_.GetTimeFirst();
-			const auto l_last0 = spike_class_listbox_.GetTimeLast();
+			const auto l_first0 = spike_class_listbox_.get_time_first();
+			const auto l_last0 = spike_class_listbox_.get_time_last();
 			const auto len = m_pSpkDoc->get_acq_size() - l_first0;
 			nb_rect = len / (l_last0 - l_first0);
 			if (nb_rect * (l_last0 - l_first0) < len)
@@ -1164,8 +1165,8 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 void ViewSpikes::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_bIsPrinting = TRUE;
-	m_lFirst0 = spike_class_listbox_.GetTimeFirst();
-	m_lLast0 = spike_class_listbox_.GetTimeLast();
+	m_lFirst0 = spike_class_listbox_.get_time_first();
+	m_lLast0 = spike_class_listbox_.get_time_last();
 
 	//---------------------init objects-------------------------------------
 	memset(&m_logFont, 0, sizeof(LOGFONT)); 
@@ -1263,7 +1264,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		// ------------------------ print data
 
-		auto extent = spike_class_listbox_.GetYWExtent();
+		auto extent = spike_class_listbox_.get_yw_extent();
 		//auto zero = m_spkClass.GetYWOrg();
 
 		if (p_data_doc_ != nullptr)
@@ -1292,13 +1293,13 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		short max, min;
 		m_pSpkDoc->get_spike_list_current()->get_total_max_min(TRUE, &max, &min);
 		const int middle = (static_cast<int>(max) + static_cast<int>(min)) / 2;
-		spike_class_listbox_.SetYzoom(extent, middle);
+		spike_class_listbox_.set_y_zoom(extent, middle);
 		const auto n_count = spike_class_listbox_.GetCount(); 
 
 		for (auto i_count = 0; i_count < n_count; i_count++)
 		{
-			spike_class_listbox_.SetTimeIntervals(l_first, l_last);
-			spike_class_listbox_.PrintItem(p_dc, &rw_text, &rw_spikes, &rw_bars, i_count);
+			spike_class_listbox_.set_time_intervals(l_first, l_last);
+			spike_class_listbox_.print_item(p_dc, &rw_text, &rw_spikes, &rw_bars, i_count);
 			rw_text.OffsetRect(0, r_height);
 			rw_spikes.OffsetRect(0, r_height);
 			rw_bars.OffsetRect(0, r_height);
@@ -1416,7 +1417,7 @@ void ViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 
 	if (GetDocument()->db_set_current_record_position(m_file0)) {
 		update_file_parameters(TRUE);
-		spike_class_listbox_.SetTimeIntervals(m_lFirst0, m_lLast0);
+		spike_class_listbox_.set_time_intervals(m_lFirst0, m_lLast0);
 		spike_class_listbox_.Invalidate();
 	}
 
@@ -1624,8 +1625,8 @@ void ViewSpikes::OnEditCopy()
 		CString comments;
 		// display data: source data and spikes
 		//auto extent = m_ChartSpikesListBox.GetYWExtent(); 
-		const auto r_height = MulDiv(spike_class_listbox_.GetRowHeight(), rect.Width(),
-		                            spike_class_listbox_.GetColumnsTimeWidth());
+		const auto r_height = MulDiv(spike_class_listbox_.get_row_height(), rect.Width(),
+		                            spike_class_listbox_.get_columns_time_width());
 		auto rw_spikes = rect;
 		rw_spikes.bottom = r_height; 
 		auto rw_text = rw_spikes;
@@ -1655,7 +1656,7 @@ void ViewSpikes::OnEditCopy()
 
 		for (int i_count = 0; i_count < n_count; i_count++)
 		{
-			spike_class_listbox_.PrintItem(&mDC, &rw_text, &rw_spikes, &rw_bars, i_count);
+			spike_class_listbox_.print_item(&mDC, &rw_text, &rw_spikes, &rw_bars, i_count);
 			rw_spikes.OffsetRect(0, r_height);
 			rw_bars.OffsetRect(0, r_height);
 			rw_text.OffsetRect(0, r_height);
@@ -1898,7 +1899,7 @@ void ViewSpikes::OnArtefact()
 		// if not artefact: if spike has negative class, set to positive value
 		else if (spk_class < 0)
 			spk_class = -(spk_class + 1);
-		spike_class_listbox_.ChangeSpikeClass(m_spike_index, spk_class);
+		spike_class_listbox_.change_spike_class(m_spike_index, spk_class);
 	}
 	CheckDlgButton(IDC_ARTEFACT, m_b_artefact);
 	m_pSpkDoc->SetModifiedFlag(TRUE);
@@ -1929,7 +1930,7 @@ void ViewSpikes::OnFormatAlldata()
 	// spikes: center spikes horizontally and adjust hz size of display
 	constexpr int x_wo = 0;
 	const auto x_we = m_pSpkList->get_spike_length();
-	spike_class_listbox_.SetXzoom(x_we, x_wo);
+	spike_class_listbox_.set_x_zoom(x_we, x_wo);
 
 	update_legends(TRUE);
 
@@ -1954,7 +1955,7 @@ void ViewSpikes::OnFormatCentercurve()
 	short max, min;
 	m_pSpkList->get_total_max_min(TRUE, &max, &min);
 	const WORD middle = max / 2 + min / 2;
-	spike_class_listbox_.SetYzoom(spike_class_listbox_.GetYWExtent(), middle);
+	spike_class_listbox_.set_y_zoom(spike_class_listbox_.get_yw_extent(), middle);
 
 	if (p_data_doc_ != nullptr)
 		chart_data_wnd_.CenterChan(0);
@@ -2002,7 +2003,7 @@ void ViewSpikes::OnEnChangeSpikenoclass()
 
 	if (m_spike_class != spike_class_old)
 	{
-		spike_class_listbox_.ChangeSpikeClass(m_spike_index, m_spike_class);
+		spike_class_listbox_.change_spike_class(m_spike_index, m_spike_class);
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 		update_legends(TRUE);
 		spike_class_listbox_.Invalidate();

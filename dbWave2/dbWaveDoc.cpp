@@ -1639,8 +1639,8 @@ void CdbWaveDoc::export_spk_descriptors(CSharedFile * p_sf, SpikeList * p_spike_
 		p_sf->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		cs_dummy.Format(_T("%s%i"), (LPCTSTR)cs_tab, p_spike_list->get_classes_count());
 		p_sf->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-		const auto tduration = m_p_spk->get_acq_duration();
-		cs_dummy.Format(_T("%s%f"), (LPCTSTR)cs_tab, tduration);
+		const auto t_duration = m_p_spk->get_acq_duration();
+		cs_dummy.Format(_T("%s%f"), (LPCTSTR)cs_tab, t_duration);
 		p_sf->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 	}
 
@@ -1658,7 +1658,7 @@ void CdbWaveDoc::export_spk_descriptors(CSharedFile * p_sf, SpikeList * p_spike_
 CString CdbWaveDoc::export_database_data(const int option) const
 {
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	const auto options_viewspikes = &(p_app->options_view_spikes);
+	const auto options_view_spikes = &(p_app->options_view_spikes);
 	CString separator = _T("\t");
 	if (option == 1)
 		separator = _T(" | ");
@@ -1675,7 +1675,7 @@ CString CdbWaveDoc::export_database_data(const int option) const
 	cs_file_comment.Format(_T("%i%s%s"), db_table->m_mainTableSet.m_ID, (LPCTSTR)separator, (LPCTSTR)filename);
 
 	// source data file items
-	if (options_viewspikes->bacqdate) // source data time and date
+	if (options_view_spikes->bacqdate) // source data time and date
 	{
 		cs_dummy = separator + db_table->m_mainTableSet.m_table_acq_date.Format(VAR_DATEVALUEONLY);
 		cs_file_comment += cs_dummy;
@@ -1683,7 +1683,7 @@ CString CdbWaveDoc::export_database_data(const int option) const
 		cs_file_comment += cs_dummy;
 	}
 	// source data comments
-	if (options_viewspikes->bacqcomments)
+	if (options_view_spikes->bacqcomments)
 	{
 		db_table->get_record_item_value(CH_EXPT_ID, &desc);
 		cs_file_comment += separator + desc.csVal;
@@ -1752,71 +1752,71 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 	}
 
 	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	const auto options_viewspikes = &(p_app->options_view_spikes);
+	const auto options_view_spikes = &(p_app->options_view_spikes);
 
 	const auto i_old_list = m_p_spk->get_spike_list_current_index();
-	m_p_spk->export_table_title(p_sf, options_viewspikes, n_files);
-	m_p_spk->export_table_col_headers_db(p_sf, options_viewspikes);
-	m_p_spk->export_table_col_headers_data(p_sf, options_viewspikes); // this is for the measure
+	m_p_spk->export_table_title(p_sf, options_view_spikes, n_files);
+	CSpikeDoc::export_table_col_headers_db(p_sf, options_view_spikes);
+	m_p_spk->export_table_col_headers_data(p_sf, options_view_spikes); // this is for the measure
 
-	// single file export operation: EXTREMA, AMPLIT, SPIKEPOINTS
+	// single file export operation: EXTREMA, amplitude, SPIKE_POINTS
 	transpose_ = FALSE;
-	if (options_viewspikes->exportdatatype == EXPORT_INTERV)
+	if (options_view_spikes->exportdatatype == EXPORT_INTERV)
 		transpose_ = TRUE;
 
-	if (options_viewspikes->exportdatatype == EXPORT_EXTREMA
-		|| options_viewspikes->exportdatatype == EXPORT_AMPLIT
-		|| options_viewspikes->exportdatatype == EXPORT_SPIKEPOINTS) /*|| parms->exportdatatype == EXPORT_INTERV*/
+	if (options_view_spikes->exportdatatype == EXPORT_EXTREMA
+		|| options_view_spikes->exportdatatype == EXPORT_AMPLIT
+		|| options_view_spikes->exportdatatype == EXPORT_SPIKEPOINTS) 
 	{
 		const CString cs_file_desc;
-		m_p_spk->export_spk_file_comment(p_sf, options_viewspikes, 0, cs_file_desc);
-		m_p_spk->export_spk_attributes_one_file(p_sf, options_viewspikes);
+		m_p_spk->export_spk_file_comment(p_sf, options_view_spikes, 0, cs_file_desc);
+		m_p_spk->export_spk_attributes_one_file(p_sf, options_view_spikes);
 	}
-	// multiple file export operations: ISI, AUTOCORR, HISTAMPL, AVERAGE, INTERV, PSTH
+	// multiple file export operations: ISI, AUTOCORRELATION, HIST_AMPL, AVERAGE, INTERVALS, PSTH
 	else
 	{
 		auto i_step = 0;
 		CString cs_comment;
 		auto n_bins = 0;
-		double* p_doubl = nullptr;
-		switch (options_viewspikes->exportdatatype)
+		double* p_double = nullptr;
+		switch (options_view_spikes->exportdatatype)
 		{
 		case EXPORT_ISI: // ISI
-		case EXPORT_AUTOCORR: // Autocorr
-			n_bins = options_viewspikes->nbinsISI;
+		case EXPORT_AUTOCORR: // Autocorrelation
+			n_bins = options_view_spikes->nbinsISI;
 			break;
 		case EXPORT_HISTAMPL: // spike amplitude histogram
-			n_bins = options_viewspikes->histampl_nbins + 2;
+			n_bins = options_view_spikes->histampl_nbins + 2;
 			break;
 		case EXPORT_AVERAGE: // assume that all spikes have the same length
-			p_doubl = new double[m_p_spk->get_spike_list_current()->get_spike_length() * 2 + 1 + 2];
-			*p_doubl = m_p_spk->get_spike_list_current()->get_spike_length();
+			p_double = new double[m_p_spk->get_spike_list_current()->get_spike_length() * 2 + 1 + 2];
+			*p_double = m_p_spk->get_spike_list_current()->get_spike_length();
 			break;
 		case EXPORT_INTERV: // feb 23, 2009
 			break;
 		case EXPORT_PSTH: // PSTH
 		default:
-			n_bins = options_viewspikes->nbins;
+			n_bins = options_view_spikes->nbins;
 			break;
 		}
-		const auto p_hist0 = new long[n_bins + 2]; // create array (dimension = nbins) to store results
+		const auto p_hist0 = new long[n_bins + 2]; // create array (dimension = n_bins) to store results
 		*p_hist0 = n_bins;
 		ASSERT(p_hist0 != NULL);
 		CString cs_file_comment;
 		cs_file_comment.Empty();
 
 		// in each spike list, loop over spike classes as defined in the options
-		auto iclass1 = options_viewspikes->classnb;
-		auto iclass2 = options_viewspikes->classnb2;
-		if (options_viewspikes->spikeclassoption == 0)
-			iclass2 = iclass1;
+		auto class1 = options_view_spikes->classnb;
+		auto class2 = options_view_spikes->classnb2;
+		if (options_view_spikes->spikeclassoption == 0)
+			class2 = class1;
 		else
 		{
-			if (iclass2 < iclass1)
+			if (class2 < class1)
 			{
-				const auto iclassd = iclass1;
-				iclass1 = iclass2;
-				iclass2 = iclassd;
+				const auto i_class = class1;
+				class1 = class2;
+				class2 = i_class;
 			}
 		}
 
@@ -1847,48 +1847,48 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 			ASSERT(flag);
 
 			// loop over the spike lists stored in that file
-			auto ichan1 = 0;
-			auto ichan2 = m_p_spk->get_spike_list_size();
-			if (!options_viewspikes->ballChannels)
+			auto i_chan1 = 0;
+			auto i_chan2 = m_p_spk->get_spike_list_size();
+			if (!options_view_spikes->ballChannels)
 			{
-				ichan1 = i_old_list;
-				ichan2 = ichan1 + 1;
+				i_chan1 = i_old_list;
+				i_chan2 = i_chan1 + 1;
 			}
 
 			//----------------------------------------------------------
-			for (auto ispikelist = ichan1; ispikelist < ichan2; ispikelist++)
+			for (auto i_spike_list = i_chan1; i_spike_list < i_chan2; i_spike_list++)
 			{
-				const auto p_spike_list = m_p_spk->set_spike_list_as_current(ispikelist);
-				options_viewspikes->ichan = ispikelist;
-				for (auto kclass = iclass1; kclass <= iclass2; kclass++)
+				const auto p_spike_list = m_p_spk->set_spike_list_as_current(i_spike_list);
+				options_view_spikes->ichan = i_spike_list;
+				for (auto k_class = class1; k_class <= class2; k_class++)
 				{
-					export_spk_descriptors(p_sf, p_spike_list, kclass);
+					export_spk_descriptors(p_sf, p_spike_list, k_class);
 					// export data
-					switch (options_viewspikes->exportdatatype)
+					switch (options_view_spikes->exportdatatype)
 					{
 					case EXPORT_HISTAMPL: // spike amplitude histogram
-						m_p_spk->export_spk_amplitude_histogram(p_sf, options_viewspikes, p_hist0, ispikelist, kclass);
+						m_p_spk->export_spk_amplitude_histogram(p_sf, options_view_spikes, p_hist0, i_spike_list, k_class);
 						break;
 					case EXPORT_LATENCY: // occurence time of the first 10 spikes
-						m_p_spk->export_spk_latencies(p_sf, options_viewspikes, 10, ispikelist, kclass);
+						m_p_spk->export_spk_latencies(p_sf, options_view_spikes, 10, i_spike_list, k_class);
 						break;
 					case EXPORT_INTERV: // feb 23, 2009 - occurence time of all spikes
-						m_p_spk->export_spk_latencies(p_sf, options_viewspikes, -1, ispikelist, kclass);
+						m_p_spk->export_spk_latencies(p_sf, options_view_spikes, -1, i_spike_list, k_class);
 						break;
 					case EXPORT_AVERAGE: // assume that all spikes have the same length
-						m_p_spk->export_spk_average_wave(p_sf, options_viewspikes, p_doubl, ispikelist, kclass);
+						m_p_spk->export_spk_average_wave(p_sf, options_view_spikes, p_double, i_spike_list, k_class);
 						break;
 					case EXPORT_PSTH: // PSTH
 					case EXPORT_ISI: // ISI
-					case EXPORT_AUTOCORR: // Autocorr
-						m_p_spk->export_spk_psth(p_sf, options_viewspikes, p_hist0, ispikelist, kclass);
+					case EXPORT_AUTOCORR: // Autocorrelation
+						m_p_spk->export_spk_psth(p_sf, options_view_spikes, p_hist0, i_spike_list, k_class);
 						break;
 					default:
-						ATLTRACE2(_T("option selected not implemented: %i /n"), options_viewspikes->exportdatatype);
+						ATLTRACE2(_T("option selected not implemented: %i /n"), options_view_spikes->exportdatatype);
 						break;
 					}
-				} // end of for: kclass
-			} // end of for: spklist
+				} // end of for: k_class
+			} // end of for: spk_list
 
 			// update progress bar
 			if (MulDiv(ifile1, 100, n_files) > i_step)
@@ -1899,7 +1899,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 		}
 
 		delete[] p_hist0;
-		delete[] p_doubl;
+		delete[] p_double;
 	}
 
 	// transpose file
@@ -1907,9 +1907,11 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 		transpose_file_for_excel(p_sf);
 
 	// restore initial file name and channel
-	db_set_current_record_position(i_old_index);
-	if (open_current_spike_file() != nullptr)
-		m_p_spk->set_spike_list_as_current(i_old_list);
+	if (db_set_current_record_position(i_old_index)) 
+	{
+		if (open_current_spike_file() != nullptr)
+			m_p_spk->set_spike_list_as_current(i_old_list);
+	}
 	UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 }
 
@@ -1988,16 +1990,16 @@ BOOL CdbWaveDoc::transpose_file_for_excel(CSharedFile * p_sf)
 	data_transposed.WriteString(cs_transposed);
 
 	// ---------------------------------------------------------
-	// now we now how many lines are in dataDest and we will scan line by line until all lines are exhausted
-	auto icol_dest = 0;
+	// now we now how many lines are in dataDest, and we will scan line by line until all lines are exhausted
+	auto col_dest = 0;
 	auto n_found = n_records;
 
 	while (n_found > 0)
 	{
-		data_dest.Seek(ul_position_header, CFile::begin);
+		data_dest.Seek(static_cast<LONGLONG>(ul_position_header), CFile::begin);
 		cs_transposed.Empty();
 		n_found = n_records + 1;
-		icol_dest++;
+		col_dest++;
 
 		for (auto i = 0; i <= n_records; i++)
 		{
@@ -2005,7 +2007,7 @@ BOOL CdbWaveDoc::transpose_file_for_excel(CSharedFile * p_sf)
 
 			// find tab at i_col_dest position
 			auto i_first_local = 0;
-			for (auto j = 0; j < icol_dest; j++)
+			for (auto j = 0; j < col_dest; j++)
 			{
 				i_first_local = cs_read.Find(c_sep, i_first_local + 1);
 				if (i_first_local < 0) // not found: exit loop and go to next line
@@ -2032,8 +2034,8 @@ BOOL CdbWaveDoc::transpose_file_for_excel(CSharedFile * p_sf)
 			}
 
 			auto cs_temp = cs_read.Mid(i_first_local, i_last - i_first_local);
-			const auto itest = cs_temp.Find(c_sep);
-			if (itest < 1)
+			const auto test = cs_temp.Find(c_sep);
+			if (test < 1)
 				cs_temp = cs_read.Mid(i_first_local + 1, i_last - i_first_local - 1);
 			if (cs_temp.Find(c_sep) < 0)
 				cs_temp += c_sep;
@@ -2127,7 +2129,7 @@ int CdbWaveDoc::check_files_can_be_opened(CStringArray & file_names_array, CShar
 		CFileStatus status;
 		const BOOL flag = CFile::GetStatus(cs_filename, status);
 
-		// GOTO next file if it not possible to open the file either as a spk or a dat file
+		// GOTO next file if not possible to open the file either as a spk or a dat file
 		if (!flag)
 		{
 			psf = file_discarded_message(psf, cs_filename, record_item);
@@ -2563,7 +2565,7 @@ void CdbWaveDoc::remove_false_spk_files() const
 			}
 			else
 			{
-				// compare the 2 file names - if different, copy dataname & directory index into spike name & directory fields
+				// compare the 2 file names - if different, copy data name & directory index into spike name & directory fields
 				if (cs_spike_file_name.CompareNoCase(current_spike_file_name_) != 0)
 				{
 					cs_spike_file_name = db_table->m_mainTableSet.m_Filedat.Left(
