@@ -92,9 +92,9 @@ BOOL CNoteDoc::open_project_files(CString& cs_path_name)
 	dlg.m_bReadColumns = p_app->options_import.read_columns;
 	if (IDOK == dlg.DoModal())
 	{
-		p_app->options_import.discard_duplicate_files = dlg.m_bAllowDuplicateFiles;
-		p_app->options_import.header_present = dlg.m_bHeader;
-		p_app->options_import.read_columns = dlg.m_bReadColumns;
+		p_app->options_import.discard_duplicate_files =  static_cast<boolean>(dlg.m_bAllowDuplicateFiles);
+		p_app->options_import.header_present = static_cast<boolean>(dlg.m_bHeader);
+		p_app->options_import.read_columns = static_cast<boolean>(dlg.m_bReadColumns);
 	}
 
 	// open data files
@@ -107,7 +107,7 @@ BOOL CNoteDoc::open_project_files(CString& cs_path_name)
 	return flag;
 }
 
-BOOL CNoteDoc::open_file_list(CString& cs_path_name, CStringArray& cs_array_files, CStringArray& cs_array_descriptors,
+BOOL CNoteDoc::open_file_list(CString& cs_path_name, CStringArray& cs_array_files, CStringArray& cs_descriptions_array,
                               const int n_columns) const
 {
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
@@ -132,7 +132,7 @@ BOOL CNoteDoc::open_file_list(CString& cs_path_name, CStringArray& cs_array_file
 			if (p_app->options_import.read_columns)
 			{
 				//int n_columns2 = cs_array_descriptors.GetCount() / (cs_array_files.GetCount() + p_app->options_import.bHeader);
-				p_dbwave_doc->import_file_list(cs_array_descriptors, n_columns, p_app->options_import.header_present);
+				p_dbwave_doc->import_file_list(cs_descriptions_array, n_columns, p_app->options_import.header_present);
 			}
 			else
 			{
@@ -147,7 +147,7 @@ BOOL CNoteDoc::open_file_list(CString& cs_path_name, CStringArray& cs_array_file
 	return flag;
 }
 
-int CNoteDoc::extract_list(CRichEditCtrl& p_edit, CStringArray& cs_array_file_names, CStringArray& cs_array_descriptors)
+int CNoteDoc::extract_list(CRichEditCtrl& p_edit, CStringArray& cs_array_file_names, CStringArray& cs_descriptors_array)
 {
 	CString text_from_rich_edit_view{};
 	p_edit.GetWindowText(text_from_rich_edit_view);
@@ -161,28 +161,28 @@ int CNoteDoc::extract_list(CRichEditCtrl& p_edit, CStringArray& cs_array_file_na
 		i_first = 1;
 
 	int cur_pos = 0;
-	int count_rows = 0;
+	int row_index = 0;
 	int count_columns = 0;
 	const auto separator = L"\r\n";
 	CString cs_row = text_from_rich_edit_view.Tokenize(separator, cur_pos);
 	while (!cs_row.IsEmpty())
 	{
-		count_rows++;
+		row_index++;
 		if (cs_row.GetLength() > 2)
 		{
-			CStringArray cs_columns_one_row;
-			count_columns = extract_columns_from_row(cs_row, cs_columns_one_row);
-			if (count_rows > i_first)
+			CStringArray row_array;
+			count_columns = parse_row2(cs_row, row_array);
+
+			if (row_index > i_first)
 			{
-				const CString& name = cs_columns_one_row.GetAt(0);
-				if (add_file_name(name, cs_array_file_names, cs_files_tested))
-					add_row_to_array(cs_columns_one_row, cs_array_descriptors);
+				if (add_file_name(row_array.GetAt(0), cs_array_file_names, cs_files_tested))
+					add_row_to_array(row_array, cs_descriptors_array);
 				else
 					b_files_not_found = true;
 			}
 			else if (i_first == 1)
 			{
-				add_row_to_array(cs_columns_one_row, cs_array_descriptors);
+				add_row_to_array(row_array, cs_descriptors_array);
 			}
 		}
 		cs_row = text_from_rich_edit_view.Tokenize(separator, cur_pos);
@@ -193,13 +193,14 @@ int CNoteDoc::extract_list(CRichEditCtrl& p_edit, CStringArray& cs_array_file_na
 	return count_columns;
 }
 
-void CNoteDoc::add_row_to_array(const CStringArray& cs_row, CStringArray& cs_out)
+void CNoteDoc::add_row_to_array(const CStringArray& row_array, CStringArray& cs_descriptors_array)
 {
-	for (int i = 0; i < cs_row.GetCount(); i++)
-		cs_out.Add(cs_row.GetAt(i));
+	for (int i = 0; i < row_array.GetCount(); i++)
+		cs_descriptors_array.Add(row_array.GetAt(i));
 }
 
-int CNoteDoc::extract_columns_from_row(const CString& cs_row, CStringArray& cs_columns)
+/*
+int CNoteDoc::parse_row(const CString& cs_row, CStringArray& cs_columns)
 {
 	int cur_pos = 0;
 	int count_columns = 0;
@@ -219,6 +220,20 @@ int CNoteDoc::extract_columns_from_row(const CString& cs_row, CStringArray& cs_c
 		cur_pos = new_pos + 1;
 	}
 	return count_columns;
+}
+*/
+
+int CNoteDoc::parse_row2(const CString& cs_row, CStringArray& cs_columns)
+{
+	int cur_pos = 0;
+	const CString tokens = _T("\t;,");
+	CString res_token = cs_row.Tokenize(tokens, cur_pos);
+	while (res_token != _T(""))
+	{
+		cs_columns.Add(res_token);
+		res_token = cs_row.Tokenize(tokens, cur_pos);
+	}
+	return cs_columns.GetCount();
 }
 
 BOOL CNoteDoc::add_file_name(const CString& res_token, CStringArray& cs_array_ok, CStringArray& cs_array_tested)

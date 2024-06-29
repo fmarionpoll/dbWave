@@ -47,7 +47,7 @@ public:
 	CString		db_filename;
 	CString		proposed_data_path_name;
 
-	void	import_file_list(CStringArray& file_list, int n_columns = 1, boolean b_header = false);
+	void	import_file_list(CStringArray& cs_descriptors_array, int n_columns = 1, boolean b_header = false);
 	BOOL	import_database(const CString& filename) const;
 
 	static BOOL	is_extension_recognized_as_data_file(CString string);

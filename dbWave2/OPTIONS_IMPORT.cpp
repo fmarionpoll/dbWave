@@ -66,12 +66,12 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 		ar << gain_ead;
 
 		// generic data import options
-		int bflag = is_sapid_3_5; // combine flags: update flag, combine
-		bflag <<= 1;
-		bflag += preview_requested;
-		bflag <<= 1;
-		bflag += is_single_run;
-		ar << bflag;
+		int flag = is_sapid_3_5; // combine flags: update flag, combine
+		flag <<= 1;
+		flag += preview_requested;
+		flag <<= 1;
+		flag += is_single_run;
+		ar << flag;
 
 		ar << static_cast<WORD>(nb_runs);
 		ar << static_cast<WORD>(nb_channels);
@@ -89,14 +89,14 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 
 		// generic data export options
 		ar << export_type;
-		bflag = all_channels;
-		bflag <<= 1;
-		bflag += separate_comments;
-		bflag <<= 1;
-		bflag += entire_file;
-		bflag <<= 1;
-		bflag += include_time;
-		ar << bflag;
+		flag = all_channels;
+		flag <<= 1;
+		flag += separate_comments;
+		flag <<= 1;
+		flag += entire_file;
+		flag <<= 1;
+		flag += include_time;
+		ar << flag;
 
 		ar << selected_channel;
 		ar << time_first;
@@ -105,42 +105,42 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 		ar << path_w_to_ascii;
 
 		// add extensible options
-		int ntypes = 2;
-		ar << ntypes;
+		int n_types = 2;
+		ar << n_types;
 
 		// int
-		ntypes = 2;
-		ar << ntypes;
+		n_types = 2;
+		ar << n_types;
 		ar << i_under_sample;
-		bflag = b_dummy;
-		bflag <<= 1;
-		bflag += discard_duplicate_files;
-		ar << bflag;
+		flag = b_dummy;
+		flag <<= 1;
+		flag += discard_duplicate_files;
+		ar << flag;
 
 		// CStrings
-		ntypes = 1;
-		ar << ntypes;
+		n_types = 1;
+		ar << n_types;
 		ar << path;
 	}
 	else
 	{
 		WORD version;
-		int bflag;
+		int flag;
 		ar >> version;
 		ar >> gain_fid;
 		ar >> gain_ead;
 		if (version >= 2)
 		{
 			WORD w1;
-			ar >> bflag;
+			ar >> flag;
 			// decompose flags: update flag (/2),  get value, mask
-			is_single_run = bflag;
+			is_single_run = static_cast<boolean>(flag);
 			is_single_run &= 0x1;
-			bflag >>= 1;
-			preview_requested = bflag;
+			flag >>= 1;
+			preview_requested = static_cast<boolean>(flag);
 			preview_requested &= 0x1;
-			bflag >>= 1;
-			is_sapid_3_5 = bflag;
+			flag >>= 1;
+			is_sapid_3_5 = static_cast<boolean>(flag);
 			is_sapid_3_5 &= 0x1;
 
 			ar >> w1;
@@ -165,17 +165,17 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 		if (version >= 4)
 		{
 			ar >> export_type;
-			ar >> bflag;
-			include_time = bflag;
+			ar >> flag;
+			include_time = static_cast<boolean>(flag);
 			include_time &= 0x1;
-			bflag >>= 1;
-			entire_file = bflag;
+			flag >>= 1;
+			entire_file = static_cast<boolean>(flag);
 			entire_file &= 0x1;
-			bflag >>= 1;
-			separate_comments = bflag;
+			flag >>= 1;
+			separate_comments = static_cast<boolean>(flag);
 			separate_comments &= 0x1;
-			bflag >>= 1;
-			all_channels = bflag;
+			flag >>= 1;
+			all_channels = static_cast<boolean>(flag);
 			all_channels &= 0x1;
 			ar >> selected_channel;
 			ar >> time_first;
@@ -185,36 +185,36 @@ void OPTIONS_IMPORT::Serialize(CArchive& ar)
 			ar >> path_w_to_ascii;
 		if (version >= 6)
 		{
-			int ntypes;
-			ar >> ntypes;
-			if (ntypes > 0)
+			int n_types;
+			ar >> n_types;
+			if (n_types > 0)
 			{
-				int nints;
-				ar >> nints;
+				int n_integers;
+				ar >> n_integers;
 				ar >> i_under_sample;
-				nints--;
-				if (nints > 0)
+				n_integers--;
+				if (n_integers > 0)
 				{
-					ar >> bflag;
-					nints--;
-					discard_duplicate_files = bflag;
+					ar >> flag;
+					n_integers--;
+					discard_duplicate_files = static_cast<boolean>(flag);
 					discard_duplicate_files &= 0x1;
-					bflag >>= 1;
-					b_dummy = bflag;
+					flag >>= 1;
+					b_dummy = static_cast<boolean>(flag);
 					b_dummy &= 0x1;
-					bflag >>= 1;
+					flag >>= 1;
 				}
 			}
-			ntypes--;
+			n_types--;
 
-			if (ntypes > 0)
+			if (n_types > 0)
 			{
-				int nstrings;
-				ar >> nstrings;
+				int n_strings;
+				ar >> n_strings;
 				ar >> path;
-				nstrings--;
+				n_strings--;
 			}
-			ntypes--;
+			n_types--;
 		}
 	}
 }

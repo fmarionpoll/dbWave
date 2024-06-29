@@ -1198,7 +1198,7 @@ void CdbWaveDoc::set_record_file_names(const source_data * record) const
 
 boolean CdbWaveDoc::set_record_spk_classes(const source_data * record) const
 {
-	boolean flag = m_p_spk->OnOpenDocument(record->cs_spk_file);
+	const boolean flag = static_cast<boolean>(m_p_spk->OnOpenDocument(record->cs_spk_file));
 	if (flag)
 	{
 		db_table->m_mainTableSet.m_nspikes = m_p_spk->get_spike_list_current()->get_spikes_count();
@@ -1215,31 +1215,31 @@ void CdbWaveDoc::set_record_wave_format(const source_data * record) const
 	db_table->transfer_wave_format_data_to_record(record->p_wave_format);
 }
 
-void CdbWaveDoc::import_file_list(CStringArray & file_list, const int n_columns, const boolean b_header)
+void CdbWaveDoc::import_file_list(CStringArray& cs_descriptors_array, const int n_columns, const boolean b_header)
 {
 	// exit if no data to import
-	const int n_files = get_size_2d_array(file_list, n_columns, b_header);
+	const int n_files = get_size_2d_array(cs_descriptors_array, n_columns, b_header);
 	if (n_files == 0)
 		return;
 
-	CSharedFile* psf = static_cast<CdbWaveApp*>(AfxGetApp())->m_psf;
-	SAFE_DELETE(psf)
+	CSharedFile* shared_file = static_cast<CdbWaveApp*>(AfxGetApp())->m_psf;
+	SAFE_DELETE(shared_file)
 		static_cast<CdbWaveApp*>(AfxGetApp())->m_psf = nullptr;
-	psf = new CSharedFile(GMEM_MOVEABLE | GMEM_DDESHARE | GMEM_ZEROINIT);
+	shared_file = new CSharedFile(GMEM_MOVEABLE | GMEM_DDESHARE | GMEM_ZEROINIT);
 
 	// -------------------------- cancel any pending edit or add operation
 	db_table->update_all_database_tables();
 	db_table->m_mainTableSet.Close();
 	if (!db_table->m_mainTableSet.OpenTable(dbOpenTable, nullptr, 0))
 	{
-		delete psf;
+		delete shared_file;
 		return;
 	}
 
 	// browse existing database array - collect data file acquisition time and IDs already used
 	db_table->m_mainTableSet.GetMaxIDs();
 	long m_id = db_table->m_mainTableSet.max_ID;
-	const auto n_files_ok = check_files_can_be_opened(file_list, psf, n_columns, b_header);
+	const auto n_files_ok = check_files_can_be_opened(cs_descriptors_array, shared_file, n_columns, b_header);
 
 	// ---------------------------------------------file loop: read infos --------------------------------
 	DlgProgress dlg;
@@ -1256,14 +1256,14 @@ void CdbWaveDoc::import_file_list(CStringArray & file_list, const int n_columns,
 				break;
 		// get file name
 		int index = index_2d_array(i_record, n_columns, b_header);
-		auto cs_filename = CString(file_list[index]);
+		auto cs_filename = CString(cs_descriptors_array[index]);
 		CString cs_comment;
 		cs_comment.Format(_T("Import file [%i / %i] %s"), i_record + 1, n_files_ok, (LPCTSTR)cs_filename);
 		dlg.SetStatus(cs_comment);
 		dlg.StepIt();
 
-		if (!import_file_single(cs_filename, m_id, i_record, file_list, n_columns, b_header))
-			psf = file_discarded_message(psf, cs_filename, i_record);
+		if (!import_file_single(cs_filename, m_id, i_record, cs_descriptors_array, n_columns, b_header))
+			shared_file = file_discarded_message(shared_file, cs_filename, i_record);
 	}
 
 	// open dynaset
@@ -1278,7 +1278,7 @@ void CdbWaveDoc::import_file_list(CStringArray & file_list, const int n_columns,
 	// close files opened here
 	SAFE_DELETE(m_p_dat)
 		SAFE_DELETE(m_p_spk)
-		SAFE_DELETE(psf)
+		SAFE_DELETE(shared_file)
 }
 
 boolean CdbWaveDoc::import_file_single(const CString & cs_filename, long& m_id, const int i_record, const CStringArray & cs_array, const int n_columns,
