@@ -130,15 +130,9 @@ BOOL CNoteDoc::open_file_list(CString& cs_path_name, CStringArray& cs_array_file
 		if (p_dbwave_doc->OnNewDocument(dbname))
 		{
 			if (p_app->options_import.read_columns)
-			{
-				//int n_columns2 = cs_array_descriptors.GetCount() / (cs_array_files.GetCount() + p_app->options_import.bHeader);
 				p_dbwave_doc->import_file_list(cs_descriptions_array, n_columns, p_app->options_import.header_present);
-			}
 			else
-			{
 				p_dbwave_doc->import_file_list(cs_array_files);
-			}
-
 			const auto p_wave_format = (p_app->m_dbWaveView_Template)->CreateNewFrame(p_dbwave_doc, nullptr);
 			ASSERT(p_wave_format != NULL);
 			p_app->m_dbWaveView_Template->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
@@ -198,30 +192,6 @@ void CNoteDoc::add_row_to_array(const CStringArray& row_array, CStringArray& cs_
 	for (int i = 0; i < row_array.GetCount(); i++)
 		cs_descriptors_array.Add(row_array.GetAt(i));
 }
-
-/*
-int CNoteDoc::parse_row(const CString& cs_row, CStringArray& cs_columns)
-{
-	int cur_pos = 0;
-	int count_columns = 0;
-	int new_pos = 0;
-	CString cs_extract = cs_row;
-	while (new_pos >= 0)
-	{
-		const auto separator = L"\t;,";
-		cs_extract = cs_extract.Right(cs_extract.GetLength() - cur_pos);
-		new_pos = cs_extract.FindOneOf(separator);
-		int end_pos = new_pos;
-		if (end_pos < 0)
-			end_pos = cs_extract.GetLength();
-		CString res_token = cs_extract.Left(end_pos);
-		cs_columns.Add(res_token);
-		count_columns++;
-		cur_pos = new_pos + 1;
-	}
-	return count_columns;
-}
-*/
 
 int CNoteDoc::parse_row2(const CString& cs_row, CStringArray& cs_columns)
 {

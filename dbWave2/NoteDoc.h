@@ -30,7 +30,6 @@ protected:
 	static int extract_list(CRichEditCtrl& p_edit, CStringArray& cs_array_file_names, CStringArray& cs_descriptors_array);
 	static BOOL add_file_name(const CString& res_token, CStringArray& cs_array_ok, CStringArray& cs_array_tested);
 	static void display_files_imported(CRichEditCtrl& p_edit, const CStringArray& cs_descriptors_list);
-	//static int parse_row(const CString& cs_row, CStringArray& cs_columns);
 	static int parse_row2(const CString& cs_row, CStringArray& cs_columns);
 	static void add_row_to_array(const CStringArray& row_array, CStringArray& cs_descriptors_array);
 	static BOOL is_file_present(const CString& cs_filename)
