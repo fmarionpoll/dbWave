@@ -5,18 +5,18 @@
 
 // display parameters: m_range_mode
 constexpr auto RANGE_ALL = 0;
-constexpr auto RANGE_TIMEINTERVALS = 1;
+constexpr auto RANGE_TIME_INTERVALS = 1;
 constexpr auto RANGE_INDEX = 2;
 
 // display parameters: plot_mode_
 constexpr auto PLOT_BLACK = 0;
-constexpr auto PLOT_ONECLASSONLY = 1;
-constexpr auto PLOT_ONECLASS = 2;
-constexpr auto PLOT_CLASSCOLORS = 3;
-constexpr auto PLOT_SINGLESPIKE = 4;
+constexpr auto PLOT_ONE_CLASS_ONLY = 1;
+constexpr auto PLOT_ONE_CLASS = 2;
+constexpr auto PLOT_CLASS_COLORS = 3;
+constexpr auto PLOT_SINGLE_SPIKE = 4;
 constexpr auto PLOT_ALLGREY = 5;
-constexpr auto PLOT_WITHINBOUNDS = 6;
-constexpr auto PLOT_ONECOLOR = 7;
+constexpr auto PLOT_WITHIN_BOUNDS = 6;
+constexpr auto PLOT_ONE_COLOR = 7;
 
 constexpr auto NB_COLORS = 17;
 constexpr auto BLACK_COLOR = 0;
@@ -154,7 +154,7 @@ protected:
 	long file_position_last_right_pixel_ = 0; // file position of last right pixel
 	long file_position_equivalent_to_mouse_jitter_{}; // file position range corresponding mouse jitter
 
-	// plotting options - parameters for PLOT_WITHINBOUNDS
+	// plotting options - parameters for PLOT_WITHIN_BOUNDS
 	int plot_within_mode_{};
 	int lower_limit_{};
 	int upper_limit_{};

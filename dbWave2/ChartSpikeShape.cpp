@@ -85,7 +85,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			i_first_spike = index_first_spike_;
 		}
 		auto selected_pen_color = BLACK_COLOR;
-		if (plot_mode_ == PLOT_ONECLASS || plot_mode_ == PLOT_ONECOLOR)
+		if (plot_mode_ == PLOT_ONE_CLASS || plot_mode_ == PLOT_ONE_COLOR)
 			selected_pen_color = SILVER_COLOR;
 		const auto old_pen = p_dc->SelectObject(&pen_table_[selected_pen_color]);
 
@@ -94,7 +94,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			const Spike* spike = p_spike_list_->get_spike(i_spike);
 
 			// skip spike ?
-			if (range_mode_ == RANGE_TIMEINTERVALS
+			if (range_mode_ == RANGE_TIME_INTERVALS
 				&& (spike->get_time() < l_first_ || spike->get_time() > l_last_))
 				continue;
 
@@ -102,15 +102,15 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			const auto spike_class = spike->get_class_id();
 			switch (plot_mode_)
 			{
-			case PLOT_ONECLASSONLY:
+			case PLOT_ONE_CLASS_ONLY:
 				if (spike_class != selected_class_)
 					continue;
 				break;
-			case PLOT_CLASSCOLORS:
+			case PLOT_CLASS_COLORS:
 				selected_pen_color = spike_class % NB_COLORS;
 				p_dc->SelectObject(&pen_table_[selected_pen_color]);
 				break;
-			case PLOT_ONECLASS:
+			case PLOT_ONE_CLASS:
 				if (spike_class == selected_class_)
 					continue;
 			default:
@@ -123,17 +123,17 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			p_dc->Polyline(&polyline_points_[0], spike_length);
 		}
 
-		if (plot_mode_ == PLOT_ONECLASS || plot_mode_ == PLOT_ONECOLOR)
+		if (plot_mode_ == PLOT_ONE_CLASS || plot_mode_ == PLOT_ONE_COLOR)
 		{
 			selected_pen_color = index_color_selected_;
-			if (plot_mode_ == PLOT_ONECOLOR)
+			if (plot_mode_ == PLOT_ONE_COLOR)
 				selected_pen_color = selected_class_ % NB_COLORS;
 			p_dc->SelectObject(&pen_table_[selected_pen_color]);
 			for (auto i_spike = i_last_spike; i_spike >= i_first_spike; i_spike--)
 			{
 				const Spike* spike = p_spike_list_->get_spike(i_spike);
 				// skip spike ?
-				if (range_mode_ == RANGE_TIMEINTERVALS
+				if (range_mode_ == RANGE_TIME_INTERVALS
 					&& (spike->get_time() < l_first_ || spike->get_time() > l_last_))
 					continue;
 
@@ -158,7 +158,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			display_vertical_tags(p_dc);
 
 		// display text
-		if (b_text_ && plot_mode_ == PLOT_ONECLASSONLY)
+		if (b_text_ && plot_mode_ == PLOT_ONE_CLASS_ONLY)
 		{
 			TCHAR num[10];
 			wsprintf(num, _T("%i"), get_selected_class());
@@ -472,11 +472,11 @@ int ChartSpikeShape::hit_curve(const CPoint point)
 	}
 	for (auto spike_index = index_last_spike; spike_index >= index_first_spike; spike_index--)
 	{
-		if (range_mode_ == RANGE_TIMEINTERVALS
+		if (range_mode_ == RANGE_TIME_INTERVALS
 			&& (p_spike_list_->get_spike(spike_index)->get_time() < l_first_
 				|| p_spike_list_->get_spike(spike_index)->get_time() > l_last_))
 			continue;
-		if (plot_mode_ == PLOT_ONECLASSONLY
+		if (plot_mode_ == PLOT_ONE_CLASS_ONLY
 			&& p_spike_list_->get_spike(spike_index)->get_class_id() != selected_class_)
 			continue;
 
@@ -611,7 +611,7 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 	{
 		//case PLOT_BLACK:			selpen = BLACK_COLOR; break;
 		//case PLOT_ONECLASSONLY:	selpen = BLACK_COLOR; break;
-	case PLOT_ONECLASS:
+	case PLOT_ONE_CLASS:
 		selected_color = index_color_background_;
 		break;
 	case PLOT_ALLGREY:
@@ -635,7 +635,7 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 		Spike* spike = p_spike_list_->get_spike(spike_index);
 		if (range_mode_ == RANGE_INDEX && (spike_index > index_last_spike_ || spike_index < index_first_spike_))
 			continue;
-		if (range_mode_ == RANGE_TIMEINTERVALS)
+		if (range_mode_ == RANGE_TIME_INTERVALS)
 		{
 			if (spike->get_time() < l_first_)
 				continue;
@@ -644,22 +644,22 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 		}
 
 		const auto spike_class = p_spike_list_->get_spike(spike_index)->get_class_id();
-		if (plot_mode_ == PLOT_ONECLASSONLY && spike_class != selected_class_)
+		if (plot_mode_ == PLOT_ONE_CLASS_ONLY && spike_class != selected_class_)
 			continue;
-		if (plot_mode_ == PLOT_ONECLASS && spike_class == selected_class_)
+		if (plot_mode_ == PLOT_ONE_CLASS && spike_class == selected_class_)
 			continue;
 
 		plot_array_to_dc(p_dc, spike->get_p_data());
 	}
 
 	// display selected class if requested by option
-	if (plot_mode_ == PLOT_ONECLASS)
+	if (plot_mode_ == PLOT_ONE_CLASS)
 	{
 		p_dc->SelectObject(&pen_table_[index_color_selected_]);
 		for (auto spike_index = spike_index_last; spike_index >= spike_index_first; spike_index--)
 		{
 			Spike* spike = p_spike_list_->get_spike(spike_index);
-			if (range_mode_ == RANGE_TIMEINTERVALS)
+			if (range_mode_ == RANGE_TIME_INTERVALS)
 			{
 				const auto spike_time = spike->get_time();
 				if (spike_time < l_first_ || spike_time > l_last_)

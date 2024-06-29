@@ -68,6 +68,6 @@ CNoteDoc* ViewNoteDoc::GetDocument() // non-debug version is inline
 void ViewNoteDoc::OnToolsOpendatafiles()
 {
 	auto p_document = GetDocument();
-	CString csname = p_document->GetPathName();
-	p_document->OpenProjectFiles(csname);
+	CString cs_name = p_document->GetPathName();
+	p_document->open_project_files(cs_name);
 }

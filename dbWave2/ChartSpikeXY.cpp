@@ -132,7 +132,7 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 void ChartSpikeXY::display_spike(const Spike* spike, CDC* p_dc, const CRect& rect, const CRect& rect1, const long window_duration) const
 {
 	const auto l_spike_time = spike->get_time();
-	if (range_mode_ == RANGE_TIMEINTERVALS
+	if (range_mode_ == RANGE_TIME_INTERVALS
 		&& (l_spike_time < l_first_ || l_spike_time > l_last_))
 		return;
 
@@ -141,14 +141,14 @@ void ChartSpikeXY::display_spike(const Spike* spike, CDC* p_dc, const CRect& rec
 	auto selected_brush = BLACK_COLOR;
 	switch (plot_mode_)
 	{
-	case PLOT_ONECLASSONLY:
+	case PLOT_ONE_CLASS_ONLY:
 		if (spike_class_id != selected_class_)
 			return;
 		break;
-	case PLOT_CLASSCOLORS:
+	case PLOT_CLASS_COLORS:
 		selected_brush = spike_class_id % NB_COLORS;
 		break;
-	case PLOT_ONECLASS:
+	case PLOT_ONE_CLASS:
 		if (spike_class_id != selected_class_)
 			selected_brush = SILVER_COLOR;
 		else
@@ -216,13 +216,13 @@ void ChartSpikeXY::display_spike(const Spike* spike)
 	int color_index = BLACK_COLOR;
 	switch (plot_mode_)
 	{
-	case PLOT_ONECLASSONLY:
-	case PLOT_ONECLASS:
+	case PLOT_ONE_CLASS_ONLY:
+	case PLOT_ONE_CLASS:
 		color_index = BLACK_COLOR; 
 		if (spike_class != selected_class_)
 			color_index = SILVER_COLOR; 
 		break;
-	case PLOT_CLASSCOLORS:
+	case PLOT_CLASS_COLORS:
 		color_index = spike_class % 8;
 		break;
 	case PLOT_BLACK:
@@ -461,7 +461,7 @@ int ChartSpikeXY::hit_curve(const CPoint point)
 
 	// first look at black spikes (foreground)
 	const auto upperbound = p_spike_list_->get_spikes_count() - 1;
-	if (plot_mode_ == PLOT_ONECLASS)
+	if (plot_mode_ == PLOT_ONE_CLASS)
 	{
 		for (int spike_index = upperbound; spike_index >= 0; spike_index--)
 		{

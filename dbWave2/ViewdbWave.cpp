@@ -205,7 +205,7 @@ void ViewdbWave::display_spikes()
 		static_cast<CButton*>(GetDlgItem(IDC_RADIOONECLASS))->SetCheck(BST_CHECKED);
 		m_spikeclass = m_options_viewdata->spikeclass;
 		mm_spikeclass.EnableWindow(TRUE);
-		m_dataListCtrl.set_spike_plot_mode(PLOT_ONECLASSONLY, m_spikeclass);
+		m_dataListCtrl.set_spike_plot_mode(PLOT_ONE_CLASS_ONLY, m_spikeclass);
 	}
 }
 
@@ -631,7 +631,7 @@ void ViewdbWave::OnBnClickedRadiooneclass()
 {
 	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(TRUE);
 	m_options_viewdata->bDisplayAllClasses = FALSE;
-	m_dataListCtrl.set_spike_plot_mode(PLOT_ONECLASSONLY, m_spikeclass);
+	m_dataListCtrl.set_spike_plot_mode(PLOT_ONE_CLASS_ONLY, m_spikeclass);
 	m_dataListCtrl.refresh_display();
 }
 
@@ -643,6 +643,6 @@ void ViewdbWave::OnEnChangeSpikeclass()
 	mm_spikeclass.OnEnChange(this, m_spikeclass, 1, -1);
 	m_options_viewdata->spikeclass = m_spikeclass;
 	UpdateData(FALSE);
-	m_dataListCtrl.set_spike_plot_mode(PLOT_ONECLASSONLY, m_spikeclass);
+	m_dataListCtrl.set_spike_plot_mode(PLOT_ONE_CLASS_ONLY, m_spikeclass);
 	m_dataListCtrl.refresh_display();
 }

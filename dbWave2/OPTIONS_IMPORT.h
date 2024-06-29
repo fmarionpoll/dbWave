@@ -11,52 +11,52 @@ class OPTIONS_IMPORT : public CObject
 	void Serialize(CArchive& ar) override;
 
 public:
-	BOOL b_changed{false};
+	boolean b_changed{false};
 	WORD w_version{6};
 
 	// Varian files
-	float fGainFID{10.f};
-	float fGainEAD{10.f};
-	CString path_wtoascii{};
+	float gain_fid{10.f};
+	float gain_ead{10.f};
+	CString path_w_to_ascii{};
 
 	// generic files
-	BOOL bSingleRun{true};
-	BOOL bPreview{true};
-	BOOL bSapid3_5{false};
-	BOOL bDummy{false};
-	BOOL bDiscardDuplicateFiles{false};
-	BOOL bReadColumns{false};
-	BOOL bHeader{false};
-	short nbRuns{1};
-	short nbChannels{1};
-	float samplingRate{10.f};
-	short encodingMode{OLx_ENC_BINARY};
-	short bitsPrecision{12};
-	float voltageMax{10.f};
-	float voltageMin{-10.f};
-	int skipNbytes{5};
+	boolean is_single_run{true};
+	boolean preview_requested{true};
+	boolean is_sapid_3_5{false};
+	boolean b_dummy{false};
+	boolean discard_duplicate_files{false};
+	boolean read_columns{false};
+	boolean header_present{false};
+	short nb_runs{1};
+	short nb_channels{1};
+	float sampling_rate{10.f};
+	short encoding_mode{OLx_ENC_BINARY};
+	short bits_precision{12};
+	float voltage_max{10.f};
+	float voltage_min{-10.f};
+	int skip_n_bytes{5};
 	CString title{};
-	CWaveChanArray* pwave_chan_array{nullptr};
+	CWaveChanArray* p_wave_chan_array{nullptr};
 
 	// last selected filter - index
-	int nSelectedFilter{0};
+	int n_selected_filter{0};
 	// export options
-	WORD exportType{2}; // type of export (0=sapid 3.5, 1=txt, 2=excel, ...)
-	BOOL bAllchannels{true}; // export all channels or one
-	BOOL bSeparateComments{false}; // comments in a separate file
-	BOOL bentireFile{true}; // complete file / interval
-	BOOL bincludeTime{true}; // include time steps (excel, txt)
-	int selectedChannel{0}; // one channel
-	float fTimefirst{0.f}; // interval first
-	float fTimelast{2.f}; // interval last
-	int iundersample{1}; // undersample factor when exporting data
+	WORD export_type{2}; // type of export (0=sapid 3.5, 1=txt, 2=excel, ...)
+	boolean all_channels{true}; // export all channels or one
+	boolean separate_comments{false}; // comments in a separate file
+	boolean entire_file{true}; // complete file / interval
+	boolean include_time{true}; // include time steps (excel, txt)
+	int selected_channel{0}; // one channel
+	float time_first{0.f}; // interval first
+	float time_last{2.f}; // interval last
+	int i_under_sample{1}; // under_sample factor when exporting data
 
 	CString path{}; // path to files to import
 
 	void initialize_wave_chan_array()
 	{
-		pwave_chan_array = new (CWaveChanArray);
-		ASSERT(pwave_chan_array != NULL);
-		pwave_chan_array->chan_array_add();
+		p_wave_chan_array = new (CWaveChanArray);
+		ASSERT(p_wave_chan_array != NULL);
+		p_wave_chan_array->chan_array_add();
 	}
 };

@@ -43,8 +43,8 @@ void RowItem::create_item(CWnd* parent_wnd, CdbWaveDoc* pdb_doc, SpikeList* p_sp
 void RowItem::set_class_id(int new_class_id)
 {
 	class_id_ = new_class_id;
-	chart_spike_bar_->set_plot_mode(PLOT_ONECLASSONLY, class_id_);
-	chart_spike_shape_->set_plot_mode(PLOT_ONECLASSONLY, class_id_);
+	chart_spike_bar_->set_plot_mode(PLOT_ONE_CLASS_ONLY, class_id_);
+	chart_spike_shape_->set_plot_mode(PLOT_ONE_CLASS_ONLY, class_id_);
 	row_comment_->Format(_T("class %i\nn=%i"), class_id_, spike_list_->get_class_id_n_items(class_id_));
 }
 
@@ -97,10 +97,10 @@ void RowItem::set_time_intervals(const long l_first, const long l_last) const
 {
 	if (chart_spike_shape_ != nullptr)
 	{
-		chart_spike_shape_->set_range_mode(RANGE_TIMEINTERVALS);
+		chart_spike_shape_->set_range_mode(RANGE_TIME_INTERVALS);
 		chart_spike_shape_->set_time_intervals(l_first, l_last);
 	}
-	chart_spike_bar_->set_range_mode(RANGE_TIMEINTERVALS);
+	chart_spike_bar_->set_range_mode(RANGE_TIME_INTERVALS);
 	chart_spike_bar_->set_time_intervals(l_first, l_last);
 }
 

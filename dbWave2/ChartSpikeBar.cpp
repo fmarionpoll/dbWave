@@ -329,7 +329,7 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 
 		// skip spike if outside time range && option
 		const auto l_spike_time = spike->get_time();
-		if (range_mode_ == RANGE_TIMEINTERVALS
+		if (range_mode_ == RANGE_TIME_INTERVALS
 			&& (l_spike_time < l_first_ || l_spike_time > l_last_))
 			continue;
 
@@ -337,14 +337,14 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 		const auto spike_class = spike->get_class_id();
 		switch (plot_mode_)
 		{
-		case PLOT_ONECLASSONLY:
+		case PLOT_ONE_CLASS_ONLY:
 			if (spike_class != selected_class_)
 				continue;
 			break;
-		case PLOT_CLASSCOLORS:
+		case PLOT_CLASS_COLORS:
 			pen_color = spike_class % NB_COLORS;
 			break;
-		case PLOT_ONECLASS:
+		case PLOT_ONE_CLASS:
 			if (spike_class != selected_class_)
 				pen_color = SILVER_COLOR;
 			else
@@ -414,7 +414,7 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 
 		const Spike* spike = p_spike_list_->get_spike(no_spike);
 		const auto no_spike_class = spike->get_class_id();
-		if (PLOT_ONECLASSONLY == plot_mode_ && no_spike_class != selected_class_)
+		if (PLOT_ONE_CLASS_ONLY == plot_mode_ && no_spike_class != selected_class_)
 			continue;
 
 		auto color_index = RED_COLOR;
@@ -422,13 +422,13 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 		{
 			switch (plot_mode_)
 			{
-			case PLOT_ONECLASSONLY:
-			case PLOT_ONECLASS:
+			case PLOT_ONE_CLASS_ONLY:
+			case PLOT_ONE_CLASS:
 				color_index = BLACK_COLOR;
 				if (no_spike_class != selected_class_)
 					color_index = SILVER_COLOR;
 				break;
-			case PLOT_CLASSCOLORS:
+			case PLOT_CLASS_COLORS:
 				if (is_selected_spike_in_this_list && no_spike == spike_selected_.spike_index)
 					highlight_spike(spike);
 				color_index = no_spike_class % NB_COLORS;
@@ -464,12 +464,12 @@ void ChartSpikeBar::display_spike(const Spike* spike)
 	const auto spike_class = spike->get_class_id();
 	switch (plot_mode_)
 	{
-	case PLOT_ONECLASSONLY:
-	case PLOT_ONECLASS:
+	case PLOT_ONE_CLASS_ONLY:
+	case PLOT_ONE_CLASS:
 		if (spike_class != selected_class_)
 			color_index = SILVER_COLOR;
 		break;
-	case PLOT_CLASSCOLORS:
+	case PLOT_CLASS_COLORS:
 		color_index = spike_class % NB_COLORS;
 		break;
 	case PLOT_BLACK:
@@ -747,7 +747,7 @@ int ChartSpikeBar::hit_curve(const CPoint point)
 		const auto l_spike_time = spike->get_time();
 		if (l_spike_time < x_min || l_spike_time > x_max)
 			continue;
-		if (plot_mode_ == PLOT_ONECLASSONLY
+		if (plot_mode_ == PLOT_ONE_CLASS_ONLY
 			&& spike->get_class_id() != selected_class_)
 			continue;
 

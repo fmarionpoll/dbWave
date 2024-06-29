@@ -54,7 +54,7 @@ BOOL DlgFindFiles::OnInitDialog()
 	else
 	{
 		auto p_app = static_cast<CdbWaveApp*>(AfxGetApp()); // load browse parameters
-		static_cast<CButton*>(GetDlgItem(IDC_CHECKDISCARD))->SetCheck(p_app->options_import.bDiscardDuplicateFiles);
+		static_cast<CButton*>(GetDlgItem(IDC_CHECKDISCARD))->SetCheck(p_app->options_import.discard_duplicate_files);
 	}
 	UpdateData(FALSE);
 	m_fileext.SetCurSel(m_selinit); // select first item / file extensions
@@ -70,7 +70,7 @@ void DlgFindFiles::OnOK()
 	m_mfcbrowsecontrol.GetWindowTextW(m_path);
 	auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	p_app->options_import.path = m_path;
-	p_app->options_import.bDiscardDuplicateFiles = static_cast<CButton*>(GetDlgItem(IDC_CHECKDISCARD))->GetCheck();
+	p_app->options_import.discard_duplicate_files = static_cast<CButton*>(GetDlgItem(IDC_CHECKDISCARD))->GetCheck();
 
 	CDialog::OnOK();
 }

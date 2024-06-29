@@ -1296,7 +1296,7 @@ boolean CdbWaveDoc::import_file_single(const CString & cs_filename, long& m_id, 
 	const auto t = record.p_wave_format->acqtime;
 	COleDateTime o_time;
 	o_time.SetDateTime(t.GetYear(), t.GetMonth(), t.GetDay(), t.GetHour(), t.GetMinute(), t.GetSecond());
-	if (!static_cast<CdbWaveApp*>(AfxGetApp())->options_import.bDiscardDuplicateFiles)
+	if (!static_cast<CdbWaveApp*>(AfxGetApp())->options_import.discard_duplicate_files)
 	{
 		if (!db_table->m_mainTableSet.CheckIfAcqDateTimeIsUnique(&o_time))
 			return false;

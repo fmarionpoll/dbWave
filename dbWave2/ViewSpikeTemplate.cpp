@@ -174,7 +174,7 @@ void ViewSpikeTemplates::OnInitialUpdate()
 	hit_rate_sort = spike_classification_parameters_->hit_rate_sort;
 	k_tolerance = spike_classification_parameters_->k_tolerance;
 
-	m_chart_spk_wnd_shape_.set_plot_mode(PLOT_ONECLASS, 0);
+	m_chart_spk_wnd_shape_.set_plot_mode(PLOT_ONE_CLASS, 0);
 	spk_form_tag_left_ = m_chart_spk_wnd_shape_.vertical_tags.add_tag(spike_classification_parameters_->k_left, 0);
 	spk_form_tag_right_ = m_chart_spk_wnd_shape_.vertical_tags.add_tag(spike_classification_parameters_->k_right, 0);
 
@@ -245,7 +245,7 @@ void ViewSpikeTemplates::select_spike_list(const int index_current)
 	if (!b_display_single_class)
 		m_chart_spk_wnd_shape_.set_plot_mode(PLOT_BLACK, 0);
 	else
-		m_chart_spk_wnd_shape_.set_plot_mode(PLOT_ONECLASS, spike_no_class);
+		m_chart_spk_wnd_shape_.set_plot_mode(PLOT_ONE_CLASS, spike_no_class);
 
 	l_first_ = 0;
 	l_last_ = m_pSpkDoc->get_acq_size() - 1;
@@ -384,7 +384,7 @@ void ViewSpikeTemplates::OnEnChangeclassno()
 
 		if (spike_no_class != spike_class) // change display if necessary
 		{
-			m_chart_spk_wnd_shape_.set_plot_mode(PLOT_ONECLASS, spike_no_class);
+			m_chart_spk_wnd_shape_.set_plot_mode(PLOT_ONE_CLASS, spike_no_class);
 			m_chart_spk_wnd_shape_.Invalidate();
 			update_legends();
 		}
@@ -1187,7 +1187,7 @@ void ViewSpikeTemplates::OnBnClickedDisplaysingleclass()
 	if (b_display_single_class)
 	{
 		GetDlgItem(IDC_EDIT2)->ShowWindow(SW_SHOW);
-		m_chart_spk_wnd_shape_.set_plot_mode(PLOT_ONECLASS, spike_no_class);
+		m_chart_spk_wnd_shape_.set_plot_mode(PLOT_ONE_CLASS, spike_no_class);
 	}
 	else
 	{

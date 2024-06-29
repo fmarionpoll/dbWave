@@ -168,22 +168,22 @@ void ViewSpikeSort::OnInitialUpdate()
 	m_destination_class = spike_classification_parameters_->dest_class;
 
 	chart_spike_shape_.display_all_files(false, GetDocument());
-	chart_spike_shape_.set_plot_mode(PLOT_ONECOLOR, m_source_class);
+	chart_spike_shape_.set_plot_mode(PLOT_ONE_COLOR, m_source_class);
 	chart_spike_shape_.set_scope_parameters(&(options_view_data_->spksort1spk));
 	m_spk_form_tag_left_ = chart_spike_shape_.vertical_tags.add_tag(spike_classification_parameters_->i_left, 0);
 	m_spk_form_tag_right_ = chart_spike_shape_.vertical_tags.add_tag(spike_classification_parameters_->i_right, 0);
 
 	chart_xt_measures_.display_all_files(false, GetDocument());
-	chart_xt_measures_.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
+	chart_xt_measures_.set_plot_mode(PLOT_CLASS_COLORS, m_source_class);
 	chart_xt_measures_.set_scope_parameters(&(options_view_data_->spksort1parms));
 	m_i_tag_up_ = chart_xt_measures_.horizontal_tags.add_tag(spike_classification_parameters_->upper_threshold, 0);
 	m_i_tag_low_ = chart_xt_measures_.horizontal_tags.add_tag(spike_classification_parameters_->lower_threshold, 0);
 
 	chart_spike_bar_.display_all_files(false, GetDocument());
-	chart_spike_bar_.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
+	chart_spike_bar_.set_plot_mode(PLOT_CLASS_COLORS, m_source_class);
 	chart_spike_bar_.set_scope_parameters(&(options_view_data_->spksort1bars));
 
-	chart_histogram_.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
+	chart_histogram_.set_plot_mode(PLOT_CLASS_COLORS, m_source_class);
 	chart_histogram_.set_scope_parameters(&(options_view_data_->spksort1hist));
 
 	// display tag lines at proper places
@@ -353,16 +353,16 @@ void ViewSpikeSort::update_file_parameters()
 	m_t2 = static_cast<float>(spike_classification_parameters_->i_right) * m_time_unit / m_pSpkList->get_acq_sampling_rate();
 
 	chart_spike_bar_.set_source_data(m_pSpkList, GetDocument());
-	chart_spike_bar_.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
+	chart_spike_bar_.set_plot_mode(PLOT_CLASS_COLORS, m_source_class);
 
 	chart_spike_shape_.set_source_data(m_pSpkList, GetDocument());
 	chart_spike_shape_.vertical_tags.set_tag_val(m_spk_form_tag_left_, spike_classification_parameters_->i_left);
 	chart_spike_shape_.vertical_tags.set_tag_val(m_spk_form_tag_right_, spike_classification_parameters_->i_right);
-	chart_spike_shape_.set_plot_mode(PLOT_ONECOLOR, m_source_class);
+	chart_spike_shape_.set_plot_mode(PLOT_ONE_COLOR, m_source_class);
 
 	chart_xt_measures_.set_source_data(m_pSpkList, GetDocument());
-	chart_xt_measures_.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
-	chart_histogram_.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
+	chart_xt_measures_.set_plot_mode(PLOT_CLASS_COLORS, m_source_class);
+	chart_histogram_.set_plot_mode(PLOT_CLASS_COLORS, m_source_class);
 
 	m_file_scroll_infos_.fMask = SIF_ALL;
 	m_file_scroll_infos_.nMin = 0;
@@ -1346,10 +1346,10 @@ void ViewSpikeSort::OnEnChangeSourceSpikeClass()
 		mm_source_class_.OnEnChange(this, m_source_class, 1, -1);
 		if (source_class != m_source_class)
 		{
-			chart_spike_shape_.set_plot_mode(PLOT_ONECOLOR, m_source_class);
-			chart_xt_measures_.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
-			chart_histogram_.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
-			chart_spike_bar_.set_plot_mode(PLOT_CLASSCOLORS, m_source_class);
+			chart_spike_shape_.set_plot_mode(PLOT_ONE_COLOR, m_source_class);
+			chart_xt_measures_.set_plot_mode(PLOT_CLASS_COLORS, m_source_class);
+			chart_histogram_.set_plot_mode(PLOT_CLASS_COLORS, m_source_class);
+			chart_spike_bar_.set_plot_mode(PLOT_CLASS_COLORS, m_source_class);
 		}
 		// change histogram accordingly
 		chart_spike_shape_.Invalidate();

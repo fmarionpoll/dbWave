@@ -74,7 +74,7 @@ void ChartSpikeHistVert::plot_data_to_dc(CDC* p_dc)
 	switch (plot_mode_)
 	{
 	case PLOT_BLACK:
-	case PLOT_ONECLASSONLY:
+	case PLOT_ONE_CLASS_ONLY:
 		color = BLACK_COLOR;
 		break;
 	default:
@@ -96,11 +96,11 @@ void ChartSpikeHistVert::plot_data_to_dc(CDC* p_dc)
 		{
 			const auto spkcla = static_cast<int>(p_dw->GetAt(0));
 			color = BLACK_COLOR;
-			if (PLOT_ONECLASSONLY == plot_mode_ && spkcla != selected_class_)
+			if (PLOT_ONE_CLASS_ONLY == plot_mode_ && spkcla != selected_class_)
 				continue;
-			if (PLOT_CLASSCOLORS == plot_mode_)
+			if (PLOT_CLASS_COLORS == plot_mode_)
 				color = spkcla % NB_COLORS;
-			else if (plot_mode_ == PLOT_ONECLASS && spkcla == selected_class_)
+			else if (plot_mode_ == PLOT_ONE_CLASS && spkcla == selected_class_)
 			{
 				color = BLACK_COLOR;
 				continue;
@@ -110,7 +110,7 @@ void ChartSpikeHistVert::plot_data_to_dc(CDC* p_dc)
 	}
 
 	// plot selected class (one histogram)
-	if (plot_mode_ == PLOT_ONECLASS)
+	if (plot_mode_ == PLOT_ONE_CLASS)
 	{
 		color = BLACK_COLOR;
 		CDWordArray* p_dw = nullptr;
@@ -359,7 +359,7 @@ int ChartSpikeHistVert::hit_curve(CPoint point)
 	// test selected histogram first (foreground)
 	auto ihist = 1;
 	CDWordArray* pDW = nullptr;
-	if (plot_mode_ == PLOT_ONECLASS || plot_mode_ == PLOT_ONECLASSONLY)
+	if (plot_mode_ == PLOT_ONE_CLASS || plot_mode_ == PLOT_ONE_CLASS_ONLY)
 	{
 		// get array corresp to selected_class_ as well as histogram index
 		for (auto i = 1; i < histogram_ptr_array.GetSize(); i++)
@@ -387,12 +387,12 @@ int ChartSpikeHistVert::hit_curve(CPoint point)
 	}
 
 	// test other histograms
-	if (plot_mode_ != PLOT_ONECLASSONLY && hitspk < 0)
+	if (plot_mode_ != PLOT_ONE_CLASS_ONLY && hitspk < 0)
 	{
 		for (auto jhist = 1; jhist < histogram_ptr_array.GetSize() && hitspk < 0; jhist++)
 		{
 			pDW = histogram_ptr_array.GetAt(jhist);
-			if (plot_mode_ == PLOT_ONECLASS && static_cast<int>(pDW->GetAt(0)) == selected_class_)
+			if (plot_mode_ == PLOT_ONE_CLASS && static_cast<int>(pDW->GetAt(0)) == selected_class_)
 				continue;
 			for (auto i = mouse_x1; i <= mouse_x2; i++)
 			{

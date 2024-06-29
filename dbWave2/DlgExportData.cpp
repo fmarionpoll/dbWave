@@ -44,14 +44,14 @@ void DlgExportData::UpdateStructFromControls()
 {
 	UpdateData(TRUE);
 
-	iivO.exportType = m_ComboExportas.GetCurSel();
-	iivO.bAllchannels = static_cast<CButton*>(GetDlgItem(IDC_ALLCHANNELS))->GetCheck();
-	iivO.bSeparateComments = static_cast<CButton*>(GetDlgItem(IDC_SAVECOMMENTS))->GetCheck();
-	iivO.bentireFile = static_cast<CButton*>(GetDlgItem(IDC_ENTIREFILE))->GetCheck();
-	iivO.bincludeTime = static_cast<CButton*>(GetDlgItem(IDC_BTIMESTEPS))->GetCheck();
-	iivO.selectedChannel = m_channelnumber;
-	iivO.fTimefirst = m_timefirst;
-	iivO.fTimelast = m_timelast;
+	iivO.export_type = m_ComboExportas.GetCurSel();
+	iivO.all_channels = static_cast<CButton*>(GetDlgItem(IDC_ALLCHANNELS))->GetCheck();
+	iivO.separate_comments = static_cast<CButton*>(GetDlgItem(IDC_SAVECOMMENTS))->GetCheck();
+	iivO.entire_file = static_cast<CButton*>(GetDlgItem(IDC_ENTIREFILE))->GetCheck();
+	iivO.include_time = static_cast<CButton*>(GetDlgItem(IDC_BTIMESTEPS))->GetCheck();
+	iivO.selected_channel = m_channelnumber;
+	iivO.time_first = m_timefirst;
+	iivO.time_last = m_timelast;
 }
 
 BOOL DlgExportData::DestroyWindow()
@@ -83,23 +83,23 @@ BOOL DlgExportData::OnInitDialog()
 	iivO = p_app->options_import; // copy structure / options
 
 	// update dependent controls
-	m_ComboExportas.SetCurSel(iivO.exportType); // combo-box
-	if (iivO.exportType != 0) // hide if not sapid
+	m_ComboExportas.SetCurSel(iivO.export_type); // combo-box
+	if (iivO.export_type != 0) // hide if not sapid
 	{
 		GetDlgItem(IDC_SAVECOMMENTS)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_BTIMESTEPS)->ShowWindow(SW_SHOW);
 	}
-	static_cast<CButton*>(GetDlgItem(IDC_SAVECOMMENTS))->SetCheck(iivO.bSeparateComments);
-	static_cast<CButton*>(GetDlgItem(IDC_BTIMESTEPS))->SetCheck(iivO.bincludeTime);
+	static_cast<CButton*>(GetDlgItem(IDC_SAVECOMMENTS))->SetCheck(iivO.separate_comments);
+	static_cast<CButton*>(GetDlgItem(IDC_BTIMESTEPS))->SetCheck(iivO.include_time);
 
-	static_cast<CButton*>(GetDlgItem(IDC_ENTIREFILE))->SetCheck(iivO.bentireFile);
-	GetDlgItem(IDC_TIMEFIRST)->EnableWindow(!iivO.bentireFile);
-	GetDlgItem(IDC_TIMELAST)->EnableWindow(!iivO.bentireFile);
+	static_cast<CButton*>(GetDlgItem(IDC_ENTIREFILE))->SetCheck(iivO.entire_file);
+	GetDlgItem(IDC_TIMEFIRST)->EnableWindow(!iivO.entire_file);
+	GetDlgItem(IDC_TIMELAST)->EnableWindow(!iivO.entire_file);
 
 	if (m_dbDoc->m_p_dat->get_vt_tags_list()->get_tag_list_size() < 1)
 	{
-		m_timefirst = iivO.fTimefirst;
-		m_timelast = iivO.fTimelast;
+		m_timefirst = iivO.time_first;
+		m_timelast = iivO.time_last;
 	}
 	else
 	{
@@ -114,11 +114,11 @@ BOOL DlgExportData::OnInitDialog()
 		m_timelast /= chrate;
 	}
 
-	static_cast<CButton*>(GetDlgItem(IDC_ALLCHANNELS))->SetCheck(iivO.bAllchannels);
-	static_cast<CButton*>(GetDlgItem(IDC_SINGLECHANNEL))->SetCheck(!iivO.bAllchannels);
+	static_cast<CButton*>(GetDlgItem(IDC_ALLCHANNELS))->SetCheck(iivO.all_channels);
+	static_cast<CButton*>(GetDlgItem(IDC_SINGLECHANNEL))->SetCheck(!iivO.all_channels);
 
-	GetDlgItem(IDC_CHANNELNUMBER)->EnableWindow(!iivO.bAllchannels);
-	m_channelnumber = iivO.selectedChannel; //  one channel
+	GetDlgItem(IDC_CHANNELNUMBER)->EnableWindow(!iivO.all_channels);
+	m_channelnumber = iivO.selected_channel; //  one channel
 
 	// get filename(s) and select first in the list
 	m_icurrentfile = m_dbDoc->db_get_current_record_position();
@@ -163,29 +163,29 @@ void DlgExportData::OnOK()
 
 void DlgExportData::OnSinglechannel()
 {
-	iivO.bAllchannels = FALSE;
+	iivO.all_channels = FALSE;
 	GetDlgItem(IDC_CHANNELNUMBER)->EnableWindow(TRUE);
 }
 
 void DlgExportData::OnAllchannels()
 {
-	iivO.bAllchannels = FALSE;
+	iivO.all_channels = FALSE;
 	GetDlgItem(IDC_CHANNELNUMBER)->EnableWindow(FALSE);
 }
 
 void DlgExportData::OnEntirefile()
 {
-	iivO.bentireFile = !iivO.bentireFile;
-	GetDlgItem(IDC_TIMEFIRST)->EnableWindow(!iivO.bentireFile);
-	GetDlgItem(IDC_TIMELAST)->EnableWindow(!iivO.bentireFile);
+	iivO.entire_file = !iivO.entire_file;
+	GetDlgItem(IDC_TIMEFIRST)->EnableWindow(!iivO.entire_file);
+	GetDlgItem(IDC_TIMELAST)->EnableWindow(!iivO.entire_file);
 }
 
 void DlgExportData::OnSelchangeExportas()
 {
 	UpdateData(TRUE); // convert result
-	iivO.exportType = m_ComboExportas.GetCurSel();
+	iivO.export_type = m_ComboExportas.GetCurSel();
 	int bShow = SW_HIDE;
-	if (iivO.exportType == 0)
+	if (iivO.export_type == 0)
 		bShow = SW_SHOW;
 	GetDlgItem(IDC_SAVECOMMENTS)->ShowWindow(bShow);
 	GetDlgItem(IDC_BTIMESTEPS)->ShowWindow(!bShow);
@@ -251,7 +251,7 @@ void DlgExportData::Export()
 	// compute some parameters
 	m_pDat = m_dbDoc->m_p_dat; // pointer to data document
 	CWaveFormat* pwaveFormat = m_pDat->get_waveformat();
-	if (iivO.bentireFile) // if all data, load
+	if (iivO.entire_file) // if all data, load
 	{
 		// intervals from data file
 		mm_timefirst = 0.f;
@@ -272,9 +272,9 @@ void DlgExportData::Export()
 
 	mm_firstchan = 0; // loop through all chans
 	mm_lastchan = pwaveFormat->scan_count - 1; // or only one
-	if (!iivO.bAllchannels) // depending on this flag
+	if (!iivO.all_channels) // depending on this flag
 	{
-		mm_firstchan = iivO.selectedChannel; // flag set: change limits
+		mm_firstchan = iivO.selected_channel; // flag set: change limits
 		mm_lastchan = mm_firstchan;
 	}
 
@@ -388,11 +388,11 @@ BOOL DlgExportData::ExportDataAsTextFile()
 	csCharBuf.Empty();
 
 	// export data only if text
-	if (iivO.exportType == EXPORT_TEXT)
+	if (iivO.export_type == EXPORT_TEXT)
 	{
 		// LINE 10.......... header for each channel
 
-		if (iivO.bincludeTime)
+		if (iivO.include_time)
 		{
 			cs_dummy.Format(_T("time (s)\t"));
 			csCharBuf += cs_dummy;
@@ -415,7 +415,7 @@ BOOL DlgExportData::ExportDataAsTextFile()
 		// loop over all values
 		for (int ii_time = mm_lFirst; ii_time < mm_lLast; ii_time++)
 		{
-			if (iivO.bincludeTime) // add time stamp
+			if (iivO.include_time) // add time stamp
 			{
 				cs_dummy.Format(_T("%li"), ii_time);
 				csCharBuf += cs_dummy;
@@ -471,7 +471,7 @@ BOOL DlgExportData::ExportDataAsSapidFile()
 	dataDest.Close(); // close file
 
 	// export file description in a separate text file
-	if (iivO.bSeparateComments)
+	if (iivO.separate_comments)
 	{
 		const auto filedest = m_filedest;
 		m_filedest = m_filedest.Left(m_filedest.GetLength() - 3) + _T("TXT");
@@ -626,7 +626,7 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 	// loop to write data: write columns header, split cols if too much data
 
 	auto ncolsperbout = mm_lastchan - mm_firstchan + 1; // nb column within 1 bout
-	if (iivO.bincludeTime) // one more if time
+	if (iivO.include_time) // one more if time
 		ncolsperbout++;
 	const auto maxrow = 16383; // last row MAX
 	const auto doclength = mm_lLast - mm_lFirst + 1; // compute how many rows are necess
@@ -641,14 +641,14 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 		mm_lLast = nbouts * boutlength;
 	}
 	auto j0 = 0;
-	if (iivO.bincludeTime)
+	if (iivO.include_time)
 		j0++;
 	for (auto i = 0; i < nbouts; i++)
 	{
 		CString iterat;
 		iterat.Format(_T("[%i]"), i);
 		CString comment;
-		if (iivO.bincludeTime)
+		if (iivO.include_time)
 		{
 			comment = _T("time") + iterat;
 			saveCString_BIFF(&data_dest, row, col, comment);
@@ -678,7 +678,7 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 		{
 			if (ii_time >= mm_lLast)
 				continue;
-			if (iivO.bincludeTime)
+			if (iivO.include_time)
 			{
 				fdouble = ii_time / rate;
 				save_BIFF(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&fdouble));
@@ -858,7 +858,7 @@ BOOL DlgExportData::ExportDataAsdbWaveFile()
 	delete[] p_data;
 
 	// export file description in a separate text file
-	if (iivO.bSeparateComments)
+	if (iivO.separate_comments)
 	{
 		const auto filedest = m_filedest;
 		m_filedest = m_filedest.Left(m_filedest.GetLength() - 3) + _T("TXT");

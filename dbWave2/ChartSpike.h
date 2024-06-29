@@ -15,7 +15,7 @@ public:
 	~ChartSpike() override;
 
 protected:
-	int range_mode_ = RANGE_TIMEINTERVALS;	// display range
+	int range_mode_ = RANGE_TIME_INTERVALS;	// display range
 	long l_first_ = 0;						// time index of first pt displayed
 	long l_last_ = 0;						// time index of last pt displayed
 	int index_first_spike_ = 0;				// index first spike

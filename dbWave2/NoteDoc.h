@@ -12,9 +12,9 @@ public:
 	BOOL OnNewDocument() override;
 	void Serialize(CArchive& ar) override;
 
-	BOOL OnOpenDocument(LPCTSTR lpszPathName) override;
-	CRichEditCntrItem* CreateClientItem(REOBJECT* preo) const override;
-	BOOL OpenProjectFiles(CString& cspathname);
+	BOOL OnOpenDocument(LPCTSTR lpsz_path_name) override;
+	CRichEditCntrItem* CreateClientItem(REOBJECT* p_re_object) const override;
+	BOOL open_project_files(CString& cs_path_name);
 
 	// Implementation
 public:
@@ -25,20 +25,18 @@ public:
 #endif
 
 protected:
-	int extractList(CRichEditCtrl& pEdit, CStringArray& csFilesOK, CStringArray& csDescriptors);
-	BOOL openFileList(CString& cspathname, CStringArray& cs_arrayfiles, CStringArray& csListDescriptors, int nColumns);
-	BOOL addFileName(CString& resToken, CStringArray& csArrayOK, CStringArray& csArrayTested);
-	void displayFilesImported(CRichEditCtrl& pEdit, CStringArray& pArrayTested);
-	int extractColumnsFromRow(CString& cs, CStringArray& pResult);
+	BOOL open_file_list(CString& cs_path_name, CStringArray& cs_array_files, CStringArray& cs_array_descriptors, int n_columns) const;
 
-	BOOL isFilePresent(CString csFilename)
+	static int extract_list(CRichEditCtrl& p_edit, CStringArray& cs_array_file_names, CStringArray& cs_array_descriptors);
+	static BOOL add_file_name(const CString& res_token, CStringArray& cs_array_ok, CStringArray& cs_array_tested);
+	static void display_files_imported(CRichEditCtrl& p_edit, const CStringArray& cs_descriptors_list);
+	static int extract_columns_from_row(const CString& cs_row, CStringArray& cs_columns);
+	static void add_row_to_array(const CStringArray& cs_row, CStringArray& cs_out);
+	static BOOL is_file_present(const CString& cs_filename)
 	{
 		CFileStatus status;
-		return CFile::GetStatus(csFilename, status);
+		return CFile::GetStatus(cs_filename, status);
 	}
-
-	void addRowToArray(CStringArray& csRow, CStringArray& csOut);
-
 
 	DECLARE_MESSAGE_MAP()
 };

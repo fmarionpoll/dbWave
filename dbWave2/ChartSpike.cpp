@@ -14,12 +14,12 @@ int ChartSpike::get_color_according_to_plot_mode(const Spike* spike, int plot_mo
 	auto color = BLACK_COLOR;
 	switch (plot_mode)
 	{
-	case PLOT_ONECLASSONLY:
-	case PLOT_ONECLASS:
+	case PLOT_ONE_CLASS_ONLY:
+	case PLOT_ONE_CLASS:
 		if (no_spike_class != selected_class_)
 			color = SILVER_COLOR;
 		break;
-	case PLOT_CLASSCOLORS:
+	case PLOT_CLASS_COLORS:
 		color = no_spike_class % NB_COLORS;
 		break;
 	case PLOT_BLACK:
@@ -69,7 +69,7 @@ void ChartSpike::sub_item_create(CWnd* parent_wnd, const CRect& rect, int i_id, 
 	const auto n_spikes = spike_list->get_spikes_count();
 
 	set_source_data(spike_list, pdb_doc);
-	set_plot_mode(PLOT_ONECLASSONLY, i_class);
+	set_plot_mode(PLOT_ONE_CLASS_ONLY, i_class);
 	set_range_mode(RANGE_INDEX);
 	set_spk_indexes(0, n_spikes - 1);
 	set_b_draw_frame(TRUE);
@@ -87,11 +87,11 @@ boolean ChartSpike::is_spike_within_range(const db_spike& spike_selected) const
 		return false;
 
 	const auto ii_time = spike->get_time();
-	if (range_mode_ == RANGE_TIMEINTERVALS
+	if (range_mode_ == RANGE_TIME_INTERVALS
 		&& (ii_time < l_first_ || ii_time > l_last_))
 		return false;
 
-	if (plot_mode_ == PLOT_ONECLASSONLY
+	if (plot_mode_ == PLOT_ONE_CLASS_ONLY
 		&& spike->get_class_id() != selected_class_)
 		return false;
 
