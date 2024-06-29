@@ -310,7 +310,7 @@ void ViewdbWave::OnActivateView(BOOL bActivate, CView * pActivateView, CView * p
 		if (p_mainframe->m_pSecondToolBar != nullptr)
 			p_mainframe->ShowPane(p_mainframe->m_pSecondToolBar, FALSE, FALSE, TRUE);
 		// load status
-		m_nStatus = static_cast<CChildFrame*>(p_mainframe->MDIGetActive())->m_nStatus;
+		m_nStatus = static_cast<CChildFrame*>(p_mainframe->MDIGetActive())->m_n_status;
 		p_mainframe->PostMessageW(WM_MYMESSAGE, HINT_ACTIVATEVIEW, reinterpret_cast<LPARAM>(pActivateView->GetDocument()));
 	}
 	else
@@ -321,7 +321,7 @@ void ViewdbWave::OnActivateView(BOOL bActivate, CView * pActivateView, CView * p
 			static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.viewdata = *(pDataChartWnd->get_scope_parameters());
 		}
 		if (pActivateView != nullptr)
-			static_cast<CChildFrame*>(p_mainframe->MDIGetActive())->m_nStatus = m_nStatus;
+			static_cast<CChildFrame*>(p_mainframe->MDIGetActive())->m_n_status = m_nStatus;
 	}
 	dbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }

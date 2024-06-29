@@ -44,6 +44,7 @@ void ViewSpikes::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_JITTER, m_jitter_ms);
 	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
 	DDX_Check(pDX, IDC_SAMECLASS, m_b_keep_same_class);
+	DDX_Control(pDX, IDC_ZOOM_ON_OFF, set_zoom);
 }
 
 BEGIN_MESSAGE_MAP(ViewSpikes, dbTableView)
@@ -80,7 +81,7 @@ BEGIN_MESSAGE_MAP(ViewSpikes, dbTableView)
 	ON_EN_CHANGE(IDC_EDIT5, &ViewSpikes::OnEnChangeDestclass)
 	ON_EN_CHANGE(IDC_JITTER, &ViewSpikes::OnEnChangeJitter)
 
-	ON_BN_CLICKED(IDC_BUTTON2, &ViewSpikes::OnZoom)
+	ON_BN_CLICKED(IDC_ZOOM_ON_OFF, &ViewSpikes::on_zoom)
 	ON_BN_CLICKED(IDC_GAIN_button, &ViewSpikes::OnGAINbutton)
 	ON_BN_CLICKED(IDC_BIAS_button, &ViewSpikes::OnBIASbutton)
 	ON_BN_CLICKED(IDC_ARTEFACT, &ViewSpikes::OnArtefact)
@@ -246,7 +247,7 @@ void ViewSpikes::change_zoom(LPARAM lParam)
 		l_first_ = chart_data_wnd_.GetDataFirstIndex();
 		l_last_ = chart_data_wnd_.GetDataLastIndex();
 	}
-	else if (HIWORD(lParam) == IDC_LISTCLASSES) //[ne marche pas! HIWORD(lParam)==1]
+	else if (HIWORD(lParam) == IDC_LISTCLASSES) //TODO [does not work! HIWORD(lParam)==1]
 	{
 		l_first_ = spike_class_listbox_.GetTimeFirst();
 		l_last_ = spike_class_listbox_.GetTimeLast();
@@ -480,6 +481,9 @@ void ViewSpikes::OnInitialUpdate()
 	m_autoIncrement = true;
 	m_autoDetect = true;
 
+	const auto p_btn = static_cast<CButton*>(GetDlgItem(IDC_ZOOM_ON_OFF));
+	p_btn->SetCheck(1);
+
 	// load global parameters
 	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	options_view_data_ = &(p_app->options_view_data); 
@@ -647,7 +651,7 @@ void ViewSpikes::update_spike_file(BOOL b_update_interface)
 		spike_class_listbox_.SetCurSel(0);
 }
 
-void ViewSpikes::update_legends(BOOL b_update_interface)
+void ViewSpikes::update_legends(const BOOL b_update_interface)
 {
 	if (!b_update_interface)
 		return;
@@ -686,7 +690,7 @@ void ViewSpikes::update_legends(BOOL b_update_interface)
 	update_file_scroll();
 }
 
-void ViewSpikes::adjust_y_zoom_to_max_min(BOOL b_force_search_max_min)
+void ViewSpikes::adjust_y_zoom_to_max_min(const BOOL b_force_search_max_min)
 {
 	if (y_we_ == 1 || b_force_search_max_min)
 	{
@@ -773,7 +777,7 @@ void ViewSpikes::OnToolsEdittransformspikes()
 	chart_data_wnd_.Invalidate();
 }
 
-void ViewSpikes::PrintComputePageSize()
+void ViewSpikes::print_compute_page_size()
 {
 	// magic to get printer dialog that would be used if we were printing!
 	CPrintDialog dlg(FALSE);
@@ -796,41 +800,41 @@ void ViewSpikes::PrintComputePageSize()
 	m_printRect.top = options_view_data_->topPageMargin;
 }
 
-void ViewSpikes::PrintFileBottomPage(CDC* p_dc, const CPrintInfo* pInfo)
+void ViewSpikes::print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_info)
 {
 	const auto t = CTime::GetCurrentTime();
 	CString ch;
 	ch.Format(_T("  page %d:%d %d-%d-%d"), // %d:%d",
-	          pInfo->m_nCurPage, pInfo->GetMaxPage(),
+	          p_info->m_nCurPage, p_info->GetMaxPage(),
 	          t.GetDay(), t.GetMonth(), t.GetYear());
 	const auto ch_date = GetDocument()->db_get_current_spk_file_name();
 	p_dc->SetTextAlign(TA_CENTER);
 	p_dc->TextOut(options_view_data_->horzRes / 2, options_view_data_->vertRes - 57, ch_date);
 }
 
-CString ViewSpikes::PrintConvertFileIndex(long l_first, long l_last)
+CString ViewSpikes::print_convert_file_index(long l_first, long l_last) const
 {
 	CString cs_unit = _T(" s");
 	int constexpr array_size = 64;
 	TCHAR sz_dest[array_size];
-	constexpr size_t cbDest = array_size * sizeof(TCHAR);
+	constexpr size_t cb_dest = array_size * sizeof(TCHAR);
 
 	float x_scale_factor;
-	auto x = PrintChangeUnit(
+	auto x = print_change_unit(
 		static_cast<float>(l_first) / m_pSpkDoc->get_acq_rate(), &cs_unit, &x_scale_factor);
 	auto fraction = static_cast<int>((x - floorf(x)) * static_cast<float>(1000.));
-	StringCbPrintf(sz_dest, cbDest, TEXT("time = %i.%03.3i - "), static_cast<int>(x), fraction);
+	StringCbPrintf(sz_dest, cb_dest, TEXT("time = %i.%03.3i - "), static_cast<int>(x), fraction);
 	CString cs_comment = sz_dest;
 
 	x = static_cast<float>(l_last) / (m_pSpkDoc->get_acq_rate() * x_scale_factor); 
 	fraction = static_cast<int>((x - floorf(x)) * static_cast<float>(1000.));
-	StringCbPrintf(sz_dest, cbDest, _T("%f.%03.3i %s"), floorf(x), fraction, static_cast<LPCTSTR>(cs_unit));
-	StringCbPrintf(sz_dest, cbDest, _T("%f.%03.3i %s"), floorf(x), fraction, static_cast<LPCTSTR>(cs_unit));
+	StringCbPrintf(sz_dest, cb_dest, _T("%f.%03.3i %s"), floorf(x), fraction, static_cast<LPCTSTR>(cs_unit));
+	StringCbPrintf(sz_dest, cb_dest, _T("%f.%03.3i %s"), floorf(x), fraction, static_cast<LPCTSTR>(cs_unit));
 	cs_comment += sz_dest;
 	return cs_comment;
 }
 
-long ViewSpikes::PrintGetFileSeriesIndexFromPage(const int page, int* file_number)
+long ViewSpikes::print_get_file_series_index_from_page(const int page, int* file_number)
 {
 	auto l_first = m_lprintFirst;
 
@@ -866,7 +870,7 @@ long ViewSpikes::PrintGetFileSeriesIndexFromPage(const int page, int* file_numbe
 	return l_first; // return index first point / data file
 }
 
-CString ViewSpikes::PrintGetFileInfos()
+CString ViewSpikes::print_get_file_infos()
 {
 	CString str_comment; // scratch pad
 	const CString tab("    "); // use 4 spaces as tabulation character
@@ -898,7 +902,7 @@ CString ViewSpikes::PrintGetFileInfos()
 	return str_comment;
 }
 
-CString ViewSpikes::PrintBars(CDC* p_dc, const CRect* rect)
+CString ViewSpikes::print_bars(CDC* p_dc, const CRect* rect)
 {
 	CString str_comment;
 	const CString rc(_T("\n"));
@@ -914,7 +918,7 @@ CString ViewSpikes::PrintBars(CDC* p_dc, const CRect* rect)
 	///// time abscissa ///////////////////////////
 	const int ii_first = spike_class_listbox_.GetTimeFirst();
 	const int ii_last = spike_class_listbox_.GetTimeLast();
-	auto cs_comment = PrintConvertFileIndex(ii_first, ii_last);
+	auto cs_comment = print_convert_file_index(ii_first, ii_last);
 
 	///// horizontal time bar ///////////////////////////
 	if (options_view_data_->bTimeScaleBar)
@@ -1015,12 +1019,12 @@ CString ViewSpikes::PrintBars(CDC* p_dc, const CRect* rect)
 	return str_comment;
 }
 
-BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
+BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 {
-	if (!DoPreparePrinting(pInfo))
+	if (!DoPreparePrinting(p_info))
 		return FALSE;
 
-	if (!COleDocObjectItem::OnPreparePrinting(this, pInfo))
+	if (!COleDocObjectItem::OnPreparePrinting(this, p_info))
 		return FALSE;
 
 	// save current state of the windows
@@ -1040,9 +1044,9 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 
 	// printing margins
 	if (options_view_data_->vertRes <= 0 || options_view_data_->horzRes <= 0
-		|| options_view_data_->horzRes != pInfo->m_rectDraw.Width()
-		|| options_view_data_->vertRes != pInfo->m_rectDraw.Height())
-		PrintComputePageSize();
+		|| options_view_data_->horzRes != p_info->m_rectDraw.Width()
+		|| options_view_data_->vertRes != p_info->m_rectDraw.Height())
+		print_compute_page_size();
 
 	// how many rows per page?
 	const auto size_row = options_view_data_->HeightDoc + options_view_data_->heightSeparator;
@@ -1121,17 +1125,17 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 		n_pages++;
 
 	//------------------------------------------------------
-	pInfo->SetMaxPage(n_pages); //one-page printing/preview
-	pInfo->m_nNumPreviewPages = 1; // preview 1 pages at a time
-	pInfo->m_pPD->m_pd.Flags &= ~PD_NOSELECTION; // allow print only selection
+	p_info->SetMaxPage(n_pages); //one-page printing/preview
+	p_info->m_nNumPreviewPages = 1; // preview 1 pages at a time
+	p_info->m_pPD->m_pd.Flags &= ~PD_NOSELECTION; // allow print only selection
 
 	if (options_view_data_->bPrintSelection)
-		pInfo->m_pPD->m_pd.Flags |= PD_SELECTION; // set button to selection
+		p_info->m_pPD->m_pd.Flags |= PD_SELECTION; // set button to selection
 
 	// call dialog box
-	const auto flag = DoPreparePrinting(pInfo);
+	const auto flag = DoPreparePrinting(p_info);
 	// set max nb of pages according to selection
-	options_view_data_->bPrintSelection = pInfo->m_pPD->PrintSelection();
+	options_view_data_->bPrintSelection = p_info->m_pPD->PrintSelection();
 	if (options_view_data_->bPrintSelection)
 	{
 		n_pages = 1;
@@ -1149,7 +1153,7 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* pInfo)
 			if (n_pages * m_nbrowsperpage < nb_rect)
 				n_pages++;
 		}
-		pInfo->SetMaxPage(n_pages);
+		p_info->SetMaxPage(n_pages);
 	}
 
 	p_dbwave_doc->db_set_current_record_position(m_file0);
@@ -1175,17 +1179,19 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_pOldFont = p_dc->SelectObject(&m_fontPrint);
 	p_dc->SetMapMode(MM_TEXT); 
-	PrintFileBottomPage(p_dc, pInfo); 
+	print_file_bottom_page(p_dc, pInfo); 
 	const int current_page = static_cast<int>(pInfo->m_nCurPage); 
 
 	// --------------------- load data corresponding to the first row of current page
 
 	// print only current selection - transform current page into file index
 	int file_index; 
-	auto l_first = PrintGetFileSeriesIndexFromPage(current_page - 1, &file_index);
-	GetDocument()->db_set_current_record_position(file_index);
-	update_file_parameters(FALSE);
-	update_file_scroll();
+	auto l_first = print_get_file_series_index_from_page(current_page - 1, &file_index);
+	if (GetDocument()->db_set_current_record_position(file_index))
+	{
+		update_file_parameters(FALSE);
+		update_file_scroll();
+	}
 	auto very_last = m_pSpkDoc->get_acq_size() - 1; 
 
 	CRect r_where(m_printRect.left,
@@ -1220,7 +1226,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		auto rw2 = r_where; // printing rectangle - constant
 		rw2.OffsetRect(-r_where.left, -r_where.top); // set RW2 origin = 0,0
-		auto r_height = rw2.Height() / max_classes_; // ncount;
+		auto r_height = rw2.Height() / max_classes_; // n_count;
 		if (p_data_doc_ != nullptr)
 			r_height = rw2.Height() / (max_classes_ + 1);
 		const auto r_separator = r_height / 8;
@@ -1256,16 +1262,16 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		// ------------------------ print data
 
-		auto extent = spike_class_listbox_.GetYWExtent(); // get current extents
+		auto extent = spike_class_listbox_.GetYWExtent();
 		//auto zero = m_spkClass.GetYWOrg();
 
 		if (p_data_doc_ != nullptr)
 		{
-			if (options_view_data_->bClipRect) // clip curve display ?
-				p_dc->IntersectClipRect(&rw_bars); // yes
-			chart_data_wnd_.GetDataFromDoc(l_first, l_last); // load data from file
+			if (options_view_data_->bClipRect)
+				p_dc->IntersectClipRect(&rw_bars); 
+			chart_data_wnd_.GetDataFromDoc(l_first, l_last);
 			chart_data_wnd_.CenterChan(0);
-			chart_data_wnd_.Print(p_dc, &rw_bars); // print data
+			chart_data_wnd_.Print(p_dc, &rw_bars); 
 			p_dc->SelectClipRgn(nullptr);
 
 			extent = chart_data_wnd_.get_channel_list_item(0)->GetYextent();
@@ -1274,7 +1280,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		// ------------------------ print spikes
 
-		rw_bars.bottom = rw_bars.top + r_height; // adjust the rect position
+		rw_bars.bottom = rw_bars.top + r_height; 
 		rw_spikes.top = rw_bars.top;
 		rw_spikes.bottom = rw_bars.bottom;
 		rw_text.top = rw_bars.top;
@@ -1358,8 +1364,8 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		CString cs_comment;
 		if (l_first == m_lprintFirst) // first row = full comment
 		{
-			cs_comment += PrintGetFileInfos();
-			cs_comment += PrintBars(p_dc, &comment_rect); // bars and bar legends
+			cs_comment += print_get_file_infos();
+			cs_comment += print_bars(p_dc, &comment_rect); // bars and bar legends
 		}
 
 		// print comments stored into cs_comment
@@ -1385,9 +1391,11 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			if (file_index < m_nfiles) // last file ??
 			{
 				// NO: select new file
-				GetDocument()->db_move_next();
-				update_file_parameters(FALSE);
-				update_file_scroll();
+				if (GetDocument()->db_move_next())
+				{
+					update_file_parameters(FALSE);
+					update_file_scroll();
+				}
 				very_last = m_pSpkDoc->get_acq_size() - 1;
 			}
 			else
@@ -1405,10 +1413,11 @@ void ViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	m_fontPrint.DeleteObject();
 	m_bIsPrinting = FALSE;
 
-	GetDocument()->db_set_current_record_position(m_file0);
-	update_file_parameters(TRUE);
-	spike_class_listbox_.SetTimeIntervals(m_lFirst0, m_lLast0);
-	spike_class_listbox_.Invalidate();
+	if (GetDocument()->db_set_current_record_position(m_file0)) {
+		update_file_parameters(TRUE);
+		spike_class_listbox_.SetTimeIntervals(m_lFirst0, m_lLast0);
+		spike_class_listbox_.Invalidate();
+	}
 
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	if (p_app->m_p_view_spikes_memory_file != nullptr)
@@ -1422,13 +1431,13 @@ void ViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 
 static char vs_units[] = {"GM  mµpf  "};  
 static int vs_units_power[] = {9, 6, 0, 0, -3, -6, -9, -12, 0};
-static int vsmax_index = 8; 
+constexpr int vs_max_index = 8; 
 
-float ViewSpikes::PrintChangeUnit(float x_val, CString* x_unit, float* x_scalefactor)
+float ViewSpikes::print_change_unit(float x_val, CString* x_unit, float* x_scale_factor)
 {
 	if (x_val == 0.f) 
 	{
-		*x_scalefactor = 1.0f;
+		*x_scale_factor = 1.0f;
 		return 0.0f;
 	}
 
@@ -1445,13 +1454,13 @@ float ViewSpikes::PrintChangeUnit(float x_val, CString* x_unit, float* x_scalefa
 	else
 		i = 3 - ip_rec / 3;
 
-	if (i > vsmax_index) 
-		i = vsmax_index;
+	if (i > vs_max_index) 
+		i = vs_max_index;
 	else if (i < 0) 
 		i = 0;
-	*x_scalefactor = static_cast<float>(pow(10.0f, vs_units_power[i])); // convert & store
+	*x_scale_factor = static_cast<float>(pow(10.0f, vs_units_power[i])); 
 	x_unit->SetAt(0, vs_units[i]); 
-	return x_val * static_cast<float>(i_sign) / *x_scalefactor; 
+	return x_val * static_cast<float>(i_sign) / *x_scale_factor; 
 }
 
 void ViewSpikes::center_data_display_on_spike(const int spike_no)
@@ -1692,25 +1701,32 @@ void ViewSpikes::OnEditCopy()
 	}
 }
 
-void ViewSpikes::OnZoom()
+
+void ViewSpikes::on_zoom()
 {
-	int ii_start = 0;
-	if (m_spike_index != -1)
+	if (set_zoom.GetCheck())
 	{
-		ii_start = m_pSpkList->get_spike(m_spike_index)->get_time();
-		const int delta = static_cast<int>(m_zoom * m_pSpkDoc->get_acq_rate());
-		ii_start -= delta/2;
+		int ii_start = 0;
+		if (m_spike_index != -1)
+		{
+			ii_start = m_pSpkList->get_spike(m_spike_index)->get_time();
+			const int delta = static_cast<int>(m_zoom * m_pSpkDoc->get_acq_rate());
+			ii_start -= delta / 2;
+		}
+		zoom_on_preset_interval(ii_start);
 	}
-	zoom_on_preset_interval(ii_start);
+	else
+		OnFormatAlldata();
 }
+
 
 void ViewSpikes::zoom_on_preset_interval(int ii_start)
 {
 	if (ii_start < 0)
 		ii_start = 0;
 	l_first_ = ii_start;
-	const auto acqrate = m_pSpkDoc->get_acq_rate();
-	l_last_ = static_cast<long>((l_first_ / acqrate + m_zoom) * acqrate);
+	const auto acquisition_rate = m_pSpkDoc->get_acq_rate();
+	l_last_ = static_cast<long>((static_cast<float>(l_first_) / acquisition_rate + m_zoom) * acquisition_rate);
 	update_legends(TRUE);
 	// display data
 	spike_class_listbox_.Invalidate();
@@ -1752,40 +1768,40 @@ void ViewSpikes::update_gain_scroll()
 
 void ViewSpikes::scroll_gain(UINT nSBCode, UINT nPos)
 {
-	int lSize = chart_data_wnd_.get_channel_list_item(0)->GetYextent();
+	int l_size = chart_data_wnd_.get_channel_list_item(0)->GetYextent();
 	// get corresponding data
 	switch (nSBCode)
 	{
 	// .................scroll to the start
-	case SB_LEFT: lSize = YEXTENT_MIN;
+	case SB_LEFT: l_size = YEXTENT_MIN;
 		break;
 	// .................scroll one line left
-	case SB_LINELEFT: lSize -= lSize / 10 + 1;
+	case SB_LINELEFT: l_size -= l_size / 10 + 1;
 		break;
 	// .................scroll one line right
-	case SB_LINERIGHT: lSize += lSize / 10 + 1;
+	case SB_LINERIGHT: l_size += l_size / 10 + 1;
 		break;
 	// .................scroll one page left
-	case SB_PAGELEFT: lSize -= lSize / 2 + 1;
+	case SB_PAGELEFT: l_size -= l_size / 2 + 1;
 		break;
 	// .................scroll one page right
-	case SB_PAGERIGHT: lSize += lSize + 1;
+	case SB_PAGERIGHT: l_size += l_size + 1;
 		break;
 	// .................scroll to end right
-	case SB_RIGHT: lSize = YEXTENT_MAX;
+	case SB_RIGHT: l_size = YEXTENT_MAX;
 		break;
 	// .................scroll to pos = nPos or drag scroll box -- pos = nPos
 	case SB_THUMBPOSITION:
-	case SB_THUMBTRACK: lSize = MulDiv(static_cast<int>(nPos) - 50, YEXTENT_MAX, 100);
+	case SB_THUMBTRACK: l_size = MulDiv(static_cast<int>(nPos) - 50, YEXTENT_MAX, 100);
 		break;
 	// .................NOP: set position only
 	default: break;
 	}
 
 	// change y extent
-	if (lSize > 0) //&& lSize<=YEXTENT_MAX)
+	if (l_size > 0) //&& lSize<=YEXTENT_MAX)
 	{
-		chart_data_wnd_.get_channel_list_item(0)->SetYextent(lSize);
+		chart_data_wnd_.get_channel_list_item(0)->SetYextent(l_size);
 		update_legends(TRUE);
 		chart_data_wnd_.Invalidate();
 	}
@@ -1796,10 +1812,10 @@ void ViewSpikes::scroll_gain(UINT nSBCode, UINT nPos)
 
 void ViewSpikes::update_bias_scroll()
 {
-	CChanlistItem* pchan = chart_data_wnd_.get_channel_list_item(0);
-	const auto i_pos = (pchan->GetYzero()
-			- pchan->GetDataBinZero())
-		* 100 / static_cast<int>(YZERO_SPAN) + 50;
+	const CChanlistItem* chan_list_item = chart_data_wnd_.get_channel_list_item(0);
+	const auto i_pos = (chan_list_item->GetYzero()
+			- chan_list_item->GetDataBinZero())
+			* 100 / static_cast<int>(YZERO_SPAN) + 50;
 	scrollbar_y_.SetScrollPos(i_pos, TRUE);
 }
 

@@ -17,7 +17,6 @@ protected:
 	~ViewSpikes() override;
 
 	// Form Data
-public:
 	enum { IDD = IDD_VIEWSPIKES };
 
 	float m_time_first = 0.f;
@@ -31,6 +30,8 @@ public:
 	BOOL m_b_artefact = false;
 	BOOL m_b_keep_same_class = false;
 	float m_jitter_ms = 1.f;
+
+	CButton set_zoom;
 
 	// Attributes
 protected:
@@ -80,11 +81,10 @@ protected:
 	void update_spike_file(BOOL b_update_interface);
 	void update_gain_scroll();
 	void update_bias_scroll();
-	void adjust_y_zoom_to_max_min(BOOL b_force_search_max_min);
+
 	void select_spike(db_spike& spike_selected);
 	void define_sub_classed_items();
 	void define_stretch_parameters();
-	void zoom_on_preset_interval(int ii_start);
 	void scroll_gain(UINT nSBCode, UINT nPos);
 	void scroll_bias(UINT nSBCode, UINT nPos);
 	void set_v_bar_mode(short bMode);
@@ -96,7 +96,10 @@ protected:
 	void update_file_scroll();
 	void center_data_display_on_spike(int spike_no);
 	void set_mouse_cursor(short param_value);
+
 	void change_zoom(LPARAM lParam);
+	void adjust_y_zoom_to_max_min(BOOL b_force_search_max_min);
+	void zoom_on_preset_interval(int ii_start);
 
 	// public interface to view
 public:
@@ -105,7 +108,7 @@ protected:
 	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 	void DoDataExchange(CDataExchange* pDX) override;
 	void OnInitialUpdate() override;
-	BOOL OnPreparePrinting(CPrintInfo* pInfo) override;
+	BOOL OnPreparePrinting(CPrintInfo* p_info) override;
 	void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
 	void OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
 	void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
@@ -117,16 +120,14 @@ protected:
 	SPKCLASSIF* spk_classification_parameters_ = nullptr;
 	SPKDETECTPARM* spk_detection_parameters_ = nullptr; 
 
-protected:
-	void PrintFileBottomPage(CDC* p_dc, const CPrintInfo* pInfo);
-	CString PrintConvertFileIndex(long l_first, long l_last);
-	void PrintComputePageSize();
-	CString PrintGetFileInfos();
-	CString PrintBars(CDC* p_dc, const CRect* rect);
-	long PrintGetFileSeriesIndexFromPage(int page, int* file);
-	float PrintChangeUnit(float x_val, CString* x_unit, float* x_scalefactor);
+	void print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_info);
+	CString print_convert_file_index(long l_first, long l_last) const;
+	void print_compute_page_size();
+	CString print_get_file_infos();
+	CString print_bars(CDC* p_dc, const CRect* rect);
+	long print_get_file_series_index_from_page(int page, int* file);
+	static float print_change_unit(float x_val, CString* x_unit, float* x_scale_factor);
 
-protected:
 	// Generated message map functions
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
 
@@ -149,7 +150,7 @@ protected:
 
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnEditCopy();
-	afx_msg void OnZoom();
+	afx_msg void on_zoom();
 	afx_msg void OnGAINbutton();
 	afx_msg void OnBIASbutton();
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);

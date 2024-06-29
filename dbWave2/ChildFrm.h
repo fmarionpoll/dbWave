@@ -9,71 +9,72 @@ public:
 	void ActivateFrame(int n_cmd_show = -1) override;
 	~CChildFrame() override;
 
-	UINT m_view_ON =  ID_VIEW_DATABASE;
-	int m_previous_view_ON = ID_VIEW_DATABASE ;
+	UINT m_view_on =  ID_VIEW_DATABASE;
+	int m_previous_view_on = ID_VIEW_DATABASE ;
 	int m_cursor_state = 0;
-	int m_nStatus = 0;
+	int m_n_status = 0;
 
 #ifdef _DEBUG
 	void AssertValid() const override;
 	void Dump(CDumpContext& dc) const override;
 #endif
 protected:
-	BOOL m_bDeleteFile{ false };
-	BOOL m_bKeepChoice{ false };
+	BOOL m_b_delete_file_{ false };
+	BOOL m_b_keep_choice_{ false };
 
-	void replaceView(CRuntimeClass* pViewClass, HMENU hmenu);
-	void OnToolsImportfiles(int ifilter);
-	void exportASCII(int option);
-	BOOL exportToExcel();
-	BOOL exportToExcelAndBuildPivot(int option);
-	void buildExcelPivot(void* oApp, void* odataSheet, CString csSourceDataAddress, CString csNameSheet,
-	                     short XlConsolidationFunction, int col2);
+	void replace_view(CRuntimeClass* p_view_class, HMENU h_menu);
+	void on_tools_import_files(int i_filter);
+	void export_ascii(int option);
+	BOOL export_to_excel();
+	BOOL export_to_excel_and_build_pivot(int option);
+	static void build_excel_pivot(void* po_app, void* p_odata_sheet, CString cs_source_data_address, CString cs_name_sheet,
+	                              short xl_consolidation_function, int col2);
 
 protected:
-	afx_msg void OnViewCursormodeNormal();
-	afx_msg void OnUpdateViewCursormodeNormal(CCmdUI* pCmdUI);
-	afx_msg void OnViewCursormodeMeasure();
-	afx_msg void OnUpdateViewCursormodeMeasure(CCmdUI* pCmdUI);
-	afx_msg void OnViewCursormodeZoomin();
-	afx_msg void OnUpdateViewCursormodeZoomin(CCmdUI* pCmdUI);
-	afx_msg void OnOptionsBrowsemode();
-	afx_msg void OnOptionsPrintmargins();
-	afx_msg void OnOptionsLoadsaveoptions();
-	afx_msg void OnToolsExportdatacomments();
-	afx_msg void OnToolsExportdataAsText();
-	afx_msg void OnToolsExportnumberofspikes();
+	afx_msg void on_view_cursor_mode_normal();
+	afx_msg void on_update_view_cursor_mode_normal(CCmdUI* pCmdUI);
+	afx_msg void on_view_cursor_mode_measure();
+	afx_msg void on_update_view_cursor_mode_measure(CCmdUI* pCmdUI);
+	afx_msg void on_view_cursor_mode_zoom_in();
+	afx_msg void on_update_view_cursor_mode_zoom_in(CCmdUI* pCmdUI);
+
+	afx_msg void on_options_browse_mode();
+	afx_msg void on_options_print_margins();
+	afx_msg void on_options_load_save_options();
+	afx_msg void on_tools_export_data_comments();
+	afx_msg void on_tools_export_data_as_text();
+	afx_msg void on_tools_export_number_of_spikes();
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
-	afx_msg void ReplaceViewIndex(UINT nID);
-	afx_msg void OnUpdateViewMenu(CCmdUI* pCmdUI);
+	afx_msg void replace_view_index(UINT n_id);
+	afx_msg void on_update_view_menu(CCmdUI* p_cmd_ui);
 
 public:
-	afx_msg void OnRecordGotorecord();
-	afx_msg void OnRecordDeletecurrent();
-	afx_msg void OnRecordAdd();
-	afx_msg void OnToolsRemoveMissingFiles();
-	afx_msg void OnToolsRemoveduplicatefiles();
-	afx_msg void OnToolsRestoredeletedfiles();
-	afx_msg void OnToolsSynchronizesourceinformationsCurrentfile();
-	afx_msg void OnToolsSynchronizesourceinformationsAllfiles();
-	afx_msg void OnToolsRemoveartefactfiles();
-	afx_msg void OnToolsCheckFilelistsConsistency();
-	afx_msg void OnToolsImportATFfiles();
+	afx_msg void on_record_goto_record();
+	afx_msg void on_record_delete_current();
+	afx_msg void on_record_add();
+	afx_msg void on_tools_remove_missing_files();
+	afx_msg void on_tools_remove_duplicate_files();
+	afx_msg void on_tools_restore_deleted_files();
+	afx_msg void on_tools_synchronize_source_information_current_file();
+	afx_msg void on_tools_synchronize_source_information_all_files();
+	afx_msg void on_tools_remove_artefact_files();
+	afx_msg void on_tools_check_file_lists_consistency();
+	afx_msg void on_tools_import_atl_files();
 	//afx_msg void OnToolsImportSyntechaspkfiles();
-	afx_msg void OnToolsImportDatafiles();
-	afx_msg void OnToolsImportSpikefiles();
-	afx_msg void OnToolsImportDatabase();
-	afx_msg void OnToolsCopyAllProjectFiles();
-	afx_msg void OnToolsExportdatafile();
-	afx_msg void OnMDIActivate(BOOL bActivate, CWnd* pActivateWnd, CWnd* pDeactivateWnd);
-	afx_msg void OnToolsPathsRelative();
-	afx_msg void OnToolsPathsAbsolute();
-	afx_msg void OnToolsPath();
-	afx_msg void OnToolsRemoveunused();
-	afx_msg void OnToolsImport();
-	afx_msg void OnToolsSynchro();
-	afx_msg void OnToolsGarbage();
-	afx_msg void OnToolsCompactdatabase();
+	afx_msg void on_tools_import_data_files();
+	afx_msg void on_tools_import_spike_files();
+	afx_msg void on_tools_import_database();
+	afx_msg void on_tools_copy_all_project_files();
+	afx_msg void on_tools_export_data_file();
+	afx_msg void on_mdi_activate(BOOL bActivate, CWnd* pActivateWnd, CWnd* pDeactivateWnd);
+	afx_msg void on_tools_paths_relative();
+	afx_msg void on_tools_paths_absolute();
+	afx_msg void on_tools_path();
+	afx_msg void on_tools_remove_unused();
+	afx_msg void on_tools_import();
+	afx_msg void on_tools_synchro();
+	afx_msg void on_tools_garbage();
+	afx_msg void on_tools_compact_database();
 
 	DECLARE_MESSAGE_MAP()
 };
