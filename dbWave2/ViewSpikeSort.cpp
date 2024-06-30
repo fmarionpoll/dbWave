@@ -1462,7 +1462,7 @@ void ViewSpikeSort::on_en_change_t1()
 		{
 			spike_classification_parameters_->i_left = it1;
 			chart_spike_shape_.move_vt_track(m_spk_form_tag_left_, spike_classification_parameters_->i_left);
-			m_pSpkList->m_imaxmin1SL = spike_classification_parameters_->i_left;
+			m_pSpkList->m_i_max_min_1_sl = spike_classification_parameters_->i_left;
 		}
 		UpdateData(FALSE);
 	}
@@ -1487,7 +1487,7 @@ void ViewSpikeSort::on_en_change_t2()
 		{
 			spike_classification_parameters_->i_right = it2;
 			chart_spike_shape_.move_vt_track(m_spk_form_tag_right_, spike_classification_parameters_->i_right);
-			m_pSpkList->m_imaxmin2SL = spike_classification_parameters_->i_right;
+			m_pSpkList->m_i_max_min_2_sl = spike_classification_parameters_->i_right;
 		}
 		UpdateData(FALSE);
 	}

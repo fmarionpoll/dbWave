@@ -130,10 +130,10 @@ public:
 	afx_msg LRESULT on_my_message(WPARAM code, LPARAM lParam);
 	afx_msg void on_measure();
 	afx_msg void on_format_all_data();
-
 	afx_msg void on_format_center_curve();
 	afx_msg void on_format_gain_adjust();
 	afx_msg void on_format_split_curves();
+
 	afx_msg void on_tools_edit_spikes();
 	afx_msg void on_select_all_files();
 	afx_msg void on_tools_align_spikes();

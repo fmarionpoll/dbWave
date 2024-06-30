@@ -26,16 +26,16 @@ void SpikeList::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		ar << ID_string;
-		m_version = 7;
-		ar << m_version;
+		ar << id_string_;
+		m_version_ = 7;
+		ar << m_version_;
 		serialize_version7(ar);
 	}
 	else
 	{
 		delete_arrays();
 		CString cs_id; ar >> cs_id;
-		if (cs_id == ID_string)
+		if (cs_id == id_string_)
 		{
 			WORD version; ar >> version;
 			if (version == 7 || version == 6)
@@ -60,28 +60,28 @@ void SpikeList::Serialize(CArchive& ar)
 
 void SpikeList::read_file_version1(CArchive& ar)
 {
-	m_icenter1SL = 0;
-	m_icenter2SL = spk_detect_parameters_.detect_pre_threshold;
-	m_imaxmin1SL = m_icenter2SL;
-	m_imaxmin2SL = get_spike_length() - 1;
+	m_i_center_1_sl = 0;
+	m_i_center_2_sl = spk_detect_parameters_.detect_pre_threshold;
+	m_i_max_min_1_sl = m_i_center_2_sl;
+	m_i_max_min_2_sl = get_spike_length() - 1;
 }
 
 void SpikeList::remove_artefacts()
 {
-	auto n_spikes = m_spikes.GetSize();
+	auto n_spikes = spikes_.GetSize();
 	auto n_spikes_ok = n_spikes;
 
 	for (auto i = n_spikes - 1; i >= 0; i--)
 	{
-		if (m_spikes.GetAt(i)->get_class_id() < 0)
+		if (spikes_.GetAt(i)->get_class_id() < 0)
 		{
-			const auto se = m_spikes.GetAt(i);
+			const auto se = spikes_.GetAt(i);
 			delete se;
-			m_spikes.RemoveAt(i);
+			spikes_.RemoveAt(i);
 			n_spikes_ok--;
 		}
 	}
-	n_spikes = m_spikes.GetSize();
+	n_spikes = spikes_.GetSize();
 	ASSERT(n_spikes_ok == n_spikes);
 	update_class_list();
 }
@@ -125,28 +125,28 @@ void SpikeList::serialize_spike_elements(CArchive& ar)
 	{
 		if (!m_b_save_artefacts)
 			remove_artefacts();
-		const auto n_spikes = m_spikes.GetSize();
+		const auto n_spikes = spikes_.GetSize();
 		ar << static_cast<WORD>(n_spikes);
 		for (auto i = 0; i < n_spikes; i++)
-			m_spikes.GetAt(i)->Serialize(ar);
+			spikes_.GetAt(i)->Serialize(ar);
 	}
 	else
 	{
 		WORD w1; ar >> w1; const int n_spikes = w1;
-		m_spikes.SetSize(n_spikes);
+		spikes_.SetSize(n_spikes);
 		for (auto i = 0; i < n_spikes; i++)
 		{
 			auto* se = new(Spike);
 			ASSERT(se != NULL);
 			se->Serialize(ar);
-			m_spikes.SetAt(i, se);
+			spikes_.SetAt(i, se);
 		}
 	}
 }
 
 void SpikeList::serialize_spike_data(CArchive& ar) 
 {
-	const auto n_spikes = m_spikes.GetSize();
+	const auto n_spikes = spikes_.GetSize();
 	if (ar.IsStoring())
 	{
 		const WORD spike_length = static_cast<WORD>(get_spike_length());
@@ -194,7 +194,7 @@ void SpikeList::serialize_spike_class_descriptors(CArchive& ar)
 	}
 	else
 	{
-		m_extrema_valid = FALSE;
+		extrema_valid_ = FALSE;
 		class_descriptors_.RemoveAll();
 		long dummy;
 		ar >> dummy; m_keep_only_valid_classes = dummy;
@@ -215,20 +215,20 @@ void SpikeList::serialize_additional_data(CArchive& ar)
 	{
 		constexpr int n_parameters = 4;
 		ar << n_parameters;
-		ar << m_icenter1SL;
-		ar << m_icenter2SL;
-		ar << m_imaxmin1SL;
-		ar << m_imaxmin2SL;
+		ar << m_i_center_1_sl;
+		ar << m_i_center_2_sl;
+		ar << m_i_max_min_1_sl;
+		ar << m_i_max_min_2_sl;
 	}
 	else
 	{
 		int n_parameters;
 		ar >> n_parameters;
 		if (n_parameters < 5) {
-			ar >> m_icenter1SL; n_parameters--;
-			ar >> m_icenter2SL; n_parameters--;
-			ar >> m_imaxmin1SL; n_parameters--;
-			ar >> m_imaxmin2SL; n_parameters--;
+			ar >> m_i_center_1_sl; n_parameters--;
+			ar >> m_i_center_2_sl; n_parameters--;
+			ar >> m_i_max_min_1_sl; n_parameters--;
+			ar >> m_i_max_min_2_sl; n_parameters--;
 			ASSERT(n_parameters < 1);
 		}
 	}
@@ -241,18 +241,18 @@ void SpikeList::read_file_version5(CArchive& ar)
 	WORD w1;
 	ar >> w1;
 	const int n_spikes = w1;
-	m_spikes.SetSize(n_spikes); 
+	spikes_.SetSize(n_spikes); 
 	for (auto i = 0; i < n_spikes; i++) 
 	{
 		auto* se = new(Spike);
 		ASSERT(se != NULL);
 		se->read_version0(ar);
-		m_spikes[i] = se;
+		spikes_[i] = se;
 	}
 
 	serialize_spike_data(ar);
 
-	m_extrema_valid = FALSE;
+	extrema_valid_ = FALSE;
 	m_keep_only_valid_classes = FALSE; 
 	m_n_classes = 1;
 	class_descriptors_.SetSize(1);
@@ -309,13 +309,13 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 	WORD w1;
 	ar >> w1;
 	const int n_spikes = w1;
-	m_spikes.SetSize(n_spikes); 
+	spikes_.SetSize(n_spikes); 
 	for (auto i = 0; i < n_spikes; i++)
 	{
 		const auto se = new(Spike);
 		ASSERT(se != NULL);
 		se->read_version0(ar); 
-		m_spikes[i] = se;
+		spikes_[i] = se;
 	}
 
 	// ----------------------------------------------------
@@ -332,7 +332,7 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 		ar.Read(lp_dest, n_bytes); 
 	}
 	
-	m_extrema_valid = FALSE;
+	extrema_valid_ = FALSE;
 
 	// ----------------------------------------------------
 	// (5) load class array if valid flag
@@ -366,58 +366,58 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 	{
 		int n_parameters;
 		ar >> n_parameters;
-		ar >> m_icenter1SL;
+		ar >> m_i_center_1_sl;
 		n_parameters--;
-		ar >> m_icenter2SL;
+		ar >> m_i_center_2_sl;
 		n_parameters--;
-		ar >> m_imaxmin1SL;
+		ar >> m_i_max_min_1_sl;
 		n_parameters--;
-		ar >> m_imaxmin2SL;
+		ar >> m_i_max_min_2_sl;
 		n_parameters--;
 	}
 	if (version < 3)
 	{
-		m_icenter1SL = 0;
-		m_icenter2SL = spk_detect_parameters_.detect_pre_threshold;
-		m_imaxmin1SL = m_icenter2SL;
-		m_imaxmin2SL = get_spike_length() - 1;
+		m_i_center_1_sl = 0;
+		m_i_center_2_sl = spk_detect_parameters_.detect_pre_threshold;
+		m_i_max_min_1_sl = m_i_center_2_sl;
+		m_i_max_min_2_sl = get_spike_length() - 1;
 	}
 }
 
 void SpikeList::delete_arrays()
 {
-	const int n_spikes = m_spikes.GetSize();
+	const int n_spikes = spikes_.GetSize();
 	if (n_spikes > 0)
 	{
 		for (auto i = n_spikes - 1; i >= 0; i--)
-			delete m_spikes.GetAt(i);
-		m_spikes.RemoveAll();
+			delete spikes_.GetAt(i);
+		spikes_.RemoveAll();
 	}
 	class_descriptors_.RemoveAll();
 }
 
 int SpikeList::remove_spike(int spike_index)
 {
-	if (spike_index <= m_spikes.GetUpperBound())
+	if (spike_index <= spikes_.GetUpperBound())
 	{
-		const auto element = m_spikes.GetAt(spike_index);
+		const auto element = spikes_.GetAt(spike_index);
 		delete element;
-		m_spikes.RemoveAt(spike_index);
+		spikes_.RemoveAt(spike_index);
 	}
-	return m_spikes.GetSize();
+	return spikes_.GetSize();
 }
 
 BOOL SpikeList::is_any_spike_around(const long ii_time, const int jitter, int& spike_index, const int channel_index)
 {
 	// search spike index of first spike which time is > to present one
 	spike_index = 0;
-	if (m_spikes.GetSize() > 0)
+	if (spikes_.GetSize() > 0)
 	{
 		// loop to find position of the new spike
-		for (auto j = m_spikes.GetUpperBound(); j >= 0; j--)
+		for (auto j = spikes_.GetUpperBound(); j >= 0; j--)
 		{
 			// assumed ordered list
-			if (ii_time >= m_spikes[j]->get_time())
+			if (ii_time >= spikes_[j]->get_time())
 			{
 				spike_index = j + 1; 
 				break; 
@@ -429,7 +429,7 @@ BOOL SpikeList::is_any_spike_around(const long ii_time, const int jitter, int& s
 	long delta_time; 
 	if (spike_index > 0) 
 	{
-		delta_time = m_spikes[spike_index - 1]->get_time() - ii_time;
+		delta_time = spikes_[spike_index - 1]->get_time() - ii_time;
 		if (labs(delta_time) <= jitter) 
 		{
 			spike_index--; 
@@ -437,10 +437,10 @@ BOOL SpikeList::is_any_spike_around(const long ii_time, const int jitter, int& s
 		}
 	}
 
-	if (spike_index <= m_spikes.GetUpperBound()) 
+	if (spike_index <= spikes_.GetUpperBound()) 
 	{
-		delta_time = m_spikes[spike_index]->get_time() - ii_time;
-		const auto i_channel_2 = m_spikes[spike_index]->get_source_channel();
+		delta_time = spikes_[spike_index]->get_time() - ii_time;
+		const auto i_channel_2 = spikes_[spike_index]->get_source_channel();
 		if (i_channel_2 == channel_index && labs(delta_time) <= jitter) 
 			return TRUE; 
 	}
@@ -512,22 +512,22 @@ int SpikeList::add_spike(short* source_data, const int n_channels, const long ii
 	int index_added_spike;
 	auto jitter = 0;
 	if (b_check)
-		jitter = m_jitterSL;
+		jitter = m_jitter_sl;
 	const auto b_found = is_any_spike_around(ii_time, jitter, index_added_spike, source_channel);
 
 	if (!b_found)
 	{
-		auto* se = new Spike(ii_time, source_channel, 0, i_class, m_spike_length);
+		auto* se = new Spike(ii_time, source_channel, 0, i_class, spike_length_);
 		ASSERT(se != NULL);
-		m_spikes.InsertAt(index_added_spike, se);
+		spikes_.InsertAt(index_added_spike, se);
 
 		if (source_data != nullptr)
 		{
-			se->transfer_data_to_spike_buffer(source_data, n_channels, m_spike_length);
+			se->transfer_data_to_spike_buffer(source_data, n_channels, spike_length_);
 			// compute max min between brackets for new spike
 			short max, min;
 			int i_max, i_min;
-			se->measure_max_min_ex(&max, &i_max, &min, &i_min, 0, m_spike_length-1);
+			se->measure_max_min_ex(&max, &i_max, &min, &i_min, 0, spike_length_-1);
 			se->set_max_min_ex(max, min, i_min - i_max);
 		}
 	}
@@ -537,7 +537,7 @@ int SpikeList::add_spike(short* source_data, const int n_channels, const long ii
 int SpikeList::get_index_first_spike(const int index_start, const boolean reject_artefacts)
 {
 	int index_found = -1;
-	const int n_spikes = m_spikes.GetCount();
+	const int n_spikes = spikes_.GetCount();
 	if (n_spikes == 0)
 		return index_found;
 	for (auto index = index_start; index < n_spikes; index++)
@@ -560,24 +560,24 @@ int SpikeList::get_index_first_spike(const int index_start, const boolean reject
 
 void SpikeList::get_total_max_min(const BOOL b_recalculate, short* max, short* min)
 {
-	if (b_recalculate || !m_extrema_valid)
+	if (b_recalculate || !extrema_valid_)
 		get_total_max_min_measure();
-	*max = m_maximum_over_all_spikes;
-	*min = m_minimum_over_all_spikes;
+	*max = maximum_over_all_spikes_;
+	*min = minimum_over_all_spikes_;
 }
 
 void SpikeList::get_total_max_min_read()
 {
 	const int index0 = get_index_first_spike(0, true);
-	m_minimum_over_all_spikes = static_cast<short>(bin_zero_);
-	m_maximum_over_all_spikes = m_minimum_over_all_spikes;
+	minimum_over_all_spikes_ = static_cast<short>(bin_zero_);
+	maximum_over_all_spikes_ = minimum_over_all_spikes_;
 	if (index0 < 0)
 		return;
 
 	short max1, min1;
-	const int n_spikes = m_spikes.GetCount();
-	m_minimum_over_all_spikes = get_spike(index0)->get_value_at_offset((m_imaxmin1SL + m_imaxmin2SL)/2);
-	m_maximum_over_all_spikes = m_minimum_over_all_spikes;
+	const int n_spikes = spikes_.GetCount();
+	minimum_over_all_spikes_ = get_spike(index0)->get_value_at_offset((m_i_max_min_1_sl + m_i_max_min_2_sl)/2);
+	maximum_over_all_spikes_ = minimum_over_all_spikes_;
 
 	for (auto index = index0; index < n_spikes; index++)
 	{
@@ -585,10 +585,10 @@ void SpikeList::get_total_max_min_read()
 		if (spike->get_class_id() >= 0)
 		{
 			spike->get_max_min(&max1, &min1);
-			if (max1 > m_maximum_over_all_spikes)
-				m_maximum_over_all_spikes = max1;
-			if (min1 < m_minimum_over_all_spikes)
-				m_minimum_over_all_spikes = min1;
+			if (max1 > maximum_over_all_spikes_)
+				maximum_over_all_spikes_ = max1;
+			if (min1 < minimum_over_all_spikes_)
+				minimum_over_all_spikes_ = min1;
 		}
 	}
 }
@@ -596,17 +596,17 @@ void SpikeList::get_total_max_min_read()
 void SpikeList::get_total_max_min_measure()
 {
 	const int index0 = get_index_first_spike(0, true);
-	m_minimum_over_all_spikes = static_cast<short>(bin_zero_);
-	m_maximum_over_all_spikes = m_minimum_over_all_spikes;
+	minimum_over_all_spikes_ = static_cast<short>(bin_zero_);
+	maximum_over_all_spikes_ = minimum_over_all_spikes_;
 	if (index0 < 0)
 		return;
 
-	const int n_spikes = m_spikes.GetCount();
+	const int n_spikes = spikes_.GetCount();
 	short max1, min1;
 	int max_index, min_index;
 	const int i_last = get_spike_length() - 1;
-	m_minimum_over_all_spikes = get_spike(index0)->get_value_at_offset((m_imaxmin1SL + m_imaxmin2SL) / 2);
-	m_maximum_over_all_spikes = m_minimum_over_all_spikes;
+	minimum_over_all_spikes_ = get_spike(index0)->get_value_at_offset((m_i_max_min_1_sl + m_i_max_min_2_sl) / 2);
+	maximum_over_all_spikes_ = minimum_over_all_spikes_;
 
 	for (auto index = index0; index < n_spikes; index++)
 	{
@@ -615,10 +615,10 @@ void SpikeList::get_total_max_min_measure()
 		{
 			constexpr int i_first = 1;
 			spike->measure_max_min_ex(&max1, &max_index, &min1, &min_index, i_first, i_last);
-			if (max1 > m_maximum_over_all_spikes)
-				m_maximum_over_all_spikes = max1;
-			if (min1 < m_minimum_over_all_spikes)
-				m_minimum_over_all_spikes = min1;
+			if (max1 > maximum_over_all_spikes_)
+				maximum_over_all_spikes_ = max1;
+			if (min1 < minimum_over_all_spikes_)
+				minimum_over_all_spikes_ = min1;
 		}
 	}
 }
@@ -645,9 +645,9 @@ BOOL SpikeList::init_spike_list(const AcqDataDoc* acq_data_doc, const SPKDETECTP
 
 	if (!flag)
 	{
-		m_extrema_valid = TRUE;
-		m_minimum_over_all_spikes = 2048;
-		m_maximum_over_all_spikes = 2100;
+		extrema_valid_ = TRUE;
+		minimum_over_all_spikes_ = 2048;
+		maximum_over_all_spikes_ = 2100;
 	}
 
 	// reset buffers, list, spk params
@@ -892,7 +892,7 @@ int SpikeList::add_class_id(const int id)
 void SpikeList::change_all_spike_from_class_id_to_new_class_id(const int old_class_ID, const int new_class_ID)
 {
 	// first find valid max and min
-	for (auto index = 0; index < m_spikes.GetSize(); index++)
+	for (auto index = 0; index < spikes_.GetSize(); index++)
 	{
 		if (get_spike(index)->get_class_id() == old_class_ID)
 			get_spike(index)->set_class_id(new_class_ID);

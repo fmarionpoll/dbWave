@@ -29,18 +29,18 @@ public:
 	SpikeList();
 	~SpikeList() override;
 
-	int m_selected_spike = -1;
-	int m_jitterSL = 2;
-	int m_icenter1SL = 0;
-	int m_icenter2SL = 60;
-	int m_imaxmin1SL = 0;
-	int m_imaxmin2SL = 59;
+	int m_selected_spike {-1};
+	int m_jitter_sl  {2};
+	int m_i_center_1_sl {0};
+	int m_i_center_2_sl {60};
+	int m_i_max_min_1_sl {0};
+	int m_i_max_min_2_sl {59};
 
 	// Description
 protected:
 	// (0) ---------------infos about file version and ID
-	WORD m_version = 6;		// aug 2013 change spike element
-	CString ID_string = _T("Awave Spike file v");
+	WORD m_version_ {6};		// aug 2013 change spike element
+	CString id_string_ {_T("Awave Spike file v")};
 
 	// (1) ---------------infos about data acquisition and spike detection ------------------
 	CWaveChan wave_channel_{};	
@@ -49,19 +49,19 @@ protected:
 	float sampling_rate_ {10000.f};
 	float volts_per_bin_  {0.001f}; 
 	SPKDETECTPARM spk_detect_parameters_ {};
-	CString channel_description_;
+	CString channel_description_ {};
 
 	// (2) -------------ordered spike list with class, time, etc-----------------------------
-	BOOL m_extrema_valid = false;
-	short m_minimum_over_all_spikes = 0; 
-	short m_maximum_over_all_spikes = 0;
-	int m_spike_length = 60;
-	CArray<Spike*, Spike*> m_spikes;
+	BOOL extrema_valid_  {false};
+	short minimum_over_all_spikes_ {0}; 
+	short maximum_over_all_spikes_ {0};
+	int spike_length_ {60};
+	CArray<Spike*, Spike*> spikes_;
 
 	// (3) --------classes of spikes
-	BOOL m_b_save_artefacts = false; 
-	BOOL m_keep_only_valid_classes = false;
-	int m_n_classes = 0;
+	BOOL m_b_save_artefacts {false}; 
+	BOOL m_keep_only_valid_classes {false};
+	int m_n_classes {0};
 	CArray<SpikeClassDescriptor, SpikeClassDescriptor> class_descriptors_{};
 
 	//  (5) list of spikes flagged
@@ -69,7 +69,7 @@ protected:
 
 	// Operations
 public:
-	WORD get_version() const { return m_version; }
+	WORD get_version() const { return m_version_; }
 	BOOL is_class_list_valid() const { return m_keep_only_valid_classes; }
 
 	int get_classes_count() const {return  class_descriptors_.GetCount();}
@@ -87,8 +87,8 @@ public:
 
 	void change_spike_class_id(int spike_no, int class_id);
 
-	Spike* get_spike(const int index) { return m_spikes.GetSize() > 0 ? m_spikes.GetAt(index) : nullptr; }
-	int get_spikes_count() const { return m_spikes.GetCount(); }
+	Spike* get_spike(const int index) { return spikes_.GetSize() > 0 ? spikes_.GetAt(index) : nullptr; }
+	int get_spikes_count() const { return spikes_.GetCount(); }
 
 	WORD get_acq_encoding() const { return data_encoding_mode_; }
 	float get_acq_sampling_rate() const { return sampling_rate_; }
@@ -100,8 +100,8 @@ public:
 
 	int add_spike(short* source, int n_channels, long ii_time, int source_channel, int i_class, BOOL b_check);
 
-	int  get_spike_length() const { return m_spike_length; }
-	void set_spike_length(int spike_length) { m_spike_length = spike_length; }
+	int  get_spike_length() const { return spike_length_; }
+	void set_spike_length(int spike_length) { spike_length_ = spike_length; }
 
 	int remove_spike(int spike_index);
 	BOOL is_any_spike_around(long ii_time, int jitter, int& spike_index, int channel_index);
