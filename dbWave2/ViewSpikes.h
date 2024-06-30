@@ -6,7 +6,7 @@
 #include "ChartData.h"
 #include "Editctrl.h"
 #include "OPTIONS_VIEWDATAMEASURE.h"
-#include "SPKCLASSIF.h"
+#include "SPK_CLASSIF.h"
 #include "SPKDETECTPARM.h"
 
 class ViewSpikes : public dbTableView
@@ -117,7 +117,7 @@ protected:
 	// page format printing parameters (pixel unit)
 	OPTIONS_VIEWDATA* options_view_data_ = nullptr; 
 	OPTIONS_VIEWDATAMEASURE* options_view_data_measure_ = nullptr; 
-	SPKCLASSIF* spk_classification_parameters_ = nullptr;
+	SPK_CLASSIF* spk_classification_parameters_ = nullptr;
 	SPKDETECTPARM* spk_detection_parameters_ = nullptr; 
 
 	void print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_info);

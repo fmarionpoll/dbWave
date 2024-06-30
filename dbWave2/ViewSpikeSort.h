@@ -6,7 +6,7 @@
 #include "dbTableView.h"
 #include "Editctrl.h"
 #include "ScrollBarEx.h"
-#include "SPKCLASSIF.h"
+#include "SPK_CLASSIF.h"
 
 
 class ViewSpikeSort : public dbTableView
@@ -68,7 +68,7 @@ protected:
 	ScrollBarEx m_file_scroll_; 
 	SCROLLINFO m_file_scroll_infos_{}; 
 
-	SPKCLASSIF* spike_classification_parameters_{};
+	SPK_CLASSIF* spike_classification_parameters_{};
 	OPTIONS_VIEWDATA* options_view_data_{};
 
 	int m_i_tag_low_{};
@@ -85,10 +85,10 @@ protected:
 	float m_delta_{};
 	int m_measure_y1_max_{}; // max of array m_measure_y1
 	int m_measure_y1_min_{}; // min of array m_measure_y1
-	BOOL b_valid_extrema_ = false; // tells if m_measure_y1_max_ & m_measure_y1_min_ are valid
-	long l_first_{}; // display first
-	long l_last_{}; // display last
-	BOOL b_measure_done_ = false; // flag m_measure_y1 valid
+	boolean b_valid_extrema_ = false; // tells if m_measure_y1_max_ & m_measure_y1_min_ are valid
+	long l_first_{}; 
+	long l_last_{}; 
+	boolean b_measure_done_ = false; 
 	int div_amplitude_by_ = 1; // value to adjust changes in amplitude / filter(s)
 
 	// Operations
@@ -101,15 +101,15 @@ public:
 
 	// Overrides
 public:
-	BOOL OnMove(UINT nIDMoveCommand) override;
+	BOOL OnMove(UINT n_id_move_command) override;
 protected:
 	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 	void DoDataExchange(CDataExchange* pDX) override;
-	void define_sub_classed_items();
-	void define_stretch_parameters();
 	void OnInitialUpdate() override;
 	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
 
+	void define_sub_classed_items();
+	void define_stretch_parameters();
 	void update_file_parameters();
 	void update_spike_file();
 	void update_legends();
@@ -125,35 +125,35 @@ protected:
 
 	// Generated message map functions
 public:
-	afx_msg void OnSelchangeParameter();
-	afx_msg void OnSort();
-	afx_msg LRESULT OnMyMessage(WPARAM code, LPARAM lParam);
-	afx_msg void OnMeasure();
-	afx_msg void OnFormatAlldata();
+	afx_msg void on_select_change_parameter();
+	afx_msg void on_sort();
+	afx_msg LRESULT on_my_message(WPARAM code, LPARAM lParam);
+	afx_msg void on_measure();
+	afx_msg void on_format_all_data();
 
-	afx_msg void OnFormatCentercurve();
-	afx_msg void OnFormatGainadjust();
-	afx_msg void OnFormatSplitcurves();
-	afx_msg void OnToolsEdittransformspikes();
-	afx_msg void OnSelectAllFiles();
-	afx_msg void OnToolsAlignspikes();
+	afx_msg void on_format_center_curve();
+	afx_msg void on_format_gain_adjust();
+	afx_msg void on_format_split_curves();
+	afx_msg void on_tools_edit_spikes();
+	afx_msg void on_select_all_files();
+	afx_msg void on_tools_align_spikes();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 
-	afx_msg void OnEnChangeLower();
-	afx_msg void OnEnChangeUpper();
-	afx_msg void OnEnChangeT1();
-	afx_msg void OnEnChangeT2();
-	afx_msg void OnEnChangeSourceSpikeClass();
-	afx_msg void OnEnChangeDestinationSpikeClass();
-	afx_msg void OnEnChangeTimeFirst();
-	afx_msg void OnEnChangeTimeLast();
-	afx_msg void OnEnChangemVMin();
-	afx_msg void OnEnChangemVMax();
-	afx_msg void OnEnChangeNOspike();
-	afx_msg void OnEnChangeSpikeClass();
-	afx_msg void OnEnChangeEditLeft2();
-	afx_msg void OnEnChangeEditRight2();
-	afx_msg void OnEnChangeNBins();
+	afx_msg void on_en_change_lower();
+	afx_msg void on_en_change_upper();
+	afx_msg void on_en_change_t1();
+	afx_msg void on_en_change_t2();
+	afx_msg void on_en_change_source_spike_class();
+	afx_msg void on_en_change_destination_spike_class();
+	afx_msg void on_en_change_time_first();
+	afx_msg void on_en_change_time_last();
+	afx_msg void on_en_change_mv_min();
+	afx_msg void on_en_change_mv_max();
+	afx_msg void on_en_change_no_spike();
+	afx_msg void on_en_change_spike_class();
+	afx_msg void on_en_change_edit_left2();
+	afx_msg void on_en_change_edit_right2();
+	afx_msg void on_en_change_n_bins();
 
 	DECLARE_MESSAGE_MAP()
 };

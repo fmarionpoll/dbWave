@@ -806,7 +806,7 @@
     <ClCompile Include="SCOPECHANNEL.cpp" />
     <ClCompile Include="SCOPESTRUCT.cpp" />
     <ClCompile Include="SpikeClassDescriptor.cpp" />
-    <ClCompile Include="SPKCLASSIF.cpp" />
+    <ClCompile Include="SPK_CLASSIF.cpp" />
     <ClCompile Include="SPKDETECTARRAY.cpp" />
     <ClCompile Include="SPKDETECTPARM.cpp" />
     <ClCompile Include="STIMDETECT.cpp" />
@@ -1393,7 +1393,7 @@
     <ClInclude Include="SCOPESTRUCT.h" />
     <ClInclude Include="SpikeClassDescriptor.h" />
     <ClInclude Include="dbSpike.h" />
-    <ClInclude Include="SPKCLASSIF.h" />
+    <ClInclude Include="SPK_CLASSIF.h" />
     <ClInclude Include="SPKDETECTARRAY.h" />
     <ClInclude Include="SPKDETECTPARM.h" />
     <ClInclude Include="STIMDETECT.h" />

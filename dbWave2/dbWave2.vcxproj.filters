@@ -486,7 +486,7 @@
     <ClCompile Include="SPKDETECTPARM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SPKCLASSIF.cpp">
+    <ClCompile Include="SPK_CLASSIF.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpikeDetectArray.cpp">
@@ -1091,7 +1091,7 @@
     <ClInclude Include="SPKDETECTARRAY.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SPKCLASSIF.h">
+    <ClInclude Include="SPK_CLASSIF.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpikeDetectArray.h">

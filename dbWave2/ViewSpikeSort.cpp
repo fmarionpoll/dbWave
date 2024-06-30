@@ -12,7 +12,7 @@
 #define new DEBUG_NEW
 #endif
 
-// TODO limit size of measure array to nbspikes within currently selected spikelist
+// TODO limit size of measure array to nb_spikes within currently selected spike_list
 
 IMPLEMENT_DYNCREATE(ViewSpikeSort, dbTableView)
 
@@ -62,38 +62,38 @@ void ViewSpikeSort::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(ViewSpikeSort, dbTableView)
 
-	ON_MESSAGE(WM_MYMESSAGE, &ViewSpikeSort::OnMyMessage)
+	ON_MESSAGE(WM_MYMESSAGE, &ViewSpikeSort::on_my_message)
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_WM_DESTROY()
 	ON_WM_HSCROLL()
-	ON_EN_CHANGE(IDC_SOURCECLASS, &ViewSpikeSort::OnEnChangeSourceSpikeClass)
-	ON_EN_CHANGE(IDC_DESTINATIONCLASS, &ViewSpikeSort::OnEnChangeDestinationSpikeClass)
-	ON_CBN_SELCHANGE(IDC_PARAMETER, &ViewSpikeSort::OnSelchangeParameter)
-	ON_EN_CHANGE(IDC_LIMITLOWER, &ViewSpikeSort::OnEnChangeLower)
-	ON_EN_CHANGE(IDC_LIMITUPPER, &ViewSpikeSort::OnEnChangeUpper)
-	ON_EN_CHANGE(IDC_T1, &ViewSpikeSort::OnEnChangeT1)
-	ON_EN_CHANGE(IDC_T2, &ViewSpikeSort::OnEnChangeT2)
-	ON_BN_CLICKED(IDC_EXECUTE, &ViewSpikeSort::OnSort)
-	ON_BN_CLICKED(IDC_MEASURE, &ViewSpikeSort::OnMeasure)
-	ON_BN_CLICKED(IDC_CHECK1, &ViewSpikeSort::OnSelectAllFiles)
-	ON_COMMAND(ID_FORMAT_ALLDATA, &ViewSpikeSort::OnFormatAlldata)
-	ON_COMMAND(ID_FORMAT_CENTERCURVE, &ViewSpikeSort::OnFormatCentercurve)
-	ON_COMMAND(ID_FORMAT_GAINADJUST, &ViewSpikeSort::OnFormatGainadjust)
-	ON_COMMAND(ID_FORMAT_SPLITCURVES, &ViewSpikeSort::OnFormatSplitcurves)
-	ON_COMMAND(ID_TOOLS_EDITSPIKES, &ViewSpikeSort::OnToolsEdittransformspikes)
-	ON_COMMAND(ID_TOOLS_ALIGNSPIKES, &ViewSpikeSort::OnToolsAlignspikes)
+	ON_EN_CHANGE(IDC_SOURCECLASS, &ViewSpikeSort::on_en_change_source_spike_class)
+	ON_EN_CHANGE(IDC_DESTINATIONCLASS, &ViewSpikeSort::on_en_change_destination_spike_class)
+	ON_CBN_SELCHANGE(IDC_PARAMETER, &ViewSpikeSort::on_select_change_parameter)
+	ON_EN_CHANGE(IDC_LIMITLOWER, &ViewSpikeSort::on_en_change_lower)
+	ON_EN_CHANGE(IDC_LIMITUPPER, &ViewSpikeSort::on_en_change_upper)
+	ON_EN_CHANGE(IDC_T1, &ViewSpikeSort::on_en_change_t1)
+	ON_EN_CHANGE(IDC_T2, &ViewSpikeSort::on_en_change_t2)
+	ON_BN_CLICKED(IDC_EXECUTE, &ViewSpikeSort::on_sort)
+	ON_BN_CLICKED(IDC_MEASURE, &ViewSpikeSort::on_measure)
+	ON_BN_CLICKED(IDC_CHECK1, &ViewSpikeSort::on_select_all_files)
+	ON_COMMAND(ID_FORMAT_ALLDATA, &ViewSpikeSort::on_format_all_data)
+	ON_COMMAND(ID_FORMAT_CENTERCURVE, &ViewSpikeSort::on_format_center_curve)
+	ON_COMMAND(ID_FORMAT_GAINADJUST, &ViewSpikeSort::on_format_gain_adjust)
+	ON_COMMAND(ID_FORMAT_SPLITCURVES, &ViewSpikeSort::on_format_split_curves)
+	ON_COMMAND(ID_TOOLS_EDITSPIKES, &ViewSpikeSort::on_tools_edit_spikes)
+	ON_COMMAND(ID_TOOLS_ALIGNSPIKES, &ViewSpikeSort::on_tools_align_spikes)
 
-	ON_EN_CHANGE(IDC_EDIT2, &ViewSpikeSort::OnEnChangeTimeFirst)
-	ON_EN_CHANGE(IDC_EDIT3, &ViewSpikeSort::OnEnChangeTimeLast)
-	ON_EN_CHANGE(IDC_EDIT7, &ViewSpikeSort::OnEnChangemVMin)
-	ON_EN_CHANGE(IDC_EDIT6, &ViewSpikeSort::OnEnChangemVMax)
-	ON_EN_CHANGE(IDC_EDITLEFT2, &ViewSpikeSort::OnEnChangeEditLeft2)
-	ON_EN_CHANGE(IDC_EDITRIGHT2, &ViewSpikeSort::OnEnChangeEditRight2)
-	ON_EN_CHANGE(IDC_NSPIKES, &ViewSpikeSort::OnEnChangeNOspike)
-	ON_BN_DOUBLECLICKED(IDC_DISPLAYPARM, &ViewSpikeSort::OnToolsEdittransformspikes)
-	ON_EN_CHANGE(IDC_SPIKECLASS, &ViewSpikeSort::OnEnChangeSpikeClass)
-	ON_EN_CHANGE(IDC_BINMV, &ViewSpikeSort::OnEnChangeNBins)
+	ON_EN_CHANGE(IDC_EDIT2, &ViewSpikeSort::on_en_change_time_first)
+	ON_EN_CHANGE(IDC_EDIT3, &ViewSpikeSort::on_en_change_time_last)
+	ON_EN_CHANGE(IDC_EDIT7, &ViewSpikeSort::on_en_change_mv_min)
+	ON_EN_CHANGE(IDC_EDIT6, &ViewSpikeSort::on_en_change_mv_max)
+	ON_EN_CHANGE(IDC_EDITLEFT2, &ViewSpikeSort::on_en_change_edit_left2)
+	ON_EN_CHANGE(IDC_EDITRIGHT2, &ViewSpikeSort::on_en_change_edit_right2)
+	ON_EN_CHANGE(IDC_NSPIKES, &ViewSpikeSort::on_en_change_no_spike)
+	ON_BN_DOUBLECLICKED(IDC_DISPLAYPARM, &ViewSpikeSort::on_tools_edit_spikes)
+	ON_EN_CHANGE(IDC_SPIKECLASS, &ViewSpikeSort::on_en_change_spike_class)
+	ON_EN_CHANGE(IDC_BINMV, &ViewSpikeSort::on_en_change_n_bins)
 END_MESSAGE_MAP()
 
 void ViewSpikeSort::define_sub_classed_items()
@@ -271,12 +271,12 @@ void ViewSpikeSort::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	{
 		switch (LOWORD(lHint))
 		{
-		case HINT_DOCHASCHANGED: // file has changed?
+		case HINT_DOCHASCHANGED: 
 		case HINT_DOCMOVERECORD:
 		case HINT_REQUERY:
 			update_file_parameters();
 			break;
-		case HINT_CLOSEFILEMODIFIED: // close modified file: save
+		case HINT_CLOSEFILEMODIFIED: 
 			saveCurrentSpkFile();
 			break;
 		case HINT_REPLACEVIEW:
@@ -286,10 +286,10 @@ void ViewSpikeSort::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-BOOL ViewSpikeSort::OnMove(UINT nIDMoveCommand)
+BOOL ViewSpikeSort::OnMove(const UINT n_id_move_command)
 {
 	saveCurrentSpkFile();
-	return dbTableView::OnMove(nIDMoveCommand);
+	return dbTableView::OnMove(n_id_move_command);
 }
 
 void ViewSpikeSort::update_spike_file()
@@ -400,11 +400,11 @@ void ViewSpikeSort::update_file_parameters()
 		}
 		// update text , display and compute histogram
 		b_measure_done_ = FALSE; 
-		OnMeasure();
+		on_measure();
 	}
 
-	
-	select_spike(db_spike(-1, -1, spike_index));
+	db_spike spike_sel(-1, -1, spike_index);
+	select_spike(spike_sel);
 }
 
 void ViewSpikeSort::update_legends()
@@ -431,7 +431,7 @@ void ViewSpikeSort::update_legends()
 	UpdateData(FALSE);
 }
 
-void ViewSpikeSort::OnSort()
+void ViewSpikeSort::on_sort()
 {
 	// set file indexes - assume only one file selected
 	const auto pdb_doc = GetDocument();
@@ -488,6 +488,7 @@ void ViewSpikeSort::OnSort()
 		const CSize limits1(spike_classification_parameters_->lower_threshold, spike_classification_parameters_->upper_threshold);
 		const CSize from_class_id_to_class_id(m_source_class, m_destination_class);
 		const CSize time_window(l_first_, l_last_);
+
 		// sort on 1 parameter
 		if (4 != spike_classification_parameters_->i_parameter)
 		{
@@ -528,7 +529,7 @@ void ViewSpikeSort::OnSort()
 	m_pSpkDoc->SetModifiedFlag(TRUE);
 }
 
-LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
+LRESULT ViewSpikeSort::on_my_message(WPARAM code, LPARAM lParam)
 {
 	short shortValue = LOWORD(lParam);
 	switch (code)
@@ -580,11 +581,10 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 				spike_index = chart_xt_measures_.get_hit_spike();
 			// if m_bAllFiles, spike_index is global, otherwise it comes from a single file...
 			select_spike(spike_index);
-			OnToolsEdittransformspikes();
+			on_tools_edit_spikes();
 		}
 		break;
 
-	//case HINT_MOVEVERTTAG: // -------------  vertical tag has moved lowp = tag index
 	case HINT_CHANGEVERTTAG: // -------------  vertical tag value has changed
 		if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
 		{
@@ -593,14 +593,14 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 				spike_classification_parameters_->i_left = chart_spike_shape_.vertical_tags.get_value(m_spk_form_tag_left_);
 				m_t1 = static_cast<float>(spike_classification_parameters_->i_left) * m_time_unit / m_pSpkList->get_acq_sampling_rate();
 				mm_t1_.m_bEntryDone = TRUE;
-				OnEnChangeT1();
+				on_en_change_t1();
 			}
 			else if (shortValue == m_spk_form_tag_right_) // second tag
 			{
 				spike_classification_parameters_->i_right = chart_spike_shape_.vertical_tags.get_value(m_spk_form_tag_right_);
 				m_t2 = static_cast<float>(spike_classification_parameters_->i_right) * m_time_unit / m_pSpkList->get_acq_sampling_rate();
 				mm_t2_.m_bEntryDone = TRUE;
-				OnEnChangeT2();
+				on_en_change_t2();
 			}
 		}
 		else if (HIWORD(lParam) == IDC_HISTOGRAM)
@@ -626,7 +626,7 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 				spike_classification_parameters_->i_xy_right = chart_xt_measures_.vertical_tags.get_value(m_i_xy_right_);
 				m_t_xy_right = static_cast<float>(spike_classification_parameters_->i_xy_right) / delta;
 				mm_t_xy_right_.m_bEntryDone = TRUE;
-				OnEnChangeEditRight2();
+				on_en_change_edit_right2();
 			}
 			else if (shortValue == m_i_xy_left_)
 			{
@@ -634,13 +634,12 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 				spike_classification_parameters_->i_xy_left = chart_xt_measures_.vertical_tags.get_value(m_i_xy_left_);
 				m_t_xy_left = static_cast<float>(spike_classification_parameters_->i_xy_left) / delta;
 				mm_t_xy_left_.m_bEntryDone = TRUE;
-				OnEnChangeEditLeft2();
+				on_en_change_edit_left2();
 			}
 		}
 		break;
 
 	case HINT_CHANGEHZTAG: // ------------- change horizontal tag value
-		//case HINT_MOVEHZTAG:	// ------------- move horizontal tag
 		if (HIWORD(lParam) == IDC_DISPLAYPARM)
 		{
 			if (shortValue == m_i_tag_low_) // first tag
@@ -648,14 +647,14 @@ LRESULT ViewSpikeSort::OnMyMessage(WPARAM code, LPARAM lParam)
 				spike_classification_parameters_->lower_threshold = chart_xt_measures_.horizontal_tags.get_value(m_i_tag_low_);
 				limit_lower_threshold = static_cast<float>(spike_classification_parameters_->lower_threshold) * m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
 				mm_limit_lower_.m_bEntryDone = TRUE;
-				OnEnChangeLower();
+				on_en_change_lower();
 			}
 			else if (shortValue == m_i_tag_up_) // second tag
 			{
 				spike_classification_parameters_->upper_threshold = chart_xt_measures_.horizontal_tags.get_value(m_i_tag_up_); 
 				limit_upper_threshold = static_cast<float>(spike_classification_parameters_->upper_threshold) * m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
 				mm_limit_upper_.m_bEntryDone = TRUE;
-				OnEnChangeUpper();
+				on_en_change_upper();
 			}
 		}
 		break;
@@ -707,16 +706,17 @@ void ViewSpikeSort::clear_flag_all_spikes()
 	chart_spike_bar_.Invalidate();
 }
 
-void ViewSpikeSort::OnMeasure()
+void ViewSpikeSort::on_measure()
 {
 	// set file indexes - assume only one file selected
 	const auto pdb_doc = GetDocument();
 	const int n_files = pdb_doc->db_get_n_records();
 	const auto current_spike_list = m_pSpkDoc->get_spike_list_current_index();
-	int index_current_file = pdb_doc->db_get_current_record_position(); // index current file
+	const int index_current_file = pdb_doc->db_get_current_record_position(); 
 
 	// change size of arrays and prepare temporary dialog
-	select_spike(db_spike(-1, -1, -1));
+	db_spike spike_sel(-1, -1, -1);
+	select_spike(spike_sel);
 	int index_first_file = index_current_file;
 	int index_last_file = index_current_file;
 	if (m_b_all_files)
@@ -815,7 +815,7 @@ void ViewSpikeSort::update_gain()
 	chart_spike_bar_.Invalidate();
 }
 
-void ViewSpikeSort::OnFormatAlldata()
+void ViewSpikeSort::on_format_all_data()
 {
 	// build new histogram only if necessary
 	auto calculate_histogram = FALSE;
@@ -867,7 +867,7 @@ void ViewSpikeSort::build_histogram()
 	chart_histogram_.build_hist_from_document(pdb_doc, m_b_all_files, l_first_, l_last_, m_measure_y1_max_, m_measure_y1_min_, n_bins, TRUE);
 }
 
-void ViewSpikeSort::OnFormatCentercurve()
+void ViewSpikeSort::on_format_center_curve()
 {
 	const auto n_spikes = m_pSpkList->get_spikes_count();
 	for (auto i_spike = 0; i_spike < n_spikes; i_spike++)
@@ -886,12 +886,12 @@ void ViewSpikeSort::OnFormatCentercurve()
 	update_legends();
 }
 
-void ViewSpikeSort::OnFormatSplitcurves()
+void ViewSpikeSort::on_format_split_curves()
 {
-	OnFormatGainadjust();
+	on_format_gain_adjust();
 }
 
-void ViewSpikeSort::OnFormatGainadjust()
+void ViewSpikeSort::on_format_gain_adjust()
 {
 	// adjust gain
 	short maxvalue, minvalue;
@@ -960,7 +960,7 @@ void ViewSpikeSort::select_spike(db_spike& spike_sel)
 	UpdateData(FALSE);
 }
 
-void ViewSpikeSort::OnToolsEdittransformspikes()
+void ViewSpikeSort::on_tools_edit_spikes()
 {
 	DlgSpikeEdit dlg;
 	dlg.m_yextent = chart_spike_shape_.get_yw_extent();
@@ -1002,7 +1002,7 @@ void ViewSpikeSort::OnToolsEdittransformspikes()
 	update_legends();
 }
 
-void ViewSpikeSort::OnSelectAllFiles()
+void ViewSpikeSort::on_select_all_files()
 {
 	m_b_all_files = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
 	chart_spike_bar_.display_all_files(m_b_all_files, GetDocument());
@@ -1010,10 +1010,10 @@ void ViewSpikeSort::OnSelectAllFiles()
 	chart_xt_measures_.display_all_files(m_b_all_files, GetDocument());
 
 	b_measure_done_ = FALSE;
-	OnMeasure();
+	on_measure();
 }
 
-void ViewSpikeSort::OnToolsAlignspikes()
+void ViewSpikeSort::on_tools_align_spikes()
 {
 	// get source data
 	auto b_doc_exist = FALSE;
@@ -1201,7 +1201,7 @@ void ViewSpikeSort::OnToolsAlignspikes()
 	delete[] p_cxy0;
 	delete[] p_dummy0;
 
-	OnMeasure();
+	on_measure();
 }
 
 void ViewSpikeSort::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
@@ -1279,7 +1279,7 @@ void ViewSpikeSort::select_spike_list(int current_index)
 {
 	m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_index);
 	ASSERT(m_pSpkList != NULL);
-	OnMeasure();
+	on_measure();
 
 	// update source data: change data channel and update display
 	chart_histogram_.set_spike_list(m_pSpkList);
@@ -1293,7 +1293,7 @@ void ViewSpikeSort::select_spike_list(int current_index)
 	chart_spike_bar_.Invalidate();
 }
 
-void ViewSpikeSort::OnEnChangeEditLeft2()
+void ViewSpikeSort::on_en_change_edit_left2()
 {
 	if (mm_t_xy_left_.m_bEntryDone)
 	{
@@ -1315,7 +1315,7 @@ void ViewSpikeSort::OnEnChangeEditLeft2()
 	}
 }
 
-void ViewSpikeSort::OnEnChangeEditRight2()
+void ViewSpikeSort::on_en_change_edit_right2()
 {
 	if (mm_t_xy_right_.m_bEntryDone)
 	{
@@ -1338,7 +1338,7 @@ void ViewSpikeSort::OnEnChangeEditRight2()
 	}
 }
 
-void ViewSpikeSort::OnEnChangeSourceSpikeClass()
+void ViewSpikeSort::on_en_change_source_spike_class()
 {
 	if (mm_source_class_.m_bEntryDone)
 	{
@@ -1363,7 +1363,7 @@ void ViewSpikeSort::OnEnChangeSourceSpikeClass()
 	}
 }
 
-void ViewSpikeSort::OnEnChangeDestinationSpikeClass()
+void ViewSpikeSort::on_en_change_destination_spike_class()
 {
 	if (mm_destination_class_.m_bEntryDone)
 	{
@@ -1374,15 +1374,15 @@ void ViewSpikeSort::OnEnChangeDestinationSpikeClass()
 	}
 }
 
-void ViewSpikeSort::OnSelchangeParameter()
+void ViewSpikeSort::on_select_change_parameter()
 {
 	const auto i_parameter = m_combo_parameter.GetCurSel();
 	if (i_parameter != spike_classification_parameters_->i_parameter)
 	{
 		spike_classification_parameters_->i_parameter = i_parameter;
 		activate_mode4();
-		OnMeasure();
-		OnFormatCentercurve();
+		on_measure();
+		on_format_center_curve();
 	}
 
 	//    STATIC3 lower STATIC4 upper STATIC5 T1 STATIC6 T2
@@ -1405,7 +1405,7 @@ void ViewSpikeSort::check_valid_threshold_limits()
 		limit_upper_threshold = limit_lower_threshold + m_delta_ * 10.f;
 }
 
-void ViewSpikeSort::OnEnChangeLower()
+void ViewSpikeSort::on_en_change_lower()
 {
 	if (mm_limit_lower_.m_bEntryDone)
 	{
@@ -1422,7 +1422,7 @@ void ViewSpikeSort::OnEnChangeLower()
 	}
 }
 
-void ViewSpikeSort::OnEnChangeUpper()
+void ViewSpikeSort::on_en_change_upper()
 {
 	if (mm_limit_upper_.m_bEntryDone)
 	{
@@ -1440,7 +1440,7 @@ void ViewSpikeSort::OnEnChangeUpper()
 	}
 }
 
-void ViewSpikeSort::OnEnChangeT1()
+void ViewSpikeSort::on_en_change_t1()
 {
 	if (mm_t1_.m_bEntryDone)
 	{
@@ -1464,7 +1464,7 @@ void ViewSpikeSort::OnEnChangeT1()
 	}
 }
 
-void ViewSpikeSort::OnEnChangeT2()
+void ViewSpikeSort::on_en_change_t2()
 {
 	if (mm_t2_.m_bEntryDone)
 	{
@@ -1489,7 +1489,7 @@ void ViewSpikeSort::OnEnChangeT2()
 	}
 }
 
-void ViewSpikeSort::OnEnChangeTimeFirst()
+void ViewSpikeSort::on_en_change_time_first()
 {
 	if (mm_time_first_.m_bEntryDone)
 	{
@@ -1506,7 +1506,7 @@ void ViewSpikeSort::OnEnChangeTimeFirst()
 	}
 }
 
-void ViewSpikeSort::OnEnChangeTimeLast()
+void ViewSpikeSort::on_en_change_time_last()
 {
 	if (mm_time_last_.m_bEntryDone)
 	{
@@ -1521,7 +1521,7 @@ void ViewSpikeSort::OnEnChangeTimeLast()
 	}
 }
 
-void ViewSpikeSort::OnEnChangemVMin()
+void ViewSpikeSort::on_en_change_mv_min()
 {
 	if (mm_mv_min_.m_bEntryDone)
 	{
@@ -1537,7 +1537,7 @@ void ViewSpikeSort::OnEnChangemVMin()
 	}
 }
 
-void ViewSpikeSort::OnEnChangemVMax()
+void ViewSpikeSort::on_en_change_mv_max()
 {
 	if (mm_mv_max_.m_bEntryDone)
 	{
@@ -1550,7 +1550,7 @@ void ViewSpikeSort::OnEnChangemVMax()
 	}
 }
 
-void ViewSpikeSort::OnEnChangeNOspike()
+void ViewSpikeSort::on_en_change_no_spike()
 {
 	if (mm_spike_index_.m_bEntryDone)
 	{
@@ -1587,7 +1587,7 @@ void ViewSpikeSort::OnEnChangeNOspike()
 	}
 }
 
-void ViewSpikeSort::OnEnChangeSpikeClass()
+void ViewSpikeSort::on_en_change_spike_class()
 {
 	if (mm_spike_index_class_.m_bEntryDone)
 	{
@@ -1605,7 +1605,7 @@ void ViewSpikeSort::OnEnChangeSpikeClass()
 	}
 }
 
-void ViewSpikeSort::OnEnChangeNBins()
+void ViewSpikeSort::on_en_change_n_bins()
 {
 	if (mm_mv_bin_.m_bEntryDone)
 	{

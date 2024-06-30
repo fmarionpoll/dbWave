@@ -3,7 +3,7 @@
 #include "dbTableView.h"
 #include "Editctrl.h"
 #include "OPTIONS_VIEWDATAMEASURE.h"
-#include "SPKCLASSIF.h"
+#include "SPK_CLASSIF.h"
 #include "TemplateListWnd.h"
 
 
@@ -51,7 +51,7 @@ protected:
 
 	OPTIONS_VIEWDATA* options_view_data_ = nullptr; 
 	OPTIONS_VIEWDATAMEASURE* options_view_data_measure_ = nullptr; 
-	SPKCLASSIF* spike_classification_parameters_ = nullptr; 
+	SPK_CLASSIF* spike_classification_parameters_ = nullptr; 
 	SCROLLINFO scroll_file_pos_infos_{};
 	long l_first_ = 0;
 	long l_last_ = 0;

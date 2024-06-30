@@ -1,49 +1,22 @@
 ﻿#include "stdafx.h"
-#include "SPKCLASSIF.h"
+#include "SPK_CLASSIF.h"
 
 #include "TemplateListWnd.h"
 
 
-IMPLEMENT_SERIAL(SPKCLASSIF, CObject, 0 /* schema number*/)
+IMPLEMENT_SERIAL(SPK_CLASSIF, CObject, 0 /* schema number*/)
 
-SPKCLASSIF::SPKCLASSIF() : b_changed(0), n_int_parameters(0), n_float_parameters(0)
+SPK_CLASSIF::SPK_CLASSIF() : b_changed(0), n_int_parameters(0), n_float_parameters(0)
 {
-	w_version = 2;
-	data_transform = 0; // data transform method (0=raw data)
-	i_parameter = 0; // type of parameter measured
-	i_left = 10; // position of first cursor
-	i_right = 40; // position of second cursor
-	lower_threshold = 0; // second threshold
-	upper_threshold = 10; // first threshold
-	i_xy_left = 10;
-	i_xy_right = 40;
-	source_class = 0; // source class
-	dest_class = 0; // destination class
-	hit_rate = 50;
-	hit_rate_sort = 75;
-	k_tolerance = 1.96f;
-	k_left = 10;
-	k_right = 40;
-	row_height = 100; // height of the spike row within spikeview
-	col_text = -1;
-	col_spikes = 100; // width of the spikes within one row
-	col_separator = 5;
-	p_template = nullptr;
-	mv_min = 0.f;
-	mv_max = 2.f;
-	v_dest_class = 1;
-	v_source_class = 0;
-	f_jitter_ms = 1.f;
-	b_reset_zoom = TRUE;
 }
 
-SPKCLASSIF::~SPKCLASSIF()
+SPK_CLASSIF::~SPK_CLASSIF()
 {
 	if (p_template)
 		delete static_cast<CTemplateListWnd*>(p_template);
 }
 
-SPKCLASSIF& SPKCLASSIF::operator =(const SPKCLASSIF& arg)
+SPK_CLASSIF& SPK_CLASSIF::operator =(const SPK_CLASSIF& arg)
 {
 	if (this != &arg)
 	{
@@ -84,7 +57,7 @@ SPKCLASSIF& SPKCLASSIF::operator =(const SPKCLASSIF& arg)
 	return *this;
 }
 
-void SPKCLASSIF::Serialize(CArchive& ar)
+void SPK_CLASSIF::Serialize(CArchive& ar)
 {
 	BOOL b_tpl_is_present = FALSE;
 	if (ar.IsStoring())
@@ -298,7 +271,7 @@ void SPKCLASSIF::Serialize(CArchive& ar)
 }
 
 
-void SPKCLASSIF::CreateTPL()
+void SPK_CLASSIF::create_tpl()
 {
 	p_template = new (CTemplateListWnd);
 }

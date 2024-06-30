@@ -74,7 +74,7 @@ void ViewSpikeTemplates::OnDestroy()
 	if (m_template_list_.GetNtemplates() != 0)
 	{
 		if (spike_classification_parameters_->p_template == nullptr)
-			spike_classification_parameters_->CreateTPL();
+			spike_classification_parameters_->create_tpl();
 		*static_cast<CTemplateListWnd*>(spike_classification_parameters_->p_template) = m_template_list_;
 	}
 	dbTableView::OnDestroy();

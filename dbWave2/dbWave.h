@@ -13,7 +13,7 @@
 #include "OPTIONS_OUTPUTDATA.h"
 #include "OPTIONS_VIEWDATA.h"
 #include "OPTIONS_VIEWSPIKES.h"
-#include "SPKCLASSIF.h"
+#include "SPK_CLASSIF.h"
 #include "SPKDETECTARRAY.h"
 #include "STIMDETECT.h"
 
@@ -51,7 +51,7 @@ public:
 	CString m_comment;
 	STIMDETECT stimulus_detect;
 	SPKDETECTARRAY spk_detect_array;
-	SPKCLASSIF spk_classification;
+	SPK_CLASSIF spk_classification;
 
 	OPTIONS_VIEWDATA options_view_data;
 	OPTIONS_VIEWSPIKES options_view_spikes;
