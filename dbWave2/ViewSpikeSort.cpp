@@ -1004,12 +1004,12 @@ void ViewSpikeSort::on_tools_edit_spikes()
 void ViewSpikeSort::on_select_all_files()
 {
 	m_b_all_files = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
+	b_measure_done_ = FALSE;
+	on_measure();
+
 	chart_spike_bar_.display_all_files(m_b_all_files, GetDocument());
 	chart_spike_shape_.display_all_files(m_b_all_files, GetDocument());
 	chart_xt_measures_.display_all_files(m_b_all_files, GetDocument());
-
-	b_measure_done_ = FALSE;
-	on_measure();
 }
 
 void ViewSpikeSort::on_tools_align_spikes()

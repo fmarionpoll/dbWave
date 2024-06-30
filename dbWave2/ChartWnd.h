@@ -49,7 +49,7 @@ public:
 	virtual void plot_data_to_dc(CDC* p_dc);
 
 	void erase_background(CDC* p_dc);
-	void PlotToBitmap(CDC* p_dc);
+	void plot_to_bitmap(CDC* p_dc);
 	static COLORREF get_color(const int color_index) { return color_table_[color_index]; }
 	static void set_color_table_at(const int color_index, const COLORREF color_ref) { color_table_[color_index] = color_ref; }
 	static int find_color_index(COLORREF color_ref);
@@ -110,40 +110,40 @@ public:
 		b_bottom_comment = flag;
 	}
 
-	Ruler x_ruler{};
-	Ruler y_ruler{};
-	CFont h_font{};
-	BOOL b_nice_grid = false;
-	int abscissa_height = 10;
-	int ordinates_width = 25;
-	RulerBar* x_ruler_bar = nullptr;
-	RulerBar* y_ruler_bar = nullptr;
+	Ruler x_ruler {};
+	Ruler y_ruler {};
+	CFont h_font {};
+	BOOL b_nice_grid  {false};
+	int abscissa_height  {10};
+	int ordinates_width  {25};
+	RulerBar* x_ruler_bar  {nullptr};
+	RulerBar* y_ruler_bar  {nullptr};
 
-	TagList horizontal_tags{}; 
-	TagList vertical_tags{}; 
-	CString cs_bottom_comment{};
-	BOOL b_bottom_comment = false;
+	TagList horizontal_tags {}; 
+	TagList vertical_tags {}; 
+	CString cs_bottom_comment {};
+	BOOL b_bottom_comment {false};
 
 	// Implementation
 protected:
 	static int cursors_count_; 
 	static HCURSOR cursors_[NB_CURSORS]; 
 	static int cursors_drag_mode_[NB_CURSORS]; // cursor mode: 0=invert rect; 1=catch object
-	int cursor_index_max_ = NB_CURSORS;
-	int cursor_type_ = 0; 
-	int old_cursor_type_ = 0;
-	HCURSOR handle_current_cursor_{}; 
-	int current_cursor_mode_ = 0; // current cursor drag mode
+	int cursor_index_max_  {NB_CURSORS};
+	int cursor_type_  {0}; 
+	int old_cursor_type_  {0};
+	HCURSOR handle_current_cursor_ {}; 
+	int current_cursor_mode_ {0}; // current cursor drag mode
 	static COLORREF color_table_[NB_COLORS]; // array with color ref
 
 	CPen pen_table_[NB_COLORS]; // table with CPen objects (same colors as color table
 	BOOL b_left_mouse_button_down_ = false;
-	BOOL b_use_dib_ = false;
-	CDC plot_dc_{};
-	CWordArray array_mark_{};
-	CPen black_dotted_pen_{};
+	BOOL b_use_dib_  {false};
+	CDC plot_dc_ {};
+	CWordArray array_mark_ {};
+	CPen black_dotted_pen_ {};
 	CString cs_empty_;
-	SCOPESTRUCT scope_structure_{};
+	SCOPESTRUCT scope_structure_ {};
 
 	int plot_mode_ = 0;
 	int index_color_background_ = SILVER_COLOR;

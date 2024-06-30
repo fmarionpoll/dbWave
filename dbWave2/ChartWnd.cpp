@@ -70,7 +70,7 @@ ChartWnd::ChartWnd()
 	}
 	cursors_count_++;
 
-	set_mouse_cursor_type(0);
+	ChartWnd::set_mouse_cursor_type(0);
 
 	m_client_rect_ = CRect(0, 0, 10, 10); // minimal size of the button
 	adjust_display_rect(&m_client_rect_);
@@ -96,7 +96,7 @@ ChartWnd::~ChartWnd()
 	cursors_count_--;
 	if (cursors_count_ == 0)
 	{
-		for (auto i = 1; i < NB_CURSORS; i++) // elmt 0: global object cursor
+		for (auto i = 1; i < NB_CURSORS; i++) // element 0: global object cursor
 		{
 			if (nullptr != cursors_[i])
 				DestroyCursor(cursors_[i]);
@@ -111,7 +111,7 @@ ChartWnd::~ChartWnd()
 		i.DeleteObject();
 }
 
-// trap call to presubclass in order to get source window size..
+// trap call to pre-subclass in order to get source window size..
 // assume that palette is present within the application inside CMainFrame...
 void ChartWnd::PreSubclassWindow()
 {
@@ -176,7 +176,7 @@ BOOL ChartWnd::OnEraseBkgnd(CDC* p_dc)
 	return TRUE; // say we handled it
 }
 
-void ChartWnd::PlotToBitmap(CDC* p_dc)
+void ChartWnd::plot_to_bitmap(CDC* p_dc)
 {
 	CBitmap bitmap_plot;
 	bitmap_plot.CreateBitmap(m_client_rect_.right, m_client_rect_.bottom, p_dc->GetDeviceCaps(PLANES),
@@ -196,7 +196,7 @@ void ChartWnd::OnPaint()
 	if (!b_use_dib_)
 		plot_data_to_dc(&dc);
 	else
-		PlotToBitmap(&dc);
+		plot_to_bitmap(&dc);
 }
 
 void ChartWnd::plot_data_to_dc(CDC* p_dc)

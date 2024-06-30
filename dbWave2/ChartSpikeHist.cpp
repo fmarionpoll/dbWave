@@ -70,6 +70,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	}
 	const int n_saved_dc = p_dc->SaveDC();
 	prepare_dc(p_dc);
+
 	int color;
 	// save background color which is changed by later calls to FillSolidRect
 	// when doing so, pens created with PS_DOT pattern and with XOR_PEN do
