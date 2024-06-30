@@ -442,11 +442,26 @@ void ChartSpikeXY::zoom_data(CRect* rect_from, CRect* rect_dest)
 
 void ChartSpikeXY::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	if (spike_selected_.spike_index < 0 || spike_hit_.spike_index < 0)
+	/*if (spike_selected_.spike_index < 0 || spike_hit_.spike_index < 0)
 		ChartSpike::OnLButtonDblClk(nFlags, point);
 	else
 		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), BN_DOUBLECLICKED),
-		                         reinterpret_cast<LPARAM>(m_hWnd));
+		                         reinterpret_cast<LPARAM>(m_hWnd));*/
+	if ((spike_selected_.spike_index < 0 && p_spike_list_->get_spike_flag_array_count() < 1) || spike_hit_.spike_index < 0)
+		ChartSpike::OnLButtonDblClk(nFlags, point);
+	else
+	{
+		if (spike_selected_.spike_index >= 0)
+		{
+			post_my_message(HINT_DBLCLKSEL, spike_selected_.spike_index);
+		}
+		else
+		{
+			const auto selected_spike = hit_curve(point);
+			if (selected_spike > 0)
+				post_my_message(HINT_DBLCLKSEL, selected_spike);
+		}
+	}
 }
 
 int ChartSpikeXY::hit_curve(const CPoint point)

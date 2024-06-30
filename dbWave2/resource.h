@@ -589,6 +589,7 @@
 #define IDC_EDIT5                       1145
 #define IDC_EDIT6                       1146
 #define IDC_EDIT7                       1147
+#define IDC_EDIT_MIN_MV                 1147
 #define IDC_EDIT12                      1152
 #define IDC_EDIT_NAME                   1160
 #define IDC_EDIT_NUMNAME                1161
@@ -828,6 +829,7 @@
 #define IDC_DISPLAYNOTHING              1520
 #define IDC_SPIKE_CLASS                 1521
 #define IDC_ZOOM_ON_OFF                 1524
+#define IDC_EDIT_MAX_MV                 1525
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768
@@ -954,7 +956,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        580
 #define _APS_NEXT_COMMAND_VALUE         33021
-#define _APS_NEXT_CONTROL_VALUE         1525
+#define _APS_NEXT_CONTROL_VALUE         1526
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
 #endif

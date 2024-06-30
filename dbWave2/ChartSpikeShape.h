@@ -59,9 +59,9 @@ protected:
 	void draw_flagged_spikes(CDC* p_dc);
 	void plot_array_to_dc(CDC* p_dc, short* p_array);
 
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point) override;
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point) override;
+	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point) override;
 
 	DECLARE_MESSAGE_MAP()
 };

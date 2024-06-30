@@ -43,13 +43,13 @@ protected:
 	CString ID_string = _T("Awave Spike file v");
 
 	// (1) ---------------infos about data acquisition and spike detection ------------------
-	CWaveChan m_acquisition_channel{};	
-	WORD m_data_encoding_mode = 0;
-	long m_bin_zero = 4096; 
-	float m_sampling_rate = 10000.f;
-	float m_volts_per_bin = 0.001f; 
-	SPKDETECTPARM m_detection_parameters{};
-	CString m_spike_channel_description;
+	CWaveChan wave_channel_{};	
+	WORD data_encoding_mode_  {0};
+	long bin_zero_  {4096}; 
+	float sampling_rate_ {10000.f};
+	float volts_per_bin_  {0.001f}; 
+	SPKDETECTPARM spk_detect_parameters_ {};
+	CString channel_description_;
 
 	// (2) -------------ordered spike list with class, time, etc-----------------------------
 	BOOL m_extrema_valid = false;
@@ -62,23 +62,23 @@ protected:
 	BOOL m_b_save_artefacts = false; 
 	BOOL m_keep_only_valid_classes = false;
 	int m_n_classes = 0;
-	CArray<SpikeClassDescriptor, SpikeClassDescriptor> m_spike_class_descriptors{};
+	CArray<SpikeClassDescriptor, SpikeClassDescriptor> class_descriptors_{};
 
 	//  (5) list of spikes flagged
-	CArray<int, int> m_index_flagged_spikes {};
+	CArray<int, int> flagged_spikes_ {};
 
 	// Operations
 public:
 	WORD get_version() const { return m_version; }
 	BOOL is_class_list_valid() const { return m_keep_only_valid_classes; }
 
-	int get_classes_count() const {return  m_spike_class_descriptors.GetCount();}
-	int get_class_id(const int i) const { return m_spike_class_descriptors.GetAt(i).get_class_id();}
-	void set_class_id(const int i, const int id) { m_spike_class_descriptors.GetAt(i).set_class_id(id); }
+	int get_classes_count() const {return  class_descriptors_.GetCount();}
+	int get_class_id(const int i) const { return class_descriptors_.GetAt(i).get_class_id();}
+	void set_class_id(const int i, const int id) { class_descriptors_.GetAt(i).set_class_id(id); }
 	int add_class_id(const int id);
 
-	int get_class_n_items(const int i) const { return m_spike_class_descriptors.GetAt(i).get_n_items(); }
-	void set_class_n_items(const int i, int n_spikes) { m_spike_class_descriptors.GetAt(i).set_n_items(n_spikes); }
+	int get_class_n_items(const int i) const { return class_descriptors_.GetAt(i).get_n_items(); }
+	void set_class_n_items(const int i, int n_spikes) { class_descriptors_.GetAt(i).set_n_items(n_spikes); }
 
 	int get_class_id_descriptor_index(int class_id);
 	int get_class_id_n_items(int class_id);
@@ -90,13 +90,13 @@ public:
 	Spike* get_spike(const int index) { return m_spikes.GetSize() > 0 ? m_spikes.GetAt(index) : nullptr; }
 	int get_spikes_count() const { return m_spikes.GetCount(); }
 
-	WORD get_acq_encoding() const { return m_data_encoding_mode; }
-	float get_acq_sampling_rate() const { return m_sampling_rate; }
-	float get_acq_volts_per_bin() const { return m_volts_per_bin; }
-	int get_acq_bin_zero() const { return m_bin_zero; }
+	WORD get_acq_encoding() const { return data_encoding_mode_; }
+	float get_acq_sampling_rate() const { return sampling_rate_; }
+	float get_acq_volts_per_bin() const { return volts_per_bin_; }
+	int get_acq_bin_zero() const { return bin_zero_; }
 
-	void set_detection_parameters(const SPKDETECTPARM* p_sd) { m_detection_parameters = *p_sd; }
-	SPKDETECTPARM* get_detection_parameters() { return &m_detection_parameters; }
+	void set_detection_parameters(const SPKDETECTPARM* p_sd) { spk_detect_parameters_ = *p_sd; }
+	SPKDETECTPARM* get_detection_parameters() { return &spk_detect_parameters_; }
 
 	int add_spike(short* source, int n_channels, long ii_time, int source_channel, int i_class, BOOL b_check);
 
@@ -133,8 +133,8 @@ public:
 	void flag_range_of_spikes(long l_first, long l_last, BOOL b_set);
 	void select_spikes_within_bounds(int v_min, int v_max, long l_first, long l_last, BOOL b_add);
 	void get_range_of_spike_flagged(long& l_first, long& l_last);
-	BOOL get_spike_flag_array_at(int i) const { return m_index_flagged_spikes.GetAt(i); }
-	int get_spike_flag_array_count() const { return m_index_flagged_spikes.GetCount(); }
+	BOOL get_spike_flag_array_at(int i) const { return flagged_spikes_.GetAt(i); }
+	int get_spike_flag_array_count() const { return flagged_spikes_.GetCount(); }
 	void change_class_of_flagged_spikes(int new_class_id);
 
 protected:

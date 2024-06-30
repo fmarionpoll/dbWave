@@ -67,10 +67,10 @@ public:
 	void plot_data_to_dc(CDC* p_dc) override;
 
 protected:
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDblClk(UINT n_flags, CPoint point);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point) override;
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point) override;
+	afx_msg void OnLButtonDblClk(UINT n_flags, CPoint point) override;
+	afx_msg void OnSize(UINT nType, int cx, int cy) override;
 
 	DECLARE_MESSAGE_MAP()
 };

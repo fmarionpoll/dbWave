@@ -46,9 +46,9 @@ protected:
 	void display_hz_tags(CDC* p_dc);
 	void display_vt_tags(CDC* p_dc);
 
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point) override;
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point) override;
+	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point) override;
 
 	DECLARE_MESSAGE_MAP()
 };

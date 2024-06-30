@@ -755,8 +755,8 @@ void ViewSpikes::OnToolsEdittransformspikes()
 	dlg.m_xextent = spike_class_listbox_.get_xw_extent(); 
 	dlg.m_xzero = spike_class_listbox_.get_xw_org();
 	dlg.m_spike_index = m_spike_index; 
-	dlg.m_parent = this;
 	dlg.m_pdbWaveDoc = GetDocument();
+	dlg.m_parent = this;
 
 	// open dialog box and wait for response
 	dlg.DoModal();

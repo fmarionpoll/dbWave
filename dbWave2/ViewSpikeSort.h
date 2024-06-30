@@ -15,9 +15,14 @@ class ViewSpikeSort : public dbTableView
 protected:
 	ViewSpikeSort();
 	~ViewSpikeSort() override;
+	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+	void DoDataExchange(CDataExchange* pDX) override;
+	void OnInitialUpdate() override;
+	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
+public:
+	BOOL OnMove(UINT n_id_move_command) override;
 
 	// Form Data
-public:
 	enum { IDD = IDD_VIEWSPKSORT1 };
 
 	CComboBox m_combo_parameter;
@@ -29,18 +34,17 @@ public:
 	float limit_upper_threshold {1.f};
 	int m_source_class {0};
 	int m_destination_class {0};
-	float m_time_first {0.f};
-	float m_time_last {0.f};
-	float m_mv_max {0.f};
-	float m_mv_min  {0.f};
-	float m_mv_bin  {0.01f};
+	float time_first {0.f};
+	float time_last {0.f};
+	float mv_max {0.f};
+	float mv_min  {0.f};
+	float mv_bin  {0.01f};
 
-	BOOL m_b_all_files  {false};
+	BOOL b_all_files  {false};
 	int m_spike_index  {-1};
 	int m_spike_index_class  {0};
-	float m_t_xy_right  {1.f};
-	float m_t_xy_left {0.f};
-	
+	float t_xy_right  {1.f};
+	float t_xy_left {0.f};
 
 	// Attributes
 protected:
@@ -99,15 +103,7 @@ public:
 		chart_spike_shape_.set_mouse_cursor_type(cursor_mode);
 	}
 
-	// Overrides
-public:
-	BOOL OnMove(UINT n_id_move_command) override;
 protected:
-	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
-	void DoDataExchange(CDataExchange* pDX) override;
-	void OnInitialUpdate() override;
-	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
-
 	void define_sub_classed_items();
 	void define_stretch_parameters();
 	void update_file_parameters();
@@ -122,6 +118,10 @@ protected:
 	void build_histogram();
 	void clear_flag_all_spikes();
 	void check_valid_threshold_limits();
+	boolean open_dat_and_spk_files_of_selected_spike(const db_spike& spike_coords);
+
+	void all_charts_invalidate();
+	void all_charts_set_spike_list(SpikeList* spk_list);
 
 	// Generated message map functions
 public:

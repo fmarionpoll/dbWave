@@ -50,12 +50,12 @@ public:
 
 	void erase_background(CDC* p_dc);
 	void plot_to_bitmap(CDC* p_dc);
+
 	static COLORREF get_color(const int color_index) { return color_table_[color_index]; }
 	static void set_color_table_at(const int color_index, const COLORREF color_ref) { color_table_[color_index] = color_ref; }
 	static int find_color_index(COLORREF color_ref);
 
 	void set_string(const CString& cs) { cs_empty_ = cs; }
-
 	void set_b_use_dib(BOOL b_set_plot); // use DIB or not
 	void set_display_area_size(int cx, int cy); // set size of the display area
 
@@ -191,7 +191,7 @@ protected:
 	HWND m_hwnd_reflect_ = nullptr;
 	Tag* m_temp_vertical_tag_ = nullptr;
 
-protected:
+
 	void PreSubclassWindow() override;
 	virtual int hit_curve(CPoint point);
 
@@ -214,17 +214,16 @@ protected:
 	void draw_scale_from_ruler(CDC* p_dc, const Ruler* p_ruler);
 
 	// Generated message map functions
-protected:
-	afx_msg void OnSize(UINT n_type, int cx, int cy);
-	afx_msg BOOL OnEraseBkgnd(CDC* p_dc);
-	afx_msg void OnPaint();
-	afx_msg BOOL OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	afx_msg virtual void OnSize(UINT n_type, int cx, int cy);
+	afx_msg virtual BOOL OnEraseBkgnd(CDC* p_dc);
+	afx_msg virtual void OnPaint();
+	afx_msg virtual BOOL OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message);
+	afx_msg virtual void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg virtual void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg virtual void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg virtual void OnLButtonDblClk(UINT nFlags, CPoint point);
+	afx_msg virtual void OnRButtonUp(UINT nFlags, CPoint point);
+	afx_msg virtual void OnRButtonDown(UINT nFlags, CPoint point);
 
 	DECLARE_MESSAGE_MAP()
 };
