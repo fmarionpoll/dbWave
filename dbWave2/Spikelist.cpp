@@ -623,15 +623,15 @@ void SpikeList::get_total_max_min_measure()
 	}
 }
 
-BOOL SpikeList::init_spike_list(const AcqDataDoc* acq_data_doc, const SPKDETECTPARM* spk_detect_parm)
+BOOL SpikeList::init_spike_list(const AcqDataDoc* acq_data_doc, const SPKDETECTPARM* spk_detect_parameters)
 {
 	// remove data from spike list
 	erase_data();
 	remove_all_spike_flags();
 
 	// copy data from CObArray
-	if (spk_detect_parm != nullptr)
-		spk_detect_parameters_ = *spk_detect_parm;
+	if (spk_detect_parameters != nullptr)
+		spk_detect_parameters_ = *spk_detect_parameters;
 
 	auto flag = false;
 	if (acq_data_doc != nullptr)
@@ -723,7 +723,7 @@ int SpikeList::toggle_spike_flag(int spike_index)
 
 void SpikeList::set_single_spike_flag(const int spike_index)
 {
-	if (flagged_spikes_.GetCount() != 1) 
+	if (!flagged_spikes_.IsEmpty()) 
 	{
 		flagged_spikes_.RemoveAll();
 		flagged_spikes_.SetSize(1);
@@ -748,7 +748,7 @@ BOOL SpikeList::get_spike_flag(const int spike_index)
 
 void SpikeList::remove_all_spike_flags()
 {
-	if (flagged_spikes_.GetCount() > 0) {
+	if (!flagged_spikes_.IsEmpty()) {
 		flagged_spikes_.RemoveAll();
 		flagged_spikes_.SetSize(0);
 	}

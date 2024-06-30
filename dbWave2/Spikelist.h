@@ -108,7 +108,7 @@ public:
 
 	void get_total_max_min(BOOL b_recalculate, short* max, short* min);
 
-	BOOL init_spike_list(const AcqDataDoc* acq_data_doc, const SPKDETECTPARM* spk_detect_parm);
+	BOOL init_spike_list(const AcqDataDoc* acq_data_doc, const SPKDETECTPARM* spk_detect_parameters);
 	long update_class_list();
 	void erase_data();
 	void change_all_spike_from_class_id_to_new_class_id(int old_class_ID, int new_class_ID);
