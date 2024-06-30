@@ -22,24 +22,24 @@ public:
 
 	CComboBox m_combo_parameter;
 
-	float m_t1 = 0.f;
-	float m_t2 = 0.f;
-	float m_time_unit = 1000.f; // 1=s, 1000f=ms, 1e6=us
-	float limit_lower_threshold = 0.f;
-	float limit_upper_threshold = 1.f;
-	int m_source_class = 0;
-	int m_destination_class = 0;
-	float m_time_first = 0.f;
-	float m_time_last = 0.f;
-	float m_mv_max = 0.f;
-	float m_mv_min = 0.f;
-	float m_mv_bin = 0.01f;
+	float m_t1 { 0.f } ;
+	float m_t2 { 0.5f };
+	float m_time_unit { 1000.f }; // 1=s, 1000f=ms, 1e6=us
+	float limit_lower_threshold { 0.f };
+	float limit_upper_threshold {1.f};
+	int m_source_class {0};
+	int m_destination_class {0};
+	float m_time_first {0.f};
+	float m_time_last {0.f};
+	float m_mv_max {0.f};
+	float m_mv_min  {0.f};
+	float m_mv_bin  {0.01f};
 
-	BOOL m_b_all_files = false;
-	int m_spike_index = -1;
-	int m_spike_index_class = 0;
-	float m_t_xy_right = 1.f;
-	float m_t_xy_left = 0.f;
+	BOOL m_b_all_files  {false};
+	int m_spike_index  {-1};
+	int m_spike_index_class  {0};
+	float m_t_xy_right  {1.f};
+	float m_t_xy_left {0.f};
 	
 
 	// Attributes
@@ -71,25 +71,25 @@ protected:
 	SPK_CLASSIF* spike_classification_parameters_{};
 	OPTIONS_VIEWDATA* options_view_data_{};
 
-	int m_i_tag_low_{};
-	int m_i_tag_up_{};
-	int m_i_xy_right_{};
-	int m_i_xy_left_{};
+	int m_i_tag_low_ {};
+	int m_i_tag_up_ {};
+	int m_i_xy_right_ {};
+	int m_i_xy_left_ {};
 
 	int m_spk_hist_upper_threshold_{};
 	int m_spk_hist_lower_threshold_{};
 	int m_spk_form_tag_left_{};
 	int m_spk_form_tag_right_{};
 
-	float mv_unit_ = 1000.f; // 1=V, 1000f=mV, 1e6=uV
+	float mv_unit_ {1000.f}; // 1=V, 1000f=mV, 1e6=uV
 	float m_delta_{};
 	int m_measure_y1_max_{}; // max of array m_measure_y1
 	int m_measure_y1_min_{}; // min of array m_measure_y1
-	boolean b_valid_extrema_ = false; // tells if m_measure_y1_max_ & m_measure_y1_min_ are valid
+	boolean b_valid_extrema_ {false}; // tells if m_measure_y1_max_ & m_measure_y1_min_ are valid
 	long l_first_{}; 
 	long l_last_{}; 
-	boolean b_measure_done_ = false; 
-	int div_amplitude_by_ = 1; // value to adjust changes in amplitude / filter(s)
+	boolean b_measure_done_ {false}; 
+	int div_amplitude_by_  {1}; // value to adjust changes in amplitude / filter(s)
 
 	// Operations
 public:

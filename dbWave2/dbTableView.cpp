@@ -65,7 +65,7 @@ CDaoRecordset* dbTableView::OnGetRecordset()
 
 void dbTableView::OnSize(UINT nType, int cx, int cy)
 {
-	if (m_b_init)
+	if (m_b_init_)
 	{
 		switch (nType)
 		{
@@ -73,7 +73,7 @@ void dbTableView::OnSize(UINT nType, int cx, int cy)
 		case SIZE_RESTORED:
 			if (cx <= 0 || cy <= 0)
 				break;
-			m_stretch.ResizeControls(nType, cx, cy);
+			m_stretch_.ResizeControls(nType, cx, cy);
 			break;
 		default:
 			break;
@@ -86,7 +86,7 @@ BOOL dbTableView::OnMove(UINT nIDMoveCommand)
 {
 	const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
 	auto p_document = GetDocument();
-	if (m_autoDetect && p_document->db_get_current_spk_file_name(TRUE).IsEmpty())
+	if (m_auto_detect && p_document->db_get_current_spk_file_name(TRUE).IsEmpty())
 	{
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
 	}
@@ -137,19 +137,19 @@ void dbTableView::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		CView::OnPrint(p_dc, pInfo);
 }
 
-void dbTableView::saveCurrentSpkFile()
+void dbTableView::save_current_spk_file()
 {
 	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
 	{
 		const auto p_doc = GetDocument();
-		auto currentlist = 0;
-		if (m_tabCtrl.m_hWnd != nullptr) currentlist = m_tabCtrl.GetCurSel();
-		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(currentlist);
+		auto current_list = 0;
+		if (m_tabCtrl.m_hWnd != nullptr) current_list = m_tabCtrl.GetCurSel();
+		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_list);
 		if (m_pSpkList != nullptr && !m_pSpkList->is_class_list_valid())
 			m_pSpkList->update_class_list();
 
-		const auto spkfile_name = p_doc->db_set_current_spike_file_name();
-		m_pSpkDoc->OnSaveDocument(spkfile_name);
+		const auto spk_file_name = p_doc->db_set_current_spike_file_name();
+		m_pSpkDoc->OnSaveDocument(spk_file_name);
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 
 		auto n_spike_classes = 1;
@@ -162,11 +162,10 @@ void dbTableView::saveCurrentSpkFile()
 		}
 		p_doc->set_db_n_spikes(n_spikes);
 		p_doc->set_db_n_spike_classes(n_spike_classes);
-
 	}
 }
 
-void dbTableView::IncrementSpikeFlag()
+void dbTableView::increment_spike_flag()
 {
 	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
 	{
@@ -180,14 +179,14 @@ void dbTableView::IncrementSpikeFlag()
 
 void dbTableView::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	auto icursel = m_tabCtrl.GetCurSel();
-	SendMessage(WM_MYMESSAGE, HINT_VIEWTABCHANGE, MAKELPARAM(icursel, 0));
+	const auto i_cur_sel = m_tabCtrl.GetCurSel();
+	SendMessage(WM_MYMESSAGE, HINT_VIEWTABCHANGE, MAKELPARAM(i_cur_sel, 0));
 	*pResult = 0;
 }
 
 void dbTableView::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	const auto icursel = m_tabCtrl.GetCurSel();
-	PostMessage(WM_MYMESSAGE, HINT_VIEWTABHASCHANGED, MAKELPARAM(icursel, 0));
+	const auto i_cur_sel = m_tabCtrl.GetCurSel();
+	PostMessage(WM_MYMESSAGE, HINT_VIEWTABHASCHANGED, MAKELPARAM(i_cur_sel, 0));
 	*pResult = 0;
 }

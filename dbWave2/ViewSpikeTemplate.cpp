@@ -18,7 +18,7 @@ ViewSpikeTemplates::ViewSpikeTemplates()
 ViewSpikeTemplates::~ViewSpikeTemplates()
 {
 	if (m_pSpkDoc != nullptr)
-		saveCurrentSpkFile(); 
+		save_current_spk_file(); 
 }
 
 void ViewSpikeTemplates::DoDataExchange(CDataExchange* pDX)
@@ -82,13 +82,13 @@ void ViewSpikeTemplates::OnDestroy()
 
 BOOL ViewSpikeTemplates::OnMove(UINT nIDMoveCommand)
 {
-	saveCurrentSpkFile();
+	save_current_spk_file();
 	return dbTableView::OnMove(nIDMoveCommand);
 }
 
 void ViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	if (m_b_init)
+	if (m_b_init_)
 	{
 		switch (LOWORD(lHint))
 		{
@@ -97,7 +97,7 @@ void ViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			update_file_parameters();
 			break;
 		case HINT_CLOSEFILEMODIFIED:
-			saveCurrentSpkFile();
+			save_current_spk_file();
 			break;
 		case HINT_REPLACEVIEW:
 		default:
@@ -133,11 +133,11 @@ void ViewSpikeTemplates::define_sub_classed_items()
 
 void ViewSpikeTemplates::define_stretch_parameters()
 {
-	m_stretch.AttachParent(this); // attach form_view pointer
-	m_stretch.newProp(IDC_LIST1, SZEQ_XLEQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_LIST2, XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_LIST3, XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_TAB2, XLEQ_XREQ, SZEQ_YBEQ);
+	m_stretch_.AttachParent(this); // attach form_view pointer
+	m_stretch_.newProp(IDC_LIST1, SZEQ_XLEQ, YTEQ_YBEQ);
+	m_stretch_.newProp(IDC_LIST2, XLEQ_XREQ, YTEQ_YBEQ);
+	m_stretch_.newProp(IDC_LIST3, XLEQ_XREQ, YTEQ_YBEQ);
+	m_stretch_.newProp(IDC_TAB2, XLEQ_XREQ, SZEQ_YBEQ);
 }
 
 void ViewSpikeTemplates::OnInitialUpdate()
@@ -145,9 +145,9 @@ void ViewSpikeTemplates::OnInitialUpdate()
 	dbTableView::OnInitialUpdate();
 	define_sub_classed_items();
 	define_stretch_parameters();
-	m_b_init = TRUE;
-	m_autoIncrement = true;
-	m_autoDetect = true;
+	m_b_init_ = TRUE;
+	m_auto_increment = true;
+	m_auto_detect = true;
 
 	// load global parameters
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());

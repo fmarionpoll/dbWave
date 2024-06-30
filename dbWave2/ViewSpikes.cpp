@@ -101,7 +101,7 @@ void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_d
 		const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		if (this != pActivateView && this == p_deactivate_view)
 		{
-			saveCurrentSpkFile();
+			save_current_spk_file();
 			// save column parameters
 			spk_classification_parameters_->col_separator = spike_class_listbox_.get_columns_separator_width();
 			spk_classification_parameters_->row_height = spike_class_listbox_.get_row_height();
@@ -127,13 +127,13 @@ void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_d
 
 BOOL ViewSpikes::OnMove(UINT nIDMoveCommand)
 {
-	saveCurrentSpkFile();
+	save_current_spk_file();
 	return dbTableView::OnMove(nIDMoveCommand);
 }
 
 void ViewSpikes::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	if (m_b_init)
+	if (m_b_init_)
 	{
 		switch (LOWORD(lHint))
 		{
@@ -142,7 +142,7 @@ void ViewSpikes::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			update_file_parameters(TRUE);
 			break;
 		case HINT_CLOSEFILEMODIFIED:
-			saveCurrentSpkFile();
+			save_current_spk_file();
 			break;
 		case HINT_REPLACEVIEW:
 		default:
@@ -458,19 +458,19 @@ void ViewSpikes::define_sub_classed_items()
 
 void ViewSpikes::define_stretch_parameters()
 {
-	m_stretch.AttachParent(this);
-	m_stretch.newProp(IDC_LISTCLASSES, XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
+	m_stretch_.AttachParent(this);
+	m_stretch_.newProp(IDC_LISTCLASSES, XLEQ_XREQ, YTEQ_YBEQ);
+	m_stretch_.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
 
-	m_stretch.newProp(IDC_DISPLAYDAT, XLEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_TIMEINTERVALS, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_TIMEFIRST, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_TIMELAST, SZEQ_XREQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_DISPLAYDAT, XLEQ_XREQ, SZEQ_YTEQ);
+	m_stretch_.newProp(IDC_TIMEINTERVALS, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_TIMEFIRST, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_TIMELAST, SZEQ_XREQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YBEQ);
 
-	m_stretch.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch_.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch_.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch_.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, SZEQ_YTEQ);
 }
 
 void ViewSpikes::OnInitialUpdate()
@@ -478,9 +478,9 @@ void ViewSpikes::OnInitialUpdate()
 	dbTableView::OnInitialUpdate();
 	define_sub_classed_items();
 	define_stretch_parameters();
-	m_b_init = TRUE;
-	m_autoIncrement = true;
-	m_autoDetect = true;
+	m_b_init_ = TRUE;
+	m_auto_increment = true;
+	m_auto_detect = true;
 
 	const auto p_btn = static_cast<CButton*>(GetDlgItem(IDC_ZOOM_ON_OFF));
 	p_btn->SetCheck(1);
@@ -766,7 +766,7 @@ void ViewSpikes::OnToolsEdittransformspikes()
 	if (dlg.m_bchanged)
 	{
 		m_pSpkDoc->SetModifiedFlag(TRUE);
-		saveCurrentSpkFile();
+		save_current_spk_file();
 		update_spike_file(TRUE);
 	}
 	l_first_ = l_first;
@@ -795,10 +795,10 @@ void ViewSpikes::print_compute_page_size()
 	options_view_data_->vertRes = dc.GetDeviceCaps(VERTRES);
 
 	// margins (pixels)
-	m_printRect.right = options_view_data_->horzRes - options_view_data_->rightPageMargin;
-	m_printRect.bottom = options_view_data_->vertRes - options_view_data_->bottomPageMargin;
-	m_printRect.left = options_view_data_->leftPageMargin;
-	m_printRect.top = options_view_data_->topPageMargin;
+	m_print_rect_.right = options_view_data_->horzRes - options_view_data_->rightPageMargin;
+	m_print_rect_.bottom = options_view_data_->vertRes - options_view_data_->bottomPageMargin;
+	m_print_rect_.left = options_view_data_->leftPageMargin;
+	m_print_rect_.top = options_view_data_->topPageMargin;
 }
 
 void ViewSpikes::print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_info)
@@ -837,23 +837,23 @@ CString ViewSpikes::print_convert_file_index(long l_first, long l_last) const
 
 long ViewSpikes::print_get_file_series_index_from_page(const int page, int* file_number)
 {
-	auto l_first = m_lprintFirst;
+	auto l_first = m_l_print_first_;
 
-	const auto max_row = m_nbrowsperpage * page; 
+	const auto max_row = m_nb_rows_per_page_ * page; 
 	auto i_file = 0; 
 	if (options_view_data_->bPrintSelection)
-		i_file = m_file0;
+		i_file = m_file_0_;
 	//const auto current = GetDocument()->db_get_current_record_position();
 	if (GetDocument()->db_set_current_record_position(i_file)) {
 
 		auto very_last = GetDocument()->db_get_data_len() - 1;
 		for (auto row = 0; row < max_row; row++)
 		{
-			l_first += m_lprintLen; // end of row
+			l_first += m_l_print_len_; // end of row
 			if (l_first >= very_last) // next file ?
 			{
 				i_file++; // next file index
-				if (i_file > m_nfiles) // last file ??
+				if (i_file > m_files_count_) // last file ??
 				{
 					i_file--;
 					break;
@@ -861,7 +861,7 @@ long ViewSpikes::print_get_file_series_index_from_page(const int page, int* file
 				// update end-of-file
 				if (GetDocument()->db_move_next()) {
 					very_last = GetDocument()->db_get_data_len() - 1;
-					l_first = m_lprintFirst;
+					l_first = m_l_print_first_;
 				}
 			}
 		}
@@ -1051,37 +1051,37 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 
 	// how many rows per page?
 	const auto size_row = options_view_data_->HeightDoc + options_view_data_->heightSeparator;
-	m_nbrowsperpage = m_printRect.Height() / size_row;
-	if (m_nbrowsperpage == 0) // prevent zero pages
-		m_nbrowsperpage = 1;
+	m_nb_rows_per_page_ = m_print_rect_.Height() / size_row;
+	if (m_nb_rows_per_page_ == 0) // prevent zero pages
+		m_nb_rows_per_page_ = 1;
 
 	// compute number of rows according to multiple row flag
-	m_lprintFirst = spike_class_listbox_.get_time_first();
-	m_lprintLen = spike_class_listbox_.get_time_last() - m_lprintFirst + 1;
+	m_l_print_first_ = spike_class_listbox_.get_time_first();
+	m_l_print_len_ = spike_class_listbox_.get_time_last() - m_l_print_first_ + 1;
 
 	// make sure the number of classes per file is known
 	const auto p_dbwave_doc = GetDocument();
-	m_file0 = p_dbwave_doc->db_get_current_record_position();
-	ASSERT(m_file0 >= 0);
-	m_printFirst = m_file0;
-	m_printLast = m_file0;
-	m_nfiles = 1;
+	m_file_0_ = p_dbwave_doc->db_get_current_record_position();
+	ASSERT(m_file_0_ >= 0);
+	m_print_first_ = m_file_0_;
+	m_print_last_ = m_file_0_;
+	m_files_count_ = 1;
 
 	if (!options_view_data_->bPrintSelection)
 	{
-		m_printFirst = 0;
-		m_nfiles = p_dbwave_doc->db_get_n_records();
-		m_printLast = m_nfiles - 1;
+		m_print_first_ = 0;
+		m_files_count_ = p_dbwave_doc->db_get_n_records();
+		m_print_last_ = m_files_count_ - 1;
 	}
 
 	// update the nb of classes per file selected and add this number
 	max_classes_ = 1;
 	auto nb_rect = 0; // total nb of rows
-	if (p_dbwave_doc->db_set_current_record_position(m_printFirst))
+	if (p_dbwave_doc->db_set_current_record_position(m_print_first_))
 	{
 		auto nn_classes = 0;
 
-		for (auto i = m_printFirst; i <= m_printLast; i++, p_dbwave_doc->db_move_next())
+		for (auto i = m_print_first_; i <= m_print_last_; i++, p_dbwave_doc->db_move_next())
 		{
 			// get number of classes
 			if (p_dbwave_doc->get_db_n_spike_classes() <= 0)
@@ -1107,9 +1107,9 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 
 			if (options_view_data_->bMultirowDisplay)
 			{
-				const auto len = p_dbwave_doc->db_get_data_len() - m_lprintFirst; // file length
-				auto n_rows = len / m_lprintLen; // how many rows for this file?
-				if (len > n_rows * m_lprintLen) // remainder?
+				const auto len = p_dbwave_doc->db_get_data_len() - m_l_print_first_; // file length
+				auto n_rows = len / m_l_print_len_; // how many rows for this file?
+				if (len > n_rows * m_l_print_len_) // remainder?
 					n_rows++;
 				nb_rect += static_cast<int>(n_rows); // update nb of rows
 			}
@@ -1118,11 +1118,11 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 
 	// multiple rows?
 	if (!options_view_data_->bMultirowDisplay)
-		nb_rect = m_nfiles;
+		nb_rect = m_files_count_;
 
 	// n pages
-	auto n_pages = nb_rect / m_nbrowsperpage;
-	if (nb_rect > m_nbrowsperpage * n_pages)
+	auto n_pages = nb_rect / m_nb_rows_per_page_;
+	if (nb_rect > m_nb_rows_per_page_ * n_pages)
 		n_pages++;
 
 	//------------------------------------------------------
@@ -1140,7 +1140,7 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 	if (options_view_data_->bPrintSelection)
 	{
 		n_pages = 1;
-		m_nfiles = 1;
+		m_files_count_ = 1;
 		if (options_view_data_->bMultirowDisplay)
 		{
 			const auto l_first0 = spike_class_listbox_.get_time_first();
@@ -1150,36 +1150,36 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 			if (nb_rect * (l_last0 - l_first0) < len)
 				nb_rect++;
 
-			n_pages = nb_rect / m_nbrowsperpage;
-			if (n_pages * m_nbrowsperpage < nb_rect)
+			n_pages = nb_rect / m_nb_rows_per_page_;
+			if (n_pages * m_nb_rows_per_page_ < nb_rect)
 				n_pages++;
 		}
 		p_info->SetMaxPage(n_pages);
 	}
 
-	if (!p_dbwave_doc->db_set_current_record_position(m_file0))
+	if (!p_dbwave_doc->db_set_current_record_position(m_file_0_))
 		AfxMessageBox(_T("database error repositioning record\n"), MB_OK);
 	return flag;
 }
 
 void ViewSpikes::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
-	m_bIsPrinting = TRUE;
-	m_lFirst0 = spike_class_listbox_.get_time_first();
-	m_lLast0 = spike_class_listbox_.get_time_last();
+	m_b_is_printing_ = TRUE;
+	m_l_first_0_ = spike_class_listbox_.get_time_first();
+	m_l_last0_ = spike_class_listbox_.get_time_last();
 
 	//---------------------init objects-------------------------------------
-	memset(&m_logFont, 0, sizeof(LOGFONT)); 
-	lstrcpy(m_logFont.lfFaceName, _T("Arial"));
-	m_logFont.lfHeight = options_view_data_->fontsize; 
-	m_pOldFont = nullptr;
-	m_fontPrint.CreateFontIndirect(&m_logFont);
+	memset(&m_log_font_, 0, sizeof(LOGFONT)); 
+	lstrcpy(m_log_font_.lfFaceName, _T("Arial"));
+	m_log_font_.lfHeight = options_view_data_->fontsize; 
+	m_p_old_font_ = nullptr;
+	m_font_print_.CreateFontIndirect(&m_log_font_);
 	p_dc->SetBkMode(TRANSPARENT);
 }
 
 void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 {
-	m_pOldFont = p_dc->SelectObject(&m_fontPrint);
+	m_p_old_font_ = p_dc->SelectObject(&m_font_print_);
 	p_dc->SetMapMode(MM_TEXT); 
 	print_file_bottom_page(p_dc, pInfo); 
 	const int current_page = static_cast<int>(pInfo->m_nCurPage); 
@@ -1196,13 +1196,13 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	}
 	auto very_last = m_pSpkDoc->get_acq_size() - 1; 
 
-	CRect r_where(m_printRect.left,
-	              m_printRect.top, 
-	              m_printRect.left + options_view_data_->WidthDoc,
-	              m_printRect.top + options_view_data_->HeightDoc);
+	CRect r_where(m_print_rect_.left,
+	              m_print_rect_.top, 
+	              m_print_rect_.left + options_view_data_->WidthDoc,
+	              m_print_rect_.top + options_view_data_->HeightDoc);
 
 	// loop through all files	--------------------------------------------------------
-	for (int i = 0; i < m_nbrowsperpage; i++)
+	for (int i = 0; i < m_nb_rows_per_page_; i++)
 	{
 		// save conditions (Save/RestoreDC is mandatory!) --------------------------------
 
@@ -1252,12 +1252,12 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		// bottom of the first rectangle
 		rw_bars.bottom = rw2.top + r_height;
-		auto l_last = l_first + m_lprintLen; // compute last pt to load
+		auto l_last = l_first + m_l_print_len_; // compute last pt to load
 		if (l_last > very_last) // check end across file length
 			l_last = very_last;
-		if ((l_last - l_first + 1) < m_lprintLen) // adjust rect to length of data
+		if ((l_last - l_first + 1) < m_l_print_len_) // adjust rect to length of data
 		{
-			rw_bars.right = MulDiv(rw_bars.Width(), l_last - l_first, m_lprintLen)
+			rw_bars.right = MulDiv(rw_bars.Width(), l_last - l_first, m_l_print_len_)
 				+ rw_bars.left;
 			ASSERT(rw_bars.right > rw_bars.left);
 		}
@@ -1364,7 +1364,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		// print comments according to row within file
 		CString cs_comment;
-		if (l_first == m_lprintFirst) // first row = full comment
+		if (l_first == m_l_print_first_) // first row = full comment
 		{
 			cs_comment += print_get_file_infos();
 			cs_comment += print_bars(p_dc, &comment_rect); // bars and bar legends
@@ -1372,7 +1372,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		// print comments stored into cs_comment
 		comment_rect.OffsetRect(options_view_data_->textseparator + comment_rect.Width(), 0);
-		comment_rect.right = m_printRect.right;
+		comment_rect.right = m_print_rect_.right;
 
 		// reset text align mode (otherwise pbs!) output text and restore text alignment
 		const auto ui_flag = p_dc->SetTextAlign(TA_LEFT | TA_NOUPDATECP);
@@ -1381,7 +1381,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		p_dc->SetTextAlign(ui_flag);
 
 		// update file parameters for next row --------------------------------------------
-		l_first += m_lprintLen;
+		l_first += m_l_print_len_;
 		// next file?
 		// if index next point is past the end of the file
 		// OR not entire record and not multiple row display
@@ -1390,7 +1390,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 				!options_view_data_->bMultirowDisplay))
 		{
 			file_index++; // next index
-			if (file_index < m_nfiles) // last file ??
+			if (file_index < m_files_count_) // last file ??
 			{
 				// NO: select new file
 				if (GetDocument()->db_move_next())
@@ -1401,23 +1401,23 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 				very_last = m_pSpkDoc->get_acq_size() - 1;
 			}
 			else
-				i = m_nbrowsperpage; // YES: break
-			l_first = m_lprintFirst;
+				i = m_nb_rows_per_page_; // YES: break
+			l_first = m_l_print_first_;
 		}
 	} // this is the end of a very long for loop.....................
 
-	if (m_pOldFont != nullptr)
-		p_dc->SelectObject(m_pOldFont);
+	if (m_p_old_font_ != nullptr)
+		p_dc->SelectObject(m_p_old_font_);
 }
 
 void ViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
-	m_fontPrint.DeleteObject();
-	m_bIsPrinting = FALSE;
+	m_font_print_.DeleteObject();
+	m_b_is_printing_ = FALSE;
 
-	if (GetDocument()->db_set_current_record_position(m_file0)) {
+	if (GetDocument()->db_set_current_record_position(m_file_0_)) {
 		update_file_parameters(TRUE);
-		spike_class_listbox_.set_time_intervals(m_lFirst0, m_lLast0);
+		spike_class_listbox_.set_time_intervals(m_l_first_0_, m_l_last0_);
 		spike_class_listbox_.Invalidate();
 	}
 
@@ -1609,18 +1609,18 @@ void ViewSpikes::OnEditCopy()
 		mDC.SetAttribDC(attribute_dc.GetSafeHdc()); 
 
 		// print comments : set font
-		m_pOldFont = nullptr;
+		m_p_old_font_ = nullptr;
 		const auto old_size = options_view_data_->fontsize;
 		options_view_data_->fontsize = 10;
-		memset(&m_logFont, 0, sizeof(LOGFONT)); 
-		lstrcpy(m_logFont.lfFaceName, _T("Arial")); 
-		m_logFont.lfHeight = options_view_data_->fontsize; 
-		m_pOldFont = nullptr;
-		m_fontPrint.CreateFontIndirect(&m_logFont);
+		memset(&m_log_font_, 0, sizeof(LOGFONT)); 
+		lstrcpy(m_log_font_.lfFaceName, _T("Arial")); 
+		m_log_font_.lfHeight = options_view_data_->fontsize; 
+		m_p_old_font_ = nullptr;
+		m_font_print_.CreateFontIndirect(&m_log_font_);
 		mDC.SetBkMode(TRANSPARENT);
 
 		options_view_data_->fontsize = old_size;
-		m_pOldFont = mDC.SelectObject(&m_fontPrint);
+		m_p_old_font_ = mDC.SelectObject(&m_font_print_);
 
 		CString comments;
 		// display data: source data and spikes
@@ -1662,9 +1662,9 @@ void ViewSpikes::OnEditCopy()
 			rw_text.OffsetRect(0, r_height);
 		}
 
-		if (m_pOldFont != nullptr)
-			mDC.SelectObject(m_pOldFont);
-		m_fontPrint.DeleteObject();
+		if (m_p_old_font_ != nullptr)
+			mDC.SelectObject(m_p_old_font_);
+		m_font_print_.DeleteObject();
 
 		// restore old_pen
 		mDC.SelectObject(old_pen);

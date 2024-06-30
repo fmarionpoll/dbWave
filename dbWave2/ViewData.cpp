@@ -112,19 +112,19 @@ void ViewData::define_sub_classed_items()
 void ViewData::define_stretch_parameters()
 {
 	// save coordinates and properties of "always visible" controls
-	m_stretch.AttachParent(this); // attach form_view pointer
-	m_stretch.newProp(IDC_DISPLAY, XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_COMBOCHAN, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_SOURCE, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_TIMEFIRST, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_TIMELAST, SZEQ_XREQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
-	m_b_init = TRUE;
+	m_stretch_.AttachParent(this); // attach form_view pointer
+	m_stretch_.newProp(IDC_DISPLAY, XLEQ_XREQ, YTEQ_YBEQ);
+	m_stretch_.newProp(IDC_COMBOCHAN, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch_.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch_.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch_.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, YTEQ_YBEQ);
+	m_stretch_.newProp(IDC_SOURCE, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_TIMEFIRST, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_TIMELAST, SZEQ_XREQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
+	m_stretch_.newProp(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
+	m_b_init_ = TRUE;
 }
 
 void ViewData::OnInitialUpdate()
@@ -157,7 +157,7 @@ void ViewData::OnInitialUpdate()
 
 void ViewData::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	if (!m_b_init)
+	if (!m_b_init_)
 		return;
 
 	auto i_update = NULL;
@@ -293,7 +293,7 @@ void ViewData::OnEditCopy()
 			m_ChartDataWnd.GetWindowRect(&old_rect);
 
 			CRect rect(0, 0, options_view_data->hzResolution, options_view_data->vtResolution);
-			m_npixels0 = m_ChartDataWnd.get_rect_width();
+			m_pixels_count_0_ = m_ChartDataWnd.get_rect_width();
 
 			// create metafile
 			CMetaFileDC m_dc;
@@ -317,13 +317,13 @@ void ViewData::OnEditCopy()
 			*new_scope_struct = *old_scope_struct;
 
 			// print comments : set font
-			memset(&m_logFont, 0, sizeof(LOGFONT));
-			GetObject(GetStockObject(SYSTEM_FONT), sizeof(LOGFONT), &m_logFont);
-			m_pOldFont = nullptr;
+			memset(&m_log_font_, 0, sizeof(LOGFONT));
+			GetObject(GetStockObject(SYSTEM_FONT), sizeof(LOGFONT), &m_log_font_);
+			m_p_old_font_ = nullptr;
 			/*BOOL flag = */
-			m_fontPrint.CreateFontIndirect(&m_logFont);
-			m_pOldFont = m_dc.SelectObject(&m_fontPrint);
-			const int line_height = m_logFont.lfHeight + 5;
+			m_font_print_.CreateFontIndirect(&m_log_font_);
+			m_p_old_font_ = m_dc.SelectObject(&m_font_print_);
+			const int line_height = m_log_font_.lfHeight + 5;
 			auto y_pixels_row = 0;
 			constexpr auto x_column = 10;
 
@@ -350,9 +350,9 @@ void ViewData::OnEditCopy()
 			m_dc.LineTo(left, y_pixels_row);
 
 			m_dc.SelectObject(p_old_brush);
-			if (m_pOldFont != nullptr)
-				m_dc.SelectObject(m_pOldFont);
-			m_fontPrint.DeleteObject();
+			if (m_p_old_font_ != nullptr)
+				m_dc.SelectObject(m_p_old_font_);
+			m_font_print_.DeleteObject();
 
 			// Close metafile
 			ReleaseDC(p_dc_ref);
@@ -373,7 +373,7 @@ void ViewData::OnEditCopy()
 			}
 
 			// restore initial conditions
-			m_ChartDataWnd.ResizeChannels(m_npixels0, 0);
+			m_ChartDataWnd.ResizeChannels(m_pixels_count_0_, 0);
 			m_ChartDataWnd.GetDataFromDoc();
 			m_ChartDataWnd.Invalidate();
 		}
@@ -1197,10 +1197,10 @@ void ViewData::ComputePrinterPageSize()
 	options_view_data->vertRes = dc.GetDeviceCaps(VERTRES);
 
 	// margins (pixels)
-	m_printRect.right = options_view_data->horzRes - options_view_data->rightPageMargin;
-	m_printRect.bottom = options_view_data->vertRes - options_view_data->bottomPageMargin;
-	m_printRect.left = options_view_data->leftPageMargin;
-	m_printRect.top = options_view_data->topPageMargin;
+	m_print_rect_.right = options_view_data->horzRes - options_view_data->rightPageMargin;
+	m_print_rect_.bottom = options_view_data->vertRes - options_view_data->bottomPageMargin;
+	m_print_rect_.left = options_view_data->leftPageMargin;
+	m_print_rect_.top = options_view_data->topPageMargin;
 }
 
 void ViewData::PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo)
@@ -1241,15 +1241,15 @@ CString ViewData::convert_file_index(long l_first, long l_last)
 BOOL ViewData::get_file_series_index_from_page(int page, int& file_number, long& l_first)
 {
 	// loop until we get all rows
-	const auto totalrows = m_nbrowsperpage * (page - 1);
-	l_first = m_lprintFirst;
+	const auto totalrows = m_nb_rows_per_page_ * (page - 1);
+	l_first = m_l_print_first_;
 	file_number = 0; // file list index
 	if (options_view_data->bPrintSelection) // current file if selection only
-		file_number = m_file0;
+		file_number = m_file_0_;
 	else
 		GetDocument()->db_move_first();
 
-	auto very_last = m_lprintFirst + m_lprintLen;
+	auto very_last = m_l_print_first_ + m_l_print_len_;
 	if (options_view_data->bEntireRecord)
 		very_last = m_p_dat_Doc->get_doc_channel_length() - 1;
 
@@ -1434,31 +1434,31 @@ int ViewData::print_get_n_pages()
 {
 	// how many rows per page?
 	const auto size_row = options_view_data->HeightDoc + options_view_data->heightSeparator;
-	m_nbrowsperpage = m_printRect.Height() / size_row;
-	if (m_nbrowsperpage == 0) // prevent zero pages
-		m_nbrowsperpage = 1;
+	m_nb_rows_per_page_ = m_print_rect_.Height() / size_row;
+	if (m_nb_rows_per_page_ == 0) // prevent zero pages
+		m_nb_rows_per_page_ = 1;
 
 	int ntotal_rows; // number of rectangles -- or nb of rows
 	auto p_dbwave_doc = GetDocument();
 
 	// compute number of rows according to bmultirow & bentirerecord flag
-	m_lprintFirst = m_ChartDataWnd.GetDataFirstIndex();
-	m_lprintLen = m_ChartDataWnd.GetDataLastIndex() - m_lprintFirst + 1;
-	m_file0 = GetDocument()->db_get_current_record_position();
-	ASSERT(m_file0 >= 0);
-	m_nfiles = 1;
-	auto ifile0 = m_file0;
-	auto ifile1 = m_file0;
+	m_l_print_first_ = m_ChartDataWnd.GetDataFirstIndex();
+	m_l_print_len_ = m_ChartDataWnd.GetDataLastIndex() - m_l_print_first_ + 1;
+	m_file_0_ = GetDocument()->db_get_current_record_position();
+	ASSERT(m_file_0_ >= 0);
+	m_files_count_ = 1;
+	auto ifile0 = m_file_0_;
+	auto ifile1 = m_file_0_;
 	if (!options_view_data->bPrintSelection)
 	{
 		ifile0 = 0;
-		m_nfiles = p_dbwave_doc->db_get_n_records();
-		ifile1 = m_nfiles;
+		m_files_count_ = p_dbwave_doc->db_get_n_records();
+		ifile1 = m_files_count_;
 	}
 
 	// only one row per file
 	if (!options_view_data->bMultirowDisplay || !options_view_data->bEntireRecord)
-		ntotal_rows = m_nfiles;
+		ntotal_rows = m_files_count_;
 
 	// multirows per file
 	else
@@ -1475,23 +1475,23 @@ int ViewData::print_get_n_pages()
 				len = m_p_dat_Doc->get_doc_channel_length();
 				p_dbwave_doc->db_set_data_len(len);
 			}
-			len -= m_lprintFirst;
-			auto nrows = len / m_lprintLen; // how many rows for this file?
-			if (len > nrows * m_lprintLen) // remainder?
+			len -= m_l_print_first_;
+			auto nrows = len / m_l_print_len_; // how many rows for this file?
+			if (len > nrows * m_l_print_len_) // remainder?
 				nrows++;
 			ntotal_rows += static_cast<int>(nrows); // update nb of rows
 		}
 	}
 
-	if (m_file0 >= 0)
+	if (m_file_0_ >= 0)
 	{
-		p_dbwave_doc->db_set_current_record_position(m_file0);
+		p_dbwave_doc->db_set_current_record_position(m_file_0_);
 		p_dbwave_doc->open_current_data_file();
 	}
 
 	// npages
-	int npages = ntotal_rows / m_nbrowsperpage;
-	if (ntotal_rows > m_nbrowsperpage * npages)
+	int npages = ntotal_rows / m_nb_rows_per_page_;
+	if (ntotal_rows > m_nb_rows_per_page_ * npages)
 		npages++;
 
 	return npages;
@@ -1499,32 +1499,32 @@ int ViewData::print_get_n_pages()
 
 void ViewData::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
-	m_bIsPrinting = TRUE;
-	m_lFirst0 = m_ChartDataWnd.GetDataFirstIndex();
-	m_lLast0 = m_ChartDataWnd.GetDataLastIndex();
-	m_npixels0 = m_ChartDataWnd.get_rect_width();
+	m_b_is_printing_ = TRUE;
+	m_l_first_0_ = m_ChartDataWnd.GetDataFirstIndex();
+	m_l_last0_ = m_ChartDataWnd.GetDataLastIndex();
+	m_pixels_count_0_ = m_ChartDataWnd.get_rect_width();
 
 	//---------------------init objects-------------------------------------
-	memset(&m_logFont, 0, sizeof(LOGFONT)); // prepare font
-	lstrcpy(m_logFont.lfFaceName, _T("Arial")); // Arial font
-	m_logFont.lfHeight = options_view_data->fontsize; // font height
-	m_pOldFont = nullptr;
+	memset(&m_log_font_, 0, sizeof(LOGFONT)); // prepare font
+	lstrcpy(m_log_font_.lfFaceName, _T("Arial")); // Arial font
+	m_log_font_.lfHeight = options_view_data->fontsize; // font height
+	m_p_old_font_ = nullptr;
 	/*BOOL flag = */
-	m_fontPrint.CreateFontIndirect(&m_logFont);
+	m_font_print_.CreateFontIndirect(&m_log_font_);
 	p_dc->SetBkMode(TRANSPARENT);
 }
 
 void ViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 {
-	m_pOldFont = p_dc->SelectObject(&m_fontPrint);
+	m_p_old_font_ = p_dc->SelectObject(&m_font_print_);
 
 	// --------------------- RWhere = rectangle/row in which we plot the data, rWidth = row width
 	const auto r_width = options_view_data->WidthDoc; // margins
 	const auto r_height = options_view_data->HeightDoc; // margins
-	CRect r_where(m_printRect.left, // printing rectangle for data
-	              m_printRect.top,
-	              m_printRect.left + r_width,
-	              m_printRect.top + r_height);
+	CRect r_where(m_print_rect_.left, // printing rectangle for data
+	              m_print_rect_.top,
+	              m_print_rect_.left + r_width,
+	              m_print_rect_.top + r_height);
 	//CRect RW2 = RWhere;									// printing rectangle - constant
 	//RW2.OffsetRect(-RWhere.left, -RWhere.top);			// set RW2 origin = 0,0
 
@@ -1534,7 +1534,7 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	// --------------------- load data corresponding to the first row of current page
 	int filenumber; // file number and file index
 	long l_first; // index first data point / first file
-	auto very_last = m_lprintFirst + m_lprintLen; // index last data point / current file
+	auto very_last = m_l_print_first_ + m_l_print_len_; // index last data point / current file
 	const int curpage = pInfo->m_nCurPage; // get current page number
 	get_file_series_index_from_page(curpage, filenumber, l_first);
 	if (l_first < GetDocument()->db_get_data_len() - 1)
@@ -1550,7 +1550,7 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 	// loop through all files	--------------------------------------------------------
 	const int old_dc = p_dc->SaveDC(); // save DC
-	for (auto i = 0; i < m_nbrowsperpage; i++)
+	for (auto i = 0; i < m_nb_rows_per_page_; i++)
 	{
 		// first : set rectangle where data will be printed
 		auto comment_rect = r_where; // save RWhere for comments
@@ -1559,7 +1559,7 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		// load data and adjust display rectangle ----------------------------------------
 		// reduce width to the size of the data
-		auto l_last = l_first + m_lprintLen; // compute last pt to load
+		auto l_last = l_first + m_l_print_len_; // compute last pt to load
 		if (l_first < GetDocument()->db_get_data_len() - 1)
 		{
 			if (l_last > very_last) // check end across file length
@@ -1579,7 +1579,7 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		// print comments according to row within file
 		CString cs_comment;
-		if (l_first == m_lprintFirst) // first row = full comment
+		if (l_first == m_l_print_first_) // first row = full comment
 		{
 			cs_comment += get_file_infos();
 			cs_comment += PrintBars(p_dc, &comment_rect); // bars and bar legends
@@ -1589,7 +1589,7 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		// print comments stored into cs_comment
 		comment_rect.OffsetRect(options_view_data->textseparator + comment_rect.Width(), 0);
-		comment_rect.right = m_printRect.right;
+		comment_rect.right = m_print_rect_.right;
 
 		// reset text align mode (otherwise pbs!) output text and restore text alignment
 		const auto ui_flag = p_dc->SetTextAlign(TA_LEFT | TA_NOUPDATECP);
@@ -1601,7 +1601,7 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		const auto ifile = filenumber;
 		if (!PrintGetNextRow(filenumber, l_first, very_last))
 		{
-			i = m_nbrowsperpage;
+			i = m_nb_rows_per_page_;
 			break;
 		}
 		if (ifile != filenumber)
@@ -1610,8 +1610,8 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	p_dc->RestoreDC(old_dc); // restore Display context
 
 	// end of file loop : restore initial conditions
-	if (m_pOldFont != nullptr)
-		p_dc->SelectObject(m_pOldFont);
+	if (m_p_old_font_ != nullptr)
+		p_dc->SelectObject(m_p_old_font_);
 	*p_newparms = oldparms;
 }
 
@@ -1620,7 +1620,7 @@ BOOL ViewData::PrintGetNextRow(int& file_number, long& l_first, long& very_last)
 	if (!options_view_data->bMultirowDisplay || !options_view_data->bEntireRecord)
 	{
 		file_number++;
-		if (file_number >= m_nfiles)
+		if (file_number >= m_files_count_)
 			return FALSE;
 
 		GetDocument()->db_move_next();
@@ -1632,16 +1632,16 @@ BOOL ViewData::PrintGetNextRow(int& file_number, long& l_first, long& very_last)
 	}
 	else
 	{
-		l_first += m_lprintLen;
+		l_first += m_l_print_len_;
 		if (l_first >= very_last)
 		{
 			file_number++; // next index
-			if (file_number >= m_nfiles) // last file ??
+			if (file_number >= m_files_count_) // last file ??
 				return FALSE;
 
 			GetDocument()->db_move_next();
 			very_last = GetDocument()->db_get_data_len() - 1;
-			l_first = m_lprintFirst;
+			l_first = m_l_print_first_;
 		}
 	}
 	return TRUE;
@@ -1649,11 +1649,11 @@ BOOL ViewData::PrintGetNextRow(int& file_number, long& l_first, long& very_last)
 
 void ViewData::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
-	m_fontPrint.DeleteObject();
-	m_bIsPrinting = FALSE;
-	GetDocument()->db_set_current_record_position(m_file0);
-	m_ChartDataWnd.ResizeChannels(m_npixels0, 0);
-	m_ChartDataWnd.GetDataFromDoc(m_lFirst0, m_lLast0);
+	m_font_print_.DeleteObject();
+	m_b_is_printing_ = FALSE;
+	GetDocument()->db_set_current_record_position(m_file_0_);
+	m_ChartDataWnd.ResizeChannels(m_pixels_count_0_, 0);
+	m_ChartDataWnd.GetDataFromDoc(m_l_first_0_, m_l_last0_);
 	update_file_parameters();
 }
 

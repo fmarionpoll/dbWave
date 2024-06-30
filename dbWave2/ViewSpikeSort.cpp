@@ -24,10 +24,9 @@ ViewSpikeSort::ViewSpikeSort()
 
 ViewSpikeSort::~ViewSpikeSort()
 {
-	// save spkD list i	 changed
 	if (m_pSpkDoc != nullptr)
-		saveCurrentSpkFile(); // save file if modified
-	// save current spike detection parameters
+		save_current_spk_file(); // save file if modified
+
 	spike_classification_parameters_->b_changed = TRUE;
 	spike_classification_parameters_->source_class = m_source_class;
 	spike_classification_parameters_->dest_class = m_destination_class;
@@ -129,20 +128,20 @@ void ViewSpikeSort::define_sub_classed_items()
 
 void ViewSpikeSort::define_stretch_parameters()
 {
-	m_stretch.AttachParent(this);
+	m_stretch_.AttachParent(this);
 
-	m_stretch.newProp(IDC_EDIT7, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_DISPLAYPARM, XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_DISPLAYBARS, XLEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_EDIT3, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_STATICRIGHT, SZEQ_XREQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_EDIT7, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_DISPLAYPARM, XLEQ_XREQ, YTEQ_YBEQ);
+	m_stretch_.newProp(IDC_DISPLAYBARS, XLEQ_XREQ, SZEQ_YTEQ);
+	m_stretch_.newProp(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YTEQ);
+	m_stretch_.newProp(IDC_EDIT3, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch_.newProp(IDC_STATICRIGHT, SZEQ_XREQ, SZEQ_YBEQ);
 
-	m_stretch.newProp(IDC_STATICLEFT, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_STATIC12, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_EDITLEFT2, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_EDITRIGHT2, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_STATICLEFT, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_STATIC12, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_EDITLEFT2, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_EDITRIGHT2, SZEQ_XLEQ, SZEQ_YBEQ);
 }
 
 void ViewSpikeSort::OnInitialUpdate()
@@ -150,9 +149,9 @@ void ViewSpikeSort::OnInitialUpdate()
 	dbTableView::OnInitialUpdate();
 	define_sub_classed_items();
 	define_stretch_parameters();
-	m_b_init = TRUE;
-	m_autoIncrement = true;
-	m_autoDetect = true;
+	m_b_init_ = TRUE;
+	m_auto_increment = true;
+	m_auto_detect = true;
 
 	// load global parameters
 	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
@@ -251,7 +250,7 @@ void ViewSpikeSort::OnActivateView(const BOOL bActivate, CView* pActivateView, C
 	}
 	else
 	{
-		saveCurrentSpkFile();
+		save_current_spk_file();
 		const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		if (nullptr == p_app->m_p_sort1_spikes_memory_file)
 		{
@@ -267,7 +266,7 @@ void ViewSpikeSort::OnActivateView(const BOOL bActivate, CView* pActivateView, C
 
 void ViewSpikeSort::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	if (m_b_init)
+	if (m_b_init_)
 	{
 		switch (LOWORD(lHint))
 		{
@@ -277,7 +276,7 @@ void ViewSpikeSort::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			update_file_parameters();
 			break;
 		case HINT_CLOSEFILEMODIFIED: 
-			saveCurrentSpkFile();
+			save_current_spk_file();
 			break;
 		case HINT_REPLACEVIEW:
 		default:
@@ -288,7 +287,7 @@ void ViewSpikeSort::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 BOOL ViewSpikeSort::OnMove(const UINT n_id_move_command)
 {
-	saveCurrentSpkFile();
+	save_current_spk_file();
 	return dbTableView::OnMove(n_id_move_command);
 }
 
@@ -642,14 +641,14 @@ LRESULT ViewSpikeSort::on_my_message(WPARAM code, LPARAM lParam)
 	case HINT_CHANGEHZTAG: // ------------- change horizontal tag value
 		if (HIWORD(lParam) == IDC_DISPLAYPARM)
 		{
-			if (shortValue == m_i_tag_low_) // first tag
+			if (shortValue == m_i_tag_low_) 
 			{
 				spike_classification_parameters_->lower_threshold = chart_xt_measures_.horizontal_tags.get_value(m_i_tag_low_);
 				limit_lower_threshold = static_cast<float>(spike_classification_parameters_->lower_threshold) * m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
 				mm_limit_lower_.m_bEntryDone = TRUE;
 				on_en_change_lower();
 			}
-			else if (shortValue == m_i_tag_up_) // second tag
+			else if (shortValue == m_i_tag_up_)
 			{
 				spike_classification_parameters_->upper_threshold = chart_xt_measures_.horizontal_tags.get_value(m_i_tag_up_); 
 				limit_upper_threshold = static_cast<float>(spike_classification_parameters_->upper_threshold) * m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
@@ -910,12 +909,12 @@ void ViewSpikeSort::on_format_gain_adjust()
 	minvalue = static_cast<short>(measure.cy);
 
 	const auto delta = m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
-	const auto max2 = static_cast<short>(limit_upper_threshold / delta);
-	const auto min2 = static_cast<short>(limit_lower_threshold / delta);
-	if (max2 > maxvalue)
-		maxvalue = max2;
-	if (min2 < minvalue)
-		minvalue = min2;
+	const auto upper2 = static_cast<short>(limit_upper_threshold / delta);
+	const auto lower2 = static_cast<short>(limit_lower_threshold / delta);
+	if (upper2 > maxvalue)
+		maxvalue = upper2;
+	if (lower2 < minvalue)
+		minvalue = lower2;
 	y_we = MulDiv(maxvalue - minvalue + 1, 10, 8);
 	y_wo = (maxvalue + minvalue) / 2;
 
@@ -1393,13 +1392,8 @@ void ViewSpikeSort::on_select_change_parameter()
 
 void ViewSpikeSort::check_valid_threshold_limits()
 {
-	
-	if (limit_lower_threshold >= limit_upper_threshold)
-		limit_lower_threshold = limit_upper_threshold - m_delta_ * 10.f;
-
-	if (limit_lower_threshold < 0) {
+	if (limit_lower_threshold >= limit_upper_threshold|| limit_lower_threshold < 0) 
 		limit_lower_threshold = 0;
-	}
 
 	if (limit_upper_threshold <= limit_lower_threshold)
 		limit_upper_threshold = limit_lower_threshold + m_delta_ * 10.f;
