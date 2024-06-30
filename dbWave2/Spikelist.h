@@ -59,9 +59,9 @@ protected:
 	CArray<Spike*, Spike*> spikes_;
 
 	// (3) --------classes of spikes
-	BOOL m_b_save_artefacts {false}; 
-	BOOL m_keep_only_valid_classes {false};
-	int m_n_classes {0};
+	BOOL b_save_artefacts_ {false}; 
+	BOOL keep_only_valid_classes_ {false};
+	int n_classes_ {0};
 	CArray<SpikeClassDescriptor, SpikeClassDescriptor> class_descriptors_{};
 
 	//  (5) list of spikes flagged
@@ -70,7 +70,7 @@ protected:
 	// Operations
 public:
 	WORD get_version() const { return m_version_; }
-	BOOL is_class_list_valid() const { return m_keep_only_valid_classes; }
+	BOOL is_class_list_valid() const { return keep_only_valid_classes_; }
 
 	int get_classes_count() const {return  class_descriptors_.GetCount();}
 	int get_class_id(const int i) const { return class_descriptors_.GetAt(i).get_class_id();}

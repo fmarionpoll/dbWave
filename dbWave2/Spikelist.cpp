@@ -123,7 +123,7 @@ void SpikeList::serialize_spike_elements(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		if (!m_b_save_artefacts)
+		if (!b_save_artefacts_)
 			remove_artefacts();
 		const auto n_spikes = spikes_.GetSize();
 		ar << static_cast<WORD>(n_spikes);
@@ -182,8 +182,8 @@ void SpikeList::serialize_spike_class_descriptors(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		m_keep_only_valid_classes = FALSE;
-		ar << static_cast<long>(m_keep_only_valid_classes);
+		keep_only_valid_classes_ = FALSE;
+		ar << static_cast<long>(keep_only_valid_classes_);
 		auto n_descriptors = class_descriptors_.GetSize();
 		ar << static_cast<long>(n_descriptors);
 		for (auto i = 0; i < n_descriptors; i++)
@@ -197,10 +197,10 @@ void SpikeList::serialize_spike_class_descriptors(CArchive& ar)
 		extrema_valid_ = FALSE;
 		class_descriptors_.RemoveAll();
 		long dummy;
-		ar >> dummy; m_keep_only_valid_classes = dummy;
-		ar >> dummy; m_n_classes = dummy;
-		class_descriptors_.SetSize(m_n_classes);
-		for (auto i = 0; i < m_n_classes; i++)
+		ar >> dummy; keep_only_valid_classes_ = dummy;
+		ar >> dummy; n_classes_ = dummy;
+		class_descriptors_.SetSize(n_classes_);
+		for (auto i = 0; i < n_classes_; i++)
 		{
 			SpikeClassDescriptor item;
 			item.Serialize(ar);
@@ -253,21 +253,21 @@ void SpikeList::read_file_version5(CArchive& ar)
 	serialize_spike_data(ar);
 
 	extrema_valid_ = FALSE;
-	m_keep_only_valid_classes = FALSE; 
-	m_n_classes = 1;
+	keep_only_valid_classes_ = FALSE; 
+	n_classes_ = 1;
 	class_descriptors_.SetSize(1);
 	class_descriptors_.SetAt(0, SpikeClassDescriptor(0, 0)); 
 	long dummy;
 	ar >> dummy;
-	m_keep_only_valid_classes = dummy;
-	if (m_keep_only_valid_classes) 
+	keep_only_valid_classes_ = dummy;
+	if (keep_only_valid_classes_) 
 	{
 		ar >> dummy;
-		m_n_classes = dummy;
-		if (m_n_classes != 0)
+		n_classes_ = dummy;
+		if (n_classes_ != 0)
 		{
-			class_descriptors_.SetSize(m_n_classes);
-			for (int i = 0; i < m_n_classes; i++)
+			class_descriptors_.SetSize(n_classes_);
+			for (int i = 0; i < n_classes_; i++)
 			{
 				int dummy1, dummy2;
 				ar >> dummy1;
@@ -337,23 +337,23 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 	// ----------------------------------------------------
 	// (5) load class array if valid flag
 	// reset elements of the list
-	m_keep_only_valid_classes = FALSE; // default: no valid array
-	m_n_classes = 1;
+	keep_only_valid_classes_ = FALSE; // default: no valid array
+	n_classes_ = 1;
 	class_descriptors_.SetSize(2); // default size - some functions
 	class_descriptors_.SetAt(0, SpikeClassDescriptor(0, 0)); 
 
 	// load flag and load elements only if valid
 	long dummy;
 	ar >> dummy;
-	m_keep_only_valid_classes = dummy;
-	if (m_keep_only_valid_classes) // read class list
+	keep_only_valid_classes_ = dummy;
+	if (keep_only_valid_classes_) // read class list
 	{
 		ar >> dummy;
-		m_n_classes = dummy;
-		if (m_n_classes != 0)
+		n_classes_ = dummy;
+		if (n_classes_ != 0)
 		{
-			class_descriptors_.SetSize(m_n_classes);
-			for (int i = 0; i < m_n_classes; i++)
+			class_descriptors_.SetSize(n_classes_);
+			for (int i = 0; i < n_classes_; i++)
 			{
 				int dummy1, dummy2;
 				ar >> dummy1;
@@ -465,7 +465,7 @@ BOOL SpikeList::is_any_spike_around(const long ii_time, const int jitter, int& s
 int SpikeList::get_class_id_descriptor_index(int class_id)
 {
 	int item_index = -1;
-	for (int i = 0; i < m_n_classes; i++)
+	for (int i = 0; i < n_classes_; i++)
 	{
 		if (class_descriptors_.GetAt(i).get_class_id() != class_id)
 			continue;
@@ -654,8 +654,8 @@ BOOL SpikeList::init_spike_list(const AcqDataDoc* acq_data_doc, const SPKDETECTP
 	set_spike_length(spk_detect_parameters_.extract_n_points);
 
 	// reset classes
-	m_keep_only_valid_classes = FALSE; // default: no valid array
-	m_n_classes = 0;
+	keep_only_valid_classes_ = FALSE; // default: no valid array
+	n_classes_ = 0;
 	class_descriptors_.SetSize(2); // default size - some functions
 	class_descriptors_.SetAt(0, SpikeClassDescriptor(0,0)); 
 	return TRUE;
@@ -838,23 +838,23 @@ void SpikeList::change_class_of_flagged_spikes(int new_class_id)
 long SpikeList::update_class_list()
 {
 	const auto n_spikes = get_spikes_count();
-	m_n_classes = 1; 
+	n_classes_ = 1; 
 	class_descriptors_.RemoveAll(); 
-	m_keep_only_valid_classes = TRUE; 
+	keep_only_valid_classes_ = TRUE; 
 	if (n_spikes == 0)
 	{
 		//m_spike_class_descriptors.Add(SpikeClassDescriptor(0, 0)); 
 		return 0L; 
 	}
 	class_descriptors_.Add(SpikeClassDescriptor(get_spike(0)->get_class_id(), 1));
-	m_n_classes = 1; 
+	n_classes_ = 1; 
 
 	// loop over all spikes of the list
 	for (auto i = 1; i < n_spikes; i++)
 	{
 		const auto spike_class = get_spike(i)->get_class_id(); 
 		boolean found = false;
-		for (auto j = 0; j < m_n_classes; j++)
+		for (auto j = 0; j < n_classes_; j++)
 		{
 			SpikeClassDescriptor* class_descriptor = &class_descriptors_.GetAt(j);
 			const auto array_class = class_descriptor->get_class_id();
@@ -868,7 +868,7 @@ long SpikeList::update_class_list()
 		if (!found)
 			add_class_id(spike_class);
 	}
-	return m_n_classes;
+	return n_classes_;
 }
 
 int SpikeList::add_class_id(const int id)
@@ -885,7 +885,7 @@ int SpikeList::add_class_id(const int id)
 	}
 	if (index < 0)
 		index = class_descriptors_.Add(SpikeClassDescriptor(id, 1));
-	m_n_classes++;
+	n_classes_++;
 	return index;
 }
 
