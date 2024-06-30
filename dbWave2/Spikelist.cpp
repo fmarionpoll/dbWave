@@ -15,6 +15,7 @@ SpikeList::SpikeList()
 {
 	class_descriptors_.SetSize(1);
 	class_descriptors_.Add(SpikeClassDescriptor(0,0));
+	flagged_spikes_.SetSize(0);
 }
 
 SpikeList::~SpikeList()
@@ -667,37 +668,7 @@ void SpikeList::erase_data()
 	m_selected_spike = -1;
 }
 
-int SpikeList::set_spike_flag(int spike_index, BOOL set_spike_flag)
-{
-	// set spike flag: add spike to the array
-	if (TRUE == set_spike_flag)
-	{
-		// first look if spike_index is already flagged
-		if (!get_spike_flag(spike_index))
-			flagged_spikes_.Add(spike_index);
-	}
-
-	// remove flag
-	else
-	{
-		// find spike_index within the array and remove it
-		auto index = -1;
-		for (auto i = flagged_spikes_.GetCount() - 1; i >= 0; i--)
-		{
-			if (flagged_spikes_.GetAt(i) == spike_index)
-			{
-				index = i;
-				break;
-			}
-		}
-		if (index >= 0)
-			flagged_spikes_.RemoveAt(index);
-	}
-	// return the number of elements within the array
-	return get_spike_flag_array_count();
-}
-
-int SpikeList::toggle_spike_flag(int spike_index)
+int SpikeList::toggle_spike_flag(const int spike_index)
 {
 	// find spike within array
 	auto index = -1;
@@ -710,48 +681,40 @@ int SpikeList::toggle_spike_flag(int spike_index)
 		}
 	}
 
-	// if found: remove it
 	if (index >= 0)
 		flagged_spikes_.RemoveAt(index);
-
-	// if not found, add it
 	else
 		flagged_spikes_.Add(spike_index);
 
-	return get_spike_flag_array_count();
+	return flagged_spikes_.GetCount();
 }
 
 void SpikeList::set_single_spike_flag(const int spike_index)
 {
 	if (!flagged_spikes_.IsEmpty()) 
-	{
 		flagged_spikes_.RemoveAll();
-		flagged_spikes_.SetSize(1);
-	}
-	flagged_spikes_.SetAt(0, spike_index);
+	flagged_spikes_.Add(spike_index);
 }
 
 BOOL SpikeList::get_spike_flag(const int spike_index)
 {
-	BOOL bFlag = FALSE;
+	BOOL b_flag = FALSE;
 	// search if spike_index is in the list
 	for (int i = flagged_spikes_.GetCount() - 1; i >= 0; i--)
 	{
 		if (flagged_spikes_.GetAt(i) == spike_index)
 		{
-			bFlag = TRUE;
+			b_flag = TRUE;
 			break;
 		}
 	}
-	return bFlag;
+	return b_flag;
 }
 
 void SpikeList::remove_all_spike_flags()
 {
-	if (!flagged_spikes_.IsEmpty()) {
+	if (!flagged_spikes_.IsEmpty())
 		flagged_spikes_.RemoveAll();
-		flagged_spikes_.SetSize(0);
-	}
 }
 
 void SpikeList::flag_range_of_spikes(const long l_first, const long l_last, const BOOL b_set)

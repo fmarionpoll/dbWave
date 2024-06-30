@@ -517,134 +517,154 @@ void ViewSpikeSort::on_sort()
 	m_pSpkDoc->SetModifiedFlag(TRUE);
 }
 
+void ViewSpikeSort::set_mouse_cursor(short short_value)
+{
+	if (CURSOR_ZOOM < short_value)
+		short_value = 0;
+	set_view_mouse_cursor(short_value);
+	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(short_value, 0));
+}
+
+void ViewSpikeSort::change_hz_limits()
+{
+	if (4 != spike_classification_parameters_->i_parameter)
+	{
+		l_first_ = chart_xt_measures_.get_time_first();
+		l_last_ = chart_xt_measures_.get_time_last();
+	}
+	else
+	{
+		l_first_ = chart_spike_bar_.get_time_first();
+		l_last_ = chart_spike_bar_.get_time_last();
+	}
+	update_legends();
+}
+
+void ViewSpikeSort::hit_spike()
+{
+	if (m_pSpkList->get_spike_flag_array_count() > 0)
+		clear_flag_all_spikes();
+	db_spike spike_hit = GetDocument()->get_spike_hit();
+	select_spike(spike_hit);
+}
+
+void ViewSpikeSort::change_vertical_tag_spike_shape(const short short_value)
+{
+	if (short_value == m_spk_form_tag_left_) // first tag
+	{
+		spike_classification_parameters_->i_left = chart_spike_shape_.vertical_tags.get_value(m_spk_form_tag_left_);
+		m_t1 = static_cast<float>(spike_classification_parameters_->i_left) * m_time_unit / m_pSpkList->get_acq_sampling_rate();
+		mm_t1_.m_bEntryDone = TRUE;
+		on_en_change_t1();
+	}
+	else if (short_value == m_spk_form_tag_right_) // second tag
+	{
+		spike_classification_parameters_->i_right = chart_spike_shape_.vertical_tags.get_value(m_spk_form_tag_right_);
+		m_t2 = static_cast<float>(spike_classification_parameters_->i_right) * m_time_unit / m_pSpkList->get_acq_sampling_rate();
+		mm_t2_.m_bEntryDone = TRUE;
+		on_en_change_t2();
+	}
+}
+
+void ViewSpikeSort::change_vertical_tag_histogram(const short short_value)
+{
+	if (short_value == m_spk_hist_lower_threshold_) // first tag
+	{
+		spike_classification_parameters_->lower_threshold = chart_histogram_.vertical_tags.get_value(m_spk_hist_lower_threshold_);
+		limit_lower_threshold = static_cast<float>(spike_classification_parameters_->lower_threshold) * m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
+		UpdateData(false);
+	}
+	else if (short_value == m_spk_hist_upper_threshold_) // second tag
+	{
+		spike_classification_parameters_->upper_threshold = chart_histogram_.vertical_tags.get_value(m_spk_hist_upper_threshold_); // load new value
+		limit_upper_threshold = static_cast<float>(spike_classification_parameters_->upper_threshold) * m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
+		UpdateData(false);
+	}
+}
+
+void ViewSpikeSort::change_vertical_tag_xy_chart(const short short_value)
+{
+	if (short_value == m_i_xy_right_)
+	{
+		const auto delta = m_pSpkList->get_acq_sampling_rate() / m_time_unit;
+		spike_classification_parameters_->i_xy_right = chart_xt_measures_.vertical_tags.get_value(m_i_xy_right_);
+		t_xy_right = static_cast<float>(spike_classification_parameters_->i_xy_right) / delta;
+		mm_t_xy_right_.m_bEntryDone = TRUE;
+		on_en_change_edit_right2();
+	}
+	else if (short_value == m_i_xy_left_)
+	{
+		const auto delta = m_pSpkList->get_acq_sampling_rate() / m_time_unit;
+		spike_classification_parameters_->i_xy_left = chart_xt_measures_.vertical_tags.get_value(m_i_xy_left_);
+		t_xy_left = static_cast<float>(spike_classification_parameters_->i_xy_left) / delta;
+		mm_t_xy_left_.m_bEntryDone = TRUE;
+		on_en_change_edit_left2();
+	}
+}
+
+void ViewSpikeSort::change_horizontal_tag_xy_chart(const short short_value)
+{
+	if (short_value == m_i_tag_low_)
+	{
+		spike_classification_parameters_->lower_threshold = chart_xt_measures_.horizontal_tags.get_value(m_i_tag_low_);
+		limit_lower_threshold = static_cast<float>(spike_classification_parameters_->lower_threshold) * m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
+		mm_limit_lower_.m_bEntryDone = TRUE;
+		on_en_change_lower();
+	}
+	else if (short_value == m_i_tag_up_)
+	{
+		spike_classification_parameters_->upper_threshold = chart_xt_measures_.horizontal_tags.get_value(m_i_tag_up_);
+		limit_upper_threshold = static_cast<float>(spike_classification_parameters_->upper_threshold) * m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
+		mm_limit_upper_.m_bEntryDone = TRUE;
+		on_en_change_upper();
+	}
+}
+
+void ViewSpikeSort::save_windows_properties_to_options()
+{
+	options_view_data_->spksort1spk = *chart_spike_shape_.get_scope_parameters();
+	options_view_data_->spksort1parms = *chart_xt_measures_.get_scope_parameters();
+	options_view_data_->spksort1hist = *chart_histogram_.get_scope_parameters();
+	options_view_data_->spksort1bars = *chart_spike_bar_.get_scope_parameters();
+}
+
 LRESULT ViewSpikeSort::on_my_message(WPARAM code, LPARAM lParam)
 {
-	short shortValue = LOWORD(lParam);
+	const short short_value = LOWORD(lParam);
 	switch (code)
 	{
 	case HINT_SETMOUSECURSOR: // ------------- change mouse cursor (all 3 items)
-		if (CURSOR_ZOOM < shortValue)
-			shortValue = 0;
-		set_view_mouse_cursor(shortValue);
-		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(shortValue, 0));
+		set_mouse_cursor(short_value);
 		break;
 
 	case HINT_CHANGEHZLIMITS: // -------------  abscissa have changed
-		if (4 != spike_classification_parameters_->i_parameter)
-		{
-			l_first_ = chart_xt_measures_.get_time_first();
-			l_last_ = chart_xt_measures_.get_time_last();
-		}
-		else
-		{
-			l_first_ = chart_spike_bar_.get_time_first();
-			l_last_ = chart_spike_bar_.get_time_last();
-		}
-		update_legends();
+		change_hz_limits();
 		break;
 
 	case HINT_HITSPIKE:
-		{
-			if (m_pSpkList->get_spike_flag_array_count() > 0)
-				clear_flag_all_spikes();
-			db_spike spike_hit = GetDocument()->get_spike_hit();
-			select_spike(spike_hit);
-		}
+		hit_spike();
 		break;
 
 	case HINT_SELECTSPIKES:
-		chart_xt_measures_.Invalidate();
-		chart_spike_shape_.Invalidate();
-		chart_spike_bar_.Invalidate();
+		all_charts_invalidate();
 		break;
 
 	case HINT_DBLCLKSEL:
-		{
-			db_spike spike_index = GetDocument()->get_spike_hit();
-			//if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
-			//	spike_index = chart_spike_shape_.get_hit_spike();
-			//else if (HIWORD(lParam) == IDC_DISPLAYBARS)
-			//	spike_index = chart_spike_bar_.get_hit_spike();
-			//else if (HIWORD(lParam) == IDC_DISPLAYPARM)
-			//	spike_index = chart_xt_measures_.get_hit_spike();
-			// if m_bAllFiles, spike_index is global, otherwise it comes from a single file...
-			select_spike(spike_index);
-			on_tools_edit_spikes();
-		}
+		on_tools_edit_spikes();
 		break;
 
 	case HINT_CHANGEVERTTAG: // -------------  vertical tag value has changed
 		if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
-		{
-			if (shortValue == m_spk_form_tag_left_) // first tag
-			{
-				spike_classification_parameters_->i_left = chart_spike_shape_.vertical_tags.get_value(m_spk_form_tag_left_);
-				m_t1 = static_cast<float>(spike_classification_parameters_->i_left) * m_time_unit / m_pSpkList->get_acq_sampling_rate();
-				mm_t1_.m_bEntryDone = TRUE;
-				on_en_change_t1();
-			}
-			else if (shortValue == m_spk_form_tag_right_) // second tag
-			{
-				spike_classification_parameters_->i_right = chart_spike_shape_.vertical_tags.get_value(m_spk_form_tag_right_);
-				m_t2 = static_cast<float>(spike_classification_parameters_->i_right) * m_time_unit / m_pSpkList->get_acq_sampling_rate();
-				mm_t2_.m_bEntryDone = TRUE;
-				on_en_change_t2();
-			}
-		}
+			change_vertical_tag_spike_shape(short_value);
 		else if (HIWORD(lParam) == IDC_HISTOGRAM)
-		{
-			if (shortValue == m_spk_hist_lower_threshold_) // first tag
-			{
-				spike_classification_parameters_->lower_threshold = chart_histogram_.vertical_tags.get_value(m_spk_hist_lower_threshold_);
-				limit_lower_threshold = static_cast<float>(spike_classification_parameters_->lower_threshold) * m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
-				UpdateData(false);
-			}
-			else if (shortValue == m_spk_hist_upper_threshold_) // second tag
-			{
-				spike_classification_parameters_->upper_threshold = chart_histogram_.vertical_tags.get_value(m_spk_hist_upper_threshold_); // load new value
-				limit_upper_threshold = static_cast<float>(spike_classification_parameters_->upper_threshold) * m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
-				UpdateData(false);
-			}
-		}
+			change_vertical_tag_histogram(short_value);
 		else if (HIWORD(lParam) == IDC_DISPLAYPARM)
-		{
-			if (shortValue == m_i_xy_right_)
-			{
-				const auto delta = m_pSpkList->get_acq_sampling_rate() / m_time_unit;
-				spike_classification_parameters_->i_xy_right = chart_xt_measures_.vertical_tags.get_value(m_i_xy_right_);
-				t_xy_right = static_cast<float>(spike_classification_parameters_->i_xy_right) / delta;
-				mm_t_xy_right_.m_bEntryDone = TRUE;
-				on_en_change_edit_right2();
-			}
-			else if (shortValue == m_i_xy_left_)
-			{
-				const auto delta = m_pSpkList->get_acq_sampling_rate() / m_time_unit;
-				spike_classification_parameters_->i_xy_left = chart_xt_measures_.vertical_tags.get_value(m_i_xy_left_);
-				t_xy_left = static_cast<float>(spike_classification_parameters_->i_xy_left) / delta;
-				mm_t_xy_left_.m_bEntryDone = TRUE;
-				on_en_change_edit_left2();
-			}
-		}
+			change_vertical_tag_xy_chart(short_value);
 		break;
 
 	case HINT_CHANGEHZTAG: // ------------- change horizontal tag value
 		if (HIWORD(lParam) == IDC_DISPLAYPARM)
-		{
-			if (shortValue == m_i_tag_low_) 
-			{
-				spike_classification_parameters_->lower_threshold = chart_xt_measures_.horizontal_tags.get_value(m_i_tag_low_);
-				limit_lower_threshold = static_cast<float>(spike_classification_parameters_->lower_threshold) * m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
-				mm_limit_lower_.m_bEntryDone = TRUE;
-				on_en_change_lower();
-			}
-			else if (shortValue == m_i_tag_up_)
-			{
-				spike_classification_parameters_->upper_threshold = chart_xt_measures_.horizontal_tags.get_value(m_i_tag_up_); 
-				limit_upper_threshold = static_cast<float>(spike_classification_parameters_->upper_threshold) * m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
-				mm_limit_upper_.m_bEntryDone = TRUE;
-				on_en_change_upper();
-			}
-		}
+			change_horizontal_tag_xy_chart(short_value);
 		break;
 
 	case HINT_VIEWSIZECHANGED: // ------------- change zoom
@@ -652,14 +672,11 @@ LRESULT ViewSpikeSort::on_my_message(WPARAM code, LPARAM lParam)
 		break;
 
 	case HINT_WINDOWPROPSCHANGED:
-		options_view_data_->spksort1spk = *chart_spike_shape_.get_scope_parameters();
-		options_view_data_->spksort1parms = *chart_xt_measures_.get_scope_parameters();
-		options_view_data_->spksort1hist = *chart_histogram_.get_scope_parameters();
-		options_view_data_->spksort1bars = *chart_spike_bar_.get_scope_parameters();
+		save_windows_properties_to_options();
 		break;
 
 	case HINT_VIEWTABHASCHANGED:
-		select_spike_list(shortValue);
+		select_spike_list(short_value);
 		break;
 
 	default:
@@ -975,36 +992,38 @@ boolean ViewSpikeSort::open_dat_and_spk_files_of_selected_spike(const db_spike& 
 
 void ViewSpikeSort::on_tools_edit_spikes()
 {
-	const db_spike& spike_coords = GetDocument()->get_spike_hit();
+	db_spike spike_coords = GetDocument()->get_spike_hit();
 	ASSERT(m_spike_index == spike_coords.spike_index);
-
-	DlgSpikeEdit dlg;
-	dlg.m_yextent = chart_spike_shape_.get_yw_extent();
-	dlg.m_yzero = chart_spike_shape_.get_yw_org();
-	dlg.m_xextent = chart_spike_shape_.get_xw_extent();
-	dlg.m_xzero = chart_spike_shape_.get_xw_org();
-	dlg.m_spike_index = m_spike_index;
-	dlg.m_pdbWaveDoc = GetDocument();
-	dlg.m_parent = this;
+	select_spike(spike_coords);
 
 	if (!open_dat_and_spk_files_of_selected_spike(spike_coords))
 		return;
 
-	// run dialog box
+	DlgSpikeEdit dlg;
+	dlg.y_extent = chart_spike_shape_.get_yw_extent();
+	dlg.y_zero = chart_spike_shape_.get_yw_org();
+	dlg.x_extent = chart_spike_shape_.get_xw_extent();
+	dlg.x_zero = chart_spike_shape_.get_xw_org();
+	dlg.spike_index = m_spike_index;
+	dlg.db_wave_doc = GetDocument();
+	dlg.m_parent = this;
 	dlg.DoModal();
-	if (dlg.m_bchanged)
+
+	if (!dlg.b_artefact)
+	{
+		m_spike_index = dlg.spike_index;
+		db_spike spike_sel(-1, -1, m_spike_index);
+		select_spike(spike_sel);
+	}
+
+	if (dlg.b_changed)
 	{
 		m_pSpkDoc->SetModifiedFlag(TRUE);
-		const auto current_list = m_tabCtrl.GetCurSel();
-		m_pSpkDoc->set_spike_list_as_current(current_list);
 	}
 
-	if (!dlg.m_bartefact && m_spike_index != dlg.m_spike_index) {
-		auto db_selected = db_spike(-1, -1, dlg.m_spike_index);
-		select_spike(db_selected);
-	}
-
-	update_legends();
+	//update_legends();
+	all_charts_invalidate();
+	UpdateData(FALSE);
 }
 
 void ViewSpikeSort::on_select_all_files()

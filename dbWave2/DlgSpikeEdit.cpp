@@ -21,11 +21,11 @@ DlgSpikeEdit::DlgSpikeEdit(CWnd* pParent /*=NULL*/)
 void DlgSpikeEdit::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_SPIKECLASS, m_spikeclass);
-	DDX_Text(pDX, IDC_SPIKENO, m_spike_index);
-	DDX_Check(pDX, IDC_ARTEFACT, m_bartefact);
-	DDX_Text(pDX, IDC_DISPLAYRATIO, m_displayratio);
-	DDX_Text(pDX, IDC_YEXTENT, m_yvextent);
+	DDX_Text(pDX, IDC_SPIKECLASS, spike_class);
+	DDX_Text(pDX, IDC_SPIKENO, spike_index);
+	DDX_Check(pDX, IDC_ARTEFACT, b_artefact);
+	DDX_Text(pDX, IDC_DISPLAYRATIO, display_ratio);
+	DDX_Text(pDX, IDC_YEXTENT, yv_extent);
 }
 
 BEGIN_MESSAGE_MAP(DlgSpikeEdit, CDialog)
@@ -42,74 +42,74 @@ END_MESSAGE_MAP()
 
 void DlgSpikeEdit::load_spike_parameters()
 {
-	const Spike* spike = m_pSpkList->get_spike(m_spike_index); 
-	m_spikeclass = spike->get_class_id(); 
-	m_bartefact = (m_spikeclass < 0);
-	m_iitime = spike->get_time();
-	m_SpkChartWnd.draw_spike(spike);
+	const Spike* spike = p_spk_list_->get_spike(spike_index); 
+	spike_class = spike->get_class_id(); 
+	b_artefact = (spike_class < 0);
+	ii_time_ = spike->get_time();
+	chart_spike_shape_.draw_spike(spike);
 
-	LoadSourceViewData();
+	load_source_view_data();
 	UpdateData(FALSE); 
 }
 
 BOOL DlgSpikeEdit::OnInitDialog()
 {
 	CDialog::OnInitDialog(); 
-	m_pAcqDatDoc = m_pdbWaveDoc->m_p_dat;
-	m_pSpkList = m_pdbWaveDoc->m_p_spk->get_spike_list_current();
-	if (m_pSpkList == nullptr || m_pSpkList->get_spikes_count() == 0)
+	p_acq_data_doc_ = db_wave_doc->m_p_dat;
+	p_spk_list_ = db_wave_doc->m_p_spk->get_spike_list_current();
+	if (p_spk_list_ == nullptr || p_spk_list_->get_spikes_count() == 0)
 	{
 		EndDialog(FALSE); 
 		return TRUE;
 	}
 
 	// subclass edit controls
-	VERIFY(mm_spikeclass.SubclassDlgItem(IDC_SPIKECLASS, this));
+	VERIFY(mm_spike_class.SubclassDlgItem(IDC_SPIKECLASS, this));
 	VERIFY(mm_spike_index.SubclassDlgItem(IDC_SPIKENO, this));
-	VERIFY(m_HScroll.SubclassDlgItem(IDC_SCROLLBAR1, this));
-	VERIFY(m_VScroll.SubclassDlgItem(IDC_SCROLLBAR2, this));
+	VERIFY(m_h_scroll_.SubclassDlgItem(IDC_SCROLLBAR1, this));
+	VERIFY(m_v_scroll_.SubclassDlgItem(IDC_SCROLLBAR2, this));
 
 	// add scrollbar to the left of edit controls
-	mm_spikeclass.ShowScrollBar(SB_VERT);
+	mm_spike_class.ShowScrollBar(SB_VERT);
 	mm_spike_index.ShowScrollBar(SB_VERT);
 
 	// attach spike buffer
-	VERIFY(m_SpkChartWnd.SubclassDlgItem(IDC_DISPLAYSPIKE_buttn, this));
-	m_SpkChartWnd.set_source_data(m_pSpkList, m_pdbWaveDoc);
-	if (m_spike_index < 0) // select at least spike 0
-		m_spike_index = 0;
+	VERIFY(chart_spike_shape_.SubclassDlgItem(IDC_DISPLAYSPIKE_buttn, this));
+	chart_spike_shape_.set_source_data(p_spk_list_, db_wave_doc);
+	if (spike_index < 0) // select at least spike 0
+		spike_index = 0;
 
-	m_SpkChartWnd.set_range_mode(RANGE_ALL); // display mode (lines)
-	m_SpkChartWnd.set_plot_mode(PLOT_BLACK, 0); // display also artefacts
+	chart_spike_shape_.set_range_mode(RANGE_ALL); // display mode (lines)
+	chart_spike_shape_.set_plot_mode(PLOT_BLACK, 0); // display also artefacts
 
-	if (m_pAcqDatDoc != nullptr)
+	if (p_acq_data_doc_ != nullptr)
 	{
-		VERIFY(m_ChartDataWnd.SubclassDlgItem(IDC_DISPLAREA_buttn, this));
-		m_ChartDataWnd.set_b_use_dib(FALSE);
-		m_ChartDataWnd.AttachDataFile(m_pAcqDatDoc);
-		const auto lvSize = m_ChartDataWnd.get_rect_size();
-		m_ChartDataWnd.ResizeChannels(lvSize.cx, 0); // change nb of pixels
-		m_ChartDataWnd.remove_all_channel_list_items();
-		m_ChartDataWnd.add_channel_list_item(m_pSpkList->get_detection_parameters()->extract_channel, m_pSpkList->get_detection_parameters()->extract_transform);
+		VERIFY(chart_data_.SubclassDlgItem(IDC_DISPLAREA_buttn, this));
+		chart_data_.set_b_use_dib(FALSE);
+		chart_data_.AttachDataFile(p_acq_data_doc_);
+		const auto lvSize = chart_data_.get_rect_size();
+		chart_data_.ResizeChannels(lvSize.cx, 0); // change nb of pixels
+		chart_data_.remove_all_channel_list_items();
+		chart_data_.add_channel_list_item(p_spk_list_->get_detection_parameters()->extract_channel, p_spk_list_->get_detection_parameters()->extract_transform);
 
-		if (m_pSpkList->get_detection_parameters()->compensate_Baseline)
+		if (p_spk_list_->get_detection_parameters()->compensate_Baseline)
 		{
-			m_ChartDataWnd.add_channel_list_item(m_pSpkList->get_detection_parameters()->extract_channel, MOVAVG30);
-			m_ChartDataWnd.get_channel_list_item(1)->SetColor(6);
-			m_ChartDataWnd.get_channel_list_item(1)->SetPenWidth(1);
+			chart_data_.add_channel_list_item(p_spk_list_->get_detection_parameters()->extract_channel, MOVAVG30);
+			chart_data_.get_channel_list_item(1)->SetColor(6);
+			chart_data_.get_channel_list_item(1)->SetPenWidth(1);
 			static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(1);
 		}
-		m_intervals_to_highlight_spikes.SetSize(3 + 2); // total size
-		m_intervals_to_highlight_spikes.SetAt(0, 0); // source channel
-		m_intervals_to_highlight_spikes.SetAt(1, RGB(255, 0, 0)); // red color
-		m_intervals_to_highlight_spikes.SetAt(2, 1); // pen size
-		m_ChartDataWnd.SetHighlightData(&m_intervals_to_highlight_spikes); // tell sourceview to highlight spk
+		intervals_to_highlight_spikes_.SetSize(3 + 2); // total size
+		intervals_to_highlight_spikes_.SetAt(0, 0); // source channel
+		intervals_to_highlight_spikes_.SetAt(1, RGB(255, 0, 0)); // red color
+		intervals_to_highlight_spikes_.SetAt(2, 1); // pen size
+		chart_data_.SetHighlightData(&intervals_to_highlight_spikes_); // tell sourceview to highlight spk
 
 		// validate associated controls
-		VERIFY(mm_yvextent.SubclassDlgItem(IDC_YEXTENT, this));
-		VERIFY(mm_displayratio.SubclassDlgItem(IDC_DISPLAYRATIO, this));
-		mm_yvextent.ShowScrollBar(SB_VERT);
-		mm_displayratio.ShowScrollBar(SB_VERT);
+		VERIFY(mm_yv_extent.SubclassDlgItem(IDC_YEXTENT, this));
+		VERIFY(mm_display_ratio.SubclassDlgItem(IDC_DISPLAYRATIO, this));
+		mm_yv_extent.ShowScrollBar(SB_VERT);
+		mm_display_ratio.ShowScrollBar(SB_VERT);
 	}
 	else
 	{
@@ -121,37 +121,37 @@ BOOL DlgSpikeEdit::OnInitDialog()
 		GetDlgItem(IDC_BUTTON4)->EnableWindow(FALSE);
 	}
 
-	m_displayratio = 20; // how much spike versus source data
-	m_spkpretrig = m_pSpkList->get_detection_parameters()->detect_pre_threshold; // load parms used many times
-	m_spklen = m_pSpkList->get_spike_length(); // pre-trig and spike length
-	m_viewdatalen = MulDiv(m_spklen, 100, m_displayratio); // how wide is source window
-	if (m_yextent == 0)
+	display_ratio = 20; // how much spike versus source data
+	spk_pre_trigger_ = p_spk_list_->get_detection_parameters()->detect_pre_threshold; // load parms used many times
+	spk_length_ = p_spk_list_->get_spike_length(); // pre-trig and spike length
+	view_data_len_ = MulDiv(spk_length_, 100, display_ratio); // how wide is source window
+	if (y_extent == 0)
 	{
 		short max, min;
-		m_pSpkList->get_total_max_min(TRUE, &max, &min);
-		m_yextent = (max - min);
-		m_yzero = (max + min) / 2;
+		p_spk_list_->get_total_max_min(TRUE, &max, &min);
+		y_extent = (max - min);
+		y_zero = (max + min) / 2;
 	}
 
-	m_yvextent = m_yextent; // ordinates extent
+	yv_extent = y_extent; // ordinates extent
 
 	// display data and init parameters
 	load_spike_parameters(); // load textual parms and displ source
-	m_iitimeold = m_iitime;
-	m_bchanged = FALSE; // no modif yet to spikes
+	ii_time_old_ = ii_time_;
+	b_changed = FALSE; // no modif yet to spikes
 
 	// adjust scroll bar (size of button and left/right limits)
 #define SCROLLMAX 200
 #define SCROLLCENTER 100
-	m_HScroll_infos.fMask = SIF_ALL;
-	m_HScroll_infos.nMin = 0;
-	m_HScroll_infos.nMax = SCROLLMAX;
-	m_HScroll_infos.nPos = SCROLLCENTER;
-	m_HScroll_infos.nPage = 10;
-	m_HScroll.SetScrollInfo(&m_HScroll_infos);
+	m_h_scroll_infos_.fMask = SIF_ALL;
+	m_h_scroll_infos_.nMin = 0;
+	m_h_scroll_infos_.nMax = SCROLLMAX;
+	m_h_scroll_infos_.nPos = SCROLLCENTER;
+	m_h_scroll_infos_.nPage = 10;
+	m_h_scroll_.SetScrollInfo(&m_h_scroll_infos_);
 
-	m_VScroll_infos = m_HScroll_infos;
-	m_VScroll.SetScrollInfo(&m_VScroll_infos);
+	m_v_scroll_infos_ = m_h_scroll_infos_;
+	m_v_scroll_.SetScrollInfo(&m_v_scroll_infos_);
 
 	return TRUE; // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -161,20 +161,20 @@ void DlgSpikeEdit::OnEnChangespike_index()
 {
 	if (mm_spike_index.m_bEntryDone)
 	{
-		const auto spike_index = m_spike_index;
-		mm_spike_index.OnEnChange(this, m_spike_index, 1, -1);
+		const auto i_spike_index = spike_index;
+		mm_spike_index.OnEnChange(this, spike_index, 1, -1);
 
 		// check boundaries
-		if (m_spike_index < 0)
-			m_spike_index = 0;
-		if (m_spike_index >= m_pSpkList->get_spikes_count())
-			m_spike_index = m_pSpkList->get_spikes_count() - 1;
+		if (spike_index < 0)
+			spike_index = 0;
+		if (spike_index >= p_spk_list_->get_spikes_count())
+			spike_index = p_spk_list_->get_spikes_count() - 1;
 
-		if (m_spike_index != spike_index) 
+		if (spike_index != i_spike_index) 
 		{
 			load_spike_parameters();
-			m_iitimeold = m_iitime;
-			UpdateSpikeScroll();
+			ii_time_old_ = ii_time_;
+			update_spike_scroll();
 		}
 		else
 			UpdateData(FALSE);
@@ -183,131 +183,131 @@ void DlgSpikeEdit::OnEnChangespike_index()
 
 void DlgSpikeEdit::OnEnChangeSpikeclass()
 {
-	if (mm_spikeclass.m_bEntryDone)
+	if (mm_spike_class.m_bEntryDone)
 	{
-		mm_spikeclass.OnEnChange(this, m_spikeclass, 1, -1);
-		m_pSpkList->get_spike(m_spike_index)->set_class_id(m_spikeclass);
-		m_bartefact = (m_spikeclass < 0);
+		mm_spike_class.OnEnChange(this, spike_class, 1, -1);
+		p_spk_list_->get_spike(spike_index)->set_class_id(spike_class);
+		b_artefact = (spike_class < 0);
 		UpdateData(FALSE);
-		m_bchanged = TRUE;
+		b_changed = TRUE;
 	}
 }
 
 void DlgSpikeEdit::OnArtefact()
 {
 	UpdateData(TRUE); // load value from control
-	m_spikeclass = (m_bartefact) ? -1 : 0;
-	m_pSpkList->get_spike(m_spike_index)->set_class_id(m_spikeclass);
+	spike_class = (b_artefact) ? -1 : 0;
+	p_spk_list_->get_spike(spike_index)->set_class_id(spike_class);
 	UpdateData(FALSE); // update value
-	m_bchanged = TRUE;
+	b_changed = TRUE;
 }
 
 void DlgSpikeEdit::OnEnChangeDisplayratio()
 {
-	if (mm_displayratio.m_bEntryDone)
+	if (mm_display_ratio.m_bEntryDone)
 	{
-		mm_displayratio.OnEnChange(this, m_displayratio, 1, -1);
+		mm_display_ratio.OnEnChange(this, display_ratio, 1, -1);
 
-		if (m_displayratio < 1)
-			m_displayratio = 1;
+		if (display_ratio < 1)
+			display_ratio = 1;
 		UpdateData(FALSE);
-		m_viewdatalen = MulDiv(m_spklen, 100, m_displayratio);
-		LoadSourceViewData();
+		view_data_len_ = MulDiv(spk_length_, 100, display_ratio);
+		load_source_view_data();
 	}
 }
 
 void DlgSpikeEdit::OnEnChangeYextent()
 {
-	if (mm_yvextent.m_bEntryDone)
+	if (mm_yv_extent.m_bEntryDone)
 	{
-		mm_yvextent.OnEnChange(this, m_yvextent, 1, -1);
+		mm_yv_extent.OnEnChange(this, yv_extent, 1, -1);
 		UpdateData(FALSE);
-		ASSERT(m_yvextent != 0);
-		if (m_yvextent != m_yextent)
+		ASSERT(yv_extent != 0);
+		if (yv_extent != y_extent)
 		{
-			m_yextent = m_yvextent;
-			m_ChartDataWnd.get_channel_list_item(0)->SetYextent(m_yextent);
-			if (m_pSpkList->get_detection_parameters()->compensate_Baseline)
-				m_ChartDataWnd.get_channel_list_item(1)->SetYextent(m_yextent);
-			m_SpkChartWnd.set_yw_ext_org(m_yextent, m_yzero);
-			m_ChartDataWnd.Invalidate();
-			m_SpkChartWnd.Invalidate();
+			y_extent = yv_extent;
+			chart_data_.get_channel_list_item(0)->SetYextent(y_extent);
+			if (p_spk_list_->get_detection_parameters()->compensate_Baseline)
+				chart_data_.get_channel_list_item(1)->SetYextent(y_extent);
+			chart_spike_shape_.set_yw_ext_org(y_extent, y_zero);
+			chart_data_.Invalidate();
+			chart_spike_shape_.Invalidate();
 		}
 	}
 }
 
-void DlgSpikeEdit::LoadSourceViewData()
+void DlgSpikeEdit::load_source_view_data()
 {
-	if (m_pAcqDatDoc == nullptr)
+	if (p_acq_data_doc_ == nullptr)
 		return;
 
-	const auto spike = m_pSpkList->get_spike(m_spike_index); 
-	const auto spike_first = spike->get_time() - m_spkpretrig;
-	m_intervals_to_highlight_spikes.SetAt(3, spike_first); 
-	const auto spike_last = spike_first + m_spklen; 
-	m_intervals_to_highlight_spikes.SetAt(4, spike_last);
+	const auto spike = p_spk_list_->get_spike(spike_index); 
+	const auto spike_first = spike->get_time() - spk_pre_trigger_;
+	intervals_to_highlight_spikes_.SetAt(3, spike_first); 
+	const auto spike_last = spike_first + spk_length_; 
+	intervals_to_highlight_spikes_.SetAt(4, spike_last);
 
 	// compute limits of m_sourceView
-	auto source_view_first = spike_first + m_spklen / 2 - m_viewdatalen / 2;
+	auto source_view_first = spike_first + spk_length_ / 2 - view_data_len_ / 2;
 	if (source_view_first < 0) 
 		source_view_first = 0; 
-	auto source_view_last = source_view_first + m_viewdatalen - 1; 
-	if (source_view_last > m_ChartDataWnd.GetDocumentLast()) 
+	auto source_view_last = source_view_first + view_data_len_ - 1; 
+	if (source_view_last > chart_data_.GetDocumentLast()) 
 	{
-		source_view_last = m_ChartDataWnd.GetDocumentLast();
-		source_view_first = source_view_last - m_viewdatalen + 1;
+		source_view_last = chart_data_.GetDocumentLast();
+		source_view_first = source_view_last - view_data_len_ + 1;
 	}
 	// get data from doc
-	m_spikeChan = spike->get_source_channel();
+	spike_chan = spike->get_source_channel();
 
-	m_ChartDataWnd.set_channel_list_source_channel(0, m_spikeChan);
-	m_ChartDataWnd.GetDataFromDoc(source_view_first, source_view_last);
+	chart_data_.set_channel_list_source_channel(0, spike_chan);
+	chart_data_.GetDataFromDoc(source_view_first, source_view_last);
 
-	const auto method = m_pSpkList->get_detection_parameters()->extract_transform;
-	m_pAcqDatDoc->load_transformed_data(source_view_first, source_view_last, method, m_spikeChan);
+	const auto method = p_spk_list_->get_detection_parameters()->extract_transform;
+	p_acq_data_doc_->load_transformed_data(source_view_first, source_view_last, method, spike_chan);
 
 	// adjust offset (center spike) : use initial offset from spike
-	CChanlistItem* chan0 = m_ChartDataWnd.get_channel_list_item(0);
-	chan0->SetYzero(m_yzero + spike->get_amplitude_offset());
-	chan0->SetYextent(m_yextent);
+	CChanlistItem* chan0 = chart_data_.get_channel_list_item(0);
+	chan0->SetYzero(y_zero + spike->get_amplitude_offset());
+	chan0->SetYextent(y_extent);
 
-	if (m_pSpkList->get_detection_parameters()->compensate_Baseline)
+	if (p_spk_list_->get_detection_parameters()->compensate_Baseline)
 	{
-		CChanlistItem* chan1 = m_ChartDataWnd.get_channel_list_item(1);
-		chan1->SetYzero(m_yzero + spike->get_amplitude_offset());
-		chan1->SetYextent(m_yextent);
+		CChanlistItem* chan1 = chart_data_.get_channel_list_item(1);
+		chan1->SetYzero(y_zero + spike->get_amplitude_offset());
+		chan1->SetYextent(y_extent);
 	}
-	m_ChartDataWnd.Invalidate();
+	chart_data_.Invalidate();
 }
 
-void DlgSpikeEdit::LoadSpikeFromData(int shift)
+void DlgSpikeEdit::load_spike_from_data(const int shift)
 {
-	if (m_pAcqDatDoc != nullptr)
+	if (p_acq_data_doc_ != nullptr)
 	{
-		Spike* pSpike = m_pSpkList->get_spike(m_spike_index);
+		Spike* pSpike = p_spk_list_->get_spike(spike_index);
 		//auto offset = pSpike->get_amplitude_offset();
-		m_iitime += shift;
-		pSpike->set_time(m_iitime);
-		UpdateSpikeScroll();
+		ii_time_ += shift;
+		pSpike->set_time(ii_time_);
+		update_spike_scroll();
 
-		LoadSourceViewData();
-		const auto spike_first = m_iitime - m_spkpretrig;
+		load_source_view_data();
+		const auto spike_first = ii_time_ - spk_pre_trigger_;
 
-		auto lp_source = m_pAcqDatDoc->get_transformed_data_buffer();
-		const auto delta = spike_first - m_pAcqDatDoc->get_t_buffer_first();
+		auto lp_source = p_acq_data_doc_->get_transformed_data_buffer();
+		const auto delta = spike_first - p_acq_data_doc_->get_t_buffer_first();
 		lp_source += delta;
-		pSpike->transfer_data_to_spike_buffer(lp_source, 1, m_spklen);
+		pSpike->transfer_data_to_spike_buffer(lp_source, 1, spk_length_);
 		short max, min;
 		int i_max, i_min;
-		pSpike->measure_max_min_ex(&max, &i_max, &min, &i_min, 0, m_pSpkList->get_spike_length() - 1);
+		pSpike->measure_max_min_ex(&max, &i_max, &min, &i_min, 0, p_spk_list_->get_spike_length() - 1);
 		pSpike->set_max_min_ex(max, min, i_min - i_max);
 
 		// copy data to spike buffer
 		//offset += pSpike->get_amplitude_offset();
 		//pSpike->OffsetSpikeDataToAverageEx(offset, offset);
 
-		m_SpkChartWnd.Invalidate();
-		m_bchanged = TRUE;
+		chart_spike_shape_.Invalidate();
+		b_changed = TRUE;
 	}
 }
 
@@ -344,20 +344,20 @@ void DlgSpikeEdit::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 	case SB_THUMBPOSITION: // scroll to pos = nPos
 	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
-		shift = static_cast<int>(nPos) - SCROLLCENTER - (m_iitime - m_iitimeold);
+		shift = static_cast<int>(nPos) - SCROLLCENTER - (ii_time_ - ii_time_old_);
 		break;
 	default: // NOP: set position only
 		return;
 	}
-	LoadSpikeFromData(shift);
+	load_spike_from_data(shift);
 }
 
-void DlgSpikeEdit::UpdateSpikeScroll()
+void DlgSpikeEdit::update_spike_scroll()
 {
-	m_HScroll_infos.fMask = SIF_PAGE | SIF_POS;
-	m_HScroll_infos.nPos = m_iitime - m_iitimeold + SCROLLCENTER;
-	m_HScroll_infos.nPage = 10;
-	m_HScroll.SetScrollInfo(&m_HScroll_infos);
+	m_h_scroll_infos_.fMask = SIF_PAGE | SIF_POS;
+	m_h_scroll_infos_.nPos = ii_time_ - ii_time_old_ + SCROLLCENTER;
+	m_h_scroll_infos_.nPage = 10;
+	m_h_scroll_.SetScrollInfo(&m_h_scroll_infos_);
 }
 
 void DlgSpikeEdit::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
@@ -394,10 +394,10 @@ void DlgSpikeEdit::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		return;
 	}
 
-	auto spike = m_pSpkList->get_spike(m_spike_index);
-	spike->set_spike_length(m_pSpkList->get_spike_length());
+	const auto spike = p_spk_list_->get_spike(spike_index);
+	spike->set_spike_length(p_spk_list_->get_spike_length());
 	spike->offset_spike_data(static_cast<short>(shift));
 
 	load_spike_parameters();
-	m_bchanged = TRUE;
+	b_changed = TRUE;
 }

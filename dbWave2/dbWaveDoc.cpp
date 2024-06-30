@@ -423,7 +423,7 @@ Spike* CdbWaveDoc::get_spike(const db_spike& spike_coords)
 {
 	if (spike_coords.spike_index < 0)
 		return nullptr;
-	TRACE("get_spike from position:%i spike_list %i - spike index %i\n", spike_coords.database_position, spike_coords.spike_list_index, spike_coords.spike_index);
+	//TRACE("get_spike from position:%i spike_list %i - spike index %i\n", spike_coords.database_position, spike_coords.spike_list_index, spike_coords.spike_index);
 
 	if (spike_coords.database_position != db_get_current_record_position()) {
 		if (db_set_current_record_position(spike_coords.database_position))

@@ -10,48 +10,48 @@ public:
 
 	enum { IDD = IDD_EDITSPIKE };
 
-	int m_spikeclass{ 0 };
-	int m_spike_index{ 0 };
-	BOOL m_bartefact{ false };
-	int m_displayratio{ 0 };
-	int m_yvextent{ 0 };
+	int spike_class{ 0 };
+	int spike_index{ 0 };
+	BOOL b_artefact{ false };
+	int display_ratio{ 0 };
+	int yv_extent{ 0 };
 
 	CEditCtrl mm_spike_index;
-	CEditCtrl mm_spikeclass;
-	CEditCtrl mm_displayratio;
-	CEditCtrl mm_yvextent;
+	CEditCtrl mm_spike_class;
+	CEditCtrl mm_display_ratio;
+	CEditCtrl mm_yv_extent;
 
-	CdbWaveDoc* m_pdbWaveDoc{ nullptr };
-	int m_spikeChan{ 0 };
-	CWnd* m_parent{ nullptr }; 
-	int m_xextent{ 0 };
-	int m_yextent{ 0 };
-	int m_xzero{ 0 };
-	int m_yzero{ 0 };
-	BOOL m_bchanged{ 0 };
+	CdbWaveDoc* db_wave_doc { nullptr };
+	int spike_chan { 0 };
+	CWnd* m_parent { nullptr }; 
+	int x_extent { 0 };
+	int y_extent { 0 };
+	int x_zero { 0 };
+	int y_zero { 0 };
+	BOOL b_changed { 0 };
 
 protected:
-	SpikeList* m_pSpkList{ nullptr };
-	AcqDataDoc* m_pAcqDatDoc{ nullptr };
-	int m_spkpretrig{ 0 };
-	int m_spklen{ 0 };
-	int m_viewdatalen{ 0 };
-	CDWordArray m_intervals_to_highlight_spikes;
-	ChartSpikeShape m_SpkChartWnd;
-	ChartData m_ChartDataWnd;
-	long m_iitimeold{ 0 };
-	long m_iitime{ 0 };
-	CScrollBar m_HScroll;
-	CScrollBar m_VScroll;
-	SCROLLINFO m_HScroll_infos{}; 
-	SCROLLINFO m_VScroll_infos{};
+	SpikeList* p_spk_list_ { nullptr };
+	AcqDataDoc* p_acq_data_doc_ { nullptr };
+	int spk_pre_trigger_{ 0 };
+	int spk_length_{ 0 };
+	int view_data_len_{ 0 };
+	CDWordArray intervals_to_highlight_spikes_;
+	ChartSpikeShape chart_spike_shape_;
+	ChartData chart_data_;
+	long ii_time_old_{ 0 };
+	long ii_time_{ 0 };
+	CScrollBar m_h_scroll_;
+	CScrollBar m_v_scroll_;
+	SCROLLINFO m_h_scroll_infos_{}; 
+	SCROLLINFO m_v_scroll_infos_{};
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 	void load_spike_parameters();
-	void LoadSourceViewData();
-	void LoadSpikeFromData(int shift);
-	void UpdateSpikeScroll();
+	void load_source_view_data();
+	void load_spike_from_data(int shift);
+	void update_spike_scroll();
 
 	// Generated message map functions
 	BOOL OnInitDialog() override;

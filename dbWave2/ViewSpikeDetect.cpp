@@ -1411,23 +1411,23 @@ int ViewSpikeDetection::detect_method_1(WORD channel_index)
 void ViewSpikeDetection::OnToolsEdittransformspikes()
 {
 	DlgSpikeEdit dlg; // dialog box
-	dlg.m_yextent = m_chart_spike_shape.get_yw_extent();
-	dlg.m_yzero = m_chart_spike_shape.get_yw_org(); 
-	dlg.m_xextent = m_chart_spike_shape.get_xw_extent(); 
-	dlg.m_xzero = m_chart_spike_shape.get_xw_org(); 
-	dlg.m_spike_index = m_spike_index; 
+	dlg.y_extent = m_chart_spike_shape.get_yw_extent();
+	dlg.y_zero = m_chart_spike_shape.get_yw_org(); 
+	dlg.x_extent = m_chart_spike_shape.get_xw_extent(); 
+	dlg.x_zero = m_chart_spike_shape.get_xw_org(); 
+	dlg.spike_index = m_spike_index; 
 	m_pSpkList->remove_all_spike_flags();
-	dlg.m_pdbWaveDoc = GetDocument();
+	dlg.db_wave_doc = GetDocument();
 	dlg.m_parent = this;
 
 	// open dialog box and wait for response
 	dlg.DoModal();
 
-	m_spike_index = dlg.m_spike_index;
+	m_spike_index = dlg.spike_index;
 	db_spike spike_sel(-1, -1, m_spike_index);
 	select_spike_no(spike_sel, FALSE);
 	update_spike_display();
-	if (dlg.m_bchanged)
+	if (dlg.b_changed)
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 
 	update_legends();

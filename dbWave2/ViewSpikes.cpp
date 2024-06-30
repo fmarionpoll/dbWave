@@ -750,20 +750,19 @@ void ViewSpikes::OnToolsEdittransformspikes()
 	const auto l_last = spike_class_listbox_.get_time_last();
 
 	DlgSpikeEdit dlg;
-	dlg.m_yextent = spike_class_listbox_.get_yw_extent(); 
-	dlg.m_yzero = spike_class_listbox_.get_yw_org(); 
-	dlg.m_xextent = spike_class_listbox_.get_xw_extent(); 
-	dlg.m_xzero = spike_class_listbox_.get_xw_org();
-	dlg.m_spike_index = m_spike_index; 
-	dlg.m_pdbWaveDoc = GetDocument();
+	dlg.y_extent = spike_class_listbox_.get_yw_extent(); 
+	dlg.y_zero = spike_class_listbox_.get_yw_org(); 
+	dlg.x_extent = spike_class_listbox_.get_xw_extent(); 
+	dlg.x_zero = spike_class_listbox_.get_xw_org();
+	dlg.spike_index = m_spike_index; 
+	dlg.db_wave_doc = GetDocument();
 	dlg.m_parent = this;
-
-	// open dialog box and wait for response
 	dlg.DoModal();
-	if (!dlg.m_bartefact)
-		m_spike_index = dlg.m_spike_index;
 
-	if (dlg.m_bchanged)
+	if (!dlg.b_artefact)
+		m_spike_index = dlg.spike_index;
+
+	if (dlg.b_changed)
 	{
 		m_pSpkDoc->SetModifiedFlag(TRUE);
 		save_current_spk_file();

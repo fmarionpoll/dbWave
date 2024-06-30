@@ -98,7 +98,7 @@ public:
 	void set_detection_parameters(const SPKDETECTPARM* p_sd) { spk_detect_parameters_ = *p_sd; }
 	SPKDETECTPARM* get_detection_parameters() { return &spk_detect_parameters_; }
 
-	int add_spike(short* source, int n_channels, long ii_time, int source_channel, int i_class, BOOL b_check);
+	int add_spike(short* source_data, int n_channels, long ii_time, int source_channel, int i_class, BOOL b_check);
 
 	int  get_spike_length() const { return spike_length_; }
 	void set_spike_length(int spike_length) { spike_length_ = spike_length; }
@@ -124,8 +124,6 @@ public:
 	int get_valid_spike_number(int spike_index) const;
 	int get_next_spike(int spike_index, int delta, BOOL b_keep_same_class) ;
 
-public:
-	int set_spike_flag(int spike_index, BOOL set_spike_flag);
 	int toggle_spike_flag(int spike_index);
 	void set_single_spike_flag(int spike_index);
 	BOOL get_spike_flag(int spike_index);
@@ -133,7 +131,7 @@ public:
 	void flag_range_of_spikes(long l_first, long l_last, BOOL b_set);
 	void select_spikes_within_bounds(int v_min, int v_max, long l_first, long l_last, BOOL b_add);
 	void get_range_of_spike_flagged(long& l_first, long& l_last);
-	BOOL get_spike_flag_array_at(int i) const { return flagged_spikes_.GetAt(i); }
+	BOOL get_spike_flag_array_at(const int i) const { return flagged_spikes_.GetAt(i); }
 	int get_spike_flag_array_count() const { return flagged_spikes_.GetCount(); }
 	void change_class_of_flagged_spikes(int new_class_id);
 

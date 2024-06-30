@@ -123,10 +123,20 @@ protected:
 	void all_charts_invalidate();
 	void all_charts_set_spike_list(SpikeList* spk_list);
 
+	void set_mouse_cursor(short short_value);
+	void change_hz_limits();
+	void hit_spike();
+	void change_vertical_tag_spike_shape(short short_value);
+	void change_vertical_tag_histogram(short short_value);
+	void change_vertical_tag_xy_chart(short short_value);
+	void change_horizontal_tag_xy_chart(short short_value);
+	void save_windows_properties_to_options();
+
 	// Generated message map functions
 public:
 	afx_msg void on_select_change_parameter();
 	afx_msg void on_sort();
+
 	afx_msg LRESULT on_my_message(WPARAM code, LPARAM lParam);
 	afx_msg void on_measure();
 	afx_msg void on_format_all_data();
