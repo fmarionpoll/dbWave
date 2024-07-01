@@ -1098,8 +1098,8 @@ source_data CdbWaveDoc::get_wave_format_from_either_file(CString cs_filename)
 
 	// test  files
 	CFileStatus status;
-	record.data_file_present = CFile::GetStatus(record.cs_dat_file, status);
-	record.spike_file_present = CFile::GetStatus(record.cs_spk_file, status);
+	record.data_file_present = static_cast<boolean>(CFile::GetStatus(record.cs_dat_file, status));
+	record.spike_file_present = static_cast<boolean>(CFile::GetStatus(record.cs_spk_file, status));
 	if (record.data_file_present)
 		cs_filename = record.cs_dat_file;
 	else if (record.spike_file_present)
