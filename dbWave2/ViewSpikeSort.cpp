@@ -418,7 +418,7 @@ void ViewSpikeSort::update_legends()
 	else
 		chart_xt_measures_.set_time_intervals(-m_pSpkList->get_spike_length(), m_pSpkList->get_spike_length());
 	chart_spike_shape_.set_time_intervals(l_first_, l_last_);
-	chart_spike_bar_.set_time_intervals(l_first_, l_last_);;
+	chart_spike_bar_.set_time_intervals(l_first_, l_last_);
 
 	all_charts_invalidate();
 	UpdateData(FALSE);
