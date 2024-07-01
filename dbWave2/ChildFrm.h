@@ -44,7 +44,7 @@ protected:
 	afx_msg void on_tools_export_data_comments();
 	afx_msg void on_tools_export_data_as_text();
 	afx_msg void on_tools_export_number_of_spikes();
-	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT on_my_message(WPARAM wParam, LPARAM lParam);
 	afx_msg void replace_view_index(UINT n_id);
 	afx_msg void on_update_view_menu(CCmdUI* p_cmd_ui);
 
@@ -64,6 +64,7 @@ public:
 	afx_msg void on_tools_import_data_files();
 	afx_msg void on_tools_import_spike_files();
 	afx_msg void on_tools_import_database();
+	static void import_database();
 	afx_msg void on_tools_copy_all_project_files();
 	afx_msg void on_tools_export_data_file();
 	afx_msg void on_mdi_activate(BOOL bActivate, CWnd* pActivateWnd, CWnd* pDeactivateWnd);
