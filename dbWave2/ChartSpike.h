@@ -42,6 +42,8 @@ public:
 
 	db_spike get_hit_spike() const { return spike_hit_; }
 	db_spike get_selected_spike() const { return spike_selected_; }
+	void set_selected_spike(const db_spike& selected) { spike_selected_ = selected; }
+
 	boolean is_spike_within_range(const db_spike& spike_selected) const;
 	db_spike hit_curve_in_doc(CPoint point);
 

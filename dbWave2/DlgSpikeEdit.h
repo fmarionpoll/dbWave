@@ -36,6 +36,7 @@ protected:
 	int spk_pre_trigger_{ 0 };
 	int spk_length_{ 0 };
 	int view_data_len_{ 0 };
+	db_spike spike_sel_{};
 	CDWordArray intervals_to_highlight_spikes_;
 	ChartSpikeShape chart_spike_shape_;
 	ChartData chart_data_;

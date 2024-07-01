@@ -42,13 +42,19 @@ END_MESSAGE_MAP()
 
 void DlgSpikeEdit::load_spike_parameters()
 {
+	if (spike_index < 0)
+		spike_index = 0;
+	spike_sel_.spike_index = spike_index;
+	chart_spike_shape_.set_selected_spike(spike_sel_);
+	
 	const Spike* spike = p_spk_list_->get_spike(spike_index); 
 	spike_class = spike->get_class_id(); 
 	b_artefact = (spike_class < 0);
 	ii_time_ = spike->get_time();
 	chart_spike_shape_.draw_spike(spike);
 
-	load_source_view_data();
+	if (p_acq_data_doc_ != nullptr)
+		load_source_view_data();
 	UpdateData(FALSE); 
 }
 
@@ -62,6 +68,8 @@ BOOL DlgSpikeEdit::OnInitDialog()
 		EndDialog(FALSE); 
 		return TRUE;
 	}
+	spike_sel_.database_position = -1;
+	spike_sel_.spike_list_index = -1;
 
 	// subclass edit controls
 	VERIFY(mm_spike_class.SubclassDlgItem(IDC_SPIKECLASS, this));
@@ -76,9 +84,6 @@ BOOL DlgSpikeEdit::OnInitDialog()
 	// attach spike buffer
 	VERIFY(chart_spike_shape_.SubclassDlgItem(IDC_DISPLAYSPIKE_buttn, this));
 	chart_spike_shape_.set_source_data(p_spk_list_, db_wave_doc);
-	if (spike_index < 0) // select at least spike 0
-		spike_index = 0;
-
 	chart_spike_shape_.set_range_mode(RANGE_ALL); // display mode (lines)
 	chart_spike_shape_.set_plot_mode(PLOT_BLACK, 0); // display also artefacts
 
@@ -87,8 +92,8 @@ BOOL DlgSpikeEdit::OnInitDialog()
 		VERIFY(chart_data_.SubclassDlgItem(IDC_DISPLAREA_buttn, this));
 		chart_data_.set_b_use_dib(FALSE);
 		chart_data_.AttachDataFile(p_acq_data_doc_);
-		const auto lvSize = chart_data_.get_rect_size();
-		chart_data_.ResizeChannels(lvSize.cx, 0); // change nb of pixels
+		const auto lv_size = chart_data_.get_rect_size();
+		chart_data_.ResizeChannels(lv_size.cx, 0); 
 		chart_data_.remove_all_channel_list_items();
 		chart_data_.add_channel_list_item(p_spk_list_->get_detection_parameters()->extract_channel, p_spk_list_->get_detection_parameters()->extract_transform);
 
@@ -122,9 +127,9 @@ BOOL DlgSpikeEdit::OnInitDialog()
 	}
 
 	display_ratio = 20; // how much spike versus source data
-	spk_pre_trigger_ = p_spk_list_->get_detection_parameters()->detect_pre_threshold; // load parms used many times
-	spk_length_ = p_spk_list_->get_spike_length(); // pre-trig and spike length
-	view_data_len_ = MulDiv(spk_length_, 100, display_ratio); // how wide is source window
+	spk_pre_trigger_ = p_spk_list_->get_detection_parameters()->detect_pre_threshold; 
+	spk_length_ = p_spk_list_->get_spike_length();
+	view_data_len_ = MulDiv(spk_length_, 100, display_ratio); 
 	if (y_extent == 0)
 	{
 		short max, min;
@@ -132,13 +137,12 @@ BOOL DlgSpikeEdit::OnInitDialog()
 		y_extent = (max - min);
 		y_zero = (max + min) / 2;
 	}
-
-	yv_extent = y_extent; // ordinates extent
+	yv_extent = y_extent; 
 
 	// display data and init parameters
-	load_spike_parameters(); // load textual parms and displ source
+	load_spike_parameters(); 
 	ii_time_old_ = ii_time_;
-	b_changed = FALSE; // no modif yet to spikes
+	b_changed = FALSE; 
 
 	// adjust scroll bar (size of button and left/right limits)
 #define SCROLLMAX 200
@@ -154,7 +158,6 @@ BOOL DlgSpikeEdit::OnInitDialog()
 	m_v_scroll_.SetScrollInfo(&m_v_scroll_infos_);
 
 	return TRUE; // return TRUE unless you set the focus to a control
-	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void DlgSpikeEdit::OnEnChangespike_index()
@@ -195,10 +198,10 @@ void DlgSpikeEdit::OnEnChangeSpikeclass()
 
 void DlgSpikeEdit::OnArtefact()
 {
-	UpdateData(TRUE); // load value from control
+	UpdateData(TRUE); 
 	spike_class = (b_artefact) ? -1 : 0;
 	p_spk_list_->get_spike(spike_index)->set_class_id(spike_class);
-	UpdateData(FALSE); // update value
+	UpdateData(FALSE); 
 	b_changed = TRUE;
 }
 
@@ -212,7 +215,8 @@ void DlgSpikeEdit::OnEnChangeDisplayratio()
 			display_ratio = 1;
 		UpdateData(FALSE);
 		view_data_len_ = MulDiv(spk_length_, 100, display_ratio);
-		load_source_view_data();
+		if (p_acq_data_doc_ != nullptr)
+			load_source_view_data();
 	}
 }
 
@@ -238,9 +242,6 @@ void DlgSpikeEdit::OnEnChangeYextent()
 
 void DlgSpikeEdit::load_source_view_data()
 {
-	if (p_acq_data_doc_ == nullptr)
-		return;
-
 	const auto spike = p_spk_list_->get_spike(spike_index); 
 	const auto spike_first = spike->get_time() - spk_pre_trigger_;
 	intervals_to_highlight_spikes_.SetAt(3, spike_first); 
@@ -284,10 +285,10 @@ void DlgSpikeEdit::load_spike_from_data(const int shift)
 {
 	if (p_acq_data_doc_ != nullptr)
 	{
-		Spike* pSpike = p_spk_list_->get_spike(spike_index);
+		Spike* p_spike = p_spk_list_->get_spike(spike_index);
 		//auto offset = pSpike->get_amplitude_offset();
 		ii_time_ += shift;
-		pSpike->set_time(ii_time_);
+		p_spike->set_time(ii_time_);
 		update_spike_scroll();
 
 		load_source_view_data();
@@ -296,11 +297,12 @@ void DlgSpikeEdit::load_spike_from_data(const int shift)
 		auto lp_source = p_acq_data_doc_->get_transformed_data_buffer();
 		const auto delta = spike_first - p_acq_data_doc_->get_t_buffer_first();
 		lp_source += delta;
-		pSpike->transfer_data_to_spike_buffer(lp_source, 1, spk_length_);
+		p_spike->transfer_data_to_spike_buffer(lp_source, 1, spk_length_);
+
 		short max, min;
 		int i_max, i_min;
-		pSpike->measure_max_min_ex(&max, &i_max, &min, &i_min, 0, p_spk_list_->get_spike_length() - 1);
-		pSpike->set_max_min_ex(max, min, i_min - i_max);
+		p_spike->measure_max_min_ex(&max, &i_max, &min, &i_min, 0, p_spk_list_->get_spike_length() - 1);
+		p_spike->set_max_min_ex(max, min, i_min - i_max);
 
 		// copy data to spike buffer
 		//offset += pSpike->get_amplitude_offset();
@@ -326,27 +328,25 @@ void DlgSpikeEdit::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 	// assume that code comes from SCROLLBAR1
 	int shift;
-	// get corresponding data
 	switch (nSBCode)
 	{
-	case SB_LEFT: shift = -10;
-		break; // scroll to the start
+	case SB_LEFT: shift = -100;
+		break; 
 	case SB_LINELEFT: shift = -1;
-		break; // scroll one line left
+		break; 
 	case SB_LINERIGHT: shift = +1;
-		break; // scroll one line right
+		break;
 	case SB_PAGELEFT: shift = -10;
-		break; // scroll one page left
+		break; 
 	case SB_PAGERIGHT: shift = +10;
-		break; // scroll one page right
-	case SB_RIGHT: shift = +10;
-		break; // scroll to end right
-
+		break; 
+	case SB_RIGHT: shift = +100;
+		break; 
 	case SB_THUMBPOSITION: // scroll to pos = nPos
 	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
 		shift = static_cast<int>(nPos) - SCROLLCENTER - (ii_time_ - ii_time_old_);
 		break;
-	default: // NOP: set position only
+	default: 
 		return;
 	}
 	load_spike_from_data(shift);
@@ -370,27 +370,25 @@ void DlgSpikeEdit::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 	// assume that code comes from SCROLLBAR2
 	int shift;
-	// get corresponding data
 	switch (nSBCode)
 	{
-	case SB_TOP: shift = -10;
-		break; // scroll to the start
+	case SB_TOP: shift = -100;
+		break; 
 	case SB_LINEUP: shift = -1;
-		break; // scroll one line left
+		break; 
 	case SB_LINEDOWN: shift = 1;
-		break; // scroll one line right
+		break; 
 	case SB_PAGEUP: shift = -10;
-		break; // scroll one page left
+		break; 
 	case SB_PAGEDOWN: shift = 10;
-		break; // scroll one page right
-	case SB_BOTTOM: shift = 10;
-		break; // scroll to end right
-
+		break; 
+	case SB_BOTTOM: shift = 100;
+		break; 
 	case SB_THUMBPOSITION: // scroll to pos = nPos
 	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
 		shift = nPos - SCROLLCENTER - 4096;
 		break;
-	default: // NOP: set position only
+	default: 
 		return;
 	}
 

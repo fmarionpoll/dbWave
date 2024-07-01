@@ -249,7 +249,7 @@ int ChartSpikeShape::display_ex_data(short* p_data, const int color)
 	return color;
 }
 
-void ChartSpikeShape::select_spike(const db_spike & spike_sel)
+void ChartSpikeShape::select_spike(const db_spike& spike_sel)
 {
 	spike_selected_ = spike_sel;
 	if (spike_sel.spike_index >= 0) 
