@@ -427,9 +427,16 @@ Spike* CdbWaveDoc::get_spike(const db_spike& spike_coords)
 
 	if (spike_coords.database_position != db_get_current_record_position()) {
 		if (db_set_current_record_position(spike_coords.database_position))
-			open_current_spike_file();
+			if (nullptr == open_current_spike_file())
+				return nullptr;
 	}
-	SpikeList* p_spike_list = m_p_spk->get_spike_list_at(spike_coords.spike_list_index);
+
+	SpikeList* p_spike_list = nullptr;
+	if (spike_coords.spike_index >= 0)
+		p_spike_list = m_p_spk->get_spike_list_at(spike_coords.spike_list_index);
+	else
+		p_spike_list = m_p_spk->get_spike_list_current();
+	
 	return p_spike_list->get_spike(spike_coords.spike_index);
 }
 
