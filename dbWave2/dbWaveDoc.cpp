@@ -1457,7 +1457,7 @@ BOOL CdbWaveDoc::import_data_files_from_another_data_base(const CString & other_
 	delete p_new_doc;
 
 	// copy data
-	const CString path_to_mdb_sub_directory = get_full_path_name_without_extension();
+	const CString path_to_mdb_sub_directory = get_full_path_name_without_extension() + "/" + other_data_base_file_name;
 	if (!create_directory_if_does_not_exists(path_to_mdb_sub_directory))
 		return false;
 
