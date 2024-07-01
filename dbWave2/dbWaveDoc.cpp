@@ -661,8 +661,8 @@ void CdbWaveDoc::export_data_ascii_comments(CSharedFile * p_shared_file)
 		}
 	}
 
-	db_set_current_record_position(index_current);
-	open_current_data_file();
+	if (db_set_current_record_position(index_current))
+		open_current_data_file();
 }
 
 boolean CdbWaveDoc::create_directory_if_does_not_exists(const CString & path)
@@ -1419,21 +1419,30 @@ CString CdbWaveDoc::get_path_directory(const CString & full_name)
 
 void CdbWaveDoc::copy_files_to_directory(CStringArray & files_to_copy_array, const CString& mdb_directory)
 {
-	for (int i = 0; i < files_to_copy_array.GetCount(); i++) {
+	for (int i = 0; i < files_to_copy_array.GetCount(); i++) 
+	{
 		files_to_copy_array[i] = copy_file_to_directory(files_to_copy_array[i], mdb_directory);
 	}
 }
 
-BOOL CdbWaveDoc::import_data_files_from_another_data_base(const CString & other_data_base_file_name) const
+BOOL CdbWaveDoc::import_data_files_from_another_data_base(const CString& other_data_base_file_name) const
 {
 	const auto p_new_doc = new CdbWaveDoc; // open database
 	if (!p_new_doc->OnOpenDocument(other_data_base_file_name))
 		return FALSE;
 
+	const CString cs1 = get_full_path_name_without_extension();
+	const CString file_name = PathFindFileName(other_data_base_file_name);
+	const auto i_position_of_extension = file_name.ReverseFind('.');
+	const CString cs2 = file_name.Left(i_position_of_extension);
+	const CString path_to_mdb_sub_directory = cs1 + _T("\\") + cs2;
+	if (!create_directory_if_does_not_exists(path_to_mdb_sub_directory))
+		return FALSE;
+
 	// get names of data files of otherDataBase
 	const auto p_new_database = p_new_doc->db_table;
 	p_new_database->m_mainTableSet.MoveFirst();
-	auto n_added_records = 0;
+
 	CStringArray file_list_dat;
 	CStringArray file_list_spk;
 	CStringArray files_copied;
@@ -1442,27 +1451,32 @@ BOOL CdbWaveDoc::import_data_files_from_another_data_base(const CString & other_
 	{
 		if (this->db_table->is_record_time_unique(p_new_database->m_mainTableSet.m_table_acq_date))
 		{
-			this->db_table->import_record_from_database(p_new_database);
 			CString dat_name = p_new_database->get_current_record_data_file_name();
 			if (!dat_name.IsEmpty() && file_exists(dat_name))
 				file_list_dat.Add(dat_name);
 			CString spk_name = p_new_database->get_current_record_spike_file_name();
 			if (!spk_name.IsEmpty() && file_exists(spk_name))
 				file_list_spk.Add(spk_name);
-			n_added_records++;
+		}
+		p_new_database->m_mainTableSet.MoveNext();
+	}
+
+	// copy data
+	copy_files_to_directory(file_list_dat, path_to_mdb_sub_directory);
+	copy_files_to_directory(file_list_spk, path_to_mdb_sub_directory);
+
+	// import data
+	p_new_database->m_mainTableSet.MoveFirst();
+	while (!p_new_database->m_mainTableSet.IsEOF())
+	{
+		if (this->db_table->is_record_time_unique(p_new_database->m_mainTableSet.m_table_acq_date))
+		{
+			this->db_table->import_record_from_database(p_new_database);
 		}
 		p_new_database->m_mainTableSet.MoveNext();
 	}
 	p_new_database->m_mainTableSet.Close();
 	delete p_new_doc;
-
-	// copy data
-	const CString path_to_mdb_sub_directory = get_full_path_name_without_extension() + "/" + other_data_base_file_name;
-	if (!create_directory_if_does_not_exists(path_to_mdb_sub_directory))
-		return false;
-
-	copy_files_to_directory(file_list_dat, path_to_mdb_sub_directory);
-	copy_files_to_directory(file_list_spk, path_to_mdb_sub_directory);
 
 	// open dynaset
 	db_table->m_mainTableSet.Close();

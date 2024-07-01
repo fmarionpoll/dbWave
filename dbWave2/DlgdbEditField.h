@@ -27,14 +27,13 @@ public:
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override;
-	void DisplayElements();
-	void ModifyCurrent();
-	void ModifyAll();
-
-	void ModifySelected()
+	void display_elements() const;
+	void modify_current();
+	void modify_all();
+	void modify_selected()
 	{
-		const auto iedit = m_pMainTable->GetEditMode();
-		if (iedit != dbEditNone)
+		const auto i_edit = m_pMainTable->GetEditMode();
+		if (i_edit != dbEditNone)
 			m_pMainTable->Update();
 
 		const auto bookmark_current = m_pMainTable->GetBookmark();
@@ -46,41 +45,38 @@ protected:
 		{
 			const long n_item = m_pdbDoc->selected_records.GetAt(i);
 			m_pMainTable->SetAbsolutePosition(n_item);
-			ModifyCurrent();
+			modify_current();
 		}
 		m_pMainTable->SetBookmark(bookmark_current);
 	}
 
-	long m_sourceID{ 0 };
-	long m_destID{ 0 };
-	long m_initialID {-1};
+	long m_source_id_{ 0 };
+	long m_dest_id_{ 0 };
+	long m_initial_id_ {-1};
 
 public:
-	int m_sourceselect{REC_CURRENT};
-	int m_sourcecondition{ COND_EQU };
-	int m_destaction{ CHGE_ID };
-	BOOL m_bCaseSensitive{ false };
+	int m_source_select{REC_CURRENT};
+	int m_source_condition{ COND_EQU };
+	int m_dest_action{ CHGE_ID };
+	BOOL m_b_case_sensitive{ false };
 
-	CString m_csfieldvalue { _T("") };
-	CString m_cstextsearch{ _T("") };
-	CString m_cstextreplacewith{ _T("") };
-	CComboBox m_codictionary{};
-	BOOL m_bcodictchanged{ false };
-	CComboBox m_cosource;
+	CString m_cs_field_value { _T("") };
+	CString m_cs_text_search{ _T("") };
+	CString m_cs_text_replace_with{ _T("") };
+	CComboBox m_co_dictionary{};
+	BOOL m_b_co_dictionary_changed{ false };
+	CComboBox m_co_source;
 	int m_first{ -1 };
-
 
 	CdbTableMain* m_pMainTable{ nullptr }; 
 	CString m_csColName; 
 	CdbTableAssociated* m_pIndexTable{ nullptr }; 
 	CArray<long, long>* m_pliIDArray{ nullptr }; 
 	BOOL m_bIndexTable{ true }; // TRUE=linked field, FALSE=main field (m_pIndexTable=NULL)
-	CdbWaveDoc* m_pdbDoc{nullptr};
+	CdbWaveDoc* m_pdbDoc {nullptr};
 
-
-	afx_msg void OnBnClickedRadio1();
 	BOOL OnInitDialog() override;
-
+	afx_msg void OnBnClickedRadio1();
 	afx_msg void OnBnClickedRadio2();
 	afx_msg void OnBnClickedRadio3();
 	afx_msg void OnBnClickedRadio4();

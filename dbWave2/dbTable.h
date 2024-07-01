@@ -29,13 +29,13 @@ public:
 	//protected:
 	CdbTableAssociated m_operator_set;
 	CdbTableAssociated m_insect_set;
-	CdbTableAssociated m_locationSet;
+	CdbTableAssociated m_location_set;
 	CdbTableAssociated m_sensillum_set;
-	CdbTableAssociated m_stim_set;
-	CdbTableAssociated m_conc_set;
+	CdbTableAssociated m_stimulus_set;
+	CdbTableAssociated m_concentration_set;
 	CdbTableAssociated m_sex_set;
 	CdbTableAssociated m_strain_set;
-	CdbTableAssociated m_expt_set;
+	CdbTableAssociated m_experiment_set;
 	CdbTableAssociated m_path_set;
 
 	//CdbTableAssociated	m_stim2Set; // TODO

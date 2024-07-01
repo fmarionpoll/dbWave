@@ -193,23 +193,23 @@ BOOL DlgADExperiment::OnInitDialog()
 
 	m_csMoreComment = m_pwaveFormat->csMoreComment;
 	LoadList(&m_coConcentration, &(options_inputdata_->csA_concentration), options_inputdata_->icsA_concentration,
-		&(m_pdbDoc->db_table->m_conc_set));
+		&(m_pdbDoc->db_table->m_concentration_set));
 	LoadList(&m_coStimulus, &(options_inputdata_->csA_stimulus), options_inputdata_->icsA_stimulus,
-		&(m_pdbDoc->db_table->m_stim_set));
+		&(m_pdbDoc->db_table->m_stimulus_set));
 	LoadList(&m_coConcentration2, &(options_inputdata_->csA_concentration2), options_inputdata_->icsA_concentration2,
-		&(m_pdbDoc->db_table->m_conc_set));
+		&(m_pdbDoc->db_table->m_concentration_set));
 	LoadList(&m_coStimulus2, &(options_inputdata_->csA_stimulus2), options_inputdata_->icsA_stimulus2,
-		&(m_pdbDoc->db_table->m_stim_set));
+		&(m_pdbDoc->db_table->m_stimulus_set));
 	LoadList(&m_coInsect, &(options_inputdata_->csA_insect), options_inputdata_->icsA_insect, &(m_pdbDoc->db_table->m_insect_set));
 	LoadList(&m_coLocation, &(options_inputdata_->csA_location), options_inputdata_->icsA_location,
-		&(m_pdbDoc->db_table->m_locationSet));
+		&(m_pdbDoc->db_table->m_location_set));
 	LoadList(&m_coSensillum, &(options_inputdata_->csA_sensillum), options_inputdata_->icsA_sensillum,
 		&(m_pdbDoc->db_table->m_sensillum_set));
 	LoadList(&m_coStrain, &(options_inputdata_->csA_strain), options_inputdata_->icsA_strain, &(m_pdbDoc->db_table->m_strain_set));
 	LoadList(&m_coSex, &(options_inputdata_->csA_sex), options_inputdata_->icsA_sex, &(m_pdbDoc->db_table->m_sex_set));
 	LoadList(&m_coOperator, &(options_inputdata_->csA_operatorname), options_inputdata_->icsA_operatorname,
 		&(m_pdbDoc->db_table->m_operator_set));
-	LoadList(&m_coExpt, &(options_inputdata_->csA_expt), options_inputdata_->icsA_expt, &(m_pdbDoc->db_table->m_expt_set));
+	LoadList(&m_coExpt, &(options_inputdata_->csA_expt), options_inputdata_->icsA_expt, &(m_pdbDoc->db_table->m_experiment_set));
 	LoadList(&m_coRepeat, nullptr, options_inputdata_->icsA_repeat, nullptr);
 	LoadList(&m_coRepeat2, nullptr, options_inputdata_->icsA_repeat2, nullptr);
 

@@ -81,7 +81,7 @@ public:
 	void	get_max_min_of_all_spikes(BOOL b_all_files, BOOL b_recalculate, short* max, short* min);
 	CSize	get_max_min_of_single_spike(BOOL b_all);
 
-	void	set_clean_db_on_exit(BOOL bClear) { clean_database_on_exit_ = bClear; }
+	void	set_clean_db_on_exit(const BOOL b_clear) { clean_database_on_exit_ = b_clear; }
 
 	void	export_data_ascii_comments(CSharedFile* p_shared_file);
 	void	export_number_of_spikes(CSharedFile* p_sf);

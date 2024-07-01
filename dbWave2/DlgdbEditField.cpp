@@ -25,12 +25,12 @@ DlgdbEditField::~DlgdbEditField()
 void DlgdbEditField::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT1, m_csfieldvalue);
-	DDX_Text(pDX, IDC_EDIT2, m_cstextsearch);
-	DDX_Text(pDX, IDC_EDIT3, m_cstextreplacewith);
-	DDX_Control(pDX, IDC_COMBO1, m_codictionary);
-	DDX_Control(pDX, IDC_COMBO3, m_cosource);
-	DDX_Check(pDX, IDC_CHECKCASESENSITIV, m_bCaseSensitive);
+	DDX_Text(pDX, IDC_EDIT1, m_cs_field_value);
+	DDX_Text(pDX, IDC_EDIT2, m_cs_text_search);
+	DDX_Text(pDX, IDC_EDIT3, m_cs_text_replace_with);
+	DDX_Control(pDX, IDC_COMBO1, m_co_dictionary);
+	DDX_Control(pDX, IDC_COMBO3, m_co_source);
+	DDX_Check(pDX, IDC_CHECKCASESENSITIV, m_b_case_sensitive);
 }
 
 BEGIN_MESSAGE_MAP(DlgdbEditField, CDialogEx)
@@ -64,33 +64,33 @@ BOOL DlgdbEditField::OnInitDialog()
 		GetDlgItem(IDC_BUTTON1)->EnableWindow(FALSE);
 		GetDlgItem(IDC_RADIO2)->EnableWindow(FALSE);
 		GetDlgItem(IDC_EDIT2)->EnableWindow(FALSE);
-		m_codictionary.ModifyStyle(LBS_SORT, NULL);
+		m_co_dictionary.ModifyStyle(LBS_SORT, NULL);
 	}
 
 	// Add extra initialization here
 	static_cast<CButton*>(GetDlgItem(IDC_RADIO1))->SetCheck(BST_CHECKED);
 	static_cast<CButton*>(GetDlgItem(IDC_RADIO4))->SetCheck(BST_CHECKED);
-	DisplayElements();
+	display_elements();
 
 	// fill source type
-	m_cosource.SetCurSel(1); // only the current record
+	m_co_source.SetCurSel(1); // only the current record
 
 	// load source value from the main table
 	COleVariant var_value;
 	m_pMainTable->GetFieldValue(m_csColName, var_value);
 	if (var_value.vt != VT_NULL)
 	{
-		m_initialID = var_value.lVal;
+		m_initial_id_ = var_value.lVal;
 		if (m_bIndexTable)
-			m_csfieldvalue = m_pIndexTable->GetStringFromID(var_value.lVal);
+			m_cs_field_value = m_pIndexTable->GetStringFromID(var_value.lVal);
 		else
-			m_csfieldvalue.Format(_T("%i"), var_value.lVal);
+			m_cs_field_value.Format(_T("%i"), var_value.lVal);
 	}
 	else
-		m_csfieldvalue.Empty(); // = _T("undefined");
+		m_cs_field_value.Empty(); // = _T("undefined");
 
 	// linked field: fill CComboBox with content of linked table
-	m_codictionary.ResetContent();
+	m_co_dictionary.ResetContent();
 	if (m_bIndexTable)
 	{
 		if (m_pIndexTable->IsOpen() && !m_pIndexTable->IsBOF())
@@ -102,8 +102,8 @@ BOOL DlgdbEditField::OnInitDialog()
 				m_pIndexTable->GetFieldValue(0, var_value0);
 				m_pIndexTable->GetFieldValue(1, var_value1);
 				CString cs_dummy = var_value0.bstrVal;
-				const auto i = m_codictionary.AddString(cs_dummy);
-				m_codictionary.SetItemData(i, var_value1.lVal);
+				const auto i = m_co_dictionary.AddString(cs_dummy);
+				m_co_dictionary.SetItemData(i, var_value1.lVal);
 				m_pIndexTable->MoveNext();
 			}
 		}
@@ -117,95 +117,95 @@ BOOL DlgdbEditField::OnInitDialog()
 			CString cs;
 			const auto uc_id = m_pliIDArray->GetAt(i);
 			cs.Format(_T("%i"), uc_id);
-			auto j = m_codictionary.FindStringExact(0, cs);
+			auto j = m_co_dictionary.FindStringExact(0, cs);
 			if (j == CB_ERR)
 			{
-				const auto k = m_codictionary.InsertString(i, cs);
+				const auto k = m_co_dictionary.InsertString(i, cs);
 				ASSERT(k != CB_ERR);
-				m_codictionary.SetItemData(k, uc_id);
+				m_co_dictionary.SetItemData(k, uc_id);
 			}
 		}
 	}
 	// select value in combobox
-	int iselect = 0;
-	if (!m_csfieldvalue.IsEmpty())
-		iselect = m_codictionary.FindStringExact(0, m_csfieldvalue);
-	m_codictionary.SetCurSel(iselect);
+	int i_select = 0;
+	if (!m_cs_field_value.IsEmpty())
+		i_select = m_co_dictionary.FindStringExact(0, m_cs_field_value);
+	m_co_dictionary.SetCurSel(i_select);
 
 	UpdateData(FALSE);
 	return TRUE; // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void DlgdbEditField::DisplayElements()
+void DlgdbEditField::display_elements() const
 {
-	GetDlgItem(IDC_EDIT1)->EnableWindow(m_sourcecondition == COND_EQU);
-	GetDlgItem(IDC_EDIT2)->EnableWindow(m_sourcecondition == COND_SEARCH);
-	GetDlgItem(IDC_CHECKCASESENSITIV)->EnableWindow(m_sourcecondition == COND_SEARCH);
+	GetDlgItem(IDC_EDIT1)->EnableWindow(m_source_condition == COND_EQU);
+	GetDlgItem(IDC_EDIT2)->EnableWindow(m_source_condition == COND_SEARCH);
+	GetDlgItem(IDC_CHECKCASESENSITIV)->EnableWindow(m_source_condition == COND_SEARCH);
 
-	GetDlgItem(IDC_COMBO1)->EnableWindow(m_destaction == CHGE_ID);
+	GetDlgItem(IDC_COMBO1)->EnableWindow(m_dest_action == CHGE_ID);
 	//if (m_bIndexTable)
-	GetDlgItem(IDC_BUTTON1)->EnableWindow(m_destaction == CHGE_ID);
-	GetDlgItem(IDC_EDIT3)->EnableWindow(m_destaction == CHGE_TXT);
+	GetDlgItem(IDC_BUTTON1)->EnableWindow(m_dest_action == CHGE_ID);
+	GetDlgItem(IDC_EDIT3)->EnableWindow(m_dest_action == CHGE_TXT);
 }
 
 void DlgdbEditField::OnCbnSelchangeCombo3()
 {
-	m_sourceselect = m_cosource.GetCurSel();
-	DisplayElements();
+	m_source_select = m_co_source.GetCurSel();
+	display_elements();
 }
 
 void DlgdbEditField::OnBnClickedRadio1()
 {
-	m_sourcecondition = COND_EQU;
-	DisplayElements();
+	m_source_condition = COND_EQU;
+	display_elements();
 }
 
 void DlgdbEditField::OnBnClickedRadio2()
 {
-	m_sourcecondition = COND_SEARCH;
-	DisplayElements();
+	m_source_condition = COND_SEARCH;
+	display_elements();
 }
 
 void DlgdbEditField::OnBnClickedRadio3()
 {
-	m_sourcecondition = COND_NONE;
-	DisplayElements();
+	m_source_condition = COND_NONE;
+	display_elements();
 }
 
 void DlgdbEditField::OnBnClickedRadio4()
 {
-	m_destaction = CHGE_ID;
-	DisplayElements();
+	m_dest_action = CHGE_ID;
+	display_elements();
 }
 
 void DlgdbEditField::OnBnClickedRadio5()
 {
-	m_destaction = CHGE_TXT;
-	DisplayElements();
+	m_dest_action = CHGE_TXT;
+	display_elements();
 }
 
 void DlgdbEditField::OnBnClickedRadio6()
 {
-	m_destaction = CHGE_CLEAR;
-	DisplayElements();
+	m_dest_action = CHGE_CLEAR;
+	display_elements();
 }
 
 void DlgdbEditField::OnBnClickedButton1()
 {
 	DlgEditList dlg;
-	dlg.pCo = &m_codictionary;
-	const auto iresult = dlg.DoModal();
-	if (IDOK == iresult)
+	dlg.pCo = &m_co_dictionary;
+	const auto i_result = dlg.DoModal();
+	if (IDOK == i_result)
 	{
-		m_codictionary.ResetContent();
-		const auto nitems = dlg.m_csArray.GetCount();
-		for (auto i = 0; i < nitems; i++)
+		m_co_dictionary.ResetContent();
+		const auto n_items = dlg.m_csArray.GetCount();
+		for (auto i = 0; i < n_items; i++)
 		{
 			auto cs = dlg.m_csArray.GetAt(i);
-			m_codictionary.AddString(cs);
+			m_co_dictionary.AddString(cs);
 		}
-		m_codictionary.SetCurSel(dlg.m_selected);
+		m_co_dictionary.SetCurSel(dlg.m_selected);
 	}
 	UpdateData(FALSE);
 }
@@ -222,45 +222,45 @@ void DlgdbEditField::OnBnClickedOk()
 	// (1) get ID of record selected in the combo, check if it exists (if not, add it) and select it as current
 	if (m_bIndexTable)
 	{
-		CString cs;
-		m_destID = -1;
-		if (m_codictionary.GetCount() > 0)
+		m_dest_id_ = -1;
+		if (m_co_dictionary.GetCount() > 0)
 		{
-			m_codictionary.GetLBText(m_codictionary.GetCurSel(), cs);
-			m_pIndexTable->AddStringsFromCombo(&m_codictionary);
-			ASSERT(m_pIndexTable->GetIDFromString(cs, m_destID));
+			CString cs;
+			m_co_dictionary.GetLBText(m_co_dictionary.GetCurSel(), cs);
+			m_pIndexTable->AddStringsFromCombo(&m_co_dictionary);
+			ASSERT(m_pIndexTable->GetIDFromString(cs, m_dest_id_));
 		}
-		if (m_sourcecondition == COND_SEARCH && !m_bCaseSensitive)
-			m_cstextsearch.MakeLower(); // change case of search string if case-sensitive is not checked
+		if (m_source_condition == COND_SEARCH && !m_b_case_sensitive)
+			m_cs_text_search.MakeLower(); // change case of search string if case-sensitive is not checked
 	}
 	// numeric field only - value in the main table
 	else
 	{
-		if (m_sourcecondition == COND_EQU)
-			m_initialID = GetDlgItemInt(IDC_EDIT1);
+		if (m_source_condition == COND_EQU)
+			m_initial_id_ = GetDlgItemInt(IDC_EDIT1);
 
-		if (m_destaction == CHGE_ID)
+		if (m_dest_action == CHGE_ID)
 		{
 			// change ID
 			CString cs;
-			m_codictionary.GetLBText(m_codictionary.GetCurSel(), cs);
-			m_destID = _tstoi(cs);
+			m_co_dictionary.GetLBText(m_co_dictionary.GetCurSel(), cs);
+			m_dest_id_ = _tstoi(cs);
 		}
-		else if (m_destaction == CHGE_TXT)
-			m_destID = GetDlgItemInt(IDC_EDIT3);
+		else if (m_dest_action == CHGE_TXT)
+			m_dest_id_ = GetDlgItemInt(IDC_EDIT3);
 	}
 
 	// (2) edit the main table
-	switch (m_sourceselect)
+	switch (m_source_select)
 	{
 	case REC_CURRENT:
-		ModifyCurrent();
+		modify_current();
 		break;
 	case REC_ALL:
-		ModifyAll();
+		modify_all();
 		break;
 	case REC_SELECTED:
-		ModifySelected();
+		modify_selected();
 		break;
 	default:
 		break;
@@ -268,17 +268,16 @@ void DlgdbEditField::OnBnClickedOk()
 
 	// (3) check if we need/can "remove" records from the index table
 	if (m_bIndexTable)
-		m_pIndexTable->RemoveStringsNotInCombo(&m_codictionary);
+		m_pIndexTable->RemoveStringsNotInCombo(&m_co_dictionary);
 
 	// exit
 	CDialogEx::OnOK();
 }
 
-
-void DlgdbEditField::ModifyAll()
+void DlgdbEditField::modify_all()
 {
-	const auto iedit = m_pMainTable->GetEditMode();
-	if (iedit != dbEditNone)
+	const auto i_edit = m_pMainTable->GetEditMode();
+	if (i_edit != dbEditNone)
 		m_pMainTable->Update();
 
 
@@ -286,17 +285,17 @@ void DlgdbEditField::ModifyAll()
 	m_pMainTable->MoveFirst();
 	while (!m_pMainTable->IsEOF())
 	{
-		ModifyCurrent();
+		modify_current();
 		m_pMainTable->MoveNext();
 	}
 	m_pMainTable->SetBookmark(bookmark_current);
 }
 
-void DlgdbEditField::ModifyCurrent()
+void DlgdbEditField::modify_current()
 {
 	long id_current = 0; // ID of current record
-	auto ifound = 0;
-	CString csvalue;
+	auto i_found = 0;
+	CString cs_value;
 	COleVariant var_value;
 	m_pMainTable->GetFieldValue(m_csColName, var_value); // FALSE if field is null
 	const BOOL b_valid = (var_value.vt != VT_NULL);
@@ -304,10 +303,10 @@ void DlgdbEditField::ModifyCurrent()
 		id_current = var_value.lVal;
 
 	// reject record?  if condition "==" : reject if iID != IDscope
-	switch (m_sourcecondition)
+	switch (m_source_condition)
 	{
 	case COND_EQU:
-		if (id_current != m_initialID) //&& bValid)
+		if (id_current != m_initial_id_) //&& bValid)
 			return; // exit if current record is already correct or if record is not valid
 		break;
 	case COND_SEARCH:
@@ -315,11 +314,11 @@ void DlgdbEditField::ModifyCurrent()
 			break;
 		if (b_valid)
 		{
-			csvalue = m_pIndexTable->GetStringFromID(id_current);
-			if (!m_bCaseSensitive)
-				csvalue.MakeLower();
-			ifound = csvalue.Find(m_cstextsearch, 0);
-			if (ifound < 0)
+			cs_value = m_pIndexTable->GetStringFromID(id_current);
+			if (!m_b_case_sensitive)
+				cs_value.MakeLower();
+			i_found = cs_value.Find(m_cs_text_search, 0);
+			if (i_found < 0)
 				return; // exit if the search string is not found
 		}
 		break;
@@ -329,10 +328,10 @@ void DlgdbEditField::ModifyCurrent()
 	}
 
 	// change ID value, erase ID value or change text...
-	switch (m_destaction)
+	switch (m_dest_action)
 	{
 	case CHGE_ID: // change ID
-		m_pMainTable->SetLongValue(m_destID, m_csColName);
+		m_pMainTable->SetLongValue(m_dest_id_, m_csColName);
 		break;
 	case CHGE_CLEAR: // erase iID
 		m_pMainTable->SetValueNull(m_csColName);
@@ -342,22 +341,22 @@ void DlgdbEditField::ModifyCurrent()
 		// indexed value
 		if (m_bIndexTable)
 		{
-			const auto csnew = csvalue.Left(ifound)
-				+ m_cstextreplacewith
-				+ csvalue.Right(csvalue.GetLength() - (m_cstextsearch.GetLength() + ifound));
-			const auto id_new = m_pIndexTable->GetStringInLinkedTable(csnew);
+			const auto cs_new = cs_value.Left(i_found)
+				+ m_cs_text_replace_with
+				+ cs_value.Right(cs_value.GetLength() - (m_cs_text_search.GetLength() + i_found));
+			const auto id_new = m_pIndexTable->GetStringInLinkedTable(cs_new);
 			if (id_new >= 0)
 			{
 				m_pMainTable->SetLongValue(id_new, m_csColName);
 				// make sure that the new string is stored in the combobox
-				m_first = m_codictionary.FindStringExact(m_first, csnew);
+				m_first = m_co_dictionary.FindStringExact(m_first, cs_new);
 				if (CB_ERR == m_first)
-					m_first = m_codictionary.AddString(csnew);
+					m_first = m_co_dictionary.AddString(cs_new);
 			}
 		}
 		// raw value
 		else
-			m_pMainTable->SetLongValue(m_destID, m_csColName);
+			m_pMainTable->SetLongValue(m_dest_id_, m_csColName);
 		break;
 	default:
 		break;

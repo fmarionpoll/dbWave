@@ -65,16 +65,16 @@ CdbTable::CdbTable()
 void CdbTable::set_attached_tables_names()
 {
 	// Set_DFX_SQL_Names(CString defaultSQL /* or table name*/, CString DFX_cs, CString DFX_ID)
-	m_stim_set.Set_DFX_SQL_Names(m_column_properties[CH_STIM_ID].attached_table, _T("stim"), _T("stimID"));
-	m_conc_set.Set_DFX_SQL_Names(m_column_properties[CH_CONC_ID].attached_table, _T("conc"), _T("concID"));
+	m_stimulus_set.Set_DFX_SQL_Names(m_column_properties[CH_STIM_ID].attached_table, _T("stim"), _T("stimID"));
+	m_concentration_set.Set_DFX_SQL_Names(m_column_properties[CH_CONC_ID].attached_table, _T("conc"), _T("concID"));
 	m_operator_set.Set_DFX_SQL_Names(m_column_properties[CH_OPERATOR_ID].attached_table, _T("operator"), _T("operatorID"));
 	m_insect_set.Set_DFX_SQL_Names(m_column_properties[CH_INSECT_ID].attached_table, _T("insect"), _T("insectID"));
-	m_locationSet.Set_DFX_SQL_Names(m_column_properties[CH_LOCATION_ID].attached_table, _T("type"), _T("typeID"));
+	m_location_set.Set_DFX_SQL_Names(m_column_properties[CH_LOCATION_ID].attached_table, _T("type"), _T("typeID"));
 	m_path_set.Set_DFX_SQL_Names(m_column_properties[CH_PATH_ID].attached_table, _T("path"), _T("pathID"));
 	m_sensillum_set.Set_DFX_SQL_Names(m_column_properties[CH_SENSILLUM_ID].attached_table, _T("stage"), _T("stageID"));
 	m_sex_set.Set_DFX_SQL_Names(m_column_properties[CH_SEX_ID].attached_table, _T("sex"), _T("sexID"));
 	m_strain_set.Set_DFX_SQL_Names(m_column_properties[CH_STRAIN_ID].attached_table, _T("strain"), _T("strainID"));
-	m_expt_set.Set_DFX_SQL_Names(m_column_properties[CH_EXPT_ID].attached_table, _T("expt"), _T("exptID"));
+	m_experiment_set.Set_DFX_SQL_Names(m_column_properties[CH_EXPT_ID].attached_table, _T("expt"), _T("exptID"));
 
 }
 
@@ -85,10 +85,10 @@ boolean CdbTable::create_relations_with_attached_tables(const CString& cs_table)
 	if (!create_relation_between_associated_table_and_1_column(cs_table, CH_INSECT_ID, l_attr, &m_insect_set)) return FALSE;
 	if (!create_relation_between_associated_table_and_1_column(cs_table, CH_SENSILLUM_ID, l_attr, &m_sensillum_set)) return FALSE;
 	if (!create_relation_between_associated_table_and_1_column(cs_table, CH_OPERATOR_ID, l_attr, &m_operator_set)) return FALSE;
-	if (!create_relation_between_associated_table_and_1_column(cs_table, CH_LOCATION_ID, l_attr, &m_locationSet)) return FALSE;
+	if (!create_relation_between_associated_table_and_1_column(cs_table, CH_LOCATION_ID, l_attr, &m_location_set)) return FALSE;
 	if (!create_relation_between_associated_table_and_1_column(cs_table, CH_STRAIN_ID, l_attr, &m_strain_set)) return FALSE;
 	if (!create_relation_between_associated_table_and_1_column(cs_table, CH_SEX_ID, l_attr, &m_sex_set)) return FALSE;
-	if (!create_relation_between_associated_table_and_1_column(cs_table, CH_EXPT_ID, l_attr, &m_expt_set)) return FALSE;
+	if (!create_relation_between_associated_table_and_1_column(cs_table, CH_EXPT_ID, l_attr, &m_experiment_set)) return FALSE;
 
 	if (!create_relation_between_associated_table_and_2_columns(cs_table, CH_PATH_ID, CH_PATH2_ID)) return FALSE;
 	if (!create_relation_between_associated_table_and_2_columns(cs_table, CH_STIM_ID, CH_STIM2_ID)) return FALSE;
@@ -267,13 +267,13 @@ void CdbTable::create_associated_tables()
 	m_insect_set.CreateIndextable(_T("insectname"), _T("insect"), _T("insectID"), 100, this);
 	m_sensillum_set.CreateIndextable(_T("sensillumname"), _T("stage"), _T("stageID"), 100, this);
 	m_operator_set.CreateIndextable(_T("operator"), _T("operator"), _T("operatorID"), 50, this);
-	m_stim_set.CreateIndextable(_T("stim"), _T("stim"), _T("stimID"), 100, this);
-	m_conc_set.CreateIndextable(_T("conc"), _T("conc"), _T("concID"), 100, this);
-	m_locationSet.CreateIndextable(_T("location"), _T("type"), _T("typeID"), 100, this);
+	m_stimulus_set.CreateIndextable(_T("stim"), _T("stim"), _T("stimID"), 100, this);
+	m_concentration_set.CreateIndextable(_T("conc"), _T("conc"), _T("concID"), 100, this);
+	m_location_set.CreateIndextable(_T("location"), _T("type"), _T("typeID"), 100, this);
 	m_path_set.CreateIndextable(_T("path"), _T("path"), _T("pathID"), 255, this);
 	m_strain_set.CreateIndextable(_T("strain"), _T("strain"), _T("strainID"), 100, this);
 	m_sex_set.CreateIndextable(_T("sex"), _T("sex"), _T("sexID"), 10, this);
-	m_expt_set.CreateIndextable(_T("expt"), _T("expt"), _T("exptID"), 100, this);
+	m_experiment_set.CreateIndextable(_T("expt"), _T("expt"), _T("exptID"), 100, this);
 }
 
 void CdbTable::create_all_tables()
@@ -351,16 +351,16 @@ BOOL CdbTable::open_tables()
 	// open tables
 	try
 	{
-		open_associated_table(&m_stim_set);
-		open_associated_table(&m_conc_set);
+		open_associated_table(&m_stimulus_set);
+		open_associated_table(&m_concentration_set);
 		open_associated_table(&m_operator_set);
 		open_associated_table(&m_insect_set);
-		open_associated_table(&m_locationSet);
+		open_associated_table(&m_location_set);
 		open_associated_table(&m_path_set);
 		open_associated_table(&m_sensillum_set);
 		open_associated_table(&m_sex_set);
 		open_associated_table(&m_strain_set);
-		open_associated_table(&m_expt_set);
+		open_associated_table(&m_experiment_set);
 	}
 	catch (CDaoException* e)
 	{
@@ -384,7 +384,7 @@ void CdbTable::add_column_28(CDaoTableDef& table_def, const CString& cs_table, c
 {
 	table_def.Open(cs_table);
 	table_def.CreateField(m_mainTableSet.m_desc[CH_EXPT_ID].header_name, dbLong, 4, 0);
-	m_expt_set.CreateIndextable(_T("expt"), _T("expt"), _T("exptID"), 100, this);
+	m_experiment_set.CreateIndextable(_T("expt"), _T("expt"), _T("exptID"), 100, this);
 	CreateRelation(_T("table_expt"), _T("expt"), cs_table, l_attr, _T("exptID"),
 		m_mainTableSet.m_desc[CH_EXPT_ID].header_name);
 	table_def.Close();
@@ -492,14 +492,14 @@ void CdbTable::close_database()
 		if (m_mainTableSet.IsOpen()) m_mainTableSet.Close();
 		if (m_operator_set.IsOpen()) m_operator_set.Close();
 		if (m_insect_set.IsOpen()) m_insect_set.Close();
-		if (m_locationSet.IsOpen()) m_locationSet.Close();
+		if (m_location_set.IsOpen()) m_location_set.Close();
 		if (m_sensillum_set.IsOpen()) m_sensillum_set.Close();
 		if (m_path_set.IsOpen()) m_path_set.Close();
-		if (m_stim_set.IsOpen()) m_stim_set.Close();
-		if (m_conc_set.IsOpen()) m_conc_set.Close();
+		if (m_stimulus_set.IsOpen()) m_stimulus_set.Close();
+		if (m_concentration_set.IsOpen()) m_concentration_set.Close();
 		if (m_sex_set.IsOpen()) m_sex_set.Close();
 		if (m_strain_set.IsOpen()) m_strain_set.Close();
-		if (m_expt_set.IsOpen()) m_expt_set.Close();
+		if (m_experiment_set.IsOpen()) m_experiment_set.Close();
 
 		// close the workspace
 		m_pWorkspace->Close();
@@ -518,8 +518,8 @@ void CdbTable::update_all_database_tables()
 		m_operator_set.Update();
 	if (m_insect_set.GetEditMode() != dbEditNone)
 		m_insect_set.Update();
-	if (m_locationSet.GetEditMode() != dbEditNone)
-		m_locationSet.Update();
+	if (m_location_set.GetEditMode() != dbEditNone)
+		m_location_set.Update();
 	if (m_sensillum_set.GetEditMode() != dbEditNone)
 		m_sensillum_set.Update();
 	if (m_path_set.GetEditMode() != dbEditNone)
@@ -528,8 +528,8 @@ void CdbTable::update_all_database_tables()
 		m_sex_set.Update();
 	if (m_strain_set.GetEditMode() != dbEditNone)
 		m_strain_set.Update();
-	if (m_expt_set.GetEditMode() != dbEditNone)
-		m_expt_set.Update();
+	if (m_experiment_set.GetEditMode() != dbEditNone)
+		m_experiment_set.Update();
 }
 
 CString CdbTable::get_file_path(const int i_id)
@@ -887,17 +887,17 @@ DB_ITEMDESC* CdbTable::get_record_item_descriptor(int column_index)
 		break;
 	case CH_STIM_ID:
 		p_desc->pdataItem = &m_mainTableSet.m_stim_ID;
-		p_desc->plinkedSet = &m_stim_set;
+		p_desc->plinkedSet = &m_stimulus_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 	case CH_CONC_ID:
 		p_desc->pdataItem = &m_mainTableSet.m_conc_ID;
-		p_desc->plinkedSet = &m_conc_set;
+		p_desc->plinkedSet = &m_concentration_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 	case CH_LOCATION_ID:
 		p_desc->pdataItem = &m_mainTableSet.m_location_ID;
-		p_desc->plinkedSet = &m_locationSet;
+		p_desc->plinkedSet = &m_location_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 	case CH_PATH_ID:
@@ -912,12 +912,12 @@ DB_ITEMDESC* CdbTable::get_record_item_descriptor(int column_index)
 		break;
 	case CH_STIM2_ID:
 		p_desc->pdataItem = &m_mainTableSet.m_stim2_ID;
-		p_desc->plinkedSet = &m_stim_set;
+		p_desc->plinkedSet = &m_stimulus_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 	case CH_CONC2_ID:
 		p_desc->pdataItem = &m_mainTableSet.m_conc2_ID;
-		p_desc->plinkedSet = &m_conc_set;
+		p_desc->plinkedSet = &m_concentration_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 	case CH_STRAIN_ID:
@@ -948,7 +948,7 @@ DB_ITEMDESC* CdbTable::get_record_item_descriptor(int column_index)
 		break;
 	case CH_EXPT_ID:
 		p_desc->pdataItem = &m_mainTableSet.m_expt_ID;
-		p_desc->plinkedSet = &m_expt_set;
+		p_desc->plinkedSet = &m_experiment_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 
@@ -1072,7 +1072,7 @@ void CdbTable::transfer_wave_format_data_to_record(const CWaveFormat* p_wave_for
 {
 	// set time -- o_time
 	COleDateTime o_time;
-	auto t = p_wave_format->acqtime;
+	const auto t = p_wave_format->acqtime;
 	o_time.SetDateTime(t.GetYear(), t.GetMonth(), t.GetDay(), t.GetHour(), t.GetMinute(), t.GetSecond());
 	m_mainTableSet.SetFieldNull(&(m_mainTableSet.m_table_acq_date), FALSE);
 	m_mainTableSet.m_table_acq_date = o_time;
@@ -1095,16 +1095,16 @@ void CdbTable::transfer_wave_format_data_to_record(const CWaveFormat* p_wave_for
 	// set type, stimulus and concentrations
 	m_mainTableSet.m_operator_ID = m_operator_set.GetStringInLinkedTable(p_wave_format->csOperator);
 	m_mainTableSet.m_insect_ID = m_insect_set.GetStringInLinkedTable(p_wave_format->csInsectname);
-	m_mainTableSet.m_location_ID = m_locationSet.GetStringInLinkedTable(p_wave_format->csLocation);
-	m_mainTableSet.m_expt_ID = m_expt_set.GetStringInLinkedTable(p_wave_format->cs_comment);
+	m_mainTableSet.m_location_ID = m_location_set.GetStringInLinkedTable(p_wave_format->csLocation);
+	m_mainTableSet.m_expt_ID = m_experiment_set.GetStringInLinkedTable(p_wave_format->cs_comment);
 	m_mainTableSet.m_sensillum_ID = m_sensillum_set.GetStringInLinkedTable(p_wave_format->csSensillum);
-	m_mainTableSet.m_stim_ID = m_stim_set.GetStringInLinkedTable(p_wave_format->csStimulus);
-	m_mainTableSet.m_conc_ID = m_conc_set.GetStringInLinkedTable(p_wave_format->csConcentration);
-	m_mainTableSet.m_stim2_ID = m_stim_set.GetStringInLinkedTable(p_wave_format->csStimulus2);
-	m_mainTableSet.m_conc2_ID = m_conc_set.GetStringInLinkedTable(p_wave_format->csConcentration2);
+	m_mainTableSet.m_stim_ID = m_stimulus_set.GetStringInLinkedTable(p_wave_format->csStimulus);
+	m_mainTableSet.m_conc_ID = m_concentration_set.GetStringInLinkedTable(p_wave_format->csConcentration);
+	m_mainTableSet.m_stim2_ID = m_stimulus_set.GetStringInLinkedTable(p_wave_format->csStimulus2);
+	m_mainTableSet.m_conc2_ID = m_concentration_set.GetStringInLinkedTable(p_wave_format->csConcentration2);
 	m_mainTableSet.m_sex_ID = m_sex_set.GetStringInLinkedTable(p_wave_format->csSex);
 	m_mainTableSet.m_strain_ID = m_strain_set.GetStringInLinkedTable(p_wave_format->csStrain);
-	m_mainTableSet.m_expt_ID = m_expt_set.GetStringInLinkedTable(p_wave_format->cs_comment);
+	m_mainTableSet.m_expt_ID = m_experiment_set.GetStringInLinkedTable(p_wave_format->cs_comment);
 	m_mainTableSet.m_flag = p_wave_format->flag;
 }
 
@@ -1112,13 +1112,13 @@ void CdbTable::delete_unused_entries_in_accessory_tables()
 {
 	delete_unused_entries_in_attached_table(&m_operator_set, CH_OPERATOR_ID, -1);
 	delete_unused_entries_in_attached_table(&m_insect_set, CH_INSECT_ID, -1);
-	delete_unused_entries_in_attached_table(&m_locationSet, CH_LOCATION_ID, -1);
+	delete_unused_entries_in_attached_table(&m_location_set, CH_LOCATION_ID, -1);
 	delete_unused_entries_in_attached_table(&m_sensillum_set, CH_SENSILLUM_ID, -1);
-	delete_unused_entries_in_attached_table(&m_stim_set, CH_STIM_ID, CH_STIM2_ID);
-	delete_unused_entries_in_attached_table(&m_conc_set, CH_CONC_ID, CH_CONC2_ID);
+	delete_unused_entries_in_attached_table(&m_stimulus_set, CH_STIM_ID, CH_STIM2_ID);
+	delete_unused_entries_in_attached_table(&m_concentration_set, CH_CONC_ID, CH_CONC2_ID);
 	delete_unused_entries_in_attached_table(&m_sex_set, CH_SEX_ID, -1);
 	delete_unused_entries_in_attached_table(&m_strain_set, CH_STRAIN_ID, -1);
-	delete_unused_entries_in_attached_table(&m_expt_set, CH_EXPT_ID, -1);
+	delete_unused_entries_in_attached_table(&m_experiment_set, CH_EXPT_ID, -1);
 	delete_unused_entries_in_attached_table(&m_path_set, CH_PATH_ID, CH_PATH2_ID);
 }
 
