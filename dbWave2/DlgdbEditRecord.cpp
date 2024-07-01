@@ -170,16 +170,16 @@ void DlgdbEditRecord::PopulateCombo_WithText(CDaoRecordset& linkedtableSet, CCom
 	}
 
 	// search item which has value iID
-	auto isel = -1;
+	auto i_sel = -1;
 	for (auto i = 0; i < combo.GetCount(); i++)
 	{
 		if (iID == static_cast<int>(combo.GetItemData(i)))
 		{
-			isel = i;
+			i_sel = i;
 			break;
 		}
 	}
-	combo.SetCurSel(isel);
+	combo.SetCurSel(i_sel);
 }
 
 void DlgdbEditRecord::UpdateDatabaseFromDialog()
@@ -203,7 +203,6 @@ void DlgdbEditRecord::UpdateDatabaseFromDialog()
 	UpdateSetFromCombo(p_database->m_experiment_set, m_ctlexpt, m_pSet->m_expt_ID);
 
 	//// save fixed parameters
-
 	CString cs;
 	m_ctlinsectID.GetWindowText(cs);
 	m_pSet->m_IDinsect = _ttoi(cs);
@@ -262,8 +261,8 @@ void DlgdbEditRecord::UpdateSetFromCombo(CDaoRecordset& linkedtableSet, CComboBo
 	}
 	else
 	{
-		int iID = combo.GetItemData(n_index);
-		iIDset = iID;
+		int i_id = combo.GetItemData(n_index);
+		iIDset = i_id;
 	}
 }
 
@@ -317,34 +316,34 @@ void DlgdbEditRecord::EditChangeItem_IndirectField(int IDC)
 
 void DlgdbEditRecord::EditChangeItem_MainField(int IDC)
 {
-	auto pdesc = GetItemDescriptors(IDC);
-	if (pdesc->pComboBox == nullptr)
+	const auto p_desc = GetItemDescriptors(IDC);
+	if (p_desc->pComboBox == nullptr)
 		return;
 
 	DlgdbEditField dlg;
 	dlg.m_pMainTable = m_pSet; 
-	dlg.m_csColName = pdesc->header_name;
-	dlg.m_pliIDArray = &pdesc->liArray; 
+	dlg.m_csColName = p_desc->header_name;
+	dlg.m_pliIDArray = &p_desc->liArray; 
 	dlg.m_pIndexTable = nullptr;
 	dlg.m_pdbDoc = m_pdbDoc;
 	if (dlg.DoModal() == IDOK)
 	{
 		// update array
 		m_pSet->BuildAndSortIDArrays();
-		PopulateCombo_WithNumbers(*pdesc->pComboBox, &pdesc->liArray, *pdesc->pdataItem);
+		PopulateCombo_WithNumbers(*p_desc->pComboBox, &p_desc->liArray, *p_desc->pdataItem);
 
 		// find current selection and set combo to this position
-		const auto i_id = *pdesc->pdataItem;
-		auto icursel = 0;
-		for (auto i = pdesc->liArray.GetUpperBound(); i >= 0; i--)
+		const auto i_id = *p_desc->pdataItem;
+		auto i_cursel = 0;
+		for (auto i = p_desc->liArray.GetUpperBound(); i >= 0; i--)
 		{
-			if (i_id == pdesc->liArray.GetAt(i))
+			if (i_id == p_desc->liArray.GetAt(i))
 			{
-				icursel = i;
+				i_cursel = i;
 				break;
 			}
 		}
-		pdesc->pComboBox->SetCurSel(icursel);
+		p_desc->pComboBox->SetCurSel(i_cursel);
 	}
 }
 
@@ -353,7 +352,7 @@ void DlgdbEditRecord::EditChangeItem_MainField(int IDC)
 
 DB_ITEMDESC* DlgdbEditRecord::GetItemDescriptors(int IDC)
 {
-	DB_ITEMDESC* pdesc = nullptr;
+	DB_ITEMDESC* p_desc = nullptr;
 	const auto p_dbwave_doc = m_pdbDoc;
 	auto p_db = p_dbwave_doc->db_table;
 	int ich;
@@ -439,11 +438,11 @@ DB_ITEMDESC* DlgdbEditRecord::GetItemDescriptors(int IDC)
 	}
 	if (ich >= 0) 
 	{
-		pdesc = &m_pSet->m_desc[ich];
-		p_db->get_record_item_value(ich, pdesc);
+		p_desc = &m_pSet->m_desc[ich];
+		p_db->get_record_item_value(ich, p_desc);
 	}
 
-	return pdesc;
+	return p_desc;
 }
 
 void DlgdbEditRecord::OnBnClickedButtonstimulus()

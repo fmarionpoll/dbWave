@@ -56,7 +56,7 @@ public:
 		return CFile::GetStatus(cs_filename, status);
 	}
 
-	CWaveFormat* get_wave_format(CString filename, BOOL is_dat_file);
+	CWaveFormat* get_wave_format(CString cs_filename, BOOL is_dat_file);
 
 	BOOL		OnNewDocument(LPCTSTR lpsz_path_name);
 	AcqDataDoc* get_current_dat_document() const { return m_p_dat; }
