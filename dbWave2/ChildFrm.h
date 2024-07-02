@@ -64,7 +64,6 @@ public:
 	afx_msg void on_tools_import_data_files();
 	afx_msg void on_tools_import_spike_files();
 	afx_msg void on_tools_import_database();
-	static void import_database();
 	afx_msg void on_tools_copy_all_project_files();
 	afx_msg void on_tools_export_data_file();
 	afx_msg void on_mdi_activate(BOOL bActivate, CWnd* pActivateWnd, CWnd* pDeactivateWnd);

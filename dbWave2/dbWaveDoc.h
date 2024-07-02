@@ -81,7 +81,7 @@ public:
 	void	get_max_min_of_all_spikes(BOOL b_all_files, BOOL b_recalculate, short* max, short* min);
 	CSize	get_max_min_of_single_spike(BOOL b_all);
 
-	void	set_clean_db_on_exit(const BOOL b_clear) { clean_database_on_exit_ = b_clear; }
+	void	set_clean_db_on_exit(const BOOL b_clear) {clean_database_on_exit_ = b_clear; }
 
 	void	export_data_ascii_comments(CSharedFile* p_shared_file);
 	void	export_number_of_spikes(CSharedFile* p_sf);
@@ -91,7 +91,7 @@ public:
 
 	void	synchronize_source_infos(const BOOL b_all);
 	BOOL	update_waveformat_from_database(CWaveFormat* p_wave_format) const;
-	BOOL	import_data_files_from_another_data_base(const CString& other_data_base_file_name) const;
+	BOOL	import_data_files_from_another_data_base(const CString& other_data_base_file_name, boolean copy_data_to_new_sub_directory) const;
 	BOOL	copy_files_to_directory(const CString& path);
 
 protected:
@@ -106,8 +106,10 @@ protected:
 	static numberIDToText headers_[];
 	static BOOL	transpose_file_for_excel(CSharedFile* p_sf);
 	static int check_files_can_be_opened(CStringArray& file_names_array, CSharedFile* psf, int n_columns, boolean b_header);
-	static int index_2d_array(const int i_row, const int n_columns, boolean bHeader) { return (i_row + (bHeader ? 1 : 0)) * n_columns; }
-	static int get_size_2d_array(const CStringArray& cs_array, int nColumns, boolean bHeader) { return cs_array.GetSize() / nColumns - (bHeader ? 1 : 0); }
+	static int index_2d_array(const int i_row, const int n_columns, const boolean b_header)
+				{ return (i_row + (b_header ? 1 : 0)) * n_columns; }
+	static int get_size_2d_array(const CStringArray& cs_array, const int n_columns, const boolean b_header)
+				{ return cs_array.GetSize() / n_columns - (b_header ? 1 : 0); }
 	static void	remove_row_at(CStringArray& file_name_array, int i_row, int n_columns, boolean b_header);
 	static CSharedFile* file_discarded_message(CSharedFile* p_sf, const CString& cs_filename, int i_record);
 	static void	get_infos_from_string_array(const source_data* p_record, const CStringArray& file_names_array, int const i_record, int n_columns, boolean b_header);

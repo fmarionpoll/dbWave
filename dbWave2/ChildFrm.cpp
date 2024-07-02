@@ -1022,11 +1022,6 @@ void CChildFrame::on_tools_import_spike_files()
 
 void CChildFrame::on_tools_import_database()
 {
-	import_database();
-}
-
-void CChildFrame::import_database()
-{
 	CFileDialog dlg_file(TRUE);
 	CString file_name;
 	constexpr int max_files = 100;
@@ -1035,14 +1030,20 @@ void CChildFrame::import_database()
 	dlg_file.GetOFN().nMaxFile = buff_size;
 	dlg_file.GetOFN().lpstrFilter = _T("Database Files\0*.mdb");
 	dlg_file.GetOFN().lpstrTitle = _T("Select a database to be merged with current database...");
+	constexpr int check_id = 1001;
+	HRESULT b_result = dlg_file.AddCheckButton(check_id, L"Copy data files to a new sub-directory", FALSE);
 	if (IDOK == dlg_file.DoModal())
 	{
+		BOOL copy_data_to_new_sub_directory;
+		b_result = dlg_file.GetCheckButtonState(check_id, copy_data_to_new_sub_directory);
+		TRACE(L"reading the value for check_id %d\n", copy_data_to_new_sub_directory);
+
 		CdbWaveDoc* p_db_wave_doc = CdbWaveDoc::get_active_mdi_document();
 		if (p_db_wave_doc == nullptr)
 			return;
 
-		if (p_db_wave_doc->import_data_files_from_another_data_base(file_name))
-			BOOL flag = p_db_wave_doc->db_move_last();
+		if (p_db_wave_doc->import_data_files_from_another_data_base(file_name, copy_data_to_new_sub_directory))
+			boolean result = p_db_wave_doc->db_move_last();
 		p_db_wave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 	}
 }

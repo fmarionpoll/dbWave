@@ -1422,19 +1422,23 @@ void CdbWaveDoc::copy_files_to_directory(CStringArray & files_to_copy_array, con
 		files_to_copy_array[i] = copy_file_to_directory(files_to_copy_array[i], mdb_directory);
 }
 
-BOOL CdbWaveDoc::import_data_files_from_another_data_base(const CString& other_data_base_file_name) const
+BOOL CdbWaveDoc::import_data_files_from_another_data_base(const CString& other_data_base_file_name, const boolean copy_data_to_new_sub_directory) const
 {
 	const auto p_new_doc = new CdbWaveDoc;
 	if (!p_new_doc->OnOpenDocument(other_data_base_file_name))
 		return FALSE;
 
-	const CString cs1 = get_full_path_name_without_extension();
-	const CString file_name = PathFindFileName(other_data_base_file_name);
-	const auto i_position_of_extension = file_name.ReverseFind('.');
-	const CString cs2 = file_name.Left(i_position_of_extension);
-	const CString path_to_mdb_sub_directory = cs1 + _T("\\") + cs2;
-	if (!create_directory_if_does_not_exists(path_to_mdb_sub_directory))
-		return FALSE;
+	CString path_to_mdb_sub_directory{};
+	if (copy_data_to_new_sub_directory)
+	{
+		const CString cs1 = get_full_path_name_without_extension();
+		const CString file_name = PathFindFileName(other_data_base_file_name);
+		const auto i_position_of_extension = file_name.ReverseFind('.');
+		const CString cs2 = file_name.Left(i_position_of_extension);
+		path_to_mdb_sub_directory = cs1 + _T("\\") + cs2;
+		if (!create_directory_if_does_not_exists(path_to_mdb_sub_directory))
+			return FALSE;
+	}
 
 	// get names of data files of otherDataBase
 	const auto p_new_database = p_new_doc->db_table;
@@ -1443,14 +1447,15 @@ BOOL CdbWaveDoc::import_data_files_from_another_data_base(const CString& other_d
 	{
 		if (db_table->is_record_time_unique(p_new_database->m_mainTableSet.m_table_acq_date))
 		{
-			CString dat_name = p_new_database->get_current_record_data_file_name();
-			if (!dat_name.IsEmpty() && file_exists(dat_name))
-				dat_name = copy_file_to_directory(dat_name, path_to_mdb_sub_directory);
-			CString spk_name = p_new_database->get_current_record_spike_file_name();
-			if (!spk_name.IsEmpty() && file_exists(spk_name))
-				spk_name = copy_file_to_directory(spk_name, path_to_mdb_sub_directory);
-
-			// TODO here get path and path2 and save for later their transformation§?
+			if (copy_data_to_new_sub_directory)
+			{
+				CString dat_name = p_new_database->get_current_record_data_file_name();
+				if (!dat_name.IsEmpty() && file_exists(dat_name))
+					dat_name = copy_file_to_directory(dat_name, path_to_mdb_sub_directory);
+				CString spk_name = p_new_database->get_current_record_spike_file_name();
+				if (!spk_name.IsEmpty() && file_exists(spk_name))
+					spk_name = copy_file_to_directory(spk_name, path_to_mdb_sub_directory);
+			}
 			db_table->import_record_from_database(p_new_database);
 		}
 		p_new_database->m_mainTableSet.MoveNext();
@@ -1458,7 +1463,7 @@ BOOL CdbWaveDoc::import_data_files_from_another_data_base(const CString& other_d
 	p_new_database->m_mainTableSet.Close();
 	delete p_new_doc;
 
-	// TODO change value of old directory into new directory in associated table path
+	// TODO change associated table "old directory" to "new directory" 
 
 	// open dynaset
 	db_table->m_mainTableSet.Close();
