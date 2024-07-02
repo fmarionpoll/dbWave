@@ -100,7 +100,7 @@ public:
 	void set_cursor_max_on_dbl_click(const int imax) { cursor_index_max_ = imax; }
 	void plot_to_bitmap(CBitmap* p_bitmap);
 	void draw_grid(CDC* p_dc);
-	void adjust_display_rect(const CRect* rect);
+	void adjust_display_rect(const CRect* p_rect);
 	BOOL get_b_draw_frame() const { return scope_structure_.bDrawframe; }
 	void set_b_draw_frame(const BOOL flag) { scope_structure_.bDrawframe = flag; }
 	CRect get_defined_rect() const { return {m_pt_first_.x, m_pt_first_.y, m_pt_last_.x, m_pt_last_.y}; }
@@ -218,7 +218,7 @@ protected:
 	afx_msg virtual BOOL OnEraseBkgnd(CDC* p_dc);
 	afx_msg virtual void OnPaint();
 	afx_msg virtual BOOL OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message);
-	afx_msg virtual void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg virtual void OnMouseMove(UINT n_flags, CPoint point);
 	afx_msg virtual void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg virtual void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg virtual void OnLButtonDblClk(UINT nFlags, CPoint point);

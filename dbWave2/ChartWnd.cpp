@@ -111,7 +111,7 @@ ChartWnd::~ChartWnd()
 		i.DeleteObject();
 }
 
-// trap call to pre-subclass in order to get source window size..
+// trap call to pre-subclass in order to get source window size
 // assume that palette is present within the application inside CMainFrame...
 void ChartWnd::PreSubclassWindow()
 {
@@ -182,10 +182,10 @@ void ChartWnd::plot_to_bitmap(CDC* p_dc)
 	bitmap_plot.CreateBitmap(m_client_rect_.right, m_client_rect_.bottom, p_dc->GetDeviceCaps(PLANES),
 	                         p_dc->GetDeviceCaps(BITSPIXEL), nullptr);
 	plot_dc_.CreateCompatibleDC(p_dc);
-	const auto pold_plot_bitmap = plot_dc_.SelectObject(&bitmap_plot);
+	const auto p_old_plot_bitmap = plot_dc_.SelectObject(&bitmap_plot);
 	plot_data_to_dc(&plot_dc_);
 	p_dc->BitBlt(0, 0, m_display_rect_.right, m_display_rect_.bottom, &plot_dc_, 0, 0, SRCCOPY);
-	plot_dc_.SelectObject(pold_plot_bitmap);
+	plot_dc_.SelectObject(p_old_plot_bitmap);
 }
 
 void ChartWnd::OnPaint()
@@ -307,17 +307,17 @@ void ChartWnd::draw_grid_from_ruler(CDC* p_dc, const Ruler* p_ruler) const
 		tickmax = rc_client.Height();
 
 	// draw scale
-	//double smallscaleinc = pRuler->m_dscaleinc / 5.;
-	auto dpos = floor(p_ruler->m_first_major_scale);
-	const auto dlen = p_ruler->m_highest_value - p_ruler->m_lowest_value;
+	//double small_scale_inc = pRuler->m_d_scale_inc / 5.;
+	auto d_pos = floor(p_ruler->m_first_major_scale);
+	const auto d_len = p_ruler->m_highest_value - p_ruler->m_lowest_value;
 	p_dc->SetBkMode(TRANSPARENT);
 
-	while (dpos <= p_ruler->m_highest_value)
+	while (d_pos <= p_ruler->m_highest_value)
 	{
 		int tick_pos;
 		if (p_ruler->m_is_horizontal) // horizontal
 		{
-			tick_pos = static_cast<int>(rc_client.Width() * (dpos - p_ruler->m_lowest_value) / dlen) + rc_client.left;
+			tick_pos = static_cast<int>(rc_client.Width() * (d_pos - p_ruler->m_lowest_value) / d_len) + rc_client.left;
 			if (tick_pos >= 0 && tick_pos <= tickmax)
 			{
 				p_dc->MoveTo(tick_pos, rc_client.bottom - 1); // line
@@ -326,16 +326,16 @@ void ChartWnd::draw_grid_from_ruler(CDC* p_dc, const Ruler* p_ruler) const
 		}
 		else // vertical
 		{
-			tick_pos = static_cast<int>(rc_client.Height() * (p_ruler->m_highest_value - dpos) / dlen) + rc_client.top;
+			tick_pos = static_cast<int>(rc_client.Height() * (p_ruler->m_highest_value - d_pos) / d_len) + rc_client.top;
 			if (tick_pos >= 0 && tick_pos <= tickmax)
 			{
 				p_dc->MoveTo(rc_client.left + 1, tick_pos); // line
 				p_dc->LineTo(rc_client.right - 1, tick_pos);
 			}
 		}
-		if (dpos != 0. && fabs(dpos) < 1E-10)
-			dpos = 0;
-		dpos += p_ruler->m_length_major_scale;
+		if (d_pos != 0. && fabs(d_pos) < 1E-10)
+			d_pos = 0;
+		d_pos += p_ruler->m_length_major_scale;
 	}
 	// restore objects used in this routine
 	p_dc->SelectObject(p_old_pen);
@@ -360,32 +360,32 @@ void ChartWnd::draw_scale_from_ruler(CDC* p_dc, const Ruler* p_ruler)
 	CString str;
 
 	// draw ticks and legends
-	const auto tick_small_height = 4;
-	int tickmax;
+	int tick_max;
 	if (p_ruler->m_is_horizontal) // horizontal
-		tickmax = rc_client.Width();
+		tick_max = rc_client.Width();
 	else // vertical
-		tickmax = rc_client.Height();
+		tick_max = rc_client.Height();
 
 	// draw scale
-	const auto smallscaleinc = p_ruler->m_length_major_scale / 5.;
-	auto dpos = floor(p_ruler->m_first_major_scale);
-	const auto dlen = p_ruler->m_highest_value - p_ruler->m_lowest_value;
+	const auto small_scale_inc = p_ruler->m_length_major_scale / 5.;
+	auto d_pos = floor(p_ruler->m_first_major_scale);
+	const auto d_len = p_ruler->m_highest_value - p_ruler->m_lowest_value;
 	p_dc->SetBkMode(TRANSPARENT);
 
-	while (dpos <= p_ruler->m_highest_value)
+	while (d_pos <= p_ruler->m_highest_value)
 	{
 		// display small tick marks
 		p_dc->SelectObject(&a_pen1);
-		auto dsmallpos = dpos;
+		auto d_small_pos = d_pos;
 		int tick_pos;
 		for (auto i = 0; i < 4; i++)
 		{
-			dsmallpos += smallscaleinc;
+			constexpr auto tick_small_height = 4;
+			d_small_pos += small_scale_inc;
 			if (p_ruler->m_is_horizontal) // ---------------------------- horizontal
 			{
-				tick_pos = static_cast<int>(rc_client.Width() * (dsmallpos - p_ruler->m_lowest_value) / dlen) + rc_client.left;
-				if (tick_pos >= rc_client.left && tick_pos <= tickmax)
+				tick_pos = static_cast<int>(rc_client.Width() * (d_small_pos - p_ruler->m_lowest_value) / d_len) + rc_client.left;
+				if (tick_pos >= rc_client.left && tick_pos <= tick_max)
 				{
 					p_dc->MoveTo(tick_pos, rc_client.bottom - 1);
 					p_dc->LineTo(tick_pos, rc_client.bottom - tick_small_height);
@@ -393,8 +393,8 @@ void ChartWnd::draw_scale_from_ruler(CDC* p_dc, const Ruler* p_ruler)
 			}
 			else // --------------------------------------------------- vertical
 			{
-				tick_pos = static_cast<int>(rc_client.Height() * (p_ruler->m_highest_value - dsmallpos) / dlen) + rc_client.top;
-				if (tick_pos >= rc_client.top && tick_pos <= tickmax)
+				tick_pos = static_cast<int>(rc_client.Height() * (p_ruler->m_highest_value - d_small_pos) / d_len) + rc_client.top;
+				if (tick_pos >= rc_client.top && tick_pos <= tick_max)
 				{
 					p_dc->MoveTo(rc_client.left + 1, tick_pos);
 					p_dc->LineTo(rc_client.left + tick_small_height, tick_pos);
@@ -405,12 +405,12 @@ void ChartWnd::draw_scale_from_ruler(CDC* p_dc, const Ruler* p_ruler)
 		// display large ticks and text
 		p_dc->SelectObject(&a_pen2);
 		if (p_ruler->m_is_horizontal) // horizontal
-			tick_pos = static_cast<int>(rc_client.Width() * (dpos - p_ruler->m_lowest_value) / dlen) + rc_client.left;
+			tick_pos = static_cast<int>(rc_client.Width() * (d_pos - p_ruler->m_lowest_value) / d_len) + rc_client.left;
 		else // vertical
-			tick_pos = static_cast<int>(rc_client.Height() * (p_ruler->m_highest_value - dpos) / dlen) + rc_client.top;
-		if (tick_pos >= 0 && tick_pos <= tickmax)
+			tick_pos = static_cast<int>(rc_client.Height() * (p_ruler->m_highest_value - d_pos) / d_len) + rc_client.top;
+		if (tick_pos >= 0 && tick_pos <= tick_max)
 		{
-			str.Format(_T("%g"), dpos);
+			str.Format(_T("%g"), d_pos);
 			const auto size = p_dc->GetTextExtent(str);
 			int x, y;
 			if (p_ruler->m_is_horizontal) // ----------- horizontal
@@ -433,9 +433,9 @@ void ChartWnd::draw_scale_from_ruler(CDC* p_dc, const Ruler* p_ruler)
 			}
 			p_dc->TextOut(x, y, str);
 		}
-		if (dpos != 0. && fabs(dpos) < 1E-10)
-			dpos = 0;
-		dpos += p_ruler->m_length_major_scale;
+		if (d_pos != 0. && fabs(d_pos) < 1E-10)
+			d_pos = 0;
+		d_pos += p_ruler->m_length_major_scale;
 	}
 
 	// restore objects used in this routine
@@ -477,7 +477,7 @@ void ChartWnd::adjust_display_rect(const CRect* p_rect)
 
 void ChartWnd::draw_grid(CDC* p_dc)
 {
-	// TODO: get major intervals from rulerbar is not nullptr
+	// TODO: get major intervals from ruler bar is not nullptr
 	if (b_nice_grid)
 		draw_grid_nicely_spaced(p_dc);
 	else
@@ -568,10 +568,10 @@ BOOL ChartWnd::OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message)
 
 void ChartWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	int newcursor = cursor_type_ + 1;
-	if (newcursor >= cursor_index_max_)
-		newcursor = 0;
-	post_my_message(HINT_SETMOUSECURSOR, newcursor);
+	int new_cursor = cursor_type_ + 1;
+	if (new_cursor >= cursor_index_max_)
+		new_cursor = 0;
+	post_my_message(HINT_SETMOUSECURSOR, new_cursor);
 }
 
 void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
@@ -600,7 +600,7 @@ void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 			if (nFlags & MK_CONTROL)
 				post_my_message(HINT_LMOUSEBUTTONDOW_CTRL, MAKELONG(point.x, point.y));
 
-			track_mode_ = TRACK_RECT; // flag trackrect
+			track_mode_ = TRACK_RECT; // flag track_rect
 
 		// test HZ tags - if OK, then start tracking & init variables & flags
 			hc_trapped_ = hit_horizontal_tag(point.y);
@@ -610,7 +610,7 @@ void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 				m_pt_last_.x = 0; // set initial coordinates
 				m_pt_last_.y = horizontal_tags.get_tag_pixel(hc_trapped_);
 				m_pt_first_ = m_pt_last_;
-				// tell parent that HZtag was selected
+				// tell parent that HZ_tag was selected
 				send_my_message(HINT_HITHZTAG, hc_trapped_);
 				break;
 			}
@@ -638,7 +638,7 @@ void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 				else
 					m_pt_last_.x = vertical_tags.get_tag_pixel(hc_trapped_);
 				m_pt_last_.y = 0;
-				// tell parent that VTtag was selected
+				// tell parent that VT_tag was selected
 				send_my_message(HINT_HITVERTTAG, hc_trapped_);
 				break;
 			}
@@ -663,7 +663,7 @@ void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 }
 
-void ChartWnd::OnMouseMove(UINT nFlags, CPoint point)
+void ChartWnd::OnMouseMove(UINT n_flags, CPoint point)
 {
 	// track rectangle : update rectangle size
 	switch (track_mode_)
@@ -717,7 +717,7 @@ void ChartWnd::OnMouseMove(UINT nFlags, CPoint point)
 			// reflect mouse move message
 			::SendMessage(m_hwnd_reflect_,
 			              WM_MOUSEMOVE,
-			              nFlags,
+			              n_flags,
 			              MAKELPARAM(point.x + (rect1.left - rect0.left),
 			                         point.y + (rect1.top - rect0.top)));
 		}
@@ -768,7 +768,7 @@ void ChartWnd::OnRButtonDown(UINT nFlags, CPoint point)
 	case CURSOR_CROSS: // tracking type
 		m_pt_first_ = point;
 		m_pt_last_ = point;
-		track_mode_ = TRACK_RECT; // flag trackrect
+		track_mode_ = TRACK_RECT; // flag track_rect
 		invert_tracker(point); // invert rectangle
 		capture_cursor();
 		break;
@@ -812,8 +812,8 @@ void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 		CWnd::OnRButtonUp(nFlags, point);
 		if (m_b_allow_props_)
 		{
-			const auto parms_old = new SCOPESTRUCT();
-			*parms_old = scope_structure_;
+			const auto params_old = new SCOPESTRUCT();
+			*params_old = scope_structure_;
 			DlgChartProps dlg;
 			dlg.m_pscope = this;
 			m_b_allow_props_ = FALSE; // inhibit properties
@@ -821,13 +821,13 @@ void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 			// if Cancel or Escape or anything else: restore previous values
 			if (IDOK != dlg.DoModal())
 			{
-				scope_structure_ = *parms_old;
+				scope_structure_ = *params_old;
 				Invalidate();
 			}
 			else
 				post_my_message(HINT_WINDOWPROPSCHANGED, NULL);
 			m_b_allow_props_ = TRUE;
-			delete parms_old;
+			delete params_old;
 		}
 		break;
 
@@ -851,16 +851,16 @@ void ChartWnd::zoom_pop()
 
 void ChartWnd::zoom_out()
 {
-	if (i_undo_zoom_ > 0) // memory?
+	if (i_undo_zoom_ > 0) 
 		zoom_pop();
 	else
 	{
 		CClientDC dc(this);
 		rect_zoom_to_ = m_display_rect_;
 		rect_zoom_from_ = rect_zoom_to_;
-		const auto yshrink = rect_zoom_to_.Height() / 4;
-		const auto xshrink = rect_zoom_to_.Width() / 4;
-		rect_zoom_to_.InflateRect(xshrink, yshrink);
+		const auto y_shrink = rect_zoom_to_.Height() / 4;
+		const auto x_shrink = rect_zoom_to_.Width() / 4;
+		rect_zoom_to_.InflateRect(x_shrink, y_shrink);
 		zoom_data(&rect_zoom_from_, &rect_zoom_to_);
 		i_undo_zoom_ = -1;
 	}
@@ -868,46 +868,46 @@ void ChartWnd::zoom_out()
 
 void ChartWnd::zoom_in()
 {
-	if (i_undo_zoom_ < 0) // memory?
+	if (i_undo_zoom_ < 0) 
 		zoom_pop();
 	else
 	{
 		CClientDC dc(this);
 		rect_zoom_to_ = m_display_rect_;
 		rect_zoom_from_ = rect_zoom_to_;
-		const auto yshrink = -rect_zoom_to_.Height() / 4;
-		const auto xshrink = -rect_zoom_to_.Width() / 4;
-		rect_zoom_to_.InflateRect(xshrink, yshrink);
+		const auto y_shrink = -rect_zoom_to_.Height() / 4;
+		const auto x_shrink = -rect_zoom_to_.Width() / 4;
+		rect_zoom_to_.InflateRect(x_shrink, y_shrink);
 		zoom_data(&rect_zoom_from_, &rect_zoom_to_);
 		i_undo_zoom_ = 1;
 	}
 }
 
-int ChartWnd::hit_horizontal_tag(int y)
+int ChartWnd::hit_horizontal_tag(const int y)
 {
-	auto chit = -1; // horizontal cursor hit
-	const auto jitter = 3; // jitter allowed: 5 pixels total
+	auto hit_cursor = -1; 
 	const auto j = horizontal_tags.get_tag_list_size();
-	for (auto i = 0; i < j; i++) // loop through all cursors
+	for (auto i = 0; i < j; i++) 
 	{
-		const auto val = horizontal_tags.get_tag_pixel(i); // get pixel value
+		constexpr auto jitter = 3;
+		const auto val = horizontal_tags.get_tag_pixel(i); 
 		if (val <= y + jitter && val >= y - jitter)
 		{
-			chit = i;
+			hit_cursor = i;
 			break;
 		}
 	}
-	return chit;
+	return hit_cursor;
 }
 
-int ChartWnd::hit_vertical_tag_long(long lx)
+int ChartWnd::hit_vertical_tag_long(const long lx)
 {
-	auto chit = -1; // horizontal cursor hit
+	auto chit = -1; 
 	const auto j = vertical_tags.get_tag_list_size();
-	for (auto i = 0; i < j; i++) // loop through all cursors
+	for (auto i = 0; i < j; i++) 
 	{
-		const auto lval = vertical_tags.get_tag_l_val(i);
-		if (lval <= lx + file_position_equivalent_to_mouse_jitter_ && lval >= lx - file_position_equivalent_to_mouse_jitter_)
+		const auto l_val = vertical_tags.get_tag_l_val(i);
+		if (l_val <= lx + file_position_equivalent_to_mouse_jitter_ && l_val >= lx - file_position_equivalent_to_mouse_jitter_)
 		{
 			chit = i;
 			break;
@@ -918,11 +918,11 @@ int ChartWnd::hit_vertical_tag_long(long lx)
 
 int ChartWnd::hit_vertical_tag_pixel(int x)
 {
-	auto chit = -1; // horizontal cursor hit
-	const auto jitter = 3; // jitter allowed: 5 pixels total
+	auto chit = -1; 
 	const auto j = vertical_tags.get_tag_list_size();
-	for (auto i = 0; i < j; i++) // loop through all cursors
+	for (auto i = 0; i < j; i++) 
 	{
+		constexpr auto jitter = 3;
 		const auto val = vertical_tags.get_tag_pixel(i);
 		if (val <= x + jitter && val >= x - jitter)
 		{
@@ -933,9 +933,9 @@ int ChartWnd::hit_vertical_tag_pixel(int x)
 	return chit;
 }
 
-void ChartWnd::invert_tracker(CPoint point)
+void ChartWnd::invert_tracker(const CPoint point)
 {
-	CClientDC dc(this); // get dc to fbutton window
+	CClientDC dc(this); 
 	const auto old_brush = static_cast<CBrush*>(dc.SelectStockObject(NULL_BRUSH));
 	const auto old_rop = dc.SetROP2(R2_NOTXORPEN);
 	const auto old_pen = dc.SelectObject(&black_dotted_pen_);
@@ -950,8 +950,8 @@ void ChartWnd::invert_tracker(CPoint point)
 
 void ChartWnd::display_vertical_tags(CDC* p_dc)
 {
-	const auto oldp = p_dc->SelectObject(&black_dotted_pen_);
-	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
+	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
+	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
 	const auto y0 = MulDiv(0 - m_y_vo_, m_y_we_, m_y_ve_) + m_y_wo_;
 	const auto y1 = MulDiv(m_display_rect_.bottom - m_y_vo_, m_y_we_, m_y_ve_) + m_y_wo_;
 
@@ -962,26 +962,26 @@ void ChartWnd::display_vertical_tags(CDC* p_dc)
 		p_dc->LineTo(k, y1);
 	}
 
-	p_dc->SelectObject(oldp);
-	p_dc->SetROP2(nold_rop);
+	p_dc->SelectObject(old_pen);
+	p_dc->SetROP2(old_rop2);
 }
 
 void ChartWnd::display_horizontal_tags(CDC* p_dc)
 {
-	const auto pold = p_dc->SelectObject(&black_dotted_pen_);
-	const auto nold_rop = p_dc->SetROP2(R2_NOTXORPEN);
-	auto oldval = horizontal_tags.get_value(horizontal_tags.get_tag_list_size() - 1) - 1;
-	for (auto iTag = horizontal_tags.get_tag_list_size() - 1; iTag >= 0; iTag--)
+	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
+	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
+	auto old_val = horizontal_tags.get_value(horizontal_tags.get_tag_list_size() - 1) - 1;
+	for (auto i_tag = horizontal_tags.get_tag_list_size() - 1; i_tag >= 0; i_tag--)
 	{
-		const auto k = horizontal_tags.get_value(iTag);
-		if (k == oldval)
+		const auto k = horizontal_tags.get_value(i_tag);
+		if (k == old_val)
 			continue;
 		p_dc->MoveTo(m_x_wo_, k);
 		p_dc->LineTo(m_x_we_, k);
-		oldval = k;
+		old_val = k;
 	}
-	p_dc->SelectObject(pold);
-	p_dc->SetROP2(nold_rop);
+	p_dc->SelectObject(old_pen);
+	p_dc->SetROP2(old_rop2);
 }
 
 void ChartWnd::xor_horizontal_tag(const int y_point)
@@ -990,8 +990,8 @@ void ChartWnd::xor_horizontal_tag(const int y_point)
 		return;
 	CClientDC dc(this);
 
-	const auto p_old_pen = dc.SelectObject(&black_dotted_pen_);
-	const auto nold_rop = dc.SetROP2(R2_NOTXORPEN);
+	const auto old_pen = dc.SelectObject(&black_dotted_pen_);
+	const auto old_rop2 = dc.SetROP2(R2_NOTXORPEN);
 	dc.IntersectClipRect(&m_display_rect_);
 
 	dc.MoveTo(m_display_rect_.left, m_pt_last_.y);
@@ -999,8 +999,8 @@ void ChartWnd::xor_horizontal_tag(const int y_point)
 	dc.MoveTo(m_display_rect_.left, y_point);
 	dc.LineTo(m_display_rect_.right, y_point);
 
-	dc.SetROP2(nold_rop);
-	dc.SelectObject(p_old_pen);
+	dc.SetROP2(old_rop2);
+	dc.SelectObject(old_pen);
 	m_pt_last_.y = y_point;
 }
 
@@ -1008,9 +1008,9 @@ void ChartWnd::xor_vertical_tag(const int x_point)
 {
 	CClientDC dc(this);
 
-	const auto p_old_pen = dc.SelectObject(&black_dotted_pen_);
-	const auto nold_rop = dc.SetROP2(R2_NOTXORPEN);
-	dc.IntersectClipRect(&m_client_rect_); // clip drawing inside rect
+	const auto old_pen = dc.SelectObject(&black_dotted_pen_);
+	const auto old_rop2 = dc.SetROP2(R2_NOTXORPEN);
+	dc.IntersectClipRect(&m_client_rect_); 
 
 	dc.MoveTo(m_pt_last_.x, m_display_rect_.top);
 	dc.LineTo(m_pt_last_.x, m_display_rect_.bottom);
@@ -1018,8 +1018,8 @@ void ChartWnd::xor_vertical_tag(const int x_point)
 	dc.MoveTo(x_point, m_display_rect_.top);
 	dc.LineTo(x_point, m_display_rect_.bottom);
 
-	dc.SetROP2(nold_rop);
-	dc.SelectObject(p_old_pen);
+	dc.SetROP2(old_rop2);
+	dc.SelectObject(old_pen);
 	m_pt_last_.x = x_point;
 }
 
