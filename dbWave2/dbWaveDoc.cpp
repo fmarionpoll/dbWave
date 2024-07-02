@@ -431,7 +431,7 @@ Spike* CdbWaveDoc::get_spike(const db_spike& spike_coords)
 				return nullptr;
 	}
 
-	SpikeList* p_spike_list = nullptr;
+	SpikeList* p_spike_list;
 	if (spike_coords.spike_index >= 0)
 		p_spike_list = m_p_spk->get_spike_list_at(spike_coords.spike_list_index);
 	else
