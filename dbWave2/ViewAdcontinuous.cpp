@@ -399,8 +399,8 @@ void ViewADcontinuous::UpdateViewDataFinal()
 	pDocDat->read_data_infos();
 	const long length_doc_channel = pDocDat->get_doc_channel_length();
 	m_chartDataAD.AttachDataFile(pDocDat);
-	m_chartDataAD.ResizeChannels(m_chartDataAD.get_rect_width(), length_doc_channel);
-	m_chartDataAD.GetDataFromDoc(0, length_doc_channel);
+	m_chartDataAD.resize_channels(m_chartDataAD.get_rect_width(), length_doc_channel);
+	m_chartDataAD.get_data_from_doc(0, length_doc_channel);
 }
 
 void ViewADcontinuous::TransferFilesToDatabase()
@@ -440,7 +440,7 @@ void ViewADcontinuous::InitAcquisitionDisplay()
 {
 	const CWaveFormat* pWFormat = &(options_input_data_->waveFormat);
 	m_chartDataAD.AttachDataFile(&m_inputDataFile);
-	m_chartDataAD.ResizeChannels(0, m_channel_sweep_length);
+	m_chartDataAD.resize_channels(0, m_channel_sweep_length);
 	if (m_chartDataAD.get_channel_list_size() != pWFormat->scan_count)
 	{
 		m_chartDataAD.remove_all_channel_list_items();

@@ -286,7 +286,7 @@ void ViewData::OnEditCopy()
 		options_view_data->vtResolution = dlg.m_nordinates;
 
 		if (!dlg.m_bgraphics)
-			m_ChartDataWnd.CopyAsText(dlg.m_ioption, dlg.m_iunit, dlg.m_nabcissa);
+			m_ChartDataWnd.copy_as_text(dlg.m_ioption, dlg.m_iunit, dlg.m_nabcissa);
 		else
 		{
 			CRect old_rect;
@@ -373,8 +373,8 @@ void ViewData::OnEditCopy()
 			}
 
 			// restore initial conditions
-			m_ChartDataWnd.ResizeChannels(m_pixels_count_0_, 0);
-			m_ChartDataWnd.GetDataFromDoc();
+			m_ChartDataWnd.resize_channels(m_pixels_count_0_, 0);
+			m_ChartDataWnd.get_data_from_doc();
 			m_ChartDataWnd.Invalidate();
 		}
 	}
@@ -504,7 +504,7 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 	}
 
 	// load real data from file and update time parameters
-	m_ChartDataWnd.GetDataFromDoc(l_first, l_last); 
+	m_ChartDataWnd.get_data_from_doc(l_first, l_last); 
 	m_time_first_abcissa = static_cast<float>(m_ChartDataWnd.GetDataFirstIndex()) / m_samplingRate; 
 	m_time_last_abcissa = static_cast<float>(m_ChartDataWnd.GetDataLastIndex()) / m_samplingRate; 
 	m_channel_selected = 0; // select chan 0
@@ -777,7 +777,7 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 void ViewData::OnViewAlldata()
 {
-	m_ChartDataWnd.GetDataFromDoc(0, GetDocument()->db_get_data_len() - 1);
+	m_ChartDataWnd.get_data_from_doc(0, GetDocument()->db_get_data_len() - 1);
 	UpdateLegends(UPD_ABCISSA | CHG_XSCALE);
 	UpdateData(FALSE);
 	m_ChartDataWnd.Invalidate();
@@ -969,7 +969,7 @@ void ViewData::OnBiasScroll(UINT nSBCode, UINT nPos)
 
 void ViewData::OnCenterCurve()
 {
-	m_ChartDataWnd.CenterChan(m_channel_selected);
+	m_ChartDataWnd.center_chan(m_channel_selected);
 	m_ChartDataWnd.Invalidate();
 
 	CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
@@ -981,7 +981,7 @@ void ViewData::OnCenterCurve()
 
 void ViewData::OnGainAdjustCurve()
 {
-	m_ChartDataWnd.MaxgainChan(m_channel_selected);
+	m_ChartDataWnd.max_gain_chan(m_channel_selected);
 	m_ChartDataWnd.Invalidate();
 
 	CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
@@ -1028,11 +1028,11 @@ void ViewData::OnFileScroll(UINT nSBCode, UINT nPos)
 	case SB_PAGELEFT: // scroll one page left
 	case SB_PAGERIGHT: // scroll one page right
 	case SB_RIGHT: // scroll to end right
-		b_result = m_ChartDataWnd.ScrollDataFromDoc(nSBCode);
+		b_result = m_ChartDataWnd.scroll_data_from_doc(nSBCode);
 		break;
 	case SB_THUMBPOSITION: // scroll to pos = nPos
 	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
-		b_result = m_ChartDataWnd.GetDataFromDoc(
+		b_result = m_ChartDataWnd.get_data_from_doc(
 			(nPos * m_p_dat_Doc->get_doc_channel_length()) / 100L);
 		break;
 	default: // NOP: set position only
@@ -1070,7 +1070,7 @@ void ViewData::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		l_last = l_first + m_file_scroll_bar_infos.nPage - 1;
 		m_time_first_abcissa = static_cast<float>(l_first) / m_samplingRate;
 		m_time_last_abcissa = static_cast<float>(l_last) / m_samplingRate;
-		m_ChartDataWnd.GetDataFromDoc(l_first, l_last);
+		m_ChartDataWnd.get_data_from_doc(l_first, l_last);
 		m_ChartDataWnd.Invalidate();
 		cs.Format(_T("%.3f"), m_time_first_abcissa);
 		SetDlgItemText(IDC_TIMEFIRST, cs);
@@ -1082,7 +1082,7 @@ void ViewData::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		m_file_scroll_bar.GetScrollInfo(&m_file_scroll_bar_infos, SIF_ALL);
 		l_first = m_file_scroll_bar_infos.nPos;
 		l_last = l_first + m_file_scroll_bar_infos.nPage - 1;
-		if (m_ChartDataWnd.GetDataFromDoc(l_first, l_last))
+		if (m_ChartDataWnd.get_data_from_doc(l_first, l_last))
 		{
 			UpdateLegends(UPD_ABCISSA);
 			UpdateData(FALSE); // copy view object to controls
@@ -1174,7 +1174,7 @@ void ViewData::OnFormatXscale()
 	{
 		m_time_first_abcissa = dlg.m_firstAbcissa * dlg.m_abcissaScale;
 		m_time_last_abcissa = dlg.m_lastAbcissa * dlg.m_abcissaScale;
-		m_ChartDataWnd.GetDataFromDoc(static_cast<long>(m_time_first_abcissa * m_samplingRate),
+		m_ChartDataWnd.get_data_from_doc(static_cast<long>(m_time_first_abcissa * m_samplingRate),
 		                              static_cast<long>(m_time_last_abcissa * m_samplingRate));
 		UpdateLegends(UPD_ABCISSA | UPD_XSCALE | CHG_XBAR);
 	}
@@ -1564,7 +1564,7 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		{
 			if (l_last > very_last) // check end across file length
 				l_last = very_last;
-			m_ChartDataWnd.GetDataFromDoc(l_first, l_last); // load data from file
+			m_ChartDataWnd.get_data_from_doc(l_first, l_last); // load data from file
 			update_channels_display_parameters();
 			m_ChartDataWnd.Print(p_dc, &r_where); // print data
 		}
@@ -1652,8 +1652,8 @@ void ViewData::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	m_font_print_.DeleteObject();
 	m_b_is_printing_ = FALSE;
 	GetDocument()->db_set_current_record_position(m_file_0_);
-	m_ChartDataWnd.ResizeChannels(m_pixels_count_0_, 0);
-	m_ChartDataWnd.GetDataFromDoc(m_l_first_0_, m_l_last0_);
+	m_ChartDataWnd.resize_channels(m_pixels_count_0_, 0);
+	m_ChartDataWnd.get_data_from_doc(m_l_first_0_, m_l_last0_);
 	update_file_parameters();
 }
 
@@ -1662,7 +1662,7 @@ void ViewData::OnEnChangeTimefirst()
 	if (mm_time_first_abcissa.m_bEntryDone)
 	{
 		mm_time_first_abcissa.OnEnChange(this, m_time_first_abcissa, 1.f, -1.f);
-		m_ChartDataWnd.GetDataFromDoc(static_cast<long>(m_time_first_abcissa * m_samplingRate),
+		m_ChartDataWnd.get_data_from_doc(static_cast<long>(m_time_first_abcissa * m_samplingRate),
 		                              static_cast<long>(m_time_last_abcissa * m_samplingRate));
 		UpdateLegends(UPD_ABCISSA | CHG_XSCALE);
 		m_ChartDataWnd.Invalidate();
@@ -1674,7 +1674,7 @@ void ViewData::OnEnChangeTimelast()
 	if (mm_time_last_abcissa.m_bEntryDone)
 	{
 		mm_time_last_abcissa.OnEnChange(this, m_time_last_abcissa, 1.f, -1.f);
-		m_ChartDataWnd.GetDataFromDoc(static_cast<long>(m_time_first_abcissa * m_samplingRate),
+		m_ChartDataWnd.get_data_from_doc(static_cast<long>(m_time_first_abcissa * m_samplingRate),
 		                              static_cast<long>(m_time_last_abcissa * m_samplingRate));
 		UpdateLegends(UPD_ABCISSA | CHG_XSCALE);
 		m_ChartDataWnd.Invalidate();

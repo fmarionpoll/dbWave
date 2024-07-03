@@ -198,7 +198,7 @@ protected:
 	void prepare_dc(CDC* p_dc, const CPrintInfo* p_info = nullptr);
 	void capture_cursor();
 	void release_cursor();
-	void left_button_up_horizontal_tag(UINT nFlags, CPoint point);
+	void left_button_up_horizontal_tag(UINT n_flags, CPoint point);
 	void send_my_message(int code, int code_parameter) const;
 	void post_my_message(int code, int code_parameter) const;
 	void invert_tracker(CPoint point); // invert rectangle when mouse-left is down

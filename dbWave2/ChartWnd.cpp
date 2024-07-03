@@ -749,14 +749,15 @@ void ChartWnd::OnLButtonUp(UINT nFlags, CPoint point)
 	b_left_mouse_button_down_ = FALSE;
 }
 
-void ChartWnd::left_button_up_horizontal_tag(UINT nFlags, CPoint point)
+void ChartWnd::left_button_up_horizontal_tag(UINT n_flags, CPoint point)
 {
 	// convert pix into data value
-	const auto val = MulDiv(m_pt_last_.y - m_y_vo_, m_y_we_, m_y_ve_) + m_y_wo_;
-	horizontal_tags.set_tag_val(hc_trapped_, val);
-	point.y = MulDiv(val - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_;
+	const auto data_value = MulDiv(m_pt_last_.y - m_y_vo_, m_y_we_, m_y_ve_) + m_y_wo_;
+	horizontal_tags.set_tag_val(hc_trapped_, data_value);
+
+	point.y = MulDiv(data_value - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_;
 	xor_horizontal_tag(point.y);
-	OnLButtonUp(nFlags, point);
+	ChartWnd::OnLButtonUp(n_flags, point);
 	post_my_message(HINT_CHANGEHZTAG, hc_trapped_);
 }
 

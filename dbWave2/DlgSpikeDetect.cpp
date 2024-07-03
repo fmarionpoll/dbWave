@@ -260,7 +260,7 @@ void DlgSpikeDetect::OnBnClickedDelparambttn()
 void DlgSpikeDetect::OnEnChangeDetectthreshold() 
 {
 	const int ithreshold = GetDlgItemInt(IDC_DETECTTHRESHOLD);
-	m_pChartDataDetectWnd->MoveHZtagtoVal(0, ithreshold);
+	m_pChartDataDetectWnd->move_hz_tag_to_val(0, ithreshold);
 }
 
 void DlgSpikeDetect::OnCbnSelchangeDetectchan() 
@@ -275,7 +275,7 @@ void DlgSpikeDetect::UpdateSourceView() const
 	// TODO not used??
 	//int icursel3 = ((CComboBox*) GetDlgItem(IDC_EXTRACTCHAN))->GetCurSel();
 	m_pChartDataDetectWnd->set_channel_list_y(0, icursel, icursel2);
-	m_pChartDataDetectWnd->GetDataFromDoc();
+	m_pChartDataDetectWnd->get_data_from_doc();
 	m_pChartDataDetectWnd->AutoZoomChan(0);
 	m_pChartDataDetectWnd->Invalidate();
 }

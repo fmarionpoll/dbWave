@@ -15,7 +15,7 @@ public:
 
 	int add_tag(int val, int reference_channel);
 	int add_l_tag(long l_val, int reference_channel); 
-	int add_tag(Tag& arg); 
+	int add_tag(const Tag& arg); 
 	void copy_tag_list(TagList* p_t_list); 
 
 	int remove_tag(int tag_index); 

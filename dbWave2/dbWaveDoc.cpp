@@ -432,7 +432,7 @@ Spike* CdbWaveDoc::get_spike(const db_spike& spike_coords)
 	}
 
 	SpikeList* p_spike_list;
-	if (spike_coords.spike_index >= 0)
+	if (spike_coords.spike_list_index >= 0)
 		p_spike_list = m_p_spk->get_spike_list_at(spike_coords.spike_list_index);
 	else
 		p_spike_list = m_p_spk->get_spike_list_current();

@@ -520,14 +520,14 @@ void DlgImportGenericData::UpdatePreview()
 	int ndocchans = m_AcqDataFile.get_waveformat()->scan_count;
 	m_ChartDataWnd.AttachDataFile(&m_AcqDataFile);
 	CSize lsize = m_ChartDataWnd.get_rect_size();
-	m_ChartDataWnd.ResizeChannels(lsize.cx, m_AcqDataFile.get_doc_channel_length());
+	m_ChartDataWnd.resize_channels(lsize.cx, m_AcqDataFile.get_doc_channel_length());
 	if (m_ChartDataWnd.get_channel_list_size() < ndocchans) // add envelopes if necessary
 	{
 		for (int jdocchan = 1; jdocchan < ndocchans; jdocchan++)
 			m_ChartDataWnd.add_channel_list_item(jdocchan, 0);
 	}
 	// load data from document and adjust display
-	m_ChartDataWnd.GetDataFromDoc(0, m_AcqDataFile.get_doc_channel_length() - 1);
+	m_ChartDataWnd.get_data_from_doc(0, m_AcqDataFile.get_doc_channel_length() - 1);
 	for (int i = 0; i < ndocchans; i++)
 	{
 		int max, min;

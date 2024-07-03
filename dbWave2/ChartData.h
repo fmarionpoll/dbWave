@@ -15,21 +15,21 @@ public:
 	void	Serialize(CArchive& ar) override;
 
 public:
-	BOOL	GetDataFromDoc();
-	BOOL	GetDataFromDoc(long l_first);
-	BOOL	GetDataFromDoc(long l_first, long l_last);
-	BOOL	GetSmoothDataFromDoc(int ioption);
-	BOOL	ScrollDataFromDoc(WORD nSBCode);
+	BOOL	get_data_from_doc();
+	BOOL	get_data_from_doc(long l_first);
+	BOOL	get_data_from_doc(long l_first, long l_last);
+	BOOL	get_smooth_data_from_doc(int i_option);
+	BOOL	scroll_data_from_doc(WORD n_sb_code);
 
-	int		ResizeChannels(int npixels, long lSize); // change size of display chans, load data if necessary
+	int		resize_channels(int n_pixels, long l_size); // change size of display chans, load data if necessary
 	BOOL	AttachDataFile(AcqDataDoc* pDataFile);
 	BOOL	IsDefined() const { return (chanlistitem_ptr_array.GetSize() > 0); } // is data defined?
 	AcqDataDoc* GetpDataFile() const { return m_pDataFile; }
 
 	// export representation of data to the clipboard
-	BOOL	CopyAsText(int ioption, int iunit, int nabcissa);
-	LPTSTR	GetAsciiLine(LPTSTR lpCopy, int iunit);
-	LPTSTR	GetAsciiEnvelope(LPTSTR lpCopy, int iunit);
+	BOOL	copy_as_text(int i_option, int i_unit, int n_abcissa);
+	LPTSTR	get_ascii_line(LPTSTR lp_copy, int i_unit);
+	LPTSTR	get_ascii_envelope(LPTSTR lp_copy, int i_unit);
 
 	// Helper functions
 	long	GetNxPixels() const { return m_npixels; } // number of pixels defined in this window
@@ -42,7 +42,7 @@ public:
 	long	GetDataOffsetfromPixel(int pix) const {
 				return static_cast<long>(pix) * (m_lxLast - m_lxFirst + 1) / static_cast<long>(m_display_rect_.right) + m_lxFirst; }
 
-	void UpdatePageLineSize(); // update page and line size parameters
+	void update_page_line_size(); // update page and line size parameters
 
 	// Attributes
 protected:
@@ -89,9 +89,9 @@ public:
 	int		remove_channel_list_item(int i_chan);
 	CChanlistItem* get_channel_list_item(int item) const { return chanlistitem_ptr_array.GetAt(item); }
 
-	int		set_channel_list_transform_mode(int item, int i_mode);
+	int		set_channel_list_transform_mode(int i_chan, int i_mode);
 	int		set_channel_list_source_channel(int i_channel, int acq_channel);
-	void	set_channel_list_y(int i, int chan, int transform);
+	void	set_channel_list_y(int i_chan, int acq_chan, int transform);
 	void	set_channel_list_volts_extent(int i_chan, const float* p_value);
 	void	set_channel_list_volts_zero(int i_chan, const float* p_value);
 
@@ -124,24 +124,24 @@ public:
 	SCOPESTRUCT* get_scope_parameters() override;
 	void	set_scope_parameters(SCOPESTRUCT* pStruct) override;
 	void	AutoZoomChan(int i) const;
-	void	CenterChan(int i) const;
-	void	MaxgainChan(int i) const;
+	void	center_chan(int i) const;
+	void	max_gain_chan(int i) const;
 	void	split_channels() const;
-	void	UpdateChanlistFromDoc();
-	void	UpdateChanlistMaxSpan();
-	void	UpdateGainSettings(int i);
-	void	SetHighlightData(CDWordArray* pIntervals);
-	void	SetHighlightData(const CHighLight& source);
-	void	SetTrackSpike(BOOL btrackspike, int tracklen, int trackoffset, int trackchannel);
-	void	MoveHZtagtoVal(int itag, int ival);
+	void	update_chan_list_from_doc();
+	void	update_chan_list_max_span();
+	void	update_gain_settings(int i_chan);
+	void	set_highlight_data(const CDWordArray* p_intervals);
+	void	set_highlight_data(const CHighLight& source);
+	void	set_track_spike(BOOL b_track_spike, int track_len, int track_offset, int track_channel);
+	void	move_hz_tag_to_val(int itag, int ival);
 	void	update_x_ruler();
 	void	update_y_ruler();
 	void	plot_data_to_dc(CDC* p_dc) override;
-	void	zoom_data(CRect* prevRect, CRect* newRect) override;
+	void	zoom_data(CRect* previous_rect, CRect* new_rect) override;
 
 	void	Print(CDC* p_dc, CRect* rect, BOOL bCenterline = FALSE);
 
-	void	adjust_gain(boolean set_mV_span, float mV_span) const;
+	void	adjust_gain(boolean b_set_span_mv, float span_mv_value) const;
 	void	load_data_within_window(boolean set_time_span, float t_first, float t_last);
 	void	load_all_channels(int data_transform);
 
@@ -150,7 +150,7 @@ protected:
 	int		does_cursor_hit_curve(CPoint point);
 	void	curve_xor();
 	void	display_vt_tags_long_value(CDC* p_dc);
-	void	display_hz_tags_for_channel(CDC* p_dc, int ichan, const CChanlistItem* pChan);
+	void	display_hz_tags_for_channel(CDC* p_dc, int i_chan, const CChanlistItem* p_channel);
 
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

@@ -21,7 +21,7 @@ int TagList::insert_tag(Tag* tag)
 	return tag_ptr_array_.Add(tag);
 }
 
-int TagList::add_tag(Tag& arg)
+int TagList::add_tag(const Tag& arg)
 {
 	const auto tag = new Tag;
 	ASSERT(tag != NULL);
@@ -86,7 +86,7 @@ void TagList::set_tag_val(const int i_tag, const int value)
 		ASSERT(tag_ptr_array_.GetSize() >= i_tag);
 	}
 	const auto p_cur = tag_ptr_array_.GetAt(i_tag);
-	if (p_cur != nullptr) // if the cursor exist change the m_value
+	if (p_cur != nullptr) 
 		p_cur->m_value = value;
 }
 

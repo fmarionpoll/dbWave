@@ -173,7 +173,7 @@ void ViewSpikes::set_add_spikes_mode(int mouse_cursor_type)
 		h_wnd = nullptr;
 	chart_data_wnd_.reflect_mouse_move_message(h_wnd);
 	spike_class_listbox_.reflect_bar_mouse_move_message(h_wnd);
-	chart_data_wnd_.SetTrackSpike(b_add_spike_mode_, spk_detection_parameters_->extract_n_points, spk_detection_parameters_->detect_pre_threshold,
+	chart_data_wnd_.set_track_spike(b_add_spike_mode_, spk_detection_parameters_->extract_n_points, spk_detection_parameters_->detect_pre_threshold,
 	                             spk_detection_parameters_->extract_channel);
 
 	if (b_add_spike_mode_)
@@ -409,7 +409,7 @@ void ViewSpikes::select_spike(db_spike& spike_selected)
 		{
 			highlighted_intervals_.SetAt(3, spk_first);
 			highlighted_intervals_.SetAt(4, spk_last);
-			chart_data_wnd_.SetHighlightData(&highlighted_intervals_);
+			chart_data_wnd_.set_highlight_data(&highlighted_intervals_);
 			chart_data_wnd_.Invalidate();
 		}
 	}
@@ -527,7 +527,7 @@ void ViewSpikes::OnInitialUpdate()
 	if (b_add_spike_mode_)
 	{
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_CURSORMODE_MEASURE, NULL);
-		chart_data_wnd_.SetTrackSpike(b_add_spike_mode_, spk_detection_parameters_->extract_n_points, spk_detection_parameters_->detect_pre_threshold,
+		chart_data_wnd_.set_track_spike(b_add_spike_mode_, spk_detection_parameters_->extract_n_points, spk_detection_parameters_->detect_pre_threshold,
 		                             spk_detection_parameters_->extract_channel);
 	}
 }
@@ -572,8 +572,8 @@ void ViewSpikes::update_data_file(const BOOL b_update_interface)
 	}
 	else
 	{
-		chart_data_wnd_.ResizeChannels(chart_data_wnd_.get_rect_width(), l_last_ - l_first_);
-		chart_data_wnd_.GetDataFromDoc(l_first_, l_last_);
+		chart_data_wnd_.resize_channels(chart_data_wnd_.get_rect_width(), l_last_ - l_first_);
+		chart_data_wnd_.get_data_from_doc(l_first_, l_last_);
 
 		if (b_init_source_view_)
 		{
@@ -672,7 +672,7 @@ void ViewSpikes::update_legends(const BOOL b_update_interface)
 		h_safe_wnd = nullptr;
 	chart_data_wnd_.reflect_mouse_move_message(h_safe_wnd);
 	spike_class_listbox_.reflect_bar_mouse_move_message(h_safe_wnd);
-	chart_data_wnd_.SetTrackSpike(b_add_spike_mode_, spk_detection_parameters_->extract_n_points, spk_detection_parameters_->detect_pre_threshold,
+	chart_data_wnd_.set_track_spike(b_add_spike_mode_, spk_detection_parameters_->extract_n_points, spk_detection_parameters_->detect_pre_threshold,
 	                             spk_detection_parameters_->extract_channel);
 
 	// update spike bars & forms CListBox
@@ -683,7 +683,7 @@ void ViewSpikes::update_legends(const BOOL b_update_interface)
 	// update text abscissa and horizontal scroll position
 	m_time_first = static_cast<float>(l_first_) / m_pSpkDoc->get_acq_rate();
 	m_time_last = static_cast<float>(l_last_ + 1) / m_pSpkDoc->get_acq_rate();
-	chart_data_wnd_.GetDataFromDoc(l_first_, l_last_);
+	chart_data_wnd_.get_data_from_doc(l_first_, l_last_);
 
 	// update scrollbar and select spikes
 	db_spike spike_selected(-1, -1, m_spike_index);
@@ -727,8 +727,8 @@ void ViewSpikes::select_spike_list(int current_selection)
 	// data are ok
 	else
 	{
-		chart_data_wnd_.ResizeChannels(chart_data_wnd_.get_rect_width(), l_last_ - l_first_);
-		chart_data_wnd_.GetDataFromDoc(l_first_, l_last_);
+		chart_data_wnd_.resize_channels(chart_data_wnd_.get_rect_width(), l_last_ - l_first_);
+		chart_data_wnd_.get_data_from_doc(l_first_, l_last_);
 		int max, min;
 		CChanlistItem* chan = chart_data_wnd_.get_channel_list_item(0);
 		chan->GetMaxMin(&max, &min);
@@ -1270,8 +1270,8 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		{
 			if (options_view_data_->bClipRect)
 				p_dc->IntersectClipRect(&rw_bars); 
-			chart_data_wnd_.GetDataFromDoc(l_first, l_last);
-			chart_data_wnd_.CenterChan(0);
+			chart_data_wnd_.get_data_from_doc(l_first, l_last);
+			chart_data_wnd_.center_chan(0);
 			chart_data_wnd_.Print(p_dc, &rw_bars); 
 			p_dc->SelectClipRgn(nullptr);
 
@@ -1515,7 +1515,7 @@ void ViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 			file_scrollbar_.GetScrollInfo(&file_scroll_infos_, SIF_ALL);
 			const long l_first = file_scroll_infos_.nPos;
 			const long l_last = l_first + static_cast<long>(file_scroll_infos_.nPage) - 1;
-			chart_data_wnd_.GetDataFromDoc(l_first, l_last);
+			chart_data_wnd_.get_data_from_doc(l_first, l_last);
 		}
 		break;
 
@@ -1532,7 +1532,7 @@ void ViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	chart_data_wnd_.Invalidate();
 
 	if (p_data_doc_ != nullptr)
-		chart_data_wnd_.CenterChan(0);
+		chart_data_wnd_.center_chan(0);
 }
 
 void ViewSpikes::scroll_file(const UINT n_sb_code, const UINT n_pos)
@@ -1546,11 +1546,11 @@ void ViewSpikes::scroll_file(const UINT n_sb_code, const UINT n_pos)
 	case SB_PAGELEFT: 
 	case SB_PAGERIGHT: 
 	case SB_RIGHT: 
-		chart_data_wnd_.ScrollDataFromDoc(static_cast<WORD>(n_sb_code));
+		chart_data_wnd_.scroll_data_from_doc(static_cast<WORD>(n_sb_code));
 		break;
 	case SB_THUMBPOSITION: 
 	case SB_THUMBTRACK: 
-		chart_data_wnd_.GetDataFromDoc(MulDiv(static_cast<int>(n_pos), chart_data_wnd_.GetDocumentLast(), 100));
+		chart_data_wnd_.get_data_from_doc(MulDiv(static_cast<int>(n_pos), chart_data_wnd_.GetDocumentLast(), 100));
 		break;
 	default:
 		break;
@@ -1640,7 +1640,7 @@ void ViewSpikes::OnEditCopy()
 		// display data	if data file was found
 		if (p_data_doc_ != nullptr)
 		{
-			chart_data_wnd_.CenterChan(0);
+			chart_data_wnd_.center_chan(0);
 			chart_data_wnd_.Print(&mDC, &rw_bars);
 
 			//auto extent = m_ChartDataWnd.get_channel_list_item(0)->Get_Y_extent();
@@ -1694,8 +1694,8 @@ void ViewSpikes::OnEditCopy()
 	spike_class_listbox_.Invalidate();
 	if (p_data_doc_ != nullptr)
 	{
-		chart_data_wnd_.GetDataFromDoc(l_first_, l_last_);
-		chart_data_wnd_.ResizeChannels(chart_data_wnd_.get_rect_width(), l_last_ - l_first_);
+		chart_data_wnd_.get_data_from_doc(l_first_, l_last_);
+		chart_data_wnd_.resize_channels(chart_data_wnd_.get_rect_width(), l_last_ - l_first_);
 		chart_data_wnd_.Invalidate();
 	}
 }
@@ -1957,7 +1957,7 @@ void ViewSpikes::OnFormatCentercurve()
 	spike_class_listbox_.set_y_zoom(spike_class_listbox_.get_yw_extent(), middle);
 
 	if (p_data_doc_ != nullptr)
-		chart_data_wnd_.CenterChan(0);
+		chart_data_wnd_.center_chan(0);
 
 	update_legends(TRUE);
 	spike_class_listbox_.Invalidate();
@@ -1971,7 +1971,7 @@ void ViewSpikes::OnFormatGainadjust()
 		adjust_y_zoom_to_max_min(true);
 	}
 	if (p_data_doc_ != nullptr)
-		chart_data_wnd_.MaxgainChan(0);
+		chart_data_wnd_.max_gain_chan(0);
 
 	update_legends(TRUE);
 	spike_class_listbox_.Invalidate();

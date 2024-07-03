@@ -121,7 +121,7 @@ void DlgDataSeries::OnClickedDefineseries()
 	}
 
 	// cope with the changes: display, adjust curve
-	m_pChartDataWnd->GetDataFromDoc(); // load data from document
+	m_pChartDataWnd->get_data_from_doc(); // load data from document
 	int max, min;
 	CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(m_listindex);
 	chan->GetMaxMin(&max, &min);
@@ -138,7 +138,7 @@ void DlgDataSeries::OnOK()
 	m_listindex = m_listseries.GetCurSel() - 1;
 	if (m_listindex < 0)
 		m_listindex = 0;
-	m_pChartDataWnd->GetDataFromDoc();
+	m_pChartDataWnd->get_data_from_doc();
 	m_pChartDataWnd->Invalidate();
 	CDialog::OnOK();
 }

@@ -93,7 +93,7 @@ BOOL DlgSpikeEdit::OnInitDialog()
 		chart_data_.set_b_use_dib(FALSE);
 		chart_data_.AttachDataFile(p_acq_data_doc_);
 		const auto lv_size = chart_data_.get_rect_size();
-		chart_data_.ResizeChannels(lv_size.cx, 0); 
+		chart_data_.resize_channels(lv_size.cx, 0); 
 		chart_data_.remove_all_channel_list_items();
 		chart_data_.add_channel_list_item(p_spk_list_->get_detection_parameters()->extract_channel, p_spk_list_->get_detection_parameters()->extract_transform);
 
@@ -108,7 +108,7 @@ BOOL DlgSpikeEdit::OnInitDialog()
 		intervals_to_highlight_spikes_.SetAt(0, 0); // source channel
 		intervals_to_highlight_spikes_.SetAt(1, RGB(255, 0, 0)); // red color
 		intervals_to_highlight_spikes_.SetAt(2, 1); // pen size
-		chart_data_.SetHighlightData(&intervals_to_highlight_spikes_); // tell sourceview to highlight spk
+		chart_data_.set_highlight_data(&intervals_to_highlight_spikes_); // tell sourceview to highlight spk
 
 		// validate associated controls
 		VERIFY(mm_yv_extent.SubclassDlgItem(IDC_YEXTENT, this));
@@ -262,7 +262,7 @@ void DlgSpikeEdit::load_source_view_data()
 	spike_chan = spike->get_source_channel();
 
 	chart_data_.set_channel_list_source_channel(0, spike_chan);
-	chart_data_.GetDataFromDoc(source_view_first, source_view_last);
+	chart_data_.get_data_from_doc(source_view_first, source_view_last);
 
 	const auto method = p_spk_list_->get_detection_parameters()->extract_transform;
 	p_acq_data_doc_->load_transformed_data(source_view_first, source_view_last, method, spike_chan);
