@@ -490,6 +490,8 @@ CSize CdbWaveDoc::get_max_min_of_single_spike(const BOOL b_all)
 		{
 			if (db_set_current_record_position(i_file))
 				open_current_spike_file();
+			if (m_p_spk == nullptr)
+				continue;
 			m_p_spk->set_spike_list_as_current(0);
 		}
 		const auto p_spk_list = m_p_spk->get_spike_list_current();
@@ -516,6 +518,7 @@ CSize CdbWaveDoc::get_max_min_of_single_spike(const BOOL b_all)
 	{
 		if (db_set_current_record_position(n_current_file))
 			open_current_spike_file();
+		if (m_p_spk!= nullptr)
 		m_p_spk->set_spike_list_as_current(0);
 	}
 
