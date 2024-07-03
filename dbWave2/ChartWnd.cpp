@@ -517,6 +517,8 @@ void ChartWnd::prepare_dc(CDC* p_dc, const CPrintInfo* p_info)
 		p_dc->SetViewportExt(m_x_ve_, m_y_ve_);
 		if (m_y_we_ == 0)
 			m_y_we_ = 1024;
+		if (m_x_we_ == 0)
+			m_x_we_ = 1024;
 		p_dc->SetWindowExt(m_x_we_, m_y_we_);
 		p_dc->SetWindowOrg(m_x_wo_, m_y_wo_);
 	}

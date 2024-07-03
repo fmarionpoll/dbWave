@@ -58,6 +58,9 @@ void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 			if (dbwave_doc_->db_set_current_record_position(i_file))
 				p_spike_doc_ = dbwave_doc_->open_current_spike_file();
 		}
+		if (dbwave_doc_->m_p_spk == nullptr)
+			continue;
+
 		p_spike_list_ = p_spike_doc_->get_spike_list_current();
 
 		// test presence of data

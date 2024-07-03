@@ -935,7 +935,7 @@ void ViewSpikeSort::on_format_gain_adjust()
 
 void ViewSpikeSort::select_spike(db_spike& spike_sel)
 {
-	if (spike_sel.database_position < 0 || spike_sel.spike_list_index < 0) {
+	if (spike_sel.database_position >= 0 || spike_sel.spike_list_index < 0) {
 		const CdbWaveDoc* p_doc = chart_spike_shape_.get_db_wave_doc();
 		spike_sel.database_position = p_doc->db_get_current_record_position();
 		spike_sel.spike_list_index = p_doc->m_p_spk->get_spike_list_current_index();

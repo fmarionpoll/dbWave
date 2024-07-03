@@ -423,9 +423,9 @@ Spike* CdbWaveDoc::get_spike(const db_spike& spike_coords)
 {
 	if (spike_coords.spike_index < 0)
 		return nullptr;
-	//TRACE("get_spike from position:%i spike_list %i - spike index %i\n", spike_coords.database_position, spike_coords.spike_list_index, spike_coords.spike_index);
 
-	if (spike_coords.database_position != db_get_current_record_position()) {
+	if ((spike_coords.database_position >= 0) && (spike_coords.database_position != db_get_current_record_position())) 
+	{
 		if (db_set_current_record_position(spike_coords.database_position))
 			if (nullptr == open_current_spike_file())
 				return nullptr;
@@ -456,6 +456,8 @@ void CdbWaveDoc::get_max_min_of_all_spikes(const BOOL b_all_files, const BOOL b_
 		{
 			if (db_set_current_record_position(i_file))
 				open_current_spike_file();
+			if (m_p_spk == nullptr)
+				continue;
 			m_p_spk->set_spike_list_as_current(0);
 		}
 		const auto p_spk_list = m_p_spk->get_spike_list_current();

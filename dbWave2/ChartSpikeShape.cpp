@@ -53,6 +53,9 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			if (dbwave_doc_->db_set_current_record_position(i_file))
 				dbwave_doc_->open_current_spike_file();
 		}
+		if (dbwave_doc_->m_p_spk == nullptr)
+			continue;
+
 		p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
 
 		//test if data are there - if none, display message and exit
@@ -254,7 +257,7 @@ void ChartSpikeShape::select_spike(const db_spike& spike_sel)
 	spike_selected_ = spike_sel;
 	if (spike_sel.spike_index >= 0) 
 	{
-		const Spike* spike = dbwave_doc_->get_spike(spike_selected_);
+		const Spike* spike = dbwave_doc_->get_spike(spike_sel);
 		draw_spike(spike);
 	}
 }
