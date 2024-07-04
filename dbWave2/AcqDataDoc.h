@@ -110,7 +110,7 @@ public:
 	static int get_transforms_count() { return CWaveBuf::GetWBNTypesofTransforms(); }
 	static CString get_transform_name(const int i) { return CWaveBuf::GetWBTransformsAllowed(i); }
 	static BOOL set_wb_transform_span(const int i, const int i_span) { return CWaveBuf::SetWBTransformSpan(i, i_span); }
-	static int is_wb_span_change_allowed(int i) { return CWaveBuf::IsWBSpanChangeAllowed(i); }
+	static int is_wb_span_change_allowed(const int i) { return CWaveBuf::IsWBSpanChangeAllowed(i); }
 	static BOOL is_wb_transform_allowed(const int i_mode) { return CWaveBuf::IsWBTransformAllowed(i_mode); }
 
 	BOOL get_volts_per_bin(const int channel, float* volts_per_bin, const int mode = 0) const
@@ -121,14 +121,11 @@ public:
 	BOOL init_wb_transform_buffer() const { return m_pWBuf->InitWBTransformBuffer(); }
 
 	void set_offset_to_data(ULONGLONG ulOffset) const { m_pXFile->m_ulOffsetData = ulOffset; }
-	void set_offset_to_header(ULONGLONG ulOffset) const { m_pXFile->m_ulOffsetHeader = ulOffset; }
-
+	void set_offset_to_header(ULONGLONG ulOffset) const { m_pXFile->m_ulOffsetHeader = static_cast<LONGLONG>(ulOffset); }
 	ULONGLONG get_offset_to_data() const { return m_pXFile->m_ulOffsetData; }
 	ULONGLONG get_offset_to_header() const { return m_pXFile->m_ulOffsetHeader; }
 	int get_header_size() const { return m_pXFile->m_bHeaderSize; }
-
 	void set_reading_buffer_dirty() { m_bValidReadBuffer = FALSE; }
-
 	BOOL allocate_buffer();
 	BOOL adjust_buffer(const int elements_count);
 	void read_data_infos();

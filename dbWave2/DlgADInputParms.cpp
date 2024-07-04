@@ -588,12 +588,12 @@ void DlgADInputs::SaveData()
 	{
 		m_pwFormat->scan_count = static_cast<short>(m_nacqchans);
 		m_pchArray->chan_array_set_size(m_nacqchans);
-		const WORD ch_buffer_size = m_pwFormat->buffersize / m_nacqchans;
-		m_pwFormat->buffersize = ch_buffer_size * m_nacqchans;
+		const WORD ch_buffer_size = m_pwFormat->buffer_size / m_nacqchans;
+		m_pwFormat->buffer_size = ch_buffer_size * m_nacqchans;
 	}
 	// general acq parameters
-	GetDlgItem(IDC_ADCARDNAME)->GetWindowText(m_pwFormat->csADcardName);
-	m_pwFormat->binspan = static_cast<long>(m_iNBins);
+	GetDlgItem(IDC_ADCARDNAME)->GetWindowText(m_pwFormat->cs_ad_card_name);
+	m_pwFormat->bin_span = static_cast<long>(m_iNBins);
 
 	// save each channel
 	for (auto i = 1; i <= m_nacqchans; i++)
@@ -669,7 +669,7 @@ void DlgADInputs::SaveGridToWavechanData(int col)
 		static_cast<double>(p_chan->am_gainpost);
 	p_chan->am_gaintotal = p_chan->am_amplifiergain * p_chan->am_gainAD;
 	// compute dependent parameters
-	p_chan->am_resolutionV = m_pwFormat->fullscale_volts / p_chan->am_gaintotal / m_pwFormat->binspan;
+	p_chan->am_resolutionV = m_pwFormat->full_scale_volts / p_chan->am_gaintotal / m_pwFormat->bin_span;
 }
 
 void DlgADInputs::OnBnClickedOk()
@@ -748,10 +748,10 @@ void DlgADInputs::LoadADparameters_From_pwFormat()
 	else
 	{
 		m_nacqchans = m_pwFormat->scan_count;
-		GetDlgItem(IDC_ADCARDNAME)->SetWindowText(m_pwFormat->csADcardName);
+		GetDlgItem(IDC_ADCARDNAME)->SetWindowText(m_pwFormat->cs_ad_card_name);
 
 		// get precision and compute corresponding nb of bits
-		m_iNBins = m_pwFormat->binspan + 1;
+		m_iNBins = m_pwFormat->bin_span + 1;
 		int i_bins = static_cast<int>(m_iNBins);
 		auto n_bits = 0;
 		do

@@ -185,7 +185,7 @@ void ViewADcontinuous::get_acquisition_parameters_from_data_file()
 		options_input_data_->waveFormat.copy(pDat->get_waveformat());
 		options_input_data_->chanArray.chan_array_set_size(options_input_data_->waveFormat.scan_count);
 		options_input_data_->chanArray.Copy(pDat->get_wavechan_array());
-		options_input_data_->waveFormat.bADwritetofile = m_bADwritetofile;
+		options_input_data_->waveFormat.b_ad_write_to_file = m_bADwritetofile;
 	}
 }
 
@@ -200,7 +200,7 @@ void ViewADcontinuous::OnInitialUpdate()
 	options_output_data_ = &(pApp->options_output_data);
 
 	m_b_found_dt_open_layer_dll_ = FALSE;
-	m_bADwritetofile = options_input_data_->waveFormat.bADwritetofile;
+	m_bADwritetofile = options_input_data_->waveFormat.b_ad_write_to_file;
 	m_bStartOutPutMode = options_output_data_->b_allow_output_data;
 	m_Combo_StartOutput.SetCurSel(m_bStartOutPutMode);
 
@@ -264,8 +264,8 @@ BOOL ViewADcontinuous::FindDTOpenLayersBoards()
 
 	short isel = 0;
 	// if name already defined, check if board present
-	if (!(options_input_data_->waveFormat).csADcardName.IsEmpty())
-		isel = static_cast<short>(m_Combo_ADcard.FindString(-1, (options_input_data_->waveFormat).csADcardName));
+	if (!(options_input_data_->waveFormat).cs_ad_card_name.IsEmpty())
+		isel = static_cast<short>(m_Combo_ADcard.FindString(-1, (options_input_data_->waveFormat).cs_ad_card_name));
 	if (isel < 0)
 		isel = 0;
 
@@ -279,7 +279,7 @@ BOOL ViewADcontinuous::SelectDTOpenLayersBoard(const CString& card_name)
 {
 	// get infos
 	m_b_found_dt_open_layer_dll_ = TRUE;
-	(options_input_data_->waveFormat).csADcardName = card_name;
+	(options_input_data_->waveFormat).cs_ad_card_name = card_name;
 
 	// connect A/D subsystem and display/hide buttons
 	m_bStartOutPutMode = 0;
@@ -451,7 +451,7 @@ void ViewADcontinuous::InitAcquisitionDisplay()
 	}
 
 	// adapt source view 
-	int i_extent = MulDiv(pWFormat->binspan, 12, 10);
+	int i_extent = MulDiv(pWFormat->bin_span, 12, 10);
 	if (options_input_data_->izoomCursel != 0)
 		i_extent = options_input_data_->izoomCursel;
 
@@ -464,8 +464,8 @@ void ViewADcontinuous::InitAcquisitionDisplay()
 		pD->SetColor(static_cast<WORD>(i));
 		float doc_volts_per_bin;
 		m_inputDataFile.get_volts_per_bin(i, &doc_volts_per_bin);
-		pD->SetDataBinFormat(pWFormat->binzero, pWFormat->binspan);
-		pD->SetDataVoltsFormat(doc_volts_per_bin, pWFormat->fullscale_volts);
+		pD->SetDataBinFormat(pWFormat->bin_zero, pWFormat->bin_span);
+		pD->SetDataVoltsFormat(doc_volts_per_bin, pWFormat->full_scale_volts);
 	}
 
 	UpdateGainScroll();
@@ -493,14 +493,14 @@ BOOL ViewADcontinuous::StartAcquisition()
 	pWFormat->sample_count = 0; 
 	pWFormat->sampling_rate_per_channel = pWFormat->sampling_rate_per_channel / static_cast<float>(options_input_data_->iundersample);
 	m_clock_rate_ = pWFormat->sampling_rate_per_channel * static_cast<float>(pWFormat->scan_count);
-	pWFormat->acqtime = CTime::GetCurrentTime();
+	pWFormat->acquisition_time = CTime::GetCurrentTime();
 
 	// data format
-	pWFormat->binspan = (options_input_data_->waveFormat).binspan;
-	pWFormat->fullscale_volts = (options_input_data_->waveFormat).fullscale_volts;
+	pWFormat->bin_span = (options_input_data_->waveFormat).bin_span;
+	pWFormat->full_scale_volts = (options_input_data_->waveFormat).full_scale_volts;
 	// trick: if OLx_ENC_BINARY, it is changed on the fly within AD_Transfer function 
 	pWFormat->mode_encoding = OLx_ENC_2SCOMP;
-	pWFormat->binzero = 0;
+	pWFormat->bin_zero = 0;
 
 	// start acquisition and save data to file?
 	if (m_bADwritetofile && (pWFormat->trig_mode == OLx_TRG_EXTRA + 1))
@@ -938,9 +938,9 @@ short* ViewADcontinuous::ADC_Transfer(short* source_data, const CWaveFormat * pW
 	pRawDataBuf += (m_channel_sweep_start_ * pWFormat->scan_count);
 
 	// if offset binary (unsigned words), transform data into signed integers (two's complement)
-	if ((options_input_data_->waveFormat).binzero != NULL)
+	if ((options_input_data_->waveFormat).bin_zero != NULL)
 	{
-		const auto bin_zero_value = static_cast<short>(options_input_data_->waveFormat.binzero);
+		const auto bin_zero_value = static_cast<short>(options_input_data_->waveFormat.bin_zero);
 		short* p_data_acquisition_value = source_data;
 		for (int j = 0; j < m_Acq32_AD.Getbuflen(); j++, p_data_acquisition_value++)
 			*p_data_acquisition_value -= bin_zero_value;
@@ -982,7 +982,7 @@ void ViewADcontinuous::under_sample_buffer(short* pRawDataBuf, short* pDTbuf0, c
 
 void ViewADcontinuous::ADC_TransferToChart(short* pdataBuf, const CWaveFormat * pWFormat)
 {
-	if (pWFormat->bOnlineDisplay)
+	if (pWFormat->b_online_display)
 	{
 		//short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
 		m_chartDataAD.display_buffer(pdataBuf, m_channel_sweep_refresh_);
@@ -1001,7 +1001,7 @@ void ViewADcontinuous::ADC_TransferToFile(CWaveFormat * pWFormat)
 	short* pdataBuf = m_inputDataFile.get_raw_data_buffer();
 	pdataBuf += (m_channel_sweep_start_ * pWFormat->scan_count);
 
-	if (pWFormat->bADwritetofile)
+	if (pWFormat->b_ad_write_to_file)
 	{
 		const BOOL flag = m_inputDataFile.AcqDoc_DataAppend(pdataBuf, m_byte_sweep_refresh_);
 		ASSERT(flag);
@@ -1256,15 +1256,15 @@ void ViewADcontinuous::OnBnClickedDaparameters2()
 void ViewADcontinuous::OnBnClickedWriteToDisk()
 {
 	m_bADwritetofile = TRUE;
-	options_input_data_->waveFormat.bADwritetofile = m_bADwritetofile;
-	m_inputDataFile.get_waveformat()->bADwritetofile = m_bADwritetofile;
+	options_input_data_->waveFormat.b_ad_write_to_file = m_bADwritetofile;
+	m_inputDataFile.get_waveformat()->b_ad_write_to_file = m_bADwritetofile;
 }
 
 void ViewADcontinuous::OnBnClickedOscilloscope()
 {
 	m_bADwritetofile = FALSE;
-	options_input_data_->waveFormat.bADwritetofile = m_bADwritetofile;
-	m_inputDataFile.get_waveformat()->bADwritetofile = m_bADwritetofile;
+	options_input_data_->waveFormat.b_ad_write_to_file = m_bADwritetofile;
+	m_inputDataFile.get_waveformat()->b_ad_write_to_file = m_bADwritetofile;
 }
 
 void ViewADcontinuous::UpdateRadioButtons()
@@ -1332,7 +1332,7 @@ void ViewADcontinuous::InitAcquisitionInputFile()
 void ViewADcontinuous::OnBnClickedUnzoom()
 {
 	const CWaveFormat* pWFormat = &(options_input_data_->waveFormat);
-	const int i_extent = pWFormat->binspan;
+	const int i_extent = pWFormat->bin_span;
 
 	for (int i = 0; i < pWFormat->scan_count; i++)
 	{

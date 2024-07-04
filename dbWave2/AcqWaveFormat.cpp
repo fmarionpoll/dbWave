@@ -9,7 +9,7 @@ IMPLEMENT_SERIAL(CWaveFormat, CObject, 0 /* schema number*/)
 
 CWaveFormat::CWaveFormat()
 {
-	acqtime = CTime::GetCurrentTime();
+	acquisition_time = CTime::GetCurrentTime();
 }
 
 CWaveFormat::~CWaveFormat()
@@ -21,10 +21,10 @@ void CWaveFormat::Serialize(CArchive& ar)
 	{
 		constexpr WORD version = 10;
 		ar << version; // 1
-		ar << acqtime; // 2
-		ar << fullscale_volts; // 3
-		ar << binspan; // 4
-		ar << binzero; // 5
+		ar << acquisition_time; // 2
+		ar << full_scale_volts; // 3
+		ar << bin_span; // 4
+		ar << bin_zero; // 5
 		ar << static_cast<WORD>(mode_encoding); // 6
 		ar << static_cast<WORD>(mode_clock); // 7
 		ar << static_cast<WORD>(mode_trigger); // 8
@@ -36,33 +36,33 @@ void CWaveFormat::Serialize(CArchive& ar)
 		ar << static_cast<WORD>(trig_chan);
 		ar << static_cast<WORD>(trig_threshold);
 		ar << static_cast<WORD>(data_flow);
-		ar << bOnlineDisplay;
-		ar << bADwritetofile;
-		ar << bufferNitems;
-		ar << buffersize;
+		ar << b_online_display;
+		ar << b_ad_write_to_file;
+		ar << buffer_n_items;
+		ar << buffer_size;
 
 		constexpr int n_comments = 14;
 		ar << n_comments;
 		// save "CString"
 		ar << cs_comment;
-		ar << csStimulus;
-		ar << csConcentration;
-		ar << csInsectname;
-		ar << csOperator;
-		ar << csLocation;
-		ar << csSensillum;
-		ar << csStrain;
-		ar << csMoreComment;
-		ar << csADcardName;
-		ar << csStimulus2;
-		ar << csConcentration2;
-		ar << csSex;
+		ar << cs_stimulus;
+		ar << cs_concentration;
+		ar << cs_insect_name;
+		ar << cs_operator;
+		ar << cs_location;
+		ar << cs_sensillum;
+		ar << cs_strain;
+		ar << cs_more_comment;
+		ar << cs_ad_card_name;
+		ar << cs_stimulus2;
+		ar << cs_concentration2;
+		ar << cs_sex;
 
 		constexpr int n_items = 4;
 		ar << n_items;
 		// save "long"
-		ar << insectID;
-		ar << sensillumID;
+		ar << insect_id;
+		ar << sensillum_id;
 		ar << repeat;
 		ar << repeat2;
 	}
@@ -76,10 +76,10 @@ void CWaveFormat::Serialize(CArchive& ar)
 		else
 		{
 			WORD w;
-			ar >> acqtime; // 2
-			ar >> fullscale_volts; // 3
-			ar >> binspan; // 4
-			ar >> binzero; // 5
+			ar >> acquisition_time; // 2
+			ar >> full_scale_volts; // 3
+			ar >> bin_span; // 4
+			ar >> bin_zero; // 5
 			ar >> w;
 			mode_encoding = static_cast<short>(w); // 6
 			ar >> w;
@@ -99,30 +99,30 @@ void CWaveFormat::Serialize(CArchive& ar)
 			trig_threshold = static_cast<short>(w);
 			ar >> w;
 			data_flow = static_cast<short>(w);
-			ar >> bOnlineDisplay;
-			ar >> bADwritetofile;
-			ar >> bufferNitems >> buffersize;
+			ar >> b_online_display;
+			ar >> b_ad_write_to_file;
+			ar >> buffer_n_items >> buffer_size;
 
 			int n_comments;
 			ar >> n_comments;
 			ASSERT(n_comments == 14);
 			ar >> cs_comment;
-			ar >> csStimulus;
-			ar >> csConcentration;
-			ar >> csInsectname;
-			ar >> csOperator;
-			ar >> csLocation;
-			ar >> csSensillum;
-			ar >> csStrain;
-			ar >> csMoreComment;
-			ar >> csADcardName;
-			ar >> csStimulus2;
-			ar >> csConcentration2;
-			ar >> csSex;
+			ar >> cs_stimulus;
+			ar >> cs_concentration;
+			ar >> cs_insect_name;
+			ar >> cs_operator;
+			ar >> cs_location;
+			ar >> cs_sensillum;
+			ar >> cs_strain;
+			ar >> cs_more_comment;
+			ar >> cs_ad_card_name;
+			ar >> cs_stimulus2;
+			ar >> cs_concentration2;
+			ar >> cs_sex;
 
 			int n_items; ar >> n_items;
-			n_items--; ar >> insectID;		// 4
-			n_items--; ar >> sensillumID;	// 3
+			n_items--; ar >> insect_id;		// 4
+			n_items--; ar >> sensillum_id;	// 3
 			n_items--; ar >> repeat;		// 2
 			n_items--; ar >> repeat2;		// 1
 			float dummy;
@@ -135,19 +135,19 @@ void CWaveFormat::read_v8_and_before(CArchive& ar, WORD version)
 {
 	ASSERT(!ar.IsStoring());
 	WORD w;
-	ar >> acqtime; // 2
-	ar >> fullscale_volts; // 3
+	ar >> acquisition_time; // 2
+	ar >> full_scale_volts; // 3
 	if (version < 6)
 	{
 		ar >> w;
-		binspan = w; // 4
+		bin_span = w; // 4
 		ar >> w;
-		binzero = w; // 5
+		bin_zero = w; // 5
 	}
 	else
 	{
-		ar >> binspan; // 4
-		ar >> binzero; // 5
+		ar >> bin_span; // 4
+		ar >> bin_zero; // 5
 	}
 	ar >> w;
 	mode_encoding = static_cast<short>(w); // 6
@@ -168,41 +168,41 @@ void CWaveFormat::read_v8_and_before(CArchive& ar, WORD version)
 	trig_threshold = static_cast<short>(w);
 	ar >> w;
 	data_flow = static_cast<short>(w);
-	ar >> bOnlineDisplay;
-	ar >> bADwritetofile;
-	ar >> bufferNitems >> buffersize;
+	ar >> b_online_display;
+	ar >> b_ad_write_to_file;
+	ar >> buffer_n_items >> buffer_size;
 
 	if (version >= 7)
 	{
 		ar >> cs_comment;
-		ar >> csStimulus;
-		ar >> csConcentration;
-		ar >> csInsectname;
-		ar >> csOperator;
-		ar >> csLocation;
-		ar >> csSensillum;
-		ar >> csStrain;
-		ar >> csMoreComment;
-		ar >> csADcardName;
-		ar >> csStimulus2;
-		ar >> csConcentration2;
+		ar >> cs_stimulus;
+		ar >> cs_concentration;
+		ar >> cs_insect_name;
+		ar >> cs_operator;
+		ar >> cs_location;
+		ar >> cs_sensillum;
+		ar >> cs_strain;
+		ar >> cs_more_comment;
+		ar >> cs_ad_card_name;
+		ar >> cs_stimulus2;
+		ar >> cs_concentration2;
 		if (version == 8)
-			ar >> csSex;
+			ar >> cs_sex;
 	}
 	else
 	{
 		ar >> cs_comment;
-		ar >> csStimulus;
-		ar >> csConcentration;
-		ar >> csInsectname;
-		ar >> csOperator;
-		ar >> csLocation;
-		ar >> csSensillum;
-		ar >> csStrain;
-		ar >> csMoreComment;
+		ar >> cs_stimulus;
+		ar >> cs_concentration;
+		ar >> cs_insect_name;
+		ar >> cs_operator;
+		ar >> cs_location;
+		ar >> cs_sensillum;
+		ar >> cs_strain;
+		ar >> cs_more_comment;
 		if (version >= 3)
 		{
-			ar >> csADcardName;
+			ar >> cs_ad_card_name;
 		}
 	}
 
@@ -210,9 +210,9 @@ void CWaveFormat::read_v8_and_before(CArchive& ar, WORD version)
 	{
 		int n_items;
 		ar >> n_items;
-		ar >> insectID;
+		ar >> insect_id;
 		n_items--;
-		ar >> sensillumID;
+		ar >> sensillum_id;
 		n_items--;
 		repeat = 0;
 		repeat2 = 0;
@@ -223,18 +223,18 @@ void CWaveFormat::read_v8_and_before(CArchive& ar, WORD version)
 	}
 	else
 	{
-		insectID = 0;
-		sensillumID = 0;
+		insect_id = 0;
+		sensillum_id = 0;
 	}
 }
 
 void CWaveFormat::copy(const CWaveFormat* arg)
 {
-	acqtime = arg->acqtime;
-	wversion = arg->wversion;
-	fullscale_volts = arg->fullscale_volts;
-	binspan = arg->binspan;
-	binzero = arg->binzero;
+	acquisition_time = arg->acquisition_time;
+	w_version = arg->w_version;
+	full_scale_volts = arg->full_scale_volts;
+	bin_span = arg->bin_span;
+	bin_zero = arg->bin_zero;
 
 	mode_encoding = arg->mode_encoding;
 	mode_clock = arg->mode_clock;
@@ -250,27 +250,27 @@ void CWaveFormat::copy(const CWaveFormat* arg)
 	trig_threshold = arg->trig_threshold;
 
 	data_flow = arg->data_flow;
-	bOnlineDisplay = arg->bOnlineDisplay;
-	bADwritetofile = arg->bADwritetofile;
-	bufferNitems = arg->bufferNitems;
-	buffersize = arg->buffersize;
+	b_online_display = arg->b_online_display;
+	b_ad_write_to_file = arg->b_ad_write_to_file;
+	buffer_n_items = arg->buffer_n_items;
+	buffer_size = arg->buffer_size;
 
 	cs_comment = arg->cs_comment;
-	csStimulus = arg->csStimulus;
-	csConcentration = arg->csConcentration;
-	csStimulus2 = arg->csStimulus2;
-	csConcentration2 = arg->csConcentration2;
+	cs_stimulus = arg->cs_stimulus;
+	cs_concentration = arg->cs_concentration;
+	cs_stimulus2 = arg->cs_stimulus2;
+	cs_concentration2 = arg->cs_concentration2;
 
-	csInsectname = arg->csInsectname;
-	csLocation = arg->csLocation;
-	csSensillum = arg->csSensillum;
-	csStrain = arg->csStrain;
-	csSex = arg->csSex;
-	csMoreComment = arg->csMoreComment;
-	csADcardName = arg->csADcardName;
-	csOperator = arg->csOperator;
-	insectID = arg->insectID;
-	sensillumID = arg->sensillumID;
+	cs_insect_name = arg->cs_insect_name;
+	cs_location = arg->cs_location;
+	cs_sensillum = arg->cs_sensillum;
+	cs_strain = arg->cs_strain;
+	cs_sex = arg->cs_sex;
+	cs_more_comment = arg->cs_more_comment;
+	cs_ad_card_name = arg->cs_ad_card_name;
+	cs_operator = arg->cs_operator;
+	insect_id = arg->insect_id;
+	sensillum_id = arg->sensillum_id;
 	repeat = arg->repeat;
 	repeat2 = arg->repeat2;
 }
@@ -306,18 +306,18 @@ CString CWaveFormat::get_comments(const CString& p_separator, const BOOL b_expla
 {
 	CString cs_out;
 	cs_out += add_comments(p_separator, b_explanation, _T("comment1="), cs_comment);
-	cs_out += add_comments(p_separator, b_explanation, _T("stim1="), csStimulus);
-	cs_out += add_comments(p_separator, b_explanation, _T("conc1= #"), csConcentration);
-	cs_out += add_comments(p_separator, b_explanation, _T("stim2="), csStimulus2);
-	cs_out += add_comments(p_separator, b_explanation, _T("com2= #"), csConcentration2);
+	cs_out += add_comments(p_separator, b_explanation, _T("stim1="), cs_stimulus);
+	cs_out += add_comments(p_separator, b_explanation, _T("conc1= #"), cs_concentration);
+	cs_out += add_comments(p_separator, b_explanation, _T("stim2="), cs_stimulus2);
+	cs_out += add_comments(p_separator, b_explanation, _T("com2= #"), cs_concentration2);
 
-	cs_out += add_comments(p_separator, b_explanation, _T("insect="), csInsectname);
-	cs_out += add_comments(p_separator, b_explanation, _T("location="), csLocation);
-	cs_out += add_comments(p_separator, b_explanation, _T("sensillum="), csSensillum);
-	cs_out += add_comments(p_separator, b_explanation, _T("strain="), csStrain);
-	cs_out += add_comments(p_separator, b_explanation, _T("sex="), csSex);
-	cs_out += add_comments(p_separator, b_explanation, _T("operator="), csOperator);
-	cs_out += add_comments(p_separator, b_explanation, _T("comment2="), csMoreComment);
+	cs_out += add_comments(p_separator, b_explanation, _T("insect="), cs_insect_name);
+	cs_out += add_comments(p_separator, b_explanation, _T("location="), cs_location);
+	cs_out += add_comments(p_separator, b_explanation, _T("sensillum="), cs_sensillum);
+	cs_out += add_comments(p_separator, b_explanation, _T("strain="), cs_strain);
+	cs_out += add_comments(p_separator, b_explanation, _T("sex="), cs_sex);
+	cs_out += add_comments(p_separator, b_explanation, _T("operator="), cs_operator);
+	cs_out += add_comments(p_separator, b_explanation, _T("comment2="), cs_more_comment);
 
 	return cs_out;
 }

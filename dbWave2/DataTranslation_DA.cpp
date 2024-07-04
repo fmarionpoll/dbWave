@@ -203,7 +203,7 @@ void DataTranslation_DA::DeclareAndFillBuffers(const OPTIONS_INPUTDATA* pADC_opt
 {
 	const float sweepduration = pADC_options->sweepduration;
 	const float chrate = pADC_options->waveFormat.sampling_rate_per_channel;
-	const int nbuffers = pADC_options->waveFormat.bufferNitems;
+	const int nbuffers = pADC_options->waveFormat.buffer_n_items;
 	
 	DeleteBuffers();
 	m_frequency = chrate;

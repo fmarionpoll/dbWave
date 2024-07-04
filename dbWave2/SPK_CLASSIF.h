@@ -12,8 +12,8 @@ class SPK_CLASSIF : public CObject
 	// sort with parameters
 	int data_transform {0}; // dummy
 	int i_parameter {0}; // type of parameter measured
-	int i_left {10}; // position of first cursor along spike 
-	int i_right {40}; // position of second cursor along spike
+	int i_cursor_t1 {10}; // position of first cursor along spike 
+	int i_cursor_t2 {40}; // position of second cursor along spike
 	int lower_threshold {0}; // binary value of lower threshold to select spike class
 	int upper_threshold {10}; // binary value of upper threshold to select spike class
 	int i_xy_left {10}; // position of left cursor on xy display

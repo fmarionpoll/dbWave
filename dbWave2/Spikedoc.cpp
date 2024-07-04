@@ -95,8 +95,8 @@ void CSpikeDoc::read_before_version6(CArchive& ar, WORD wwVersion)
 {
 	if (wwVersion >= 2 && wwVersion < 5)
 	{
-		ar >> m_wave_format.csStimulus >> m_wave_format.csConcentration;
-		ar >> m_wave_format.csSensillum;
+		ar >> m_wave_format.cs_stimulus >> m_wave_format.cs_concentration;
+		ar >> m_wave_format.cs_sensillum;
 	}
 	ar >> m_detection_date >> m_comment; // R2-3
 	ar >> m_acquisition_file_name >> m_acquisition_comment >> m_acquisition_time; // R4-6
@@ -371,7 +371,7 @@ void CSpikeDoc::init_source_doc(const AcqDataDoc* p_document)
 {
 	// load parameters from file
 	const auto wave_format = p_document->get_waveformat();
-	m_acquisition_time = wave_format->acqtime;
+	m_acquisition_time = wave_format->acquisition_time;
 	m_acquisition_size = p_document->get_doc_channel_length();
 	m_acquisition_rate = wave_format->sampling_rate_per_channel;
 	m_acquisition_comment = wave_format->cs_comment;
@@ -1121,28 +1121,28 @@ void CSpikeDoc::export_spk_file_comment(CSharedFile* shared_file, const OPTIONS_
 			CString cs_temp;
 			cs_dummy = cs_tab + m_acquisition_comment;
 			shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-			cs_dummy.Format(_T("\t%i"), m_wave_format.insectID);
+			cs_dummy.Format(_T("\t%i"), m_wave_format.insect_id);
 			shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 
-			cs_dummy.Format(_T("\t%i"), m_wave_format.sensillumID);
+			cs_dummy.Format(_T("\t%i"), m_wave_format.sensillum_id);
 			shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 
-			cs_dummy = cs_tab + m_wave_format.csInsectname;
-			cs_dummy += cs_tab + m_wave_format.csStrain;
-			cs_dummy += cs_tab + m_wave_format.csSex;
-			cs_dummy += cs_tab + m_wave_format.csLocation;
-			cs_dummy += cs_tab + m_wave_format.csOperator;
-			cs_dummy += cs_tab + m_wave_format.csMoreComment;
+			cs_dummy = cs_tab + m_wave_format.cs_insect_name;
+			cs_dummy += cs_tab + m_wave_format.cs_strain;
+			cs_dummy += cs_tab + m_wave_format.cs_sex;
+			cs_dummy += cs_tab + m_wave_format.cs_location;
+			cs_dummy += cs_tab + m_wave_format.cs_operator;
+			cs_dummy += cs_tab + m_wave_format.cs_more_comment;
 
-			cs_dummy += cs_tab + m_wave_format.csStimulus;
-			cs_dummy += cs_tab + m_wave_format.csConcentration;
+			cs_dummy += cs_tab + m_wave_format.cs_stimulus;
+			cs_dummy += cs_tab + m_wave_format.cs_concentration;
 			cs_temp.Format(_T("%i"), m_wave_format.repeat);
 			cs_dummy += cs_tab + cs_temp;
-			cs_dummy += cs_tab + m_wave_format.csStimulus2;
-			cs_dummy += cs_tab + m_wave_format.csConcentration2;
+			cs_dummy += cs_tab + m_wave_format.cs_stimulus2;
+			cs_dummy += cs_tab + m_wave_format.cs_concentration2;
 			cs_temp.Format(_T("%i"), m_wave_format.repeat2);
 			cs_dummy += cs_tab + cs_temp;
-			cs_dummy += cs_tab + m_wave_format.csSensillum;
+			cs_dummy += cs_tab + m_wave_format.cs_sensillum;
 			shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		}
 	}

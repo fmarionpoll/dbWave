@@ -14,12 +14,12 @@ class CWaveFormat final : public CObject
 	DECLARE_SERIAL(CWaveFormat);
 
 public:
-	WORD wversion = 8;							// header version number
+	WORD w_version = 8;							// header version number
 
-	CTime acqtime;
-	float fullscale_volts { 20.0f};				// volts full scale, gain 1
-	long binspan { 4096};						// 2^12, 2^16
-	long binzero { 2048};						// 2048, 32768 (0 if 2's complement)
+	CTime acquisition_time;
+	float full_scale_volts { 20.0f};			// volts full scale, gain 1
+	long bin_span { 4096};						// 2^12, 2^16
+	long bin_zero { 2048};						// 2048, 32768 (0 if 2's complement)
 
 	short mode_encoding { 0};					// 0{offset binary/1{straight/2{2s complement
 	short mode_clock { 0};						// 0{internal, 1{external
@@ -34,29 +34,29 @@ public:
 	short trig_chan { 0};						// (trig_mode{input) A/D channel input
 	short trig_threshold { 2048};				// (trig_mode{input) A/D channel input threshold value
 	short data_flow { 0};						// 0 { continuous, 1 { burst
-	short bufferNitems { 10};					// n buffers declared
-	WORD buffersize { 1000};					// total size of one buffer (nb points [short])
-	BOOL bOnlineDisplay { true};				// TRUE { online data display, FALSE{no display during acquisition
-	BOOL bADwritetofile { false};				// TRUE { write data to disk,  FALSE{no saving
-	BOOL bUnicode { true};						// TRUE if unicode
+	short buffer_n_items { 10};					// n buffers declared
+	WORD buffer_size { 1000};					// total size of one buffer (nb points [short])
+	BOOL b_online_display { true};				// TRUE { online data display, FALSE{no display during acquisition
+	BOOL b_ad_write_to_file { false};			// TRUE { write data to disk,  FALSE{no saving
+	BOOL b_unicode { true};						// TRUE if unicode
 
 	// comments
-	CString csADcardName { _T("undefined")};	// 1 I/O card name
-	CString cs_comment { _T("")};				// x 2 file annotation - used now as "csExpt"
-	CString csStimulus { _T("")};				// x 3 stimulation (chemical)
-	CString csConcentration { _T("")};			// x 4 stimulus concentration
-	CString csInsectname { _T("")};				// x 5 sensillum type
-	CString csLocation { _T("")};				// x 6 location
-	CString csSensillum { _T("")};				// x 7 sensillum nb
-	CString csStrain { _T("")};					// x 8 name of the strain
-	CString csOperator { _T("")};				// x 9 name of the operator
-	CString csMoreComment { _T("")};			// x 10 free comment space
-	CString csStimulus2 { _T("")};				// x 11 stimulus 2
-	CString csConcentration2 { _T("")};			// x 12 concentration of stimulus 2
-	CString csSex { _T("")};					// x 13 sex
+	CString cs_ad_card_name { _T("undefined")};	// 1 I/O card name
+	CString cs_comment { _T("")};			// x 2 file annotation - used now as "cs_experiment"
+	CString cs_stimulus { _T("")};		// x 3 stimulation (chemical)
+	CString cs_concentration { _T("")};	// x 4 stimulus concentration
+	CString cs_insect_name { _T("")};		// x 5 sensillum type
+	CString cs_location { _T("")};		// x 6 location
+	CString cs_sensillum { _T("")};		// x 7 sensillum nb
+	CString cs_strain { _T("")};			// x 8 name of the strain
+	CString cs_operator { _T("")};		// x 9 name of the operator
+	CString cs_more_comment { _T("")};	// x 10 free comment space
+	CString cs_stimulus2 { _T("")};		// x 11 stimulus 2
+	CString cs_concentration2 { _T("")};	// x 12 concentration of stimulus 2
+	CString cs_sex { _T("")};				// x 13 sex
 
-	long insectID { 0};							// 14
-	long sensillumID { 0};						// 15
+	long insect_id { 0};						// 14
+	long sensillum_id { 0};						// 15
 	long repeat { 0};							// 16
 	long repeat2 { 0};							// 17
 	int flag { 0};								// 18

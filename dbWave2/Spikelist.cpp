@@ -639,7 +639,7 @@ BOOL SpikeList::init_spike_list(const AcqDataDoc* acq_data_doc, const SPKDETECTP
 	{
 		const auto wave_format = acq_data_doc->get_waveformat();
 		data_encoding_mode_ = wave_format->mode_encoding;
-		bin_zero_ = wave_format->binzero;
+		bin_zero_ = wave_format->bin_zero;
 		sampling_rate_ = wave_format->sampling_rate_per_channel;
 		flag = acq_data_doc->get_volts_per_bin(spk_detect_parameters_.detect_channel, &volts_per_bin_);
 	}

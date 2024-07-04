@@ -1278,7 +1278,7 @@ CString ViewData::get_file_infos()
 		}
 		if (options_view_data->bAcqDateTime) // print data acquisition date & time
 		{
-			const auto date = pwave_format->acqtime.Format(_T("%#d %B %Y %X")); //("%c");
+			const auto date = pwave_format->acquisition_time.Format(_T("%#d %B %Y %X")); //("%c");
 			str_comment += date;
 		}
 		str_comment += rc;

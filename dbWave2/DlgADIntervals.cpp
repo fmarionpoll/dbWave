@@ -54,11 +54,11 @@ void DlgADIntervals::OnOK()
 {
 	UpdateData(TRUE);
 	m_acqdef.sampling_rate_per_channel = m_ad_rate_channel;
-	m_acqdef.buffersize = WORD(m_buffer_W_size * UINT(m_acqdef.scan_count));
-	m_acqdef.bufferNitems = short(m_buffer_N_items);
+	m_acqdef.buffer_size = WORD(m_buffer_W_size * UINT(m_acqdef.scan_count));
+	m_acqdef.buffer_n_items = short(m_buffer_N_items);
 	m_acqdef.sample_count = static_cast<long>(m_acquisition_duration * float(m_acqdef.scan_count) * m_ad_rate_channel);
-	m_acqdef.bOnlineDisplay = static_cast<CButton*>(GetDlgItem(IDC_ONLINEDISPLAY))->GetCheck();
-	m_acqdef.bADwritetofile = static_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->GetCheck();
+	m_acqdef.b_online_display = static_cast<CButton*>(GetDlgItem(IDC_ONLINEDISPLAY))->GetCheck();
+	m_acqdef.b_ad_write_to_file = static_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->GetCheck();
 	m_acqdef.data_flow = (GetCheckedRadioButton(IDC_CONTINUOUS, IDC_BURST) == IDC_CONTINUOUS) ? 0 : 1;
 	m_acqdef.duration = m_acquisition_duration;
 
@@ -107,15 +107,15 @@ BOOL DlgADIntervals::OnInitDialog()
 	// load data from document
 	m_acqdef.copy(m_p_wave_format);
 	m_ad_rate_channel = m_acqdef.sampling_rate_per_channel;
-	m_buffer_N_items = m_acqdef.bufferNitems;
+	m_buffer_N_items = m_acqdef.buffer_n_items;
 	m_buffer_W_size = static_cast<UINT>(m_sweep_duration * m_ad_rate_channel / float(m_buffer_N_items));
 
 	// init parameters manually if there is no driver
 	if (0.0f == m_rate_minimum) m_rate_minimum = 0.1f;
 	if (0.0f == m_rate_maximum) m_rate_maximum = 50000.f;
 
-	static_cast<CButton*>(GetDlgItem(IDC_ONLINEDISPLAY))->SetCheck(m_acqdef.bOnlineDisplay);
-	static_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->SetCheck(m_acqdef.bADwritetofile);
+	static_cast<CButton*>(GetDlgItem(IDC_ONLINEDISPLAY))->SetCheck(m_acqdef.b_online_display);
+	static_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->SetCheck(m_acqdef.b_ad_write_to_file);
 	auto i_id = (m_acqdef.data_flow == 0) ? IDC_CONTINUOUS : IDC_BURST;
 	CheckRadioButton(IDC_CONTINUOUS, IDC_BURST, i_id);
 

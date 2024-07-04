@@ -76,9 +76,9 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveBuf* pBuf)
 	}
 
 	//	tentative
-	pWFormat->fullscale_volts = 5.0f; // 10 V full scale
-	pWFormat->binspan = 65536; // 16 bits resolution
-	pWFormat->binzero = 0;
+	pWFormat->full_scale_volts = 5.0f; // 10 V full scale
+	pWFormat->bin_span = 65536; // 16 bits resolution
+	pWFormat->bin_zero = 0;
 
 	pWFormat->mode_encoding = OLx_ENC_BINARY;
 	pWFormat->mode_clock = INTERNAL_CLOCK;
@@ -87,9 +87,9 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveBuf* pBuf)
 	pWFormat->sample_count = mcidHeader.number_of_samples;
 
 	pWFormat->cs_comment.Empty();
-	pWFormat->csStimulus.Empty();
-	pWFormat->csConcentration.Empty();
-	pWFormat->csSensillum.Empty();
+	pWFormat->cs_stimulus.Empty();
+	pWFormat->cs_concentration.Empty();
+	pWFormat->cs_sensillum.Empty();
 
 	return TRUE;
 }

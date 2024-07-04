@@ -1943,8 +1943,8 @@ void ViewSpikes::OnFormatCentercurve()
 
 	// loop over all spikes of the list
 	const int n_spikes = m_pSpkList->get_spikes_count();
-	const auto i_t1 = spk_classification_parameters_->i_left;
-	const auto i_t2 = spk_classification_parameters_->i_right;
+	const auto i_t1 = spk_classification_parameters_->i_cursor_t1;
+	const auto i_t2 = spk_classification_parameters_->i_cursor_t2;
 	for (int i_spike = 0; i_spike < n_spikes; i_spike++)
 	{
 		Spike* spike = m_pSpkList->get_spike(i_spike);

@@ -76,8 +76,8 @@ int ChartData::add_channel_list_item(int ns, int mode)
 		m_pDataFile->get_volts_per_bin(ns, &volts_per_bin, mode);
 		const auto wave_chan_array = m_pDataFile->get_wavechan_array();
 		const auto wave_format = m_pDataFile->get_waveformat();
-		p_chan_list_item->SetDataBinFormat(wave_format->binzero, wave_format->binspan);
-		p_chan_list_item->SetDataVoltsFormat(volts_per_bin, wave_format->fullscale_volts);
+		p_chan_list_item->SetDataBinFormat(wave_format->bin_zero, wave_format->bin_span);
+		p_chan_list_item->SetDataVoltsFormat(volts_per_bin, wave_format->full_scale_volts);
 		if (ns >= wave_chan_array->chan_array_get_size())
 			ns = 0;
 		const auto p_channel = wave_chan_array->get_p_channel(ns);
@@ -176,8 +176,8 @@ void ChartData::update_gain_settings(const int i_chan)
 	const auto wave_format = m_pDataFile->get_waveformat();
 	if (doc_volts_per_bin != volts_per_data_bin)
 	{
-		p_chan->SetDataBinFormat(wave_format->binzero, wave_format->binspan);
-		p_chan->SetDataVoltsFormat(doc_volts_per_bin, wave_format->fullscale_volts);
+		p_chan->SetDataBinFormat(wave_format->bin_zero, wave_format->bin_span);
+		p_chan->SetDataVoltsFormat(doc_volts_per_bin, wave_format->full_scale_volts);
 		auto i_extent = p_chan->GetYextent();
 		i_extent = static_cast<int>(static_cast<float>(i_extent) / doc_volts_per_bin * volts_per_data_bin);
 		p_chan->SetYextent(i_extent);
@@ -1124,7 +1124,7 @@ BOOL ChartData::copy_as_text(const int i_option, const int i_unit, const int n_a
 			auto lp_copy = static_cast<LPTSTR>(GlobalLock(h_copy));
 
 			// data file name, comment, header
-			const auto date = (wave_format->acqtime).Format(_T("%#d %B %Y %X"));
+			const auto date = (wave_format->acquisition_time).Format(_T("%#d %B %Y %X"));
 			StringCchPrintfEx(lp_copy, characters_remaining, &lp_copy, &characters_remaining, STRSAFE_NULL_ON_FAILURE,
 			                  _T("%s\t%s\r\n"), static_cast<LPCTSTR>(m_pDataFile->GetPathName()),
 			                  static_cast<LPCTSTR>(date));

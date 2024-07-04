@@ -648,8 +648,8 @@ void DlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
 
 	// define parameters within CWaveFormat
 	pwF->cs_comment = piivO->title;
-	pwF->acqtime = status.m_ctime; // use CFile creation time
-	pwF->fullscale_volts = piivO->voltage_max - piivO->voltage_min;
+	pwF->acquisition_time = status.m_ctime; // use CFile creation time
+	pwF->full_scale_volts = piivO->voltage_max - piivO->voltage_min;
 	pwF->mode_encoding = piivO->encoding_mode;
 	long binspan = 4096;
 	switch (piivO->bits_precision)
@@ -664,10 +664,10 @@ void DlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
 		break;
 	default: break;
 	}
-	pwF->binspan = binspan;
-	pwF->binzero = 0;
+	pwF->bin_span = binspan;
+	pwF->bin_zero = 0;
 	if (piivO->encoding_mode == 0) // OLx_ENC_BINARY
-		pwF->binzero = binspan / 2;
+		pwF->bin_zero = binspan / 2;
 
 	// copy ACQCHAN directly from iivO
 	pDataF->get_wavechan_array()->Copy(piivO->p_wave_chan_array);

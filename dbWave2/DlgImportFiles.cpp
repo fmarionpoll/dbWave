@@ -208,16 +208,16 @@ BOOL DlgImportFiles::ImportATFFile()
 	m_xinstgain = 100.; // tentative value (top to min=2000 mV)
 	m_xrate = 10000.0f; // tentative value
 	CWaveFormat* pwF = pTo->get_waveformat();
-	pwF->fullscale_volts = 20.0f; // 20 V full scale
-	pwF->binspan = 65536; // 16 bits resolution
-	pwF->binzero = 0; // ?
+	pwF->full_scale_volts = 20.0f; // 20 V full scale
+	pwF->bin_span = 65536; // 16 bits resolution
+	pwF->bin_zero = 0; // ?
 
 	pwF->mode_encoding = OLx_ENC_2SCOMP;
 	pwF->mode_clock = INTERNAL_CLOCK;
 	pwF->mode_trigger = INTERNAL_TRIGGER;
 	pwF->scan_count = m_scan_count; // number of channels in scan list
 	pwF->sampling_rate_per_channel = static_cast<float>(m_xrate); // channel sampling rate (Hz)
-	pwF->csADcardName = "Digidata Axon";
+	pwF->cs_ad_card_name = "Digidata Axon";
 
 	for (int i = 0; i < m_scan_count; i++)
 	{
@@ -317,8 +317,8 @@ line 11-	0	141.144	0.0317383
 		goto Emergency_exit;
 	}
 
-	pwF->binspan = 65536; // 16 bits resolution
-	pwF->binzero = 0;
+	pwF->bin_span = 65536; // 16 bits resolution
+	pwF->bin_zero = 0;
 	pwF->mode_encoding = OLx_ENC_BINARY;
 
 	// start conversion
@@ -424,21 +424,21 @@ BOOL DlgImportFiles::GetExperimentParameters(const AcqDataDoc* pTo) const
 		CWaveFormat* pwFTo = pTo->get_waveformat();
 		const CWaveFormat* pwFDlg = &pacqD->waveFormat;
 
-		pwFTo->csADcardName = pwFDlg->csADcardName;
+		pwFTo->cs_ad_card_name = pwFDlg->cs_ad_card_name;
 		pwFTo->cs_comment = pwFDlg->cs_comment;
-		pwFTo->csStimulus = pwFDlg->csStimulus;
-		pwFTo->csConcentration = pwFDlg->csConcentration;
-		pwFTo->csInsectname = pwFDlg->csInsectname;
-		pwFTo->csLocation = pwFDlg->csLocation;
-		pwFTo->csSensillum = pwFDlg->csSensillum;
-		pwFTo->csStrain = pwFDlg->csStrain;
-		pwFTo->csOperator = pwFDlg->csOperator;
-		pwFTo->csMoreComment = pwFDlg->csMoreComment;
-		pwFTo->csStimulus2 = pwFDlg->csStimulus2;
-		pwFTo->csConcentration2 = pwFDlg->csConcentration2;
-		pwFTo->csSex = pwFDlg->csSex;
-		pwFTo->insectID = pwFDlg->insectID;
-		pwFTo->sensillumID = pwFDlg->sensillumID;
+		pwFTo->cs_stimulus = pwFDlg->cs_stimulus;
+		pwFTo->cs_concentration = pwFDlg->cs_concentration;
+		pwFTo->cs_insect_name = pwFDlg->cs_insect_name;
+		pwFTo->cs_location = pwFDlg->cs_location;
+		pwFTo->cs_sensillum = pwFDlg->cs_sensillum;
+		pwFTo->cs_strain = pwFDlg->cs_strain;
+		pwFTo->cs_operator = pwFDlg->cs_operator;
+		pwFTo->cs_more_comment = pwFDlg->cs_more_comment;
+		pwFTo->cs_stimulus2 = pwFDlg->cs_stimulus2;
+		pwFTo->cs_concentration2 = pwFDlg->cs_concentration2;
+		pwFTo->cs_sex = pwFDlg->cs_sex;
+		pwFTo->insect_id = pwFDlg->insect_id;
+		pwFTo->sensillum_id = pwFDlg->sensillum_id;
 		return TRUE;
 	}
 	return FALSE;

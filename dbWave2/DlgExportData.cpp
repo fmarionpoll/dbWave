@@ -334,7 +334,7 @@ BOOL DlgExportData::ExportDataAsTextFile()
 	CWaveChanArray* pChanArray = m_pDat->get_wavechan_array();
 	CWaveFormat* pwaveFormat = m_pDat->get_waveformat();
 
-	CString csdate = (pwaveFormat->acqtime).Format("%#d %B %Y %X");
+	CString csdate = (pwaveFormat->acquisition_time).Format("%#d %B %Y %X");
 	cs_dummy.Format(_T("date :\t%s\r\n"), (LPCTSTR)csdate);
 	csCharBuf += cs_dummy;
 	cs_dummy.Format(_T("comment :\t%s\r\n"), (LPCTSTR)pwaveFormat->get_comments(_T("\t")));
@@ -551,7 +551,7 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 	const auto pwaveFormat = m_pDat->get_waveformat();
 	const auto pchanArray = m_pDat->get_wavechan_array();
 
-	auto date = (pwaveFormat->acqtime).Format(_T("%#d %B %Y %X")); //("%c");
+	auto date = (pwaveFormat->acquisition_time).Format(_T("%#d %B %Y %X")); //("%c");
 	save_BIFF(&data_dest, BIFF_CHARS, row, col, "date");
 	col++;
 	saveCString_BIFF(&data_dest, row, col, date);

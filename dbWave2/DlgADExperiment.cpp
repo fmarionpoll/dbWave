@@ -120,22 +120,22 @@ void DlgADExperiment::OnOK()
 		options_inputdata_->exptnumber = int(m_exptnumber) + 1;
 		options_inputdata_->insectnumber = int(m_insectnumber);
 
-		m_pwaveFormat->insectID = long(m_insectnumber);
+		m_pwaveFormat->insect_id = long(m_insectnumber);
 		m_pwaveFormat->repeat = options_inputdata_->icsA_repeat;
 		m_pwaveFormat->repeat2 = options_inputdata_->icsA_repeat2;
-		m_pwaveFormat->csMoreComment = m_csMoreComment;
+		m_pwaveFormat->cs_more_comment = m_csMoreComment;
 
 		// save descriptors into waveFormat (data acq file descriptor) and update database
-		m_coStimulus.GetWindowText(m_pwaveFormat->csStimulus);
-		m_coConcentration.GetWindowText(m_pwaveFormat->csConcentration);
-		m_coStimulus2.GetWindowText(m_pwaveFormat->csStimulus2);
-		m_coConcentration2.GetWindowText(m_pwaveFormat->csConcentration2);
-		m_coLocation.GetWindowText(m_pwaveFormat->csLocation);
-		m_coSensillum.GetWindowText(m_pwaveFormat->csSensillum);
-		m_coStrain.GetWindowText(m_pwaveFormat->csStrain);
-		m_coSex.GetWindowText(m_pwaveFormat->csSex);
-		m_coOperator.GetWindowText(m_pwaveFormat->csOperator);
-		m_coInsect.GetWindowText(m_pwaveFormat->csInsectname);
+		m_coStimulus.GetWindowText(m_pwaveFormat->cs_stimulus);
+		m_coConcentration.GetWindowText(m_pwaveFormat->cs_concentration);
+		m_coStimulus2.GetWindowText(m_pwaveFormat->cs_stimulus2);
+		m_coConcentration2.GetWindowText(m_pwaveFormat->cs_concentration2);
+		m_coLocation.GetWindowText(m_pwaveFormat->cs_location);
+		m_coSensillum.GetWindowText(m_pwaveFormat->cs_sensillum);
+		m_coStrain.GetWindowText(m_pwaveFormat->cs_strain);
+		m_coSex.GetWindowText(m_pwaveFormat->cs_sex);
+		m_coOperator.GetWindowText(m_pwaveFormat->cs_operator);
+		m_coInsect.GetWindowText(m_pwaveFormat->cs_insect_name);
 		m_coExpt.GetWindowText(m_pwaveFormat->cs_comment);
 
 		// save data into commons
@@ -191,7 +191,7 @@ BOOL DlgADExperiment::OnInitDialog()
 	m_csPathname = m_pdbDoc->proposed_data_path_name;
 	m_mfcBrowsePath.SetWindowTextW(m_csPathname);
 
-	m_csMoreComment = m_pwaveFormat->csMoreComment;
+	m_csMoreComment = m_pwaveFormat->cs_more_comment;
 	LoadList(&m_coConcentration, &(options_inputdata_->csA_concentration), options_inputdata_->icsA_concentration,
 		&(m_pdbDoc->db_table->m_concentration_set));
 	LoadList(&m_coStimulus, &(options_inputdata_->csA_stimulus), options_inputdata_->icsA_stimulus,
@@ -218,16 +218,16 @@ BOOL DlgADExperiment::OnInitDialog()
 
 	if (!m_bADexpt)
 	{
-		m_coStimulus.SetWindowText(m_pwaveFormat->csStimulus);
-		m_coConcentration.SetWindowText(m_pwaveFormat->csConcentration);
-		m_coStimulus2.SetWindowText(m_pwaveFormat->csStimulus2);
-		m_coConcentration2.SetWindowText(m_pwaveFormat->csConcentration2);
-		m_coLocation.SetWindowText(m_pwaveFormat->csLocation);
-		m_coSensillum.SetWindowText(m_pwaveFormat->csSensillum);
-		m_coStrain.SetWindowText(m_pwaveFormat->csStrain);
-		m_coSex.SetWindowText(m_pwaveFormat->csSex);
-		m_coOperator.SetWindowText(m_pwaveFormat->csOperator);
-		m_coInsect.SetWindowText(m_pwaveFormat->csInsectname);
+		m_coStimulus.SetWindowText(m_pwaveFormat->cs_stimulus);
+		m_coConcentration.SetWindowText(m_pwaveFormat->cs_concentration);
+		m_coStimulus2.SetWindowText(m_pwaveFormat->cs_stimulus2);
+		m_coConcentration2.SetWindowText(m_pwaveFormat->cs_concentration2);
+		m_coLocation.SetWindowText(m_pwaveFormat->cs_location);
+		m_coSensillum.SetWindowText(m_pwaveFormat->cs_sensillum);
+		m_coStrain.SetWindowText(m_pwaveFormat->cs_strain);
+		m_coSex.SetWindowText(m_pwaveFormat->cs_sex);
+		m_coOperator.SetWindowText(m_pwaveFormat->cs_operator);
+		m_coInsect.SetWindowText(m_pwaveFormat->cs_insect_name);
 		m_coExpt.SetWindowText(m_pwaveFormat->cs_comment);
 
 		GetDlgItem(IDC_STATIC1)->ShowWindow(SW_HIDE);

@@ -49,27 +49,27 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 	const auto devid = *reinterpret_cast<short*>(pchar);
 	switch (devid)
 	{
-	case 1: p_WaveFormat->csADcardName = _T("DT2828");
+	case 1: p_WaveFormat->cs_ad_card_name = _T("DT2828");
 		break;
-	case 2: p_WaveFormat->csADcardName = _T("DT2827");
+	case 2: p_WaveFormat->cs_ad_card_name = _T("DT2827");
 		break;
-	case 4: p_WaveFormat->csADcardName = _T("DT2821_F_DI");
+	case 4: p_WaveFormat->cs_ad_card_name = _T("DT2821_F_DI");
 		break;
-	case 8: p_WaveFormat->csADcardName = _T("DT2821_F_SE");
+	case 8: p_WaveFormat->cs_ad_card_name = _T("DT2821_F_SE");
 		break;
-	case 16: p_WaveFormat->csADcardName = _T("DT2821");
+	case 16: p_WaveFormat->cs_ad_card_name = _T("DT2821");
 		break;
-	case 32: p_WaveFormat->csADcardName = _T("DT2821_G_DI");
+	case 32: p_WaveFormat->cs_ad_card_name = _T("DT2821_G_DI");
 		break;
-	case 64: p_WaveFormat->csADcardName = _T("DT2821_G_SE");
+	case 64: p_WaveFormat->cs_ad_card_name = _T("DT2821_G_SE");
 		break;
-	case 128: p_WaveFormat->csADcardName = _T("DT2823");
+	case 128: p_WaveFormat->cs_ad_card_name = _T("DT2823");
 		break;
-	case 256: p_WaveFormat->csADcardName = _T("DT2825");
+	case 256: p_WaveFormat->cs_ad_card_name = _T("DT2825");
 		break;
-	case 512: p_WaveFormat->csADcardName = _T("DT2824");
+	case 512: p_WaveFormat->cs_ad_card_name = _T("DT2824");
 		break;
-	default: p_WaveFormat->csADcardName = _T("DT_OTHER");
+	default: p_WaveFormat->cs_ad_card_name = _T("DT_OTHER");
 		break;
 	}
 
@@ -93,10 +93,10 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 	p_WaveFormat->sample_count = len1;
 
 	// ---------------- specific DT2821 differential mode
-	p_WaveFormat->fullscale_volts = 20.f; // 20 mv full scale (+10 V to -10 V)
-	p_WaveFormat->binspan = 4096; // 12 bits resolution
-	p_WaveFormat->binzero = 2048; // offset binary encoding
-	p_WaveFormat->wversion = 1; // initial version
+	p_WaveFormat->full_scale_volts = 20.f; // 20 mv full scale (+10 V to -10 V)
+	p_WaveFormat->bin_span = 4096; // 12 bits resolution
+	p_WaveFormat->bin_zero = 2048; // offset binary encoding
+	p_WaveFormat->w_version = 1; // initial version
 
 	// get device flags & encoding
 	//DEV_FLAGS devflags = (DEV_FLAGS)((short) *(pHeader+DEVFLAGS));
@@ -112,12 +112,12 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 	p_WaveFormat->cs_comment.TrimRight();
 
 	// assume that comment is standardized and has the following fields
-	p_WaveFormat->csStimulus = atl_comment.Mid(0, 20);
-	p_WaveFormat->csStimulus.TrimRight();
-	p_WaveFormat->csConcentration = atl_comment.Mid(20, 10);
-	p_WaveFormat->csConcentration.TrimRight();
-	p_WaveFormat->csSensillum = atl_comment.Mid(30, 10);
-	p_WaveFormat->csSensillum.TrimRight();
+	p_WaveFormat->cs_stimulus = atl_comment.Mid(0, 20);
+	p_WaveFormat->cs_stimulus.TrimRight();
+	p_WaveFormat->cs_concentration = atl_comment.Mid(20, 10);
+	p_WaveFormat->cs_concentration.TrimRight();
+	p_WaveFormat->cs_sensillum = atl_comment.Mid(30, 10);
+	p_WaveFormat->cs_sensillum.TrimRight();
 	p_WaveFormat->cs_comment.Empty();
 
 	const auto pfirst = p_header + ACQDATE;
@@ -137,7 +137,7 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 		ASSERT(FALSE);
 		sys_time = CTime::GetCurrentTime();
 	}
-	p_WaveFormat->acqtime = sys_time;
+	p_WaveFormat->acquisition_time = sys_time;
 
 	// clock period, sampling rate/chan and file duration
 	pchar = p_header + CLKPER;
@@ -170,8 +170,8 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 		p_chan->am_amplifiergain = *p_xgain_list; // total gain (ampli + A/D card)
 		p_chan->am_gaintotal = p_chan->am_amplifiergain * static_cast<double>(p_chan->am_gainAD);
 		// TODO: check if resolution is computed correctly
-		p_chan->am_resolutionV = static_cast<double>(p_WaveFormat->fullscale_volts) / p_chan->am_gaintotal /
-			p_WaveFormat->binspan;
+		p_chan->am_resolutionV = static_cast<double>(p_WaveFormat->full_scale_volts) / p_chan->am_gaintotal /
+			p_WaveFormat->bin_span;
 	}
 
 	// init as if no amplifier were present

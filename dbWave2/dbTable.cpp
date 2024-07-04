@@ -1072,7 +1072,7 @@ void CdbTable::transfer_wave_format_data_to_record(const CWaveFormat* p_wave_for
 {
 	// set time -- o_time
 	COleDateTime o_time;
-	const auto t = p_wave_format->acqtime;
+	const auto t = p_wave_format->acquisition_time;
 	o_time.SetDateTime(t.GetYear(), t.GetMonth(), t.GetDay(), t.GetHour(), t.GetMinute(), t.GetSecond());
 	m_mainTableSet.SetFieldNull(&(m_mainTableSet.m_table_acq_date), FALSE);
 	m_mainTableSet.m_table_acq_date = o_time;
@@ -1082,28 +1082,28 @@ void CdbTable::transfer_wave_format_data_to_record(const CWaveFormat* p_wave_for
 
 	// set insect ID, sensillumID, repeat and repeat2, moreComment
 	m_mainTableSet.SetFieldNull(&(m_mainTableSet.m_IDinsect), FALSE);
-	m_mainTableSet.m_IDinsect = p_wave_format->insectID;
+	m_mainTableSet.m_IDinsect = p_wave_format->insect_id;
 	m_mainTableSet.SetFieldNull(&(m_mainTableSet.m_IDsensillum), FALSE);
-	m_mainTableSet.m_IDsensillum = p_wave_format->sensillumID;
+	m_mainTableSet.m_IDsensillum = p_wave_format->sensillum_id;
 	m_mainTableSet.SetFieldNull(&(m_mainTableSet.m_repeat), FALSE);
 	m_mainTableSet.m_repeat = p_wave_format->repeat;
 	m_mainTableSet.SetFieldNull(&(m_mainTableSet.m_repeat2), FALSE);
 	m_mainTableSet.m_repeat2 = p_wave_format->repeat2;
 	m_mainTableSet.SetFieldNull(&(m_mainTableSet.m_more), FALSE);
-	m_mainTableSet.m_more = p_wave_format->csMoreComment;
+	m_mainTableSet.m_more = p_wave_format->cs_more_comment;
 
 	// set type, stimulus and concentrations
-	m_mainTableSet.m_operator_ID = m_operator_set.GetStringInLinkedTable(p_wave_format->csOperator);
-	m_mainTableSet.m_insect_ID = m_insect_set.GetStringInLinkedTable(p_wave_format->csInsectname);
-	m_mainTableSet.m_location_ID = m_location_set.GetStringInLinkedTable(p_wave_format->csLocation);
+	m_mainTableSet.m_operator_ID = m_operator_set.GetStringInLinkedTable(p_wave_format->cs_operator);
+	m_mainTableSet.m_insect_ID = m_insect_set.GetStringInLinkedTable(p_wave_format->cs_insect_name);
+	m_mainTableSet.m_location_ID = m_location_set.GetStringInLinkedTable(p_wave_format->cs_location);
 	m_mainTableSet.m_expt_ID = m_experiment_set.GetStringInLinkedTable(p_wave_format->cs_comment);
-	m_mainTableSet.m_sensillum_ID = m_sensillum_set.GetStringInLinkedTable(p_wave_format->csSensillum);
-	m_mainTableSet.m_stim_ID = m_stimulus_set.GetStringInLinkedTable(p_wave_format->csStimulus);
-	m_mainTableSet.m_conc_ID = m_concentration_set.GetStringInLinkedTable(p_wave_format->csConcentration);
-	m_mainTableSet.m_stim2_ID = m_stimulus_set.GetStringInLinkedTable(p_wave_format->csStimulus2);
-	m_mainTableSet.m_conc2_ID = m_concentration_set.GetStringInLinkedTable(p_wave_format->csConcentration2);
-	m_mainTableSet.m_sex_ID = m_sex_set.GetStringInLinkedTable(p_wave_format->csSex);
-	m_mainTableSet.m_strain_ID = m_strain_set.GetStringInLinkedTable(p_wave_format->csStrain);
+	m_mainTableSet.m_sensillum_ID = m_sensillum_set.GetStringInLinkedTable(p_wave_format->cs_sensillum);
+	m_mainTableSet.m_stim_ID = m_stimulus_set.GetStringInLinkedTable(p_wave_format->cs_stimulus);
+	m_mainTableSet.m_conc_ID = m_concentration_set.GetStringInLinkedTable(p_wave_format->cs_concentration);
+	m_mainTableSet.m_stim2_ID = m_stimulus_set.GetStringInLinkedTable(p_wave_format->cs_stimulus2);
+	m_mainTableSet.m_conc2_ID = m_concentration_set.GetStringInLinkedTable(p_wave_format->cs_concentration2);
+	m_mainTableSet.m_sex_ID = m_sex_set.GetStringInLinkedTable(p_wave_format->cs_sex);
+	m_mainTableSet.m_strain_ID = m_strain_set.GetStringInLinkedTable(p_wave_format->cs_strain);
 	m_mainTableSet.m_expt_ID = m_experiment_set.GetStringInLinkedTable(p_wave_format->cs_comment);
 	m_mainTableSet.m_flag = p_wave_format->flag;
 }

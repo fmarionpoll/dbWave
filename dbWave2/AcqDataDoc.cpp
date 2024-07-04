@@ -200,9 +200,9 @@ CString AcqDataDoc::get_data_file_infos(const OPTIONS_VIEWDATA* pVD) const
 
 	// date and time
 	if (pVD->bacqdate)
-		cs_out += (waveformat->acqtime).Format("\t%#d %B %Y");
+		cs_out += (waveformat->acquisition_time).Format("\t%#d %B %Y");
 	if (pVD->bacqtime)
-		cs_out += (waveformat->acqtime).Format("\t%X");
+		cs_out += (waveformat->acquisition_time).Format("\t%X");
 
 	// file size
 	if (pVD->bfilesize) // file size
@@ -253,11 +253,11 @@ void AcqDataDoc::export_data_file_to_txt_file(CStdioFile* pdataDest)
 
 	const auto p_wave_format = get_waveformat();
 	// date and time
-	cs_out = (p_wave_format->acqtime).Format(_T("acqdate= %#d %B %Y"));
+	cs_out = (p_wave_format->acquisition_time).Format(_T("acqdate= %#d %B %Y"));
 	cs_out += sep;
 	pdataDest->WriteString(cs_out);
 
-	cs_out = (p_wave_format->acqtime).Format(_T("acqtime= %X"));
+	cs_out = (p_wave_format->acquisition_time).Format(_T("acqtime= %X"));
 	cs_out += sep;
 	pdataDest->WriteString(cs_out);
 
@@ -287,7 +287,7 @@ void AcqDataDoc::export_data_file_to_txt_file(CStdioFile* pdataDest)
 
 	// loop to read actual data
 	read_data_block(0);
-	const auto mv_factor = p_wave_format->fullscale_volts / p_wave_format->binspan * 1000.;
+	const auto mv_factor = p_wave_format->full_scale_volts / p_wave_format->bin_span * 1000.;
 	for (long j = 0; j < get_doc_channel_length(); j++)
 	{
 		CString cs;
@@ -460,7 +460,7 @@ BOOL AcqDataDoc::read_data_block(long l_first)
 		m_lBUFchanLast = m_lBUFchanFirst + m_lBUFSize / m_DOCnbchans - 1;
 
 		// remove offset so that data are signed short (for offset binary data of 12 or 16 bits resolution)
-		const auto w_bin_zero = static_cast<WORD>(m_pWBuf->m_waveFormat.binzero);
+		const auto w_bin_zero = static_cast<WORD>(m_pWBuf->m_waveFormat.bin_zero);
 		if (m_bRemoveOffset && w_bin_zero != NULL)
 		{
 			auto* pw_buf = reinterpret_cast<WORD*>(m_pWBuf->get_pointer_to_raw_data_buffer());

@@ -1146,37 +1146,37 @@ void CdbWaveDoc::get_infos_from_string_array(const source_data * p_record, const
 		{
 		case 1: p_wave_format->cs_comment = cs_item;
 			break;
-		case 2: p_wave_format->insectID = _ttoi(cs_item);
+		case 2: p_wave_format->insect_id = _ttoi(cs_item);
 			break;
-		case 3: p_wave_format->sensillumID = _ttoi(cs_item);
+		case 3: p_wave_format->sensillum_id = _ttoi(cs_item);
 			break;
-		case 4: p_wave_format->csInsectname = cs_item;
+		case 4: p_wave_format->cs_insect_name = cs_item;
 			break;
-		case 5: p_wave_format->csStrain = cs_item;
+		case 5: p_wave_format->cs_strain = cs_item;
 			break;
-		case 6: p_wave_format->csSex = cs_item;
+		case 6: p_wave_format->cs_sex = cs_item;
 			break;
-		case 7: p_wave_format->csLocation = cs_item;
+		case 7: p_wave_format->cs_location = cs_item;
 			break;
-		case 8: p_wave_format->csOperator = cs_item;
+		case 8: p_wave_format->cs_operator = cs_item;
 			break;
-		case 9: p_wave_format->csMoreComment = cs_item;
+		case 9: p_wave_format->cs_more_comment = cs_item;
 			break;
-		case 10: p_wave_format->csStimulus = cs_item;
+		case 10: p_wave_format->cs_stimulus = cs_item;
 			break;
-		case 11: p_wave_format->csConcentration = cs_item;
+		case 11: p_wave_format->cs_concentration = cs_item;
 			break;
 		case 12: p_wave_format->repeat = _ttoi(cs_item);
 			break;
-		case 13: p_wave_format->csStimulus2 = cs_item;
+		case 13: p_wave_format->cs_stimulus2 = cs_item;
 			break;
-		case 14: p_wave_format->csConcentration2 = cs_item;
+		case 14: p_wave_format->cs_concentration2 = cs_item;
 			break;
 		case 15: p_wave_format->repeat2 = _ttoi(cs_item);
 			break;
-		case 16: p_wave_format->csSensillum = cs_item;
+		case 16: p_wave_format->cs_sensillum = cs_item;
 			break;
-		case 17: p_wave_format->csADcardName = cs_item; // TODO: check if this is ok
+		case 17: p_wave_format->cs_ad_card_name = cs_item; // TODO: check if this is ok
 			break;
 		case 18: p_wave_format->flag = _ttoi(cs_item);
 			break;
@@ -1304,7 +1304,7 @@ boolean CdbWaveDoc::import_file_single(const CString & cs_filename, long& m_id, 
 		get_infos_from_string_array(&record, cs_array, i_record, n_columns, b_header);
 
 	// check data acquisition time - go to next file if already exist and if flag set
-	const auto t = record.p_wave_format->acqtime;
+	const auto t = record.p_wave_format->acquisition_time;
 	COleDateTime o_time;
 	o_time.SetDateTime(t.GetYear(), t.GetMonth(), t.GetDay(), t.GetHour(), t.GetMinute(), t.GetSecond());
 	if (!static_cast<CdbWaveApp*>(AfxGetApp())->options_import.discard_duplicate_files)
@@ -1633,19 +1633,19 @@ BOOL CdbWaveDoc::update_waveformat_from_database(CWaveFormat * p_wave_format) co
 	//GetRecordItemValue(const int i_column, DB_ITEMDESC * p_desc)
 	// CH_EXPT_ID long/CString: experiment
 	b_changed = db_table->get_record_value_string(CH_EXPT_ID, p_wave_format->cs_comment);
-	b_changed |= db_table->get_record_value_string(CH_MORE, p_wave_format->csMoreComment);
-	b_changed |= db_table->get_record_value_string(CH_OPERATOR_ID, p_wave_format->csOperator);
-	b_changed |= db_table->get_record_value_string(CH_INSECT_ID, p_wave_format->csInsectname);
-	b_changed |= db_table->get_record_value_string(CH_STRAIN_ID, p_wave_format->csStrain);
-	b_changed |= db_table->get_record_value_string(CH_SEX_ID, p_wave_format->csSex);
-	b_changed |= db_table->get_record_value_string(CH_LOCATION_ID, p_wave_format->csLocation);
-	b_changed |= db_table->get_record_value_string(CH_SENSILLUM_ID, p_wave_format->csSensillum);
-	b_changed |= db_table->get_record_value_string(CH_STIM_ID, p_wave_format->csStimulus);
-	b_changed |= db_table->get_record_value_string(CH_CONC_ID, p_wave_format->csConcentration);
-	b_changed |= db_table->get_record_value_string(CH_STIM2_ID, p_wave_format->csStimulus2);
-	b_changed |= db_table->get_record_value_string(CH_CONC2_ID, p_wave_format->csConcentration2);
-	b_changed |= db_table->get_record_value_long(CH_IDINSECT, p_wave_format->insectID);
-	b_changed |= db_table->get_record_value_long(CH_IDSENSILLUM, p_wave_format->sensillumID);
+	b_changed |= db_table->get_record_value_string(CH_MORE, p_wave_format->cs_more_comment);
+	b_changed |= db_table->get_record_value_string(CH_OPERATOR_ID, p_wave_format->cs_operator);
+	b_changed |= db_table->get_record_value_string(CH_INSECT_ID, p_wave_format->cs_insect_name);
+	b_changed |= db_table->get_record_value_string(CH_STRAIN_ID, p_wave_format->cs_strain);
+	b_changed |= db_table->get_record_value_string(CH_SEX_ID, p_wave_format->cs_sex);
+	b_changed |= db_table->get_record_value_string(CH_LOCATION_ID, p_wave_format->cs_location);
+	b_changed |= db_table->get_record_value_string(CH_SENSILLUM_ID, p_wave_format->cs_sensillum);
+	b_changed |= db_table->get_record_value_string(CH_STIM_ID, p_wave_format->cs_stimulus);
+	b_changed |= db_table->get_record_value_string(CH_CONC_ID, p_wave_format->cs_concentration);
+	b_changed |= db_table->get_record_value_string(CH_STIM2_ID, p_wave_format->cs_stimulus2);
+	b_changed |= db_table->get_record_value_string(CH_CONC2_ID, p_wave_format->cs_concentration2);
+	b_changed |= db_table->get_record_value_long(CH_IDINSECT, p_wave_format->insect_id);
+	b_changed |= db_table->get_record_value_long(CH_IDSENSILLUM, p_wave_format->sensillum_id);
 	b_changed |= db_table->get_record_value_long(CH_REPEAT, p_wave_format->repeat);
 	b_changed |= db_table->get_record_value_long(CH_REPEAT2, p_wave_format->repeat2);
 
@@ -2377,7 +2377,7 @@ void CdbWaveDoc::remove_duplicate_files()
 			if (b_ok)
 			{
 				const auto wave_format = m_p_dat->get_waveformat();
-				o_time_file_current = wave_format->acqtime;
+				o_time_file_current = wave_format->acquisition_time;
 				// loop to find if current file has a duplicate in the list of previous files stored in the array
 				for (auto i = 0; i < index_valid_records; i++)
 				{

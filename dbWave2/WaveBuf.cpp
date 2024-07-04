@@ -25,7 +25,7 @@ int CWaveBuf::create_buffer_with_n_channels(const int i)
 	if (m_waveFormat.scan_count == i
 		&& m_chanArray.chan_array_get_size() == i)
 		return i;
-	const auto i_num_elements = m_waveFormat.buffersize / m_waveFormat.scan_count;
+	const auto i_num_elements = m_waveFormat.buffer_size / m_waveFormat.scan_count;
 	m_waveFormat.scan_count = static_cast<short>(i);
 	m_chanArray.chan_array_set_size(i);
 	ASSERT(m_chanArray.chan_array_get_size() == m_waveFormat.scan_count);
@@ -119,7 +119,7 @@ BOOL CWaveBuf::createWBuffer(const int i_num_elements, const int n_channels)
 		}
 		m_iNumElements = i_num_elements;
 	}
-	m_waveFormat.buffersize = static_cast<WORD>(i_num_elements * n_channels);
+	m_waveFormat.buffer_size = static_cast<WORD>(i_num_elements * n_channels);
 	return TRUE;
 }
 
@@ -585,9 +585,9 @@ BOOL CWaveBuf::GetWBVoltsperBin(const int ch_index, float* volts_per_bin, const 
 				* static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_gainAD);
 		}
 
-		m_chanArray.get_p_channel(ch_index)->am_resolutionV = m_waveFormat.fullscale_volts
+		m_chanArray.get_p_channel(ch_index)->am_resolutionV = m_waveFormat.full_scale_volts
 			/ static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_gaintotal)
-			/ static_cast<float>(m_waveFormat.binspan);
+			/ static_cast<float>(m_waveFormat.bin_span);
 	}
 	*volts_per_bin = static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_resolutionV / correction);
 	return true;

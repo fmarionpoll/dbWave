@@ -117,9 +117,9 @@ BOOL CDataFileASD::ReadDataInfos(CWaveBuf* pBuf)
 	wave_format->scan_count = 1; // assume 1 channel
 
 	// ---------------- specifics from Syntech A/D card
-	wave_format->fullscale_volts = 10.0f; // 10 mv full scale
-	wave_format->binspan = 32768; // 15 bits resolution
-	wave_format->binzero = wave_format->binspan / 2; // ?
+	wave_format->full_scale_volts = 10.0f; // 10 mv full scale
+	wave_format->bin_span = 32768; // 15 bits resolution
+	wave_format->bin_zero = wave_format->bin_span / 2; // ?
 
 	wave_format->mode_encoding = OLx_ENC_BINARY;
 	wave_format->mode_clock = INTERNAL_CLOCK;
@@ -149,7 +149,7 @@ BOOL CDataFileASD::ReadDataInfos(CWaveBuf* pBuf)
 	pChan->am_amplifiergain = static_cast<float>(rec_factor);
 
 	pChan->am_gaintotal = pChan->am_amplifiergain * pChan->am_gainheadstage; // total gain
-	pChan->am_resolutionV = wave_format->fullscale_volts / pChan->am_gaintotal / wave_format->binspan;
+	pChan->am_resolutionV = wave_format->full_scale_volts / pChan->am_gaintotal / wave_format->bin_span;
 
 	// ---------------- ASD -- capture date and time
 
@@ -187,7 +187,7 @@ BOOL CDataFileASD::ReadDataInfos(CWaveBuf* pBuf)
 	ichar1 += 3;
 	const auto iyear = _ttoi(cs_comment.Mid(ichar1, 4));
 
-	wave_format->acqtime = CTime(iyear, imonth, iday, ihour, imin, isec);
+	wave_format->acquisition_time = CTime(iyear, imonth, iday, ihour, imin, isec);
 
 	// Date  : Thu Nov 01 17:45:24 2001
 	// insect -> Jf#8
@@ -198,16 +198,16 @@ BOOL CDataFileASD::ReadDataInfos(CWaveBuf* pBuf)
 	ichar1 = cs_comment.Find(_T("Pretrigger"));
 	ichar1 = cs_comment.Find(od, ichar1) + 2;
 	short ichar2 = cs_comment.Find(od, ichar1) + 1;
-	wave_format->csInsectname = cs_comment.Mid(ichar1, ichar2 - ichar1 - 1);
+	wave_format->cs_insect_name = cs_comment.Mid(ichar1, ichar2 - ichar1 - 1);
 
 	ichar1 = ichar2 + 1;
 	ichar2 = cs_comment.Find(od, ichar1) + 1;
-	wave_format->csSensillum = cs_comment.Mid(ichar1, ichar2 - ichar1 - 1);
+	wave_format->cs_sensillum = cs_comment.Mid(ichar1, ichar2 - ichar1 - 1);
 
-	wave_format->csStimulus = cs_comment.Mid(ichar2 + 1, strlen - 1);
+	wave_format->cs_stimulus = cs_comment.Mid(ichar2 + 1, strlen - 1);
 
 	wave_format->cs_comment.Empty();
-	wave_format->csConcentration.Empty();
+	wave_format->cs_concentration.Empty();
 
 	return DOCTYPE_ASDSYNTECH;
 }

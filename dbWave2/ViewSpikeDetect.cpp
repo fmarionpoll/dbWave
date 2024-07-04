@@ -2133,7 +2133,7 @@ CString ViewSpikeDetection::PrintGetFileInfos()
 
 		if (options_view_data->bAcqDateTime) 
 		{
-			const auto date = (wave_format->acqtime).Format(_T("%#d %B %Y %X")); 
+			const auto date = (wave_format->acquisition_time).Format(_T("%#d %B %Y %X")); 
 			str_comment += date;
 		}
 		str_comment += rc;

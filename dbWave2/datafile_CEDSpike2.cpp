@@ -104,19 +104,19 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 	CWaveChanArray* p_array = pBuf->GetpWavechanArray();
 
 	//	tentative
-	pWFormat->fullscale_volts = 5.0f; // 10 V full scale
-	pWFormat->binspan = 65536; // 16 bits resolution
-	pWFormat->binzero = 0;
+	pWFormat->full_scale_volts = 5.0f; // 10 V full scale
+	pWFormat->bin_span = 65536; // 16 bits resolution
+	pWFormat->bin_zero = 0;
 	pWFormat->mode_encoding = OLx_ENC_BINARY;
 	pWFormat->mode_clock = INTERNAL_CLOCK;
 	pWFormat->mode_trigger = INTERNAL_TRIGGER;
-	pWFormat->csADcardName = "CED1401";
+	pWFormat->cs_ad_card_name = "CED1401";
 
 	// get comments
 	pWFormat->cs_comment.Empty();
-	pWFormat->csStimulus.Empty();
-	pWFormat->csConcentration.Empty();
-	pWFormat->csSensillum.Empty();
+	pWFormat->cs_stimulus.Empty();
+	pWFormat->cs_concentration.Empty();
+	pWFormat->cs_sensillum.Empty();
 
 	// get global data and n channels
 	double time_base = S64GetTimeBase(m_nFid);
@@ -131,7 +131,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 		AfxMessageBox(message, MB_OK);
 		return false;
 	}
-	pWFormat->acqtime = CTime(
+	pWFormat->acquisition_time = CTime(
 		array_get_time_date.wYear, array_get_time_date.ucMon, array_get_time_date.ucDay,
 		array_get_time_date.ucHour, array_get_time_date.ucMin, array_get_time_date.ucSec);
 	pWFormat->scan_count = 0;

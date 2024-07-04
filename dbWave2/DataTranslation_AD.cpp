@@ -35,9 +35,9 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_INPUTDATA* pADC_options)
 		m_pOptions = pADC_options;
 		CWaveFormat* pWFormat = &(m_pOptions->waveFormat);
 
-		pWFormat->fullscale_volts = GetMaxRange() - GetMinRange();
+		pWFormat->full_scale_volts = GetMaxRange() - GetMinRange();
 		int iresolution = GetResolution();
-		pWFormat->binspan = ((1L << iresolution) - 1);
+		pWFormat->bin_span = ((1L << iresolution) - 1);
 
 		// set max channel number according to input configuration m_numchansMAX
 		m_pOptions->bChannelType = GetChannelType();
@@ -49,9 +49,9 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_INPUTDATA* pADC_options)
 		// data encoding (binary or offset encoding)
 		pWFormat->mode_encoding = static_cast<int>(GetEncoding());
 		if (pWFormat->mode_encoding == OLx_ENC_BINARY)
-			pWFormat->binzero = pWFormat->binspan / 2 + 1;
+			pWFormat->bin_zero = pWFormat->bin_span / 2 + 1;
 		else if (pWFormat->mode_encoding == OLx_ENC_2SCOMP)
-			pWFormat->binzero = 0;
+			pWFormat->bin_zero = 0;
 
 		// load infos concerning frequency, dma chans, programmable gains
 		m_freqmax = GetSSCapsEx(OLSSCE_MAXTHROUGHPUT); // m_dfMaxThroughput
@@ -108,8 +108,8 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_INPUTDATA* pADC_options)
 			pChannel->am_amplifiergain = static_cast<double>(pChannel->am_gainheadstage) * static_cast<double>(pChannel
 				->am_gainpre) * static_cast<double>(pChannel->am_gainpost);
 			pChannel->am_gaintotal = pChannel->am_amplifiergain * static_cast<double>(pChannel->am_gainAD);
-			pChannel->am_resolutionV = static_cast<double>(pWFormat->fullscale_volts) / pChannel->am_gaintotal /
-				static_cast<double>(pWFormat->binspan);
+			pChannel->am_resolutionV = static_cast<double>(pWFormat->full_scale_volts) / pChannel->am_gaintotal /
+				static_cast<double>(pWFormat->bin_span);
 		}
 
 		// pass parameters to the board and check if errors
@@ -130,18 +130,18 @@ void DataTranslation_AD::DeclareBuffers(OPTIONS_INPUTDATA* pADC_options)
 
 	CWaveFormat* pWFormat = &(pADC_options->waveFormat);
 	// make sure that buffer length contains at least nacq chans
-	if (pWFormat->buffersize < pWFormat->scan_count * m_pOptions->iundersample)
-		pWFormat->buffersize = pWFormat->scan_count * m_pOptions->iundersample;
+	if (pWFormat->buffer_size < pWFormat->scan_count * m_pOptions->iundersample)
+		pWFormat->buffer_size = pWFormat->scan_count * m_pOptions->iundersample;
 
 	// define buffer length
 	const float sweepduration = m_pOptions->sweepduration;
 	const long chsweeplength = static_cast<long>(float(sweepduration) * pWFormat->sampling_rate_per_channel / float(
 		m_pOptions->iundersample));
-	m_chbuflen = chsweeplength * m_pOptions->iundersample / pWFormat->bufferNitems;
+	m_chbuflen = chsweeplength * m_pOptions->iundersample / pWFormat->buffer_n_items;
 	m_buflen = m_chbuflen * pWFormat->scan_count;
 
 	// declare buffers to DT
-	for (int i = 0; i < pWFormat->bufferNitems; i++)
+	for (int i = 0; i < pWFormat->buffer_n_items; i++)
 	{
 		ECODE ecode = olDmAllocBuffer(0, m_buflen, &m_bufhandle);
 		ecode = OLNOERROR;
