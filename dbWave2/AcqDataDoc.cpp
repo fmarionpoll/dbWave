@@ -31,15 +31,15 @@ AcqDataDoc::~AcqDataDoc()
 	SAFE_DELETE(m_pXFile)
 }
 
-BOOL AcqDataDoc::OnSaveDocument(CString& szPathName)
+BOOL AcqDataDoc::save_document(CString& sz_path_name)
 {
-	const BOOL flag = SaveAs(szPathName, FALSE);
+	const BOOL flag = save_as(sz_path_name, FALSE);
 	if (flag)
 		SetModifiedFlag(FALSE); // mark the document as clean
 	return flag;
 }
 
-BOOL AcqDataDoc::OnOpenDocument(CString& sz_path_name)
+BOOL AcqDataDoc::open_document(CString& sz_path_name)
 {
 	// close data file unless it is already opened
 	if (m_pXFile != nullptr)
@@ -748,7 +748,7 @@ void AcqDataDoc::acq_close_file() const
 		m_pXFile->CloseDataFile();
 }
 
-BOOL AcqDataDoc::SaveAs(CString& new_name, BOOL b_check_over_write, const int i_type)
+BOOL AcqDataDoc::save_as(CString& new_name, BOOL b_check_over_write, const int i_type)
 {
 	const auto i_position_of_extension = new_name.ReverseFind('.');
 	if (i_position_of_extension > 0)

@@ -474,7 +474,7 @@ void DlgImportGenericData::OnImport()
 
 	// convert file
 	UpdateWaveDescriptors(&m_AcqDataFile);
-	m_AcqDataFile.SaveAs(m_filedest);
+	m_AcqDataFile.save_as(m_filedest);
 	m_pfilenameArray->SetAt(index, m_filedest);
 
 	// delete drop list item CComboBox

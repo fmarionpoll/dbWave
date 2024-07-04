@@ -58,7 +58,7 @@ public:
 
 	CWaveFormat* get_wave_format(CString cs_filename, BOOL is_dat_file);
 
-	BOOL		OnNewDocument(LPCTSTR lpsz_path_name);
+	BOOL		open_new_document(LPCTSTR lpsz_path_name);
 	AcqDataDoc* get_current_dat_document() const { return m_p_dat; }
 	AcqDataDoc* open_current_data_file();
 	void		close_current_data_file() const;

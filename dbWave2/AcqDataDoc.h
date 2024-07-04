@@ -23,8 +23,8 @@ class AcqDataDoc : public CDocument
 
 	CString get_data_file_infos(const OPTIONS_VIEWDATA* pVD) const;
 	void export_data_file_to_txt_file(CStdioFile* pdataDest);
-	BOOL OnSaveDocument(CString& sz_path_name);
-	BOOL OnOpenDocument(CString& sz_path_name);
+	BOOL save_document(CString& sz_path_name);
+	BOOL open_document(CString& sz_path_name);
 	BOOL OnNewDocument() override;
 
 	BOOL open_acq_file(CString& cs_filename);
@@ -72,7 +72,6 @@ public:
 	short* load_transformed_data(long l_first, long l_last, int transform_type, int source_channel);
 	BOOL build_transformed_data(int transform_type, int source_channel) const;
 	BOOL load_raw_data(long* l_first, long* l_last, int span /*, BOOL bImposedReading*/);
-	short* load_raw_data_parameters(int* channels_count) const;
 
 	// write data
 	BOOL write_hz_tags(TagList* p_tags) const;
@@ -83,7 +82,7 @@ public:
 
 	// AwaveFile operations -- could add parameter to create other type
 	BOOL acq_create_file(CString& cs_file_name);
-	BOOL SaveAs(CString& new_name, BOOL b_check_over_write = TRUE, int i_type = 0);
+	BOOL save_as(CString& new_name, BOOL b_check_over_write = TRUE, int i_type = 0);
 
 	// helpers
 	long get_doc_channel_length() const { return m_lDOCchanLength; }
@@ -99,26 +98,27 @@ public:
 
 	int get_scan_count() const { return m_pWBuf->m_waveFormat.scan_count; }
 	short* get_raw_data_buffer() const { return m_pWBuf->get_pointer_to_raw_data_buffer(); }
-	short* get_raw_data_element(int chan, int index) const
+	short* get_raw_data_element(const int chan, const int index) const
 	{
 		return m_pWBuf->get_pointer_to_raw_data_element(chan, index - m_lBUFchanFirst);
 	}
 
 	short* get_transformed_data_buffer() const { return m_pWBuf->get_pointer_to_transformed_data_buffer(); }
-	short* get_transformed_data_element(int index) const { return (m_pWBuf->get_pointer_to_transformed_data_buffer() + index); }
-	int get_transformed_data_span(int i) const { return m_pWBuf->GetWBTransformSpan(i); }
-	WORD get_transforms_count() const { return m_pWBuf->GetWBNTypesofTransforms(); }
-	CString get_transform_name(int i) const { return m_pWBuf->GetWBTransformsAllowed(i); }
+	short* get_transformed_data_element(const int index) const { return (m_pWBuf->get_pointer_to_transformed_data_buffer() + index); }
 
-	BOOL get_volts_per_bin(int channel, float* volts_per_bin, const int mode = 0) const
+	static int get_transformed_data_span(const int i) { return CWaveBuf::GetWBTransformSpan(i); }
+	static int get_transforms_count() { return CWaveBuf::GetWBNTypesofTransforms(); }
+	static CString get_transform_name(const int i) { return CWaveBuf::GetWBTransformsAllowed(i); }
+	static BOOL set_wb_transform_span(const int i, const int i_span) { return CWaveBuf::SetWBTransformSpan(i, i_span); }
+	static int is_wb_span_change_allowed(int i) { return CWaveBuf::IsWBSpanChangeAllowed(i); }
+	static BOOL is_wb_transform_allowed(const int i_mode) { return CWaveBuf::IsWBTransformAllowed(i_mode); }
+
+	BOOL get_volts_per_bin(const int channel, float* volts_per_bin, const int mode = 0) const
 	{
 		return m_pWBuf->GetWBVoltsperBin(channel, volts_per_bin, mode);
 	}
 
-	BOOL is_wb_transform_allowed(int imode) const { return m_pWBuf->IsWBTransformAllowed(imode); }
 	BOOL init_wb_transform_buffer() const { return m_pWBuf->InitWBTransformBuffer(); }
-	BOOL set_wb_transform_span(int i, int ispan) const { return m_pWBuf->SetWBTransformSpan(i, ispan); }
-	int is_wb_span_change_allowed(int i) const { return m_pWBuf->IsWBSpanChangeAllowed(i); }
 
 	void set_offset_to_data(ULONGLONG ulOffset) const { m_pXFile->m_ulOffsetData = ulOffset; }
 	void set_offset_to_header(ULONGLONG ulOffset) const { m_pXFile->m_ulOffsetHeader = ulOffset; }

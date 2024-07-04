@@ -79,13 +79,13 @@ BOOL CdbWaveDoc::OnNewDocument()
 	CString cs_ext = sz_entry;
 	cs_ext += _T("_1");
 	cs_path += _T('\\') + cs_ext;
-	return OnNewDocument(cs_path);
+	return open_new_document(cs_path);
 }
 
 // TODO here: ask where data are to be saved (call make directory/explore directory)
 // ask for name of a database, then create a directory of the same name where the database will be put
 
-BOOL CdbWaveDoc::OnNewDocument(LPCTSTR lpsz_path_name)
+BOOL CdbWaveDoc::open_new_document(LPCTSTR lpsz_path_name)
 {
 	if (b_call_new_ && !COleDocument::OnNewDocument())
 		return FALSE;
@@ -230,7 +230,7 @@ BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	{
 		if (i_ext > 0)
 			cs_new = cs_new.Left(i_ext);
-		const auto flag = OnNewDocument(cs_new);
+		const auto flag = open_new_document(cs_new);
 		if (flag)
 		{
 			CStringArray file_names;
@@ -381,7 +381,7 @@ AcqDataDoc* CdbWaveDoc::open_current_data_file()
 	// open document; erase object if operation failed
 	db_get_current_dat_file_name(TRUE);
 	if (current_datafile_name_.IsEmpty()
-		|| !m_p_dat->OnOpenDocument(current_datafile_name_))
+		|| !m_p_dat->open_document(current_datafile_name_))
 	{
 		delete m_p_dat;
 		m_p_dat = nullptr;
@@ -1362,7 +1362,7 @@ CWaveFormat* CdbWaveDoc::get_wave_format(CString cs_filename, const BOOL is_dat_
 	CWaveFormat* p_wave_format = nullptr;
 	if (is_dat_file)
 	{
-		const auto b_is_read_ok = m_p_dat->OnOpenDocument(cs_filename);
+		const auto b_is_read_ok = m_p_dat->open_document(cs_filename);
 		if (b_is_read_ok)
 			p_wave_format = m_p_dat->get_waveformat();
 	}

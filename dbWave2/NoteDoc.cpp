@@ -127,7 +127,7 @@ BOOL CNoteDoc::open_file_list(CString& cs_path_name, CStringArray& cs_array_file
 		const auto i2 = cs_path_name.ReverseFind('.');
 		const auto dbname = cs_path_name.Mid(i1 + 1, i2 - i1 - 1);
 
-		if (p_dbwave_doc->OnNewDocument(dbname))
+		if (p_dbwave_doc->open_new_document(dbname))
 		{
 			if (p_app->options_import.read_columns)
 				p_dbwave_doc->import_file_list(cs_descriptions_array, n_columns, p_app->options_import.header_present);

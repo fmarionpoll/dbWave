@@ -29,7 +29,6 @@ protected:
 	float m_acquisition_rate = 1.f;
 	long m_acquisition_size = 0;
 
-
 	// Operations
 public:
 	CString get_file_infos();
@@ -37,6 +36,7 @@ public:
 
 	CString get_acq_filename() const { return m_acquisition_file_name; }
 	void set_acq_filename(const CString& name) { m_acquisition_file_name = name; }
+
 	CString get_comment() const { return m_comment; }
 	CTime get_acq_time() const { return m_acquisition_time; }
 	float get_acq_duration() const { return static_cast<float>(m_acquisition_size) / m_acquisition_rate; }
@@ -45,8 +45,10 @@ public:
 
 	int get_spike_list_size() const { return spike_list_array.GetSize(); }
 	void set_spike_list_size(int i) { return spike_list_array.SetSize(i); }
+
 	SpikeList* set_spike_list_as_current(int spike_list_index);
 	SpikeList* get_spike_list_current();
+
 	SpikeList* get_spike_list_at(int spike_list_index);
 	int get_spike_list_current_index() const { return m_current_spike_list; }
 
@@ -80,6 +82,7 @@ public:
 	BOOL OnNewDocument() override;
 	BOOL OnOpenDocument(LPCTSTR pszPathName) override;
 	void clear_data();
+
 	long build_psth(const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, int class_index);
 	long build_isi(const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, int class_index);
 	long build_autocorrelation(const OPTIONS_VIEWSPIKES* options_view_spikes, long* sum0, int class_index);

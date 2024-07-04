@@ -27,22 +27,26 @@ public:
 
 	CComboBox m_combo_parameter;
 
-	float m_t1 { 0.f } ;
-	float m_t2 { 0.5f };
+	float spike_shape_t1 { 0.f } ;
+	float spike_shape_t2 { 0.5f };
 	float m_time_unit { 1000.f }; // 1=s, 1000f=ms, 1e6=us
-	float limit_lower_threshold { 0.f };
-	float limit_upper_threshold {1.f};
-	int m_source_class {0};
-	int m_destination_class {0};
-	float time_first {0.f};
-	float time_last {0.f};
-	float mv_max {0.f};
-	float mv_min  {0.f};
-	float mv_bin  {0.01f};
+
+	float histogram_lower_threshold { 0.f };
+	float histogram_upper_threshold {1.f};
+	float histogram_bin_size_mv{ 0.01f };
+
+	int sort_source_class {0};
+	int sort_destination_class {0};
+
+	float display_bars_time_left {0.f};
+	float display_bars_time_last {0.f};
+
+	float xy_max_amplitude_mv {0.f};
+	float xy_min_amplitude_mv  {0.f};
 
 	BOOL b_all_files  {false};
 	int m_spike_index  {-1};
-	int m_spike_index_class  {0};
+	int m_spike_index_class {0};
 	float t_xy_right  {1.f};
 	float t_xy_left {0.f};
 

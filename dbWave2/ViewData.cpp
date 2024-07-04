@@ -1141,7 +1141,7 @@ void ViewData::save_modified_file()
 	if (m_p_dat_Doc->IsModified())
 	{
 		CString docname = GetDocument()->db_get_current_dat_file_name();
-		m_p_dat_Doc->OnSaveDocument(docname);
+		m_p_dat_Doc->save_document(docname);
 	}
 	m_p_dat_Doc->SetModifiedFlag(FALSE);
 }

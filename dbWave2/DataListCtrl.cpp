@@ -556,7 +556,7 @@ void DataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
 		ptr->pdataDoc = new AcqDataDoc;
 		ASSERT(ptr->pdataDoc != NULL);
 	}
-	if (ptr->csDatafileName.IsEmpty() || !ptr->pdataDoc->OnOpenDocument(ptr->csDatafileName))
+	if (ptr->csDatafileName.IsEmpty() || !ptr->pdataDoc->open_document(ptr->csDatafileName))
 	{
 		p_wnd->remove_all_channel_list_items();
 		auto comment = _T("File name: ") + ptr->csDatafileName;
