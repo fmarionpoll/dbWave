@@ -236,8 +236,7 @@ void ViewSpikes::set_mouse_cursor(const short param_value)
 		set_add_spikes_mode(param_value);
 
 	chart_data_wnd_.set_mouse_cursor_type(param_value);
-	if(!spike_class_listbox_.set_mouse_cursor_type(param_value))
-		AfxMessageBox(_T("Error in changing mouse cursor\n"), MB_OK);
+	int old_cursor = spike_class_listbox_.set_mouse_cursor_type(param_value);
 	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(param_value, 0));
 }
 

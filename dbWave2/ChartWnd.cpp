@@ -16,7 +16,7 @@ COLORREF ChartWnd::color_table_[] =
 	RGB(128, 0, 0), // 3 maroon
 	RGB(196, 2, 51), // 4 red
 	RGB(128, 128, 128), // 5 grey
-	RGB(249, 132, 229), // 6 fuschia
+	RGB(249, 132, 229), // 6 fuchsia
 	RGB(0, 128, 0), // 7 green
 	RGB(91, 255, 0), // 8 lime
 	RGB(107, 142, 35), // 9 olive
@@ -300,11 +300,11 @@ void ChartWnd::draw_grid_from_ruler(CDC* p_dc, const Ruler* p_ruler) const
 
 	// draw ticks and legends
 	//auto tick_small_height = 4;
-	int tickmax;
+	int tick_max;
 	if (p_ruler->m_is_horizontal) // horizontal
-		tickmax = rc_client.Width();
+		tick_max = rc_client.Width();
 	else // vertical
-		tickmax = rc_client.Height();
+		tick_max = rc_client.Height();
 
 	// draw scale
 	//double small_scale_inc = pRuler->m_d_scale_inc / 5.;
@@ -318,7 +318,7 @@ void ChartWnd::draw_grid_from_ruler(CDC* p_dc, const Ruler* p_ruler) const
 		if (p_ruler->m_is_horizontal) // horizontal
 		{
 			tick_pos = static_cast<int>(rc_client.Width() * (d_pos - p_ruler->m_lowest_value) / d_len) + rc_client.left;
-			if (tick_pos >= 0 && tick_pos <= tickmax)
+			if (tick_pos >= 0 && tick_pos <= tick_max)
 			{
 				p_dc->MoveTo(tick_pos, rc_client.bottom - 1); // line
 				p_dc->LineTo(tick_pos, rc_client.top + 1);
@@ -327,7 +327,7 @@ void ChartWnd::draw_grid_from_ruler(CDC* p_dc, const Ruler* p_ruler) const
 		else // vertical
 		{
 			tick_pos = static_cast<int>(rc_client.Height() * (p_ruler->m_highest_value - d_pos) / d_len) + rc_client.top;
-			if (tick_pos >= 0 && tick_pos <= tickmax)
+			if (tick_pos >= 0 && tick_pos <= tick_max)
 			{
 				p_dc->MoveTo(rc_client.left + 1, tick_pos); // line
 				p_dc->LineTo(rc_client.right - 1, tick_pos);
@@ -562,13 +562,13 @@ void ChartWnd::release_cursor()
 	ClipCursor(nullptr);
 }
 
-BOOL ChartWnd::OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message) 
+BOOL ChartWnd::OnSetCursor(CWnd* p_wnd, UINT n_hit_test, UINT message) 
 {
 	SetCursor(handle_current_cursor_);
 	return TRUE;
 }
 
-void ChartWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
+void ChartWnd::OnLButtonDblClk(UINT n_flags, CPoint point)
 {
 	int new_cursor = cursor_type_ + 1;
 	if (new_cursor >= cursor_index_max_)
@@ -576,7 +576,7 @@ void ChartWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 	post_my_message(HINT_SETMOUSECURSOR, new_cursor);
 }
 
-void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
+void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 {
 	if (m_hwnd_reflect_ != nullptr)
 	{
@@ -584,7 +584,7 @@ void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		CRect rect0, rect1;
 		GetWindowRect(&rect1);
 		::GetWindowRect(m_hwnd_reflect_, &rect0);
-		::SendMessage(m_hwnd_reflect_, WM_LBUTTONDOWN, nFlags,
+		::SendMessage(m_hwnd_reflect_, WM_LBUTTONDOWN, n_flags,
 		              MAKELPARAM(point.x + (rect1.left - rect0.left), point.y + (rect1.top - rect0.top)));
 	}
 	else
@@ -599,7 +599,7 @@ void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 		// track horizontal & VT cursors if mouse HIT
 		case 0: // arrow (default)
 		case CURSOR_CROSS: // cross (measure mode) (2)
-			if (nFlags & MK_CONTROL)
+			if (n_flags & MK_CONTROL)
 				post_my_message(HINT_LMOUSEBUTTONDOW_CTRL, MAKELONG(point.x, point.y));
 
 			track_mode_ = TRACK_RECT; // flag track_rect
@@ -665,7 +665,7 @@ void ChartWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 }
 
-void ChartWnd::OnMouseMove(UINT n_flags, CPoint point)
+void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 {
 	// track rectangle : update rectangle size
 	switch (track_mode_)
@@ -727,7 +727,7 @@ void ChartWnd::OnMouseMove(UINT n_flags, CPoint point)
 	}
 }
 
-void ChartWnd::OnLButtonUp(UINT nFlags, CPoint point)
+void ChartWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 {
 	if (track_mode_ != TRACK_OFF)
 	{
@@ -744,14 +744,14 @@ void ChartWnd::OnLButtonUp(UINT nFlags, CPoint point)
 		::GetWindowRect(m_hwnd_reflect_, &rect0);
 
 		// reflect mouse move message
-		::SendMessage(m_hwnd_reflect_, WM_LBUTTONUP, nFlags,
+		::SendMessage(m_hwnd_reflect_, WM_LBUTTONUP, n_flags,
 		              MAKELPARAM(point.x + (rect1.left - rect0.left),
 		                         point.y + (rect1.top - rect0.top)));
 	}
 	b_left_mouse_button_down_ = FALSE;
 }
 
-void ChartWnd::left_button_up_horizontal_tag(UINT n_flags, CPoint point)
+void ChartWnd::left_button_up_horizontal_tag(const UINT n_flags, CPoint point)
 {
 	// convert pix into data value
 	const auto data_value = MulDiv(m_pt_last_.y - m_y_vo_, m_y_we_, m_y_ve_) + m_y_wo_;

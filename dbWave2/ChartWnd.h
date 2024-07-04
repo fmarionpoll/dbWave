@@ -217,11 +217,11 @@ protected:
 	afx_msg virtual void OnSize(UINT n_type, int cx, int cy);
 	afx_msg virtual BOOL OnEraseBkgnd(CDC* p_dc);
 	afx_msg virtual void OnPaint();
-	afx_msg virtual BOOL OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message);
+	afx_msg virtual BOOL OnSetCursor(CWnd* p_wnd, UINT n_hit_test, UINT message);
 	afx_msg virtual void OnMouseMove(UINT n_flags, CPoint point);
-	afx_msg virtual void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg virtual void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg virtual void OnLButtonDblClk(UINT nFlags, CPoint point);
+	afx_msg virtual void OnLButtonDown(UINT n_flags, CPoint point);
+	afx_msg virtual void OnLButtonUp(UINT n_flags, CPoint point);
+	afx_msg virtual void OnLButtonDblClk(UINT n_flags, CPoint point);
 	afx_msg virtual void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg virtual void OnRButtonDown(UINT nFlags, CPoint point);
 

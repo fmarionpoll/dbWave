@@ -142,20 +142,20 @@ BOOL CdbTableAssociated::GetIDFromString(CString cs, long& i_id)
 
 BOOL CdbTableAssociated::SeekID(long iID)
 {
-	auto bfound = FALSE;
+	auto is_found = FALSE;
 	// find record with this ID and make it current
 	COleVariant id = iID;
 	try
 	{
 		SetCurrentIndex(_T("Primary Key"));
-		bfound = Seek(_T("="), &id);
+		is_found = Seek(_T("="), &id);
 	}
 	catch (CDaoException* e)
 	{
 		DisplayDaoException(e, 18);
 		e->Delete();
 	}
-	return bfound;
+	return is_found;
 }
 
 /////////////////////////////////////////////////////////////////////////////
