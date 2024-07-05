@@ -123,6 +123,7 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 	// restore resources
 	p_dc->SetBkColor(saved_background_color);
 	p_dc->RestoreDC(saved_dc);
+
 	// restore selection to initial file
 	if (display_all_files_)
 	{
@@ -187,7 +188,7 @@ void ChartSpikeXY::display_vt_tags(CDC* p_dc)
 	const auto y1 = m_display_rect_.bottom;
 	for (auto j = vertical_tags.get_tag_list_size() - 1; j >= 0; j--)
 	{
-		const auto val = vertical_tags.get_value(j); // get value
+		const auto val = vertical_tags.get_value(j); 
 		const auto pix_x = MulDiv(val - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_;
 		p_dc->MoveTo(pix_x, y0); // set initial pt
 		p_dc->LineTo(pix_x, y1); // VT line
