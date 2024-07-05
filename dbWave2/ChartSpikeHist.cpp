@@ -153,7 +153,7 @@ void ChartSpikeHist::plot_histogram(CDC* p_dc, const CDWordArray* p_dw, const in
 	}
 }
 
-void ChartSpikeHist::MoveHZtagtoVal(const int tag_index, const int value)
+void ChartSpikeHist::move_hz_tag_to_val(const int tag_index, const int value)
 {
 	m_pt_last_.y = MulDiv(horizontal_tags.get_value(tag_index) - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_;
 	const auto j = MulDiv(value - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_;
@@ -161,12 +161,12 @@ void ChartSpikeHist::MoveHZtagtoVal(const int tag_index, const int value)
 	horizontal_tags.set_tag_val(tag_index, value);
 }
 
-void ChartSpikeHist::MoveVTtagtoVal(int itag, int ival)
+void ChartSpikeHist::move_vt_tag_to_val(const int tag_index, int value)
 {
-	m_pt_last_.x = MulDiv(vertical_tags.get_value(itag) - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_;
-	const auto j = MulDiv(ival - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_;
+	m_pt_last_.x = MulDiv(vertical_tags.get_value(tag_index) - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_;
+	const auto j = MulDiv(value - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_;
 	xor_vertical_tag(j);
-	vertical_tags.set_tag_val(itag, ival);
+	vertical_tags.set_tag_val(tag_index, value);
 }
 
 void ChartSpikeHist::getClassArray(const int i_class, CDWordArray*& p_dw)
@@ -241,7 +241,7 @@ void ChartSpikeHist::OnLButtonUp(UINT nFlags, CPoint point)
 			// none: zoom data or offset display
 			ChartSpike::OnLButtonUp(nFlags, point);
 			CRect rect_out(m_pt_first_.x, m_pt_first_.y, m_pt_last_.x, m_pt_last_.y);
-			const int jitter = 3;
+			constexpr int jitter = 3;
 			if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 			{
 				if (cursor_type_ != CURSOR_ZOOM)
@@ -281,16 +281,17 @@ void ChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
 	// compute pixel position of horizontal tags
 	if (horizontal_tags.get_tag_list_size() > 0)
 	{
-		for (auto icur = horizontal_tags.get_tag_list_size() - 1; icur >= 0; icur--)
-			horizontal_tags.set_tag_pixel(icur, MulDiv(horizontal_tags.get_value(icur) - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_);
+		for (auto i_cur = horizontal_tags.get_tag_list_size() - 1; i_cur >= 0; i_cur--)
+			horizontal_tags.set_tag_pixel(i_cur, MulDiv(horizontal_tags.get_value(i_cur) - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_);
 	}
 	// compute pixel position of vertical tags
 	if (vertical_tags.get_tag_list_size() > 0)
 	{
-		for (auto icur = vertical_tags.get_tag_list_size() - 1; icur >= 0; icur--) // loop through all tags
-			vertical_tags.set_tag_pixel(icur, MulDiv(vertical_tags.get_value(icur) - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_);
+		for (auto i_cur = vertical_tags.get_tag_list_size() - 1; i_cur >= 0; i_cur--) // loop through all tags
+			vertical_tags.set_tag_pixel(i_cur, MulDiv(vertical_tags.get_value(i_cur) - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_);
 	}
-	ChartSpike::OnLButtonDown(nFlags, point);
+	//ChartSpike::OnLButtonDown(nFlags, point);
+	CWnd::OnLButtonDown(nFlags, point);
 	if (current_cursor_mode_ != 0 || hc_trapped_ >= 0) // do nothing else if mode != 0
 		return; // or any tag hit (VT, HZ) detected
 
@@ -310,7 +311,7 @@ void ChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
 // lp to dp: d = (l -wo)*ve/we + vo
 // dp to lp: l = (d -vo)*we/ve + wo
 // wo= window origin; we= window extent; vo=viewport origin, ve=viewport extent
-// with ordinates: wo=zero, we=yextent, ve=rect.height/2, vo = -rect.GetRectHeight()/2
+// with ordinates: wo=zero, we=y-extent, ve=rect.height/2, vo = -rect.GetRectHeight()/2
 
 void ChartSpikeHist::zoom_data(CRect* rFrom, CRect* rDest)
 {
@@ -510,7 +511,7 @@ CDWordArray* ChartSpikeHist::init_class_array(const int n_bins, const int spike_
 void ChartSpikeHist::build_hist_from_spike_list(SpikeList* p_spk_list, const long l_first, const long l_last, const int max, const int min,
                                                 const int n_bins, const BOOL b_new)
 {
-	// erase data and arrays if bnew:
+	// erase data and arrays if b_new:
 	if (b_new)
 		delete_histogram_data();
 
@@ -567,7 +568,7 @@ void ChartSpikeHist::build_hist_from_spike_list(SpikeList* p_spk_list, const lon
 // 	BuildHistFromDocument()
 // parameters
 //		CdbWaveDoc* p_doc	- dbWave document
-//		BOOL ballFiles		- if false, compute only from current spikelist, otherwise compute over the whole document
+//		BOOL ballFiles		- if false, compute only from current spike_list, otherwise compute over the whole document
 //		long l_first		= index first pt from file
 //		long l_last 		= index last pt from file
 //		int max				= maximum

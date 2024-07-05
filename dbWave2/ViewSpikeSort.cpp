@@ -1441,7 +1441,7 @@ void ViewSpikeSort::on_en_change_lower()
 		if (spike_classification_parameters_->lower_threshold != chart_xt_measures_.horizontal_tags.get_value(m_i_tag_low_))
 			chart_xt_measures_.move_hz_tag(m_i_tag_low_, spike_classification_parameters_->lower_threshold);
 		if (spike_classification_parameters_->lower_threshold != chart_histogram_.vertical_tags.get_value(m_spk_hist_lower_threshold_))
-			chart_histogram_.MoveVTtagtoVal(m_spk_hist_lower_threshold_, spike_classification_parameters_->lower_threshold);
+			chart_histogram_.move_vt_tag_to_val(m_spk_hist_lower_threshold_, spike_classification_parameters_->lower_threshold);
 		UpdateData(FALSE);
 	}
 }
@@ -1459,7 +1459,7 @@ void ViewSpikeSort::on_en_change_upper()
 		if (spike_classification_parameters_->upper_threshold != chart_xt_measures_.horizontal_tags.get_value(m_i_tag_up_))
 			chart_xt_measures_.move_hz_tag(m_i_tag_up_, spike_classification_parameters_->upper_threshold);
 		if (spike_classification_parameters_->lower_threshold != chart_histogram_.vertical_tags.get_value(m_spk_hist_upper_threshold_))
-			chart_histogram_.MoveVTtagtoVal(m_spk_hist_upper_threshold_, spike_classification_parameters_->upper_threshold);
+			chart_histogram_.move_vt_tag_to_val(m_spk_hist_upper_threshold_, spike_classification_parameters_->upper_threshold);
 		UpdateData(FALSE);
 	}
 }

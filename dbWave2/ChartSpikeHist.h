@@ -45,8 +45,8 @@ public:
 
 	void delete_histogram_data();
 	LPTSTR export_ascii(LPTSTR lp); // export ascii data
-	void MoveVTtagtoVal(int itag, int ival);
-	void MoveHZtagtoVal(int tag_index, int value);
+	void move_vt_tag_to_val(int tag_index, int value);
+	void move_hz_tag_to_val(int tag_index, int value);
 
 	
 	void zoom_data(CRect* prevRect, CRect* newRect) override;
