@@ -113,11 +113,11 @@ public:
 	Ruler x_ruler {};
 	Ruler y_ruler {};
 	CFont h_font {};
-	BOOL b_nice_grid  {false};
-	int abscissa_height  {10};
-	int ordinates_width  {25};
-	RulerBar* x_ruler_bar  {nullptr};
-	RulerBar* y_ruler_bar  {nullptr};
+	BOOL b_nice_grid {false};
+	int abscissa_height {10};
+	int ordinates_width {25};
+	RulerBar* x_ruler_bar {nullptr};
+	RulerBar* y_ruler_bar {nullptr};
 
 	TagList horizontal_tags {}; 
 	TagList vertical_tags {}; 
@@ -136,9 +136,9 @@ protected:
 	int current_cursor_mode_ {0}; // current cursor drag mode
 	static COLORREF color_table_[NB_COLORS]; // array with color ref
 
-	CPen pen_table_[NB_COLORS]; // table with CPen objects (same colors as color table
+	CPen pen_table_[NB_COLORS]; // table with CPen objects (same colors as color table)
 	BOOL b_left_mouse_button_down_ = false;
-	BOOL b_use_dib_  {false};
+	BOOL b_use_dib_ {false};
 	CDC plot_dc_ {};
 	CWordArray array_mark_ {};
 	CPen black_dotted_pen_ {};
@@ -169,6 +169,7 @@ protected:
 	int m_x_we_ = 1;
 	int m_x_vo_ = 0;
 	int m_x_ve_ = 1;
+
 	int m_y_wo_ = 0; // y origin, extent / window & view
 	int m_y_we_ = 1;
 	int m_y_vo_ = 0;
