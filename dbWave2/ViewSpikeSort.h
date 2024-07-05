@@ -90,7 +90,8 @@ protected:
 	int m_spk_form_tag_right_{};
 
 	float mv_unit_ {1000.f}; // 1=V, 1000f=mV, 1e6=uV
-	float m_delta_{};
+	float m_delta_mv_{};
+	float m_delta_t_{};
 	int m_measure_y1_max_{}; // max of array m_measure_y1
 	int m_measure_y1_min_{}; // min of array m_measure_y1
 	boolean b_valid_extrema_ {false}; // tells if m_measure_y1_max_ & m_measure_y1_min_ are valid

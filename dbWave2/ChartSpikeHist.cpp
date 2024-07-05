@@ -290,8 +290,8 @@ void ChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
 		for (auto i_cur = vertical_tags.get_tag_list_size() - 1; i_cur >= 0; i_cur--) // loop through all tags
 			vertical_tags.set_tag_pixel(i_cur, MulDiv(vertical_tags.get_value(i_cur) - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_);
 	}
-	//ChartSpike::OnLButtonDown(nFlags, point);
-	CWnd::OnLButtonDown(nFlags, point);
+
+	ChartSpike::OnLButtonDown(nFlags, point);
 	if (current_cursor_mode_ != 0 || hc_trapped_ >= 0) // do nothing else if mode != 0
 		return; // or any tag hit (VT, HZ) detected
 

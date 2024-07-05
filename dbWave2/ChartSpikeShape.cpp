@@ -173,7 +173,6 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 	}
 
 	// display selected spike
-	auto i_select = -1;
 	if ((spike_selected_.spike_index >= 0) && is_spike_within_range(spike_selected_))
 	{
 		const Spike* spike = dbwave_doc_->get_spike(spike_selected_);
@@ -612,11 +611,9 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 	int selected_color = BLACK_COLOR;
 	switch (plot_mode_)
 	{
-		//case PLOT_BLACK:			selpen = BLACK_COLOR; break;
-		//case PLOT_ONECLASSONLY:	selpen = BLACK_COLOR; break;
+		//case PLOT_BLACK:			sel_pen = BLACK_COLOR; break;
+		//case PLOT_ONE_CLASS_ONLY:	sel_pen = BLACK_COLOR; break;
 	case PLOT_ONE_CLASS:
-		selected_color = index_color_background_;
-		break;
 	case PLOT_ALLGREY:
 		selected_color = index_color_background_;
 		break;
