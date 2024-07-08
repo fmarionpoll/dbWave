@@ -138,7 +138,8 @@ void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 	{
 		if (dbwave_doc_->db_set_current_record_position(current_file))
 			dbwave_doc_->open_current_spike_file();
-		p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
+		if (dbwave_doc_->m_p_spk != nullptr)
+			p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
 	}
 }
 

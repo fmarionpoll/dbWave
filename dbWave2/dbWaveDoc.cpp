@@ -468,7 +468,8 @@ void CdbWaveDoc::get_max_min_of_all_spikes(const BOOL b_all_files, const BOOL b_
 	{
 		if (db_set_current_record_position(n_current_file))
 			open_current_spike_file();
-		m_p_spk->set_spike_list_as_current(0);
+		if (m_p_spk != nullptr)
+			m_p_spk->set_spike_list_as_current(0);
 	}
 }
 

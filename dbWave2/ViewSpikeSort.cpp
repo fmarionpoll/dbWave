@@ -433,7 +433,9 @@ void ViewSpikeSort::on_sort()
 	auto first_file = current_file;
 	auto last_file = first_file;
 	const auto n_files = pdb_doc->db_get_n_records();
-	const auto current_list = m_pSpkDoc->get_spike_list_current_index();
+	auto current_list = 0;
+	if (m_pSpkDoc != nullptr)
+		current_list = m_pSpkDoc->get_spike_list_current_index();
 
 	// change indexes if ALL files selected
 	DlgProgress* dlg_progress = nullptr;
@@ -508,14 +510,16 @@ void ViewSpikeSort::on_sort()
 		delete dlg_progress;
 		if (pdb_doc->db_set_current_record_position(current_file)) {
 			m_pSpkDoc = pdb_doc->open_current_spike_file();
-			m_pSpkList = m_pSpkDoc->get_spike_list_current();
+			if (m_pSpkDoc != nullptr)
+				m_pSpkList = m_pSpkDoc->get_spike_list_current();
 		}
 	}
 
 	// refresh data windows
 	build_histogram();
 	all_charts_invalidate();
-	m_pSpkDoc->SetModifiedFlag(TRUE);
+	if (m_pSpkDoc != nullptr)
+		m_pSpkDoc->SetModifiedFlag(TRUE);
 }
 
 void ViewSpikeSort::set_mouse_cursor(short short_value)
@@ -936,7 +940,8 @@ void ViewSpikeSort::select_spike(db_spike& spike_sel)
 	if (spike_sel.database_position >= 0 || spike_sel.spike_list_index < 0) {
 		const CdbWaveDoc* p_doc = chart_spike_shape_.get_db_wave_doc();
 		spike_sel.database_position = p_doc->db_get_current_record_position();
-		spike_sel.spike_list_index = p_doc->m_p_spk->get_spike_list_current_index();
+		if (p_doc->m_p_spk != nullptr)
+			spike_sel.spike_list_index = p_doc->m_p_spk->get_spike_list_current_index();
 	}
 	chart_spike_shape_.select_spike(spike_sel);
 	chart_spike_bar_.select_spike(spike_sel);
