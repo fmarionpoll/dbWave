@@ -373,7 +373,7 @@ void CFilterPanel::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 
 	if (pdesc->b_single_filter)
 	{
-		pdesc->cs_param_single_filter = plinked_set->GetStringFromID(pdesc->l_param_single_filter);
+		pdesc->cs_param_single_filter = plinked_set->get_string_from_id(pdesc->l_param_single_filter);
 	}
 	else
 	{
@@ -463,7 +463,7 @@ void CFilterPanel::BuildFilterItemIndirectionFromTree(DB_ITEMDESC* pdesc, HTREEI
 			for (auto j = 0; j < pdesc->liArray.GetSize(); j++)
 			{
 				const auto li = pdesc->liArray.GetAt(j);
-				auto str = pdesc->plinkedSet->GetStringFromID(li);
+				auto str = pdesc->plinkedSet->get_string_from_id(li);
 				if (str == cs)
 				{
 					pdesc->l_param_filter_array.Add(li);

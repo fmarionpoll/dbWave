@@ -82,7 +82,7 @@ BOOL DlgdbEditField::OnInitDialog()
 	{
 		m_initial_id_ = var_value.lVal;
 		if (m_bIndexTable)
-			m_cs_field_value = m_pIndexTable->GetStringFromID(var_value.lVal);
+			m_cs_field_value = m_pIndexTable->get_string_from_id(var_value.lVal);
 		else
 			m_cs_field_value.Format(_T("%i"), var_value.lVal);
 	}
@@ -227,8 +227,8 @@ void DlgdbEditField::OnBnClickedOk()
 		{
 			CString cs;
 			m_co_dictionary.GetLBText(m_co_dictionary.GetCurSel(), cs);
-			m_pIndexTable->AddStringsFromCombo(&m_co_dictionary);
-			ASSERT(m_pIndexTable->GetIDFromString(cs, m_dest_id_));
+			m_pIndexTable->add_strings_from_combo(&m_co_dictionary);
+			ASSERT(m_pIndexTable->get_id_from_string(cs, m_dest_id_));
 		}
 		if (m_source_condition == COND_SEARCH && !m_b_case_sensitive)
 			m_cs_text_search.MakeLower(); // change case of search string if case-sensitive is not checked
@@ -268,7 +268,7 @@ void DlgdbEditField::OnBnClickedOk()
 
 	// (3) check if we need/can "remove" records from the index table
 	if (m_bIndexTable)
-		m_pIndexTable->RemoveStringsNotInCombo(&m_co_dictionary);
+		m_pIndexTable->remove_strings_not_in_combo(&m_co_dictionary);
 
 	// exit
 	CDialogEx::OnOK();
@@ -314,7 +314,7 @@ void DlgdbEditField::modify_current()
 			break;
 		if (b_valid)
 		{
-			cs_value = m_pIndexTable->GetStringFromID(id_current);
+			cs_value = m_pIndexTable->get_string_from_id(id_current);
 			if (!m_b_case_sensitive)
 				cs_value.MakeLower();
 			i_found = cs_value.Find(m_cs_text_search, 0);
@@ -344,7 +344,7 @@ void DlgdbEditField::modify_current()
 			const auto cs_new = cs_value.Left(i_found)
 				+ m_cs_text_replace_with
 				+ cs_value.Right(cs_value.GetLength() - (m_cs_text_search.GetLength() + i_found));
-			const auto id_new = m_pIndexTable->GetStringInLinkedTable(cs_new);
+			const auto id_new = m_pIndexTable->get_string_in_linked_table(cs_new);
 			if (id_new >= 0)
 			{
 				m_pMainTable->SetLongValue(id_new, m_csColName);

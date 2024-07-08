@@ -9,24 +9,24 @@
 
 IMPLEMENT_DYNAMIC(CdbTableAssociated, CDaoRecordset)
 
-CdbTableAssociated::CdbTableAssociated(CDaoDatabase* pdb)
-	: CDaoRecordset(pdb)
+CdbTableAssociated::CdbTableAssociated(CDaoDatabase* p_database)
+	: CDaoRecordset(p_database)
 {
 	m_nFields = 2;
 	m_nDefaultType = dbOpenTable;
 }
 
 // store strings and add "[" and "]"
-void CdbTableAssociated::Set_DFX_SQL_Names(CString defaultSQL, CString DFX_cs, CString DFX_ID)
+void CdbTableAssociated::set_dfx_sql_names(const CString& cs_default_sql, const CString& dfx_cs, const CString& dfx_id)
 {
-	m_defaultSQL = _T("[") + defaultSQL + _T("]");
-	m_DFX_cs = _T("[") + DFX_cs + _T("]");
-	m_DFX_ID = _T("[") + DFX_ID + _T("]");
+	m_default_sql = _T("[") + cs_default_sql + _T("]");
+	m_dfx_cs = _T("[") + dfx_cs + _T("]");
+	m_dfx_id = _T("[") + dfx_id + _T("]");
 }
 
 CString CdbTableAssociated::GetDefaultDBName()
 {
-	auto cs = m_defaultName;
+	auto cs = m_default_name;
 	if (m_pDatabase->m_pDAODatabase != nullptr)
 		cs = m_pDatabase->GetName();
 
@@ -35,14 +35,14 @@ CString CdbTableAssociated::GetDefaultDBName()
 
 CString CdbTableAssociated::GetDefaultSQL()
 {
-	return m_defaultSQL;
+	return m_default_sql;
 }
 
-void CdbTableAssociated::DoFieldExchange(CDaoFieldExchange* pFX)
+void CdbTableAssociated::DoFieldExchange(CDaoFieldExchange* p_fx)
 {
-	pFX->SetFieldType(CDaoFieldExchange::outputColumn);
-	DFX_Text(pFX, m_DFX_cs, m_cs);
-	DFX_Long(pFX, m_DFX_ID, m_ID);
+	p_fx->SetFieldType(CDaoFieldExchange::outputColumn);
+	DFX_Text(p_fx, m_dfx_cs, m_cs);
+	DFX_Long(p_fx, m_dfx_id, m_id);
 }
 
 #ifdef _DEBUG
@@ -68,7 +68,7 @@ void CdbTableAssociated::Dump(CDumpContext& dc) const
 // Parameters (out):
 //		iID			assoc table index or -1
 
-long CdbTableAssociated::GetStringInLinkedTable(const CString& cs)
+long CdbTableAssociated::get_string_in_linked_table(const CString& cs)
 {
 	// string is empty - return nothing!
 	if (cs.IsEmpty())
@@ -76,7 +76,7 @@ long CdbTableAssociated::GetStringInLinkedTable(const CString& cs)
 
 	// record not found: add a new record - none found or empty
 	long i_id = -1;
-	if (!GetIDFromString(cs, i_id))
+	if (!get_id_from_string(cs, i_id))
 	{
 		try
 		{
@@ -89,7 +89,7 @@ long CdbTableAssociated::GetStringInLinkedTable(const CString& cs)
 			COleVariant var_value;
 			GetFieldValue(1, var_value);
 			i_id = var_value.lVal;
-			ASSERT(GetIDFromString(cs, i_id));
+			ASSERT(get_id_from_string(cs, i_id));
 		}
 		catch (CDaoException* e)
 		{
@@ -109,21 +109,21 @@ long CdbTableAssociated::GetStringInLinkedTable(const CString& cs)
 //		BOOL	record found (TRUE) or not (FALSE)
 //		iID		record ID (if found in the table) or unchanged (if not found)
 
-BOOL CdbTableAssociated::GetIDFromString(CString cs, long& i_id)
+BOOL CdbTableAssociated::get_id_from_string(const CString& cs, long& i_id)
 {
 	if (IsEOF() && IsBOF())
 		return FALSE;
 
-	auto bfound = FALSE;
+	auto b_found = FALSE;
 	try
 	{
 		// seek record
 		SetCurrentIndex(_T("NORM_OrderByIndex"));
 		COleVariant csVal;
 		csVal.SetString(cs, VT_BSTRT);
-		bfound = Seek(_T("="), &csVal);
+		b_found = Seek(_T("="), &csVal);
 		// record found: get ID
-		if (bfound)
+		if (b_found)
 		{
 			COleVariant var_value1;
 			GetFieldValue(1, var_value1);
@@ -135,16 +135,16 @@ BOOL CdbTableAssociated::GetIDFromString(CString cs, long& i_id)
 		DisplayDaoException(e, 18);
 		e->Delete();
 	}
-	return bfound;
+	return b_found;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
-BOOL CdbTableAssociated::SeekID(long iID)
+BOOL CdbTableAssociated::seek_id(const long i_id)
 {
 	auto is_found = FALSE;
 	// find record with this ID and make it current
-	COleVariant id = iID;
+	COleVariant id = i_id;
 	try
 	{
 		SetCurrentIndex(_T("Primary Key"));
@@ -160,11 +160,11 @@ BOOL CdbTableAssociated::SeekID(long iID)
 
 /////////////////////////////////////////////////////////////////////////////
 
-CString CdbTableAssociated::GetStringFromID(long iID)
+CString CdbTableAssociated::get_string_from_id(const long i_id)
 {
-	auto bfound = SeekID(iID);
+	const auto found = seek_id(i_id);
 	CString cs;
-	if (bfound)
+	if (found)
 	{
 		COleVariant var_value1;
 		GetFieldValue(0, var_value1);
@@ -173,19 +173,19 @@ CString CdbTableAssociated::GetStringFromID(long iID)
 	return cs;
 }
 
-void CdbTableAssociated::CreateIndextable(const CString& cstablename, const CString& cscol1, const CString& csIDcol2,
-                                     int textSize, CDaoDatabase* p_db)
+void CdbTableAssociated::create_index_table(const CString& cs_table, const CString& cs_column1, const CString& cs_id_column2,
+                                          const int text_size, CDaoDatabase* p_database)
 {
-	Set_DFX_SQL_Names(cstablename, cscol1, csIDcol2); // change name of table, col1, col2
+	set_dfx_sql_names(cs_table, cs_column1, cs_id_column2); // change name of table, col1, col2
 
-	CDaoTableDef tb(p_db);
-	tb.Create(cstablename);
+	CDaoTableDef tb(p_database);
+	tb.Create(cs_table);
 
 	// create first field in the table
 	CDaoFieldInfo fd0;
-	fd0.m_strName = cscol1;
+	fd0.m_strName = cs_column1;
 	fd0.m_nType = dbText; // Primary
-	fd0.m_lSize = textSize; // Primary
+	fd0.m_lSize = text_size; // Primary
 	fd0.m_lAttributes = dbVariableField; // Primary
 	fd0.m_nOrdinalPosition = 2; // Secondary
 	fd0.m_bRequired = FALSE; // Secondary
@@ -200,24 +200,24 @@ void CdbTableAssociated::CreateIndextable(const CString& cstablename, const CStr
 	tb.CreateField(fd0);
 
 	// create first index
-	CDaoIndexFieldInfo indexfield0;
-	indexfield0.m_strName = cscol1;
-	indexfield0.m_bDescending = FALSE;
+	CDaoIndexFieldInfo index_field0;
+	index_field0.m_strName = cs_column1;
+	index_field0.m_bDescending = FALSE;
 
-	CDaoIndexInfo indexfd0;
-	indexfd0.m_pFieldInfos = &indexfield0;
-	indexfd0.m_strName = _T("NORM_OrderByIndex");
-	indexfd0.m_nFields = 1;
-	indexfd0.m_bPrimary = FALSE;
-	indexfd0.m_bUnique = TRUE;
-	indexfd0.m_bClustered = FALSE;
-	indexfd0.m_bIgnoreNulls = FALSE;
-	indexfd0.m_bRequired = FALSE;
-	indexfd0.m_bForeign = FALSE;
-	tb.CreateIndex(indexfd0);
+	CDaoIndexInfo index_fd0;
+	index_fd0.m_pFieldInfos = &index_field0;
+	index_fd0.m_strName = _T("NORM_OrderByIndex");
+	index_fd0.m_nFields = 1;
+	index_fd0.m_bPrimary = FALSE;
+	index_fd0.m_bUnique = TRUE;
+	index_fd0.m_bClustered = FALSE;
+	index_fd0.m_bIgnoreNulls = FALSE;
+	index_fd0.m_bRequired = FALSE;
+	index_fd0.m_bForeign = FALSE;
+	tb.CreateIndex(index_fd0);
 
 	// create second field
-	fd0.m_strName = csIDcol2;
+	fd0.m_strName = cs_id_column2;
 	fd0.m_nType = dbLong; // Primary
 	fd0.m_lSize = 4; // Primary
 	fd0.m_lAttributes = dbAutoIncrField; // Primary
@@ -226,34 +226,34 @@ void CdbTableAssociated::CreateIndextable(const CString& cstablename, const CStr
 	tb.CreateField(fd0);
 
 	// create first index
-	indexfd0.m_pFieldInfos = &indexfield0;
-	indexfield0.m_strName = csIDcol2;
-	indexfield0.m_bDescending = FALSE;
+	index_fd0.m_pFieldInfos = &index_field0;
+	index_field0.m_strName = cs_id_column2;
+	index_field0.m_bDescending = FALSE;
 
-	indexfd0.m_strName = _T("Primary Key");
-	indexfd0.m_pFieldInfos = &indexfield0;
-	indexfd0.m_bPrimary = TRUE;
-	indexfd0.m_bRequired = TRUE;
-	tb.CreateIndex(indexfd0);
+	index_fd0.m_strName = _T("Primary Key");
+	index_fd0.m_pFieldInfos = &index_field0;
+	index_fd0.m_bPrimary = TRUE;
+	index_fd0.m_bRequired = TRUE;
+	tb.CreateIndex(index_fd0);
 
 	tb.Append();
 }
 
-int CdbTableAssociated::AddStringsFromCombo(CComboBox* pcombo)
+int CdbTableAssociated::add_strings_from_combo(const CComboBox* p_combo)
 {
-	const auto nitems = pcombo->GetCount();
-	auto nadded = 0;
-	long i_id;
-	CString cs;
+	const auto n_items = p_combo->GetCount();
+	auto n_added = 0;
 	try
 	{
-		for (auto i = 0; i < nitems; i++)
+		CString cs;
+		long i_id;
+		for (auto i = 0; i < n_items; i++)
 		{
-			pcombo->GetLBText(i, cs);
-			if (!GetIDFromString(cs, i_id))
+			p_combo->GetLBText(i, cs);
+			if (!get_id_from_string(cs, i_id))
 			{
-				i_id = GetStringInLinkedTable(cs);
-				nadded++;
+				i_id = get_string_in_linked_table(cs);
+				n_added++;
 			}
 		}
 	}
@@ -262,28 +262,28 @@ int CdbTableAssociated::AddStringsFromCombo(CComboBox* pcombo)
 		DisplayDaoException(e, 31);
 		e->Delete();
 	}
-	return nadded;
+	return n_added;
 }
 
-int CdbTableAssociated::RemoveStringsNotInCombo(CComboBox* pcombo)
+int CdbTableAssociated::remove_strings_not_in_combo(const CComboBox* p_combo)
 {
 	if (IsBOF() && IsEOF())
 		return 0;
 
-	auto ndeleted = 0;
+	auto n_deleted = 0;
 	COleVariant var_value0;
 	MoveFirst();
 	while (!IsEOF())
 	{
 		GetFieldValue(0, var_value0);
 		CString cs = var_value0.bstrVal;
-		const auto i = pcombo->FindStringExact(0, cs);
+		const auto i = p_combo->FindStringExact(0, cs);
 		if (CB_ERR == i)
 		{
 			try
 			{
 				Delete();
-				ndeleted++;
+				n_deleted++;
 			}
 			catch (CDaoException* e)
 			{
@@ -293,5 +293,5 @@ int CdbTableAssociated::RemoveStringsNotInCombo(CComboBox* pcombo)
 		}
 		MoveNext();
 	}
-	return ndeleted;
+	return n_deleted;
 }

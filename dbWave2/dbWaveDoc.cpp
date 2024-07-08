@@ -736,7 +736,7 @@ BOOL CdbWaveDoc::copy_files_to_directory(const CString & path)
 	while (!db_table->m_path_set.IsEOF())
 	{
 		cs_source_path_array.Add(db_table->m_path_set.m_cs);
-		ui_id_array.Add(db_table->m_path_set.m_ID);
+		ui_id_array.Add(db_table->m_path_set.m_id);
 		n_records++;
 		db_table->m_path_set.MoveNext();
 	}
@@ -1191,7 +1191,7 @@ void CdbWaveDoc::set_record_file_names(const source_data * record) const
 	// save file names
 	if (record->data_file_present)
 	{
-		db_table->m_mainTableSet.m_path_ID = db_table->m_path_set.GetStringInLinkedTable(record->cs_path);
+		db_table->m_mainTableSet.m_path_ID = db_table->m_path_set.get_string_in_linked_table(record->cs_path);
 		db_table->m_mainTableSet.SetFieldNull(&(db_table->m_mainTableSet.m_Filedat), FALSE);
 		db_table->m_mainTableSet.m_Filedat = record->cs_dat_file.Right(
 			record->cs_dat_file.GetLength() - record->i_last_backslash_position - 1);
@@ -1200,7 +1200,7 @@ void CdbWaveDoc::set_record_file_names(const source_data * record) const
 
 	if (record->spike_file_present)
 	{
-		db_table->m_mainTableSet.m_path2_ID = db_table->m_path_set.GetStringInLinkedTable(record->cs_path);
+		db_table->m_mainTableSet.m_path2_ID = db_table->m_path_set.get_string_in_linked_table(record->cs_path);
 		db_table->m_mainTableSet.SetFieldNull(&(db_table->m_mainTableSet.m_Filespk), FALSE);
 		db_table->m_mainTableSet.m_Filespk = record->cs_spk_file.Right(
 			record->cs_spk_file.GetLength() - record->i_last_backslash_position - 1);
@@ -2300,7 +2300,7 @@ void CdbWaveDoc::delete_erased_files()
 void CdbWaveDoc::db_delete_current_record()
 {
 	// save data & spike file names, together with their full access path
-	db_table->m_path_set.SeekID(db_table->m_mainTableSet.m_path_ID);
+	db_table->m_path_set.seek_id(db_table->m_mainTableSet.m_path_ID);
 	CString cs;
 	if (!db_table->m_mainTableSet.m_Filedat.IsEmpty())
 	{
