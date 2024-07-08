@@ -555,14 +555,14 @@ void ViewSpikeSort::hit_spike()
 
 void ViewSpikeSort::change_vertical_tag_spike_shape(const short short_value)
 {
-	if (short_value == m_spk_form_tag_left_) // first tag
+	if (short_value == m_spk_form_tag_left_) 
 	{
 		spike_classification_parameters_->i_cursor_t1 = chart_spike_shape_.vertical_tags.get_value(m_spk_form_tag_left_);
 		spike_shape_t1 = static_cast<float>(spike_classification_parameters_->i_cursor_t1) * m_delta_t_;
 		mm_t1_.m_bEntryDone = TRUE;
 		on_en_change_t1();
 	}
-	else if (short_value == m_spk_form_tag_right_) // second tag
+	else if (short_value == m_spk_form_tag_right_)
 	{
 		spike_classification_parameters_->i_cursor_t2 = chart_spike_shape_.vertical_tags.get_value(m_spk_form_tag_right_);
 		spike_shape_t2 = static_cast<float>(spike_classification_parameters_->i_cursor_t2) * m_delta_t_;
@@ -636,11 +636,11 @@ LRESULT ViewSpikeSort::on_my_message(WPARAM code, LPARAM lParam)
 	const short short_value = LOWORD(lParam);
 	switch (code)
 	{
-	case HINT_SETMOUSECURSOR: // ------------- change mouse cursor (all 3 items)
+	case HINT_SETMOUSECURSOR: 
 		set_mouse_cursor(short_value);
 		break;
 
-	case HINT_CHANGEHZLIMITS: // -------------  abscissa
+	case HINT_CHANGEHZLIMITS: 
 		change_hz_limits();
 		break;
 
@@ -656,7 +656,7 @@ LRESULT ViewSpikeSort::on_my_message(WPARAM code, LPARAM lParam)
 		on_tools_edit_spikes();
 		break;
 
-	case HINT_CHANGEVERTTAG: // -------------  vertical tag d
+	case HINT_CHANGEVERTTAG: 
 		if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
 			change_vertical_tag_spike_shape(short_value);
 		else if (HIWORD(lParam) == IDC_HISTOGRAM)

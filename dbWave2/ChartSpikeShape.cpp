@@ -310,7 +310,6 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 	switch (track_mode_)
 	{
 	case TRACK_BASELINE:
-		// curve was tracked
 	{
 		if (point.y != m_pt_last_.y || point.x != m_pt_last_.x)
 			OnMouseMove(nFlags, point);
@@ -320,7 +319,6 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 	break;
 
 	case TRACK_VTTAG:
-		// vertical tag was tracked
 	{
 		// convert pix into data value and back again
 		const auto val = MulDiv(point.x - m_x_vo_, m_x_we_, m_x_ve_) + m_x_wo_;
