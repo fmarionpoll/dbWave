@@ -527,7 +527,7 @@ void ChartSpikeShape::get_extents()
 	if (file_first != current_file_index || file_last != current_file_index)
 	{
 		if (dbwave_doc_->db_set_current_record_position(current_file_index) && (dbwave_doc_->open_current_spike_file() != nullptr))
-			if (dbwave_doc_->m_p_spk = nullptr) 
+			if (dbwave_doc_->m_p_spk == nullptr) 
 				p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
 	}
 }
