@@ -134,9 +134,9 @@ void CChildFrame::on_view_cursor_mode_normal()
 	(GetActiveView())->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursor_state, NULL));
 }
 
-void CChildFrame::on_update_view_cursor_mode_normal(CCmdUI * pCmdUI)
+void CChildFrame::on_update_view_cursor_mode_normal(CCmdUI * p_cmd_ui)
 {
-	pCmdUI->SetCheck(m_cursor_state == CURSOR_ARROW);
+	p_cmd_ui->SetCheck(m_cursor_state == CURSOR_ARROW);
 }
 
 void CChildFrame::on_view_cursor_mode_measure()
@@ -145,9 +145,9 @@ void CChildFrame::on_view_cursor_mode_measure()
 	(GetActiveView())->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursor_state, NULL));
 }
 
-void CChildFrame::on_update_view_cursor_mode_measure(CCmdUI * pCmdUI)
+void CChildFrame::on_update_view_cursor_mode_measure(CCmdUI * p_cmd_ui)
 {
-	pCmdUI->SetCheck(m_cursor_state == CURSOR_CROSS);
+	p_cmd_ui->SetCheck(m_cursor_state == CURSOR_CROSS);
 }
 
 void CChildFrame::on_view_cursor_mode_zoom_in()
@@ -156,9 +156,9 @@ void CChildFrame::on_view_cursor_mode_zoom_in()
 	(GetActiveView())->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursor_state, NULL));
 }
 
-void CChildFrame::on_update_view_cursor_mode_zoom_in(CCmdUI * pCmdUI)
+void CChildFrame::on_update_view_cursor_mode_zoom_in(CCmdUI * p_cmd_ui)
 {
-	pCmdUI->SetCheck(m_cursor_state == CURSOR_ZOOM);
+	p_cmd_ui->SetCheck(m_cursor_state == CURSOR_ZOOM);
 }
 
 void CChildFrame::on_options_browse_mode()
@@ -226,7 +226,7 @@ void CChildFrame::on_tools_export_data_as_text()
 	}
 }
 
-void CChildFrame::export_ascii(int option)
+void CChildFrame::export_ascii(const int option)
 {
 	CSharedFile sf(GMEM_MOVEABLE | GMEM_DDESHARE | GMEM_ZEROINIT);
 	CdbWaveDoc* p_db_wave_doc = CdbWaveDoc::get_active_mdi_document();
@@ -305,13 +305,13 @@ void CChildFrame::ActivateFrame(int n_cmd_show)
 	CMDIChildWndEx::ActivateFrame(n_cmd_show);
 }
 
-LRESULT CChildFrame::on_my_message(WPARAM wParam, LPARAM lParam)
+LRESULT CChildFrame::on_my_message(WPARAM w_param, LPARAM l_param)
 {
-	switch (wParam)
+	switch (w_param)
 	{
 	case HINT_SETMOUSECURSOR:
 	{
-		const short lowp = LOWORD(lParam);
+		const short low_param = LOWORD(l_param);
 		//switch (lowp)
 		//{
 		//case CURSOR_ZOOM:
@@ -322,7 +322,7 @@ LRESULT CChildFrame::on_my_message(WPARAM wParam, LPARAM lParam)
 		//	m_cursor_state=CURSOR_ARROW;
 		//	break;
 		//}
-		m_cursor_state = lowp;
+		m_cursor_state = low_param;
 	}
 	break;
 
@@ -443,7 +443,7 @@ void CChildFrame::on_update_view_menu(CCmdUI * p_cmd_ui)
 	p_cmd_ui->SetCheck(m_view_on == p_cmd_ui->m_nID);
 }
 
-void CChildFrame::replace_view(CRuntimeClass * p_view_class, HMENU h_menu)
+void CChildFrame::replace_view(CRuntimeClass * p_view_class, const HMENU h_menu)
 {
 	// assume that the views replaced are of dbTableView type
 	const auto p_current_view = GetActiveView();
@@ -627,16 +627,20 @@ void CChildFrame::on_tools_remove_artefact_files()
 		dlg.SetStatus(cs_comment);
 
 		// load file
-		p_db_wave_doc->db_set_current_record_position(i_file);
-		const auto b_ok = p_db_wave_doc->open_current_data_file();
-		if (!b_ok)
+
+		if (p_db_wave_doc->db_set_current_record_position(i_file)) {
+			const auto b_ok = p_db_wave_doc->open_current_data_file();
+			if (!b_ok)
+				continue;
+		}
+		else
 			continue;
 
 		auto p_dat = p_db_wave_doc->m_p_dat;
 		if (p_dat == nullptr)
 			continue;
 
-		auto n_consecutive_points = 0;
+		auto consecutive_points = 0;
 		long l_data_first = 0;
 		const auto l_data_last = p_dat->get_doc_channel_length() - 1;
 
@@ -659,19 +663,19 @@ void CChildFrame::on_tools_remove_artefact_files()
 			{
 				if (abs(last_value - *p_data) <= jitter)
 				{
-					n_consecutive_points++;
-					if (n_consecutive_points > n_consecutive_points)
+					consecutive_points++;
+					if (consecutive_points > consecutive_points)
 						break;
 				}
 				else
-					n_consecutive_points = 0;
+					consecutive_points = 0;
 				last_value = *p_data;
 				p_data++;
 			}
 			l_data_first = l_read_write_last + 1;
 		}
 		// change flag if condition met
-		if (n_consecutive_points >= n_consecutive_points)
+		if (consecutive_points >= consecutive_points)
 			p_db_wave_doc->db_set_current_record_flag(flag_rejected_file_as);
 
 		// update interface
@@ -1073,11 +1077,11 @@ void CChildFrame::on_tools_export_data_file()
 	dlg.DoModal();
 }
 
-void CChildFrame::on_mdi_activate(BOOL bActivate, CWnd * pActivateWnd, CWnd * pDeactivateWnd)
+void CChildFrame::on_mdi_activate(BOOL b_activate, CWnd * p_activate_wnd, CWnd * p_deactivate_wnd)
 {
-	CMDIChildWndEx::OnMDIActivate(bActivate, pActivateWnd, pDeactivateWnd);
+	CMDIChildWndEx::OnMDIActivate(b_activate, p_activate_wnd, p_deactivate_wnd);
 	const auto p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
-	if (bActivate)
+	if (b_activate)
 		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_MDIACTIVATE, NULL);
 }
 

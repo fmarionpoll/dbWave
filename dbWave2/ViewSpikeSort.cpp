@@ -34,29 +34,29 @@ ViewSpikeSort::~ViewSpikeSort()
 	spike_classification_parameters_->mv_min = xy_min_amplitude_mv;
 }
 
-void ViewSpikeSort::DoDataExchange(CDataExchange* pDX)
+void ViewSpikeSort::DoDataExchange(CDataExchange* p_dx)
 {
-	dbTableView::DoDataExchange(pDX);
+	dbTableView::DoDataExchange(p_dx);
 
-	DDX_Control(pDX, IDC_PARAMETER, m_combo_parameter);
-	DDX_Text(pDX, IDC_T1, spike_shape_t1);
-	DDX_Text(pDX, IDC_T2, spike_shape_t2);
-	DDX_Text(pDX, IDC_LIMITLOWER, histogram_lower_threshold);
-	DDX_Text(pDX, IDC_LIMITUPPER, histogram_upper_threshold);
-	DDX_Text(pDX, IDC_SOURCECLASS, sort_source_class);
-	DDX_Text(pDX, IDC_DESTINATIONCLASS, sort_destination_class);
-	DDX_Text(pDX, IDC_EDIT2, display_bars_time_left);
-	DDX_Text(pDX, IDC_EDIT3, display_bars_time_last);
-	DDX_Text(pDX, IDC_EDIT_MAX_MV, xy_max_amplitude_mv);
-	DDX_Text(pDX, IDC_EDIT_MIN_MV, xy_min_amplitude_mv);
-	DDX_Text(pDX, IDC_BINMV, histogram_bin_size_mv);
-	DDX_Check(pDX, IDC_CHECK1, b_all_files);
-	DDX_Text(pDX, IDC_NSPIKES, m_spike_index);
-	DDX_Text(pDX, IDC_SPIKECLASS, m_spike_index_class);
-	DDX_Text(pDX, IDC_EDITRIGHT2, t_xy_right);
-	DDX_Text(pDX, IDC_EDITLEFT2, t_xy_left);
+	DDX_Control(p_dx, IDC_PARAMETER, m_combo_parameter);
+	DDX_Text(p_dx, IDC_T1, spike_shape_t1);
+	DDX_Text(p_dx, IDC_T2, spike_shape_t2);
+	DDX_Text(p_dx, IDC_LIMITLOWER, histogram_lower_threshold);
+	DDX_Text(p_dx, IDC_LIMITUPPER, histogram_upper_threshold);
+	DDX_Text(p_dx, IDC_SOURCECLASS, sort_source_class);
+	DDX_Text(p_dx, IDC_DESTINATIONCLASS, sort_destination_class);
+	DDX_Text(p_dx, IDC_EDIT2, display_bars_time_left);
+	DDX_Text(p_dx, IDC_EDIT3, display_bars_time_last);
+	DDX_Text(p_dx, IDC_EDIT_MAX_MV, xy_max_amplitude_mv);
+	DDX_Text(p_dx, IDC_EDIT_MIN_MV, xy_min_amplitude_mv);
+	DDX_Text(p_dx, IDC_BINMV, histogram_bin_size_mv);
+	DDX_Check(p_dx, IDC_CHECK1, b_all_files);
+	DDX_Text(p_dx, IDC_NSPIKES, m_spike_index);
+	DDX_Text(p_dx, IDC_SPIKECLASS, m_spike_index_class);
+	DDX_Text(p_dx, IDC_EDITRIGHT2, t_xy_right);
+	DDX_Text(p_dx, IDC_EDITLEFT2, t_xy_left);
 
-	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
+	DDX_Control(p_dx, IDC_TAB1, m_tabCtrl);
 }
 
 BEGIN_MESSAGE_MAP(ViewSpikeSort, dbTableView)
@@ -239,13 +239,13 @@ void ViewSpikeSort::activate_mode4()
 	chart_xt_measures_.Invalidate();
 }
 
-void ViewSpikeSort::OnActivateView(const BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+void ViewSpikeSort::OnActivateView(const BOOL b_activate, CView* p_activate_view, CView* p_deactive_view)
 {
-	if (bActivate)
+	if (b_activate)
 	{
 		auto* p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
 		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW,
-		                         reinterpret_cast<LPARAM>(pActivateView->GetDocument()));
+		                         reinterpret_cast<LPARAM>(p_activate_view->GetDocument()));
 	}
 	else
 	{
@@ -260,14 +260,14 @@ void ViewSpikeSort::OnActivateView(const BOOL bActivate, CView* pActivateView, C
 		p_app->m_p_sort1_spikes_memory_file->SeekToBegin();
 		ar.Close();
 	}
-	dbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	dbTableView::OnActivateView(b_activate, p_activate_view, p_deactive_view);
 }
 
-void ViewSpikeSort::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void ViewSpikeSort::OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint)
 {
 	if (m_b_init_)
 	{
-		switch (LOWORD(lHint))
+		switch (LOWORD(l_hint))
 		{
 		case HINT_DOCHASCHANGED: 
 		case HINT_DOCMOVERECORD:

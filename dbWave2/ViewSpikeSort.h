@@ -15,10 +15,10 @@ class ViewSpikeSort : public dbTableView
 protected:
 	ViewSpikeSort();
 	~ViewSpikeSort() override;
-	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
-	void DoDataExchange(CDataExchange* pDX) override;
+	void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint) override;
+	void DoDataExchange(CDataExchange* p_dx) override;
 	void OnInitialUpdate() override;
-	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
+	void OnActivateView(BOOL b_activate, CView* p_activate_view, CView* p_deactive_view) override;
 public:
 	BOOL OnMove(UINT n_id_move_command) override;
 

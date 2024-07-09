@@ -38,12 +38,12 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 
 	get_extents();
 	prepare_dc(p_dc);
-	auto current_file = 0;
+	//auto current_file = 0;
 	auto n_files = 1;
 	if (display_all_files_)
 	{
 		n_files = dbwave_doc_->db_get_n_records();
-		current_file = dbwave_doc_->db_get_current_record_position();
+		//current_file = dbwave_doc_->db_get_current_record_position();
 	}
 
 	for (auto i_file = 0; i_file < n_files; i_file++)
@@ -52,6 +52,8 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 		{
 			if (dbwave_doc_->db_set_current_record_position(i_file))
 				dbwave_doc_->open_current_spike_file();
+			else
+				continue;
 		}
 		if (dbwave_doc_->m_p_spk == nullptr)
 			continue;
@@ -182,13 +184,13 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 	// restore resources
 	p_dc->RestoreDC(n_saved_dc);
 
-	if (display_all_files_)
-	{
-		if (dbwave_doc_->db_set_current_record_position(current_file))
-			dbwave_doc_->open_current_spike_file();
-		if (dbwave_doc_->m_p_spk != nullptr)
-			p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
-	}
+	//if (display_all_files_)
+	//{
+	//	if (dbwave_doc_->db_set_current_record_position(current_file))
+	//		dbwave_doc_->open_current_spike_file();
+	//	if (dbwave_doc_->m_p_spk != nullptr)
+	//		p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
+	//}
 }
 
 void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
