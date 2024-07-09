@@ -44,10 +44,10 @@ public:
 	short	get_amplitude_offset() const { return m_offset_; }
 
 	int		get_spike_length() const { return m_spike_length_; }
-	void	set_spike_length(int spike_length) { m_spike_length_ = spike_length; }
+	void	set_spike_length(const int spike_length) { m_spike_length_ = spike_length; }
 	short*	get_p_data(int spike_length);
 	short*	get_p_data() const;
-	short	get_value_at_offset(int index) const {return *(m_spike_data_buffer_+index);}
+	short	get_value_at_offset(const int index) const {return *(m_spike_data_buffer_+index);}
 	void	get_max_min_ex(short* max, short* min, int* d_max_to_min) const;
 
 	void	get_max_min(short* max, short* min) const;
@@ -56,8 +56,8 @@ public:
 	int		get_y2() const { return y2_; }
 	int		get_dt() const { return dt_; }
 
-	void	set_time(long ii) { m_ii_time_ = ii; }
-	void	set_class_id(int cl) { m_class_id_ = cl; }
+	void	set_time(const long ii) { m_ii_time_ = ii; }
+	void	set_class_id(const int cl) { m_class_id_ = cl; }
 
 	void	set_max_min_ex(const short max, const short min, const short d_max_min) {
 				m_value_max_ = max;
@@ -65,9 +65,9 @@ public:
 				m_d_max_min_ = d_max_min; }
 
 	void	set_amplitude_offset(const short offset) { m_offset_ = offset; }
-	void	set_y1(int y) { y1_ = y; }
-	void	set_y2(int y) { y2_ = y; }
-	void	set_dt(long x) { dt_ = x; }
+	void	set_y1(const int y) { y1_ = y; }
+	void	set_y2(const int y) { y2_ = y; }
+	void	set_dt(const long x) { dt_ = x; }
 
 	void	transfer_data_to_spike_buffer(short* source_data, int source_n_channels, int spike_length);
 
@@ -85,5 +85,5 @@ public:
 	void	Serialize(CArchive& ar) override;
 
 protected:
-	void	read_version2(CArchive& ar, WORD wVersion);
+	void	read_version2(CArchive& ar, WORD w_version);
 };

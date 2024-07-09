@@ -22,34 +22,32 @@ public:
 protected:
 	CArray<CDWordArray*, CDWordArray*> histogram_ptr_array; // array of DWord array containing histogram
 
-	int m_binsize{}; // size of one bin
-	int m_abcissaminval = 0; // minimum value from which histogram is built (abscissa)
-	int m_abcissamaxval = 0; // maximum value (abscissa max)
-	int m_nbins = 0; // n bins within histogram
+	int bin_size_{}; // size of one bin
+	int abscissa_min_value_ = 0; // minimum value from which histogram is built (abscissa)
+	int abscissa_max_value_ = 0; // maximum value (abscissa max)
+	int n_bins_ = 0; // n bins within histogram
 
-	DWORD m_lmax{}; // value max
-	int m_imax{}; // index max
-	int m_ifirst{}; // index first interval with data
-	int m_ilast{}; // index last interval with data
+	DWORD l_max_{}; // value max
+	int i_max_{}; // index max
+	int i_first_{}; // index first interval with data
+	int i_last_{}; // index last interval with data
 
 public:
-	int GetBinsize() const { return m_binsize; }
-	int GetBinMinval() const { return m_abcissaminval; }
-	int GetBinMaxVal() const { return m_abcissamaxval; }
-	int GetnBins() const { return m_nbins; }
-	int GetHistMaxPos() const { return m_imax; }
-	DWORD GetHistMax() const { return m_lmax; }
+	int get_bin_size() const { return bin_size_; }
+	int get_bin_min_value() const { return abscissa_min_value_; }
+	int get_bin_max_value() const { return abscissa_max_value_; }
+	int get_n_bins() const { return n_bins_; }
+	int get_hist_max_bin_index() const { return i_max_; }
+	DWORD get_hist_max_value() const { return l_max_; }
 
 	void build_hist_from_document(CdbWaveDoc* p_document, BOOL b_all_files, long l_first, long l_last, int max, int min,
 	                           int n_bins, BOOL b_new);
-
 	void delete_histogram_data();
 	LPTSTR export_ascii(LPTSTR lp); // export ascii data
 	void move_vt_tag_to_val(int tag_index, int value);
 	void move_hz_tag_to_val(int tag_index, int value);
 
-	
-	void zoom_data(CRect* prevRect, CRect* newRect) override;
+	void zoom_data(CRect* r_from, CRect* r_dest) override;
 
 protected:
 	int hit_curve(CPoint point) override;
@@ -58,11 +56,10 @@ protected:
 	void get_extents();
 	void plot_histogram(CDC* p_dc, const CDWordArray* p_dw, int color) const;
 
-	void getClassArray(int i_class, CDWordArray*& p_dw);
+	void get_class_array(int i_class, CDWordArray*& p_dw);
 	CDWordArray* init_class_array(int n_bins, int spike_class);
 	void build_hist_from_spike_list(SpikeList* p_spk_list, long l_first, long l_last, int max, int min, int n_bins,
 	                            BOOL b_new);
-
 public:
 	void plot_data_to_dc(CDC* p_dc) override;
 

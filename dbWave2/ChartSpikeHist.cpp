@@ -59,7 +59,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	m_y_vo_ = rect1.Height();
 
 	get_extents();
-	if (m_lmax == 0)
+	if (l_max_ == 0)
 	{
 		p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 		auto rect2 = m_display_rect_;
@@ -118,7 +118,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	{
 		color = BLACK_COLOR;
 		CDWordArray* p_dw = nullptr;
-		getClassArray(selected_class_, p_dw);
+		get_class_array(selected_class_, p_dw);
 		if (p_dw != nullptr)
 		{
 			plot_histogram(p_dc, p_dw, color);
@@ -137,13 +137,13 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 void ChartSpikeHist::plot_histogram(CDC* p_dc, const CDWordArray* p_dw, const int color) const
 {
 	CRect rect_histogram;
-	rect_histogram.left = m_abcissaminval - m_binsize;
-	rect_histogram.right = m_abcissaminval;
+	rect_histogram.left = abscissa_min_value_ - bin_size_;
+	rect_histogram.right = abscissa_min_value_;
 	rect_histogram.bottom = 0;
 	for (auto i = 1; i < p_dw->GetSize(); i++)
 	{
-		rect_histogram.left += m_binsize;
-		rect_histogram.right += m_binsize;
+		rect_histogram.left += bin_size_;
+		rect_histogram.right += bin_size_;
 		rect_histogram.top = static_cast<int>(p_dw->GetAt(i));
 		if (rect_histogram.top > 0)
 		{
@@ -169,7 +169,7 @@ void ChartSpikeHist::move_vt_tag_to_val(const int tag_index, int value)
 	vertical_tags.set_tag_val(tag_index, value);
 }
 
-void ChartSpikeHist::getClassArray(const int i_class, CDWordArray*& p_dw)
+void ChartSpikeHist::get_class_array(const int i_class, CDWordArray*& p_dw)
 {
 	// test if pDW at 0 position is the right one
 	if ((nullptr != p_dw) && (static_cast<int>(p_dw->GetAt(0)) == i_class))
@@ -190,8 +190,8 @@ void ChartSpikeHist::getClassArray(const int i_class, CDWordArray*& p_dw)
 LPTSTR ChartSpikeHist::export_ascii(LPTSTR lp)
 {
 	// print all ordinates line-by-line, different classes on same line
-	lp += wsprintf(lp, _T("Histogram\nn_bins=%i\nnclasses=%i"), m_nbins, histogram_ptr_array.GetSize());
-	lp += wsprintf(lp, _T("\nmax=%i\nmin=%i"), m_abcissamaxval, m_abcissaminval);
+	lp += wsprintf(lp, _T("Histogram\nn_bins=%i\nnclasses=%i"), n_bins_, histogram_ptr_array.GetSize());
+	lp += wsprintf(lp, _T("\nmax=%i\nmin=%i"), abscissa_max_value_, abscissa_min_value_);
 	// export classes & points
 	lp += wsprintf(lp, _T("classes;\n"));
 	int i;
@@ -201,7 +201,7 @@ LPTSTR ChartSpikeHist::export_ascii(LPTSTR lp)
 
 	// loop through all points
 	lp += wsprintf(lp, _T("\nvalues;\n"));
-	for (auto j = 1; j <= m_nbins; j++)
+	for (auto j = 1; j <= n_bins_; j++)
 	{
 		for (i = 0; i < histogram_ptr_array.GetSize(); i++)
 			lp += wsprintf(lp, _T("%i\t"), static_cast<int>((histogram_ptr_array[i])->GetAt(j)));
@@ -297,7 +297,8 @@ void ChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
 
 	// test if mouse hit one histogram
 	// if hit, then tell parent to select histogram (spike)
-	dbwave_doc_->set_spike_hit(spike_hit_ = hit_curve_in_doc(point));
+	spike_hit_ = hit_curve_in_doc(point);
+	dbwave_doc_->set_spike_hit(spike_hit_);
 	if (spike_hit_.spike_index >= 0)
 	{
 		release_cursor(); 
@@ -313,24 +314,24 @@ void ChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
 // wo= window origin; we= window extent; vo=viewport origin, ve=viewport extent
 // with ordinates: wo=zero, we=y-extent, ve=rect.height/2, vo = -rect.GetRectHeight()/2
 
-void ChartSpikeHist::zoom_data(CRect* rFrom, CRect* rDest)
+void ChartSpikeHist::zoom_data(CRect* r_from, CRect* r_dest)
 {
-	rFrom->NormalizeRect();
-	rDest->NormalizeRect();
+	r_from->NormalizeRect();
+	r_dest->NormalizeRect();
 
 	// change y gain & y offset
 	const auto y_we = m_y_we_; // save previous window extent
-	m_y_we_ = MulDiv(m_y_we_, rDest->Height(), rFrom->Height());
+	m_y_we_ = MulDiv(m_y_we_, r_dest->Height(), r_from->Height());
 	m_y_wo_ = m_y_wo_
-		- MulDiv(rFrom->top - m_y_vo_, m_y_we_, m_y_ve_)
-		+ MulDiv(rDest->top - m_y_vo_, y_we, m_y_ve_);
+		- MulDiv(r_from->top - m_y_vo_, m_y_we_, m_y_ve_)
+		+ MulDiv(r_dest->top - m_y_vo_, y_we, m_y_ve_);
 
 	// change index of first and last pt displayed
 	const auto x_we = m_x_we_; // save previous window extent
-	m_x_we_ = MulDiv(m_x_we_, rDest->Width(), rFrom->Width());
+	m_x_we_ = MulDiv(m_x_we_, r_dest->Width(), r_from->Width());
 	m_x_wo_ = m_x_wo_
-		- MulDiv(rFrom->left - m_x_vo_, m_x_we_, m_x_ve_)
-		+ MulDiv(rDest->left - m_x_vo_, x_we, m_x_ve_);
+		- MulDiv(r_from->left - m_x_vo_, m_x_we_, m_x_ve_)
+		+ MulDiv(r_dest->left - m_x_vo_, x_we, m_x_ve_);
 
 	// display
 	Invalidate();
@@ -358,12 +359,12 @@ int ChartSpikeHist::hit_curve(const CPoint point)
 	auto mouse_x2 = mouse_x - delta_x;
 	if (mouse_x1 < 1)
 		mouse_x1 = 1;
-	if (mouse_x1 > m_nbins)
-		mouse_x1 = m_nbins;
+	if (mouse_x1 > n_bins_)
+		mouse_x1 = n_bins_;
 	if (mouse_x2 < 1)
 		mouse_x2 = 1;
-	if (mouse_x2 > m_nbins)
-		mouse_x2 = m_nbins;
+	if (mouse_x2 > n_bins_)
+		mouse_x2 = n_bins_;
 
 	const auto delta_y = MulDiv(3, m_y_we_, m_y_ve_);
 	const auto mouse_y = static_cast<DWORD>(MulDiv(point.y - m_y_vo_, m_y_we_, m_y_ve_)) + m_y_wo_ + delta_y;
@@ -424,16 +425,16 @@ void ChartSpikeHist::get_extents()
 {
 	if (m_y_we_ == 1) // && m_yWO == 0)
 	{
-		if (m_lmax == 0)
+		if (l_max_ == 0)
 			get_histogram_limits(0);
-		m_y_we_ = static_cast<int>(m_lmax);
+		m_y_we_ = static_cast<int>(l_max_);
 		m_y_wo_ = 0;
 	}
 
 	if (m_x_we_ == 1) // && m_xWO == 0)
 	{
-		m_x_we_ = m_abcissamaxval - m_abcissaminval + 1;
-		m_x_wo_ = m_abcissaminval;
+		m_x_we_ = abscissa_max_value_ - abscissa_min_value_ + 1;
+		m_x_wo_ = abscissa_min_value_;
 	}
 }
 
@@ -452,35 +453,35 @@ void ChartSpikeHist::get_histogram_limits(const int i_hist)
 		return;
 
 	// get index of minimal value
-	m_ifirst = 1; // search first interval with data
-	while (m_ifirst <= m_nbins && p_dw->GetAt(m_ifirst) == 0)
-		m_ifirst++;
+	i_first_ = 1; // search first interval with data
+	while (i_first_ <= n_bins_ && p_dw->GetAt(i_first_) == 0)
+		i_first_++;
 
-	m_ilast = m_nbins; // search last interval with data
-	while (p_dw->GetAt(m_ilast) == 0 && m_ilast > m_ifirst)
-		m_ilast--;
+	i_last_ = n_bins_; // search last interval with data
+	while (p_dw->GetAt(i_last_) == 0 && i_last_ > i_first_)
+		i_last_--;
 
 	// get index of maximum value
-	m_imax = m_ifirst; // index first pt
-	m_lmax = 0; // max
-	for (auto i = m_ifirst; i <= m_ilast; i++)
+	i_max_ = i_first_; // index first pt
+	l_max_ = 0; // max
+	for (auto i = i_first_; i <= i_last_; i++)
 	{
 		const auto dw_item = p_dw->GetAt(i);
-		if (dw_item > m_lmax)
+		if (dw_item > l_max_)
 		{
-			m_imax = i;
-			m_lmax = p_dw->GetAt(i);
+			i_max_ = i;
+			l_max_ = p_dw->GetAt(i);
 		}
 	}
 }
 
 void ChartSpikeHist::resize_and_clear_histograms(const int n_bins, const int max, const int min)
 {
-	m_binsize = (max - min + 1) / n_bins + 1; 
-	m_abcissaminval = min;
-	m_abcissamaxval = min + n_bins * m_binsize; 
+	bin_size_ = (max - min + 1) / n_bins + 1; 
+	abscissa_min_value_ = min;
+	abscissa_max_value_ = min + n_bins * bin_size_; 
 
-	m_nbins = n_bins;
+	n_bins_ = n_bins;
 	for (auto j = histogram_ptr_array.GetUpperBound(); j >= 0; j--)
 	{
 		const auto p_dw = histogram_ptr_array[j];
@@ -528,7 +529,7 @@ void ChartSpikeHist::build_hist_from_spike_list(SpikeList* p_spk_list, const lon
 		return;
 	}
 
-	if (n_bins != m_nbins || p_dword_array->GetSize() != (n_bins + 1))
+	if (n_bins != n_bins_ || p_dword_array->GetSize() != (n_bins + 1))
 		resize_and_clear_histograms(n_bins, max, min);
 
 	CDWordArray* p_dw = nullptr;
@@ -540,11 +541,11 @@ void ChartSpikeHist::build_hist_from_spike_list(SpikeList* p_spk_list, const lon
 		if (ii_time < l_first || ii_time > l_last)
 			continue;
 		auto y1 = spike_element->get_y1();
-		if (y1 > m_abcissamaxval || y1 < m_abcissaminval)
+		if (y1 > abscissa_max_value_ || y1 < abscissa_min_value_)
 			continue;
 
 		// increment corresponding histogram interval in the first histogram (general, displayed in grey)
-		auto index = (y1 - m_abcissaminval) / m_binsize + 1;
+		auto index = (y1 - abscissa_min_value_) / bin_size_ + 1;
 		if (index >= p_dword_array->GetSize())
 			index = p_dword_array->GetSize() - 1;
 		auto dw_data = p_dword_array->GetAt(index) + 1;
@@ -552,7 +553,7 @@ void ChartSpikeHist::build_hist_from_spike_list(SpikeList* p_spk_list, const lon
 
 		// dispatch into corresponding class histogram (create one if necessary)
 		const auto spike_class = spike_element->get_class_id();
-		getClassArray(spike_class, p_dw);
+		get_class_array(spike_class, p_dw);
 		if (p_dw == nullptr)
 			p_dw = init_class_array(n_bins, spike_class);
 
@@ -576,7 +577,7 @@ void ChartSpikeHist::build_hist_from_spike_list(SpikeList* p_spk_list, const lon
 //		int n_bins			= number of bins -> bin size
 //		BOOL bNew=TRUE		= erase old data (TRUE) or add to old value (FALSE)
 
-void ChartSpikeHist::build_hist_from_document(CdbWaveDoc* p_doc, const BOOL b_all_files, const long l_first, const long l_last,
+void ChartSpikeHist::build_hist_from_document(CdbWaveDoc* p_document, const BOOL b_all_files, const long l_first, const long l_last,
                                               const int max, const int min, const int n_bins, BOOL b_new)
 {
 	// erase data and arrays if b_new:
@@ -586,26 +587,28 @@ void ChartSpikeHist::build_hist_from_document(CdbWaveDoc* p_doc, const BOOL b_al
 		b_new = false;
 	}
 
+	dbwave_doc_ = p_document;
+
 	auto current_file = 0;
 	auto file_first = current_file;
 	auto file_last = current_file;
 	if (b_all_files)
 	{
 		file_first = 0;
-		file_last = p_doc->db_get_n_records() - 1;
-		current_file = p_doc->db_get_current_record_position();
+		file_last = p_document->db_get_n_records() - 1;
+		current_file = p_document->db_get_current_record_position();
 	}
 
 	for (auto i_file = file_first; i_file <= file_last; i_file++)
 	{
 		if (b_all_files)
 		{
-			if (p_doc->db_set_current_record_position(i_file))
-				p_doc->open_current_spike_file(); 
+			if (p_document->db_set_current_record_position(i_file))
+				p_document->open_current_spike_file(); 
 		}
-		if (p_doc->m_p_spk != nullptr)
+		if (p_document->m_p_spk != nullptr)
 		{
-			SpikeList* p_spike_list = p_doc->m_p_spk->get_spike_list_current();
+			SpikeList* p_spike_list = p_document->m_p_spk->get_spike_list_current();
 			if (p_spike_list != nullptr && p_spike_list->get_spikes_count() > 0)
 				build_hist_from_spike_list(p_spike_list, l_first, l_last, max, min, n_bins, b_new);
 		}
@@ -613,7 +616,7 @@ void ChartSpikeHist::build_hist_from_document(CdbWaveDoc* p_doc, const BOOL b_al
 
 	if (b_all_files)
 	{
-		if (p_doc->db_set_current_record_position(current_file))
-			p_doc->open_current_spike_file();
+		if (p_document->db_set_current_record_position(current_file))
+			p_document->open_current_spike_file();
 	}
 }

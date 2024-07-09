@@ -69,7 +69,7 @@ void Spike::Serialize(CArchive& ar)
 	}
 }
 
-void Spike::read_version2(CArchive& ar, WORD wVersion)
+void Spike::read_version2(CArchive& ar, WORD w_version)
 {
 	WORD w1;
 
@@ -80,7 +80,7 @@ void Spike::read_version2(CArchive& ar, WORD wVersion)
 	ar >> w1; m_value_min_	= static_cast<short>(w1);
 	ar >> w1; m_offset_		= static_cast<short>(w1);
 	ar >> w1; m_d_max_min_	= static_cast<short>(w1);
-	if (wVersion > 1)
+	if (w_version > 1)
 	{
 		WORD n_items = 0;
 		ar >> n_items;

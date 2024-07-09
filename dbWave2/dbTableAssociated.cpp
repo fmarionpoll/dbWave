@@ -143,7 +143,6 @@ BOOL CdbTableAssociated::get_id_from_string(const CString& cs, long& i_id)
 BOOL CdbTableAssociated::seek_id(const long i_id)
 {
 	auto is_found = FALSE;
-	// find record with this ID and make it current
 	COleVariant id = i_id;
 	try
 	{

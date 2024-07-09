@@ -924,7 +924,7 @@ void ViewSpikeSort::on_format_gain_adjust()
 
 	// update display
 	chart_xt_measures_.set_yw_ext_org(y_we, y_wo);
-	const auto y_max = static_cast<int>(chart_histogram_.GetHistMax());
+	const auto y_max = static_cast<int>(chart_histogram_.get_hist_max_value());
 	chart_histogram_.set_xw_ext_org(y_we, y_wo - y_we / 2);
 	chart_histogram_.set_yw_ext_org(MulDiv(y_max, 10, 8), 0);
 
