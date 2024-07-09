@@ -304,6 +304,8 @@ void ChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
 		release_cursor(); 
 		post_my_message(HINT_HITSPIKE, NULL);
 	}
+	else
+		release_cursor();
 }
 
 // zoom_data
