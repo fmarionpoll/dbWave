@@ -660,8 +660,11 @@ void ViewSpikes::update_legends(const BOOL b_update_interface)
 		l_first_ = 0;
 	if (l_last_ <= l_first_)
 		l_last_ = l_first_ + 120;
-	if (l_last_ >= m_pSpkDoc->get_acq_size())
-		l_last_ = m_pSpkDoc->get_acq_size() - 1;
+	if (m_pSpkDoc != nullptr)
+	{
+		if (l_last_ >= m_pSpkDoc->get_acq_size())
+			l_last_ = m_pSpkDoc->get_acq_size() - 1;
+	}
 	if (l_first_ > l_last_)
 		l_first_ = l_last_ - 120;
 
@@ -680,8 +683,11 @@ void ViewSpikes::update_legends(const BOOL b_update_interface)
 		spike_class_listbox_.set_time_intervals(l_first_, l_last_);
 
 	// update text abscissa and horizontal scroll position
-	m_time_first = static_cast<float>(l_first_) / m_pSpkDoc->get_acq_rate();
-	m_time_last = static_cast<float>(l_last_ + 1) / m_pSpkDoc->get_acq_rate();
+	if (m_pSpkDoc != nullptr)
+	{
+		m_time_first = static_cast<float>(l_first_) / m_pSpkDoc->get_acq_rate();
+		m_time_last = static_cast<float>(l_last_ + 1) / m_pSpkDoc->get_acq_rate();
+	}
 	chart_data_wnd_.get_data_from_doc(l_first_, l_last_);
 
 	// update scrollbar and select spikes

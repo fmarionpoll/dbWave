@@ -518,8 +518,6 @@ void ViewSpikeSort::on_sort()
 	// refresh data windows
 	build_histogram();
 	all_charts_invalidate();
-	if (m_pSpkDoc != nullptr)
-		m_pSpkDoc->SetModifiedFlag(TRUE);
 }
 
 void ViewSpikeSort::set_mouse_cursor(short short_value)
