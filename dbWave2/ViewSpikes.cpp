@@ -320,13 +320,13 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-BOOL ViewSpikes::add_spike_to_list(long ii_time, BOOL check_if_spike_nearby)
+BOOL ViewSpikes::add_spike_to_list(const long ii_time, const BOOL check_if_spike_nearby)
 {
 	const int method = m_pSpkList->get_detection_parameters()->detect_transform;
 	const int doc_channel = m_pSpkList->get_detection_parameters()->extract_channel;
 	const int pre_threshold = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
 	const int spike_length = m_pSpkList->get_spike_length();
-	const int transformation_data_span = p_data_doc_->get_transformed_data_span(method);
+	const int transformation_data_span = AcqDataDoc::get_transformed_data_span(method);
 	const auto ii_time0 = ii_time - pre_threshold;
 	auto l_read_write_first = ii_time0;
 	auto l_read_write_last = ii_time0 + spike_length;
@@ -817,7 +817,7 @@ void ViewSpikes::print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_info)
 	p_dc->TextOut(options_view_data_->horzRes / 2, options_view_data_->vertRes - 57, ch_date);
 }
 
-CString ViewSpikes::print_convert_file_index(long l_first, long l_last) const
+CString ViewSpikes::print_convert_file_index(const long l_first, const long l_last) const
 {
 	CString cs_unit = _T(" s");
 	int constexpr array_size = 64;
@@ -828,14 +828,17 @@ CString ViewSpikes::print_convert_file_index(long l_first, long l_last) const
 	auto x = print_change_unit(
 		static_cast<float>(l_first) / m_pSpkDoc->get_acq_rate(), &cs_unit, &x_scale_factor);
 	auto fraction = static_cast<int>((x - floorf(x)) * static_cast<float>(1000.));
-	StringCbPrintf(sz_dest, cb_dest, TEXT("time = %i.%03.3i - "), static_cast<int>(x), fraction);
-	CString cs_comment = sz_dest;
+	HRESULT hr = StringCbPrintf(sz_dest, cb_dest, TEXT("time = %i.%03.3i - "), static_cast<int>(x), fraction);
+	CString cs_comment = _T("");
+	if (hr == S_OK)
+		cs_comment += sz_dest;
 
 	x = static_cast<float>(l_last) / (m_pSpkDoc->get_acq_rate() * x_scale_factor); 
 	fraction = static_cast<int>((x - floorf(x)) * static_cast<float>(1000.));
-	StringCbPrintf(sz_dest, cb_dest, _T("%f.%03.3i %s"), floorf(x), fraction, static_cast<LPCTSTR>(cs_unit));
-	StringCbPrintf(sz_dest, cb_dest, _T("%f.%03.3i %s"), floorf(x), fraction, static_cast<LPCTSTR>(cs_unit));
-	cs_comment += sz_dest;
+	hr = StringCbPrintf(sz_dest, cb_dest, _T("%f.%03.3i %s"), floorf(x), fraction, static_cast<LPCTSTR>(cs_unit));
+	if (hr == S_OK)
+		cs_comment += sz_dest;
+
 	return cs_comment;
 }
 
@@ -847,7 +850,7 @@ long ViewSpikes::print_get_file_series_index_from_page(const int page, int* file
 	auto i_file = 0; 
 	if (options_view_data_->bPrintSelection)
 		i_file = m_file_0_;
-	//const auto current = GetDocument()->db_get_current_record_position();
+
 	if (GetDocument()->db_set_current_record_position(i_file)) {
 
 		auto very_last = GetDocument()->db_get_data_len() - 1;
@@ -871,7 +874,7 @@ long ViewSpikes::print_get_file_series_index_from_page(const int page, int* file
 		}
 	}
 	*file_number = i_file; // return index / file list
-	//GetDocument()->db_set_current_record_position(current);
+	
 	return l_first; // return index first point / data file
 }
 
@@ -1601,8 +1604,7 @@ void ViewSpikes::OnEditCopy()
 
 		auto cs_title = _T("dbWave\0") + GetDocument()->GetTitle();
 		cs_title += _T("\0\0");
-		const auto hm_dc = mDC.CreateEnhanced(p_dc_ref, nullptr, &rect_bound, cs_title);
-		ASSERT(hm_dc != NULL);
+		mDC.CreateEnhanced(p_dc_ref, nullptr, &rect_bound, cs_title);
 
 		// Draw document in metafile.
 		CPen black_pen(PS_SOLID, 0, RGB(0, 0, 0));
@@ -1656,7 +1658,7 @@ void ViewSpikes::OnEditCopy()
 
 		// display spikes and bars
 		adjust_y_zoom_to_max_min(true);
-		const auto n_count = spike_class_listbox_.GetCount(); // get nb of items in this file
+		const auto n_count = spike_class_listbox_.GetCount();
 
 		for (int i_count = 0; i_count < n_count; i_count++)
 		{
@@ -1803,7 +1805,7 @@ void ViewSpikes::scroll_gain(const UINT n_sb_code, const UINT n_pos)
 	}
 
 	// change y extent
-	if (l_size > 0) //&& lSize<=YEXTENT_MAX)
+	if (l_size > 0) 
 	{
 		chart_data_wnd_.get_channel_list_item(0)->SetYextent(l_size);
 		update_legends(TRUE);
@@ -1897,12 +1899,13 @@ void ViewSpikes::OnArtefact()
 	else
 	{
 		auto spk_class = m_pSpkList->get_spike(m_spike_index)->get_class_id();
-		// if artefact: set class to negative value
-		if (m_b_artefact && spk_class >= 0)
-			spk_class = -(spk_class + 1);
-		// if not artefact: if spike has negative class, set to positive value
-		else if (spk_class < 0)
-			spk_class = -(spk_class + 1);
+		spk_class = -(spk_class + 1);
+		//// if artefact: set class to negative value
+		//if (m_b_artefact) 
+		//	spk_class = -(spk_class + 1);
+		//// if not artefact: if spike has negative class, set to positive value
+		//else if (spk_class < 0)
+		//	spk_class = -(spk_class + 1);
 		spike_class_listbox_.change_spike_class(m_spike_index, spk_class);
 	}
 	CheckDlgButton(IDC_ARTEFACT, m_b_artefact);
@@ -2058,10 +2061,10 @@ void ViewSpikes::OnEnChangeZoom()
 		if (m_zoom < 0.0f)
 			m_zoom = 1.0f;
 
-		if (m_zoom != zoom)
+		if (m_zoom > zoom || m_zoom < zoom)
 			zoom_on_preset_interval(0);
-		else
-			UpdateData(FALSE);
+
+		UpdateData(FALSE);
 	}
 }
 
