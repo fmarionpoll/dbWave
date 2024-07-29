@@ -36,7 +36,7 @@ public:
 	ChartWnd();
 	~ChartWnd() override;
 	DECLARE_SERIAL(ChartWnd)
-	void Serialize(CArchive& archive) override;
+	void Serialize(CArchive& ar) override;
 
 	virtual BOOL Create(LPCTSTR lpsz_window_name, DWORD dw_style, const RECT& rect, CWnd* p_parent_wnd, UINT n_id,
 	                    CCreateContext* p_context = nullptr);
@@ -186,7 +186,7 @@ protected:
 	int cy_jitter_; // mouse vertical jitter
 	CRect rect_zoom_from_; // temp rect
 	CRect rect_zoom_to_; // temp rect
-	int i_undo_zoom_ = 0; // 1: rect+ stored; -1: rect- stored; 0: none stored (not implemented)
+	int i_undo_zoom_ = 0; // 1: rect+ ; -1: rect- ; 0: none stored (not implemented)
 
 	BOOL m_b_allow_props_ = true;
 	HWND m_hwnd_reflect_ = nullptr;
@@ -203,7 +203,7 @@ protected:
 	void send_my_message(int code, int code_parameter) const;
 	void post_my_message(int code, int code_parameter) const;
 	void invert_tracker(CPoint point); // invert rectangle when mouse-left is down
-	int hit_horizontal_tag(int y); // test if point is on an horizontal tag line
+	int hit_horizontal_tag(int y); // test if point is on a horizontal tag line
 	int hit_vertical_tag_pixel(int x); // test if point is on a vertical tag line
 	int hit_vertical_tag_long(long lx); // test if point is on a vertical tag line
 	void zoom_in();

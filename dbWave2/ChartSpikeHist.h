@@ -65,7 +65,7 @@ public:
 
 protected:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point) override;
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point) override;
+	afx_msg void OnLButtonDown(UINT n_flags, CPoint point) override;
 	afx_msg void OnLButtonDblClk(UINT n_flags, CPoint point) override;
 	afx_msg void OnSize(UINT nType, int cx, int cy) override;
 

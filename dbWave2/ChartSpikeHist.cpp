@@ -276,7 +276,7 @@ void ChartSpikeHist::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 }
 
-void ChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
+void ChartSpikeHist::OnLButtonDown(const UINT n_flags, const CPoint point)
 {
 	// compute pixel position of horizontal tags
 	if (horizontal_tags.get_tag_list_size() > 0)
@@ -291,7 +291,7 @@ void ChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
 			vertical_tags.set_tag_pixel(i_cur, MulDiv(vertical_tags.get_value(i_cur) - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_);
 	}
 
-	ChartSpike::OnLButtonDown(nFlags, point);
+	ChartSpike::OnLButtonDown(n_flags, point);
 	if (current_cursor_mode_ != 0 || hc_trapped_ >= 0) // do nothing else if mode != 0
 		return; // or any tag hit (VT, HZ) detected
 
@@ -313,7 +313,8 @@ void ChartSpikeHist::OnLButtonDown(UINT nFlags, CPoint point)
 // rectangle selected
 // lp to dp: d = (l -wo)*ve/we + vo
 // dp to lp: l = (d -vo)*we/ve + wo
-// wo= window origin; we= window extent; vo=viewport origin, ve=viewport extent
+// parameters:
+// wo = window origin; we= window extent; vo=viewport origin, ve=viewport extent
 // with ordinates: wo=zero, we=y-extent, ve=rect.height/2, vo = -rect.GetRectHeight()/2
 
 void ChartSpikeHist::zoom_data(CRect* r_from, CRect* r_dest)

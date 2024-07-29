@@ -634,9 +634,9 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 			{
 				track_mode_ = TRACK_VTTAG;
 				if (b_vertical_tags_as_long_)
-					m_pt_last_.x = static_cast<int>((vertical_tags.get_tag_l_val(hc_trapped_) - file_position_first_left_pixel_) * long(
-						m_display_rect_.Width()) / (file_position_last_right_pixel_ - file_position_first_left_pixel_ +
-						1));
+					m_pt_last_.x = static_cast<int>((vertical_tags.get_tag_l_val(hc_trapped_) - file_position_first_left_pixel_) 
+						* static_cast<long>(m_display_rect_.Width()) 
+						/ (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1));
 				else
 					m_pt_last_.x = vertical_tags.get_tag_pixel(hc_trapped_);
 				m_pt_last_.y = 0;
@@ -1047,11 +1047,11 @@ void ChartWnd::set_scope_parameters(SCOPESTRUCT* p_struct)
 	scope_structure_ = *p_struct;
 }
 
-// bsetPlot:   TRUE=use DIB array to draw curves FALSE: do not use it
-// bsetSelect: TRUE=use a separate bitmap to draw selected curve
+
+
 void ChartWnd::set_b_use_dib(const BOOL b_set_plot)
 {
-	b_use_dib_ = b_set_plot;
+	b_use_dib_ = b_set_plot; //TRUE = use DIB array to draw curves FALSE: do not use it
 }
 
 void ChartWnd::Serialize(CArchive& ar)
