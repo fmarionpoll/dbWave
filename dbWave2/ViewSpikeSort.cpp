@@ -896,7 +896,8 @@ void ViewSpikeSort::on_format_gain_adjust()
 {
 	// adjust gain
 	short maxvalue, minvalue;
-	GetDocument()->get_max_min_of_all_spikes(b_all_files, TRUE, maxvalue, minvalue);
+	if (!GetDocument()->get_max_min_of_all_spikes(b_all_files, TRUE, maxvalue, minvalue))
+		return;
 
 	auto y_we = MulDiv(maxvalue - minvalue + 1, 10, 9);
 	auto y_wo = (maxvalue + minvalue) / 2;
