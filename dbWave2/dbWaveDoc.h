@@ -78,7 +78,7 @@ public:
 	void	set_db_n_spikes(long n_spikes) const;
 	long	get_db_n_spike_classes() const;
 	void	set_db_n_spike_classes(long n_classes) const;
-	void	get_max_min_of_all_spikes(BOOL b_all_files, BOOL b_recalculate, short* max, short* min);
+	boolean	get_max_min_of_all_spikes(BOOL b_all_files, BOOL b_recalculate, short& max, short& min);
 	CSize	get_max_min_of_single_spike(BOOL b_all);
 
 	void	set_clean_db_on_exit(const BOOL b_clear) {clean_database_on_exit_ = b_clear; }

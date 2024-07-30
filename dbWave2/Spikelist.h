@@ -75,7 +75,7 @@ public:
 	int get_classes_count() const {return  class_descriptors_.GetCount();}
 	int get_class_id(const int i) const { return class_descriptors_.GetAt(i).get_class_id();}
 	void set_class_id(const int i, const int id) { class_descriptors_.GetAt(i).set_class_id(id); }
-	int add_class_id(const int id);
+	int add_class_id(int id);
 
 	int get_class_n_items(const int i) const { return class_descriptors_.GetAt(i).get_n_items(); }
 	void set_class_n_items(const int i, int n_spikes) { class_descriptors_.GetAt(i).set_n_items(n_spikes); }
@@ -118,8 +118,8 @@ public:
 	void measure_case2_amplitude_at_t2_minus_at_t1(int t1, int t2);
 	CSize measure_y1_max_min();
 
-	BOOL sort_spike_with_y1(CSize from_class_ID_to_class_ID, CSize time_bounds, CSize limits);
-	BOOL sort_spike_with_y1_and_y2(CSize from_class_ID_to_class_ID, CSize time_bounds, CSize limits1, CSize limits2);
+	BOOL sort_spike_with_y1(CSize from_class_id_to_class_id, CSize time_bounds, CSize limits);
+	BOOL sort_spike_with_y1_and_y2(CSize from_class_id_to_class_id, CSize time_bounds, CSize limits1, CSize limits2);
 
 	int get_valid_spike_number(int spike_index) const;
 	int get_next_spike(int spike_index, int delta, BOOL b_keep_same_class) ;

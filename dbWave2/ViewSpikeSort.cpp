@@ -629,9 +629,9 @@ void ViewSpikeSort::save_windows_properties_to_options()
 	options_view_data_->spksort1bars = *chart_spike_bar_.get_scope_parameters();
 }
 
-LRESULT ViewSpikeSort::on_my_message(WPARAM code, LPARAM lParam)
+LRESULT ViewSpikeSort::on_my_message(WPARAM code, LPARAM l_param)
 {
-	const short short_value = LOWORD(lParam);
+	const short short_value = LOWORD(l_param);
 	switch (code)
 	{
 	case HINT_SETMOUSECURSOR: 
@@ -655,16 +655,16 @@ LRESULT ViewSpikeSort::on_my_message(WPARAM code, LPARAM lParam)
 		break;
 
 	case HINT_CHANGEVERTTAG: 
-		if (HIWORD(lParam) == IDC_DISPLAYSPIKE)
+		if (HIWORD(l_param) == IDC_DISPLAYSPIKE)
 			change_vertical_tag_spike_shape(short_value);
-		else if (HIWORD(lParam) == IDC_HISTOGRAM)
+		else if (HIWORD(l_param) == IDC_HISTOGRAM)
 			change_vertical_tag_histogram(short_value);
-		else if (HIWORD(lParam) == IDC_DISPLAYPARM)
+		else if (HIWORD(l_param) == IDC_DISPLAYPARM)
 			change_vertical_tag_xy_chart(short_value);
 		break;
 
 	case HINT_CHANGEHZTAG: // -------------  horizontal tag
-		if (HIWORD(lParam) == IDC_DISPLAYPARM)
+		if (HIWORD(l_param) == IDC_DISPLAYPARM)
 			change_horizontal_tag_xy_chart(short_value);
 		break;
 
@@ -828,7 +828,7 @@ void ViewSpikeSort::on_format_all_data()
 		l_first_ = 0;
 		l_last_ = m_pSpkDoc->get_acq_size() - 1;
 
-		if (spike_classification_parameters_->i_parameter != 4) // then, we need imax imin ...
+		if (spike_classification_parameters_->i_parameter != 4) // then, we need imax i_min ...
 			chart_xt_measures_.set_time_intervals(l_first_, l_last_);
 		else
 			chart_xt_measures_.set_time_intervals(-m_pSpkList->get_spike_length(), m_pSpkList->get_spike_length());
@@ -896,7 +896,7 @@ void ViewSpikeSort::on_format_gain_adjust()
 {
 	// adjust gain
 	short maxvalue, minvalue;
-	GetDocument()->get_max_min_of_all_spikes(b_all_files, TRUE, &maxvalue, &minvalue);
+	GetDocument()->get_max_min_of_all_spikes(b_all_files, TRUE, maxvalue, minvalue);
 
 	auto y_we = MulDiv(maxvalue - minvalue + 1, 10, 9);
 	auto y_wo = (maxvalue + minvalue) / 2;
@@ -1115,7 +1115,7 @@ void ViewSpikeSort::on_tools_align_spikes()
 	const auto method = m_pSpkList->get_detection_parameters()->extract_transform;
 	const auto spike_pre_trigger = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
 	const int offset = (method > 0) ? 1 : number_channels; 
-	const int span = p_dat_doc->get_transformed_data_span(method); 
+	const int span = AcqDataDoc::get_transformed_data_span(method); 
 
 	// pre-load data
 	auto ii_time0 = m_pSpkList->get_spike(0)->get_time(); 
@@ -1229,17 +1229,17 @@ void ViewSpikeSort::on_tools_align_spikes()
 	on_measure();
 }
 
-void ViewSpikeSort::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void ViewSpikeSort::OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar)
 {
 	// view scroll: if pointer null
-	if (pScrollBar == nullptr)
+	if (p_scroll_bar == nullptr)
 	{
-		dbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
+		dbTableView::OnHScroll(n_sb_code, n_pos, p_scroll_bar);
 		return;
 	}
 	// trap messages from ScrollBarEx
 	CString cs;
-	switch (nSBCode)
+	switch (n_sb_code)
 	{
 	case SB_THUMBTRACK:
 	case SB_THUMBPOSITION:
@@ -1249,7 +1249,7 @@ void ViewSpikeSort::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		break;
 
 	default:
-		scroll_file(nSBCode, nPos);
+		scroll_file(n_sb_code, n_pos);
 		break;
 	}
 	update_legends();
@@ -1631,7 +1631,7 @@ void ViewSpikeSort::on_en_change_n_bins()
 		const auto delta = (xy_max_amplitude_mv - xy_min_amplitude_mv) / 10.f;
 		mm_mv_bin_.OnEnChange(this, histogram_bin_size_mv, delta, -delta);
 
-		if (histogram_bin_size_mv != bin_mv)
+		if (histogram_bin_size_mv > bin_mv || histogram_bin_size_mv < bin_mv)
 		{
 			build_histogram();
 			update_legends();

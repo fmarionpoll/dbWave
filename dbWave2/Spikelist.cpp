@@ -529,7 +529,7 @@ int SpikeList::add_spike(short* source_data, const int n_channels, const long ii
 			short max, min;
 			int i_max, i_min;
 			se->measure_max_min_ex(&max, &i_max, &min, &i_min, 0, spike_length_-1);
-			se->set_max_min_ex(max, min, i_min - i_max);
+			se->set_max_min_ex(max, min, static_cast<short>(i_min - i_max));
 		}
 	}
 	return index_added_spike;
@@ -891,7 +891,7 @@ void SpikeList::measure_case0_amplitude_min_to_max(const int t1, const int t2)
 			}
 		}
 
-		spike_element->set_max_min_ex(max, min, min_index - max_index);
+		spike_element->set_max_min_ex(static_cast<short>(max), static_cast<short>(min), static_cast<short>(min_index - max_index));
 		spike_element->set_y1(max - min);
 	}
 }
@@ -941,12 +941,12 @@ CSize SpikeList::measure_y1_max_min()
 	return {max, min};
 }
 
-BOOL SpikeList::sort_spike_with_y1(const CSize from_class_ID_to_class_ID, const CSize time_bounds, const CSize limits)
+BOOL SpikeList::sort_spike_with_y1(const CSize from_class_id_to_class_id, const CSize time_bounds, const CSize limits)
 {
 	const auto n_spikes = get_spikes_count();
 
-	const auto from_class = from_class_ID_to_class_ID.cx;
-	const auto to_class = from_class_ID_to_class_ID.cy;
+	const auto from_class = from_class_id_to_class_id.cx;
+	const auto to_class = from_class_id_to_class_id.cy;
 	const auto first = time_bounds.cx;
 	const auto last = time_bounds.cy;
 	const int upper = limits.cy;
@@ -972,13 +972,13 @@ BOOL SpikeList::sort_spike_with_y1(const CSize from_class_ID_to_class_ID, const 
 	return b_changed;
 }
 
-BOOL SpikeList::sort_spike_with_y1_and_y2(const CSize from_class_ID_to_class_ID, const CSize time_bounds, const CSize limits1,
+BOOL SpikeList::sort_spike_with_y1_and_y2(const CSize from_class_id_to_class_id, const CSize time_bounds, const CSize limits1,
                                       const CSize limits2)
 {
 	const auto n_spikes = get_spikes_count();
 
-	const auto from_class = from_class_ID_to_class_ID.cx;
-	const auto to_class = from_class_ID_to_class_ID.cy;
+	const auto from_class = from_class_id_to_class_id.cx;
+	const auto to_class = from_class_id_to_class_id.cy;
 	const auto first = time_bounds.cx;
 	const auto last = time_bounds.cy;
 	const int upper1 = limits1.cy;

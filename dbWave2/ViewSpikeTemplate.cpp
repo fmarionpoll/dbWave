@@ -502,7 +502,7 @@ void ViewSpikeTemplates::OnFormatAlldata()
 void ViewSpikeTemplates::OnFormatGainadjust()
 {
 	short maxvalue, minvalue;
-	GetDocument()->get_max_min_of_all_spikes(m_b_all_files, TRUE, &maxvalue, &minvalue);
+	GetDocument()->get_max_min_of_all_spikes(m_b_all_files, TRUE, maxvalue, minvalue);
 	const auto extent = MulDiv(maxvalue - minvalue + 1, 10, 9);
 	const auto zero = (maxvalue + minvalue) / 2;
 
@@ -512,7 +512,7 @@ void ViewSpikeTemplates::OnFormatGainadjust()
 void ViewSpikeTemplates::OnFormatCentercurve()
 {
 	short maxvalue, minvalue;
-	GetDocument()->get_max_min_of_all_spikes(m_b_all_files, TRUE, &maxvalue, &minvalue);
+	GetDocument()->get_max_min_of_all_spikes(m_b_all_files, TRUE, maxvalue, minvalue);
 	const auto extent = m_chart_spk_wnd_shape_.get_yw_extent();
 	const auto zero = (maxvalue + minvalue) / 2;
 	set_extent_zero_all_display(extent, zero);
