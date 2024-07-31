@@ -586,7 +586,6 @@ void ChartSpikeHist::build_hist_from_spike_list(SpikeList* p_spk_list, const lon
 void ChartSpikeHist::build_hist_from_document(CdbWaveDoc* p_document, const BOOL b_all_files, const long l_first, const long l_last,
                                               const double max_mv, const double min_mv, const double bin_mv, BOOL b_new)
 {
-	// erase data and arrays if b_new:
 	if (b_new)
 	{
 		clear_data();
@@ -594,18 +593,10 @@ void ChartSpikeHist::build_hist_from_document(CdbWaveDoc* p_document, const BOOL
 	}
 
 	dbwave_doc_ = p_document;
+	constexpr auto file_first = 0;
+	const auto file_last = b_all_files ? p_document->db_get_n_records() : 1;
 
-	auto current_file = 0;
-	auto file_first = current_file;
-	auto file_last = current_file;
-	if (b_all_files)
-	{
-		file_first = 0;
-		file_last = p_document->db_get_n_records() - 1;
-		current_file = p_document->db_get_current_record_position();
-	}
-
-	for (auto i_file = file_first; i_file <= file_last; i_file++)
+	for (auto i_file = file_first; i_file < file_last; i_file++)
 	{
 		if (b_all_files)
 		{
@@ -619,51 +610,6 @@ void ChartSpikeHist::build_hist_from_document(CdbWaveDoc* p_document, const BOOL
 				build_hist_from_spike_list(p_spike_list, l_first, l_last, max_mv, min_mv, bin_mv, b_new);
 		}
 	}
-
-	if (b_all_files)
-	{
-		if (p_document->db_set_current_record_position(current_file))
-			p_document->open_current_spike_file();
-	}
 }
 
 
-void ChartSpikeHist::build_hist_from_document2(CdbWaveDoc* p_document, const BOOL b_all_files, 
-						const long l_first, const long l_last,
-						const double max, const double min, BOOL b_new)
-{
-	if (b_new)
-	{
-		clear_data();
-		b_new = false;
-	}
-
-	dbwave_doc_ = p_document;
-	const long n_files = b_all_files ? dbwave_doc_->db_get_n_records() : 1;
-	int current_spike_list_index = -1;
-	if (p_document->m_p_spk != nullptr)
-		current_spike_list_index = dbwave_doc_->m_p_spk->get_spike_list_current_index();
-	const int n_bins = histogram_n_bins_;
-
-	for (auto i_file = 0; i_file < n_files; i_file++)
-	{
-		if (b_all_files)
-		{
-			if (dbwave_doc_->db_set_current_record_position(i_file))
-				dbwave_doc_->open_current_spike_file();
-			if (dbwave_doc_->m_p_spk == nullptr)
-				continue;
-			if (current_spike_list_index < 0)
-				current_spike_list_index = dbwave_doc_->m_p_spk->get_spike_list_current_index();
-			dbwave_doc_->m_p_spk->set_spike_list_current_index(current_spike_list_index);
-		}
-
-		if (p_document->m_p_spk != nullptr)
-		{
-			SpikeList* p_spike_list = p_document->m_p_spk->get_spike_list_current();
-			if (p_spike_list != nullptr && p_spike_list->get_spikes_count() > 0)
-				build_hist_from_spike_list(p_spike_list, l_first, l_last, max, min, n_bins, b_new);
-		}
-	}
-
-}

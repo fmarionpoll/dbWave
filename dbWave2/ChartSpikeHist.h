@@ -22,13 +22,13 @@ public:
 protected:
 	CArray<CDWordArray*, CDWordArray*> histogram_array_; 
 
-	double histogram_min_mv_ = 0; 
-	double histogram_max_mv_ = 0; 
-	double histogram_bin_mv_ = 1;
+	double histogram_min_mv_ = 0.; 
+	double histogram_max_mv_ = 0.; 
+	double histogram_bin_mv_ = 0.1;
 	int histogram_n_bins_ = 0;
 
-	DWORD l_max_{}; // value max
-	int i_max_{}; // index max
+	DWORD l_max_{}; 
+	int i_max_{}; 
 	int i_first_{}; // index first interval with data
 	int i_last_{}; // index last interval with data
 
@@ -42,9 +42,7 @@ public:
 
 	void build_hist_from_document(CdbWaveDoc* p_document, BOOL b_all_files, long l_first, long l_last, 
 								double max_mv, double min_mv, double bin_mv, BOOL b_new);
-	void build_hist_from_document2(CdbWaveDoc* p_document, BOOL b_all_files, long l_first, long l_last, double max,
-	                               double min,
-	                              BOOL b_new);
+
 	void clear_data();
 	LPTSTR export_ascii(LPTSTR lp);
 	void move_vt_tag_to_val(int tag_index, int value);

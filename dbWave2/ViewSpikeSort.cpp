@@ -840,14 +840,11 @@ void ViewSpikeSort::build_histogram()
 	const auto pdb_doc = GetDocument();
 	if (pdb_doc == nullptr)
 		return;
-	// TODO histogram should be independent of max min, it should depend only on bin size and on starting point - what is displayed from histogram however is different
-	const auto delta = m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
-	m_measure_y1_max_ = static_cast<int>(xy_max_amplitude_mv / delta);
-	m_measure_y1_min_ = static_cast<int>(xy_min_amplitude_mv / delta);
-	const int n_bins = static_cast<int>((xy_max_amplitude_mv - xy_min_amplitude_mv) / histogram_bin_mv);
-	if (n_bins <= 0)
-		return;
-	chart_histogram_.build_hist_from_document(pdb_doc, b_all_files, l_first_, l_last_, m_measure_y1_max_, m_measure_y1_min_, n_bins, TRUE);
+
+	//chart_histogram_.build_hist_from_document(pdb_doc, b_all_files, l_first_, l_last_, 
+	//	xy_max_amplitude_mv, xy_min_amplitude_mv, histogram_bin_mv, TRUE);
+	chart_histogram_.build_hist_from_document(pdb_doc, b_all_files, l_first_, l_last_,
+		static_cast<double>(10.), static_cast<double>(0.), histogram_bin_mv, TRUE);
 }
 
 void ViewSpikeSort::on_format_center_curve()
