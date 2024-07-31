@@ -34,11 +34,11 @@ ChartSpikeHist::~ChartSpikeHist()
 
 void ChartSpikeHist::delete_histogram_data()
 {
-	if (histogram_ptr_array.GetSize() > 0) 
+	if (histogram_ptr_array_.GetSize() > 0) 
 	{
-		for (auto i = histogram_ptr_array.GetUpperBound(); i >= 0; i--)
-			delete histogram_ptr_array[i];
-		histogram_ptr_array.RemoveAll();
+		for (auto i = histogram_ptr_array_.GetUpperBound(); i >= 0; i--)
+			delete histogram_ptr_array_[i];
+		histogram_ptr_array_.RemoveAll();
 	}
 }
 
@@ -88,9 +88,9 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	}
 
 	//loop to display all histograms (but not the selected one)
-	for (auto i_histogram = 0; i_histogram < histogram_ptr_array.GetSize(); i_histogram++)
+	for (auto i_histogram = 0; i_histogram < histogram_ptr_array_.GetSize(); i_histogram++)
 	{
-		const auto p_dw = histogram_ptr_array.GetAt(i_histogram);
+		const auto p_dw = histogram_ptr_array_.GetAt(i_histogram);
 		if (0 == p_dw->GetSize())
 			continue;
 
@@ -177,11 +177,11 @@ void ChartSpikeHist::get_class_array(const int i_class, CDWordArray*& p_dw)
 
 	// not found, scan the array
 	p_dw = nullptr;
-	for (auto i = 1; i < histogram_ptr_array.GetSize(); i++)
+	for (auto i = 1; i < histogram_ptr_array_.GetSize(); i++)
 	{
-		if (static_cast<int>((histogram_ptr_array[i])->GetAt(0)) == i_class)
+		if (static_cast<int>((histogram_ptr_array_[i])->GetAt(0)) == i_class)
 		{
-			p_dw = histogram_ptr_array[i];
+			p_dw = histogram_ptr_array_[i];
 			break;
 		}
 	}
@@ -190,21 +190,21 @@ void ChartSpikeHist::get_class_array(const int i_class, CDWordArray*& p_dw)
 LPTSTR ChartSpikeHist::export_ascii(LPTSTR lp)
 {
 	// print all ordinates line-by-line, different classes on same line
-	lp += wsprintf(lp, _T("Histogram\nn_bins=%i\nnclasses=%i"), n_bins_, histogram_ptr_array.GetSize());
+	lp += wsprintf(lp, _T("Histogram\nn_bins=%i\nnclasses=%i"), n_bins_, histogram_ptr_array_.GetSize());
 	lp += wsprintf(lp, _T("\nmax=%i\nmin=%i"), abscissa_max_value_, abscissa_min_value_);
 	// export classes & points
 	lp += wsprintf(lp, _T("classes;\n"));
 	int i;
-	for (i = 0; i < histogram_ptr_array.GetSize(); i++)
-		lp += wsprintf(lp, _T("%i\t"), static_cast<int>((histogram_ptr_array[i])->GetAt(0)));
+	for (i = 0; i < histogram_ptr_array_.GetSize(); i++)
+		lp += wsprintf(lp, _T("%i\t"), static_cast<int>((histogram_ptr_array_[i])->GetAt(0)));
 	lp--; // erase \t and replace with \n
 
 	// loop through all points
 	lp += wsprintf(lp, _T("\nvalues;\n"));
 	for (auto j = 1; j <= n_bins_; j++)
 	{
-		for (i = 0; i < histogram_ptr_array.GetSize(); i++)
-			lp += wsprintf(lp, _T("%i\t"), static_cast<int>((histogram_ptr_array[i])->GetAt(j)));
+		for (i = 0; i < histogram_ptr_array_.GetSize(); i++)
+			lp += wsprintf(lp, _T("%i\t"), static_cast<int>((histogram_ptr_array_[i])->GetAt(j)));
 		lp--; // erase \t and replace with \n
 		lp += wsprintf(lp, _T("\n"));
 	}
@@ -212,13 +212,13 @@ LPTSTR ChartSpikeHist::export_ascii(LPTSTR lp)
 	return lp;
 }
 
-void ChartSpikeHist::OnLButtonUp(UINT nFlags, CPoint point)
+void ChartSpikeHist::OnLButtonUp(UINT n_flags, CPoint point)
 {
 	// test if horizontal tag was tracked
 	switch (track_mode_)
 	{
 	case TRACK_HZTAG:
-		left_button_up_horizontal_tag(nFlags, point);
+		left_button_up_horizontal_tag(n_flags, point);
 		break;
 
 	case TRACK_VTTAG:
@@ -229,17 +229,17 @@ void ChartSpikeHist::OnLButtonUp(UINT nFlags, CPoint point)
 			vertical_tags.set_tag_val(hc_trapped_, val);
 			point.x = MulDiv(val - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_;
 			xor_vertical_tag(point.x);
-			ChartSpike::OnLButtonUp(nFlags, point);
+			ChartSpike::OnLButtonUp(n_flags, point);
 			post_my_message(HINT_CHANGEVERTTAG, hc_trapped_);
 		}
 		break;
 
 	case TRACK_RECT:
 		{
-			ChartSpike::OnLButtonUp(nFlags, point); // else release mouse
+			ChartSpike::OnLButtonUp(n_flags, point); // else release mouse
 
 			// none: zoom data or offset display
-			ChartSpike::OnLButtonUp(nFlags, point);
+			ChartSpike::OnLButtonUp(n_flags, point);
 			CRect rect_out(m_pt_first_.x, m_pt_first_.y, m_pt_last_.x, m_pt_last_.y);
 			constexpr int jitter = 3;
 			if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
@@ -378,11 +378,11 @@ int ChartSpikeHist::hit_curve(const CPoint point)
 	{
 		auto i_hist = 1;
 		// get array corresponding to selected_class_ as well as histogram index
-		for (auto i = 1; i < histogram_ptr_array.GetSize(); i++)
+		for (auto i = 1; i < histogram_ptr_array_.GetSize(); i++)
 		{
-			if (static_cast<int>((histogram_ptr_array[i])->GetAt(0)) == selected_class_)
+			if (static_cast<int>((histogram_ptr_array_[i])->GetAt(0)) == selected_class_)
 			{
-				p_dw = histogram_ptr_array[i];
+				p_dw = histogram_ptr_array_[i];
 				i_hist = i;
 				break;
 			}
@@ -405,9 +405,9 @@ int ChartSpikeHist::hit_curve(const CPoint point)
 	// test other histograms
 	if (plot_mode_ != PLOT_ONE_CLASS_ONLY && hit_spk < 0)
 	{
-		for (auto j_hist = 1; j_hist < histogram_ptr_array.GetSize() && hit_spk < 0; j_hist++)
+		for (auto j_hist = 1; j_hist < histogram_ptr_array_.GetSize() && hit_spk < 0; j_hist++)
 		{
-			p_dw = histogram_ptr_array.GetAt(j_hist);
+			p_dw = histogram_ptr_array_.GetAt(j_hist);
 			if (plot_mode_ == PLOT_ONE_CLASS && static_cast<int>(p_dw->GetAt(0)) == selected_class_)
 				continue;
 			for (auto i = mouse_x1; i <= mouse_x2; i++)
@@ -444,14 +444,14 @@ void ChartSpikeHist::get_extents()
 void ChartSpikeHist::get_histogram_limits(const int i_hist)
 {
 	// for some unknown reason, m_p_Hist_array is set at zero when arriving here
-	if (histogram_ptr_array.GetSize() <= 0)
+	if (histogram_ptr_array_.GetSize() <= 0)
 	{
 		const auto p_dw = new (CDWordArray); // init array
 		ASSERT(p_dw != NULL);
-		histogram_ptr_array.Add(p_dw); // save pointer to this new array
-		ASSERT(histogram_ptr_array.GetSize() > 0);
+		histogram_ptr_array_.Add(p_dw); // save pointer to this new array
+		ASSERT(histogram_ptr_array_.GetSize() > 0);
 	}
-	const auto p_dw = histogram_ptr_array[i_hist];
+	const auto p_dw = histogram_ptr_array_[i_hist];
 	if (p_dw->GetSize() <= 1)
 		return;
 
@@ -485,18 +485,18 @@ void ChartSpikeHist::resize_and_clear_histograms(const int n_bins, const int max
 	abscissa_max_value_ = min + n_bins * bin_size_; 
 
 	n_bins_ = n_bins;
-	for (auto j = histogram_ptr_array.GetUpperBound(); j >= 0; j--)
+	for (auto j = histogram_ptr_array_.GetUpperBound(); j >= 0; j--)
 	{
-		const auto p_dw = histogram_ptr_array[j];
+		const auto p_dw = histogram_ptr_array_[j];
 		p_dw->SetSize(n_bins + 1);
 		for (auto i = 1; i <= n_bins; i++)
 			p_dw->SetAt(i, 0);
 	}
 }
 
-void ChartSpikeHist::OnSize(UINT nType, int cx, int cy)
+void ChartSpikeHist::OnSize(UINT n_type, int cx, int cy)
 {
-	ChartSpike::OnSize(nType, cx, cy);
+	ChartSpike::OnSize(n_type, cx, cy);
 	m_y_vo_ = cy;
 }
 
@@ -504,7 +504,7 @@ CDWordArray* ChartSpikeHist::init_class_array(const int n_bins, const int spike_
 {
 	auto p_dw = new (CDWordArray);
 	ASSERT(p_dw != NULL);
-	histogram_ptr_array.Add(p_dw); // save pointer to this new array
+	histogram_ptr_array_.Add(p_dw); // save pointer to this new array
 	p_dw->SetSize(n_bins + 1);
 	for (auto j = 1; j <= n_bins; j++)
 		p_dw->SetAt(j, 0);
@@ -519,14 +519,14 @@ void ChartSpikeHist::build_hist_from_spike_list(SpikeList* p_spk_list, const lon
 	if (b_new)
 		delete_histogram_data();
 
-	if (histogram_ptr_array.GetSize() <= 0)
+	if (histogram_ptr_array_.GetSize() <= 0)
 	{
 		const auto p_dword_array = new (CDWordArray);
 		ASSERT(p_dword_array != NULL);
-		histogram_ptr_array.Add(p_dword_array);
-		ASSERT(histogram_ptr_array.GetSize() > 0);
+		histogram_ptr_array_.Add(p_dword_array);
+		ASSERT(histogram_ptr_array_.GetSize() > 0);
 	}
-	auto* p_dword_array = histogram_ptr_array[0];
+	auto* p_dword_array = histogram_ptr_array_[0];
 	if (n_bins == 0)
 	{
 		return;

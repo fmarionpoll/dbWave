@@ -92,8 +92,8 @@ public:
 
 	WORD get_acq_encoding() const { return data_encoding_mode_; }
 	float get_acq_sampling_rate() const { return sampling_rate_; }
-	float get_acq_volts_per_bin() const { return volts_per_bin_; }
 	int get_acq_bin_zero() const { return bin_zero_; }
+	float get_acq_volts_per_bin() const { return volts_per_bin_; }
 
 	void set_detection_parameters(const SPKDETECTPARM* p_sd) { spk_detect_parameters_ = *p_sd; }
 	SPKDETECTPARM* get_detection_parameters() { return &spk_detect_parameters_; }
@@ -101,7 +101,7 @@ public:
 	int add_spike(short* source_data, int n_channels, long ii_time, int source_channel, int i_class, BOOL b_check);
 
 	int  get_spike_length() const { return spike_length_; }
-	void set_spike_length(int spike_length) { spike_length_ = spike_length; }
+	void set_spike_length(const int spike_length) { spike_length_ = spike_length; }
 
 	int remove_spike(int spike_index);
 	BOOL is_any_spike_around(long ii_time, int jitter, int& spike_index, int channel_index);

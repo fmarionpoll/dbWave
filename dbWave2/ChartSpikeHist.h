@@ -3,11 +3,11 @@
 // ChartSpikeHist build, stores and display a list of histograms
 // each histogram has the same abscissa limits (same nb of bins also)
 // they are intended to store and display histograms of parameters measured
-// from spike classes and follow the same display conventions as CSpikFormButton
-// and CSpikBarsButton.
+// from spike classes and follow the same display conventions as CSpikeFormButton
+// and CSpikeBarsButton.
 // one histogram (DWORD array) is composed of
 //		index 0 = "class" index (int)
-//		index 1 to nbins = data
+//		index 1 to n_bins = data
 
 #include "ChartSpike.h"
 #include "dbWaveDoc.h"
@@ -20,7 +20,7 @@ public:
 	~ChartSpikeHist() override;
 
 protected:
-	CArray<CDWordArray*, CDWordArray*> histogram_ptr_array; // array of DWord array containing histogram
+	CArray<CDWordArray*, CDWordArray*> histogram_ptr_array_; // array of DWord array containing histogram
 
 	int bin_size_{}; // size of one bin
 	int abscissa_min_value_ = 0; // minimum value from which histogram is built (abscissa)
@@ -64,10 +64,10 @@ public:
 	void plot_data_to_dc(CDC* p_dc) override;
 
 protected:
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point) override;
+	afx_msg void OnLButtonUp(UINT n_flags, CPoint point) override;
 	afx_msg void OnLButtonDown(UINT n_flags, CPoint point) override;
 	afx_msg void OnLButtonDblClk(UINT n_flags, CPoint point) override;
-	afx_msg void OnSize(UINT nType, int cx, int cy) override;
+	afx_msg void OnSize(UINT n_type, int cx, int cy) override;
 
 	DECLARE_MESSAGE_MAP()
 };

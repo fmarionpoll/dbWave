@@ -33,7 +33,7 @@ public:
 
 	float histogram_lower_threshold { 0.f };
 	float histogram_upper_threshold {1.f};
-	float histogram_bin_size_mv{ 0.01f };
+	float histogram_bin_mv{ 0.1f };
 
 	int sort_source_class {0};
 	int sort_destination_class {0};
@@ -71,7 +71,7 @@ protected:
 	CEditCtrl mm_spike_index_class_;
 	CEditCtrl mm_t_xy_right_;
 	CEditCtrl mm_t_xy_left_;
-	CEditCtrl mm_mv_bin_;
+	CEditCtrl mm_histogram_bin_mv_;
 
 	ScrollBarEx m_file_scroll_; 
 	SCROLLINFO m_file_scroll_infos_{}; 

@@ -443,8 +443,7 @@ Spike* CdbWaveDoc::get_spike(const db_spike& spike_coords)
 boolean CdbWaveDoc::get_max_min_of_all_spikes(const BOOL b_all_files, const BOOL b_recalculate, short& max, short& min)
 {
 	boolean spikes_found = false;
-	const long n_files = b_all_files ? 1: db_get_n_records();
-	long n_current_file = db_get_current_record_position();
+	const long n_files = b_all_files ? db_get_n_records() : 1;
 	const int current_spike_list_index = m_p_spk->m_current_spike_list;
 
 	for (long i_file = 0; i_file < n_files; i_file++)
@@ -477,13 +476,6 @@ boolean CdbWaveDoc::get_max_min_of_all_spikes(const BOOL b_all_files, const BOOL
 		}
 	}
 
-	//if (b_all_files)
-	//{
-	//	if (db_set_current_record_position(n_current_file))
-	//		open_current_spike_file();
-	//	if (m_p_spk != nullptr)
-	//		m_p_spk->set_spike_list_as_current(0);
-	//}
 	return spikes_found;
 }
 

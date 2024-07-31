@@ -49,7 +49,7 @@ void ViewSpikeSort::DoDataExchange(CDataExchange* p_dx)
 	DDX_Text(p_dx, IDC_EDIT3, display_bars_time_last);
 	DDX_Text(p_dx, IDC_EDIT_MAX_MV, xy_max_amplitude_mv);
 	DDX_Text(p_dx, IDC_EDIT_MIN_MV, xy_min_amplitude_mv);
-	DDX_Text(p_dx, IDC_BINMV, histogram_bin_size_mv);
+	DDX_Text(p_dx, IDC_BINMV, histogram_bin_mv);
 	DDX_Check(p_dx, IDC_CHECK1, b_all_files);
 	DDX_Text(p_dx, IDC_NSPIKES, m_spike_index);
 	DDX_Text(p_dx, IDC_SPIKECLASS, m_spike_index_class);
@@ -115,7 +115,7 @@ void ViewSpikeSort::define_sub_classed_items()
 	VERIFY(mm_mv_min_.SubclassDlgItem(IDC_EDIT_MIN_MV, this));
 	VERIFY(mm_t_xy_right_.SubclassDlgItem(IDC_EDITRIGHT2, this));
 	VERIFY(mm_t_xy_left_.SubclassDlgItem(IDC_EDITLEFT2, this));
-	VERIFY(mm_mv_bin_.SubclassDlgItem(IDC_BINMV, this));
+	VERIFY(mm_histogram_bin_mv_.SubclassDlgItem(IDC_BINMV, this));
 
 	VERIFY(mm_spike_index_.SubclassDlgItem(IDC_NSPIKES, this));
 	mm_spike_index_.ShowScrollBar(SB_VERT);
@@ -858,11 +858,11 @@ void ViewSpikeSort::build_histogram()
 	const auto pdb_doc = GetDocument();
 	if (pdb_doc == nullptr)
 		return;
-
+	// TODO histogram should be independent of max min, it should depend only on bin size and on starting point - what is displayed from histogram however is different
 	const auto delta = m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
 	m_measure_y1_max_ = static_cast<int>(xy_max_amplitude_mv / delta);
 	m_measure_y1_min_ = static_cast<int>(xy_min_amplitude_mv / delta);
-	const int n_bins = static_cast<int>((xy_max_amplitude_mv - xy_min_amplitude_mv) / histogram_bin_size_mv);
+	const int n_bins = static_cast<int>((xy_max_amplitude_mv - xy_min_amplitude_mv) / histogram_bin_mv);
 	if (n_bins <= 0)
 		return;
 	chart_histogram_.build_hist_from_document(pdb_doc, b_all_files, l_first_, l_last_, m_measure_y1_max_, m_measure_y1_min_, n_bins, TRUE);
@@ -894,23 +894,17 @@ void ViewSpikeSort::on_format_split_curves()
 
 void ViewSpikeSort::on_format_gain_adjust()
 {
-	// adjust gain
+	// (1) search max min for spike display (shape, bar)
 	short maxvalue, minvalue;
 	if (!GetDocument()->get_max_min_of_all_spikes(b_all_files, TRUE, maxvalue, minvalue))
 		return;
-
 	auto y_we = MulDiv(maxvalue - minvalue + 1, 10, 9);
 	auto y_wo = (maxvalue + minvalue) / 2;
 	chart_spike_shape_.set_yw_ext_org(y_we, y_wo);
 	chart_spike_bar_.set_yw_ext_org(y_we, y_wo);
 	//chart_spike_bar_.MaxCenter();
 
-	// adjust gain for spk_hist_wnd_ and XYp: data = computed values
-	// search max min of parameter values
-	const CSize measure = GetDocument()->get_max_min_of_single_spike(b_all_files);
-	maxvalue = static_cast<short>(measure.cx);
-	minvalue = static_cast<short>(measure.cy);
-
+	// (2) search max min of parameter values (measures, histogram)
 	const auto delta = m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
 	const auto upper2 = static_cast<short>(histogram_upper_threshold / delta);
 	const auto lower2 = static_cast<short>(histogram_lower_threshold / delta);
@@ -920,19 +914,19 @@ void ViewSpikeSort::on_format_gain_adjust()
 		minvalue = lower2;
 	y_we = MulDiv(maxvalue - minvalue + 1, 10, 8);
 	y_wo = (maxvalue + minvalue) / 2;
-
-	// update display
 	chart_xt_measures_.set_yw_ext_org(y_we, y_wo);
-	const auto y_max = static_cast<int>(chart_histogram_.get_hist_max_value());
 	chart_histogram_.set_xw_ext_org(y_we, y_wo - y_we / 2);
-	chart_histogram_.set_yw_ext_org(MulDiv(y_max, 10, 8), 0);
-
-	// update edit controls
 	xy_max_amplitude_mv = static_cast<float>(maxvalue) * delta;
 	xy_min_amplitude_mv = static_cast<float>(minvalue) * delta;
+
+	// (3) adjust histogram
 	build_histogram();
+	const auto y_max = static_cast<int>(chart_histogram_.get_hist_max_value());
+	chart_histogram_.set_yw_ext_org(MulDiv(y_max, 10, 8), 0);
+
 	update_legends();
 }
+
 
 void ViewSpikeSort::select_spike(db_spike& spike_sel)
 {
@@ -1626,13 +1620,13 @@ void ViewSpikeSort::on_en_change_spike_class()
 
 void ViewSpikeSort::on_en_change_n_bins()
 {
-	if (mm_mv_bin_.m_bEntryDone)
+	if (mm_histogram_bin_mv_.m_bEntryDone)
 	{
-		const auto bin_mv = histogram_bin_size_mv;
+		const auto old_histogram_bin_mv = histogram_bin_mv;
 		const auto delta = (xy_max_amplitude_mv - xy_min_amplitude_mv) / 10.f;
-		mm_mv_bin_.OnEnChange(this, histogram_bin_size_mv, delta, -delta);
+		mm_histogram_bin_mv_.OnEnChange(this, histogram_bin_mv, delta, -delta);
 
-		if (histogram_bin_size_mv > bin_mv || histogram_bin_size_mv < bin_mv)
+		if (histogram_bin_mv > old_histogram_bin_mv || histogram_bin_mv < old_histogram_bin_mv)
 		{
 			build_histogram();
 			update_legends();
