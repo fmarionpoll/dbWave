@@ -28,7 +28,7 @@ public:
 
 	float get_display_max_mv();
 	float get_display_min_mv();
-	float get_extent_m_v();
+	float get_extent_mv();
 	float get_extent_ms();
 
 	void display_all_files(const BOOL b_on, CdbWaveDoc* p_document)

@@ -766,7 +766,7 @@ void ChartSpikeShape::Serialize(CArchive & ar)
 float ChartSpikeShape::get_display_max_mv()
 {
 	get_extents();
-	return (p_spike_list_->get_acq_volts_per_bin() * 1000.f * static_cast<float>(m_y_we_ - m_y_wo_ - p_spike_list_->get_acq_bin_zero()));
+	return (p_spike_list_->convert_to_mv(m_y_we_ - m_y_wo_ ));
 }
 
 float ChartSpikeShape::get_display_min_mv()
@@ -774,10 +774,10 @@ float ChartSpikeShape::get_display_min_mv()
 	if (p_spike_list_ == nullptr)
 		return 1.f;
 	get_extents();
-	return (p_spike_list_->get_acq_volts_per_bin() * 1000.f * static_cast<float>(m_y_wo_ - m_y_we_ - p_spike_list_->get_acq_bin_zero()));
+	return p_spike_list_->convert_to_mv(m_y_wo_ - m_y_we_ );
 }
 
-float ChartSpikeShape::get_extent_m_v()
+float ChartSpikeShape::get_extent_mv()
 {
 	if (p_spike_list_ == nullptr)
 		return 1.f;

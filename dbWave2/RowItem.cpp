@@ -161,7 +161,7 @@ void RowItem::get_zoom_x_shapes(int& we, int& wo) const
 float RowItem::get_zoom_y_shapes_mv() const
 {
 	if (chart_spike_shape_ == nullptr) return 0.f;
-	return chart_spike_shape_->get_extent_m_v();
+	return chart_spike_shape_->get_extent_mv();
 }
 
 void RowItem::select_individual_spike(const int no_spike) const

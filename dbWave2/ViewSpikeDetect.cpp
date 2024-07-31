@@ -1666,13 +1666,13 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 		const float x = m_chart_spike_shape.get_extent_ms() / static_cast<float>(m_chart_spike_shape.get_nx_scale_cells());
 		m_chart_spike_shape.set_x_scale_unit_value(x);
 
-		const float y = m_chart_spike_shape.get_extent_m_v() / static_cast<float>(m_chart_spike_shape.get_ny_scale_cells());
+		const float y = m_chart_spike_shape.get_extent_mv() / static_cast<float>(m_chart_spike_shape.get_ny_scale_cells());
 		m_chart_spike_shape.set_y_scale_unit_value(y);
 		
 	}
 	
 	CString dummy1;
-	dummy1.Format(_T("%.3lf"), m_chart_spike_shape.get_extent_m_v());
+	dummy1.Format(_T("%.3lf"), m_chart_spike_shape.get_extent_mv());
 	SetDlgItemText(IDC_SPIKEWINDOWAMPLITUDE, dummy1);
 
 	CString dummy2;
@@ -2255,7 +2255,7 @@ CString ViewSpikeDetection::PrintSpkShapeBars(CDC* p_dc, const CRect* rect, BOOL
 	{
 		// the following assume that spikes are higher than 1 mV...
 		const CString cs_unit = _T("mV");
-		z = m_chart_spike_shape.get_extent_m_v() / 2.0f; 
+		z = m_chart_spike_shape.get_extent_mv() / 2.0f; 
 		k = static_cast<int>(z); 
 		if ((static_cast<double>(z) - k) > 0.5)
 			k++;
@@ -2866,7 +2866,7 @@ void ViewSpikeDetection::OnEnChangeSpkWndAmplitude()
 {
 	if (mm_spkWndAmplitude.m_bEntryDone)
 	{
-		m_spkWndAmplitude = m_chart_spike_shape.get_extent_m_v();
+		m_spkWndAmplitude = m_chart_spike_shape.get_extent_mv();
 		const auto y_old = m_spkWndAmplitude;
 		CString cs;
 		mm_spkWndAmplitude.OnEnChange(this, m_spkWndAmplitude, 1.f, -1.f);

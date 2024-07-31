@@ -78,7 +78,7 @@ public:
 	int add_class_id(int id);
 
 	int get_class_n_items(const int i) const { return class_descriptors_.GetAt(i).get_n_items(); }
-	void set_class_n_items(const int i, int n_spikes) { class_descriptors_.GetAt(i).set_n_items(n_spikes); }
+	void set_class_n_items(const int i, const int n_spikes) { class_descriptors_.GetAt(i).set_n_items(n_spikes); }
 
 	int get_class_id_descriptor_index(int class_id);
 	int get_class_id_n_items(int class_id);
@@ -94,6 +94,7 @@ public:
 	float get_acq_sampling_rate() const { return sampling_rate_; }
 	int get_acq_bin_zero() const { return bin_zero_; }
 	float get_acq_volts_per_bin() const { return volts_per_bin_; }
+	float convert_to_mv (const int value) const { return volts_per_bin_ * 1000.f * static_cast<float>(value - bin_zero_); }
 
 	void set_detection_parameters(const SPKDETECTPARM* p_sd) { spk_detect_parameters_ = *p_sd; }
 	SPKDETECTPARM* get_detection_parameters() { return &spk_detect_parameters_; }
