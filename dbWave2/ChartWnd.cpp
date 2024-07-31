@@ -120,10 +120,10 @@ void ChartWnd::PreSubclassWindow()
 	// at this stage, assume that m_hWnd is valid
 	::GetClientRect(m_hWnd, &m_client_rect_);
 	adjust_display_rect(&m_client_rect_);
-	m_x_vo_ = m_display_rect_.left;
-	m_x_ve_ = m_display_rect_.Width();
-	m_y_vo_ = m_display_rect_.Height() / 2;
-	m_y_ve_ = -m_display_rect_.Height();
+	m_x_viewport_origin_ = m_display_rect_.left;
+	m_x_viewport_extent_ = m_display_rect_.Width();
+	m_y_viewport_origin_ = m_display_rect_.Height() / 2;
+	m_y_viewport_extent_ = -m_display_rect_.Height();
 }
 
 BEGIN_MESSAGE_MAP(ChartWnd, CWnd)
@@ -165,10 +165,10 @@ void ChartWnd::set_display_area_size(const int cx, const int cy)
 	m_client_rect_.bottom = cy;
 	m_client_rect_.right = cx;
 	adjust_display_rect(&m_client_rect_);
-	m_x_vo_ = m_display_rect_.left;
-	m_x_ve_ = m_display_rect_.Width();
-	m_y_vo_ = m_display_rect_.Height() / 2;
-	m_y_ve_ = -m_display_rect_.Height();
+	m_x_viewport_origin_ = m_display_rect_.left;
+	m_x_viewport_extent_ = m_display_rect_.Width();
+	m_y_viewport_origin_ = m_display_rect_.Height() / 2;
+	m_y_viewport_extent_ = -m_display_rect_.Height();
 }
 
 BOOL ChartWnd::OnEraseBkgnd(CDC* p_dc)
@@ -513,8 +513,8 @@ void ChartWnd::prepare_dc(CDC* p_dc, const CPrintInfo* p_info)
 	p_dc->SetMapMode(MM_ANISOTROPIC);
 	if (p_info == nullptr)
 	{
-		p_dc->SetViewportOrg(m_x_vo_, m_y_vo_);
-		p_dc->SetViewportExt(m_x_ve_, m_y_ve_);
+		p_dc->SetViewportOrg(m_x_viewport_origin_, m_y_viewport_origin_);
+		p_dc->SetViewportExt(m_x_viewport_extent_, m_y_viewport_extent_);
 		if (m_y_we_ == 0)
 			m_y_we_ = 1024;
 		if (m_x_we_ == 0)
@@ -679,7 +679,7 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 		if (point.y != m_pt_curr_.y)
 		{
 			m_pt_curr_ = point;
-			const auto val = MulDiv(point.y - m_y_vo_, m_y_we_, m_y_ve_) + m_y_wo_;
+			const auto val = MulDiv(point.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
 			xor_horizontal_tag(point.y);
 			horizontal_tags.set_tag_val(hc_trapped_, val);
 			post_my_message(HINT_MOVEHZTAG, hc_trapped_);
@@ -695,7 +695,7 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 			vertical_tags.set_tag_pixel(hc_trapped_, point.x);
 			if (!b_vertical_tags_as_long_)
 			{
-				const auto val = MulDiv(point.x - m_x_vo_, m_x_we_, m_x_ve_) + m_x_wo_;
+				const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
 				vertical_tags.set_tag_val(hc_trapped_, val);
 			}
 			else
@@ -754,10 +754,10 @@ void ChartWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 void ChartWnd::left_button_up_horizontal_tag(const UINT n_flags, CPoint point)
 {
 	// convert pix into data value
-	const auto data_value = MulDiv(m_pt_last_.y - m_y_vo_, m_y_we_, m_y_ve_) + m_y_wo_;
+	const auto data_value = MulDiv(m_pt_last_.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
 	horizontal_tags.set_tag_val(hc_trapped_, data_value);
 
-	point.y = MulDiv(data_value - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_;
+	point.y = MulDiv(data_value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
 	xor_horizontal_tag(point.y);
 	ChartWnd::OnLButtonUp(n_flags, point);
 	post_my_message(HINT_CHANGEHZTAG, hc_trapped_);
@@ -955,8 +955,8 @@ void ChartWnd::display_vertical_tags(CDC* p_dc)
 {
 	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
-	const auto y0 = MulDiv(0 - m_y_vo_, m_y_we_, m_y_ve_) + m_y_wo_;
-	const auto y1 = MulDiv(m_display_rect_.bottom - m_y_vo_, m_y_we_, m_y_ve_) + m_y_wo_;
+	const auto y0 = MulDiv(0 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+	const auto y1 = MulDiv(m_display_rect_.bottom - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
 
 	for (auto j = vertical_tags.get_tag_list_size() - 1; j >= 0; j--)
 	{
@@ -1066,10 +1066,10 @@ void ChartWnd::Serialize(CArchive& ar)
 		ar << m_y_wo_; // y origin, extent / window & view
 		ar << m_y_we_;
 
-		ar << m_x_vo_;
-		ar << m_x_ve_;
-		ar << m_y_vo_;
-		ar << m_y_ve_;
+		ar << m_x_viewport_origin_;
+		ar << m_x_viewport_extent_;
+		ar << m_y_viewport_origin_;
+		ar << m_y_viewport_extent_;
 	}
 	else
 	{
@@ -1081,10 +1081,10 @@ void ChartWnd::Serialize(CArchive& ar)
 		ar >> m_y_wo_; // y origin, extent / window & view
 		ar >> m_y_we_;
 
-		ar >> m_x_vo_;
-		ar >> m_x_ve_;
-		ar >> m_y_vo_;
-		ar >> m_y_ve_;
+		ar >> m_x_viewport_origin_;
+		ar >> m_x_viewport_extent_;
+		ar >> m_y_viewport_origin_;
+		ar >> m_y_viewport_extent_;
 	}
 	scope_structure_.Serialize(ar);
 }

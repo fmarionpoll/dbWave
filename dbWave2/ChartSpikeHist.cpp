@@ -56,7 +56,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	// load resources
 	CRect rect1;
 	GetWindowRect(rect1);
-	m_y_vo_ = rect1.Height();
+	m_y_viewport_origin_ = rect1.Height();
 
 	get_extents();
 	if (l_max_ == 0)
@@ -94,7 +94,6 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 		if (0 == p_dw->GetSize())
 			continue;
 
-		// select correct color
 		if (i_histogram > 0)
 		{
 			const auto spike_class = static_cast<int>(p_dw->GetAt(0));
@@ -120,17 +119,16 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 		CDWordArray* p_dw = nullptr;
 		get_class_array(selected_class_, p_dw);
 		if (p_dw != nullptr)
-		{
 			plot_histogram(p_dc, p_dw, color);
-		}
 	}
 
 	// display cursors
-	p_dc->SetBkColor(background_color); // restore background color
-	if (horizontal_tags.get_tag_list_size() > 0) // display horizontal tags
+	if (horizontal_tags.get_tag_list_size() > 0)
 		display_horizontal_tags(p_dc);
-	if (vertical_tags.get_tag_list_size() > 0) // display vertical tags
+	if (vertical_tags.get_tag_list_size() > 0) 
 		display_vertical_tags(p_dc);
+
+	p_dc->SetBkColor(background_color);
 	p_dc->RestoreDC(n_saved_dc);
 }
 
@@ -138,13 +136,18 @@ void ChartSpikeHist::plot_histogram(CDC* p_dc, const CDWordArray* p_dw, const in
 {
 	CRect rect_histogram;
 	double interval = histogram_min_mv_;
+	const double factor = static_cast<double>(m_x_we_) / (histogram_max_mv_ - histogram_min_mv_);
 	rect_histogram.bottom = 0;
+	rect_histogram.right = static_cast<int>((interval - histogram_min_mv_) * factor) + m_x_wo_;
+
 	for (auto i = 1; i < p_dw->GetSize(); i++)
 	{
-		rect_histogram.left = static_cast<int>(floor(interval / histogram_bin_mv_));
+		rect_histogram.left = rect_histogram.right;
 		interval += histogram_bin_mv_;
-		rect_histogram.right = static_cast<int>(floor(interval / histogram_bin_mv_));
+		rect_histogram.right = static_cast<int>((interval - histogram_min_mv_) * factor) + m_x_wo_;
+
 		rect_histogram.top = static_cast<int>(p_dw->GetAt(i));
+		//rect_histogram.top = i % 10;
 		if (rect_histogram.top > 0)
 		{
 			p_dc->MoveTo(rect_histogram.left, rect_histogram.bottom);
@@ -155,16 +158,16 @@ void ChartSpikeHist::plot_histogram(CDC* p_dc, const CDWordArray* p_dw, const in
 
 void ChartSpikeHist::move_hz_tag_to_val(const int tag_index, const int value)
 {
-	m_pt_last_.y = MulDiv(horizontal_tags.get_value(tag_index) - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_;
-	const auto j = MulDiv(value - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_;
+	m_pt_last_.y = MulDiv(horizontal_tags.get_value(tag_index) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+	const auto j = MulDiv(value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
 	xor_horizontal_tag(j);
 	horizontal_tags.set_tag_val(tag_index, value);
 }
 
-void ChartSpikeHist::move_vt_tag_to_val(const int tag_index, int value)
+void ChartSpikeHist::move_vt_tag_to_val(const int tag_index, const int value)
 {
-	m_pt_last_.x = MulDiv(vertical_tags.get_value(tag_index) - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_;
-	const auto j = MulDiv(value - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_;
+	m_pt_last_.x = MulDiv(vertical_tags.get_value(tag_index) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	const auto j = MulDiv(value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 	xor_vertical_tag(j);
 	vertical_tags.set_tag_val(tag_index, value);
 }
@@ -225,9 +228,9 @@ void ChartSpikeHist::OnLButtonUp(UINT n_flags, CPoint point)
 		// vertical tag was tracked
 		{
 			// convert pix into data value and back again
-			const auto val = MulDiv(point.x - m_x_vo_, m_x_we_, m_x_ve_) + m_x_wo_;
+			const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
 			vertical_tags.set_tag_val(hc_trapped_, val);
-			point.x = MulDiv(val - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_;
+			point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 			xor_vertical_tag(point.x);
 			ChartSpike::OnLButtonUp(n_flags, point);
 			post_my_message(HINT_CHANGEVERTTAG, hc_trapped_);
@@ -282,13 +285,13 @@ void ChartSpikeHist::OnLButtonDown(const UINT n_flags, const CPoint point)
 	if (horizontal_tags.get_tag_list_size() > 0)
 	{
 		for (auto i_cur = horizontal_tags.get_tag_list_size() - 1; i_cur >= 0; i_cur--)
-			horizontal_tags.set_tag_pixel(i_cur, MulDiv(horizontal_tags.get_value(i_cur) - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_);
+			horizontal_tags.set_tag_pixel(i_cur, MulDiv(horizontal_tags.get_value(i_cur) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_);
 	}
 	// compute pixel position of vertical tags
 	if (vertical_tags.get_tag_list_size() > 0)
 	{
 		for (auto i_cur = vertical_tags.get_tag_list_size() - 1; i_cur >= 0; i_cur--) // loop through all tags
-			vertical_tags.set_tag_pixel(i_cur, MulDiv(vertical_tags.get_value(i_cur) - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_);
+			vertical_tags.set_tag_pixel(i_cur, MulDiv(vertical_tags.get_value(i_cur) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_);
 	}
 
 	ChartSpike::OnLButtonDown(n_flags, point);
@@ -326,15 +329,15 @@ void ChartSpikeHist::zoom_data(CRect* r_from, CRect* r_dest)
 	const auto y_we = m_y_we_; // save previous window extent
 	m_y_we_ = MulDiv(m_y_we_, r_dest->Height(), r_from->Height());
 	m_y_wo_ = m_y_wo_
-		- MulDiv(r_from->top - m_y_vo_, m_y_we_, m_y_ve_)
-		+ MulDiv(r_dest->top - m_y_vo_, y_we, m_y_ve_);
+		- MulDiv(r_from->top - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_)
+		+ MulDiv(r_dest->top - m_y_viewport_origin_, y_we, m_y_viewport_extent_);
 
 	// change index of first and last pt displayed
 	const auto x_we = m_x_we_; // save previous window extent
 	m_x_we_ = MulDiv(m_x_we_, r_dest->Width(), r_from->Width());
 	m_x_wo_ = m_x_wo_
-		- MulDiv(r_from->left - m_x_vo_, m_x_we_, m_x_ve_)
-		+ MulDiv(r_dest->left - m_x_vo_, x_we, m_x_ve_);
+		- MulDiv(r_from->left - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_)
+		+ MulDiv(r_dest->left - m_x_viewport_origin_, x_we, m_x_viewport_extent_);
 
 	// display
 	Invalidate();
@@ -356,8 +359,8 @@ int ChartSpikeHist::hit_curve(const CPoint point)
 {
 	auto hit_spk = -1;
 	// convert device coordinates into logical coordinates
-	const auto delta_x = MulDiv(3, m_x_we_, m_x_ve_);
-	const auto mouse_x = MulDiv(point.x - m_x_vo_, m_x_we_, m_x_ve_) + m_x_wo_;
+	const auto delta_x = MulDiv(3, m_x_we_, m_x_viewport_extent_);
+	const auto mouse_x = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
 	auto mouse_x1 = mouse_x - delta_x;
 	auto mouse_x2 = mouse_x - delta_x;
 	if (mouse_x1 < 1)
@@ -369,8 +372,8 @@ int ChartSpikeHist::hit_curve(const CPoint point)
 	if (mouse_x2 > histogram_n_bins_)
 		mouse_x2 = histogram_n_bins_;
 
-	const auto delta_y = MulDiv(3, m_y_we_, m_y_ve_);
-	const auto mouse_y = static_cast<DWORD>(MulDiv(point.y - m_y_vo_, m_y_we_, m_y_ve_)) + m_y_wo_ + delta_y;
+	const auto delta_y = MulDiv(3, m_y_we_, m_y_viewport_extent_);
+	const auto mouse_y = static_cast<DWORD>(MulDiv(point.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_)) + m_y_wo_ + delta_y;
 
 	// test selected histogram first (foreground)
 	const CDWordArray* p_dw = nullptr;
@@ -512,7 +515,7 @@ void ChartSpikeHist::resize_histograms(const double bin_mv, const double max_mv,
 void ChartSpikeHist::OnSize(const UINT n_type, const int cx, const int cy)
 {
 	ChartSpike::OnSize(n_type, cx, cy);
-	m_y_vo_ = cy;
+	m_y_viewport_origin_ = cy;
 }
 
 CDWordArray* ChartSpikeHist::init_class_array(const int n_bins, const int spike_class)
@@ -529,12 +532,8 @@ CDWordArray* ChartSpikeHist::init_class_array(const int n_bins, const int spike_
 
 void ChartSpikeHist::build_hist_from_spike_list(SpikeList* p_spk_list, const long l_first, const long l_last, 
 												const double max_mv, const double min_mv,
-                                                const double bin_mv, const BOOL b_new)
+                                                const double bin_mv)
 {
-	if (b_new)
-		clear_data();
-
-	resize_histograms(bin_mv, max_mv, min_mv);
 	auto* p_dword_array = histogram_array_[0];
 
 	CDWordArray* p_dw = nullptr;
@@ -546,7 +545,7 @@ void ChartSpikeHist::build_hist_from_spike_list(SpikeList* p_spk_list, const lon
 		if (ii_time < l_first || ii_time > l_last)
 			continue;
 
-		const auto y1 = p_spk_list->convert_to_mv(spike_element->get_y1());
+		const auto y1 = p_spk_list->convert_difference_to_mv(spike_element->get_y1());
 		if (y1 > histogram_max_mv_ || y1 < histogram_min_mv_)
 			continue;
 
@@ -584,17 +583,13 @@ void ChartSpikeHist::build_hist_from_spike_list(SpikeList* p_spk_list, const lon
 //		BOOL bNew=TRUE		= erase old data (TRUE) or add to old value (FALSE)
 
 void ChartSpikeHist::build_hist_from_document(CdbWaveDoc* p_document, const BOOL b_all_files, const long l_first, const long l_last,
-                                              const double max_mv, const double min_mv, const double bin_mv, BOOL b_new)
+                                              const double max_mv, const double min_mv, const double bin_mv)
 {
-	if (b_new)
-	{
-		clear_data();
-		b_new = false;
-	}
-
+	clear_data();
 	dbwave_doc_ = p_document;
 	constexpr auto file_first = 0;
 	const auto file_last = b_all_files ? p_document->db_get_n_records() : 1;
+	resize_histograms(bin_mv, max_mv, min_mv);
 
 	for (auto i_file = file_first; i_file < file_last; i_file++)
 	{
@@ -607,7 +602,7 @@ void ChartSpikeHist::build_hist_from_document(CdbWaveDoc* p_document, const BOOL
 		{
 			SpikeList* p_spike_list = p_document->m_p_spk->get_spike_list_current();
 			if (p_spike_list != nullptr && p_spike_list->get_spikes_count() > 0)
-				build_hist_from_spike_list(p_spike_list, l_first, l_last, max_mv, min_mv, bin_mv, b_new);
+				build_hist_from_spike_list(p_spike_list, l_first, l_last, max_mv, min_mv, bin_mv);
 		}
 	}
 }

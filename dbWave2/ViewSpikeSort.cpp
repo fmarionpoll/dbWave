@@ -841,10 +841,10 @@ void ViewSpikeSort::build_histogram()
 	if (pdb_doc == nullptr)
 		return;
 
-	//chart_histogram_.build_hist_from_document(pdb_doc, b_all_files, l_first_, l_last_, 
-	//	xy_max_amplitude_mv, xy_min_amplitude_mv, histogram_bin_mv, TRUE);
-	chart_histogram_.build_hist_from_document(pdb_doc, b_all_files, l_first_, l_last_,
-		static_cast<double>(10.), static_cast<double>(0.), histogram_bin_mv, TRUE);
+	chart_histogram_.build_hist_from_document(pdb_doc, b_all_files, l_first_, l_last_, 
+		xy_max_amplitude_mv, xy_min_amplitude_mv, histogram_bin_mv);
+	//chart_histogram_.build_hist_from_document(pdb_doc, b_all_files, l_first_, l_last_,
+	//	static_cast<double>(10.), static_cast<double>(0.), histogram_bin_mv, TRUE);
 }
 
 void ViewSpikeSort::on_format_center_curve()

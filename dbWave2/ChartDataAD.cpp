@@ -74,11 +74,11 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 	auto* ppen_old = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 
 	p_dc->SetMapMode(MM_ANISOTROPIC);
-	p_dc->SetViewportExt(m_x_ve_, m_y_ve_);
-	p_dc->SetViewportOrg(m_x_vo_, m_y_vo_);
-	p_dc->SetWindowExt(m_npixels, m_y_ve_); //chanlist_item->GetYextent());
+	p_dc->SetViewportExt(m_x_viewport_extent_, m_y_viewport_extent_);
+	p_dc->SetViewportOrg(m_x_viewport_origin_, m_y_viewport_origin_);
+	p_dc->SetWindowExt(m_npixels, m_y_viewport_extent_); //chanlist_item->GetYextent());
 	p_dc->SetWindowOrg(0, 0); //chanlist_item->GetYzero());
-	const auto yVE = m_y_ve_;
+	const auto yVE = m_y_viewport_extent_;
 
 	for (int channel_number = 0; channel_number < chanlistitem_ptr_array.GetSize(); channel_number++)
 	{

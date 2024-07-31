@@ -529,8 +529,8 @@ void ChartSpikeBar::highlight_spike(const Spike* spike)
 	const auto llk = MulDiv(l_spike_time - l_first_, m_x_we_, len);
 	const auto abscissa = static_cast<int>(llk) + m_x_wo_;
 
-	const auto max = MulDiv(1 - m_y_vo_, m_y_we_, m_y_ve_) + m_y_wo_;
-	const auto min = MulDiv(m_display_rect_.Height() - 2 - m_y_vo_, m_y_we_, m_y_ve_) + m_y_wo_;
+	const auto max = MulDiv(1 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+	const auto min = MulDiv(m_display_rect_.Height() - 2 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
 
 	CPen new_pen;
 	new_pen.CreatePen(PS_SOLID, 1, RGB(196, 2, 51));
@@ -582,8 +582,8 @@ void ChartSpikeBar::select_spikes_within_rect(CRect* p_rect, const UINT n_flags)
 	const auto len = (l_last_ - l_first_ + 1);
 	const auto l_first = MulDiv(p_rect->left, len, m_display_rect_.Width()) + l_first_;
 	const auto l_last = MulDiv(p_rect->right, len, m_display_rect_.Width()) + l_first_;
-	const auto v_min = MulDiv(p_rect->bottom - m_y_vo_, m_y_we_, m_y_ve_) + m_y_wo_;
-	const auto v_max = MulDiv(p_rect->top - m_y_vo_, m_y_we_, m_y_ve_) + m_y_wo_;
+	const auto v_min = MulDiv(p_rect->bottom - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+	const auto v_max = MulDiv(p_rect->top - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
 	const auto b_flag = (n_flags & MK_SHIFT) || (n_flags & MK_CONTROL);
 	p_spike_list_->select_spikes_within_bounds(v_min, v_max, l_first, l_last, b_flag);
 }
@@ -676,8 +676,8 @@ void ChartSpikeBar::zoom_data(CRect* prev_rect, CRect* new_rect)
 	const auto y_we = m_y_we_;
 	m_y_we_ = MulDiv(m_y_we_, new_rect->Height(), prev_rect->Height());
 	m_y_wo_ = m_y_wo_
-		- MulDiv(prev_rect->top - m_y_vo_, m_y_we_, m_y_ve_)
-		+ MulDiv(new_rect->top - m_y_vo_, y_we, m_y_ve_);
+		- MulDiv(prev_rect->top - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_)
+		+ MulDiv(new_rect->top - m_y_viewport_origin_, y_we, m_y_viewport_extent_);
 
 	// change index of first and last pt displayed
 	auto l_size = l_last_ - l_first_ + 1;
@@ -713,8 +713,8 @@ int ChartSpikeBar::hit_curve(const CPoint point)
 {
 	auto hit_spike = -1;
 	// for y coordinates, conversion is straightforward:
-	const auto mouse_y = MulDiv(point.y - m_y_vo_, m_y_we_, m_y_ve_) + m_y_wo_;
-	const auto delta_y = MulDiv(3, m_y_we_, m_y_ve_);
+	const auto mouse_y = MulDiv(point.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+	const auto delta_y = MulDiv(3, m_y_we_, m_y_viewport_extent_);
 	/*
 	// for x coordinates, the formula is in 2 steps:
 	// 1) time -> relative time: ii_time = (spike_time-m_lFirst) [-offset]
@@ -726,8 +726,8 @@ int ChartSpikeBar::hit_curve(const CPoint point)
 	//		long lSpikeTime  = (abscissa - m_xWO)*len/m_xWE + m_lFirst;
 	// convert device coordinates into logical coordinates
 	*/
-	const auto mouse_x = MulDiv(point.x - m_x_vo_, m_x_we_, m_x_ve_) + m_x_wo_;
-	const auto delta_x = MulDiv(3, m_x_we_, m_x_ve_);
+	const auto mouse_x = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
+	const auto delta_x = MulDiv(3, m_x_we_, m_x_viewport_extent_);
 	const auto len_data_displayed = (l_last_ - l_first_ + 1);
 
 	// find a spike which time of occurrence fits between l_X_max and l_X_min

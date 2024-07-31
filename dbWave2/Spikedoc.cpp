@@ -278,7 +278,7 @@ BOOL CSpikeDoc::OnSaveDocument(LPCTSTR pszPathName)
 					return FALSE;
 
 				// don't even attempt to save
-				const auto k = file_name.ReverseFind('\\') + 1; // find last occurence of antislash
+				const auto k = file_name.ReverseFind('\\') + 1; // find last occurence of anti-slash
 				if (k != -1)
 					m_new_path_ = file_name.Left(k);
 			}
@@ -442,7 +442,7 @@ void CSpikeDoc::export_spk_latencies(CSharedFile* shared_file, const OPTIONS_VIE
 	}
 }
 
-void CSpikeDoc::export_spk_latencies(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, const int n_intervals, const CString& cs_file_comment)
+void CSpikeDoc::export_spk_latencies(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, const int n_intervals, const CString& cs_file_comment)
 {
 	CString cs_dummy;
 	// spike class: -1(one:selected); 0(all); 1(all:split)
@@ -481,7 +481,7 @@ void CSpikeDoc::export_spk_latencies(CSharedFile* shared_file, OPTIONS_VIEWSPIKE
 	}
 }
 
-void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, long* sum0, const int spike_list_index, const int class_index)
+void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, long* sum0, const int spike_list_index, const int class_index)
 {
 	CString cs_dummy;
 	const auto spike_list = &spike_list_array_[spike_list_index];
@@ -576,7 +576,7 @@ void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* op
 	}
 }
 
-void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, const CString&
+void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, const CString&
                               cs_file_comment)
 {
 	CString cs_dummy;
@@ -629,7 +629,7 @@ void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* op
 		// export the comments
 		export_spk_file_comment(shared_file, options_view_spikes, class_id, cs_file_comment);
 		// test if we should continue
-		if (!(FALSE == options_view_spikes->bexportzero) && (class_n_items == 0))
+		if (!options_view_spikes->bexportzero && (class_n_items == 0))
 			export_spk_psth(shared_file, options_view_spikes, pl_sum0, m_current_spike_list_index_, class_id);
 
 		cs_dummy = _T("\r\n");
@@ -739,7 +739,7 @@ void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* shared_file, const O
 	}
 }
 
-void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, long* p_hist, const CString&
+void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, long* p_hist, const CString&
                                          cs_file_comment)
 {
 	const auto spike_list = &spike_list_array_[m_current_spike_list_index_];
@@ -973,7 +973,7 @@ void CSpikeDoc::export_table_col_headers_db(CSharedFile* shared_file, OPTIONS_VI
 	}
 	if (options_view_spikes->bacqcomments)
 	{
-		// ................     acq comments, stim, conc, type
+		// ................     acq comments, stimulus, concentration, type, etc
 		cs_dummy += _T("\tExpt\tinsectID\tssID\tinsect\tstrain\tsex\tlocation\toperator\tmore");
 		n_columns += 9;
 		cs_dummy += _T("\tstim1\tconc1\trepeat1\tstim2\tconc2\trepeat2\ttype\tflag");
@@ -1020,7 +1020,7 @@ void CSpikeDoc::export_table_col_headers_data(CSharedFile* shared_file, const OP
 	case EXPORT_PSTH: // PSTH
 		n_bins = options_view_spikes->nbins;
 		t_span = options_view_spikes->timeend - options_view_spikes->timestart;
-		t_bin = t_span / n_bins;
+		t_bin = t_span /static_cast<float>(n_bins);
 		break;
 	case EXPORT_ISI: // ISI
 		n_bins = options_view_spikes->nbinsISI;
@@ -1031,7 +1031,7 @@ void CSpikeDoc::export_table_col_headers_data(CSharedFile* shared_file, const OP
 		break;
 	case EXPORT_AUTOCORR: // Autocorrelation
 		n_bins = options_view_spikes->nbinsISI;
-		t_span = options_view_spikes->binISI * n_bins;
+		t_span = options_view_spikes->binISI *static_cast<float>(n_bins);
 		t_bin = options_view_spikes->binISI;
 		t_start = -t_span / 2.f;
 		cs_dummy = _T("\tN");
@@ -1159,37 +1159,37 @@ void CSpikeDoc::export_spk_file_comment(CSharedFile* shared_file, const OPTIONS_
 	}
 
 	// number of spikes
-	const auto pspklist = &spike_list_array_[m_current_spike_list_index_];
+	const auto p_spk_list = &spike_list_array_[m_current_spike_list_index_];
 
 	if (options_view_spikes->btotalspikes)
 	{
-		cs_dummy.Format(_T("\t%f"), pspklist->get_detection_parameters()->detect_threshold_mv);
+		cs_dummy.Format(_T("\t%f"), p_spk_list->get_detection_parameters()->detect_threshold_mv);
 		shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-		cs_dummy.Format(_T("\t%i"), pspklist->get_spikes_count());
+		cs_dummy.Format(_T("\t%i"), p_spk_list->get_spikes_count());
 		shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-		cs_dummy.Format(_T("\t%i"), pspklist->get_classes_count());
+		cs_dummy.Format(_T("\t%i"), p_spk_list->get_classes_count());
 		shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-		const auto tduration = static_cast<float>(m_acquisition_size_) / m_acquisition_rate_;
-		cs_dummy.Format(_T("\t%f"), tduration);
+		const auto t_duration = static_cast<float>(m_acquisition_size_) / m_acquisition_rate_;
+		cs_dummy.Format(_T("\t%f"), t_duration);
 		shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 	}
 	// spike list item, spike class
-	cs_dummy.Format(_T("\t%i \t%s \t%i"), options_view_spikes->ichan, (LPCTSTR)pspklist->get_detection_parameters()->comment, class_index);
+	cs_dummy.Format(_T("\t%i \t%s \t%i"), options_view_spikes->ichan, (LPCTSTR)p_spk_list->get_detection_parameters()->comment, class_index);
 	shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 }
 
-// compute poststimulus histogram
+// compute post_stimulus histogram
 // in:
-//	OPTION_VIEWSPIKES
-//		nbins		number of bins
-//		timestart	first valid spike occurence time (s)
-//		timeend		last valid spike occurence (s)
-//		spikeclassoption	0=all spike class, -1:only one, 1=exclude artefacts
-//		classnb		if !spikeclassoption, compute only from spikes with this class nb
-//		babsolutetime	false=correct time with first stimulus time
-//		timebin		bin duration (in s)
+//	OPTION_VIEW_SPIKES
+//		n_bins		number of bins
+//		time_start	first valid spike occurence time (s)
+//		time_end		last valid spike occurence (s)
+//		spike_class_option	0=all spike class, -1:only one, 1=exclude artefacts
+//		class_nb		if !spike_class_option, compute only from spikes with this class nb
+//		b_absolute_time	false=correct time with first stimulus time
+//		time_bin		bin duration (in s)
 //	long* plSum0 array of longs to receive histogram bins
-//	iclass		class selected
+//	i_class		class selected
 // out:
 //	*plSum0
 // ATTENTION! no bounds checking performed on plSum0
@@ -1206,7 +1206,7 @@ long CSpikeDoc::build_psth(const OPTIONS_VIEWSPIKES* options_view_spikes, long* 
 	const auto rate = spike_list->get_acq_sampling_rate();
 	ASSERT(rate != 0.f);
 
-	// check validity of istimulusindex
+	// check validity of stimulus_index
 	auto stimulus_index = options_view_spikes->istimulusindex;
 	if (stimulus_index > m_stimulus_intervals.GetSize() - 1)
 		stimulus_index = m_stimulus_intervals.GetSize() - 1;
@@ -1226,16 +1226,16 @@ long CSpikeDoc::build_psth(const OPTIONS_VIEWSPIKES* options_view_spikes, long* 
 
 	for (auto stimulus_index_i = stimulus_index_0; stimulus_index_i < stimulus_index_1; stimulus_index_i += increment, n++)
 	{
-		auto iioffset0 = 0;
+		auto ii_offset_0 = 0;
 		if (!options_view_spikes->babsolutetime)
 		{
 			if (m_stimulus_intervals.n_items > 0)
-				iioffset0 = m_stimulus_intervals.GetAt(stimulus_index_i);
+				ii_offset_0 = m_stimulus_intervals.GetAt(stimulus_index_i);
 			else
-				iioffset0 = static_cast<long>(-(options_view_spikes->timestart * rate));
+				ii_offset_0 = static_cast<long>(-(options_view_spikes->timestart * rate));
 		}
-		const auto ii_time_start = static_cast<long>(options_view_spikes->timestart * rate) + iioffset0;
-		const auto ii_time_end = static_cast<long>(options_view_spikes->timeend * rate) + iioffset0;
+		const auto ii_time_start = static_cast<long>(options_view_spikes->timestart * rate) + ii_offset_0;
+		const auto ii_time_end = static_cast<long>(options_view_spikes->timeend * rate) + ii_offset_0;
 		auto ii_bin_size = static_cast<long>(options_view_spikes->timebin * rate); //(ii_time_end - ii_time_start) / options_view_spikes->n_bins;
 		if (ii_bin_size <= 0)
 			ii_bin_size = 1;
@@ -1270,19 +1270,19 @@ long CSpikeDoc::build_psth(const OPTIONS_VIEWSPIKES* options_view_spikes, long* 
 	return n;
 }
 
-// compute interspike intervals histogram
+// compute inter_spike intervals histogram
 // in:
-//	OPTION_VIEWSPIKES
-//		nbinsISI	number of bins
-//		timestart	first valid spike occurence time (s)
-//		timeend		last valid spike occurence (s)
-//		spikeclassoption	0=all spike class, -1:only one, 1=exclude artefacts
-//		classnb		if !spikeclassoption, compute only from spikes with this class nb
-//		babsolutetime	false=correct time with first stimulus time
+//	OPTION_VIEW_SPIKES
+//		n_bins_ISI	number of bins
+//		time_start	first valid spike occurence time (s)
+//		time_end		last valid spike occurence (s)
+//		spike_class_option	0=all spike class, -1:only one, 1=exclude artefacts
+//		class_nb		if !spike_class_option, compute only from spikes with this class nb
+//		b_absolute_time	false=correct time with first stimulus time
 //		binISI		bin duration (in s)
 
 //	long* plSum0 array of longs to receive histogram bins
-//	iclass		class selected
+//	i_class		class selected
 // out:
 //	*plSum0
 // ATTENTION! no bounds checking performed on plSum0
@@ -1365,16 +1365,16 @@ long CSpikeDoc::build_isi(const OPTIONS_VIEWSPIKES* options_view_spikes, long* p
 
 // compute autocorrelation
 // in:
-//		OPTION_VIEWSPIKES
-//		nbinsISI	number of bins
-//		timestart	first valid spike occurence time (s)
-//		timeend		last valid spike occurence (s)
-//		spikeclassoption	0=all spike class, -1:only one, 1=exclude artefacts
-//		classnb		if !spikeclassoption, compute only from spikes with this class nb
-//		babsolutetime	false=correct time with first stimulus time
+//		OPTION_VIEW_SPIKES
+//		n_bins_ISI	number of bins
+//		time_start	first valid spike occurence time (s)
+//		time_end		last valid spike occurence (s)
+//		spike_class_option	0=all spike class, -1:only one, 1=exclude artefacts
+//		class_nb		if !spike_class_option, compute only from spikes with this class nb
+//		b_absolute_time	false=correct time with first stimulus time
 //		binISI		bin duration (in s)
 //		long* plSum0 array of longs to receive histogram bins
-//		iclass		class selected
+//		i_class		class selected
 // out:
 //		*plSum0
 //		number of spikes used as time ref for autocorrelation
@@ -1472,19 +1472,19 @@ long CSpikeDoc::build_autocorrelation(const OPTIONS_VIEWSPIKES* options_view_spi
 
 // compute peri-stimulus-histogram & autocorrelation
 // in:
-//		OPTION_VIEWSPIKES
-//		timebin		PSTH bin duration (s)
-//		nbinsISI	number of bins
-//		timestart	first valid spike occurence time (s)
-//		timeend		last valid spike occurence (s)
-//		spikeclassoption	0=all spike class, -1:only one, 1=exclude artefacts
-//		classnb		if !spikeclassoption, compute only from spikes with this class nb
-//		babsolutetime	false=correct time with first stimulus time
+//		OPTION_VIEW_SPIKES
+//		time_bin		PSTH bin duration (s)
+//		n_bins_ISI	number of bins
+//		time_start	first valid spike occurence time (s)
+//		time_end		last valid spike occurence (s)
+//		spike_class_option	0=all spike class, -1:only one, 1=exclude artefacts
+//		class_nb		if !spike_class_option, compute only from spikes with this class nb
+//		b_absolute_time	false=correct time with first stimulus time
 //		binISI		bin duration (in s)
 //		long* plSum0 array of longs to receive histogram bins
-//		iclass		class selected
+//		i_class		class selected
 // out:
-//	*plSum0  structure:  [row=nbinsISI; col=nbins]
+//	*plSum0  structure:  [row=n_bins_ISI; col=n_bins]
 //	number of spikes used as time ref for autocorrelation
 // ATTENTION! no bounds checking performed on plSum0
 
@@ -1616,11 +1616,11 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, const OPTIONS_
 
 	// clear histogram area if histogram of amplitudes
 	ASSERT(options_view_spikes->exportdatatype == EXPORT_AVERAGE);
-	auto p_doubl = value + 1;
+	auto p_value = value + 1;
 	const auto spike_length = static_cast<int>(*value); // spk length + nb items
 	auto i0 = spike_length * 2 + 2;
-	for (auto k = 1; k < i0; k++, p_doubl++)
-		*p_doubl = 0;
+	for (auto k = 1; k < i0; k++, p_value++)
+		*p_value = 0;
 
 	// check file size and position pointer at the first spike within the bin
 	i0 = 0;
@@ -1687,7 +1687,7 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, const OPTIONS_
 	}
 }
 
-void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, double* value,
+void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, double* value,
                                      const CString& cs_file_comment)
 {
 	const auto spike_list = &spike_list_array_[m_current_spike_list_index_];

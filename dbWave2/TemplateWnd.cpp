@@ -247,9 +247,9 @@ void CTemplateWnd::FillOrdinatesAtscale(BOOL bScale)
 	{
 		for (int i = 0; i < m_tpllen; i++, i1++, i2--)
 		{
-			m_ptsAvg[i].y = MulDiv(*p_avg - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_;
-			m_ptsArea[i1].y = MulDiv(*p_max - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_;
-			m_ptsArea[i2].y = MulDiv(*p_min - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_;
+			m_ptsAvg[i].y = MulDiv(*p_avg - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+			m_ptsArea[i1].y = MulDiv(*p_max - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+			m_ptsArea[i2].y = MulDiv(*p_min - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
 			p_avg++;
 			p_max++;
 			p_min++;

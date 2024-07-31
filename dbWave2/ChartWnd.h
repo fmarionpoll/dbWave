@@ -167,13 +167,13 @@ protected:
 
 	int m_x_wo_ = 0; // x origin, extent / window & view
 	int m_x_we_ = 1;
-	int m_x_vo_ = 0;
-	int m_x_ve_ = 1;
+	int m_x_viewport_origin_ = 0;
+	int m_x_viewport_extent_ = 1;
 
 	int m_y_wo_ = 0; // y origin, extent / window & view
 	int m_y_we_ = 1;
-	int m_y_vo_ = 0;
-	int m_y_ve_ = 1;
+	int m_y_viewport_origin_ = 0;
+	int m_y_viewport_extent_ = 1;
 
 	int m_cur_track_{}; // threshold  tracked
 	CPoint m_pt_first_{};

@@ -152,16 +152,16 @@ void ChartSpikeHistVert::plotHistogram(CDC* p_dc, CDWordArray* p_dw, int color)
 
 void ChartSpikeHistVert::MoveHZtagtoVal(int i, int val)
 {
-	m_pt_last_.y = MulDiv(horizontal_tags.get_value(i) - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_;
-	const auto j = MulDiv(val - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_;
+	m_pt_last_.y = MulDiv(horizontal_tags.get_value(i) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+	const auto j = MulDiv(val - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
 	xor_horizontal_tag(j);
 	horizontal_tags.set_tag_val(i, val);
 }
 
 void ChartSpikeHistVert::MoveVTtagtoVal(int itag, int ival)
 {
-	m_pt_last_.x = MulDiv(vertical_tags.get_value(itag) - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_;
-	const auto j = MulDiv(ival - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_;
+	m_pt_last_.x = MulDiv(vertical_tags.get_value(itag) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	const auto j = MulDiv(ival - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 	xor_vertical_tag(j);
 	vertical_tags.set_tag_val(itag, ival);
 }
@@ -222,9 +222,9 @@ void ChartSpikeHistVert::OnLButtonUp(UINT nFlags, CPoint point)
 		// vertical tag was tracked
 		{
 			// convert pix into data value and back again
-			const auto val = MulDiv(point.x - m_x_vo_, m_x_we_, m_x_ve_) + m_x_wo_;
+			const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
 			vertical_tags.set_tag_val(hc_trapped_, val);
-			point.x = MulDiv(val - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_;
+			point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 			xor_vertical_tag(point.x);
 			ChartSpike::OnLButtonUp(nFlags, point);
 			post_my_message(HINT_CHANGEVERTTAG, hc_trapped_);
@@ -279,13 +279,13 @@ void ChartSpikeHistVert::OnLButtonDown(UINT nFlags, CPoint point)
 	if (horizontal_tags.get_tag_list_size() > 0)
 	{
 		for (auto icur = horizontal_tags.get_tag_list_size() - 1; icur >= 0; icur--)
-			horizontal_tags.set_tag_pixel(icur, MulDiv(horizontal_tags.get_value(icur) - m_y_wo_, m_y_ve_, m_y_we_) + m_y_vo_);
+			horizontal_tags.set_tag_pixel(icur, MulDiv(horizontal_tags.get_value(icur) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_);
 	}
 	// compute pixel position of vertical tags
 	if (vertical_tags.get_tag_list_size() > 0)
 	{
 		for (auto icur = vertical_tags.get_tag_list_size() - 1; icur >= 0; icur--) // loop through all tags
-			vertical_tags.set_tag_pixel(icur, MulDiv(vertical_tags.get_value(icur) - m_x_wo_, m_x_ve_, m_x_we_) + m_x_vo_);
+			vertical_tags.set_tag_pixel(icur, MulDiv(vertical_tags.get_value(icur) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_);
 	}
 	ChartSpike::OnLButtonDown(nFlags, point);
 	if (current_cursor_mode_ != 0 || hc_trapped_ >= 0) // do nothing else if mode != 0
@@ -310,15 +310,15 @@ void ChartSpikeHistVert::zoom_data(CRect* rFrom, CRect* rDest)
 	const auto y_we = m_y_we_; // save previous window extent
 	m_y_we_ = MulDiv(m_y_we_, rDest->Height(), rFrom->Height());
 	m_y_wo_ = m_y_wo_
-		- MulDiv(rFrom->top - m_y_vo_, m_y_we_, m_y_ve_)
-		+ MulDiv(rDest->top - m_y_vo_, y_we, m_y_ve_);
+		- MulDiv(rFrom->top - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_)
+		+ MulDiv(rDest->top - m_y_viewport_origin_, y_we, m_y_viewport_extent_);
 
 	// change index of first and last pt displayed
 	const auto x_we = m_x_we_; // save previous window extent
 	m_x_we_ = MulDiv(m_x_we_, rDest->Width(), rFrom->Width());
 	m_x_wo_ = m_x_wo_
-		- MulDiv(rFrom->left - m_x_vo_, m_x_we_, m_x_ve_)
-		+ MulDiv(rDest->left - m_x_vo_, x_we, m_x_ve_);
+		- MulDiv(rFrom->left - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_)
+		+ MulDiv(rDest->left - m_x_viewport_origin_, x_we, m_x_viewport_extent_);
 
 	// display
 	Invalidate();
@@ -340,8 +340,8 @@ int ChartSpikeHistVert::hit_curve(CPoint point)
 {
 	auto hitspk = -1;
 	// convert device coordinates into logical coordinates
-	const auto deltax = MulDiv(3, m_x_we_, m_x_ve_);
-	const auto mouse_x = MulDiv(point.x - m_x_vo_, m_x_we_, m_x_ve_) + m_x_wo_;
+	const auto deltax = MulDiv(3, m_x_we_, m_x_viewport_extent_);
+	const auto mouse_x = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
 	auto mouse_x1 = mouse_x - deltax;
 	auto mouse_x2 = mouse_x - deltax;
 	if (mouse_x1 < 1)
@@ -353,8 +353,8 @@ int ChartSpikeHistVert::hit_curve(CPoint point)
 	if (mouse_x2 > m_nbins)
 		mouse_x2 = m_nbins;
 
-	const auto deltay = MulDiv(3, m_y_we_, m_y_ve_);
-	const auto mouse_y = static_cast<DWORD>(MulDiv(point.y - m_y_vo_, m_y_we_, m_y_ve_)) + m_y_wo_ + deltay;
+	const auto deltay = MulDiv(3, m_y_we_, m_y_viewport_extent_);
+	const auto mouse_y = static_cast<DWORD>(MulDiv(point.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_)) + m_y_wo_ + deltay;
 
 	// test selected histogram first (foreground)
 	auto ihist = 1;
@@ -495,7 +495,7 @@ void ChartSpikeHistVert::reSize_And_Clear_Histograms(int nbins, int max, int min
 void ChartSpikeHistVert::OnSize(UINT nType, int cx, int cy)
 {
 	ChartSpike::OnSize(nType, cx, cy);
-	m_y_vo_ = cy;
+	m_y_viewport_origin_ = cy;
 }
 
 CDWordArray* ChartSpikeHistVert::initClassArray(int nbins, int spike_class)

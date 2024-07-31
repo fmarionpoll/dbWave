@@ -94,7 +94,8 @@ public:
 	float get_acq_sampling_rate() const { return sampling_rate_; }
 	int get_acq_bin_zero() const { return bin_zero_; }
 	float get_acq_volts_per_bin() const { return volts_per_bin_; }
-	float convert_to_mv (const int value) const { return volts_per_bin_ * 1000.f * static_cast<float>(value - bin_zero_); }
+	float convert_acquisition_point_to_mv (const int value) const { return volts_per_bin_ * 1000.f * static_cast<float>(value - bin_zero_); }
+	float convert_difference_to_mv(const int value) const { return volts_per_bin_ * 1000.f * static_cast<float>(value); }
 
 	void set_detection_parameters(const SPKDETECTPARM* p_sd) { spk_detect_parameters_ = *p_sd; }
 	SPKDETECTPARM* get_detection_parameters() { return &spk_detect_parameters_; }

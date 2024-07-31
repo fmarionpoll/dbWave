@@ -98,7 +98,7 @@ public:
 	float get_channel_list_volts_per_pixel(const int item) const
 	{
 		const CChanlistItem* channel_item = get_channel_list_item(item);
-		return (static_cast<float>(channel_item->GetYextent()) * channel_item->GetVoltsperDataBin() / static_cast<float>(-m_y_ve_));
+		return (static_cast<float>(channel_item->GetYextent()) * channel_item->GetVoltsperDataBin() / static_cast<float>(-m_y_viewport_extent_));
 	}
 
 	float get_time_per_pixel() const
@@ -109,16 +109,16 @@ public:
 
 	int get_channel_list_bin_to_y_pixel(int chan, int bin)
 	{
-		return MulDiv(bin - chanlistitem_ptr_array[chan]->GetYzero(), m_y_ve_,
-		              chanlistitem_ptr_array[chan]->GetYextent()) + m_y_vo_;
+		return MulDiv(bin - chanlistitem_ptr_array[chan]->GetYzero(), m_y_viewport_extent_,
+		              chanlistitem_ptr_array[chan]->GetYextent()) + m_y_viewport_origin_;
 	}
 
 	int get_channel_list_y_pixels_to_bin(const int chan, const int y_pixel_relative_to_top_client_window)
 	{
 		return chanlistitem_ptr_array[chan]->GetYzero() + 
-				MulDiv(y_pixel_relative_to_top_client_window - m_y_vo_,
+				MulDiv(y_pixel_relative_to_top_client_window - m_y_viewport_origin_,
 					chanlistitem_ptr_array[chan]->GetYextent(), 
-					m_y_ve_);
+					m_y_viewport_extent_);
 	}
 
 	SCOPESTRUCT* get_scope_parameters() override;

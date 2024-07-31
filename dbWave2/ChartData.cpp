@@ -1278,8 +1278,8 @@ void ChartData::curve_xor()
 	p_dc->IntersectClipRect(&m_display_rect_);
 
 	p_dc->SetMapMode(MM_ANISOTROPIC);
-	p_dc->SetViewportOrg(m_display_rect_.left, m_y_vo_);
-	p_dc->SetViewportExt(get_rect_width(), m_y_ve_);
+	p_dc->SetViewportOrg(m_display_rect_.left, m_y_viewport_origin_);
+	p_dc->SetViewportExt(get_rect_width(), m_y_viewport_extent_);
 	p_dc->SetWindowExt(m_XORxext, m_XORyext);
 	p_dc->SetWindowOrg(0, 0);
 
@@ -1364,7 +1364,7 @@ void ChartData::OnMouseMove(UINT nFlags, CPoint point)
 	{
 	case TRACK_CURVE:
 		curve_xor(); // erase past curve and compute new zero
-		m_zero = MulDiv(point.y - m_pt_first_.y, m_XORyext, -m_y_ve_) + m_cur_track_;
+		m_zero = MulDiv(point.y - m_pt_first_.y, m_XORyext, -m_y_viewport_extent_) + m_cur_track_;
 		curve_xor(); // plot new curve
 		break;
 
@@ -1483,7 +1483,7 @@ int ChartData::does_cursor_hit_curve(const CPoint point)
 	{
 		// convert device coordinates into value
 		const auto i_val = get_channel_list_y_pixels_to_bin(chan, point.y);
-		const auto i_jitter = MulDiv(cy_jitter_, get_channel_list_item(chan)->GetYextent(), -m_y_ve_);
+		const auto i_jitter = MulDiv(cy_jitter_, get_channel_list_item(chan)->GetYextent(), -m_y_viewport_extent_);
 		const auto val_max = i_val + i_jitter; // mouse max
 		const auto val_min = i_val - i_jitter; // mouse min
 		chan_list_item = chanlistitem_ptr_array[chan]->pEnvelopeOrdinates;
@@ -1531,9 +1531,9 @@ void ChartData::move_hz_tag_to_val(int i, int val)
 	const auto chan_list_item = chanlistitem_ptr_array[chan];
 	m_XORyext = chan_list_item->GetYextent();
 	m_zero = chan_list_item->GetYzero();
-	m_pt_last_.y = MulDiv(horizontal_tags.get_value(i) - m_zero, m_y_ve_, m_XORyext) + m_y_vo_;
+	m_pt_last_.y = MulDiv(horizontal_tags.get_value(i) - m_zero, m_y_viewport_extent_, m_XORyext) + m_y_viewport_origin_;
 	CPoint point;
-	point.y = MulDiv(val - m_zero, m_y_ve_, m_XORyext) + m_y_vo_;
+	point.y = MulDiv(val - m_zero, m_y_viewport_extent_, m_XORyext) + m_y_viewport_origin_;
 	xor_horizontal_tag(point.y);
 	horizontal_tags.set_tag_val(i, val);
 }
