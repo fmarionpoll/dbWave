@@ -623,7 +623,7 @@ void ViewSpikes::update_spike_file(BOOL b_update_interface)
 		m_tabCtrl.InitctrlTabFromSpikeDoc(m_pSpkDoc);
 
 		const int current_index = GetDocument()->get_current_spike_file()->get_spike_list_current_index();
-		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_index);
+		m_pSpkList = m_pSpkDoc->set_spike_list_current_index(current_index);
 		spk_detection_parameters_ = m_pSpkList->get_detection_parameters();
 
 		spike_class_listbox_.set_source_data(m_pSpkList, GetDocument());
@@ -710,7 +710,7 @@ void ViewSpikes::adjust_y_zoom_to_max_min(const BOOL b_force_search_max_min)
 
 void ViewSpikes::select_spike_list(int current_selection)
 {
-	m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_selection);
+	m_pSpkList = m_pSpkDoc->set_spike_list_current_index(current_selection);
 	ASSERT(m_pSpkList != NULL);
 
 	spike_class_listbox_.set_spk_list(m_pSpkList);

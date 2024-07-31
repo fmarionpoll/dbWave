@@ -20,8 +20,8 @@ void CSpikeDoc::clear_data()
 		m_stimulus_intervals.RemoveAll();
 		m_stimulus_intervals.n_items = 0;
 	}
-	spike_list_array.SetSize(1);
-	spike_list_array[0].erase_data();
+	spike_list_array_.SetSize(1);
+	spike_list_array_[0].erase_data();
 }
 
 BOOL CSpikeDoc::OnNewDocument()
@@ -47,8 +47,8 @@ void CSpikeDoc::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		m_wVersion = 7;
-		ar << m_wVersion;
+		m_w_version_ = 7;
+		ar << m_w_version_;
 		serialize_v7(ar);
 	}
 	else
@@ -98,9 +98,9 @@ void CSpikeDoc::read_before_version6(CArchive& ar, WORD wwVersion)
 		ar >> m_wave_format.cs_stimulus >> m_wave_format.cs_concentration;
 		ar >> m_wave_format.cs_sensillum;
 	}
-	ar >> m_detection_date >> m_comment; // R2-3
-	ar >> m_acquisition_file_name >> m_acquisition_comment >> m_acquisition_time; // R4-6
-	ar >> m_acquisition_rate >> m_acquisition_size; // R7-8
+	ar >> m_detection_date >> m_comment_; // R2-3
+	ar >> m_acquisition_file_name_ >> m_acquisition_comment_ >> m_acquisition_time_; // R4-6
+	ar >> m_acquisition_rate_ >> m_acquisition_size_; // R7-8
 
 	if (wwVersion >= 3 && wwVersion <= 5)
 	{
@@ -127,9 +127,9 @@ void CSpikeDoc::read_before_version6(CArchive& ar, WORD wwVersion)
 		}
 	}
 	// read stimulus and spike classes
-	spike_list_array.RemoveAll();
-	spike_list_array.SetSize(1);
-	spike_list_array[0].Serialize(ar); // v2 to v5
+	spike_list_array_.RemoveAll();
+	spike_list_array_.SetSize(1);
+	spike_list_array_[0].Serialize(ar); // v2 to v5
 	//m_spike_class.Serialize(ar);
 }
 
@@ -139,24 +139,24 @@ void CSpikeDoc::serialize_acquisition_parameters(CArchive& ar)
 	if (ar.IsStoring())
 	{
 		ar << m_detection_date;			// W2
-		ar << m_comment;				// W3
-		ar << m_acquisition_file_name;	// W4
-		ar << m_acquisition_comment;	// W5
-		ar << m_acquisition_time;		// W6
-		ar << m_acquisition_rate;		// W7
-		ar << m_acquisition_size;		// W8
+		ar << m_comment_;				// W3
+		ar << m_acquisition_file_name_;	// W4
+		ar << m_acquisition_comment_;	// W5
+		ar << m_acquisition_time_;		// W6
+		ar << m_acquisition_rate_;		// W7
+		ar << m_acquisition_size_;		// W8
 
 		constexpr int n_items = 1; ar << n_items;
 	}
 	else
 	{
 		ar >> m_detection_date;			// W2
-		ar >> m_comment;				// W3
-		ar >> m_acquisition_file_name;	// W4
-		ar >> m_acquisition_comment;	// W5
-		ar >> m_acquisition_time;		// W6
-		ar >> m_acquisition_rate;		// W7
-		ar >> m_acquisition_size;		// W8
+		ar >> m_comment_;				// W3
+		ar >> m_acquisition_file_name_;	// W4
+		ar >> m_acquisition_comment_;	// W5
+		ar >> m_acquisition_time_;		// W6
+		ar >> m_acquisition_rate_;		// W7
+		ar >> m_acquisition_size_;		// W8
 
 		// version 4
 		int n_items; ar >> n_items;		// W9
@@ -185,18 +185,18 @@ void CSpikeDoc::serialize_spike_list_arrays(CArchive& ar)
 	int n_spike_arrays = 0;
 	if (ar.IsStoring())
 	{
-		n_spike_arrays = spike_list_array.GetSize();
+		n_spike_arrays = spike_list_array_.GetSize();
 		ar << n_spike_arrays;
 	}
 	else
 	{
 		ar >> n_spike_arrays;
-		spike_list_array.RemoveAll();
-		spike_list_array.SetSize(n_spike_arrays);
+		spike_list_array_.RemoveAll();
+		spike_list_array_.SetSize(n_spike_arrays);
 	}
 
 	for (int i = 0; i < n_spike_arrays; i++)
-		spike_list_array[i].Serialize(ar); // v6-v7
+		spike_list_array_[i].Serialize(ar); // v6-v7
 }
 
 void CSpikeDoc::read_version6(CArchive& ar)
@@ -214,9 +214,9 @@ void CSpikeDoc::read_version6(CArchive& ar)
 	sort_stimulus_array();
 
 	// read stimulus and spike classes
-	spike_list_array.RemoveAll();
-	spike_list_array.SetSize(1);
-	spike_list_array[0].Serialize(ar); // v6
+	spike_list_array_.RemoveAll();
+	spike_list_array_.SetSize(1);
+	spike_list_array_[0].Serialize(ar); // v6
 	
 	//m_spike_class.Serialize(ar);
 }
@@ -260,12 +260,12 @@ BOOL CSpikeDoc::OnSaveDocument(LPCTSTR pszPathName)
 				// If so, either Save or Update, as appropriate DoSave
 				const auto p_template = GetDocTemplate();
 				ASSERT(p_template != NULL);
-				if (!m_new_path.IsEmpty())
+				if (!m_new_path_.IsEmpty())
 				{
 					const auto j = file_name.ReverseFind('\\') + 1;
 					if (j != -1)
 						file_name = file_name.Mid(j);
-					file_name = m_new_path + file_name;
+					file_name = m_new_path_ + file_name;
 				}
 
 				if (!AfxGetApp()->DoPromptFileName(file_name,
@@ -280,7 +280,7 @@ BOOL CSpikeDoc::OnSaveDocument(LPCTSTR pszPathName)
 				// don't even attempt to save
 				const auto k = file_name.ReverseFind('\\') + 1; // find last occurence of antislash
 				if (k != -1)
-					m_new_path = file_name.Left(k);
+					m_new_path_ = file_name.Left(k);
 			}
 			break;
 
@@ -333,7 +333,7 @@ BOOL CSpikeDoc::OnOpenDocument(const LPCTSTR pszPathName)
 	const CString filename = pszPathName;
 	if (f.Open(filename, CFile::modeRead | CFile::shareDenyNone, &fe))
 	{
-		m_current_spike_list = 0;
+		m_current_spike_list_index_ = 0;
 		try
 		{
 			CArchive ar(&f, CArchive::load);
@@ -344,11 +344,11 @@ BOOL CSpikeDoc::OnOpenDocument(const LPCTSTR pszPathName)
 			SetModifiedFlag(FALSE);
 
 			// update nb of classes
-			for (auto i = 0; i < spike_list_array.GetSize(); i++)
+			for (auto i = 0; i < spike_list_array_.GetSize(); i++)
 			{
-				if (!spike_list_array[i].is_class_list_valid()) 
+				if (!spike_list_array_[i].is_class_list_valid()) 
 				{
-					spike_list_array[i].update_class_list();
+					spike_list_array_[i].update_class_list();
 					SetModifiedFlag(); 
 				}
 			}
@@ -371,10 +371,10 @@ void CSpikeDoc::init_source_doc(const AcqDataDoc* p_document)
 {
 	// load parameters from file
 	const auto wave_format = p_document->get_waveformat();
-	m_acquisition_time = wave_format->acquisition_time;
-	m_acquisition_size = p_document->get_doc_channel_length();
-	m_acquisition_rate = wave_format->sampling_rate_per_channel;
-	m_acquisition_comment = wave_format->cs_comment;
+	m_acquisition_time_ = wave_format->acquisition_time;
+	m_acquisition_size_ = p_document->get_doc_channel_length();
+	m_acquisition_rate_ = wave_format->sampling_rate_per_channel;
+	m_acquisition_comment_ = wave_format->cs_comment;
 	m_wave_format.copy( wave_format);
 }
 
@@ -387,18 +387,18 @@ CString CSpikeDoc::get_file_infos()
 	auto cs_out = GetPathName();
 	cs_out.MakeUpper();
 	cs_out += separator_tab + m_detection_date.Format(_T("%c"));
-	cs_out += separator_rc + m_comment;
+	cs_out += separator_rc + m_comment_;
 	cs_out += separator_rc;
 
 	cs_out += _T("*** SOURCE DATA ***\r\n");
-	cs_out += m_acquisition_file_name + separator_rc;
-	cs_out += m_acquisition_comment + separator_rc;
-	cs_out += m_acquisition_time.Format(_T("%#d-%B-%Y")) + separator_rc;
+	cs_out += m_acquisition_file_name_ + separator_rc;
+	cs_out += m_acquisition_comment_ + separator_rc;
+	cs_out += m_acquisition_time_.Format(_T("%#d-%B-%Y")) + separator_rc;
 
 	cs_out += _T("*** SPIKE LIST ***\r\n");
 
 	long spike_count = 0;
-	const auto spike_list = &spike_list_array[m_current_spike_list];
+	const auto spike_list = &spike_list_array_[m_current_spike_list_index_];
 	if (spike_list->get_spikes_count() > 0)
 		spike_count = spike_list->get_spikes_count();
 	wsprintf(psz, _T("n spikes = %li\r\n"), spike_count);
@@ -415,7 +415,7 @@ CString CSpikeDoc::get_file_infos()
 void CSpikeDoc::export_spk_latencies(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, const int intervals_count, const int spike_list_index, const int class_index)
 {
 	CString cs_dummy;
-	const auto spike_list = &spike_list_array[spike_list_index];
+	const auto spike_list = &spike_list_array_[spike_list_index];
 	const auto spikes_count = spike_list->get_spikes_count();
 
 	// export time of intervals_count first spikes
@@ -448,7 +448,7 @@ void CSpikeDoc::export_spk_latencies(CSharedFile* shared_file, OPTIONS_VIEWSPIKE
 	// spike class: -1(one:selected); 0(all); 1(all:split)
 	auto class0 = 0;
 	auto class1 = 0;
-	auto spike_list = &spike_list_array[m_current_spike_list];
+	auto spike_list = &spike_list_array_[m_current_spike_list_index_];
 
 	if ((options_view_spikes->spikeclassoption == -1
 			|| options_view_spikes->spikeclassoption == 1)
@@ -477,14 +477,14 @@ void CSpikeDoc::export_spk_latencies(CSharedFile* shared_file, OPTIONS_VIEWSPIKE
 			continue;
 		const auto class_id = spike_list->get_class_id(class_index);
 		export_spk_file_comment(shared_file, options_view_spikes, class_id, cs_file_comment);
-		export_spk_latencies(shared_file, options_view_spikes, n_intervals, m_current_spike_list, class_id);
+		export_spk_latencies(shared_file, options_view_spikes, n_intervals, m_current_spike_list_index_, class_id);
 	}
 }
 
 void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, long* sum0, const int spike_list_index, const int class_index)
 {
 	CString cs_dummy;
-	const auto spike_list = &spike_list_array[spike_list_index];
+	const auto spike_list = &spike_list_array_[spike_list_index];
 	auto n_bins = 1;
 
 	switch (options_view_spikes->exportdatatype)
@@ -545,7 +545,7 @@ void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* op
 		auto sampling_rate = spike_list->get_acq_sampling_rate();
 		if (sampling_rate == 0.f)
 		{
-			sampling_rate = m_acquisition_rate;
+			sampling_rate = m_acquisition_rate_;
 		}
 		ASSERT(sampling_rate != 0.f);
 		constexpr auto stimulus_index0 = 0;
@@ -580,7 +580,7 @@ void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* op
                               cs_file_comment)
 {
 	CString cs_dummy;
-	SpikeList* spike_list = &spike_list_array[m_current_spike_list];
+	SpikeList* spike_list = &spike_list_array_[m_current_spike_list_index_];
 
 	// spike class: -1(one:selected); 0(all); 1(all:split)
 	int class0 = 0;
@@ -630,7 +630,7 @@ void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* op
 		export_spk_file_comment(shared_file, options_view_spikes, class_id, cs_file_comment);
 		// test if we should continue
 		if (!(FALSE == options_view_spikes->bexportzero) && (class_n_items == 0))
-			export_spk_psth(shared_file, options_view_spikes, pl_sum0, m_current_spike_list, class_id);
+			export_spk_psth(shared_file, options_view_spikes, pl_sum0, m_current_spike_list_index_, class_id);
 
 		cs_dummy = _T("\r\n");
 		shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
@@ -644,7 +644,7 @@ void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* shared_file, const O
                                                const int class_index)
 {
 	// ................................DATA
-	auto spike_list = &spike_list_array[spike_list_index];
+	auto spike_list = &spike_list_array_[spike_list_index];
 	CString cs_dummy;
 	// temp parameters for amplitudes histogram
 	const auto histogram_amplitude_min = static_cast<int>(options_view_spikes->histampl_vmin / spike_list->get_acq_volts_per_bin());
@@ -742,7 +742,7 @@ void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* shared_file, const O
 void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, long* p_hist, const CString&
                                          cs_file_comment)
 {
-	const auto spike_list = &spike_list_array[m_current_spike_list];
+	const auto spike_list = &spike_list_array_[m_current_spike_list_index_];
 
 	// spike class: -1(one:selected); 0(all); 1(all:split)
 	auto class0 = 0;
@@ -775,7 +775,7 @@ void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* shared_file, OPTIONS
 	{
 		const auto class_id = spike_list->get_class_id(class_index);
 		export_spk_file_comment(shared_file, options_view_spikes, class_id, cs_file_comment);
-		export_spk_amplitude_histogram(shared_file, options_view_spikes, p_hist, m_current_spike_list, class_id);
+		export_spk_amplitude_histogram(shared_file, options_view_spikes, p_hist, m_current_spike_list_index_, class_id);
 	}
 }
 
@@ -793,7 +793,7 @@ void CSpikeDoc::export_spk_attributes_one_file(CSharedFile* shared_file, const O
 	}
 
 	// ................................DATA
-	const auto spike_list = &spike_list_array[m_current_spike_list];
+	const auto spike_list = &spike_list_array_[m_current_spike_list_index_];
 	CString cs_dummy = _T("\r\ntime(s)\tclass");
 	auto rate = spike_list->get_acq_sampling_rate();
 	if (rate == 0.0)
@@ -1112,14 +1112,14 @@ void CSpikeDoc::export_spk_file_comment(CSharedFile* shared_file, const OPTIONS_
 		// source data file items
 		if (options_view_spikes->bacqdate) // source data time and date
 		{
-			cs_dummy.Format(_T("\t%s"), (LPCTSTR)m_acquisition_time.Format(_T("%#d %m %Y\t%X")));
+			cs_dummy.Format(_T("\t%s"), (LPCTSTR)m_acquisition_time_.Format(_T("%#d %m %Y\t%X")));
 			shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		}
 		// source data comments
 		if (options_view_spikes->bacqcomments)
 		{
 			CString cs_temp;
-			cs_dummy = cs_tab + m_acquisition_comment;
+			cs_dummy = cs_tab + m_acquisition_comment_;
 			shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 			cs_dummy.Format(_T("\t%i"), m_wave_format.insect_id);
 			shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
@@ -1155,11 +1155,11 @@ void CSpikeDoc::export_spk_file_comment(CSharedFile* shared_file, const OPTIONS_
 	if (options_view_spikes->bspkcomments)
 	{
 		shared_file->Write(cs_tab, cs_tab.GetLength() * sizeof(TCHAR));
-		shared_file->Write(m_comment, m_comment.GetLength() * sizeof(TCHAR));
+		shared_file->Write(m_comment_, m_comment_.GetLength() * sizeof(TCHAR));
 	}
 
 	// number of spikes
-	const auto pspklist = &spike_list_array[m_current_spike_list];
+	const auto pspklist = &spike_list_array_[m_current_spike_list_index_];
 
 	if (options_view_spikes->btotalspikes)
 	{
@@ -1169,7 +1169,7 @@ void CSpikeDoc::export_spk_file_comment(CSharedFile* shared_file, const OPTIONS_
 		shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		cs_dummy.Format(_T("\t%i"), pspklist->get_classes_count());
 		shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-		const auto tduration = static_cast<float>(m_acquisition_size) / m_acquisition_rate;
+		const auto tduration = static_cast<float>(m_acquisition_size_) / m_acquisition_rate_;
 		cs_dummy.Format(_T("\t%f"), tduration);
 		shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 	}
@@ -1198,7 +1198,7 @@ long CSpikeDoc::build_psth(const OPTIONS_VIEWSPIKES* options_view_spikes, long* 
 {
 	// adjust parameters
 	long n = 0;
-	const auto spike_list = &spike_list_array[m_current_spike_list];
+	const auto spike_list = &spike_list_array_[m_current_spike_list_index_];
 
 	const auto n_spikes = spike_list->get_spikes_count();
 	if (n_spikes <= 0)
@@ -1289,7 +1289,7 @@ long CSpikeDoc::build_psth(const OPTIONS_VIEWSPIKES* options_view_spikes, long* 
 
 long CSpikeDoc::build_isi(const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, const int class_index)
 {
-	const auto spike_list = &spike_list_array[m_current_spike_list];
+	const auto spike_list = &spike_list_array_[m_current_spike_list_index_];
 
 	const auto sampling_rate = spike_list->get_acq_sampling_rate(); // sampling rate
 	long n = 0;
@@ -1383,7 +1383,7 @@ long CSpikeDoc::build_isi(const OPTIONS_VIEWSPIKES* options_view_spikes, long* p
 long CSpikeDoc::build_autocorrelation(const OPTIONS_VIEWSPIKES* options_view_spikes, long* sum0, const int class_index)
 {
 	long n = 0; // number of pivot spikes used to build autocorrelation
-	const auto spike_list = &spike_list_array[m_current_spike_list];
+	const auto spike_list = &spike_list_array_[m_current_spike_list_index_];
 	const auto spikes_count = spike_list->get_spikes_count(); // number of spikes in that file
 	if (spikes_count <= 0) // exit if no spikes
 		return n;
@@ -1491,7 +1491,7 @@ long CSpikeDoc::build_autocorrelation(const OPTIONS_VIEWSPIKES* options_view_spi
 long CSpikeDoc::build_psth_autocorrelation(const OPTIONS_VIEWSPIKES* options_view_spikes, long* sum0, const int class_index)
 {
 	long n = 0; // number of 'pivot spikes'
-	auto spike_list = &spike_list_array[m_current_spike_list];
+	auto spike_list = &spike_list_array_[m_current_spike_list_index_];
 
 	const auto spike_count = spike_list->get_spikes_count();
 	if (spike_count <= 0) // return if no spikes in that file
@@ -1603,7 +1603,7 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, const OPTIONS_
                                         const int class_index)
 {
 	CString cs_dummy;
-	const auto spike_list = &spike_list_array[spike_list_index];
+	const auto spike_list = &spike_list_array_[spike_list_index];
 	// update offset
 	auto ii_offset_0 = 0;
 	if (!options_view_spikes->babsolutetime && m_stimulus_intervals.n_items > 0)
@@ -1690,7 +1690,7 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, const OPTIONS_
 void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, double* value,
                                      const CString& cs_file_comment)
 {
-	const auto spike_list = &spike_list_array[m_current_spike_list];
+	const auto spike_list = &spike_list_array_[m_current_spike_list_index_];
 
 	// spike class: -1(one:selected); 0(all); 1(all:split)
 	auto class_index0 = 0;
@@ -1725,29 +1725,29 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, OPTIONS_VIEWSP
 	{
 		const auto class_id = spike_list->get_class_id(class_index);
 		export_spk_file_comment(shared_file, options_view_spikes, class_id, cs_file_comment);
-		export_spk_average_wave(shared_file, options_view_spikes, value, m_current_spike_list, class_id);
+		export_spk_average_wave(shared_file, options_view_spikes, value, m_current_spike_list_index_, class_id);
 	}
 }
 
-SpikeList* CSpikeDoc::set_spike_list_as_current(int spike_list_index)
+SpikeList* CSpikeDoc::set_spike_list_current_index(int spike_list_index)
 {
 	SpikeList* spike_list = nullptr;
-	if (spike_list_array.GetSize() > 0 && spike_list_index >= 0 && spike_list_index < spike_list_array.GetSize())
+	if (spike_list_array_.GetSize() > 0 && spike_list_index >= 0 && spike_list_index < spike_list_array_.GetSize())
 	{
-		spike_list = &spike_list_array[spike_list_index];
-		m_current_spike_list = spike_list_index;
+		spike_list = &spike_list_array_[spike_list_index];
+		m_current_spike_list_index_ = spike_list_index;
 	}
 	return spike_list;
 }
 
 SpikeList* CSpikeDoc::get_spike_list_current()
 {
-	if (m_current_spike_list >= 0)
-		return &spike_list_array[m_current_spike_list];
+	if (m_current_spike_list_index_ >= 0)
+		return &spike_list_array_[m_current_spike_list_index_];
 	return nullptr;
 }
 
 SpikeList* CSpikeDoc::get_spike_list_at(int spike_list_index)
 {
-	return &spike_list_array[spike_list_index];
+	return &spike_list_array_[spike_list_index];
 }

@@ -635,7 +635,7 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 		int iTab = pParent->m_tabCtrl.GetCurSel();
 		if (iTab < 0)
 			iTab = 0;
-		const auto pspk_list = ptr->pspikeDoc->set_spike_list_as_current(iTab);
+		const auto pspk_list = ptr->pspikeDoc->set_spike_list_current_index(iTab);
 		p_wnd->set_source_data(pspk_list, pParent->GetDocument());
 		p_wnd->set_plot_mode(m_spike_plot_mode, m_selected_class);
 		long l_first = 0;

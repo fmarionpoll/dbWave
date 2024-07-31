@@ -144,7 +144,7 @@ void dbTableView::save_current_spk_file()
 		const auto p_doc = GetDocument();
 		auto current_list = 0;
 		if (m_tabCtrl.m_hWnd != nullptr) current_list = m_tabCtrl.GetCurSel();
-		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_list);
+		m_pSpkList = m_pSpkDoc->set_spike_list_current_index(current_list);
 		if (m_pSpkList != nullptr && !m_pSpkList->is_class_list_valid())
 			m_pSpkList->update_class_list();
 

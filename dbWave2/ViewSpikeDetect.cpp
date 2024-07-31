@@ -249,7 +249,7 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 	// select a spike list
 	m_pSpkList = m_pSpkDoc->get_spike_list_current();
 	if (m_pSpkList == nullptr && m_pSpkDoc->get_spike_list_size() > 0)
-		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(0);
+		m_pSpkList = m_pSpkDoc->set_spike_list_current_index(0);
 
 	// no spikes list available, create one
 	if (m_pSpkList == nullptr)
@@ -260,7 +260,7 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 		m_pSpkDoc->set_spike_list_size(i_size);
 		for (auto i = 0; i < i_size; i++)
 		{
-			auto spike_list_current = m_pSpkDoc->set_spike_list_as_current(i);
+			auto spike_list_current = m_pSpkDoc->set_spike_list_current_index(i);
 			if (spike_list_current == nullptr)
 			{
 				m_pSpkDoc->add_spk_list();
@@ -268,7 +268,7 @@ void ViewSpikeDetection::update_spike_file(BOOL bUpdateInterface)
 			}
 			spike_list_current->init_spike_list(pdb_doc->m_p_dat, m_spk_detect_array_current.GetItem(i));
 		}
-		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(0);
+		m_pSpkList = m_pSpkDoc->set_spike_list_current_index(0);
 		ASSERT(m_pSpkList != nullptr);
 	}
 
@@ -1092,7 +1092,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 			continue;
 
 		// select new spike list (list with no spikes for stimulus channel)
-		SpikeList* spike_list = m_pSpkDoc->set_spike_list_as_current(i);
+		SpikeList* spike_list = m_pSpkDoc->set_spike_list_current_index(i);
 		if (spike_list == nullptr)
 		{
 			m_pSpkDoc->add_spk_list();
@@ -1127,7 +1127,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 	// display data
 	if (old_spike_list_index < 0)
 		old_spike_list_index = 0;
-	m_pSpkList = m_pSpkDoc->set_spike_list_as_current(old_spike_list_index);
+	m_pSpkList = m_pSpkDoc->set_spike_list_current_index(old_spike_list_index);
 
 	m_chart_spike_bar.set_source_data(m_pSpkList, db_document);
 	m_chart_spike_shape.set_source_data(m_pSpkList, db_document);
@@ -1495,7 +1495,7 @@ void ViewSpikeDetection::OnBnClickedClearAll()
 	// update spike list
 	for (int i = 0; i < m_pSpkDoc->get_spike_list_size(); i++)
 	{
-		SpikeList* p_spk_list = m_pSpkDoc->set_spike_list_as_current(i);
+		SpikeList* p_spk_list = m_pSpkDoc->set_spike_list_current_index(i);
 		p_spk_list->init_spike_list(GetDocument()->m_p_dat, nullptr);
 	}
 	m_pSpkList = m_pSpkDoc->get_spike_list_current();
@@ -1584,7 +1584,7 @@ void ViewSpikeDetection::OnArtefact()
 
 	const auto i_sel_parameters = m_tabCtrl.GetCurSel();
 	m_p_detect_parameters = m_spk_detect_array_current.GetItem(i_sel_parameters);
-	m_pSpkList = m_pSpkDoc->set_spike_list_as_current(i_sel_parameters);
+	m_pSpkList = m_pSpkDoc->set_spike_list_current_index(i_sel_parameters);
 
 	db_spike spike_sel(-1, -1, m_spike_index);
 	select_spike_no(spike_sel, FALSE);
@@ -2944,7 +2944,7 @@ void ViewSpikeDetection::update_detection_settings(int iSelParms)
 		for (int i = 0; i < spike_list_size; i++)
 		{
 			// select new spike list (list with no spikes for stimulus channel)
-			const auto spike_list_current = m_pSpkDoc->set_spike_list_as_current(i);
+			const auto spike_list_current = m_pSpkDoc->set_spike_list_current_index(i);
 			ASSERT(spike_list_current != NULL);
 			const auto ps_d = spike_list_current->get_detection_parameters();
 			m_spk_detect_array_current.SetItem(i, ps_d); 
@@ -2955,7 +2955,7 @@ void ViewSpikeDetection::update_detection_settings(int iSelParms)
 	for (auto i = 0; i < m_spk_detect_array_current.GetSize(); i++)
 	{
 		// select new spike list (list with no spikes for stimulus channel)
-		auto spike_list_current = m_pSpkDoc->set_spike_list_as_current(i);
+		auto spike_list_current = m_pSpkDoc->set_spike_list_current_index(i);
 		const auto p_sd = m_spk_detect_array_current.GetItem(i);
 		if (spike_list_current == nullptr)
 		{
@@ -2971,7 +2971,7 @@ void ViewSpikeDetection::update_detection_settings(int iSelParms)
 	m_pSpkList->m_selected_spike = m_spike_index; 
 	m_i_detect_parameters = iSelParms;
 	m_p_detect_parameters = m_spk_detect_array_current.GetItem(iSelParms);
-	m_pSpkList = m_pSpkDoc->set_spike_list_as_current(iSelParms);
+	m_pSpkList = m_pSpkDoc->set_spike_list_current_index(iSelParms);
 	if (m_pSpkList != nullptr)
 		highlight_spikes(TRUE);
 
@@ -3125,7 +3125,7 @@ void ViewSpikeDetection::update_tabs()
 	for (auto i = 0; i < m_pSpkDoc->get_spike_list_size(); i++)
 	{
 		CString cs;
-		const auto current_spike_list = m_pSpkDoc->set_spike_list_as_current(i);
+		const auto current_spike_list = m_pSpkDoc->set_spike_list_current_index(i);
 		cs.Format(_T("#%i %s"), i, (LPCTSTR)current_spike_list->get_detection_parameters()->comment);
 		if (!b_replace)
 			m_tabCtrl.InsertItem(i, cs);
@@ -3139,7 +3139,7 @@ void ViewSpikeDetection::update_tabs()
 			cs.ReleaseBuffer();
 		}
 	}
-	m_pSpkDoc->set_spike_list_as_current(current_spike_list_index);
+	m_pSpkDoc->set_spike_list_current_index(current_spike_list_index);
 
 	m_i_detect_parameters = m_pSpkDoc->get_spike_list_current_index();
 	m_tabCtrl.SetCurSel(m_i_detect_parameters);

@@ -299,7 +299,7 @@ void ViewSpikeSort::update_spike_file()
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		m_pSpkDoc->SetPathName(GetDocument()->db_get_current_spk_file_name(), FALSE);
 		const int current_index = GetDocument()->get_current_spike_file()->get_spike_list_current_index();
-		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_index);
+		m_pSpkList = m_pSpkDoc->set_spike_list_current_index(current_index);
 
 		// update Tab at the bottom
 		m_tabCtrl.InitctrlTabFromSpikeDoc(m_pSpkDoc);
@@ -311,9 +311,7 @@ void ViewSpikeSort::update_file_parameters()
 {
 	// reset parameters ? flag = single file or file list has changed
 	if (!b_all_files)
-	{
-		chart_histogram_.delete_histogram_data();
-	}
+		chart_histogram_.clear_data();
 
 	const BOOL first_update = (m_pSpkDoc == nullptr);
 	update_spike_file();
@@ -476,7 +474,7 @@ void ViewSpikeSort::on_sort()
 		}
 
 		// load spike list
-		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_list);
+		m_pSpkList = m_pSpkDoc->set_spike_list_current_index(current_list);
 		if ((nullptr == m_pSpkList) || (0 == m_pSpkList->get_spike_length()))
 			continue;
 
@@ -698,7 +696,7 @@ void ViewSpikeSort::clear_flag_all_spikes()
 
 				for (auto j = 0; j < m_pSpkDoc->get_spike_list_size(); j++)
 				{
-					m_pSpkList = m_pSpkDoc->set_spike_list_as_current(j);
+					m_pSpkList = m_pSpkDoc->set_spike_list_current_index(j);
 					m_pSpkList->remove_all_spike_flags();
 				}
 			}
@@ -741,7 +739,7 @@ void ViewSpikeSort::on_measure()
 		if (m_pSpkDoc == nullptr)
 			continue;
 
-		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_spike_list);
+		m_pSpkList = m_pSpkDoc->set_spike_list_current_index(current_spike_list);
 		if (m_pSpkList == nullptr)
 			continue;
 
@@ -775,15 +773,6 @@ void ViewSpikeSort::on_measure()
 		//save only if changed?
 		m_pSpkDoc->OnSaveDocument(pdb_doc->db_get_current_spk_file_name(FALSE));
 	}
-
-	//if (m_b_all_files)
-	//{
-	//	index_current_file = pdb_doc->db_get_current_record_position();
-	//	if (pdb_doc->db_set_current_record_position(index_current_file)) {
-	//		m_pSpkDoc = pdb_doc->open_current_spike_file();
-	//		m_pSpkList = m_pSpkDoc->get_spike_list_current();
-	//	}
-	//}
 
 	chart_spike_shape_.set_source_data(m_pSpkList, GetDocument());
 	chart_spike_bar_.set_source_data(m_pSpkList, GetDocument());
@@ -819,9 +808,6 @@ void ViewSpikeSort::update_gain()
 
 void ViewSpikeSort::on_format_all_data()
 {
-	// build new histogram only if necessary
-	auto calculate_histogram = FALSE;
-
 	// dots: spk file length
 	if (l_first_ != 0 || l_last_ != m_pSpkDoc->get_acq_size() - 1)
 	{
@@ -838,18 +824,14 @@ void ViewSpikeSort::on_format_all_data()
 		chart_xt_measures_.Invalidate();
 		chart_spike_shape_.Invalidate();
 		chart_spike_bar_.Invalidate();
-		calculate_histogram = TRUE;
+		build_histogram();
 	}
 
 	// spikes: center spikes horizontally and adjust hz size of display
-
 	const auto x_we = m_pSpkList->get_spike_length();
 	if (x_we != chart_spike_shape_.get_xw_extent() || 0 != chart_spike_shape_.get_xw_org())
 		chart_spike_shape_.set_xw_ext_org(x_we, 0);
 
-	// change spk_hist_wnd_
-	if (calculate_histogram)
-		build_histogram();
 	update_legends();
 }
 
@@ -920,7 +902,7 @@ void ViewSpikeSort::on_format_gain_adjust()
 	xy_min_amplitude_mv = static_cast<float>(minvalue) * delta;
 
 	// (3) adjust histogram
-	build_histogram();
+	//build_histogram();
 	const auto y_max = static_cast<int>(chart_histogram_.get_hist_max_value());
 	chart_histogram_.set_yw_ext_org(MulDiv(y_max, 10, 8), 0);
 
@@ -1297,7 +1279,7 @@ void ViewSpikeSort::update_file_scroll()
 
 void ViewSpikeSort::select_spike_list(int current_index)
 {
-	m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_index);
+	m_pSpkList = m_pSpkDoc->set_spike_list_current_index(current_index);
 	ASSERT(m_pSpkList != NULL);
 	on_measure();
 
@@ -1611,7 +1593,7 @@ void ViewSpikeSort::on_en_change_spike_class()
 		{
 			m_pSpkDoc->SetModifiedFlag(TRUE);
 			const auto current_list = m_tabCtrl.GetCurSel();
-			auto* spike_list = m_pSpkDoc->set_spike_list_as_current(current_list);
+			auto* spike_list = m_pSpkDoc->set_spike_list_current_index(current_list);
 			spike_list->get_spike(m_spike_index)->set_class_id(m_spike_index_class);
 			update_legends();
 		}

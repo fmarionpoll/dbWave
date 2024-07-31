@@ -198,7 +198,7 @@ void ViewSpikeTemplates::update_spike_file()
 		m_pSpkDoc->SetModifiedFlag(FALSE);
 		m_pSpkDoc->SetPathName(GetDocument()->db_get_current_spk_file_name(), FALSE);
 		const int index_current_spike_list = GetDocument()->get_current_spike_file()->get_spike_list_current_index();
-		m_pSpkList = m_pSpkDoc->set_spike_list_as_current(index_current_spike_list);
+		m_pSpkList = m_pSpkDoc->set_spike_list_current_index(index_current_spike_list);
 
 		// update Tab at the bottom
 		m_tabCtrl.InitctrlTabFromSpikeDoc(m_pSpkDoc);
@@ -208,7 +208,7 @@ void ViewSpikeTemplates::update_spike_file()
 
 void ViewSpikeTemplates::select_spike_list(const int index_current)
 {
-	m_pSpkList = m_pSpkDoc->set_spike_list_as_current(index_current);
+	m_pSpkList = m_pSpkDoc->set_spike_list_current_index(index_current);
 	m_tabCtrl.SetCurSel(index_current);
 
 	if (!m_pSpkList->is_class_list_valid())
@@ -610,7 +610,7 @@ void ViewSpikeTemplates::display_avg(const boolean b_all_files, CTemplateListWnd
 	auto last_file = current_file; // index last file in the series
 	// make sure we have the correct spike list here
 	const auto current_list = m_tabCtrl.GetCurSel();
-	m_pSpkDoc->set_spike_list_as_current(current_list);
+	m_pSpkDoc->set_spike_list_current_index(current_list);
 
 	CString cs_comment;
 	CString cs_file_comment = _T("Analyze file: ");
@@ -633,7 +633,7 @@ void ViewSpikeTemplates::display_avg(const boolean b_all_files, CTemplateListWnd
 		p_dbwave_doc->SetTitle(cs);
 		pSpkDoc->SetModifiedFlag(FALSE);
 
-		auto pSpkList = pSpkDoc->set_spike_list_as_current(current_list); // load pointer to spike list
+		auto pSpkList = pSpkDoc->set_spike_list_current_index(current_list); // load pointer to spike list
 		if (!pSpkList->is_class_list_valid()) // if class list not valid:
 		{
 			pSpkList->update_class_list(); // rebuild list of classes
@@ -722,7 +722,7 @@ void ViewSpikeTemplates::OnBuildTemplates()
 			m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
 		}
 
-		const auto spike_list = m_pSpkDoc->set_spike_list_as_current(currentlist);
+		const auto spike_list = m_pSpkDoc->set_spike_list_current_index(currentlist);
 		nspikes = spike_list->get_spikes_count();
 		for (auto i = 0; i < nspikes; i++)
 			m_template_list_.tAdd(m_pSpkList->get_spike(i)->get_p_data());
@@ -750,7 +750,7 @@ void ViewSpikeTemplates::OnBuildTemplates()
 			p_dbwave_doc->SetTitle(cs);
 		}
 
-		auto spike_list = m_pSpkDoc->set_spike_list_as_current(currentlist);
+		auto spike_list = m_pSpkDoc->set_spike_list_current_index(currentlist);
 		nspikes = spike_list->get_spikes_count();
 
 		// create template CListCtrl
@@ -862,7 +862,7 @@ void ViewSpikeTemplates::sort_spikes()
 			p_dbwave_doc->SetTitle(cs);
 			m_pSpkDoc->SetModifiedFlag(FALSE);
 
-			m_pSpkList = m_pSpkDoc->set_spike_list_as_current(currentlist); // load pointer to spike list
+			m_pSpkList = m_pSpkDoc->set_spike_list_current_index(currentlist); // load pointer to spike list
 			if (!m_pSpkList->is_class_list_valid()) // if class list not valid:
 			{
 				m_pSpkList->update_class_list(); // rebuild list of classes
@@ -1062,7 +1062,7 @@ void ViewSpikeTemplates::edit_spike_class(int control_id, int control_item)
 					cs += dbwave_doc->db_get_current_spk_file_name(FALSE);
 					dbwave_doc->SetTitle(cs);
 					m_pSpkDoc->SetModifiedFlag(FALSE);
-					m_pSpkList = m_pSpkDoc->set_spike_list_as_current(current_list);
+					m_pSpkList = m_pSpkDoc->set_spike_list_current_index(current_list);
 				}
 
 				// TODO: this should not work - changing SpikeClassID does not change the spike class because UpdateClassList reset classes array to zero

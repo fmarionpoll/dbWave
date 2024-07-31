@@ -444,7 +444,7 @@ boolean CdbWaveDoc::get_max_min_of_all_spikes(const BOOL b_all_files, const BOOL
 {
 	boolean spikes_found = false;
 	const long n_files = b_all_files ? db_get_n_records() : 1;
-	const int current_spike_list_index = m_p_spk->m_current_spike_list;
+	const int current_spike_list_index = m_p_spk->get_spike_list_current_index();
 
 	for (long i_file = 0; i_file < n_files; i_file++)
 	{
@@ -454,8 +454,9 @@ boolean CdbWaveDoc::get_max_min_of_all_spikes(const BOOL b_all_files, const BOOL
 				open_current_spike_file();
 			if (m_p_spk == nullptr)
 				continue;
-			m_p_spk->set_spike_list_as_current(current_spike_list_index);
+			m_p_spk->set_spike_list_current_index(current_spike_list_index);
 		}
+
 		const auto p_spk_list = m_p_spk->get_spike_list_current();
 		if (p_spk_list->get_spikes_count())
 		{
@@ -499,7 +500,7 @@ CSize CdbWaveDoc::get_max_min_of_single_spike(const BOOL b_all)
 				open_current_spike_file();
 			if (m_p_spk == nullptr)
 				continue;
-			m_p_spk->set_spike_list_as_current(0);
+			m_p_spk->set_spike_list_current_index(0);
 		}
 		const auto p_spk_list = m_p_spk->get_spike_list_current();
 		if (p_spk_list->get_spikes_count() == 0)
@@ -526,7 +527,7 @@ CSize CdbWaveDoc::get_max_min_of_single_spike(const BOOL b_all)
 		if (db_set_current_record_position(n_current_file))
 			open_current_spike_file();
 		if (m_p_spk!= nullptr)
-		m_p_spk->set_spike_list_as_current(0);
+		m_p_spk->set_spike_list_current_index(0);
 	}
 
 	return dummy;
@@ -1325,8 +1326,9 @@ boolean CdbWaveDoc::import_file_single(const CString & cs_filename, long& m_id, 
 	m_id++;
 	db_table->m_mainTableSet.m_ID = m_id;
 	set_record_file_names(&record);
-	set_record_spk_classes(&record);
 	set_record_wave_format(&record);
+	boolean flag = set_record_spk_classes(&record);
+	
 	try
 	{
 		db_table->m_mainTableSet.Update();
@@ -1802,7 +1804,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 	{
 		m_p_spk = new CSpikeDoc;
 		ASSERT(m_p_spk != NULL);
-		m_p_spk->set_spike_list_as_current(get_current_spike_file()->get_spike_list_current_index());
+		m_p_spk->set_spike_list_current_index(get_current_spike_file()->get_spike_list_current_index());
 	}
 
 	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
@@ -1885,7 +1887,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 			dlg.SetStatus(cs_comment);
 
 			// open document
-			db_set_current_record_position(ifile1);
+			BOOL flag0 = db_set_current_record_position(ifile1);
 			if (current_spike_file_name_.IsEmpty())
 				continue;
 			// check if file is still present and open it
@@ -1912,7 +1914,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 			//----------------------------------------------------------
 			for (auto i_spike_list = i_chan1; i_spike_list < i_chan2; i_spike_list++)
 			{
-				const auto p_spike_list = m_p_spk->set_spike_list_as_current(i_spike_list);
+				const auto p_spike_list = m_p_spk->set_spike_list_current_index(i_spike_list);
 				options_view_spikes->ichan = i_spike_list;
 				for (auto k_class = class1; k_class <= class2; k_class++)
 				{
@@ -1964,7 +1966,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 	if (db_set_current_record_position(i_old_index)) 
 	{
 		if (open_current_spike_file() != nullptr)
-			m_p_spk->set_spike_list_as_current(i_old_list);
+			m_p_spk->set_spike_list_current_index(i_old_list);
 	}
 	UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
 }
@@ -2028,7 +2030,7 @@ BOOL CdbWaveDoc::transpose_file_for_excel(CSharedFile * p_sf)
 	// --------------------------------------------------------- first line of the table
 	// first pass: browse through all lines from dataDest
 	auto n_records = -1;
-	data_dest.Seek(ul_position_header, CFile::begin);
+	data_dest.Seek(static_cast<LONGLONG>(ul_position_header), CFile::begin);
 	CString cs_transposed;
 	constexpr char c_sep = _T('\t');
 
@@ -2103,8 +2105,8 @@ BOOL CdbWaveDoc::transpose_file_for_excel(CSharedFile * p_sf)
 	buffer[0] = 0;
 	data_transposed.Write(&buffer, 1);
 
-	// now the transposed file has all data in the proper format
-	// and we can copy it back to the clipboard
+	// now that the transposed file has all data in the proper format,
+	// we can copy it back to the clipboard
 	ul_len_char_total = data_transposed.GetLength();
 	data_transposed.SeekToBegin();
 	ul_len_char = ul_len_char_total;
@@ -2705,22 +2707,22 @@ void CdbWaveDoc::export_datafiles_as_text_files()
 		if (!current_datafile_name_.IsEmpty())
 		{
 			// open file
-			const auto pDat = open_current_data_file();
-			ASSERT(pDat != nullptr);
+			const auto p_dat = open_current_data_file();
+			ASSERT(p_dat != nullptr);
 
 			// create text file on disk with the same name as the data file_with dat
-			CStdioFile data_dest; // destination file object
+			CStdioFile data_dest; 
 			auto cs_txt_file = current_datafile_name_ + _T("_.txt");
-			CFileException fe; // trap exceptions
+			CFileException fe; 
 			if (!data_dest.Open(
 				cs_txt_file, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone | CFile::typeText, &fe))
 			{
-				data_dest.Abort(); // file not found
+				data_dest.Abort();
 				continue;
 			}
 
 			// export data
-			m_p_dat->export_data_file_to_txt_file(&data_dest); // get infos
+			m_p_dat->export_data_file_to_txt_file(&data_dest);
 			data_dest.Close();
 			cs_txt_file += _T("\n");
 			psf->Write(cs_txt_file, cs_txt_file.GetLength() * sizeof(TCHAR));
@@ -2735,6 +2737,6 @@ void CdbWaveDoc::export_datafiles_as_text_files()
 	db_table->get_current_record_file_names();
 
 	// restore current data position
-	db_set_current_record_position(index_current_record);
+	BOOL success = db_set_current_record_position(index_current_record);
 	static_cast<CdbWaveApp*>(AfxGetApp())->m_psf = psf;
 }

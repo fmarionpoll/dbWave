@@ -361,7 +361,7 @@ LRESULT ViewdbWave::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	switch (wParam)
 	{
 	case HINT_VIEWTABHASCHANGED:
-		GetDocument()->get_current_spike_file()->set_spike_list_as_current(threshold);
+		GetDocument()->get_current_spike_file()->set_spike_list_current_index(threshold);
 		m_dataListCtrl.refresh_display();
 		break;
 

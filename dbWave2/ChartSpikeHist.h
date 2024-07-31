@@ -20,12 +20,12 @@ public:
 	~ChartSpikeHist() override;
 
 protected:
-	CArray<CDWordArray*, CDWordArray*> histogram_ptr_array_; // array of DWord array containing histogram
+	CArray<CDWordArray*, CDWordArray*> histogram_array_; 
 
-	int bin_size_{}; // size of one bin
-	int abscissa_min_value_ = 0; // minimum value from which histogram is built (abscissa)
-	int abscissa_max_value_ = 0; // maximum value (abscissa max)
-	int n_bins_ = 0; // n bins within histogram
+	double histogram_min_mv_ = 0; 
+	double histogram_max_mv_ = 0; 
+	double histogram_bin_mv_ = 1;
+	int histogram_n_bins_ = 0;
 
 	DWORD l_max_{}; // value max
 	int i_max_{}; // index max
@@ -33,17 +33,20 @@ protected:
 	int i_last_{}; // index last interval with data
 
 public:
-	int get_bin_size() const { return bin_size_; }
-	int get_bin_min_value() const { return abscissa_min_value_; }
-	int get_bin_max_value() const { return abscissa_max_value_; }
-	int get_n_bins() const { return n_bins_; }
+	double get_bin_mv() const { return histogram_bin_mv_; }
+	double get_bin_min_mv() const { return histogram_min_mv_; }
+	double get_bin_max_mv() const { return histogram_max_mv_; }
+	int get_hist_n_bins() const { return histogram_n_bins_; }
 	int get_hist_max_bin_index() const { return i_max_; }
 	DWORD get_hist_max_value() const { return l_max_; }
 
 	void build_hist_from_document(CdbWaveDoc* p_document, BOOL b_all_files, long l_first, long l_last, int max, int min,
 	                           int n_bins, BOOL b_new);
-	void delete_histogram_data();
-	LPTSTR export_ascii(LPTSTR lp); // export ascii data
+	void build_hist_from_document2(CdbWaveDoc* p_document, BOOL b_all_files, long l_first, long l_last, int max,
+	                               int min,
+	                              BOOL b_new);
+	void clear_data();
+	LPTSTR export_ascii(LPTSTR lp);
 	void move_vt_tag_to_val(int tag_index, int value);
 	void move_hz_tag_to_val(int tag_index, int value);
 
@@ -51,7 +54,7 @@ public:
 
 protected:
 	int hit_curve(CPoint point) override;
-	void resize_and_clear_histograms(int n_bins, int max, int min);
+	void resize_and_clear_histograms(int n_bins, int bin_max, int bin_min);
 	void get_histogram_limits(int i_hist);
 	void get_extents();
 	void plot_histogram(CDC* p_dc, const CDWordArray* p_dw, int color) const;

@@ -13,54 +13,54 @@ class CSpikeDoc : public CDocument
 	~CSpikeDoc() override;
 
 	SpikeClass m_spike_class{};
-	int m_current_spike_list = -1;
 	CIntervals m_stimulus_intervals{};
 	CWaveFormat m_wave_format{};
 
 protected:
-	CArray<SpikeList, SpikeList> spike_list_array{};
+	CArray<SpikeList, SpikeList> spike_list_array_{};
 	CTime m_detection_date{};
-	WORD m_wVersion = 7;
-	CString m_comment = _T("");
-	CString m_acquisition_file_name = _T("");
-	CString m_new_path = _T("");
-	CString m_acquisition_comment = _T("");
-	CTime m_acquisition_time{};
-	float m_acquisition_rate = 1.f;
-	long m_acquisition_size = 0;
+	WORD m_w_version_ = 7;
+	CString m_comment_ = _T("");
+	CString m_acquisition_file_name_ = _T("");
+	CString m_new_path_ = _T("");
+	CString m_acquisition_comment_ = _T("");
+	CTime m_acquisition_time_{};
+	float m_acquisition_rate_ = 1.f;
+	long m_acquisition_size_ = 0;
+	int m_current_spike_list_index_ = -1;
+
 
 	// Operations
 public:
 	CString get_file_infos();
 	void init_source_doc(const AcqDataDoc* p_document);
 
-	CString get_acq_filename() const { return m_acquisition_file_name; }
-	void set_acq_filename(const CString& name) { m_acquisition_file_name = name; }
+	CString get_acq_filename() const { return m_acquisition_file_name_; }
+	void set_acq_filename(const CString& name) { m_acquisition_file_name_ = name; }
 
-	CString get_comment() const { return m_comment; }
-	CTime get_acq_time() const { return m_acquisition_time; }
-	float get_acq_duration() const { return static_cast<float>(m_acquisition_size) / m_acquisition_rate; }
-	long get_acq_size() const { return m_acquisition_size; }
-	float get_acq_rate() const { return m_acquisition_rate; }
+	CString get_comment() const { return m_comment_; }
+	CTime get_acq_time() const { return m_acquisition_time_; }
+	float get_acq_duration() const { return static_cast<float>(m_acquisition_size_) / m_acquisition_rate_; }
+	long get_acq_size() const { return m_acquisition_size_; }
+	float get_acq_rate() const { return m_acquisition_rate_; }
 
-	int get_spike_list_size() const { return spike_list_array.GetSize(); }
-	void set_spike_list_size(int i) { return spike_list_array.SetSize(i); }
+	int get_spike_list_size() const { return spike_list_array_.GetSize(); }
+	void set_spike_list_size(const int i) { return spike_list_array_.SetSize(i); }
 
-	SpikeList* set_spike_list_as_current(int spike_list_index);
-	SpikeList* get_spike_list_current();
-
-	SpikeList* get_spike_list_at(int spike_list_index);
-	int get_spike_list_current_index() const { return m_current_spike_list; }
+	SpikeList*	get_spike_list_at(int spike_list_index);
+	int			get_spike_list_current_index() const { return m_current_spike_list_index_; }
+	SpikeList*	set_spike_list_current_index(int spike_list_index);
+	SpikeList*	get_spike_list_current();
 
 	int add_spk_list()
 	{
-		spike_list_array.SetSize(get_spike_list_size() + 1);
+		spike_list_array_.SetSize(get_spike_list_size() + 1);
 		return get_spike_list_size();
 	}
 
-	void set_source_filename(const CString& file_name) { m_acquisition_file_name = file_name; }
+	void set_source_filename(const CString& file_name) { m_acquisition_file_name_ = file_name; }
 	void set_detection_date(const CTime time) { m_detection_date = time; }
-	void set_comment(const CString& comment) { m_comment = comment; }
+	void set_comment(const CString& comment) { m_comment_ = comment; }
 
 	void sort_stimulus_array();
 	void export_spk_psth(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, const CString& cs_file_comment); 
