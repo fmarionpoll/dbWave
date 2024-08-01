@@ -15,7 +15,7 @@
 #define new DEBUG_NEW
 #endif
 
-numberIDToText CdbWaveDoc::headers_[] = {
+number_id_to_text CdbWaveDoc::headers_[] = {
 	{0, _T("path")}, {1, _T("Expt")}, {2, _T("insectID")}, {3, _T("ssID")}, {4, _T("insect")},
 	{5, _T("strain")}, {6, _T("sex")}, {7, _T("location")}, {8, _T("operator")}, {9, _T("more")},
 	{10, _T("stim1")}, {11, _T("conc1")}, {12, _T("repeat1")}, {13, _T("stim2")}, {14, _T("conc2")},
@@ -1127,7 +1127,7 @@ int CdbWaveDoc::find_column_associated_to_header(const CString & text)
 	int found = -1;
 	for (int i = 0; i < 18; i++)
 	{
-		CString header = headers_[i].csText;
+		CString header = headers_[i].cs_text;
 		if (text.CompareNoCase(header) == 0)
 		{
 			found = headers_[i].value;

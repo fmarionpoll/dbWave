@@ -77,7 +77,7 @@ public:
 #endif
 
 protected:
-	static numberIDToText errorMessages[];
+	static number_id_to_text errorMessages[];
 	int m_nFid = -1;
 	boolean m_bRelocate_if_StartWithGap = false;
 	boolean m_bRemoveGaps = true;

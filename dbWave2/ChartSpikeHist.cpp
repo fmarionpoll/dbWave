@@ -550,8 +550,7 @@ CDWordArray* ChartSpikeHist::init_class_array(const int n_bins, const int spike_
 }
 
 void ChartSpikeHist::build_hist_from_spike_list(SpikeList* p_spk_list, const long l_first, const long l_last, 
-												const double max_mv, const double min_mv,
-                                                const double bin_mv)
+								const double min_mv, const double max_mv, const double bin_mv)
 {
 	auto* p_dword_array = histogram_array_[0];
 
@@ -602,7 +601,7 @@ void ChartSpikeHist::build_hist_from_spike_list(SpikeList* p_spk_list, const lon
 //		BOOL bNew=TRUE		= erase old data (TRUE) or add to old value (FALSE)
 
 void ChartSpikeHist::build_hist_from_document(CdbWaveDoc* p_document, const BOOL b_all_files, const long l_first, const long l_last,
-                                              const double max_mv, const double min_mv, const double bin_mv)
+				const double min_mv, const double max_mv,  const double bin_mv)
 {
 	clear_data();
 	dbwave_doc_ = p_document;
@@ -621,7 +620,7 @@ void ChartSpikeHist::build_hist_from_document(CdbWaveDoc* p_document, const BOOL
 		{
 			SpikeList* p_spike_list = p_document->m_p_spk->get_spike_list_current();
 			if (p_spike_list != nullptr && p_spike_list->get_spikes_count() > 0)
-				build_hist_from_spike_list(p_spike_list, l_first, l_last, max_mv, min_mv, bin_mv);
+				build_hist_from_spike_list(p_spike_list, l_first, l_last, min_mv, max_mv, bin_mv);
 		}
 	}
 }

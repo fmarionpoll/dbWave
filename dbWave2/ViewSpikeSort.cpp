@@ -76,7 +76,7 @@ BEGIN_MESSAGE_MAP(ViewSpikeSort, dbTableView)
 	ON_BN_CLICKED(IDC_EXECUTE, &ViewSpikeSort::on_sort)
 	ON_BN_CLICKED(IDC_MEASURE, &ViewSpikeSort::on_measure)
 	ON_BN_CLICKED(IDC_CHECK1, &ViewSpikeSort::on_select_all_files)
-	ON_COMMAND(ID_FORMAT_ALLDATA, &ViewSpikeSort::on_format_all_data)
+	ON_COMMAND(ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA, &ViewSpikeSort::on_view_all_data_on_abscissa)
 	ON_COMMAND(ID_FORMAT_CENTERCURVE, &ViewSpikeSort::on_format_center_curve)
 	ON_COMMAND(ID_FORMAT_GAINADJUST, &ViewSpikeSort::on_format_gain_adjust)
 	ON_COMMAND(ID_FORMAT_SPLITCURVES, &ViewSpikeSort::on_format_split_curves)
@@ -92,7 +92,7 @@ BEGIN_MESSAGE_MAP(ViewSpikeSort, dbTableView)
 	ON_EN_CHANGE(IDC_NSPIKES, &ViewSpikeSort::on_en_change_no_spike)
 	ON_BN_DOUBLECLICKED(IDC_DISPLAYPARM, &ViewSpikeSort::on_tools_edit_spikes)
 	ON_EN_CHANGE(IDC_SPIKECLASS, &ViewSpikeSort::on_en_change_spike_class)
-	ON_EN_CHANGE(IDC_BINMV, &ViewSpikeSort::on_en_change_n_bins)
+	ON_EN_CHANGE(IDC_BINMV, &ViewSpikeSort::on_en_change_hist_bin_ms)
 END_MESSAGE_MAP()
 
 void ViewSpikeSort::define_sub_classed_items()
@@ -147,6 +147,7 @@ void ViewSpikeSort::define_stretch_parameters()
 void ViewSpikeSort::OnInitialUpdate()
 {
 	dbTableView::OnInitialUpdate();
+
 	define_sub_classed_items();
 	define_stretch_parameters();
 	m_b_init_ = TRUE;
@@ -781,8 +782,6 @@ void ViewSpikeSort::on_measure()
 	chart_xt_measures_.horizontal_tags.set_value_int(m_i_tag_up_, spike_classification_parameters_->upper_threshold);
 
 	build_histogram();
-	chart_histogram_.vertical_tags.set_value_int(m_i_tag_low_, spike_classification_parameters_->lower_threshold);
-	chart_histogram_.vertical_tags.set_value_int(m_i_tag_up_, spike_classification_parameters_->upper_threshold);
 
 	update_gain();
 	UpdateData(FALSE);
@@ -794,7 +793,7 @@ void ViewSpikeSort::update_gain()
 	const auto y_wo = static_cast<int>((xy_max_amplitude_mv + xy_min_amplitude_mv) / 2 / m_delta_mv_);
 
 	chart_xt_measures_.set_yw_ext_org(y_we, y_wo);
-	chart_histogram_.set_xw_ext_org(y_we, y_wo);// -y_we / 2);
+	chart_histogram_.set_xw_ext_org(y_we, y_wo);
 
 	// get max min and center accordingly
 	short max, min;
@@ -806,7 +805,7 @@ void ViewSpikeSort::update_gain()
 	all_charts_invalidate();
 }
 
-void ViewSpikeSort::on_format_all_data()
+void ViewSpikeSort::on_view_all_data_on_abscissa()
 {
 	// dots: spk file length
 	if (l_first_ != 0 || l_last_ != m_pSpkDoc->get_acq_size() - 1)
@@ -842,9 +841,10 @@ void ViewSpikeSort::build_histogram()
 		return;
 
 	chart_histogram_.build_hist_from_document(pdb_doc, b_all_files, l_first_, l_last_, 
-		xy_max_amplitude_mv, xy_min_amplitude_mv, histogram_bin_mv);
-	//chart_histogram_.build_hist_from_document(pdb_doc, b_all_files, l_first_, l_last_,
-	//	static_cast<double>(10.), static_cast<double>(0.), histogram_bin_mv, TRUE);
+		xy_min_amplitude_mv, xy_max_amplitude_mv, histogram_bin_mv);
+
+	chart_histogram_.vertical_tags.set_value_mv(m_i_tag_low_, histogram_lower_threshold);
+	chart_histogram_.vertical_tags.set_value_mv(m_i_tag_up_, histogram_upper_threshold);
 }
 
 void ViewSpikeSort::on_format_center_curve()
@@ -877,6 +877,7 @@ void ViewSpikeSort::on_format_gain_adjust()
 	short maxvalue, minvalue;
 	if (!GetDocument()->get_max_min_of_all_spikes(b_all_files, TRUE, maxvalue, minvalue))
 		return;
+
 	auto y_we = MulDiv(maxvalue - minvalue + 1, 10, 9);
 	auto y_wo = (maxvalue + minvalue) / 2;
 	chart_spike_shape_.set_yw_ext_org(y_we, y_wo);
@@ -899,13 +900,12 @@ void ViewSpikeSort::on_format_gain_adjust()
 	xy_min_amplitude_mv = static_cast<float>(minvalue) * delta;
 
 	// (3) adjust histogram
-	//build_histogram();
+	build_histogram();
 	const auto y_max = static_cast<int>(chart_histogram_.get_hist_max_value());
 	chart_histogram_.set_yw_ext_org(MulDiv(y_max, 10, 8), 0);
 
 	update_legends();
 }
-
 
 void ViewSpikeSort::select_spike(db_spike& spike_sel)
 {
@@ -1595,7 +1595,7 @@ void ViewSpikeSort::on_en_change_spike_class()
 	}
 }
 
-void ViewSpikeSort::on_en_change_n_bins()
+void ViewSpikeSort::on_en_change_hist_bin_ms()
 {
 	if (mm_histogram_bin_mv_.m_bEntryDone)
 	{

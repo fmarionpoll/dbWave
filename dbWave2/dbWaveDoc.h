@@ -103,7 +103,7 @@ protected:
 	                           boolean b_header);
 	CString get_full_path_name_without_extension() const;
 
-	static numberIDToText headers_[];
+	static number_id_to_text headers_[];
 	static BOOL	transpose_file_for_excel(CSharedFile* p_sf);
 	static int check_files_can_be_opened(CStringArray& file_names_array, CSharedFile* psf, int n_columns, boolean b_header);
 	static int index_2d_array(const int i_row, const int n_columns, const boolean b_header)

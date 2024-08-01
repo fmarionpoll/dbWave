@@ -60,7 +60,7 @@ BEGIN_MESSAGE_MAP(ViewSpikes, dbTableView)
 
 	ON_MESSAGE(WM_MYMESSAGE, &ViewSpikes::OnMyMessage)
 
-	ON_COMMAND(ID_FORMAT_ALLDATA, &ViewSpikes::OnFormatAlldata)
+	ON_COMMAND(ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA, &ViewSpikes::OnFormatAlldata)
 	ON_COMMAND(ID_FORMAT_CENTERCURVE, &ViewSpikes::OnFormatCentercurve)
 	ON_COMMAND(ID_FORMAT_GAINADJUST, &ViewSpikes::OnFormatGainadjust)
 	ON_COMMAND(ID_TOOLS_EDITSPIKES, &ViewSpikes::OnToolsEdittransformspikes)

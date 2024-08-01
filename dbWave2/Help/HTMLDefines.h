@@ -74,7 +74,7 @@
 #define HID_FORMAT_SETORDINATES                 0x18037
 #define HID_FORMAT_FIRSTFRAME                   0x18038
 #define HID_FORMAT_LASTFRAME                    0x18039
-#define HID_FORMAT_ALLDATA                      0x1803A
+#define HID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA    0x1803A
 #define HID_TOOLS_EXPORTNUMBEROFSPIKES          0x1803B
 #define HID_OPTIONS_LOADSAVEOPTIONS             0x18046
 #define HID_FORMAT_HISTOGRAM                    0x1804E

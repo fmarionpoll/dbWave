@@ -41,7 +41,7 @@ public:
 	DWORD get_hist_max_value() const { return l_max_; }
 
 	void build_hist_from_document(CdbWaveDoc* p_document, BOOL b_all_files, long l_first, long l_last, 
-								double max_mv, double min_mv, double bin_mv);
+									double min_mv, double max_mv, double bin_mv);
 
 	void clear_data();
 	LPTSTR export_ascii(LPTSTR lp);
@@ -63,7 +63,7 @@ protected:
 	void get_class_array(int i_class, CDWordArray*& p_dw);
 	CDWordArray* init_class_array(int n_bins, int spike_class);
 	void build_hist_from_spike_list(SpikeList* p_spk_list, long l_first, long l_last, 
-								double max_mv, double min_mv, double bin_mv);
+								double min_mv, double max_mv, double bin_mv);
 public:
 	void plot_data_to_dc(CDC* p_dc) override;
 

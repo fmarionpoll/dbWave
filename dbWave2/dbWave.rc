@@ -2664,7 +2664,7 @@ BEGIN
         MENUITEM "&X scale...",                 ID_FORMAT_XSCALE
         MENUITEM "F&irst frame\tShift+Home",    ID_FORMAT_FIRSTFRAME
         MENUITEM "&Last frame\tShift+End",      ID_FORMAT_LASTFRAME
-        MENUITEM "&All data\tCtrl Up",          ID_FORMAT_ALLDATA
+        MENUITEM "&All data\tCtrl Up",          ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA
         MENUITEM SEPARATOR
         MENUITEM "&Y scale...",                 ID_FORMAT_ORDINATES
         MENUITEM "&Center curve",               ID_FORMAT_CENTERCURVE
@@ -2814,7 +2814,7 @@ BEGIN
     POPUP "Forma&t"
     BEGIN
         MENUITEM "&X scale...",                 ID_FORMAT_XSCALE
-        MENUITEM "&All data\tCtrl Up",          ID_FORMAT_ALLDATA
+        MENUITEM "&All data\tCtrl Up",          ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA
         MENUITEM "F&irst frame\tHome",          ID_FORMAT_FIRSTFRAME
         MENUITEM "&Previous frame\tPage Up",    ID_FORMAT_PREVIOUSFRAME
         MENUITEM "Ne&xt frame\tPage Down",      ID_FORMAT_NEXTFRAME
@@ -3285,7 +3285,7 @@ BEGIN
     BUTTON      ID_VIEW_CURSORMODE_NORMAL
     BUTTON      ID_VIEW_CURSORMODE_ZOOMIN
     SEPARATOR
-    BUTTON      ID_FORMAT_ALLDATA
+    BUTTON      ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA
     BUTTON      ID_FORMAT_CENTERCURVE
     BUTTON      ID_FORMAT_GAINADJUST
     BUTTON      ID_FORMAT_SPLITCURVES
@@ -3299,7 +3299,7 @@ BEGIN
     BUTTON      ID_VIEW_CURSORMODE_ZOOMIN
     BUTTON      ID_VIEW_CURSORMODE_MEASURE
     SEPARATOR
-    BUTTON      ID_FORMAT_ALLDATA
+    BUTTON      ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA
     BUTTON      ID_FORMAT_CENTERCURVE
     BUTTON      ID_FORMAT_GAINADJUST
     BUTTON      32787
@@ -3852,7 +3852,7 @@ BEGIN
     ID_FORMAT_SETORDINATES  "Scale vertical axis"
     ID_FORMAT_FIRSTFRAME    "Display the start of the data recording set"
     ID_FORMAT_LASTFRAME     "Display the end of the data recording set"
-    ID_FORMAT_ALLDATA       "Display the entire data recording set"
+    ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA       "Display the entire data recording set"
     ID_TOOLS_EXPORTNUMBEROFSPIKES "Export spikes to a text document"
 END
 

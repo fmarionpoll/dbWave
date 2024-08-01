@@ -13,7 +13,7 @@ IMPLEMENT_DYNCREATE(CDataFileFromCEDSpike2, CDataFileX)
 const int LENCEDSON = 16;
 const char CEDSON64[] = "CED_DATA";
 
-numberIDToText CDataFileFromCEDSpike2::errorMessages[] = {
+number_id_to_text CDataFileFromCEDSpike2::errorMessages[] = {
 	{S64_OK, _T("There was no error")},
 	{NO_FILE, _T("Attempt to use when file not open, or use of an invalid file handle, or no spare file handle")},
 	{
@@ -359,7 +359,7 @@ CString CDataFileFromCEDSpike2::getErrorMessage(int flag)
 	{
 		if (flag == errorMessages[i].value)
 		{
-			error_msg = errorMessages[i].csText;
+			error_msg = errorMessages[i].cs_text;
 			break;
 		}
 	}
