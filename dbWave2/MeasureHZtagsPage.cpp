@@ -58,7 +58,7 @@ BOOL CMeasureHZtagsPage::GetHZcursorVal(const int index)
 		return FALSE;
 	m_index = index;
 	m_datachannel = m_pChartDataWnd->horizontal_tags.get_channel(index);
-	int k = m_pChartDataWnd->horizontal_tags.get_value(m_index);
+	int k = m_pChartDataWnd->horizontal_tags.get_value_int(m_index);
 	m_mvlevel = m_pChartDataWnd->get_channel_list_item(m_datachannel)->ConvertDataBinsToVolts(k) * 1000.f;
 
 	return TRUE;
@@ -70,7 +70,7 @@ void CMeasureHZtagsPage::OnCenter()
 	CChanlistItem* pchan = m_pChartDataWnd->get_channel_list_item(m_datachannel);
 	pchan->GetMaxMin(&max, &min);
 	const auto val = (max + min) / 2;
-	m_pChartDataWnd->horizontal_tags.set_tag_val(m_index, val);
+	m_pChartDataWnd->horizontal_tags.set_value_int(m_index, val);
 	m_pChartDataWnd->Invalidate();
 	m_mvlevel = pchan->ConvertDataBinsToVolts(val) * 1000.f;
 	UpdateData(FALSE);
@@ -103,7 +103,7 @@ void CMeasureHZtagsPage::OnEnChangeDatachannel()
 			m_datachannel = m_pChartDataWnd->get_channel_list_size() - 1;
 		if (m_nbcursors > 0 && m_index >= 0 && m_index < m_nbcursors)
 		{
-			m_pChartDataWnd->horizontal_tags.set_tag_chan(m_index, m_datachannel);
+			m_pChartDataWnd->horizontal_tags.set_channel(m_index, m_datachannel);
 			m_pChartDataWnd->Invalidate();
 		}
 		UpdateData(FALSE);
@@ -135,7 +135,7 @@ void CMeasureHZtagsPage::OnEnChangeMvlevel()
 		{
 			const auto val = m_pChartDataWnd->get_channel_list_item(m_datachannel)->ConvertVoltsToDataBins(
 				m_mvlevel / 1000.0f);
-			m_pChartDataWnd->horizontal_tags.set_tag_val(m_index, val);
+			m_pChartDataWnd->horizontal_tags.set_value_int(m_index, val);
 			m_pChartDataWnd->Invalidate();
 		}
 	}
@@ -164,12 +164,12 @@ void CMeasureHZtagsPage::OnAdjust()
 	{
 		if (m_pChartDataWnd->horizontal_tags.get_channel(i) == m_datachannel)
 		{
-			m_pChartDataWnd->horizontal_tags.set_tag_val(i, val);
+			m_pChartDataWnd->horizontal_tags.set_value_int(i, val);
 			val += dv;
 		}
 	}
 	m_pChartDataWnd->Invalidate();
-	val = m_pChartDataWnd->horizontal_tags.get_value(m_index);
+	val = m_pChartDataWnd->horizontal_tags.get_value_int(m_index);
 	m_mvlevel = m_pChartDataWnd->get_channel_list_item(m_datachannel)->ConvertDataBinsToVolts(val) * 1000.f;
 	UpdateData(FALSE);
 }

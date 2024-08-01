@@ -204,7 +204,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 				m_ticksPerSample = pChan->am_CEDticksPerSample;
 		}
 		const Tag* pTag = pTags->get_tag(0);
-		m_llFileOffset = pTag->m_lTicks / m_ticksPerSample;
+		m_llFileOffset = pTag->l_ticks / m_ticksPerSample;
 		const int newlength = pWFormat->sample_count - static_cast<int>(m_llFileOffset);
 		pWFormat->sample_count = newlength;
 	}
@@ -391,8 +391,8 @@ void CDataFileFromCEDSpike2::convert_VTtags_Ticks_to_ADintervals(CWaveBuf* pBuf,
 		for (int i = 0; i < n_tags; i++)
 		{
 			Tag* ptag = p_tags->get_tag(i);
-			ptag->m_lvalue = static_cast<long>(ptag->m_lTicks / ticksPerSample);
-			ptag->m_refchan = cedChan;
+			ptag->value_long = static_cast<long>(ptag->l_ticks / ticksPerSample);
+			ptag->ref_channel = cedChan;
 		}
 	}
 }

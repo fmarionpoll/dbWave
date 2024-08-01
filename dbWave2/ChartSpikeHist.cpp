@@ -132,6 +132,28 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	p_dc->RestoreDC(n_saved_dc);
 }
 
+void ChartSpikeHist::display_vertical_tags(CDC* p_dc)
+{
+	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
+	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
+	const auto y0 = MulDiv(0 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+	const auto y1 = MulDiv(m_display_rect_.bottom - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+
+	for (auto tag_index = vertical_tags.get_tag_list_size() - 1; tag_index >= 0; tag_index--)
+	{
+		const auto value_mv = vertical_tags.get_value_mv(tag_index);
+
+		const int value = convert_mv_to_abscissa(value_mv);
+		const auto k = MulDiv(value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+		p_dc->MoveTo(k, y0);
+		p_dc->LineTo(k, y1);
+		vertical_tags.set_value_int(tag_index, k);
+	}
+
+	p_dc->SelectObject(old_pen);
+	p_dc->SetROP2(old_rop2);
+}
+
 void ChartSpikeHist::plot_histogram(CDC* p_dc, const CDWordArray* p_dw, const int color) const
 {
 	CRect rect_histogram;
@@ -156,19 +178,23 @@ void ChartSpikeHist::plot_histogram(CDC* p_dc, const CDWordArray* p_dw, const in
 
 void ChartSpikeHist::move_hz_tag_to_val(const int tag_index, const int value)
 {
-	m_pt_last_.y = MulDiv(horizontal_tags.get_value(tag_index) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+	m_pt_last_.y = MulDiv(horizontal_tags.get_value_int(tag_index) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+
 	const auto j = MulDiv(value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
 	xor_horizontal_tag(j);
-	horizontal_tags.set_tag_val(tag_index, value);
+	horizontal_tags.set_value_int(tag_index, value);
 }
 
 void ChartSpikeHist::move_vt_tag_to_val(const int tag_index, const double value_mv)
 {
+	m_pt_last_.x = MulDiv(vertical_tags.get_value_int(tag_index) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+
 	const int value = convert_mv_to_abscissa(value_mv);
-	m_pt_last_.x = MulDiv(vertical_tags.get_value(tag_index) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 	const auto j = MulDiv(value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 	xor_vertical_tag(j);
-	vertical_tags.set_tag_val(tag_index, value);
+
+	vertical_tags.set_value_int(tag_index, j);
+	vertical_tags.set_value_mv(tag_index, value_mv);
 }
 
 void ChartSpikeHist::get_class_array(const int i_class, CDWordArray*& p_dw)
@@ -228,7 +254,7 @@ void ChartSpikeHist::OnLButtonUp(const UINT n_flags, CPoint point)
 		{
 			// convert pix into data value and back again
 			const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
-			vertical_tags.set_tag_val(hc_trapped_, val);
+			vertical_tags.set_value_int(hc_trapped_, val);
 			point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 			xor_vertical_tag(point.x);
 			ChartSpike::OnLButtonUp(n_flags, point);
@@ -284,13 +310,13 @@ void ChartSpikeHist::OnLButtonDown(const UINT n_flags, const CPoint point)
 	if (horizontal_tags.get_tag_list_size() > 0)
 	{
 		for (auto i_cur = horizontal_tags.get_tag_list_size() - 1; i_cur >= 0; i_cur--)
-			horizontal_tags.set_tag_pixel(i_cur, MulDiv(horizontal_tags.get_value(i_cur) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_);
+			horizontal_tags.set_pixel(i_cur, MulDiv(horizontal_tags.get_value_int(i_cur) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_);
 	}
 	// compute pixel position of vertical tags
 	if (vertical_tags.get_tag_list_size() > 0)
 	{
 		for (auto i_cur = vertical_tags.get_tag_list_size() - 1; i_cur >= 0; i_cur--) // loop through all tags
-			vertical_tags.set_tag_pixel(i_cur, MulDiv(vertical_tags.get_value(i_cur) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_);
+			vertical_tags.set_pixel(i_cur, MulDiv(vertical_tags.get_value_int(i_cur) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_);
 	}
 
 	ChartSpike::OnLButtonDown(n_flags, point);
@@ -483,16 +509,10 @@ void ChartSpikeHist::get_histogram_limits(const int i_hist)
 void ChartSpikeHist::resize_histograms(const double bin_mv, const double max_mv, const double min_mv)
 {
 	const int n_bins = static_cast<int>((max_mv - min_mv) / bin_mv) + 1;
-	if (n_bins != abscissa_n_bins_ )
-	{
-		abscissa_n_bins_ = n_bins;
-		clear_data();
-	}
-
+	abscissa_n_bins_ = n_bins;
 	abscissa_bin_mv_ = bin_mv;
 	abscissa_min_mv_ = min_mv;
 	abscissa_max_mv_ = min_mv + n_bins * abscissa_bin_mv_; 
-	abscissa_n_bins_ = n_bins;
 
 	if (histogram_array_.GetSize() <= 0)
 	{

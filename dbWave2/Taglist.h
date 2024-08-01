@@ -22,21 +22,27 @@ public:
 	void remove_all_tags();
 	int remove_chan_tags(int reference_channel); 
 
-	void set_tag_chan(int tag_index, int channel_index); 
-	void set_tag_val(int i_tag, int value); 
-	void set_tag_pixel(int tag_index, int pixel_value);
-	void set_tag_l_value(int tag_index, long value); 
-	void set_tag_comment(int tag_index, const CString& comment);
-
-	int get_channel(int tag_index); 
-	int get_value(int i_tag);
-	int get_tag_pixel(int tag_index); 
-	long get_tag_l_val(int tag_index); 
-	CString get_tag_comment(int tag_index); 
-
 	int get_tag_list_size() const;
 	Tag* get_tag(int tag_index);
 
-	long Write(CFile* p_data_file);
-	BOOL Read(CFile* p_data_file);
+	void set_channel(int tag_index, int channel_index);
+	int get_channel(int tag_index);
+
+	void set_value_int(int i_tag, int value);
+	int get_value_int(int i_tag);
+
+	void set_value_mv(int i_tag, double value);
+	double get_value_mv(int i_tag);
+
+	void set_pixel(int tag_index, int pixel_value);
+	int get_pixel(int tag_index);
+
+	void set_value_long(int tag_index, long value); 
+	long get_value_long(int tag_index);
+
+	void set_comment(int tag_index, const CString& comment);
+	CString get_comment(int tag_index); 
+
+	long write(CFile* p_data_file);
+	BOOL read(CFile* p_data_file);
 };

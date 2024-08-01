@@ -68,7 +68,7 @@ int TagList::remove_chan_tags(int reference_channel)
 	for (auto i = tag_ptr_array_.GetUpperBound(); i >= 0; i--)
 	{
 		const auto tag = tag_ptr_array_.GetAt(i);
-		if (tag != nullptr && tag->m_refchan == reference_channel)
+		if (tag != nullptr && tag->ref_channel == reference_channel)
 		{
 			delete tag; // delete object pointed at
 			tag_ptr_array_.RemoveAt(i); // remove item
@@ -77,7 +77,7 @@ int TagList::remove_chan_tags(int reference_channel)
 	return tag_ptr_array_.GetSize();
 }
 
-void TagList::set_tag_val(const int i_tag, const int value)
+void TagList::set_value_int(const int i_tag, const int value)
 {
 	if (tag_ptr_array_.GetSize() <= i_tag)
 	{
@@ -87,75 +87,97 @@ void TagList::set_tag_val(const int i_tag, const int value)
 	}
 	const auto p_cur = tag_ptr_array_.GetAt(i_tag);
 	if (p_cur != nullptr) 
-		p_cur->m_value = value;
+		p_cur->value_int = value;
 }
 
-int TagList::get_value(const int i_tag)
+void TagList::set_value_mv(const int i_tag, const double value)
+{
+	if (tag_ptr_array_.GetSize() <= i_tag)
+	{
+		for (auto i = tag_ptr_array_.GetSize(); i <= i_tag; i++)
+			add_tag(0, 0);
+		ASSERT(tag_ptr_array_.GetSize() >= i_tag);
+	}
+	const auto p_cur = tag_ptr_array_.GetAt(i_tag);
+	if (p_cur != nullptr)
+		p_cur->value_mv = value;
+}
+
+int TagList::get_value_int(const int i_tag)
 {
 	const auto tag = tag_ptr_array_.GetAt(i_tag);
 	if (tag != nullptr)
-		return tag->m_value;
+		return tag->value_int;
 	return NULL;
 }
+
+double TagList::get_value_mv(const int i_tag)
+{
+	const auto tag = tag_ptr_array_.GetAt(i_tag);
+	if (tag != nullptr)
+		return tag->value_mv;
+	return NULL;
+}
+
 
 int TagList::get_channel(const int tag_index)
 {
 	const auto tag = tag_ptr_array_.GetAt(tag_index);
 	if (tag != nullptr)
-		return tag->m_refchan;
+		return tag->ref_channel;
 	return NULL;
 }
 
-void TagList::set_tag_chan(const int tag_index, const int channel_index)
+void TagList::set_channel(const int tag_index, const int channel_index)
 {
 	const auto tag = tag_ptr_array_.GetAt(tag_index);
 	if (tag != nullptr) 
-		tag->m_refchan = channel_index;
+		tag->ref_channel = channel_index;
 }
 
-void TagList::set_tag_pixel(const int tag_index, const int pixel_value)
+void TagList::set_pixel(const int tag_index, const int pixel_value)
 {
 	const auto tag = tag_ptr_array_.GetAt(tag_index);
 	if (tag != nullptr) 
-		tag->m_pixel = pixel_value;
+		tag->pixel = pixel_value;
 }
 
-int TagList::get_tag_pixel(const int tag_index)
+int TagList::get_pixel(const int tag_index)
 {
 	const auto tag = tag_ptr_array_.GetAt(tag_index);
 	if (tag != nullptr)
-		return tag->m_pixel;
+		return tag->pixel;
 	return NULL;
 }
 
-void TagList::set_tag_l_value(const int tag_index, const long value)
+void TagList::set_value_long(const int tag_index, const long value)
 {
 	const auto tag = tag_ptr_array_.GetAt(tag_index);
 	if (tag != nullptr)
-		tag->m_lvalue = value;
+		tag->value_long = value;
 }
 
-long TagList::get_tag_l_val(const int tag_index)
+long TagList::get_value_long(const int tag_index)
 {
 	const auto tag = tag_ptr_array_.GetAt(tag_index);
 	if (tag != nullptr)
-		return tag->m_lvalue;
+		return tag->value_long;
 	return NULL;
 }
 
-void TagList::set_tag_comment(const int tag_index, const CString& comment)
+void TagList::set_comment(const int tag_index, const CString& comment)
 {
 	const auto tag = tag_ptr_array_.GetAt(tag_index);
 	if (tag != nullptr)
-		tag->m_csComment = comment;
+		tag->m_cs_comment = comment;
 }
 
-CString TagList::get_tag_comment(const int tag_index)
+CString TagList::get_comment(const int tag_index)
 {
 	const auto tag = tag_ptr_array_.GetAt(tag_index);
 	CString cs;
 	if (tag != nullptr)
-		cs = tag->m_csComment;
+		cs = tag->m_cs_comment;
 	return cs;
 }
 
@@ -185,16 +207,16 @@ void TagList::copy_tag_list(TagList* p_t_list)
 		{
 			const auto tag = new Tag;
 			ASSERT(tag != NULL);
-			tag->m_refchan = p_tag->m_refchan;
-			tag->m_pixel = p_tag->m_pixel;
-			tag->m_value = p_tag->m_value;
-			tag->m_lvalue = p_tag->m_lvalue;
+			tag->ref_channel = p_tag->ref_channel;
+			tag->pixel = p_tag->pixel;
+			tag->value_int = p_tag->value_int;
+			tag->value_long = p_tag->value_long;
 			insert_tag(tag);
 		}
 	}
 }
 
-long TagList::Write(CFile* p_data_file)
+long TagList::write(CFile* p_data_file)
 {
 	long l_size = sizeof(int);
 	p_data_file->Write(&m_version_, l_size);
@@ -205,12 +227,12 @@ long TagList::Write(CFile* p_data_file)
 	for (auto i = 0; i < n_elements; i++)
 	{
 		const auto tag = tag_ptr_array_.GetAt(i);
-		l_size += tag->Write(p_data_file);
+		l_size += tag->write(p_data_file);
 	}
 	return l_size;
 }
 
-BOOL TagList::Read(CFile* p_data_file)
+BOOL TagList::read(CFile* p_data_file)
 {
 	int version;
 	p_data_file->Read(&version, sizeof(int));
@@ -221,7 +243,7 @@ BOOL TagList::Read(CFile* p_data_file)
 	{
 		const auto tag = new Tag;
 		ASSERT(tag != NULL);
-		tag->Read(p_data_file);
+		tag->read(p_data_file);
 		tag_ptr_array_.Add(tag);
 	}
 	return TRUE;

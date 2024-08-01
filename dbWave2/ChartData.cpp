@@ -897,8 +897,8 @@ void ChartData::plot_data_to_dc(CDC* p_dc)
 	{
 		const auto p_pen = p_dc->SelectObject(&black_dotted_pen_);
 		const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
-		p_dc->MoveTo(m_temp_vertical_tag_->m_pixel, 2);
-		p_dc->LineTo(m_temp_vertical_tag_->m_pixel, m_display_rect_.bottom - 2);
+		p_dc->MoveTo(m_temp_vertical_tag_->pixel, 2);
+		p_dc->LineTo(m_temp_vertical_tag_->pixel, m_display_rect_.bottom - 2);
 		p_dc->SetROP2(old_rop2);
 		p_dc->SelectObject(p_pen);
 	}
@@ -915,7 +915,7 @@ void ChartData::display_hz_tags_for_channel(CDC* p_dc, const int i_chan, const C
 	{
 		if (horizontal_tags.get_channel(i) != i_chan)
 			continue;
-		auto k = horizontal_tags.get_value(i);
+		auto k = horizontal_tags.get_value_int(i);
 		k = MulDiv(static_cast<short>(k) - w_org, y_ve, w_ext);
 		p_dc->MoveTo(m_display_rect_.left, k);
 		p_dc->LineTo(m_display_rect_.right, k);
@@ -933,7 +933,7 @@ void ChartData::display_vt_tags_long_value(CDC* p_dc)
 	for (auto j = vertical_tags.get_tag_list_size() - 1; j >= 0; j--)
 	{
 		constexpr auto y0 = 0;
-		const auto lk = vertical_tags.get_tag_l_val(j);
+		const auto lk = vertical_tags.get_value_long(j);
 		if (lk < m_lxFirst || lk > m_lxLast)
 			continue;
 		const auto k = MulDiv(lk - m_lxFirst, m_display_rect_.Width(), m_lxLast - m_lxFirst + 1);
@@ -1061,7 +1061,7 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 			{
 				if (horizontal_tags.get_channel(j) != i_chan) // next tag if not associated with
 					continue; // current channel
-				auto k = horizontal_tags.get_value(j);
+				auto k = horizontal_tags.get_value_int(j);
 				k = MulDiv(k - y_zero, y_ve, y_extent) + y_vo;
 				p_dc->MoveTo(x0, k); // set initial pt
 				p_dc->LineTo(x1, k); // HZ line
@@ -1085,7 +1085,7 @@ void ChartData::Print(CDC* p_dc, CRect* pRect, BOOL bCenterLine)
 		const int k_size = pRect->right - k0;
 		for (auto j = vertical_tags.get_tag_list_size() - 1; j >= 0; j--)
 		{
-			const auto lk = vertical_tags.get_tag_l_val(j); // get value
+			const auto lk = vertical_tags.get_value_long(j); // get value
 			if (lk < m_lxFirst || lk > m_lxLast)
 				continue;
 			const int k = k0 + (lk - m_lxFirst) * k_size / (m_lxLast - m_lxFirst + 1);
@@ -1304,8 +1304,8 @@ void ChartData::OnLButtonDown(UINT nFlags, CPoint point)
 		{
 			const auto pixval = get_channel_list_bin_to_y_pixel(
 				WORD(horizontal_tags.get_channel(icur)),
-				horizontal_tags.get_value(icur));
-			horizontal_tags.set_tag_pixel(icur, pixval);
+				horizontal_tags.get_value_int(icur));
+			horizontal_tags.set_pixel(icur, pixval);
 		}
 	}
 
@@ -1399,7 +1399,7 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 			// convert pix into data value and back again
 			const auto l_val = static_cast<long>(point.x) * (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1) / static_cast<long>(m_display_rect_.
 				right) + file_position_first_left_pixel_;
-			vertical_tags.set_tag_l_value(hc_trapped_, l_val);
+			vertical_tags.set_value_long(hc_trapped_, l_val);
 			point.x = static_cast<int>((l_val - file_position_first_left_pixel_) 
 				* static_cast<long>(m_display_rect_.right) 
 				/ (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1));
@@ -1531,11 +1531,11 @@ void ChartData::move_hz_tag_to_val(int i, int val)
 	const auto chan_list_item = chanlistitem_ptr_array[chan];
 	m_XORyext = chan_list_item->GetYextent();
 	m_zero = chan_list_item->GetYzero();
-	m_pt_last_.y = MulDiv(horizontal_tags.get_value(i) - m_zero, m_y_viewport_extent_, m_XORyext) + m_y_viewport_origin_;
+	m_pt_last_.y = MulDiv(horizontal_tags.get_value_int(i) - m_zero, m_y_viewport_extent_, m_XORyext) + m_y_viewport_origin_;
 	CPoint point;
 	point.y = MulDiv(val - m_zero, m_y_viewport_extent_, m_XORyext) + m_y_viewport_origin_;
 	xor_horizontal_tag(point.y);
-	horizontal_tags.set_tag_val(i, val);
+	horizontal_tags.set_value_int(i, val);
 }
 
 void ChartData::set_highlight_data(const CHighLight& source)

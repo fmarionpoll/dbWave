@@ -324,7 +324,7 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 	{
 		// convert pix into data value and back again
 		const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
-		vertical_tags.set_tag_val(hc_trapped_, val);
+		vertical_tags.set_value_int(hc_trapped_, val);
 		point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 		xor_vertical_tag(point.x);
 		ChartSpike::OnLButtonUp(nFlags, point);
@@ -378,7 +378,7 @@ void ChartSpikeShape::OnLButtonDown(UINT nFlags, CPoint point)
 	if (vertical_tags.get_tag_list_size() > 0)
 	{
 		for (auto i_tag = vertical_tags.get_tag_list_size() - 1; i_tag >= 0; i_tag--)
-			vertical_tags.set_tag_pixel(i_tag, MulDiv(vertical_tags.get_value(i_tag) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_);
+			vertical_tags.set_pixel(i_tag, MulDiv(vertical_tags.get_value_int(i_tag) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_);
 	}
 
 	// track rectangle or VT_tag?
@@ -716,8 +716,8 @@ void ChartSpikeShape::plot_array_to_dc(CDC * p_dc, short* p_array)
 void ChartSpikeShape::move_vt_track(int i_track, int new_value)
 {
 	CPoint point;
-	m_pt_last_.x = MulDiv(vertical_tags.get_value(i_track) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	vertical_tags.set_tag_val(i_track, new_value);
+	m_pt_last_.x = MulDiv(vertical_tags.get_value_int(i_track) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	vertical_tags.set_value_int(i_track, new_value);
 	point.x = MulDiv(new_value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 	xor_vertical_tag(point.x);
 }

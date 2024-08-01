@@ -610,7 +610,7 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 			{
 				track_mode_ = TRACK_HZTAG;
 				m_pt_last_.x = 0; // set initial coordinates
-				m_pt_last_.y = horizontal_tags.get_tag_pixel(hc_trapped_);
+				m_pt_last_.y = horizontal_tags.get_pixel(hc_trapped_);
 				m_pt_first_ = m_pt_last_;
 				// tell parent that HZ_tag was selected
 				send_my_message(HINT_HITHZTAG, hc_trapped_);
@@ -634,11 +634,11 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 			{
 				track_mode_ = TRACK_VTTAG;
 				if (b_vertical_tags_as_long_)
-					m_pt_last_.x = static_cast<int>((vertical_tags.get_tag_l_val(hc_trapped_) - file_position_first_left_pixel_) 
+					m_pt_last_.x = static_cast<int>((vertical_tags.get_value_long(hc_trapped_) - file_position_first_left_pixel_) 
 						* static_cast<long>(m_display_rect_.Width()) 
 						/ (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1));
 				else
-					m_pt_last_.x = vertical_tags.get_tag_pixel(hc_trapped_);
+					m_pt_last_.x = vertical_tags.get_pixel(hc_trapped_);
 				m_pt_last_.y = 0;
 				// tell parent that VT_tag was selected
 				send_my_message(HINT_HITVERTTAG, hc_trapped_);
@@ -681,7 +681,7 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 			m_pt_curr_ = point;
 			const auto val = MulDiv(point.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
 			xor_horizontal_tag(point.y);
-			horizontal_tags.set_tag_val(hc_trapped_, val);
+			horizontal_tags.set_value_int(hc_trapped_, val);
 			post_my_message(HINT_MOVEHZTAG, hc_trapped_);
 		}
 		break;
@@ -692,17 +692,17 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 		{
 			xor_vertical_tag(point.x); // move cursor to new pixel
 			m_pt_curr_ = point;
-			vertical_tags.set_tag_pixel(hc_trapped_, point.x);
+			vertical_tags.set_pixel(hc_trapped_, point.x);
 			if (!b_vertical_tags_as_long_)
 			{
 				const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
-				vertical_tags.set_tag_val(hc_trapped_, val);
+				vertical_tags.set_value_int(hc_trapped_, val);
 			}
 			else
 			{
 				const auto lvalue = static_cast<long>(point.x) * (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1) / static_cast<long>(
 					m_display_rect_.Width()) + file_position_first_left_pixel_;
-				vertical_tags.set_tag_l_value(hc_trapped_, lvalue);
+				vertical_tags.set_value_long(hc_trapped_, lvalue);
 			}
 			post_my_message(HINT_MOVEVERTTAG, hc_trapped_);
 		}
@@ -755,7 +755,7 @@ void ChartWnd::left_button_up_horizontal_tag(const UINT n_flags, CPoint point)
 {
 	// convert pix into data value
 	const auto data_value = MulDiv(m_pt_last_.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
-	horizontal_tags.set_tag_val(hc_trapped_, data_value);
+	horizontal_tags.set_value_int(hc_trapped_, data_value);
 
 	point.y = MulDiv(data_value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
 	xor_horizontal_tag(point.y);
@@ -893,7 +893,7 @@ int ChartWnd::hit_horizontal_tag(const int y)
 	for (auto i = 0; i < j; i++) 
 	{
 		constexpr auto jitter = 3;
-		const auto val = horizontal_tags.get_tag_pixel(i); 
+		const auto val = horizontal_tags.get_pixel(i); 
 		if (val <= y + jitter && val >= y - jitter)
 		{
 			hit_cursor = i;
@@ -909,7 +909,7 @@ int ChartWnd::hit_vertical_tag_long(const long lx)
 	const auto j = vertical_tags.get_tag_list_size();
 	for (auto i = 0; i < j; i++) 
 	{
-		const auto l_val = vertical_tags.get_tag_l_val(i);
+		const auto l_val = vertical_tags.get_value_long(i);
 		if (l_val <= lx + file_position_equivalent_to_mouse_jitter_ && l_val >= lx - file_position_equivalent_to_mouse_jitter_)
 		{
 			chit = i;
@@ -926,7 +926,7 @@ int ChartWnd::hit_vertical_tag_pixel(int x)
 	for (auto i = 0; i < j; i++) 
 	{
 		constexpr auto jitter = 3;
-		const auto val = vertical_tags.get_tag_pixel(i);
+		const auto val = vertical_tags.get_pixel(i);
 		if (val <= x + jitter && val >= x - jitter)
 		{
 			chit = i;
@@ -960,7 +960,7 @@ void ChartWnd::display_vertical_tags(CDC* p_dc)
 
 	for (auto j = vertical_tags.get_tag_list_size() - 1; j >= 0; j--)
 	{
-		const auto k = vertical_tags.get_value(j);
+		const auto k = vertical_tags.get_value_int(j);
 		p_dc->MoveTo(k, y0);
 		p_dc->LineTo(k, y1);
 	}
@@ -973,10 +973,10 @@ void ChartWnd::display_horizontal_tags(CDC* p_dc)
 {
 	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
-	auto old_val = horizontal_tags.get_value(horizontal_tags.get_tag_list_size() - 1) - 1;
+	auto old_val = horizontal_tags.get_value_int(horizontal_tags.get_tag_list_size() - 1) - 1;
 	for (auto i_tag = horizontal_tags.get_tag_list_size() - 1; i_tag >= 0; i_tag--)
 	{
-		const auto k = horizontal_tags.get_value(i_tag);
+		const auto k = horizontal_tags.get_value_int(i_tag);
 		if (k == old_val)
 			continue;
 		p_dc->MoveTo(m_x_wo_, k);
@@ -1034,7 +1034,7 @@ void ChartWnd::xor_temp_vertical_tag(const int x_point)
 		m_pt_last_.x = -1;
 	}
 	xor_vertical_tag(x_point);
-	m_temp_vertical_tag_->m_pixel = x_point;
+	m_temp_vertical_tag_->pixel = x_point;
 }
 
 SCOPESTRUCT* ChartWnd::get_scope_parameters()

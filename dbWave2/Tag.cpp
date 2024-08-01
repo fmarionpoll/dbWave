@@ -6,34 +6,35 @@
 #endif
 
 
-IMPLEMENT_SERIAL(Tag, CObject, 0 /* schema number*/)
+IMPLEMENT_SERIAL(Tag, CObject, 1 /* schema number*/)
 
 Tag::Tag()
 = default;
 
-Tag::Tag(int ref_chan)
+Tag::Tag(const int ref_chan)
 {
-	m_refchan = ref_chan;
+	ref_channel = ref_chan;
 }
 
-Tag::Tag(int val, int ref_chan)
+Tag::Tag(const int val, const int ref_chan)
 {
-	m_refchan = ref_chan;
-	m_value = val;
+	ref_channel = ref_chan;
+	value_int = val;
 }
 
-Tag::Tag(long long lTicks)
+Tag::Tag(const long long ticks)
 {
-	m_lTicks = lTicks;
+	l_ticks = ticks;
 }
 
 Tag::Tag(const Tag& hc)
 {
-	m_refchan = hc.m_refchan;
-	m_value = hc.m_value;
-	m_pixel = hc.m_pixel;
-	m_lvalue = hc.m_lvalue;
-	m_csComment = hc.m_csComment;
+	ref_channel = hc.ref_channel;
+	value_int = hc.value_int;
+	pixel = hc.pixel;
+	value_long = hc.value_long;
+	value_mv = hc.value_mv;
+	m_cs_comment = hc.m_cs_comment;
 }
 
 Tag::~Tag()
@@ -44,12 +45,13 @@ Tag& Tag::operator =(const Tag& arg)
 {
 	if (this != &arg)
 	{
-		m_refchan = arg.m_refchan;
-		m_pixel = arg.m_pixel;
-		m_value = arg.m_value;
-		m_lvalue = arg.m_lvalue;
-		m_lTicks = arg.m_lTicks;
-		m_csComment = arg.m_csComment;
+		ref_channel = arg.ref_channel;
+		pixel = arg.pixel;
+		value_int = arg.value_int;
+		value_long = arg.value_long;
+		l_ticks = arg.l_ticks;
+		m_cs_comment = arg.m_cs_comment;
+		value_mv = arg.value_mv;
 	}
 	return *this;
 }
@@ -58,39 +60,46 @@ void Tag::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		ar << static_cast<WORD>(m_refchan);
-		ar << static_cast<WORD>(m_pixel);
-		ar << static_cast<WORD>(m_value);
-		ar << m_lvalue;
-		ar << m_csComment;
+		ar << static_cast<WORD>(ref_channel);
+		ar << static_cast<WORD>(pixel);
+		ar << static_cast<WORD>(value_int);
+		ar << value_long;
+		ar << m_cs_comment;
+		ar << value_mv;
 	}
 	else
 	{
+		const int n_version = ar.GetObjectSchema();
+
 		WORD w1;
 		ar >> w1;
-		m_refchan = w1;
+		ref_channel = w1;
 		ar >> w1;
-		m_pixel = w1;
+		pixel = w1;
 		ar >> w1;
-		m_value = w1;
-		ar >> m_lvalue;
-		ar >> m_csComment;
+		value_int = w1;
+		ar >> value_long;
+		ar >> m_cs_comment;
+
+		if (n_version > 0)
+			ar >> value_mv;
+
 	}
 }
 
-long Tag::Write(CFile* datafile)
+long Tag::write(CFile* p_data_file)
 {
-	const auto p1 = datafile->GetPosition();
-	CArchive ar(datafile, CArchive::store);
+	const auto p1 = p_data_file->GetPosition();
+	CArchive ar(p_data_file, CArchive::store);
 	Serialize(ar);
 	ar.Close();
-	const auto p2 = datafile->GetPosition();
+	const auto p2 = p_data_file->GetPosition();
 	return static_cast<long>(p2 - p1);
 }
 
-BOOL Tag::Read(CFile* datafile)
+BOOL Tag::read(CFile* p_data_file)
 {
-	CArchive ar(datafile, CArchive::load);
+	CArchive ar(p_data_file, CArchive::load);
 	Serialize(ar);
 	ar.Close();
 	return TRUE;

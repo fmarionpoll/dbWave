@@ -49,6 +49,7 @@ public:
 	void move_hz_tag_to_val(int tag_index, int value);
 
 	void zoom_data(CRect* r_from, CRect* r_dest) override;
+	void display_vertical_tags(CDC* p_dc) override;
 
 protected:
 	int convert_mv_to_abscissa(const double value) const {return static_cast<int>((value - abscissa_min_mv_) / abscissa_bin_mv_) + m_x_wo_;	}

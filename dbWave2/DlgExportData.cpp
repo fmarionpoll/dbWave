@@ -104,9 +104,9 @@ BOOL DlgExportData::OnInitDialog()
 	else
 	{
 		AcqDataDoc* pDat = m_dbDoc->m_p_dat;
-		m_timefirst = static_cast<float>(pDat->get_vt_tags_list()->get_tag_l_val(0));
+		m_timefirst = static_cast<float>(pDat->get_vt_tags_list()->get_value_long(0));
 		if (pDat->get_vt_tags_list()->get_tag_list_size() > 1)
-			m_timelast = static_cast<float>(pDat->get_vt_tags_list()->get_tag_l_val(1));
+			m_timelast = static_cast<float>(pDat->get_vt_tags_list()->get_value_long(1));
 		else
 			m_timelast = static_cast<float>(pDat->get_doc_channel_length());
 		float chrate = pDat->get_waveformat()->sampling_rate_per_channel;

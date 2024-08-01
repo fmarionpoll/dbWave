@@ -88,7 +88,7 @@ BOOL CDataFileAWAVE::ReadHZtags(TagList* pHZtags)
 	if (p_struct->GetDataLength() > 0)
 	{
 		Seek(p_struct->GetDataOffset(), begin);
-		if (!pHZtags->Read(this))
+		if (!pHZtags->read(this))
 			return FALSE;
 	}
 	return TRUE;
@@ -105,7 +105,7 @@ BOOL CDataFileAWAVE::ReadVTtags(TagList* pVTtags)
 	if (p_struct->GetDataLength() > 0)
 	{
 		Seek(p_struct->GetDataOffset(), begin);
-		if (!pVTtags->Read(this))
+		if (!pVTtags->read(this))
 			return FALSE;
 	}
 	return TRUE;
@@ -222,7 +222,7 @@ BOOL CDataFileAWAVE::WriteHZtags(TagList* ptags)
 	}
 	SeekToEnd(); // CFile: end of file (EOF)
 	p_struct->SetDataOffset(GetPosition()); // get offset to EOF and save pos
-	p_struct->SetDataLength(ptags->Write(this)); // write ACQDEF there & save length
+	p_struct->SetDataLength(ptags->write(this)); // write ACQDEF there & save length
 	WriteFileMap();
 	return TRUE;
 }
@@ -240,7 +240,7 @@ BOOL CDataFileAWAVE::WriteVTtags(TagList* ptags)
 	}
 	SeekToEnd(); // CFile: end of file (EOF)
 	p_struct->SetDataOffset(GetPosition()); // get offset to EOF and save pos
-	p_struct->SetDataLength(ptags->Write(this)); // write ACQDEF there & save length
+	p_struct->SetDataLength(ptags->write(this)); // write ACQDEF there & save length
 	WriteFileMap();
 	return TRUE;
 }

@@ -175,8 +175,8 @@ void CMeasureResultsPage::MeasureFromVTtags(const int channel)
 		if (tag_last < 0)
 		{
 			tag_last = i;
-			MeasureWithinInterval(channel, line, m_pChartDataWnd->vertical_tags.get_tag_l_val(tag_first),
-			                      m_pChartDataWnd->vertical_tags.get_tag_l_val(tag_last));
+			MeasureWithinInterval(channel, line, m_pChartDataWnd->vertical_tags.get_value_long(tag_first),
+			                      m_pChartDataWnd->vertical_tags.get_value_long(tag_last));
 			line++;
 			tag_first = -1;
 			tag_last = -1;
@@ -186,7 +186,7 @@ void CMeasureResultsPage::MeasureFromVTtags(const int channel)
 	// cope with isolated tags
 	if (tag_first > 0 && tag_last < 0)
 	{
-		const auto l1 = m_pChartDataWnd->vertical_tags.get_tag_l_val(tag_first);
+		const auto l1 = m_pChartDataWnd->vertical_tags.get_value_long(tag_first);
 		MeasureWithinInterval(channel, line, l1, l1);
 	}
 }
@@ -397,8 +397,8 @@ void CMeasureResultsPage::MeasureFromHZcur(int ichan)
 		{
 			tag_last = i;
 			MeasureBetweenHZ(ichan, line,
-			                 m_pChartDataWnd->horizontal_tags.get_value(tag_first),
-			                 m_pChartDataWnd->horizontal_tags.get_value(tag_last));
+			                 m_pChartDataWnd->horizontal_tags.get_value_int(tag_first),
+			                 m_pChartDataWnd->horizontal_tags.get_value_int(tag_last));
 			line++;
 			tag_first = -1;
 			tag_last = -1;
@@ -408,7 +408,7 @@ void CMeasureResultsPage::MeasureFromHZcur(int ichan)
 	// cope with isolated tags
 	if (tag_first > 0 && tag_last < 0)
 	{
-		const auto v1 = m_pChartDataWnd->horizontal_tags.get_value(tag_first);
+		const auto v1 = m_pChartDataWnd->horizontal_tags.get_value_int(tag_first);
 		MeasureBetweenHZ(ichan, line, v1, v1);
 	}
 }

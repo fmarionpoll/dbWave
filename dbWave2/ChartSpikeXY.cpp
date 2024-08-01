@@ -189,7 +189,7 @@ void ChartSpikeXY::display_vt_tags(CDC* p_dc)
 	const auto y1 = m_display_rect_.bottom;
 	for (auto j = vertical_tags.get_tag_list_size() - 1; j >= 0; j--)
 	{
-		const auto val = vertical_tags.get_value(j); 
+		const auto val = vertical_tags.get_value_int(j); 
 		const auto pix_x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 		p_dc->MoveTo(pix_x, y0); // set initial pt
 		p_dc->LineTo(pix_x, y1); // VT line
@@ -206,7 +206,7 @@ void ChartSpikeXY::display_hz_tags(CDC* p_dc)
 	const auto x2 = m_display_rect_.right;
 	for (auto i = horizontal_tags.get_tag_list_size() - 1; i >= 0; i--)
 	{
-		const auto k = horizontal_tags.get_value(i);
+		const auto k = horizontal_tags.get_value_int(i);
 		const auto y1 = MulDiv(k - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
 		p_dc->MoveTo(x1, y1);
 		p_dc->LineTo(x2, y1);
@@ -285,18 +285,18 @@ void ChartSpikeXY::highlight_spike(const Spike* spike)
 
 void ChartSpikeXY::move_hz_tag(const int index, const int new_value)
 {
-	m_pt_last_.y = MulDiv(horizontal_tags.get_value(index) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+	m_pt_last_.y = MulDiv(horizontal_tags.get_value_int(index) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
 	const auto y_pixel = MulDiv(new_value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
 	xor_horizontal_tag(y_pixel);
-	horizontal_tags.set_tag_val(index, new_value);
+	horizontal_tags.set_value_int(index, new_value);
 }
 
 void ChartSpikeXY::move_vt_tag(const int index, const int new_value)
 {
-	m_pt_last_.x = MulDiv(vertical_tags.get_value(index) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	m_pt_last_.x = MulDiv(vertical_tags.get_value_int(index) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 	const auto x_pixel = MulDiv(new_value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 	xor_vertical_tag(x_pixel);
-	vertical_tags.set_tag_val(index, new_value);
+	vertical_tags.set_value_int(index, new_value);
 }
 
 void ChartSpikeXY::select_spike(const db_spike& new_spike_selected)
@@ -328,7 +328,7 @@ void ChartSpikeXY::OnLButtonUp(UINT nFlags, CPoint point)
 		{
 			// convert pix into data value
 			const auto val = MulDiv(m_pt_last_.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
-			vertical_tags.set_tag_val(hc_trapped_, val);
+			vertical_tags.set_value_int(hc_trapped_, val);
 			point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 			xor_vertical_tag(point.x);
 			ChartSpike::OnLButtonUp(nFlags, point);
@@ -379,15 +379,15 @@ void ChartSpikeXY::OnLButtonDown(const UINT nFlags, const CPoint point)
 	if (horizontal_tags.get_tag_list_size() > 0)
 	{
 		for (auto tag_index = horizontal_tags.get_tag_list_size() - 1; tag_index >= 0; tag_index--)
-			horizontal_tags.set_tag_pixel(tag_index, MulDiv(horizontal_tags.get_value(tag_index) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_);
+			horizontal_tags.set_pixel(tag_index, MulDiv(horizontal_tags.get_value_int(tag_index) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_);
 	}
 	if (vertical_tags.get_tag_list_size() > 0)
 	{
 		for (auto tag_index = vertical_tags.get_tag_list_size() - 1; tag_index >= 0; tag_index--)
 		{
-			const auto val = vertical_tags.get_value(tag_index);
+			const auto val = vertical_tags.get_value_int(tag_index);
 			const auto pix = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-			vertical_tags.set_tag_pixel(tag_index, pix);
+			vertical_tags.set_pixel(tag_index, pix);
 		}
 	}
 

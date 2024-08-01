@@ -235,7 +235,7 @@ void ViewData::update_channel(const int channel)
 			&& m_ChartDataWnd.horizontal_tags.get_tag_list_size() > 0)
 		{
 			for (auto i = 0; i < m_ChartDataWnd.horizontal_tags.get_tag_list_size(); i++)
-				m_ChartDataWnd.horizontal_tags.set_tag_chan(i, m_channel_selected);
+				m_ChartDataWnd.horizontal_tags.set_channel(i, m_channel_selected);
 			UpdateHZtagsVal();
 			m_ChartDataWnd.Invalidate();
 		}
@@ -621,11 +621,11 @@ void ViewData::UpdateHZtagsVal()
 {
 	if (m_ChartDataWnd.horizontal_tags.get_tag_list_size() <= 0)
 		return;
-	const auto v1 = m_ChartDataWnd.horizontal_tags.get_value(0);
+	const auto v1 = m_ChartDataWnd.horizontal_tags.get_value_int(0);
 	auto itag = 0;
 	if (m_ChartDataWnd.horizontal_tags.get_tag_list_size() > 1)
 		itag = 1;
-	const auto v2 = m_ChartDataWnd.horizontal_tags.get_value(itag);
+	const auto v2 = m_ChartDataWnd.horizontal_tags.get_value_int(itag);
 	const auto mv_per_bin = m_ChartDataWnd.get_channel_list_item(m_channel_selected)->GetVoltsperDataBin() * 1000.0f;
 	m_first_Hz_cursor = static_cast<float>(v1) * mv_per_bin;
 	m_second_Hz_cursor = static_cast<float>(v2) * mv_per_bin;
@@ -674,7 +674,7 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			else if (mdMO->wOption == 3) // detect stimulus
 			{
 				mdMO->wStimuluschan = m_ChartDataWnd.horizontal_tags.get_channel(0);
-				mdMO->wStimulusthresh = m_ChartDataWnd.horizontal_tags.get_value(0);
+				mdMO->wStimulusthresh = m_ChartDataWnd.horizontal_tags.get_value_int(0);
 				m_ChartDataWnd.horizontal_tags.remove_all_tags();
 			}
 			m_ChartDataWnd.Invalidate();
@@ -755,7 +755,7 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_CHANGEHZTAG: // horizontal tag has changed 	lowp = tag nb
 		if (mdMO->wOption == 3)
-			mdMO->wStimulusthresh = m_ChartDataWnd.horizontal_tags.get_value(0);
+			mdMO->wStimulusthresh = m_ChartDataWnd.horizontal_tags.get_value_int(0);
 		else
 			UpdateHZtagsVal();
 		break;
@@ -1113,7 +1113,7 @@ void ViewData::MeasureProperties(int item)
 		break;
 	case 3:
 		mdMO->wStimuluschan = m_ChartDataWnd.horizontal_tags.get_channel(0);
-		mdMO->wStimulusthresh = m_ChartDataWnd.horizontal_tags.get_value(0);
+		mdMO->wStimulusthresh = m_ChartDataWnd.horizontal_tags.get_value_int(0);
 		break;
 	default: break;
 	}
