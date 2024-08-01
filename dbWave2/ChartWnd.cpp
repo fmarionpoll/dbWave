@@ -1047,8 +1047,6 @@ void ChartWnd::set_scope_parameters(SCOPESTRUCT* p_struct)
 	scope_structure_ = *p_struct;
 }
 
-
-
 void ChartWnd::set_b_use_dib(const BOOL b_set_plot)
 {
 	b_use_dib_ = b_set_plot; //TRUE = use DIB array to draw curves FALSE: do not use it
