@@ -1215,7 +1215,7 @@ void CdbWaveDoc::get_infos_from_string_array(const source_data * p_record, const
 			break;
 		case 16: p_wave_format->cs_sensillum = cs_item;
 			break;
-		case 17: p_wave_format->cs_ad_card_name = cs_item; // TODO: check if this is ok
+		case 17: p_wave_format->cs_ad_card_name = cs_item; 
 			break;
 		case 18: p_wave_format->flag = _ttoi(cs_item);
 			break;
@@ -1689,7 +1689,7 @@ BOOL CdbWaveDoc::update_waveformat_from_database(CWaveFormat * p_wave_format) co
 	b_changed |= db_table->get_record_value_long(CH_REPEAT, p_wave_format->repeat);
 	b_changed |= db_table->get_record_value_long(CH_REPEAT2, p_wave_format->repeat2);
 
-	const auto n_per_cycle = static_cast<int>(m_p_spk->m_stimulus_intervals.n_items / 2.f
+	const auto n_per_cycle = static_cast<int>(static_cast<float>(m_p_spk->m_stimulus_intervals.n_items) / 2.f
 		/ m_p_spk->get_acq_duration() / 8.192f);
 	b_changed |= (n_per_cycle != m_p_spk->m_stimulus_intervals.n_per_cycle);
 	m_p_spk->m_stimulus_intervals.n_per_cycle = n_per_cycle;
@@ -1908,17 +1908,17 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 		}
 
 		// loop (1) from file 1 to file n ---------------------------------------------
-		for (auto ifile1 = 0; ifile1 < n_files; ifile1++)
+		for (auto i_file = 0; i_file < n_files; i_file++)
 		{
 			// check if user wants to stop
 			if (dlg.CheckCancelButton())
 				if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 					break;
-			cs_comment.Format(_T("Processing file [%i / %i]"), ifile1 + 1, n_files);
+			cs_comment.Format(_T("Processing file [%i / %i]"), i_file + 1, n_files);
 			dlg.SetStatus(cs_comment);
 
 			// open document
-			BOOL flag0 = db_set_current_record_position(ifile1);
+			BOOL flag0 = db_set_current_record_position(i_file);
 			if (current_spike_file_name_.IsEmpty())
 				continue;
 			// check if file is still present and open it
@@ -1978,10 +1978,10 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 			} // end of for: spk_list
 
 			// update progress bar
-			if (MulDiv(ifile1, 100, n_files) > i_step)
+			if (MulDiv(i_file, 100, n_files) > i_step)
 			{
 				dlg.StepIt();
-				i_step = MulDiv(ifile1, 100, n_files);
+				i_step = MulDiv(i_file, 100, n_files);
 			}
 		}
 

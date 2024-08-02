@@ -77,7 +77,7 @@ public:
 	int get_xw_extent() const { return m_x_we_; }
 	int get_xw_org() const { return m_x_wo_; }
 
-	auto set_nx_scale_cells(int i_cells, int i_ticks = 0, int i_tick_line = 0) -> void;
+	auto set_n_x_scale_cells(int i_cells, int i_ticks = 0, int i_tick_line = 0) -> void;
 	void set_ny_scale_cells(int i_cells, int i_ticks = 0, int i_tick_line = 0);
 	int get_nx_scale_cells() const { return scope_structure_.iXCells; }
 	int get_ny_scale_cells() const { return scope_structure_.iYCells; }
@@ -223,7 +223,7 @@ protected:
 	afx_msg virtual void OnLButtonDown(UINT n_flags, CPoint point);
 	afx_msg virtual void OnLButtonUp(UINT n_flags, CPoint point);
 	afx_msg virtual void OnLButtonDblClk(UINT n_flags, CPoint point);
-	afx_msg virtual void OnRButtonUp(UINT nFlags, CPoint point);
+	afx_msg virtual void OnRButtonUp(UINT n_flags, CPoint point);
 	afx_msg virtual void OnRButtonDown(UINT nFlags, CPoint point);
 
 	DECLARE_MESSAGE_MAP()

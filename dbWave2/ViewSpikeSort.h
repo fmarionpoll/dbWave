@@ -19,6 +19,7 @@ protected:
 	void DoDataExchange(CDataExchange* p_dx) override;
 	void OnInitialUpdate() override;
 	void OnActivateView(BOOL b_activate, CView* p_activate_view, CView* p_deactive_view) override;
+
 public:
 	BOOL OnMove(UINT n_id_move_command) override;
 
@@ -109,6 +110,7 @@ public:
 	}
 
 protected:
+	void load_saved_parameters();
 	void define_sub_classed_items();
 	void define_stretch_parameters();
 	void update_file_parameters();
@@ -120,6 +122,7 @@ protected:
 	void scroll_file(UINT n_sb_code, UINT n_pos);
 	void select_spike_list(int current_index);
 	void activate_mode4();
+	void show_controls_for_mode4(int n_cmd_show) const;
 	void build_histogram();
 	void clear_flag_all_spikes();
 	void check_valid_threshold_limits();

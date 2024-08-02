@@ -79,7 +79,7 @@ void DlgChartProps::OnEnChangeXCells()
 		{
 			SCOPESTRUCT* pStruct = m_pscope->get_scope_parameters();
 			pStruct->xScaleUnitValue = pStruct->xScaleUnitValue * x_cells / m_xcells;
-			m_pscope->set_nx_scale_cells(m_xcells, m_xyticks, m_xytickline);
+			m_pscope->set_n_x_scale_cells(m_xcells, m_xyticks, m_xytickline);
 			m_pscope->Invalidate();
 		}
 		UpdateData(FALSE);
@@ -117,7 +117,7 @@ void DlgChartProps::OnEnChangeXYTicks()
 		if (m_xyticks != xy_ticks)
 		{
 			if (m_xcells > 0)
-				m_pscope->set_nx_scale_cells(m_xcells, m_xyticks, m_xytickline);
+				m_pscope->set_n_x_scale_cells(m_xcells, m_xyticks, m_xytickline);
 			if (m_ycells > 0)
 				m_pscope->set_ny_scale_cells(m_ycells, m_xyticks, m_xytickline);
 			m_pscope->Invalidate();
@@ -137,7 +137,7 @@ void DlgChartProps::OnEnChangeXYTicksLine()
 		if (m_xytickline != xy_tick_line)
 		{
 			if (m_xcells > 0)
-				m_pscope->set_nx_scale_cells(m_xcells, m_xyticks, m_xytickline);
+				m_pscope->set_n_x_scale_cells(m_xcells, m_xyticks, m_xytickline);
 			if (m_ycells > 0)
 				m_pscope->set_ny_scale_cells(m_ycells, m_xyticks, m_xytickline);
 			m_pscope->Invalidate();

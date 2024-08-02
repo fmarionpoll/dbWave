@@ -144,12 +144,8 @@ void ViewSpikeSort::define_stretch_parameters()
 	m_stretch_.newProp(IDC_EDITRIGHT2, SZEQ_XLEQ, SZEQ_YBEQ);
 }
 
-void ViewSpikeSort::OnInitialUpdate()
+void ViewSpikeSort::load_saved_parameters()
 {
-	dbTableView::OnInitialUpdate();
-
-	define_sub_classed_items();
-	define_stretch_parameters();
 	m_b_init_ = TRUE;
 	m_auto_increment = true;
 	m_auto_detect = true;
@@ -189,15 +185,26 @@ void ViewSpikeSort::OnInitialUpdate()
 	// display tag lines at proper places
 	m_spk_hist_upper_threshold_ = chart_histogram_.vertical_tags.add_tag(spike_classification_parameters_->upper_threshold, 0);
 	m_spk_hist_lower_threshold_ = chart_histogram_.vertical_tags.add_tag(spike_classification_parameters_->lower_threshold, 0);
+}
 
+void ViewSpikeSort::OnInitialUpdate()
+{
+	dbTableView::OnInitialUpdate();
+
+	define_sub_classed_items();
+	define_stretch_parameters();
+	load_saved_parameters();
 	update_file_parameters();
+
 	if (nullptr != m_pSpkList)
 	{
 		histogram_lower_threshold = static_cast<float>(spike_classification_parameters_->lower_threshold) * m_delta_mv_;
 		histogram_upper_threshold = static_cast<float>(spike_classification_parameters_->upper_threshold) * m_delta_mv_;
 		UpdateData(false);
 	}
+
 	activate_mode4();
+	gain_adjust_shape_and_bars();
 }
 
 void ViewSpikeSort::activate_mode4()
@@ -214,7 +221,7 @@ void ViewSpikeSort::activate_mode4()
 			t_xy_right = static_cast<float>(spike_classification_parameters_->i_xy_right) / delta;
 			t_xy_left = static_cast<float>(spike_classification_parameters_->i_xy_left) / delta;
 		}
-		chart_xt_measures_.set_nx_scale_cells(2, 0, 0);
+		chart_xt_measures_.set_n_x_scale_cells(2, 0, 0);
 		chart_xt_measures_.get_scope_parameters()->crScopeGrid = RGB(128, 128, 128);
 
 		if (nullptr != m_pSpkList)
@@ -229,15 +236,22 @@ void ViewSpikeSort::activate_mode4()
 	}
 	else
 	{
+		n_cmd_show = SW_HIDE;
 		chart_xt_measures_.vertical_tags.remove_all_tags();
-		chart_xt_measures_.set_nx_scale_cells(0, 0, 0);
+		chart_xt_measures_.set_n_x_scale_cells(0, 0, 0);
 	}
+
+	show_controls_for_mode4(n_cmd_show);
+	chart_xt_measures_.Invalidate();
+}
+
+void ViewSpikeSort::show_controls_for_mode4(const int n_cmd_show) const
+{
 	GetDlgItem(IDC_STATICRIGHT)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_STATICLEFT)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_STATIC12)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_EDITRIGHT2)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_EDITLEFT2)->ShowWindow(n_cmd_show);
-	chart_xt_measures_.Invalidate();
 }
 
 void ViewSpikeSort::OnActivateView(const BOOL b_activate, CView* p_activate_view, CView* p_deactive_view)
@@ -348,20 +362,22 @@ void ViewSpikeSort::update_file_parameters()
 		spike_classification_parameters_->i_cursor_t1 = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
 		spike_classification_parameters_->i_cursor_t2 = spike_classification_parameters_->i_cursor_t1 + m_pSpkList->get_detection_parameters()->detect_refractory_period;
 	}
+
+	chart_spike_shape_.set_source_data(m_pSpkList, GetDocument());
+	chart_spike_shape_.get_extents_current_spk_list();
+	chart_spike_shape_.set_plot_mode(PLOT_ONE_COLOR, sort_source_class);
+	chart_spike_shape_.vertical_tags.set_value_int(m_spk_form_tag_left_, spike_classification_parameters_->i_cursor_t1);
+	chart_spike_shape_.vertical_tags.set_value_int(m_spk_form_tag_right_, spike_classification_parameters_->i_cursor_t2);
 	spike_shape_t1 = static_cast<float>(spike_classification_parameters_->i_cursor_t1) * m_time_unit / m_pSpkList->get_acq_sampling_rate();
 	spike_shape_t2 = static_cast<float>(spike_classification_parameters_->i_cursor_t2) * m_time_unit / m_pSpkList->get_acq_sampling_rate();
 
 	chart_spike_bar_.set_source_data(m_pSpkList, GetDocument());
-	chart_spike_shape_.set_source_data(m_pSpkList, GetDocument());
-	chart_xt_measures_.set_source_data(m_pSpkList, GetDocument());
-
 	chart_spike_bar_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class);
-	chart_spike_shape_.set_plot_mode(PLOT_ONE_COLOR, sort_source_class);
-	chart_xt_measures_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class);
-	chart_histogram_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class);
 
-	chart_spike_shape_.vertical_tags.set_value_int(m_spk_form_tag_left_, spike_classification_parameters_->i_cursor_t1);
-	chart_spike_shape_.vertical_tags.set_value_int(m_spk_form_tag_right_, spike_classification_parameters_->i_cursor_t2);
+	chart_xt_measures_.set_source_data(m_pSpkList, GetDocument());
+	chart_xt_measures_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class);
+
+	chart_histogram_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class);
 
 	m_file_scroll_infos_.fMask = SIF_ALL;
 	m_file_scroll_infos_.nMin = 0;
@@ -709,15 +725,13 @@ void ViewSpikeSort::clear_flag_all_spikes()
 
 void ViewSpikeSort::on_measure()
 {
-	// set file indexes - assume only one file selected
 	const auto pdb_doc = GetDocument();
 	const int n_files = pdb_doc->db_get_n_records();
 	const auto current_spike_list = m_pSpkDoc->get_spike_list_current_index();
 	const int index_current_file = pdb_doc->db_get_current_record_position();
-
-	// change size of arrays and prepare temporary dialog
 	db_spike spike_sel(-1, -1, -1);
 	select_spike(spike_sel);
+
 	int index_first_file = index_current_file;
 	int index_last_file = index_current_file;
 	if (b_all_files)

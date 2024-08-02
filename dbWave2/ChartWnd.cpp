@@ -484,7 +484,7 @@ void ChartWnd::draw_grid(CDC* p_dc)
 		draw_grid_evenly_spaced(p_dc);
 }
 
-void ChartWnd::set_nx_scale_cells(const int i_cells, const int i_ticks, const int i_tick_line)
+void ChartWnd::set_n_x_scale_cells(const int i_cells, const int i_ticks, const int i_tick_line)
 {
 	scope_structure_.iXCells = i_cells;
 	scope_structure_.iXTicks = i_ticks;
@@ -704,7 +704,7 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 					m_display_rect_.Width()) + file_position_first_left_pixel_;
 				vertical_tags.set_value_long(hc_trapped_, lvalue);
 			}
-			post_my_message(HINT_MOVEVERTTAG, hc_trapped_);
+			post_my_message(HINT_MOVE_VERT_TAG, hc_trapped_);
 		}
 		break;
 
@@ -763,7 +763,7 @@ void ChartWnd::left_button_up_horizontal_tag(const UINT n_flags, CPoint point)
 	post_my_message(HINT_CHANGE_HZ_TAG, hc_trapped_);
 }
 
-void ChartWnd::OnRButtonDown(UINT nFlags, CPoint point)
+void ChartWnd::OnRButtonDown(const UINT nFlags, const CPoint point)
 {
 	switch (cursor_type_)
 	{
@@ -782,7 +782,7 @@ void ChartWnd::OnRButtonDown(UINT nFlags, CPoint point)
 	}
 }
 
-void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
+void ChartWnd::OnRButtonUp(const UINT n_flags, const CPoint point)
 {
 	switch (track_mode_)
 	{
@@ -812,7 +812,7 @@ void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 		break;
 
 	case TRACK_OFF:
-		CWnd::OnRButtonUp(nFlags, point);
+		CWnd::OnRButtonUp(n_flags, point);
 		if (m_b_allow_props_)
 		{
 			const auto params_old = new SCOPESTRUCT();
