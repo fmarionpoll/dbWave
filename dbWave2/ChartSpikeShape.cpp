@@ -288,7 +288,7 @@ void ChartSpikeShape::draw_spike_on_dc(const Spike* spike, CDC * p_dc)
 	p_dc->RestoreDC(n_saved_dc);
 }
 
-void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
+void ChartSpikeShape::OnLButtonUp(const UINT n_flags, CPoint point)
 {
 	if (!b_left_mouse_button_down_)
 	{
@@ -301,9 +301,9 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 	case TRACK_BASELINE:
 	{
 		if (point.y != m_pt_last_.y || point.x != m_pt_last_.x)
-			OnMouseMove(nFlags, point);
+			OnMouseMove(n_flags, point);
 		release_cursor();
-		ChartSpike::OnLButtonUp(nFlags, point);
+		ChartSpike::OnLButtonUp(n_flags, point);
 	}
 	break;
 
@@ -314,7 +314,7 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 		vertical_tags.set_value_int(hc_trapped_, val);
 		point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 		xor_vertical_tag(point.x);
-		ChartSpike::OnLButtonUp(nFlags, point);
+		ChartSpike::OnLButtonUp(n_flags, point);
 		post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
 	}
 	break;
@@ -322,7 +322,7 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 	default:
 	{
 		// none of those: zoom data or  offset display
-		ChartSpike::OnLButtonUp(nFlags, point);
+		ChartSpike::OnLButtonUp(n_flags, point);
 		CRect rect_out(m_pt_first_.x, m_pt_first_.y, m_pt_last_.x, m_pt_last_.y);
 		constexpr auto jitter = 3;
 		if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
@@ -358,7 +358,7 @@ void ChartSpikeShape::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 }
 
-void ChartSpikeShape::OnLButtonDown(UINT nFlags, CPoint point)
+void ChartSpikeShape::OnLButtonDown(const UINT n_flags, const CPoint point)
 {
 	b_left_mouse_button_down_ = TRUE;
 	// call base class to test for horizontal cursor or XORing rectangle
@@ -369,7 +369,7 @@ void ChartSpikeShape::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 
 	// track rectangle or VT_tag?
-	ChartSpike::OnLButtonDown(nFlags, point);
+	ChartSpike::OnLButtonDown(n_flags, point);
 	if (current_cursor_mode_ != 0 || hc_trapped_ >= 0)
 		return;
 
@@ -379,7 +379,7 @@ void ChartSpikeShape::OnLButtonDown(UINT nFlags, CPoint point)
 	if (spike_hit_.spike_index >= 0)
 	{
 		release_cursor();
-		if (nFlags & MK_SHIFT)
+		if (n_flags & MK_SHIFT)
 			post_my_message(HINT_HIT_SPIKE_SHIFT, NULL);
 
 		else
@@ -423,10 +423,10 @@ void ChartSpikeShape::zoom_data(CRect * r_from, CRect * r_dest)
 	post_my_message(HINT_CHANGE_ZOOM, 0);
 }
 
-void ChartSpikeShape::OnLButtonDblClk(UINT nFlags, CPoint point)
+void ChartSpikeShape::OnLButtonDblClk(UINT n_flags, CPoint point)
 {
 	if ((spike_selected_.spike_index < 0 && p_spike_list_->get_spike_flag_array_count() < 1) || spike_hit_.spike_index < 0)
-		ChartSpike::OnLButtonDblClk(nFlags, point);
+		ChartSpike::OnLButtonDblClk(n_flags, point);
 	else
 	{
 		if (spike_selected_.spike_index >= 0)
