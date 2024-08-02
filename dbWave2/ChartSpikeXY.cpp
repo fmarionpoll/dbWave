@@ -320,11 +320,11 @@ void ChartSpikeXY::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	switch (track_mode_)
 	{
-	case TRACK_HZTAG:
+	case TRACK_HZ_TAG:
 		left_button_up_horizontal_tag(nFlags, point);
 		break;
 
-	case TRACK_VTTAG:
+	case TRACK_VT_TAG:
 		{
 			// convert pix into data value
 			const auto val = MulDiv(m_pt_last_.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
@@ -332,7 +332,7 @@ void ChartSpikeXY::OnLButtonUp(UINT nFlags, CPoint point)
 			point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 			xor_vertical_tag(point.x);
 			ChartSpike::OnLButtonUp(nFlags, point);
-			post_my_message(HINT_CHANGEVERTTAG, hc_trapped_);
+			post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
 		}
 		break;
 
@@ -344,7 +344,7 @@ void ChartSpikeXY::OnLButtonUp(UINT nFlags, CPoint point)
 			if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 			{
 				if (cursor_type_ != CURSOR_ZOOM)
-					post_my_message(HINT_HITAREA, NULL);
+					post_my_message(HINT_HIT_AREA, NULL);
 				else
 					zoom_in();
 				return; // exit: mouse movement was too small
@@ -395,7 +395,7 @@ void ChartSpikeXY::OnLButtonDown(const UINT nFlags, const CPoint point)
 	ChartSpike::OnLButtonDown(nFlags, point);
 	if (current_cursor_mode_ != 0 || hc_trapped_ >= 0) // do nothing else if mode != 0
 	{
-		if (track_mode_ == TRACK_HZTAG || track_mode_ == TRACK_VTTAG)
+		if (track_mode_ == TRACK_HZ_TAG || track_mode_ == TRACK_VT_TAG)
 			return; 
 	}
 
@@ -405,10 +405,10 @@ void ChartSpikeXY::OnLButtonDown(const UINT nFlags, const CPoint point)
 	{
 		release_cursor(); 
 		if (nFlags & MK_SHIFT)
-			post_my_message(HINT_HITSPIKE_SHIFT, NULL);
+			post_my_message(HINT_HIT_SPIKE_SHIFT, NULL);
 
 		else
-			post_my_message(HINT_HITSPIKE, NULL);
+			post_my_message(HINT_HIT_SPIKE, NULL);
 	}
 }
 
@@ -442,7 +442,7 @@ void ChartSpikeXY::zoom_data(CRect* rect_from, CRect* rect_dest)
 	l_last_ = l_first_ + l_size - 1;
 	// display
 	Invalidate();
-	post_my_message(HINT_CHANGEHZLIMITS, NULL);
+	post_my_message(HINT_CHANGE_HZ_LIMITS, NULL);
 }
 
 void ChartSpikeXY::OnLButtonDblClk(UINT nFlags, CPoint point)
@@ -458,13 +458,13 @@ void ChartSpikeXY::OnLButtonDblClk(UINT nFlags, CPoint point)
 	{
 		if (spike_selected_.spike_index >= 0)
 		{
-			post_my_message(HINT_DBLCLKSEL, spike_selected_.spike_index);
+			post_my_message(HINT_DBL_CLK_SEL, spike_selected_.spike_index);
 		}
 		else
 		{
 			const auto selected_spike = hit_curve(point);
 			if (selected_spike > 0)
-				post_my_message(HINT_DBLCLKSEL, selected_spike);
+				post_my_message(HINT_DBL_CLK_SEL, selected_spike);
 		}
 	}
 }

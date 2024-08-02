@@ -495,13 +495,13 @@ void CPropertiesPanel::OnUpdateBnEditinfos(CCmdUI* pCmdUI)
 
 void CPropertiesPanel::OnBnClickedEditinfos()
 {
-	m_pDoc->update_all_views_db_wave(nullptr, HINT_GETSELECTEDRECORDS, nullptr);
+	m_pDoc->update_all_views_db_wave(nullptr, HINT_GET_SELECTED_RECORDS, nullptr);
 	DlgdbEditRecord dlg;
 	dlg.m_pdbDoc = m_pDoc;
 	if (IDOK == dlg.DoModal())
 	{
 		m_pDoc->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
-		m_pDoc->update_all_views_db_wave(nullptr, HINT_DOCHASCHANGED, nullptr);
+		m_pDoc->update_all_views_db_wave(nullptr, HINT_DOC_HAS_CHANGED, nullptr);
 	}
 }
 
@@ -515,7 +515,7 @@ void CPropertiesPanel::OnBnClickedUpdateinfos()
 	const auto l_index = m_pDoc->db_get_current_record_position();
 	UpdateTableFromProp();
 	m_pDoc->db_set_current_record_position(l_index);
-	m_pDoc->update_all_views_db_wave(nullptr, HINT_DOCHASCHANGED, nullptr);
+	m_pDoc->update_all_views_db_wave(nullptr, HINT_DOC_HAS_CHANGED, nullptr);
 }
 
 LRESULT CPropertiesPanel::OnPropertyChanged(WPARAM, LPARAM lParam)
@@ -533,13 +533,13 @@ LRESULT CPropertiesPanel::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	switch (wParam)
 	{
-	case HINT_ACTIVATEVIEW:
+	case HINT_ACTIVATE_VIEW:
 		m_pDoc = reinterpret_cast<CdbWaveDoc*>(lParam);
 		if (m_pDoc != m_pDocOld)
 			InitPropList();
 		break;
 
-	case HINT_MDIACTIVATE:
+	case HINT_MDI_ACTIVATE:
 		{
 			auto* pmain = static_cast<CMDIFrameWndEx*>(AfxGetMainWnd());
 			BOOL b_maximized;
@@ -568,13 +568,13 @@ void CPropertiesPanel::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	m_pDoc = reinterpret_cast<CdbWaveDoc*>(pSender);
 	switch (LOWORD(lHint))
 	{
-	case HINT_CLOSEFILEMODIFIED: // save current file parms
+	case HINT_CLOSE_FILE_MODIFIED: // save current file parms
 		m_pDocOld = nullptr;
 		break;
 	case HINT_REQUERY:
-	case HINT_DOCHASCHANGED:
-	case HINT_DOCMOVERECORD:
-	case HINT_REPLACEVIEW:
+	case HINT_DOC_HAS_CHANGED:
+	case HINT_DOC_MOVE_RECORD:
+	case HINT_REPLACE_VIEW:
 	default:
 		InitPropList();
 		break;

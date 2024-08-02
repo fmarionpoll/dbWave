@@ -602,7 +602,7 @@ void ChartSpikeBar::OnLButtonUp(const UINT n_flags, const CPoint point)
 	if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 	{
 		if (cursor_type_ != CURSOR_ZOOM)
-			post_my_message(HINT_HITAREA, NULL);
+			post_my_message(HINT_HIT_AREA, NULL);
 		else
 			zoom_in();
 		return; // exit: mouse movement was too small
@@ -617,7 +617,7 @@ void ChartSpikeBar::OnLButtonUp(const UINT n_flags, const CPoint point)
 		{
 			auto rect = get_defined_rect();
 			select_spikes_within_rect(&rect, n_flags);
-			post_my_message(HINT_SELECTSPIKES, NULL);
+			post_my_message(HINT_SELECT_SPIKES, NULL);
 		}
 		break;
 
@@ -626,7 +626,7 @@ void ChartSpikeBar::OnLButtonUp(const UINT n_flags, const CPoint point)
 		rect_zoom_from_ = rect_in;
 		rect_zoom_to_ = rect_out;
 		i_undo_zoom_ = 1;
-		post_my_message(HINT_SETMOUSECURSOR, old_cursor_type_);
+		post_my_message(HINT_SET_MOUSE_CURSOR, old_cursor_type_);
 		break;
 
 	default:
@@ -646,11 +646,11 @@ void ChartSpikeBar::OnLButtonDown(const UINT nFlags, CPoint point)
 		if (spike_hit_.spike_index >= 0)
 		{
 			if (nFlags & MK_SHIFT)
-				post_my_message(HINT_HITSPIKE_SHIFT, NULL);
+				post_my_message(HINT_HIT_SPIKE_SHIFT, NULL);
 			else if (nFlags & MK_CONTROL)
-				post_my_message(HINT_HITSPIKE_CTRL, NULL);
+				post_my_message(HINT_HIT_SPIKE_CTRL, NULL);
 			else
-				post_my_message(HINT_HITSPIKE, NULL);
+				post_my_message(HINT_HIT_SPIKE, NULL);
 			return;
 		}
 	}
@@ -687,7 +687,7 @@ void ChartSpikeBar::zoom_data(CRect* prev_rect, CRect* new_rect)
 	l_size = l_size * new_rect->Width() / prev_rect->Width();
 	l_last_ = l_first_ + l_size - 1;
 
-	post_my_message(HINT_CHANGEHZLIMITS, NULL);
+	post_my_message(HINT_CHANGE_HZ_LIMITS, NULL);
 }
 
 void ChartSpikeBar::OnLButtonDblClk(UINT nFlags, CPoint point)
@@ -698,13 +698,13 @@ void ChartSpikeBar::OnLButtonDblClk(UINT nFlags, CPoint point)
 	{
 		if (spike_selected_.spike_index >= 0)
 		{
-			post_my_message(HINT_DBLCLKSEL, spike_selected_.spike_index);
+			post_my_message(HINT_DBL_CLK_SEL, spike_selected_.spike_index);
 		}
 		else
 		{
 			const auto i_selected_spike = hit_curve(point);
 			if (i_selected_spike >= 0)
-				post_my_message(HINT_DBLCLKSEL, i_selected_spike);
+				post_my_message(HINT_DBL_CLK_SEL, i_selected_spike);
 		}
 	}
 }

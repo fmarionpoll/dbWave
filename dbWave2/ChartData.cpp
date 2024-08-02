@@ -768,7 +768,7 @@ void ChartData::zoom_data(CRect* previous_rect, CRect* new_rect)
 		resize_channels(0, l_last - l_first + 1);
 		get_data_from_doc(l_first, l_last);
 	}
-	post_my_message(HINT_VIEWSIZECHANGED, NULL);
+	post_my_message(HINT_VIEW_SIZE_CHANGED, NULL);
 }
 
 void ChartData::update_x_ruler()
@@ -1344,13 +1344,13 @@ void ChartData::OnLButtonDown(UINT nFlags, CPoint point)
 			m_cur_track_ = m_zero; // use m_curTrack to store zero
 
 			curve_xor(); // xor curve
-			post_my_message(HINT_HITCHANNEL, m_hitcurve); // tell parent chan selected
+			post_my_message(HINT_HIT_CHANNEL, m_hitcurve); // tell parent chan selected
 			return;
 		}
 	}
 
 	// if horizontal cursor hit -- specific .. deal with variable gain
-	if (track_mode_ == TRACK_HZTAG)
+	if (track_mode_ == TRACK_HZ_TAG)
 	{
 		const auto chan_list_item = chanlistitem_ptr_array[horizontal_tags.get_channel(hc_trapped_)];
 		m_y_we_ = chan_list_item->GetYextent(); // store extent
@@ -1385,16 +1385,16 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 			const auto chan_list_item = chanlistitem_ptr_array[m_hitcurve];
 			chan_list_item->SetYzero(m_zero);
 			track_mode_ = TRACK_OFF;
-			post_my_message(HINT_HITCHANNEL, m_hitcurve);
+			post_my_message(HINT_HIT_CHANNEL, m_hitcurve);
 			Invalidate();
 		}
 		break;
 
-	case TRACK_HZTAG:
+	case TRACK_HZ_TAG:
 		left_button_up_horizontal_tag(nFlags, point);
 		break;
 
-	case TRACK_VTTAG:
+	case TRACK_VT_TAG:
 		{
 			// convert pix into data value and back again
 			const auto l_val = static_cast<long>(point.x) * (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1) / static_cast<long>(m_display_rect_.
@@ -1404,7 +1404,7 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 				* static_cast<long>(m_display_rect_.right) 
 				/ (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1));
 			xor_vertical_tag(point.x);
-			post_my_message(HINT_CHANGEVERTTAG, hc_trapped_);
+			post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
 			track_mode_ = TRACK_OFF;
 		}
 		break;
@@ -1439,10 +1439,10 @@ void ChartData::OnLButtonUp(UINT nFlags, CPoint point)
 				}
 				else
 					zoom_in();
-				post_my_message(HINT_SETMOUSECURSOR, old_cursor_type_);
+				post_my_message(HINT_SET_MOUSE_CURSOR, old_cursor_type_);
 				break;
 			case CURSOR_CROSS:
-				post_my_message(HINT_DEFINEDRECT, NULL);
+				post_my_message(HINT_DEFINED_RECT, NULL);
 				break;
 			default:
 				break;

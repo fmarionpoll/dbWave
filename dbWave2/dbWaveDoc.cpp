@@ -530,6 +530,40 @@ boolean CdbWaveDoc::get_max_min_y1_of_all_spikes(const boolean b_all_files, int&
 	return spikes_found;
 }
 
+void CdbWaveDoc::center_spike_amplitude_all_spikes_between_t1_and_t2(const boolean b_all_files, const int spike_class, const int t1, const int t2)
+{
+	const long n_files = b_all_files ? db_get_n_records() : 1;
+	const int current_spike_list_index = m_p_spk->get_spike_list_current_index();
+	boolean initialized = false;
+
+	for (long i_file = 0; i_file < n_files; i_file++)
+	{
+		if (b_all_files)
+		{
+			if (db_set_current_record_position(i_file))
+				open_current_spike_file();
+			if (m_p_spk == nullptr)
+				continue;
+			m_p_spk->set_spike_list_current_index(current_spike_list_index);
+		}
+
+		const auto p_spk_list = m_p_spk->get_spike_list_current();
+		const auto n_spikes = p_spk_list->get_spikes_count();
+		if (n_spikes > 0)
+		{
+			for (auto i_spike = 0; i_spike < n_spikes; i_spike++)
+			{
+				const auto spike = p_spk_list->get_spike(i_spike);
+				if (spike_class < 0 || spike_class == spike->get_class_id())
+				{
+					spike->set_spike_length(p_spk_list->get_spike_length());
+					spike->center_spike_amplitude(t1, t2, 1);
+				}
+			}
+		}
+	}
+}
+
 long CdbWaveDoc::db_get_current_record_position() const
 {
 	long i_file = -1;
@@ -1965,7 +1999,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 		if (open_current_spike_file() != nullptr)
 			m_p_spk->set_spike_list_current_index(i_old_list);
 	}
-	UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+	UpdateAllViews(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 }
 
 BOOL CdbWaveDoc::transpose_file_for_excel(CSharedFile * p_sf)

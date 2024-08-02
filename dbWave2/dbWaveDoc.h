@@ -81,6 +81,7 @@ public:
 
 	boolean	get_max_min_amplitude_of_all_spikes(BOOL b_all_files, BOOL b_recalculate, short& max, short& min);
 	boolean	get_max_min_y1_of_all_spikes(const boolean b_all_files, int& max, int& min);
+	void	center_spike_amplitude_all_spikes_between_t1_and_t2(boolean b_all_files, int spike_class, int t1, int t2);
 
 	void	set_clean_db_on_exit(const BOOL b_clear) {clean_database_on_exit_ = b_clear; }
 

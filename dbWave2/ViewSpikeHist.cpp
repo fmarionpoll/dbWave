@@ -193,7 +193,7 @@ void ViewSpikeHist::OnActivateView(BOOL bActivate, CView* pActivateView, CView* 
 	if (bActivate)
 	{
 		auto p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
-		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW,
+		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_ACTIVATE_VIEW,
 		                         reinterpret_cast<LPARAM>(pActivateView->GetDocument()));
 	}
 	else
@@ -217,8 +217,8 @@ void ViewSpikeHist::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		else
 			m_nfiles = 1;
 		break;
-	case HINT_DOCHASCHANGED: // file has changed?
-	case HINT_DOCMOVERECORD:
+	case HINT_DOC_HAS_CHANGED: // file has changed?
+	case HINT_DOC_MOVE_RECORD:
 		selectSpkList(GetDocument()->get_current_spike_file()->get_spike_list_current_index(), TRUE);
 		buildDataAndDisplay();
 		break;
@@ -238,7 +238,7 @@ BOOL ViewSpikeHist::OnMove(UINT nIDMoveCommand)
 		return false;
 	}
 
-	p_document->update_all_views_db_wave(nullptr, HINT_DOCMOVERECORD, nullptr);
+	p_document->update_all_views_db_wave(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 	if (!m_pvdS->ballfiles)
 		buildDataAndDisplay();
 	selectSpkList(GetDocument()->get_current_spike_file()->get_spike_list_current_index(), TRUE);

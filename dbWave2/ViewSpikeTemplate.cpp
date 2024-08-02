@@ -92,14 +92,14 @@ void ViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	{
 		switch (LOWORD(lHint))
 		{
-		case HINT_DOCHASCHANGED: 
-		case HINT_DOCMOVERECORD:
+		case HINT_DOC_HAS_CHANGED: 
+		case HINT_DOC_MOVE_RECORD:
 			update_file_parameters();
 			break;
-		case HINT_CLOSEFILEMODIFIED:
+		case HINT_CLOSE_FILE_MODIFIED:
 			save_current_spk_file();
 			break;
-		case HINT_REPLACEVIEW:
+		case HINT_REPLACE_VIEW:
 		default:
 			break;
 		}
@@ -323,21 +323,21 @@ LRESULT ViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	short shortValue = LOWORD(lParam);
 	switch (wParam)
 	{
-	case HINT_SETMOUSECURSOR:
+	case HINT_SET_MOUSE_CURSOR:
 		if (shortValue > CURSOR_ZOOM)
 			shortValue = 0;
 		set_view_mouse_cursor(shortValue);
-		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(shortValue, 0));
+		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(shortValue, 0));
 		break;
 
-	case HINT_HITSPIKE:
+	case HINT_HIT_SPIKE:
 		{
 			db_spike spike_hit = GetDocument()->get_spike_hit();
 			select_spike(spike_hit); 
 		}
 		break;
 
-	case HINT_CHANGEVERTTAG:
+	case HINT_CHANGE_VERT_TAG:
 		if (shortValue == spk_form_tag_left_)
 		{
 			spike_classification_parameters_->k_left = m_chart_spk_wnd_shape_.vertical_tags.get_value_int(spk_form_tag_left_);
@@ -356,17 +356,17 @@ LRESULT ViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		m_template_list_.Invalidate();
 		break;
 
-	case HINT_CHANGEHZLIMITS:
-	case HINT_CHANGEZOOM:
-	case HINT_VIEWSIZECHANGED:
+	case HINT_CHANGE_HZ_LIMITS:
+	case HINT_CHANGE_ZOOM:
+	case HINT_VIEW_SIZE_CHANGED:
 		set_extent_zero_all_display(m_chart_spk_wnd_shape_.get_yw_extent(), m_chart_spk_wnd_shape_.get_yw_org());
 		update_legends();
 		break;
 
-	case HINT_RMOUSEBUTTONDOWN:
+	case HINT_R_MOUSE_BUTTON_DOWN:
 		edit_spike_class(HIWORD(lParam), shortValue);
 		break;
-	case HINT_VIEWTABHASCHANGED:
+	case HINT_VIEW_TAB_HAS_CHANGED:
 		update_ctrl_tab1(shortValue);
 		break;
 	default:

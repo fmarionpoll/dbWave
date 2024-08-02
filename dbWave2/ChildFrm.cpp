@@ -131,7 +131,7 @@ void CChildFrame::Dump(CDumpContext & dc) const
 void CChildFrame::on_view_cursor_mode_normal()
 {
 	m_cursor_state = CURSOR_ARROW;
-	(GetActiveView())->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursor_state, NULL));
+	(GetActiveView())->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state, NULL));
 }
 
 void CChildFrame::on_update_view_cursor_mode_normal(CCmdUI * p_cmd_ui)
@@ -142,7 +142,7 @@ void CChildFrame::on_update_view_cursor_mode_normal(CCmdUI * p_cmd_ui)
 void CChildFrame::on_view_cursor_mode_measure()
 {
 	m_cursor_state = CURSOR_CROSS;
-	(GetActiveView())->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursor_state, NULL));
+	(GetActiveView())->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state, NULL));
 }
 
 void CChildFrame::on_update_view_cursor_mode_measure(CCmdUI * p_cmd_ui)
@@ -153,7 +153,7 @@ void CChildFrame::on_update_view_cursor_mode_measure(CCmdUI * p_cmd_ui)
 void CChildFrame::on_view_cursor_mode_zoom_in()
 {
 	m_cursor_state = CURSOR_ZOOM;
-	(GetActiveView())->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursor_state, NULL));
+	(GetActiveView())->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state, NULL));
 }
 
 void CChildFrame::on_update_view_cursor_mode_zoom_in(CCmdUI * p_cmd_ui)
@@ -222,7 +222,7 @@ void CChildFrame::on_tools_export_data_as_text()
 	{
 		p_dbWave_doc->export_datafiles_as_text_files();
 		p_dbWave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
-		PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
+		PostMessage(WM_MYMESSAGE, HINT_SHARED_MEM_FILLED, NULL);
 	}
 }
 
@@ -309,7 +309,7 @@ LRESULT CChildFrame::on_my_message(WPARAM w_param, LPARAM l_param)
 {
 	switch (w_param)
 	{
-	case HINT_SETMOUSECURSOR:
+	case HINT_SET_MOUSE_CURSOR:
 	{
 		const short low_param = LOWORD(l_param);
 		//switch (lowp)
@@ -326,7 +326,7 @@ LRESULT CChildFrame::on_my_message(WPARAM w_param, LPARAM l_param)
 	}
 	break;
 
-	case HINT_SHAREDMEMFILLED:
+	case HINT_SHARED_MEM_FILLED:
 	{
 		const auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		if (p_app->m_psf != nullptr)
@@ -407,7 +407,7 @@ void CChildFrame::replace_view_index(UINT n_id)
 	auto doc_type = 1;
 	if (n_id < ID_VIEW_SPIKEDISPLAY || n_id == ID_VIEW_ACQUIREDATA)
 		doc_type = 0;
-	p_dbWave_doc->UpdateAllViews(nullptr, MAKELPARAM(HINT_REPLACEVIEW, doc_type), nullptr);
+	p_dbWave_doc->UpdateAllViews(nullptr, MAKELPARAM(HINT_REPLACE_VIEW, doc_type), nullptr);
 }
 
 void CChildFrame::on_update_view_menu(CCmdUI * p_cmd_ui)
@@ -706,7 +706,7 @@ void CChildFrame::on_record_goto_record()
 			p_db_wave_doc->db_set_current_record_position(dlg.m_recordPos);
 		else
 			p_db_wave_doc->db_move_to_id(dlg.m_recordID);
-		p_db_wave_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+		p_db_wave_doc->UpdateAllViews(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 	}
 }
 
@@ -728,7 +728,7 @@ void CChildFrame::on_tools_import_files(int i_filter)
 		p_db_wave_doc1->import_file_list(file_names);
 		p_db_wave_doc1->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 		// display files which were discarded in a separate document
-		PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
+		PostMessage(WM_MYMESSAGE, HINT_SHARED_MEM_FILLED, NULL);
 	}
 }
 
@@ -764,7 +764,7 @@ void CChildFrame::on_tools_import_atl_files()
 			if (p_db_wave_doc2->db_move_last())
 				p_db_wave_doc2->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 			// display files which were discarded in a separate document
-			PostMessage(WM_MYMESSAGE, HINT_SHAREDMEMFILLED, NULL);
+			PostMessage(WM_MYMESSAGE, HINT_SHARED_MEM_FILLED, NULL);
 		}
 	}
 }
@@ -807,9 +807,9 @@ void CChildFrame::on_record_delete_current()
 			p_dbWave_doc->db_delete_current_record();
 
 		// update views and rename "erased" files
-		p_dbWave_doc->UpdateAllViews(nullptr, HINT_DOCHASCHANGED, nullptr);
+		p_dbWave_doc->UpdateAllViews(nullptr, HINT_DOC_HAS_CHANGED, nullptr);
 		if (p_dbWave_doc->db_set_current_record_position(current_index))
-			p_dbWave_doc->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+			p_dbWave_doc->UpdateAllViews(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 
 		// delete erased files
 		if (m_b_delete_file_)
@@ -1082,7 +1082,7 @@ void CChildFrame::on_mdi_activate(BOOL b_activate, CWnd * p_activate_wnd, CWnd *
 	CMDIChildWndEx::OnMDIActivate(b_activate, p_activate_wnd, p_deactivate_wnd);
 	const auto p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
 	if (b_activate)
-		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_MDIACTIVATE, NULL);
+		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_MDI_ACTIVATE, NULL);
 }
 
 void CChildFrame::on_tools_paths_relative()

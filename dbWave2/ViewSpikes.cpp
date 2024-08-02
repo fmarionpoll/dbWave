@@ -94,7 +94,7 @@ void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_d
 	if (bActivate)
 	{
 		const auto p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
-		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, reinterpret_cast<LPARAM>(pActivateView->GetDocument()));
+		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_ACTIVATE_VIEW, reinterpret_cast<LPARAM>(pActivateView->GetDocument()));
 	}
 	else
 	{
@@ -137,14 +137,14 @@ void ViewSpikes::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	{
 		switch (LOWORD(lHint))
 		{
-		case HINT_DOCHASCHANGED:
-		case HINT_DOCMOVERECORD:
+		case HINT_DOC_HAS_CHANGED:
+		case HINT_DOC_MOVE_RECORD:
 			update_file_parameters(TRUE);
 			break;
-		case HINT_CLOSEFILEMODIFIED:
+		case HINT_CLOSE_FILE_MODIFIED:
 			save_current_spk_file();
 			break;
-		case HINT_REPLACEVIEW:
+		case HINT_REPLACE_VIEW:
 		default:
 			break;
 		}
@@ -237,7 +237,7 @@ void ViewSpikes::set_mouse_cursor(const short param_value)
 
 	chart_data_wnd_.set_mouse_cursor_type(param_value);
 	int old_cursor = spike_class_listbox_.set_mouse_cursor_type(param_value);
-	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(param_value, 0));
+	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(param_value, 0));
 }
 
 void ViewSpikes::change_zoom(LPARAM lParam)
@@ -260,29 +260,29 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	short param_value = LOWORD(lParam);
 	switch (wParam)
 	{
-	case HINT_SETMOUSECURSOR:
+	case HINT_SET_MOUSE_CURSOR:
 		set_mouse_cursor(param_value);
 		break;
 
-	case HINT_SELECTSPIKES:
+	case HINT_SELECT_SPIKES:
 		chart_data_wnd_.Invalidate();
 		spike_class_listbox_.Invalidate();
 		break;
 
-	case HINT_CHANGEHZLIMITS:
-	case HINT_CHANGEZOOM:
-	case HINT_VIEWSIZECHANGED:
+	case HINT_CHANGE_HZ_LIMITS:
+	case HINT_CHANGE_ZOOM:
+	case HINT_VIEW_SIZE_CHANGED:
 		change_zoom(lParam);
 		break;
 
-	case HINT_HITSPIKE:
+	case HINT_HIT_SPIKE:
 		{
 			db_spike spike_hit = GetDocument()->get_spike_hit();
 			select_spike(spike_hit);
 		}
 		break;
 
-	case HINT_DBLCLKSEL:
+	case HINT_DBL_CLK_SEL:
 		if (param_value < 0)
 			param_value = 0;
 		m_spike_index = param_value;
@@ -303,11 +303,11 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		UpdateData(FALSE);
 		break;
 
-	case HINT_WINDOWPROPSCHANGED:
+	case HINT_WINDOW_PROPS_CHANGED:
 		options_view_data_->spkviewdata = *chart_data_wnd_.get_scope_parameters();
 		break;
 
-	case HINT_HITSPIKE_SHIFT:
+	case HINT_HIT_SPIKE_SHIFT:
 		{
 			db_spike spike_hit = GetDocument()->get_spike_hit();
 			select_spike(spike_hit);
@@ -1767,7 +1767,7 @@ void ViewSpikes::update_gain_scroll()
 	scrollbar_y_.SetScrollPos(
 		MulDiv(chart_data_wnd_.get_channel_list_item(0)->GetYextent(),
 		       100,
-		       YEXTENT_MAX)
+		       Y_EXTENT_MAX)
 		+ 50,
 		TRUE);
 }
@@ -1779,7 +1779,7 @@ void ViewSpikes::scroll_gain(const UINT n_sb_code, const UINT n_pos)
 	switch (n_sb_code)
 	{
 	// .................scroll to the start
-	case SB_LEFT: l_size = YEXTENT_MIN;
+	case SB_LEFT: l_size = Y_EXTENT_MIN;
 		break;
 	// .................scroll one line left
 	case SB_LINELEFT: l_size -= l_size / 10 + 1;
@@ -1794,11 +1794,11 @@ void ViewSpikes::scroll_gain(const UINT n_sb_code, const UINT n_pos)
 	case SB_PAGERIGHT: l_size += l_size + 1;
 		break;
 	// .................scroll to end right
-	case SB_RIGHT: l_size = YEXTENT_MAX;
+	case SB_RIGHT: l_size = Y_EXTENT_MAX;
 		break;
 	// .................scroll to pos = nPos or drag scroll box -- pos = nPos
 	case SB_THUMBPOSITION:
-	case SB_THUMBTRACK: l_size = MulDiv(static_cast<int>(n_pos) - 50, YEXTENT_MAX, 100);
+	case SB_THUMBTRACK: l_size = MulDiv(static_cast<int>(n_pos) - 50, Y_EXTENT_MAX, 100);
 		break;
 	// .................NOP: set position only
 	default: break;
@@ -1821,7 +1821,7 @@ void ViewSpikes::update_bias_scroll()
 	const CChanlistItem* chan_list_item = chart_data_wnd_.get_channel_list_item(0);
 	const auto i_pos = (chan_list_item->GetYzero()
 			- chan_list_item->GetDataBinZero())
-			* 100 / static_cast<int>(YZERO_SPAN) + 50;
+			* 100 / static_cast<int>(Y_ZERO_SPAN) + 50;
 	scrollbar_y_.SetScrollPos(i_pos, TRUE);
 }
 
@@ -1834,7 +1834,7 @@ void ViewSpikes::scroll_bias(UINT nSBCode, UINT nPos)
 	switch (nSBCode)
 	{
 	case SB_LEFT: // scroll to the start
-		l_size = YZERO_MIN;
+		l_size = Y_ZERO_MIN;
 		break;
 	case SB_LINELEFT: // scroll one line left
 		l_size -= y_extent / 100 + 1;
@@ -1849,18 +1849,18 @@ void ViewSpikes::scroll_bias(UINT nSBCode, UINT nPos)
 		l_size += y_extent / 10 + 1;
 		break;
 	case SB_RIGHT: // scroll to end right
-		l_size = YZERO_MAX;
+		l_size = Y_ZERO_MAX;
 		break;
 	case SB_THUMBPOSITION: // scroll to pos = nPos
 	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
-		l_size = MulDiv(static_cast<int>(nPos) - 50, YZERO_SPAN, 100);
+		l_size = MulDiv(static_cast<int>(nPos) - 50, Y_ZERO_SPAN, 100);
 		break;
 	default: // NOP: set position only
 		break;
 	}
 
 	// try to read data with this new size
-	if (l_size > YZERO_MIN && l_size < YZERO_MAX)
+	if (l_size > Y_ZERO_MIN && l_size < Y_ZERO_MAX)
 	{
 		chan->SetYzero(l_size + chan->GetDataBinZero());
 		chart_data_wnd_.Invalidate();

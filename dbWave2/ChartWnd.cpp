@@ -573,7 +573,7 @@ void ChartWnd::OnLButtonDblClk(UINT n_flags, CPoint point)
 	int new_cursor = cursor_type_ + 1;
 	if (new_cursor >= cursor_index_max_)
 		new_cursor = 0;
-	post_my_message(HINT_SETMOUSECURSOR, new_cursor);
+	post_my_message(HINT_SET_MOUSE_CURSOR, new_cursor);
 }
 
 void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
@@ -600,7 +600,7 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 		case 0: // arrow (default)
 		case CURSOR_CROSS: // cross (measure mode) (2)
 			if (n_flags & MK_CONTROL)
-				post_my_message(HINT_LMOUSEBUTTONDOW_CTRL, MAKELONG(point.x, point.y));
+				post_my_message(HINT_L_MOUSE_BUTTON_DOWN_CTRL, MAKELONG(point.x, point.y));
 
 			track_mode_ = TRACK_RECT; // flag track_rect
 
@@ -608,12 +608,12 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 			hc_trapped_ = hit_horizontal_tag(point.y);
 			if (hc_trapped_ >= 0)
 			{
-				track_mode_ = TRACK_HZTAG;
+				track_mode_ = TRACK_HZ_TAG;
 				m_pt_last_.x = 0; // set initial coordinates
 				m_pt_last_.y = horizontal_tags.get_pixel(hc_trapped_);
 				m_pt_first_ = m_pt_last_;
 				// tell parent that HZ_tag was selected
-				send_my_message(HINT_HITHZTAG, hc_trapped_);
+				send_my_message(HINT_HIT_HZ_TAG, hc_trapped_);
 				break;
 			}
 
@@ -632,7 +632,7 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 		// mouse cursor did hit a tag, either horizontal or vertical
 			if (hc_trapped_ >= 0)
 			{
-				track_mode_ = TRACK_VTTAG;
+				track_mode_ = TRACK_VT_TAG;
 				if (b_vertical_tags_as_long_)
 					m_pt_last_.x = static_cast<int>((vertical_tags.get_value_long(hc_trapped_) - file_position_first_left_pixel_) 
 						* static_cast<long>(m_display_rect_.Width()) 
@@ -641,7 +641,7 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 					m_pt_last_.x = vertical_tags.get_pixel(hc_trapped_);
 				m_pt_last_.y = 0;
 				// tell parent that VT_tag was selected
-				send_my_message(HINT_HITVERTTAG, hc_trapped_);
+				send_my_message(HINT_HIT_VERT_TAG, hc_trapped_);
 				break;
 			}
 			break;
@@ -675,19 +675,19 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 		break;
 
 	// track horizontal tag : move tag, get value and send message
-	case TRACK_HZTAG:
+	case TRACK_HZ_TAG:
 		if (point.y != m_pt_curr_.y)
 		{
 			m_pt_curr_ = point;
 			const auto val = MulDiv(point.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
 			xor_horizontal_tag(point.y);
 			horizontal_tags.set_value_int(hc_trapped_, val);
-			post_my_message(HINT_MOVEHZTAG, hc_trapped_);
+			post_my_message(HINT_MOVE_HZ_TAG, hc_trapped_);
 		}
 		break;
 
 	// track vertical tag : move tag & update value
-	case TRACK_VTTAG:
+	case TRACK_VT_TAG:
 		if (point.x != m_pt_curr_.x)
 		{
 			xor_vertical_tag(point.x); // move cursor to new pixel
@@ -760,7 +760,7 @@ void ChartWnd::left_button_up_horizontal_tag(const UINT n_flags, CPoint point)
 	point.y = MulDiv(data_value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
 	xor_horizontal_tag(point.y);
 	ChartWnd::OnLButtonUp(n_flags, point);
-	post_my_message(HINT_CHANGEHZTAG, hc_trapped_);
+	post_my_message(HINT_CHANGE_HZ_TAG, hc_trapped_);
 }
 
 void ChartWnd::OnRButtonDown(UINT nFlags, CPoint point)
@@ -806,9 +806,9 @@ void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 			}
 		}
 		if (cursor_type_ == CURSOR_CROSS)
-			post_my_message(HINT_RMOUSEBUTTONUP, NULL);
+			post_my_message(HINT_R_MOUSE_BUTTON_UP, NULL);
 		else
-			post_my_message(HINT_SETMOUSECURSOR, old_cursor_type_);
+			post_my_message(HINT_SET_MOUSE_CURSOR, old_cursor_type_);
 		break;
 
 	case TRACK_OFF:
@@ -828,7 +828,7 @@ void ChartWnd::OnRButtonUp(UINT nFlags, CPoint point)
 				Invalidate();
 			}
 			else
-				post_my_message(HINT_WINDOWPROPSCHANGED, NULL);
+				post_my_message(HINT_WINDOW_PROPS_CHANGED, NULL);
 			m_b_allow_props_ = TRUE;
 			delete params_old;
 		}

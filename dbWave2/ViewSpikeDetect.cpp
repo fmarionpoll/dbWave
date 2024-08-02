@@ -152,14 +152,14 @@ void ViewSpikeDetection::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	{
 		switch (LOWORD(lHint))
 		{
-		case HINT_CLOSEFILEMODIFIED: // close modified file: save
+		case HINT_CLOSE_FILE_MODIFIED: // close modified file: save
 			save_current_spk_file();
 			break;
-		case HINT_DOCMOVERECORD:
-		case HINT_DOCHASCHANGED: // file has changed?
+		case HINT_DOC_MOVE_RECORD:
+		case HINT_DOC_HAS_CHANGED: // file has changed?
 			update_file_parameters(TRUE);
 			break;
-		case HINT_REPLACEVIEW:
+		case HINT_REPLACE_VIEW:
 		default:
 			break;
 		}
@@ -171,7 +171,7 @@ void ViewSpikeDetection::OnActivateView(BOOL activate, CView* activated_view, CV
 	if (activate)
 	{
 		const auto p_main_frame = static_cast<CMainFrame*>(AfxGetMainWnd());
-		p_main_frame->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW, reinterpret_cast<LPARAM>(activated_view->GetDocument()));
+		p_main_frame->PostMessage(WM_MYMESSAGE, HINT_ACTIVATE_VIEW, reinterpret_cast<LPARAM>(activated_view->GetDocument()));
 	}
 	else
 	{
@@ -632,18 +632,18 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 	// ----------------------------- change mouse cursor (all 3 items)
 	switch (wParam)
 	{
-	case HINT_SETMOUSECURSOR:
+	case HINT_SET_MOUSE_CURSOR:
 		if (threshold > CURSOR_VERTICAL)
 			threshold = 0;
 		if (threshold == CURSOR_CROSS)
 			threshold = CURSOR_VERTICAL;
 		m_cursor_state = threshold;
 		SetViewMouseCursor(threshold);
-		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursor_state, 0));
+		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state, 0));
 		break;
 
 		// ----------------------------- move horizontal cursor / source data
-	case HINT_MOVEHZTAG:
+	case HINT_MOVE_HZ_TAG:
 		m_p_detect_parameters->detect_threshold_bin = m_chart_data_filtered.horizontal_tags.get_value_int(threshold);
 		m_thresholdval = m_chart_data_filtered.get_channel_list_item(0)
 			->ConvertDataBinsToVolts(
@@ -654,13 +654,13 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 		break;
 
 		// ----------------------------- select bar/display bars or zoom
-	case HINT_CHANGEHZLIMITS: 
+	case HINT_CHANGE_HZ_LIMITS: 
 		m_chart_data_filtered.get_data_from_doc(m_chart_spike_bar.get_time_first(), m_chart_spike_bar.get_time_last());
 		m_chart_data_source.get_data_from_doc(m_chart_spike_bar.get_time_first(), m_chart_spike_bar.get_time_last());
 		update_legends();
 		break;
 
-	case HINT_HITSPIKE:
+	case HINT_HIT_SPIKE:
 		{
 			db_spike spike_hit = GetDocument()->get_spike_hit();
 			select_spike_no(spike_hit, FALSE); 
@@ -668,19 +668,19 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 		}
 		break;
 
-	case HINT_DBLCLKSEL:
+	case HINT_DBL_CLK_SEL:
 		if (threshold < 0)
 			threshold = 0;
 		m_spike_index = threshold;
 		OnToolsEdittransformspikes();
 		break;
 
-	case HINT_CHANGEZOOM:
+	case HINT_CHANGE_ZOOM:
 		update_spike_shape_window_scale(TRUE);
 		m_chart_spike_shape.Invalidate();
 		break;
 
-	case HINT_VIEWSIZECHANGED:
+	case HINT_VIEW_SIZE_CHANGED:
 		if (i_id == m_chart_data_source.GetDlgCtrlID())
 		{
 			const auto l_first = m_chart_data_source.GetDataFirstIndex(); // get source data time range
@@ -692,14 +692,14 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 		update_legends();
 		break;
 
-	case HINT_WINDOWPROPSCHANGED:
+	case HINT_WINDOW_PROPS_CHANGED:
 		options_view_data->viewspkdetectfiltered = *m_chart_data_filtered.get_scope_parameters();
 		options_view_data->viewspkdetectdata = *m_chart_data_source.get_scope_parameters();
 		options_view_data->viewspkdetectspk = *m_chart_spike_bar.get_scope_parameters();
 		options_view_data->viewspkdetectbars = *m_chart_spike_shape.get_scope_parameters();
 		break;
 
-	case HINT_DEFINEDRECT:
+	case HINT_DEFINED_RECT:
 		if (m_cursor_state == CURSOR_CROSS)
 		{
 			const auto rect = m_chart_data_filtered.get_defined_rect();
@@ -724,13 +724,13 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 		}
 		break;
 
-	case HINT_SELECTSPIKES:
+	case HINT_SELECT_SPIKES:
 		update_spike_display();
 		break;
 
-		//case HINT_HITVERTTAG:	 //11	// vertical tag hit				lowp = tag index
-		//case HINT_MOVEVERTTAG: //12	// vertical tag has moved 		lowp = new pixel / selected tag
-	case HINT_CHANGEVERTTAG: //13
+	//case HINT_HIT_VERT_TAG:	//11	// vertical tag hit				lowp = tag index
+	//case HINT_MOVE_VERT_TAG: //12		// vertical tag has moved 		lowp = new pixel / selected tag
+	case HINT_CHANGE_VERT_TAG: //13
 		{
 			int lvalue = m_pSpkDoc->m_stimulus_intervals.GetAt(threshold);
 			if (i_id == m_chart_data_filtered.GetDlgCtrlID())
@@ -749,7 +749,7 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 		break;
 
 	case WM_LBUTTONDOWN:
-	case HINT_LMOUSEBUTTONDOW_CTRL:
+	case HINT_L_MOUSE_BUTTON_DOWN_CTRL:
 		{
 			const int cx = LOWORD(lParam);
 			const int l_limit_left = m_chart_data_filtered.GetDataOffsetfromPixel(cx);
@@ -764,7 +764,7 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 		}
 		break;
 
-	case HINT_HITSPIKE_SHIFT: // spike is selected or deselected
+	case HINT_HIT_SPIKE_SHIFT: // spike is selected or deselected
 		{
 			//db_spike spike_hit = GetDocument()->get_spike_hit();
 			long l_first; 
@@ -780,7 +780,7 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 		}
 		break;
 
-	case HINT_HITSPIKE_CTRL: // add/remove selected spike to/from the group of spikes selected
+	case HINT_HIT_SPIKE_CTRL: // add/remove selected spike to/from the group of spikes selected
 		{
 			db_spike spike_hit = GetDocument()->get_spike_hit();
 			select_spike_no(spike_hit, TRUE);
@@ -788,7 +788,7 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 		}
 		break;
 
-	case HINT_HITCHANNEL: // change channel if different
+	case HINT_HIT_CHANNEL: // change channel if different
 		if (i_id == m_chart_data_filtered.GetDlgCtrlID())
 		{
 			if (m_ichanselected != threshold)
@@ -807,7 +807,7 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 		}
 		break;
 
-	case HINT_VIEWTABCHANGE:
+	case HINT_VIEW_TAB_CHANGE:
 		update_detection_settings(LOWORD(lParam));
 		break;
 
@@ -2750,10 +2750,10 @@ void ViewSpikeDetection::UpdateGainScroll(int iID)
 {
 	if (iID == IDC_SCROLLY)
 		m_scrolly.SetScrollPos(
-			MulDiv(m_chart_data_filtered.get_channel_list_item(m_ichanselected)->GetYextent(), 100, YEXTENT_MAX) + 50, TRUE);
+			MulDiv(m_chart_data_filtered.get_channel_list_item(m_ichanselected)->GetYextent(), 100, Y_EXTENT_MAX) + 50, TRUE);
 	else
 		m_scrolly2.SetScrollPos(
-			MulDiv(m_chart_data_filtered.get_channel_list_item(m_ichanselected2)->GetYextent(), 100, YEXTENT_MAX) + 50, TRUE);
+			MulDiv(m_chart_data_filtered.get_channel_list_item(m_ichanselected2)->GetYextent(), 100, Y_EXTENT_MAX) + 50, TRUE);
 }
 
 void ViewSpikeDetection::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
@@ -2770,7 +2770,7 @@ void ViewSpikeDetection::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
 	// get corresponding data
 	switch (nSBCode)
 	{
-	case SB_LEFT: y_extent = YEXTENT_MIN;
+	case SB_LEFT: y_extent = Y_EXTENT_MIN;
 		break; // .................scroll to the start
 	case SB_LINELEFT: y_extent -= y_extent / 10 + 1;
 		break; // .................scroll one line left
@@ -2780,10 +2780,10 @@ void ViewSpikeDetection::OnGainScroll(UINT nSBCode, UINT nPos, int iID)
 		break; // .................scroll one page left
 	case SB_PAGERIGHT: y_extent += y_extent + 1;
 		break; // .................scroll one page right
-	case SB_RIGHT: y_extent = YEXTENT_MAX;
+	case SB_RIGHT: y_extent = Y_EXTENT_MAX;
 		break; // .................scroll to end right
 	case SB_THUMBPOSITION: // .................scroll to pos = nPos or drag scroll box -- pos = nPos
-	case SB_THUMBTRACK: y_extent = MulDiv(nPos - 50, YEXTENT_MAX, 100);
+	case SB_THUMBTRACK: y_extent = MulDiv(nPos - 50, Y_EXTENT_MAX, 100);
 		break;
 	default: break; // .................NOP: set position only
 	}
@@ -2804,14 +2804,14 @@ void ViewSpikeDetection::UpdateBiasScroll(int iID)
 	{
 		const CChanlistItem* channel_item = m_chart_data_filtered.get_channel_list_item(m_ichanselected);
 		const auto i_pos = static_cast<int>((channel_item->GetYzero() - channel_item->GetDataBinZero())
-			* 100 / static_cast<int>(YZERO_SPAN)) + static_cast<int>(50);
+			* 100 / static_cast<int>(Y_ZERO_SPAN)) + static_cast<int>(50);
 		m_scrolly.SetScrollPos(i_pos, TRUE);
 	}
 	else
 	{
 		const CChanlistItem* channel_item = m_chart_data_filtered.get_channel_list_item(m_ichanselected2);
 		const auto i_pos = static_cast<int>((channel_item->GetYzero() - channel_item->GetDataBinZero())
-			* 100 / int(YZERO_SPAN)) + static_cast<int>(50);
+			* 100 / int(Y_ZERO_SPAN)) + static_cast<int>(50);
 		m_scrolly2.SetScrollPos(i_pos, TRUE);
 	}
 }
@@ -2832,7 +2832,7 @@ void ViewSpikeDetection::OnBiasScroll(UINT nSBCode, UINT nPos, int iID)
 	// get corresponding data
 	switch (nSBCode)
 	{
-	case SB_LEFT: l_size = YZERO_MIN;
+	case SB_LEFT: l_size = Y_ZERO_MIN;
 		break; // scroll to the start
 	case SB_LINELEFT: l_size -= y_extent / 100 + 1;
 		break; // scroll one line left
@@ -2842,16 +2842,16 @@ void ViewSpikeDetection::OnBiasScroll(UINT nSBCode, UINT nPos, int iID)
 		break; // scroll one page left
 	case SB_PAGERIGHT: l_size += y_extent / 10 + 1;
 		break; // scroll one page right
-	case SB_RIGHT: l_size = YZERO_MAX;
+	case SB_RIGHT: l_size = Y_ZERO_MAX;
 		break; // scroll to end right
 	case SB_THUMBPOSITION: // scroll to pos = nPos	// drag scroll box -- pos = nPos
-	case SB_THUMBTRACK: l_size = (nPos - 50) * (YZERO_SPAN / 100);
+	case SB_THUMBTRACK: l_size = (nPos - 50) * (Y_ZERO_SPAN / 100);
 		break;
 	default: break; // NOP: set position only
 	}
 
 	// try to read data with this new size
-	if (l_size > YZERO_MIN && l_size < YZERO_MAX)
+	if (l_size > Y_ZERO_MIN && l_size < Y_ZERO_MAX)
 	{
 		CChanlistItem* chan = p_view->get_channel_list_item(selected_channel_index);
 		chan->SetYzero(l_size + chan->GetDataBinZero());

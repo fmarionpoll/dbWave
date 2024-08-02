@@ -90,7 +90,7 @@ BOOL dbTableView::OnMove(UINT nIDMoveCommand)
 	{
 		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
 	}
-	p_document->update_all_views_db_wave(nullptr, HINT_DOCMOVERECORD, nullptr);
+	p_document->update_all_views_db_wave(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 	return flag;
 }
 
@@ -98,7 +98,7 @@ void dbTableView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 {
 	if (bActivate)
 	{
-		AfxGetMainWnd()->PostMessage(WM_MYMESSAGE, HINT_ACTIVATEVIEW,
+		AfxGetMainWnd()->PostMessage(WM_MYMESSAGE, HINT_ACTIVATE_VIEW,
 		                             reinterpret_cast<LPARAM>(pActivateView->GetDocument()));
 	}
 	else
@@ -180,13 +180,13 @@ void dbTableView::increment_spike_flag()
 void dbTableView::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto i_cur_sel = m_tabCtrl.GetCurSel();
-	SendMessage(WM_MYMESSAGE, HINT_VIEWTABCHANGE, MAKELPARAM(i_cur_sel, 0));
+	SendMessage(WM_MYMESSAGE, HINT_VIEW_TAB_CHANGE, MAKELPARAM(i_cur_sel, 0));
 	*pResult = 0;
 }
 
 void dbTableView::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto i_cur_sel = m_tabCtrl.GetCurSel();
-	PostMessage(WM_MYMESSAGE, HINT_VIEWTABHASCHANGED, MAKELPARAM(i_cur_sel, 0));
+	PostMessage(WM_MYMESSAGE, HINT_VIEW_TAB_HAS_CHANGED, MAKELPARAM(i_cur_sel, 0));
 	*pResult = 0;
 }

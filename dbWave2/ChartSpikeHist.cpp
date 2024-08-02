@@ -245,11 +245,11 @@ void ChartSpikeHist::OnLButtonUp(const UINT n_flags, CPoint point)
 	// test if horizontal tag was tracked
 	switch (track_mode_)
 	{
-	case TRACK_HZTAG:
+	case TRACK_HZ_TAG:
 		left_button_up_horizontal_tag(n_flags, point);
 		break;
 
-	case TRACK_VTTAG:
+	case TRACK_VT_TAG:
 		// vertical tag was tracked
 		{
 			// convert pix into data value and back again
@@ -258,7 +258,7 @@ void ChartSpikeHist::OnLButtonUp(const UINT n_flags, CPoint point)
 			point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 			xor_vertical_tag(point.x);
 			ChartSpike::OnLButtonUp(n_flags, point);
-			post_my_message(HINT_CHANGEVERTTAG, hc_trapped_);
+			post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
 		}
 		break;
 
@@ -273,7 +273,7 @@ void ChartSpikeHist::OnLButtonUp(const UINT n_flags, CPoint point)
 			if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 			{
 				if (cursor_type_ != CURSOR_ZOOM)
-					post_my_message(HINT_HITAREA, NULL);
+					post_my_message(HINT_HIT_AREA, NULL);
 				else
 					zoom_in();
 				break; // exit: mouse movement was too small
@@ -330,7 +330,7 @@ void ChartSpikeHist::OnLButtonDown(const UINT n_flags, const CPoint point)
 	if (spike_hit_.spike_index >= 0)
 	{
 		release_cursor(); 
-		post_my_message(HINT_HITSPIKE, NULL);
+		post_my_message(HINT_HIT_SPIKE, NULL);
 	}
 	else
 		release_cursor();
@@ -366,7 +366,7 @@ void ChartSpikeHist::zoom_data(CRect* r_from, CRect* r_dest)
 
 	// display
 	Invalidate();
-	post_my_message(HINT_CHANGEZOOM, 0);
+	post_my_message(HINT_CHANGE_ZOOM, 0);
 }
 
 void ChartSpikeHist::OnLButtonDblClk(const UINT n_flags, const CPoint point)

@@ -137,6 +137,9 @@ protected:
 	void change_horizontal_tag_xy_chart(short short_value);
 	void save_windows_properties_to_options();
 
+	void gain_adjust_shape_and_bars();
+	void gain_adjust_xy_and_histogram();
+
 	// Generated message map functions
 public:
 	afx_msg void on_select_change_parameter();
@@ -148,7 +151,6 @@ public:
 	afx_msg void on_format_center_curve();
 	afx_msg void on_format_gain_adjust();
 	afx_msg void on_format_split_curves();
-
 	afx_msg void on_tools_edit_spikes();
 	afx_msg void on_select_all_files();
 	afx_msg void on_tools_align_spikes();

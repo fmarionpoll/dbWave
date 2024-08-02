@@ -746,5 +746,5 @@ void CTemplateListWnd::OnRButtonDown(UINT nFlags, CPoint point)
 	const auto item = FindItem(&lvInfo, -1);
 
 	CListCtrl::OnRButtonDown(nFlags, point);
-	GetParent()->PostMessage(WM_MYMESSAGE, HINT_RMOUSEBUTTONDOWN, MAKELONG(item, GetDlgCtrlID()));
+	GetParent()->PostMessage(WM_MYMESSAGE, HINT_R_MOUSE_BUTTON_DOWN, MAKELONG(item, GetDlgCtrlID()));
 }

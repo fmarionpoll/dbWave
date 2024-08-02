@@ -39,12 +39,12 @@ void ScrollBarEx::OnMouseMove(UINT nFlags, CPoint point)
 	if (!GetScrollBarInfo(&m_scBarInfo))
 		return;
 
-	if (m_captureMode == MOVERIGHT
-		|| m_captureMode == MOVELEFT
-		|| (point.x >= m_scBarInfo.xyThumbTop - SPLITSIZE - TRACKSIZE && point.x <= m_scBarInfo.xyThumbTop + SPLITSIZE +
-			TRACKSIZE)
-		|| (point.x >= m_scBarInfo.xyThumbBottom - SPLITSIZE - TRACKSIZE && point.x <= m_scBarInfo.xyThumbBottom +
-			SPLITSIZE + TRACKSIZE))
+	if (m_captureMode == MOVE_RIGHT
+		|| m_captureMode == MOVE_LEFT
+		|| (point.x >= m_scBarInfo.xyThumbTop - SPLIT_SIZE - TRACK_SIZE && point.x <= m_scBarInfo.xyThumbTop + SPLIT_SIZE +
+			TRACK_SIZE)
+		|| (point.x >= m_scBarInfo.xyThumbBottom - SPLIT_SIZE - TRACK_SIZE && point.x <= m_scBarInfo.xyThumbBottom +
+			SPLIT_SIZE + TRACK_SIZE))
 		SetCursor(AfxGetApp()->LoadCursor(IDC_SPLITHORIZONTAL));
 
 	if (m_bCaptured)
@@ -52,7 +52,7 @@ void ScrollBarEx::OnMouseMove(UINT nFlags, CPoint point)
 		// move limits up to cursor, according to selected mode
 		switch (m_captureMode)
 		{
-		case MOVEBOTTOM:
+		case MOVE_BOTTOM:
 			if (point.x > m_scBarInfo.xyThumbTop)
 			{
 				m_scBarInfo.xyThumbBottom = point.x;
@@ -66,7 +66,7 @@ void ScrollBarEx::OnMouseMove(UINT nFlags, CPoint point)
 				SetScrollInfo(&m_scInfo);
 			}
 			break;
-		case MOVETOP:
+		case MOVE_TOP:
 			if (point.x < m_scBarInfo.xyThumbBottom)
 			{
 				m_scBarInfo.xyThumbTop = point.x;
@@ -81,7 +81,7 @@ void ScrollBarEx::OnMouseMove(UINT nFlags, CPoint point)
 				SetScrollInfo(&m_scInfo);
 			}
 			break;
-		case MOVEBOTH:
+		case MOVE_BOTH:
 			m_scBarInfo.xyThumbTop = m_scBarInfo_old.xyThumbTop + point.x - oldpt.x;
 			m_scBarInfo.xyThumbBottom = m_scBarInfo_old.xyThumbBottom + point.x - oldpt.x;
 			m_scInfo.nPos = MulDiv(m_scBarInfo.xyThumbTop,
@@ -115,27 +115,27 @@ void ScrollBarEx::OnLButtonDown(UINT nFlags, CPoint point)
 	m_scInfo_old = m_scInfo;
 
 	// click on the left limit of thumb
-	if (point.x >= m_scBarInfo.xyThumbBottom - SPLITSIZE - TRACKSIZE
-		&& point.x <= m_scBarInfo.xyThumbBottom + SPLITSIZE + TRACKSIZE)
+	if (point.x >= m_scBarInfo.xyThumbBottom - SPLIT_SIZE - TRACK_SIZE
+		&& point.x <= m_scBarInfo.xyThumbBottom + SPLIT_SIZE + TRACK_SIZE)
 	{
-		m_captureMode = MOVEBOTTOM;
+		m_captureMode = MOVE_BOTTOM;
 		SetCapture();
 		m_bCaptured = TRUE;
 	}
 	// click on right limit of thumb
-	else if (point.x >= m_scBarInfo.xyThumbTop - SPLITSIZE - TRACKSIZE
-		&& point.x <= m_scBarInfo.xyThumbTop + SPLITSIZE + TRACKSIZE)
+	else if (point.x >= m_scBarInfo.xyThumbTop - SPLIT_SIZE - TRACK_SIZE
+		&& point.x <= m_scBarInfo.xyThumbTop + SPLIT_SIZE + TRACK_SIZE)
 	{
-		m_captureMode = MOVETOP;
+		m_captureMode = MOVE_TOP;
 		SetCapture();
 		m_bCaptured = TRUE;
 	}
 	// click on thumb; it is necessary to catch this event because the standard routine
 	// does not transfert nPos as (int) but as a 16 bits value only
-	else if (point.x <= m_scBarInfo.xyThumbBottom - SPLITSIZE - TRACKSIZE
-		&& point.x >= m_scBarInfo.xyThumbTop - SPLITSIZE - TRACKSIZE)
+	else if (point.x <= m_scBarInfo.xyThumbBottom - SPLIT_SIZE - TRACK_SIZE
+		&& point.x >= m_scBarInfo.xyThumbTop - SPLIT_SIZE - TRACK_SIZE)
 	{
-		m_captureMode = MOVEBOTH;
+		m_captureMode = MOVE_BOTH;
 		SetCapture();
 		m_bCaptured = TRUE;
 		oldpt = point;

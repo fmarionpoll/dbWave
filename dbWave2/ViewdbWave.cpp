@@ -261,7 +261,7 @@ void ViewdbWave::updateControls()
 	}
 	//pdb_doc->SetModifiedFlag(true);
 	//pdb_doc->UpdateAllViews(this, HINT_DOCMOVERECORD, nullptr);
-	dbWaveDoc->update_all_views_db_wave(this, HINT_DOCMOVERECORD, nullptr);
+	dbWaveDoc->update_all_views_db_wave(this, HINT_DOC_MOVE_RECORD, nullptr);
 
 	//POSITION pos = pdb_doc->GetFirstViewPosition();
 	//int nviews = 0;
@@ -311,7 +311,7 @@ void ViewdbWave::OnActivateView(BOOL bActivate, CView * pActivateView, CView * p
 			p_mainframe->ShowPane(p_mainframe->m_pSecondToolBar, FALSE, FALSE, TRUE);
 		// load status
 		m_nStatus = static_cast<CChildFrame*>(p_mainframe->MDIGetActive())->m_n_status;
-		p_mainframe->PostMessageW(WM_MYMESSAGE, HINT_ACTIVATEVIEW, reinterpret_cast<LPARAM>(pActivateView->GetDocument()));
+		p_mainframe->PostMessageW(WM_MYMESSAGE, HINT_ACTIVATE_VIEW, reinterpret_cast<LPARAM>(pActivateView->GetDocument()));
 	}
 	else
 	{
@@ -341,7 +341,7 @@ void ViewdbWave::OnItemActivateListctrl(NMHDR * pNMHDR, LRESULT * pResult)
 		GetDocument()->db_set_current_record_position(p_item_activate->iItem);
 	
 	dbTableView::OnInitialUpdate();
-	GetDocument()->UpdateAllViews(nullptr, HINT_DOCMOVERECORD, nullptr);
+	GetDocument()->UpdateAllViews(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 
 	*pResult = 0;
 }
@@ -360,7 +360,7 @@ LRESULT ViewdbWave::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	switch (wParam)
 	{
-	case HINT_VIEWTABHASCHANGED:
+	case HINT_VIEW_TAB_HAS_CHANGED:
 		GetDocument()->get_current_spike_file()->set_spike_list_current_index(threshold);
 		m_dataListCtrl.refresh_display();
 		break;
@@ -378,7 +378,7 @@ void ViewdbWave::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
 
 	switch (LOWORD(lHint))
 	{
-	case HINT_GETSELECTEDRECORDS:
+	case HINT_GET_SELECTED_RECORDS:
 	{
 		const auto p_document = GetDocument();
 		p_document->selected_records.RemoveAll();
@@ -399,7 +399,7 @@ void ViewdbWave::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
 	}
 	break;
 
-	case HINT_SETSELECTEDRECORDS:
+	case HINT_SET_SELECTED_RECORDS:
 	{
 		const auto p_document = GetDocument();
 		const UINT u_selected_count = p_document->selected_records.GetSize();
@@ -426,16 +426,16 @@ void ViewdbWave::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
 	}
 	break;
 
-	case HINT_REPLACEVIEW:
+	case HINT_REPLACE_VIEW:
 		m_dataListCtrl.update_cache(-2, -2);
 		updateControls();
 		break;
 
 	case HINT_REQUERY:
 		fillListBox();
-	case HINT_DOCHASCHANGED:
+	case HINT_DOC_HAS_CHANGED:
 		m_dataListCtrl.update_cache(-1, -1);
-	case HINT_DOCMOVERECORD:
+	case HINT_DOC_MOVE_RECORD:
 	default:
 		updateControls();
 		break;

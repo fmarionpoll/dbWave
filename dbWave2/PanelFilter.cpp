@@ -157,13 +157,13 @@ LRESULT CFilterPanel::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	switch (wParam)
 	{
-	case HINT_ACTIVATEVIEW:
+	case HINT_ACTIVATE_VIEW:
 		m_pDoc = reinterpret_cast<CdbWaveDoc*>(lParam);
 		if (m_pDoc != m_pDocOld)
 			InitFilterList();
 		break;
 
-	case HINT_MDIACTIVATE:
+	case HINT_MDI_ACTIVATE:
 		{
 			auto* pmain = static_cast<CMainFrame*>(AfxGetMainWnd());
 			BOOL b_maximized;
@@ -189,16 +189,16 @@ void CFilterPanel::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	m_pDoc = reinterpret_cast<CdbWaveDoc*>(pSender);
 	switch (LOWORD(lHint))
 	{
-	case HINT_CLOSEFILEMODIFIED: // save current file parms
+	case HINT_CLOSE_FILE_MODIFIED: // save current file parms
 		//m_pDocOld = NULL;
 		break;
 
 	case HINT_REQUERY:
 		m_pDocOld = nullptr;
 
-	case HINT_DOCHASCHANGED:
-	case HINT_DOCMOVERECORD:
-	case HINT_REPLACEVIEW:
+	case HINT_DOC_HAS_CHANGED:
+	case HINT_DOC_MOVE_RECORD:
+	case HINT_REPLACE_VIEW:
 	default:
 		InitFilterList();
 		break;

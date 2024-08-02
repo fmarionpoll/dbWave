@@ -162,7 +162,7 @@ int SpikeClassListBox::select_spike(db_spike& spike_selected)
 		bAll = FALSE;
 	}
 
-	int oldspk=0;
+	int old_spk=0;
 	int spki=0;
 ;*/
 
@@ -179,7 +179,7 @@ int SpikeClassListBox::select_spike(db_spike& spike_selected)
 		// multiple selection
 		//if (false)
 		//{
-		//	auto nflaggedspikes = m_spike_list_->toggle_spike_flag(spike_selected.spike_index);
+		//	auto n_flagged_spikes = m_spike_list_->toggle_spike_flag(spike_selected.spike_index);
 		//	if (m_spike_list_->get_spike_flag_array_count() < 1)
 		//		spike_selected.spike_index = -1;
 		//}
@@ -439,22 +439,22 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	const int threshold = LOWORD(lParam);
 	switch (wParam)
 	{
-	case HINT_SETMOUSECURSOR:
+	case HINT_SET_MOUSE_CURSOR:
 		set_mouse_cursor_type(threshold);
 		break;
 
-	case HINT_CHANGEHZLIMITS:
+	case HINT_CHANGE_HZ_LIMITS:
 		set_horizontal_limits(row_selected);
 		break;
 
-	case HINT_HITSPIKE:
+	case HINT_HIT_SPIKE:
 		{
 			db_spike spike_hit = m_dbwave_doc_->get_spike_hit();
 			select_spike(spike_hit);
 		}
 		break;
 
-	case HINT_CHANGEZOOM:
+	case HINT_CHANGE_ZOOM:
 		set_y_zoom(row_selected);
 		break;
 

@@ -149,7 +149,7 @@ void ViewData::OnInitialUpdate()
 	update_file_parameters(TRUE); 
 
 	m_ChartDataWnd.set_scope_parameters(&(options_view_data->viewdata));
-	constexpr int legends_options = UPD_ABCISSA | CHG_XSCALE | UPD_ORDINATES | CHG_YSCALE;
+	constexpr int legends_options = UPD_ABSCISSA | CHG_X_SCALE | UPD_ORDINATES | CHG_Y_SCALE;
 	m_bCommonScale = TRUE;
 	m_comboSelectChan.SetCurSel(m_ChartDataWnd.get_channel_list_size());
 	UpdateLegends(legends_options);
@@ -163,21 +163,21 @@ void ViewData::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	auto i_update = NULL;
 	switch (LOWORD(lHint))
 	{
-	case HINT_REPLACEVIEW:
+	case HINT_REPLACE_VIEW:
 		return;
-	case HINT_CLOSEFILEMODIFIED: 
+	case HINT_CLOSE_FILE_MODIFIED: 
 		save_modified_file();
 		break;
-	case HINT_DOCHASCHANGED: 
-	case HINT_DOCMOVERECORD:
+	case HINT_DOC_HAS_CHANGED: 
+	case HINT_DOC_MOVE_RECORD:
 		m_bInitComment = TRUE;
 		update_file_parameters();
-		i_update = UPD_ABCISSA | CHG_XSCALE | UPD_ORDINATES | CHG_YSCALE;
+		i_update = UPD_ABSCISSA | CHG_X_SCALE | UPD_ORDINATES | CHG_Y_SCALE;
 		break;
 	default:
 		if (m_p_dat_Doc == nullptr)
 			return;
-		i_update = UPD_ABCISSA | UPD_XSCALE | UPD_ORDINATES | UPD_YSCALE;
+		i_update = UPD_ABSCISSA | UPD_X_SCALE | UPD_ORDINATES | UPD_Y_SCALE;
 		break;
 	}
 	UpdateLegends(i_update);
@@ -189,16 +189,16 @@ void ViewData::UpdateLegends(int legends_options)
 {
 	if (!m_ChartDataWnd.IsDefined() && !m_b_valid_doc_)
 		return;
-	if (legends_options & UPD_ABCISSA)
+	if (legends_options & UPD_ABSCISSA)
 		UpdateFileScroll();
-	if (legends_options & CHG_YSCALE)
+	if (legends_options & CHG_Y_SCALE)
 	{
 		UpdateHZtagsVal();
-		legends_options |= CHG_YBAR;
+		legends_options |= CHG_Y_BAR;
 	}
-	if (legends_options & UPD_YSCALE)
-		legends_options |= CHG_YBAR;
-	if (legends_options & CHG_YBAR)
+	if (legends_options & UPD_Y_SCALE)
+		legends_options |= CHG_Y_BAR;
+	if (legends_options & CHG_Y_BAR)
 		UpdateYZero(m_channel_selected, m_ChartDataWnd.get_channel_list_item(m_channel_selected)->GetYzero());
 
 	UpdateData(FALSE);
@@ -239,7 +239,7 @@ void ViewData::update_channel(const int channel)
 			UpdateHZtagsVal();
 			m_ChartDataWnd.Invalidate();
 		}
-		UpdateLegends(UPD_ORDINATES | CHG_YSCALE);
+		UpdateLegends(UPD_ORDINATES | CHG_Y_SCALE);
 	}
 }
 
@@ -249,7 +249,7 @@ void ViewData::OnFormatYscale()
 	dlg.m_pChartDataWnd = &m_ChartDataWnd;
 	dlg.m_Channel = m_channel_selected;
 	if (IDOK == dlg.DoModal())
-		UpdateLegends(UPD_ORDINATES | UPD_YSCALE | CHG_YBAR);
+		UpdateLegends(UPD_ORDINATES | UPD_Y_SCALE | CHG_Y_BAR);
 
 	m_ChartDataWnd.Invalidate();
 }
@@ -264,7 +264,7 @@ void ViewData::OnToolsDataseries()
 	dlg.DoModal();
 
 	m_channel_selected = dlg.m_listindex;
-	UpdateLegends(UPD_YSCALE);
+	UpdateLegends(UPD_Y_SCALE);
 }
 
 void ViewData::OnEditCopy()
@@ -534,7 +534,7 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 	if (b_update_interface)
 	{
 		UpdateFileScroll();
-		UpdateLegends(UPD_ABCISSA | CHG_XSCALE | CHG_YSCALE);
+		UpdateLegends(UPD_ABSCISSA | CHG_X_SCALE | CHG_Y_SCALE);
 		m_ChartDataWnd.Invalidate();
 	}
 }
@@ -655,7 +655,7 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	switch (wParam)
 	{
-	case HINT_SETMOUSECURSOR:
+	case HINT_SET_MOUSE_CURSOR:
 		// save current cursors into document if cursor_state = 3
 		if (m_cursor_state == CURSOR_CROSS)
 		{
@@ -684,7 +684,7 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			low_parameter = 0;
 	// change cursor and tell parent that it has changed
 		m_cursor_state = m_ChartDataWnd.set_mouse_cursor_type(low_parameter);
-		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursor_state, 0));
+		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state, 0));
 
 	// recall cursors from document if cursorstate = 2
 		if (m_cursor_state == CURSOR_CROSS)
@@ -700,12 +700,12 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		set_cursor_associated_windows();
 		break;
 
-	case HINT_HITCHANNEL: // change channel if different
+	case HINT_HIT_CHANNEL: // change channel if different
 		m_channel_selected = low_parameter;
-		UpdateLegends(UPD_ORDINATES | CHG_YSCALE);
+		UpdateLegends(UPD_ORDINATES | CHG_Y_SCALE);
 		break;
 
-	case HINT_DEFINEDRECT:
+	case HINT_DEFINED_RECT:
 		{
 			const auto rect = m_ChartDataWnd.get_defined_rect();
 			mdMO->wLimitSup = static_cast<WORD>(rect.top);
@@ -753,20 +753,20 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		m_ChartDataWnd.Invalidate();
 		break;
 
-	case HINT_CHANGEHZTAG: // horizontal tag has changed 	lowp = tag nb
+	case HINT_CHANGE_HZ_TAG: // horizontal tag has changed 	lowp = tag nb
 		if (mdMO->wOption == 3)
 			mdMO->wStimulusthresh = m_ChartDataWnd.horizontal_tags.get_value_int(0);
 		else
 			UpdateHZtagsVal();
 		break;
 
-	case HINT_VIEWSIZECHANGED: // change zoom
-		UpdateLegends(UPD_ABCISSA | CHG_XSCALE | UPD_ORDINATES | CHG_YSCALE);
+	case HINT_VIEW_SIZE_CHANGED: // change zoom
+		UpdateLegends(UPD_ABSCISSA | CHG_X_SCALE | UPD_ORDINATES | CHG_Y_SCALE);
 		m_ChartDataWnd.Invalidate();
 		SetVBarMode(m_VBarMode);
 		break;
 
-	case HINT_WINDOWPROPSCHANGED:
+	case HINT_WINDOW_PROPS_CHANGED:
 		options_view_data->viewdata = *(m_ChartDataWnd.get_scope_parameters());
 		break;
 	default:
@@ -778,7 +778,7 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 void ViewData::OnViewAlldata()
 {
 	m_ChartDataWnd.get_data_from_doc(0, GetDocument()->db_get_data_len() - 1);
-	UpdateLegends(UPD_ABCISSA | CHG_XSCALE);
+	UpdateLegends(UPD_ABSCISSA | CHG_X_SCALE);
 	UpdateData(FALSE);
 	m_ChartDataWnd.Invalidate();
 	UpdateFileScroll();
@@ -796,7 +796,7 @@ void ViewData::OnFormatDataseriesattributes()
 	{
 		m_channel_selected = dlg.m_listindex;
 	}
-	UpdateLegends(UPD_YSCALE);
+	UpdateLegends(UPD_Y_SCALE);
 	m_ChartDataWnd.Invalidate();
 }
 
@@ -806,7 +806,7 @@ void ViewData::OnToolsVerticaltags()
 
 	// change cursor and tell parent that it has changed
 	m_cursor_state = m_ChartDataWnd.set_mouse_cursor_type(CURSOR_CROSS);
-	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursor_state, 0));
+	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state, 0));
 	//MeasureProperties(1);
 }
 
@@ -815,7 +815,7 @@ void ViewData::OnToolsHorizontalcursors()
 	mdMO->wOption = 1;
 	// change cursor and tell parent that it has changed
 	m_cursor_state = m_ChartDataWnd.set_mouse_cursor_type(CURSOR_CROSS);
-	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursor_state, 0));
+	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state, 0));
 	//MeasureProperties(0);
 }
 
@@ -882,7 +882,7 @@ void ViewData::UpdateGainScroll()
 		MulDiv(
 			m_ChartDataWnd.get_channel_list_item(m_channel_selected)->GetYextent(),
 			100,
-			YEXTENT_MAX)
+			Y_EXTENT_MAX)
 		+ 50,
 		TRUE);
 }
@@ -893,7 +893,7 @@ void ViewData::OnGainScroll(UINT nSBCode, UINT nPos)
 	// get corresponding data
 	switch (nSBCode)
 	{
-	case SB_LEFT: yExtent = YEXTENT_MIN;
+	case SB_LEFT: yExtent = Y_EXTENT_MIN;
 		break;
 	case SB_LINELEFT: yExtent -= yExtent / 10 + 1;
 		break;
@@ -903,10 +903,10 @@ void ViewData::OnGainScroll(UINT nSBCode, UINT nPos)
 		break;
 	case SB_PAGERIGHT: yExtent += yExtent + 1;
 		break;
-	case SB_RIGHT: yExtent = YEXTENT_MAX;
+	case SB_RIGHT: yExtent = Y_EXTENT_MAX;
 		break;
 	case SB_THUMBPOSITION:
-	case SB_THUMBTRACK: yExtent = MulDiv(nPos - 50, YEXTENT_MAX, 100);
+	case SB_THUMBTRACK: yExtent = MulDiv(nPos - 50, Y_EXTENT_MAX, 100);
 		break;
 	default: break;
 	}
@@ -915,7 +915,7 @@ void ViewData::OnGainScroll(UINT nSBCode, UINT nPos)
 	if (yExtent > 0) //&& yExtent<=YEXTENT_MAX)
 	{
 		UpdateYExtent(m_channel_selected, yExtent);
-		UpdateLegends(UPD_ORDINATES | CHG_YSCALE);
+		UpdateLegends(UPD_ORDINATES | CHG_Y_SCALE);
 	}
 	// update scrollBar
 	m_ChartDataWnd.Invalidate();
@@ -926,9 +926,9 @@ void ViewData::UpdateBiasScroll()
 {
 	CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
 	const auto i_pos = (pchan->GetYzero() - pchan->GetDataBinZero())
-		* 100 / static_cast<int>(YZERO_SPAN) + 50;
+		* 100 / static_cast<int>(Y_ZERO_SPAN) + 50;
 	m_scrolly.SetScrollPos(i_pos, TRUE);
-	UpdateLegends(UPD_ORDINATES | CHG_YSCALE);
+	UpdateLegends(UPD_ORDINATES | CHG_Y_SCALE);
 }
 
 void ViewData::OnBiasScroll(UINT nSBCode, UINT nPos)
@@ -939,7 +939,7 @@ void ViewData::OnBiasScroll(UINT nSBCode, UINT nPos)
 	// get corresponding data
 	switch (nSBCode)
 	{
-	case SB_LEFT: l_size = YZERO_MIN;
+	case SB_LEFT: l_size = Y_ZERO_MIN;
 		break;
 	case SB_LINELEFT: l_size -= yextent / 100 + 1;
 		break;
@@ -949,16 +949,16 @@ void ViewData::OnBiasScroll(UINT nSBCode, UINT nPos)
 		break;
 	case SB_PAGERIGHT: l_size += yextent / 10 + 1;
 		break;
-	case SB_RIGHT: l_size = YZERO_MAX;
+	case SB_RIGHT: l_size = Y_ZERO_MAX;
 		break;
 	case SB_THUMBPOSITION:
-	case SB_THUMBTRACK: l_size = (nPos - 50) * (YZERO_SPAN / 100);
+	case SB_THUMBTRACK: l_size = (nPos - 50) * (Y_ZERO_SPAN / 100);
 		break;
 	default: break;
 	}
 
 	// try to read data with this new size
-	if (l_size > YZERO_MIN && l_size < YZERO_MAX)
+	if (l_size > Y_ZERO_MIN && l_size < Y_ZERO_MAX)
 	{
 		UpdateYZero(m_channel_selected, l_size + pchan->GetDataBinZero());
 	}
@@ -989,7 +989,7 @@ void ViewData::OnGainAdjustCurve()
 	UpdateYExtent(m_channel_selected, yextent);
 	const auto yzero = pchan->GetYzero();
 	UpdateYZero(m_channel_selected, yzero);
-	UpdateLegends(CHG_YSCALE);
+	UpdateLegends(CHG_Y_SCALE);
 }
 
 void ViewData::OnSplitCurves()
@@ -1012,7 +1012,7 @@ void ViewData::OnSplitCurves()
 		chan->SetYzero(izero);
 		pxzero -= pxoffset; // update position of next curve
 	}
-	UpdateLegends(CHG_YSCALE);
+	UpdateLegends(CHG_Y_SCALE);
 	m_ChartDataWnd.Invalidate();
 }
 
@@ -1042,7 +1042,7 @@ void ViewData::OnFileScroll(UINT nSBCode, UINT nPos)
 	// adjust display
 	if (b_result)
 	{
-		UpdateLegends(UPD_ABCISSA);
+		UpdateLegends(UPD_ABSCISSA);
 		UpdateData(FALSE); // copy view object to controls
 		m_ChartDataWnd.Invalidate();
 	}
@@ -1084,7 +1084,7 @@ void ViewData::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		l_last = l_first + m_file_scroll_bar_infos.nPage - 1;
 		if (m_ChartDataWnd.get_data_from_doc(l_first, l_last))
 		{
-			UpdateLegends(UPD_ABCISSA);
+			UpdateLegends(UPD_ABSCISSA);
 			UpdateData(FALSE); // copy view object to controls
 			m_ChartDataWnd.Invalidate();
 		}
@@ -1100,7 +1100,7 @@ void ViewData::MeasureProperties(int item)
 {
 	// make sure that cursor is ok
 	if (m_cursor_state != CURSOR_CROSS)
-		OnMyMessage(NULL, MAKELPARAM(CURSOR_CROSS, HINT_SETMOUSECURSOR));
+		OnMyMessage(NULL, MAKELPARAM(CURSOR_CROSS, HINT_SET_MOUSE_CURSOR));
 
 	// save current data into data document
 	switch (mdMO->wOption)
@@ -1155,9 +1155,9 @@ void ViewData::ADC_OnHardwareDefineexperiment()
 	{
 		auto p_dbwave_doc = GetDocument();
 		const auto record_id = p_dbwave_doc->db_get_current_record_id();
-		GetDocument()->update_all_views_db_wave(nullptr, HINT_DOCHASCHANGED, nullptr);
+		GetDocument()->update_all_views_db_wave(nullptr, HINT_DOC_HAS_CHANGED, nullptr);
 		p_dbwave_doc->db_move_to_id(record_id);
-		p_dbwave_doc->update_all_views_db_wave(nullptr, HINT_DOCMOVERECORD, nullptr);
+		p_dbwave_doc->update_all_views_db_wave(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 	}
 }
 
@@ -1176,7 +1176,7 @@ void ViewData::OnFormatXscale()
 		m_time_last_abcissa = dlg.m_lastAbcissa * dlg.m_abcissaScale;
 		m_ChartDataWnd.get_data_from_doc(static_cast<long>(m_time_first_abcissa * m_samplingRate),
 		                              static_cast<long>(m_time_last_abcissa * m_samplingRate));
-		UpdateLegends(UPD_ABCISSA | UPD_XSCALE | CHG_XBAR);
+		UpdateLegends(UPD_ABSCISSA | UPD_X_SCALE | CHG_X_BAR);
 	}
 }
 
@@ -1664,7 +1664,7 @@ void ViewData::OnEnChangeTimefirst()
 		mm_time_first_abcissa.OnEnChange(this, m_time_first_abcissa, 1.f, -1.f);
 		m_ChartDataWnd.get_data_from_doc(static_cast<long>(m_time_first_abcissa * m_samplingRate),
 		                              static_cast<long>(m_time_last_abcissa * m_samplingRate));
-		UpdateLegends(UPD_ABCISSA | CHG_XSCALE);
+		UpdateLegends(UPD_ABSCISSA | CHG_X_SCALE);
 		m_ChartDataWnd.Invalidate();
 	}
 }
@@ -1676,7 +1676,7 @@ void ViewData::OnEnChangeTimelast()
 		mm_time_last_abcissa.OnEnChange(this, m_time_last_abcissa, 1.f, -1.f);
 		m_ChartDataWnd.get_data_from_doc(static_cast<long>(m_time_first_abcissa * m_samplingRate),
 		                              static_cast<long>(m_time_last_abcissa * m_samplingRate));
-		UpdateLegends(UPD_ABCISSA | CHG_XSCALE);
+		UpdateLegends(UPD_ABSCISSA | CHG_X_SCALE);
 		m_ChartDataWnd.Invalidate();
 	}
 }

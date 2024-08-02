@@ -235,7 +235,7 @@ void ViewADcontinuous::OnInitialUpdate()
 
 	UpdateGainScroll();
 	UpdateRadioButtons();
-	GetParent()->PostMessage(WM_MYMESSAGE, NULL, MAKELPARAM(m_cursorstate, HINT_SETMOUSECURSOR));
+	GetParent()->PostMessage(WM_MYMESSAGE, NULL, MAKELPARAM(m_cursorstate, HINT_SET_MOUSE_CURSOR));
 }
 
 void ViewADcontinuous::OnCbnSelchangeComboboard()
@@ -413,7 +413,7 @@ void ViewADcontinuous::TransferFilesToDatabase()
 	pSet->BuildAndSortIDArrays();
 	pSet->RefreshQuery();
 	pdbDoc->db_set_current_record_position(pdbDoc->db_table->get_n_records() - 1);
-	pdbDoc->update_all_views_db_wave(nullptr, HINT_DOCMOVERECORD, nullptr);
+	pdbDoc->update_all_views_db_wave(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 }
 
 BOOL ViewADcontinuous::InitOutput_DA()
@@ -661,11 +661,11 @@ LRESULT ViewADcontinuous::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	// code = 2: horiz cursor hit	lowp = cursor index	
 	int low_lParam = LOWORD(lParam); // value associated with code
 
-	if (code == HINT_SETMOUSECURSOR) {
+	if (code == HINT_SET_MOUSE_CURSOR) {
 		if (low_lParam > CURSOR_ZOOM)
 			low_lParam = 0;
 		m_cursorstate = m_chartDataAD.set_mouse_cursor_type(low_lParam);
-		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SETMOUSECURSOR, MAKELPARAM(m_cursorstate, 0));
+		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursorstate, 0));
 	}
 	else {
 		if (low_lParam == 0)
@@ -1117,7 +1117,7 @@ void ViewADcontinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 
 	switch (nSBCode)
 	{
-		case SB_LEFT: y_extent = YEXTENT_MIN;
+		case SB_LEFT: y_extent = Y_EXTENT_MIN;
 			break;
 		case SB_LINELEFT: y_extent -= static_cast<int>(static_cast<float>(span) / 100.f) + 1;
 			break;
@@ -1127,7 +1127,7 @@ void ViewADcontinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 			break;
 		case SB_PAGERIGHT: y_extent += static_cast<int>(static_cast<float>(span) / 10.f) + 1;
 			break;
-		case SB_RIGHT: y_extent = YEXTENT_MAX;
+		case SB_RIGHT: y_extent = Y_EXTENT_MAX;
 			break;
 		case SB_THUMBPOSITION:
 		case SB_THUMBTRACK: y_extent = MulDiv(static_cast<int>(nPos - 50), pChan->GetDataBinSpan(), 100);
@@ -1161,7 +1161,7 @@ void ViewADcontinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 	switch (nSBCode)
 	{
 		case SB_LEFT: 
-			y_zero = YZERO_MIN;
+			y_zero = Y_ZERO_MIN;
 			break;
 		case SB_LINELEFT: 
 			y_zero -= static_cast<int>(static_cast<float>(span) / 100.f) + 1;
@@ -1176,11 +1176,11 @@ void ViewADcontinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 			y_zero += static_cast<int>(static_cast<float>(span) / 10.f) + 1;
 			break;
 		case SB_RIGHT: 
-			y_zero = YZERO_MAX;
+			y_zero = Y_ZERO_MAX;
 			break;
 		case SB_THUMBPOSITION: 		
 		case SB_THUMBTRACK:
-			y_zero = static_cast<int>(nPos - 50) * (YZERO_SPAN / 100);
+			y_zero = static_cast<int>(nPos - 50) * (Y_ZERO_SPAN / 100);
 			break;
 		default: // NOP: set position only
 			break;
