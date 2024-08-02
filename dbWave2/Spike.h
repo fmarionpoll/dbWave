@@ -48,26 +48,27 @@ public:
 	short*	get_p_data(int spike_length);
 	short*	get_p_data() const;
 	short	get_value_at_offset(const int index) const {return *(m_spike_data_buffer_+index);}
-	void	get_max_min_ex(short* max, short* min, int* d_max_to_min) const;
-
-	void	get_max_min(short* max, short* min) const;
 
 	int		get_y1() const { return y1_; }
+	void	set_y1(const int y) { y1_ = y; }
+
 	int		get_y2() const { return y2_; }
+	void	set_y2(const int y) { y2_ = y; }
+
 	int		get_dt() const { return dt_; }
+	void	set_dt(const long x) { dt_ = x; }
 
 	void	set_time(const long ii) { m_ii_time_ = ii; }
 	void	set_class_id(const int cl) { m_class_id_ = cl; }
 
+	void	get_max_min(short* max, short* min) const;
+	void	get_max_min_ex(short* max, short* min, int* d_max_to_min) const;
 	void	set_max_min_ex(const short max, const short min, const short d_max_min) {
 				m_value_max_ = max;
 				m_value_min_ = min;
 				m_d_max_min_ = d_max_min; }
 
 	void	set_amplitude_offset(const short offset) { m_offset_ = offset; }
-	void	set_y1(const int y) { y1_ = y; }
-	void	set_y2(const int y) { y2_ = y; }
-	void	set_dt(const long x) { dt_ = x; }
 
 	void	transfer_data_to_spike_buffer(short* source_data, int source_n_channels, int spike_length);
 

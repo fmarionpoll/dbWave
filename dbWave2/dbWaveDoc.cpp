@@ -440,11 +440,12 @@ Spike* CdbWaveDoc::get_spike(const db_spike& spike_coords)
 	return p_spike_list->get_spike(spike_coords.spike_index);
 }
 
-boolean CdbWaveDoc::get_max_min_of_all_spikes(const BOOL b_all_files, const BOOL b_recalculate, short& max, short& min)
+boolean CdbWaveDoc::get_max_min_amplitude_of_all_spikes(const BOOL b_all_files, const BOOL b_recalculate, short& max, short& min)
 {
 	boolean spikes_found = false;
 	const long n_files = b_all_files ? db_get_n_records() : 1;
 	const int current_spike_list_index = m_p_spk->get_spike_list_current_index();
+	boolean initialized = false;
 
 	for (long i_file = 0; i_file < n_files; i_file++)
 	{
@@ -458,79 +459,75 @@ boolean CdbWaveDoc::get_max_min_of_all_spikes(const BOOL b_all_files, const BOOL
 		}
 
 		const auto p_spk_list = m_p_spk->get_spike_list_current();
-		if (p_spk_list->get_spikes_count())
+		if (p_spk_list->get_spikes_count() > 0) 
 		{
+			spikes_found = true;
 			short max_file_i = 0;
 			short min_file_i = 0;
 			p_spk_list->get_total_max_min(b_recalculate, &max_file_i, &min_file_i);
-			if (!spikes_found)
+			if (spikes_found)
 			{
-				max = max_file_i;
-				min = min_file_i;
+				if (!initialized)
+				{
+					max = max_file_i;
+					min = min_file_i;
+					initialized = true;
+					continue;
+				}
+				if (max < max_file_i)
+					max = max_file_i;
+				if (min > min_file_i)
+					min = min_file_i;
 			}
-			else
-			{
-				if (max < max_file_i) max = max_file_i;
-				if (min > min_file_i) min = min_file_i;
-			}
-			spikes_found = true;
 		}
 	}
 
 	return spikes_found;
 }
 
-CSize CdbWaveDoc::get_max_min_of_single_spike(const BOOL b_all)
+boolean CdbWaveDoc::get_max_min_y1_of_all_spikes(const boolean b_all_files, int& max, int& min)
 {
-	long n_files = 1;
-	long n_current_file = 0;
-	if (b_all)
-	{
-		n_files = db_get_n_records();
-		n_current_file = db_get_current_record_position();
-	}
+	boolean spikes_found = false;
+	const long n_files = b_all_files ? db_get_n_records() : 1;
+	const int current_spike_list_index = m_p_spk->get_spike_list_current_index();
+	boolean initialized = false;
 
-	CSize dummy(0, 0);
-	BOOL initialized = false;
 	for (long i_file = 0; i_file < n_files; i_file++)
 	{
-		if (b_all)
+		if (b_all_files)
 		{
 			if (db_set_current_record_position(i_file))
 				open_current_spike_file();
 			if (m_p_spk == nullptr)
 				continue;
-			m_p_spk->set_spike_list_current_index(0);
+			m_p_spk->set_spike_list_current_index(current_spike_list_index);
 		}
+
 		const auto p_spk_list = m_p_spk->get_spike_list_current();
-		if (p_spk_list->get_spikes_count() == 0)
-			continue;
-
-		const CSize measure = p_spk_list->measure_y1_max_min();
-		if (initialized)
+		if (p_spk_list->get_spikes_count() > 0)
 		{
-			if (dummy.cx < measure.cx)
-				dummy.cx = measure.cx;
-			if (dummy.cy > measure.cy)
-				dummy.cy = measure.cy;
-		}
-		else
-		{
-			initialized = true;
-			dummy.cx = measure.cx;
-			dummy.cy = measure.cy;
+			int max_file_i = 0;
+			int min_file_i = 0;
+			const int n_spikes_found = p_spk_list->get_total_max_min_of_y1( &max_file_i, &min_file_i);
+			if (n_spikes_found > 0)
+			{
+				if (!initialized)
+				{
+					max = max_file_i;
+					min = min_file_i;
+					initialized = true;
+					spikes_found = true;
+					continue;
+				}
+				if (max < max_file_i) 
+					max = max_file_i;
+				if (min > min_file_i) 
+					min = min_file_i;
+			}
 		}
 	}
 
-	if (b_all)
-	{
-		if (db_set_current_record_position(n_current_file))
-			open_current_spike_file();
-		if (m_p_spk!= nullptr)
-		m_p_spk->set_spike_list_current_index(0);
-	}
-
-	return dummy;
+	return spikes_found;
 }
 
 long CdbWaveDoc::db_get_current_record_position() const

@@ -577,8 +577,7 @@ void SpikeList::get_total_max_min_read()
 
 	short max1, min1;
 	const int n_spikes = spikes_.GetCount();
-	minimum_over_all_spikes_ = get_spike(index0)->get_value_at_offset((m_i_max_min_1_sl + m_i_max_min_2_sl)/2);
-	maximum_over_all_spikes_ = minimum_over_all_spikes_;
+	boolean initialized = false;
 
 	for (auto index = index0; index < n_spikes; index++)
 	{
@@ -586,10 +585,11 @@ void SpikeList::get_total_max_min_read()
 		if (spike->get_class_id() >= 0)
 		{
 			spike->get_max_min(&max1, &min1);
-			if (max1 > maximum_over_all_spikes_)
+			if (! initialized || max1 > maximum_over_all_spikes_)
 				maximum_over_all_spikes_ = max1;
-			if (min1 < minimum_over_all_spikes_)
+			if (!initialized || min1 < minimum_over_all_spikes_)
 				minimum_over_all_spikes_ = min1;
+			initialized = true;
 		}
 	}
 }
@@ -603,11 +603,10 @@ void SpikeList::get_total_max_min_measure()
 		return;
 
 	const int n_spikes = spikes_.GetCount();
-	short max1, min1;
-	int max_index, min_index;
+	short value_max, value_min;
+	int index_max, index_min;
 	const int i_last = get_spike_length() - 1;
-	minimum_over_all_spikes_ = get_spike(index0)->get_value_at_offset((m_i_max_min_1_sl + m_i_max_min_2_sl) / 2);
-	maximum_over_all_spikes_ = minimum_over_all_spikes_;
+	boolean initialized = false;
 
 	for (auto index = index0; index < n_spikes; index++)
 	{
@@ -615,13 +614,57 @@ void SpikeList::get_total_max_min_measure()
 		if (spike->get_class_id() >= 0)
 		{
 			constexpr int i_first = 1;
-			spike->measure_max_min_ex(&max1, &max_index, &min1, &min_index, i_first, i_last);
-			if (max1 > maximum_over_all_spikes_)
-				maximum_over_all_spikes_ = max1;
-			if (min1 < minimum_over_all_spikes_)
-				minimum_over_all_spikes_ = min1;
+			spike->measure_max_min_ex(&value_max, &index_max, &value_min, &index_min, i_first, i_last);
+			if (!initialized || value_max > maximum_over_all_spikes_)
+				maximum_over_all_spikes_ = value_max;
+			if (!initialized || value_min < minimum_over_all_spikes_)
+				minimum_over_all_spikes_ = value_min;
+			initialized = true;
 		}
 	}
+}
+
+int SpikeList::get_total_max_min_of_y1(int* max, int* min)
+{
+	const int n_spikes_found = get_total_max_min_of_y1_measure();
+	*max = max_y1_over_all_spikes_;
+	*min = min_y1_over_all_spikes_;
+	return n_spikes_found;
+}
+
+int SpikeList::get_total_max_min_of_y1_measure()
+{
+	const int index0 = get_index_first_spike(0, true);
+	int n_spikes_found = 0;
+	min_y1_over_all_spikes_ = 0;
+	max_y1_over_all_spikes_ = 0;
+	if (index0 < 0)
+		return n_spikes_found;
+
+	const int n_spikes = spikes_.GetCount();
+	boolean initialized = false;
+
+	for (auto index = index0; index < n_spikes; index++)
+	{
+		const Spike* spike = get_spike(index);
+		if (spike->get_class_id() >= 0)
+		{
+			const int value = spike->get_y1();
+			n_spikes_found++;
+			if (!initialized)
+			{
+				max_y1_over_all_spikes_ = value;
+				min_y1_over_all_spikes_ = value;
+				initialized = true;
+				continue;
+			}
+			if (value > max_y1_over_all_spikes_)
+				max_y1_over_all_spikes_ = value;
+			if (value < min_y1_over_all_spikes_)
+				min_y1_over_all_spikes_ = value;
+		}
+	}
+	return n_spikes_found;
 }
 
 BOOL SpikeList::init_spike_list(const AcqDataDoc* acq_data_doc, const SPKDETECTPARM* spk_detect_parameters)
@@ -862,7 +905,7 @@ void SpikeList::change_all_spike_from_class_id_to_new_class_id(const int old_cla
 	}
 }
 
-void SpikeList::measure_case0_amplitude_min_to_max(const int t1, const int t2)
+void SpikeList::measure_amplitude_min_to_max(const int t1, const int t2)
 {
 	const auto n_spikes = get_spikes_count();
 	for (auto spike_index = 0; spike_index < n_spikes; spike_index++)
@@ -896,7 +939,7 @@ void SpikeList::measure_case0_amplitude_min_to_max(const int t1, const int t2)
 	}
 }
 
-void SpikeList::measure_case1_amplitude_at_t(const int t)
+void SpikeList::measure_amplitude_at_t(const int t)
 {
 	const auto n_spikes = get_spikes_count();
 
@@ -910,7 +953,7 @@ void SpikeList::measure_case1_amplitude_at_t(const int t)
 	}
 }
 
-void SpikeList::measure_case2_amplitude_at_t2_minus_at_t1(const int t1, const int t2)
+void SpikeList::measure_amplitude_at_t2_minus_at_t1(const int t1, const int t2)
 {
 	const auto n_spikes = get_spikes_count();
 

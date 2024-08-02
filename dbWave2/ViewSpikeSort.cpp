@@ -751,27 +751,26 @@ void ViewSpikeSort::on_measure()
 		switch (spike_classification_parameters_->i_parameter)
 		{
 		case 1: // value at t1
-			m_pSpkList->measure_case1_amplitude_at_t(spike_classification_parameters_->i_cursor_t1);
+			m_pSpkList->measure_amplitude_at_t(spike_classification_parameters_->i_cursor_t1);
 			b_measure_done_ = TRUE;
 			break;
 		case 2: // value at t2
-			m_pSpkList->measure_case1_amplitude_at_t(spike_classification_parameters_->i_cursor_t2);
+			m_pSpkList->measure_amplitude_at_t(spike_classification_parameters_->i_cursor_t2);
 			b_measure_done_ = TRUE;
 			break;
 
 		case 3: // value at t2- value at t1
-			m_pSpkList->measure_case2_amplitude_at_t2_minus_at_t1(spike_classification_parameters_->i_cursor_t1, spike_classification_parameters_->i_cursor_t2);
+			m_pSpkList->measure_amplitude_at_t2_minus_at_t1(spike_classification_parameters_->i_cursor_t1, spike_classification_parameters_->i_cursor_t2);
 			b_measure_done_ = TRUE;
 			break;
 
 		case 0: // max - min between t1 and t2
 		case 4: // max-min vs t_max-t_min
 		default:
-			m_pSpkList->measure_case0_amplitude_min_to_max(spike_classification_parameters_->i_cursor_t1, spike_classification_parameters_->i_cursor_t2);
+			m_pSpkList->measure_amplitude_min_to_max(spike_classification_parameters_->i_cursor_t1, spike_classification_parameters_->i_cursor_t2);
 			break;
 		}
 
-		//save only if changed?
 		m_pSpkDoc->OnSaveDocument(pdb_doc->db_get_current_spk_file_name(FALSE));
 	}
 
@@ -781,9 +780,7 @@ void ViewSpikeSort::on_measure()
 	chart_xt_measures_.horizontal_tags.set_value_int(m_i_tag_low_, spike_classification_parameters_->lower_threshold);
 	chart_xt_measures_.horizontal_tags.set_value_int(m_i_tag_up_, spike_classification_parameters_->upper_threshold);
 
-	build_histogram();
-
-	update_gain();
+	on_format_gain_adjust();
 	UpdateData(FALSE);
 }
 
@@ -793,6 +790,7 @@ void ViewSpikeSort::update_gain()
 	const auto y_wo = static_cast<int>((xy_max_amplitude_mv + xy_min_amplitude_mv) / 2 / m_delta_mv_);
 
 	chart_xt_measures_.set_yw_ext_org(y_we, y_wo);
+	build_histogram();
 	chart_histogram_.set_xw_ext_org(y_we, y_wo);
 
 	// get max min and center accordingly
@@ -875,7 +873,7 @@ void ViewSpikeSort::on_format_gain_adjust()
 {
 	// (1) search max min for spike display (shape, bar)
 	short maxvalue, minvalue;
-	if (!GetDocument()->get_max_min_of_all_spikes(b_all_files, TRUE, maxvalue, minvalue))
+	if (!GetDocument()->get_max_min_amplitude_of_all_spikes(b_all_files, TRUE, maxvalue, minvalue))
 		return;
 
 	auto y_we = MulDiv(maxvalue - minvalue + 1, 10, 9);
@@ -885,19 +883,22 @@ void ViewSpikeSort::on_format_gain_adjust()
 	//chart_spike_bar_.MaxCenter();
 
 	// (2) search max min of parameter values (measures, histogram)
-	const auto delta = m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
-	const auto upper2 = static_cast<short>(histogram_upper_threshold / delta);
-	const auto lower2 = static_cast<short>(histogram_lower_threshold / delta);
-	if (upper2 > maxvalue)
-		maxvalue = upper2;
-	if (lower2 < minvalue)
-		minvalue = lower2;
-	y_we = MulDiv(maxvalue - minvalue + 1, 10, 8);
-	y_wo = (maxvalue + minvalue) / 2;
+	int maxy1, miny1;
+	if (!GetDocument()->get_max_min_y1_of_all_spikes(static_cast<boolean>(b_all_files), maxy1, miny1))
+		return;
+
+	const auto upper2 = static_cast<short>(histogram_upper_threshold / m_delta_mv_);
+	const auto lower2 = static_cast<short>(histogram_lower_threshold / m_delta_mv_);
+ 	if (upper2 > maxy1)
+		maxy1 = upper2;
+	if (lower2 < miny1)
+		miny1 = lower2;
+	y_we = MulDiv(maxy1 - miny1 + 1, 10, 8);
+	y_wo = (maxy1 + miny1) / 2;
 	chart_xt_measures_.set_yw_ext_org(y_we, y_wo);
 	chart_histogram_.set_xw_ext_org(y_we, y_wo - y_we / 2);
-	xy_max_amplitude_mv = static_cast<float>(maxvalue) * delta;
-	xy_min_amplitude_mv = static_cast<float>(minvalue) * delta;
+	xy_max_amplitude_mv = m_delta_mv_ * static_cast<float>(maxy1);
+	xy_min_amplitude_mv = m_delta_mv_ * static_cast<float>(miny1);
 
 	// (3) adjust histogram
 	build_histogram();

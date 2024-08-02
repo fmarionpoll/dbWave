@@ -55,6 +55,8 @@ protected:
 	BOOL extrema_valid_  {false};
 	short minimum_over_all_spikes_ {0}; 
 	short maximum_over_all_spikes_ {0};
+	int min_y1_over_all_spikes_{ 0 };
+	int max_y1_over_all_spikes_{ 0 };
 	int spike_length_ {60};
 	CArray<Spike*, Spike*> spikes_;
 
@@ -109,15 +111,16 @@ public:
 	BOOL is_any_spike_around(long ii_time, int jitter, int& spike_index, int channel_index);
 
 	void get_total_max_min(BOOL b_recalculate, short* max, short* min);
+	int get_total_max_min_of_y1(int* max, int* min);
 
 	BOOL init_spike_list(const AcqDataDoc* acq_data_doc, const SPKDETECTPARM* spk_detect_parameters);
 	long update_class_list();
 	void erase_data();
 	void change_all_spike_from_class_id_to_new_class_id(int old_class_ID, int new_class_ID);
 
-	void measure_case0_amplitude_min_to_max(int t1, int t2);
-	void measure_case1_amplitude_at_t(int t);
-	void measure_case2_amplitude_at_t2_minus_at_t1(int t1, int t2);
+	void measure_amplitude_min_to_max(int t1, int t2);
+	void measure_amplitude_at_t(int t);
+	void measure_amplitude_at_t2_minus_at_t1(int t1, int t2);
 	CSize measure_y1_max_min();
 
 	BOOL sort_spike_with_y1(CSize from_class_id_to_class_id, CSize time_bounds, CSize limits);
@@ -154,4 +157,5 @@ protected:
 	int get_index_first_spike(int index_start, boolean reject_artefacts);
 	void get_total_max_min_read();
 	void get_total_max_min_measure();
+	int get_total_max_min_of_y1_measure();
 };
