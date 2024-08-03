@@ -7,7 +7,6 @@ class CFilterToolBar : public CMFCToolBar
 	{
 		CMFCToolBar::OnUpdateCmdUI(static_cast<CFrameWnd*>(GetOwner()), bDisableIfNoHndler);
 	}
-
 	BOOL AllowShowOnList() const override { return FALSE; }
 };
 

@@ -49,8 +49,8 @@ protected:
 	afx_msg void on_update_view_menu(CCmdUI* p_cmd_ui);
 
 public:
-	afx_msg void on_record_goto_record();
-	afx_msg void on_record_delete_current();
+	afx_msg void on_record_goto();
+	afx_msg void on_record_delete();
 	afx_msg void on_record_add();
 	afx_msg void on_tools_remove_missing_files();
 	afx_msg void on_tools_remove_duplicate_files();

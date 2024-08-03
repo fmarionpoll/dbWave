@@ -86,8 +86,8 @@ BEGIN_MESSAGE_MAP(CChildFrame, CMDIChildWndEx)
 	ON_COMMAND(ID_TOOLS_IMPORT_DATABASE, &CChildFrame::on_tools_import_database)
 	ON_COMMAND(ID_TOOLS_IMPORT_ATF_FILES, &CChildFrame::on_tools_import_atl_files)
 
-	ON_COMMAND(ID_RECORD_DELETE_CURRENT, &CChildFrame::on_record_delete_current)
-	ON_COMMAND(ID_RECORD_GOTO_RECORD, &CChildFrame::on_record_goto_record)
+	ON_COMMAND(ID_RECORD_DELETE_CURRENT, &CChildFrame::on_record_delete)
+	ON_COMMAND(ID_RECORD_GOTO_RECORD, &CChildFrame::on_record_goto)
 	ON_COMMAND(ID_RECORD_ADD, &CChildFrame::on_record_add)
 
 	ON_WM_MDIACTIVATE()
@@ -353,8 +353,8 @@ LRESULT CChildFrame::on_my_message(WPARAM w_param, LPARAM l_param)
 
 void CChildFrame::replace_view_index(UINT n_id)
 {
-	CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
-	if (p_dbWave_doc == nullptr)
+	CdbWaveDoc* p_db_wave_doc = CdbWaveDoc::get_active_mdi_document();
+	if (p_db_wave_doc == nullptr)
 		return;
 
 	const auto p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
@@ -365,27 +365,27 @@ void CChildFrame::replace_view_index(UINT n_id)
 		replace_view(RUNTIME_CLASS(ViewdbWave), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDBView);
 		break;
 	case ID_VIEW_DATA_FILE:
-		if (!p_dbWave_doc->db_get_current_dat_file_name(TRUE).IsEmpty())
+		if (!p_db_wave_doc->db_get_current_dat_file_name(TRUE).IsEmpty())
 			replace_view(RUNTIME_CLASS(ViewData), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
 		break;
 	case ID_VIEW_SPIKE_DETECTION:
-		if (!p_dbWave_doc->db_get_current_dat_file_name(TRUE).IsEmpty())
+		if (!p_db_wave_doc->db_get_current_dat_file_name(TRUE).IsEmpty())
 			replace_view(RUNTIME_CLASS(ViewSpikeDetection), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
 		break;
 	case ID_VIEW_SPIKE_DISPLAY:
-		if (!p_dbWave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
+		if (!p_db_wave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
 			replace_view(RUNTIME_CLASS(ViewSpikes), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKE_SORTING_AMPLITUDE:
-		if (!p_dbWave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
+		if (!p_db_wave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
 			replace_view(RUNTIME_CLASS(ViewSpikeSort), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKE_SORTING_TEMPLATES:
-		if (!p_dbWave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
+		if (!p_db_wave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
 			replace_view(RUNTIME_CLASS(ViewSpikeTemplates), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_SPIKE_TIME_SERIES:
-		if (!p_dbWave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
+		if (!p_db_wave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
 			replace_view(RUNTIME_CLASS(ViewSpikeHist), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
 		break;
 	case ID_VIEW_ACQUIRE_DATA:
@@ -407,7 +407,7 @@ void CChildFrame::replace_view_index(UINT n_id)
 	auto doc_type = 1;
 	if (n_id < ID_VIEW_SPIKE_DISPLAY || n_id == ID_VIEW_ACQUIRE_DATA)
 		doc_type = 0;
-	p_dbWave_doc->UpdateAllViews(nullptr, MAKELPARAM(HINT_REPLACE_VIEW, doc_type), nullptr);
+	p_db_wave_doc->UpdateAllViews(nullptr, MAKELPARAM(HINT_REPLACE_VIEW, doc_type), nullptr);
 }
 
 void CChildFrame::on_update_view_menu(CCmdUI * p_cmd_ui)
@@ -689,7 +689,7 @@ void CChildFrame::on_tools_remove_artefact_files()
 	p_db_wave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
-void CChildFrame::on_record_goto_record()
+void CChildFrame::on_record_goto()
 {
 	DlgGotoRecord dlg;
 	CdbWaveDoc* p_db_wave_doc = CdbWaveDoc::get_active_mdi_document();
@@ -769,7 +769,7 @@ void CChildFrame::on_tools_import_atl_files()
 	}
 }
 
-void CChildFrame::on_record_delete_current()
+void CChildFrame::on_record_delete()
 {
 	const auto p_view = GetActiveView();
 	CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();

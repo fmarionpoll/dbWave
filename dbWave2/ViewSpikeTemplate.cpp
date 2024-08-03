@@ -1217,7 +1217,7 @@ void ViewSpikeTemplates::OnEnChangeT1()
 		{
 			spike_classification_parameters_->k_left = it1;
 			m_chart_spk_wnd_shape_.move_vt_track(spk_form_tag_left_, spike_classification_parameters_->k_left);
-			m_pSpkList->m_i_max_min_1_sl = spike_classification_parameters_->k_left;
+			m_pSpkList->shape_t1 = spike_classification_parameters_->k_left;
 		}
 		UpdateData(FALSE);
 	}
@@ -1246,7 +1246,7 @@ void ViewSpikeTemplates::OnEnChangeT2()
 		{
 			spike_classification_parameters_->k_right = it2;
 			m_chart_spk_wnd_shape_.move_vt_track(spk_form_tag_right_, spike_classification_parameters_->k_right);
-			m_pSpkList->m_i_max_min_2_sl = spike_classification_parameters_->k_right;
+			m_pSpkList->shape_t2 = spike_classification_parameters_->k_right;
 		}
 		UpdateData(FALSE);
 	}

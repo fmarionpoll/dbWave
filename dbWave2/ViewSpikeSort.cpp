@@ -144,7 +144,7 @@ void ViewSpikeSort::define_stretch_parameters()
 	m_stretch_.newProp(IDC_EDIT_RIGHT, SZEQ_XLEQ, SZEQ_YBEQ);
 }
 
-void ViewSpikeSort::load_saved_parameters()
+void ViewSpikeSort::init_charts_from_saved_parameters()
 {
 	m_b_init_ = TRUE;
 	m_auto_increment = true;
@@ -164,16 +164,16 @@ void ViewSpikeSort::load_saved_parameters()
 	sort_destination_class_ = spike_classification_parameters_->dest_class;
 
 	chart_shape_.display_all_files(false, GetDocument());
-	chart_shape_.set_plot_mode(PLOT_ONE_COLOR, sort_source_class_);
+	chart_shape_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class_); // PLOT_ONE_COLOR
 	chart_shape_.set_scope_parameters(&(options_view_data_->spksort1spk));
-	shape_t1_ = chart_shape_.vertical_tags.add_tag(spike_classification_parameters_->i_cursor_t1, 0);
-	shape_t2_ = chart_shape_.vertical_tags.add_tag(spike_classification_parameters_->i_cursor_t2, 0);
+	shape_t1_ = chart_shape_.vertical_tags.add_tag(spike_classification_parameters_->shape_t1, 0);
+	shape_t2_ = chart_shape_.vertical_tags.add_tag(spike_classification_parameters_->shape_t2, 0);
 
 	chart_measures_.display_all_files(false, GetDocument());
 	chart_measures_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class_);
 	chart_measures_.set_scope_parameters(&(options_view_data_->spksort1parms));
-	m_i_tag_up_ = chart_measures_.horizontal_tags.add_tag(spike_classification_parameters_->upper_threshold, 0);
-	m_i_tag_low_ = chart_measures_.horizontal_tags.add_tag(spike_classification_parameters_->lower_threshold, 0);
+	measures_up_ = chart_measures_.horizontal_tags.add_tag(spike_classification_parameters_->upper_threshold, 0);
+	measures_low_ = chart_measures_.horizontal_tags.add_tag(spike_classification_parameters_->lower_threshold, 0);
 
 	chart_spike_bar_.display_all_files(false, GetDocument());
 	chart_spike_bar_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class_);
@@ -181,10 +181,8 @@ void ViewSpikeSort::load_saved_parameters()
 
 	chart_histogram_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class_);
 	chart_histogram_.set_scope_parameters(&(options_view_data_->spksort1hist));
-
-	// display tag lines at proper places
-	hist_upper_threshold_ = chart_histogram_.vertical_tags.add_tag(spike_classification_parameters_->upper_threshold, 0);
-	hist_lower_threshold_ = chart_histogram_.vertical_tags.add_tag(spike_classification_parameters_->lower_threshold, 0);
+	hist_up_ = chart_histogram_.vertical_tags.add_tag(spike_classification_parameters_->upper_threshold, 0);
+	hist_low_ = chart_histogram_.vertical_tags.add_tag(spike_classification_parameters_->lower_threshold, 0);
 }
 
 void ViewSpikeSort::OnInitialUpdate()
@@ -193,13 +191,13 @@ void ViewSpikeSort::OnInitialUpdate()
 
 	define_sub_classed_items();
 	define_stretch_parameters();
-	load_saved_parameters();
+	init_charts_from_saved_parameters();
 	update_file_parameters();
 
 	if (nullptr != m_pSpkList)
 	{
-		lower_threshold_mv_ = static_cast<float>(spike_classification_parameters_->lower_threshold) * m_delta_mv_;
-		upper_threshold_mv_ = static_cast<float>(spike_classification_parameters_->upper_threshold) * m_delta_mv_;
+		lower_threshold_mv_ = static_cast<float>(spike_classification_parameters_->lower_threshold) * delta_mv_;
+		upper_threshold_mv_ = static_cast<float>(spike_classification_parameters_->upper_threshold) * delta_mv_;
 		UpdateData(false);
 	}
 
@@ -217,7 +215,7 @@ void ViewSpikeSort::activate_mode4()
 		{
 			m_i_xy_right_ = chart_measures_.vertical_tags.add_tag(spike_classification_parameters_->i_xy_right, 0);
 			m_i_xy_left_ = chart_measures_.vertical_tags.add_tag(spike_classification_parameters_->i_xy_left, 0);
-			const auto delta = m_pSpkList->get_acq_sampling_rate() / m_time_unit_;
+			const auto delta = m_pSpkList->get_acq_sampling_rate() / time_unit_;
 			t_xy_right_ = static_cast<float>(spike_classification_parameters_->i_xy_right) / delta;
 			t_xy_left_ = static_cast<float>(spike_classification_parameters_->i_xy_left) / delta;
 		}
@@ -226,7 +224,7 @@ void ViewSpikeSort::activate_mode4()
 
 		if (nullptr != m_pSpkList)
 		{
-			const auto spike_length_ms = (static_cast<double>(static_cast<float>(m_pSpkList->get_spike_length()) * m_time_unit_ / m_pSpkList->get_acq_sampling_rate()));
+			const auto spike_length_ms = (static_cast<double>(static_cast<float>(m_pSpkList->get_spike_length()) * time_unit_ / m_pSpkList->get_acq_sampling_rate()));
 			CString cs_dummy;
 			cs_dummy.Format(_T("%0.1f ms"), spike_length_ms);
 			GetDlgItem(IDC_STATICRIGHT)->SetWindowText(cs_dummy);
@@ -305,7 +303,7 @@ BOOL ViewSpikeSort::OnMove(const UINT n_id_move_command)
 	return dbTableView::OnMove(n_id_move_command);
 }
 
-void ViewSpikeSort::update_spike_file()
+void ViewSpikeSort::load_current_spike_file()
 {
 	m_pSpkDoc = GetDocument()->open_current_spike_file();
 
@@ -324,12 +322,8 @@ void ViewSpikeSort::update_spike_file()
 
 void ViewSpikeSort::update_file_parameters()
 {
-	// reset parameters ? flag = single file or file list has changed
-	if (!b_all_files_)
-		chart_histogram_.clear_data();
-
 	const BOOL first_update = (m_pSpkDoc == nullptr);
-	update_spike_file();
+	load_current_spike_file();
 
 	if (first_update || options_view_data_->bEntireRecord)
 	{
@@ -340,9 +334,8 @@ void ViewSpikeSort::update_file_parameters()
 	}
 	l_first_ = static_cast<long>(time_first_s_ * m_pSpkList->get_acq_sampling_rate());
 	l_last_ = static_cast<long>(time_last_s_ * m_pSpkList->get_acq_sampling_rate());
-	m_delta_t_ = m_time_unit_ / m_pSpkList->get_acq_sampling_rate();
-
-	m_delta_mv_ = m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
+	delta_ms_ = time_unit_ / m_pSpkList->get_acq_sampling_rate();
+	delta_mv_ = m_pSpkList->get_acq_volts_per_bin() * mv_unit_;
 
 	// spike and classes
 	auto spike_index = m_pSpkList->m_selected_spike;
@@ -358,27 +351,23 @@ void ViewSpikeSort::update_file_parameters()
 	}
 	ASSERT(sort_source_class_ < 32768);
 
-	if (0 == spike_classification_parameters_->i_cursor_t1 && 0 == spike_classification_parameters_->i_cursor_t2)
+	if (0 == spike_classification_parameters_->shape_t1 && 0 == spike_classification_parameters_->shape_t2)
 	{
-		spike_classification_parameters_->i_cursor_t1 = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
-		spike_classification_parameters_->i_cursor_t2 = spike_classification_parameters_->i_cursor_t1 + m_pSpkList->get_detection_parameters()->detect_refractory_period;
+		spike_classification_parameters_->shape_t1 = m_pSpkList->get_detection_parameters()->detect_pre_threshold;
+		spike_classification_parameters_->shape_t2 = spike_classification_parameters_->shape_t1 + m_pSpkList->get_detection_parameters()->detect_refractory_period;
 	}
 
 	chart_shape_.set_source_data(m_pSpkList, GetDocument());
 	chart_shape_.get_extents_current_spk_list();
-	chart_shape_.set_plot_mode(PLOT_ONE_COLOR, sort_source_class_);
-	chart_shape_.vertical_tags.set_value_int(shape_t1_, spike_classification_parameters_->i_cursor_t1);
-	chart_shape_.vertical_tags.set_value_int(shape_t2_, spike_classification_parameters_->i_cursor_t2);
-	shape_t1_ms_ = static_cast<float>(spike_classification_parameters_->i_cursor_t1) * m_time_unit_ / m_pSpkList->get_acq_sampling_rate();
-	shape_t2_ms_ = static_cast<float>(spike_classification_parameters_->i_cursor_t2) * m_time_unit_ / m_pSpkList->get_acq_sampling_rate();
+	shape_t1_ms_ = static_cast<float>(spike_classification_parameters_->shape_t1) * delta_ms_;
+	shape_t2_ms_ = static_cast<float>(spike_classification_parameters_->shape_t2) * delta_ms_;
 
 	chart_spike_bar_.set_source_data(m_pSpkList, GetDocument());
-	chart_spike_bar_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class_);
 
 	chart_measures_.set_source_data(m_pSpkList, GetDocument());
-	chart_measures_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class_);
 
-	chart_histogram_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class_);
+	if (!b_all_files_)
+		chart_histogram_.clear_data();
 
 	m_file_scroll_infos_.fMask = SIF_ALL;
 	m_file_scroll_infos_.nMin = 0;
@@ -394,11 +383,10 @@ void ViewSpikeSort::update_file_parameters()
 	{
 		if (4 != spike_classification_parameters_->i_parameter)
 		{
-			chart_measures_.set_time_intervals(l_first_, l_last_);
 			if (chart_measures_.vertical_tags.get_tag_list_size() > 0)
 			{
 				chart_measures_.vertical_tags.remove_all_tags();
-				chart_measures_.Invalidate();
+				chart_measures_.set_time_intervals(l_first_, l_last_);
 			}
 		}
 		else
@@ -408,10 +396,9 @@ void ViewSpikeSort::update_file_parameters()
 			{
 				m_i_xy_right_ = chart_measures_.vertical_tags.add_tag(spike_classification_parameters_->i_xy_right, 0);
 				m_i_xy_left_ = chart_measures_.vertical_tags.add_tag(spike_classification_parameters_->i_xy_left, 0);
-				const auto delta = m_pSpkList->get_acq_sampling_rate() / m_time_unit_;
+				const auto delta = m_pSpkList->get_acq_sampling_rate() / time_unit_;
 				t_xy_right_ = static_cast<float>(spike_classification_parameters_->i_xy_right) / delta;
 				t_xy_left_ = static_cast<float>(spike_classification_parameters_->i_xy_left) / delta;
-				chart_measures_.Invalidate();
 			}
 		}
 		// update text , display and compute histogram
@@ -571,15 +558,15 @@ void ViewSpikeSort::change_vertical_tag_spike_shape(const short short_value)
 {
 	if (short_value == shape_t1_)
 	{
-		spike_classification_parameters_->i_cursor_t1 = chart_shape_.vertical_tags.get_value_int(shape_t1_);
-		shape_t1_ms_ = static_cast<float>(spike_classification_parameters_->i_cursor_t1) * m_delta_t_;
+		spike_classification_parameters_->shape_t1 = chart_shape_.vertical_tags.get_value_int(shape_t1_);
+		shape_t1_ms_ = static_cast<float>(spike_classification_parameters_->shape_t1) * delta_ms_;
 		mm_shape_t1_ms_.m_bEntryDone = TRUE;
 		on_en_change_shape_t1();
 	}
 	else if (short_value == shape_t2_)
 	{
-		spike_classification_parameters_->i_cursor_t2 = chart_shape_.vertical_tags.get_value_int(shape_t2_);
-		shape_t2_ms_ = static_cast<float>(spike_classification_parameters_->i_cursor_t2) * m_delta_t_;
+		spike_classification_parameters_->shape_t2 = chart_shape_.vertical_tags.get_value_int(shape_t2_);
+		shape_t2_ms_ = static_cast<float>(spike_classification_parameters_->shape_t2) * delta_ms_;
 		mm_shape_t2_ms_.m_bEntryDone = TRUE;
 		on_en_change_shape_t2();
 	}
@@ -587,16 +574,16 @@ void ViewSpikeSort::change_vertical_tag_spike_shape(const short short_value)
 
 void ViewSpikeSort::change_vertical_tag_histogram(const short short_value)
 {
-	if (short_value == hist_lower_threshold_) // first tag
+	if (short_value == hist_low_) // first tag
 	{
-		spike_classification_parameters_->lower_threshold = chart_histogram_.vertical_tags.get_value_int(hist_lower_threshold_);
-		lower_threshold_mv_ = static_cast<float>(spike_classification_parameters_->lower_threshold) * m_delta_mv_;
+		spike_classification_parameters_->lower_threshold = chart_histogram_.vertical_tags.get_value_int(hist_low_);
+		lower_threshold_mv_ = static_cast<float>(spike_classification_parameters_->lower_threshold) * delta_mv_;
 		UpdateData(false);
 	}
-	else if (short_value == hist_upper_threshold_) // second tag
+	else if (short_value == hist_up_) // second tag
 	{
-		spike_classification_parameters_->upper_threshold = chart_histogram_.vertical_tags.get_value_int(hist_upper_threshold_); // load new value
-		upper_threshold_mv_ = static_cast<float>(spike_classification_parameters_->upper_threshold) * m_delta_mv_;
+		spike_classification_parameters_->upper_threshold = chart_histogram_.vertical_tags.get_value_int(hist_up_); // load new value
+		upper_threshold_mv_ = static_cast<float>(spike_classification_parameters_->upper_threshold) * delta_mv_;
 		UpdateData(false);
 	}
 }
@@ -606,14 +593,14 @@ void ViewSpikeSort::change_vertical_tag_xy_chart(const short short_value)
 	if (short_value == m_i_xy_right_)
 	{
 		spike_classification_parameters_->i_xy_right = chart_measures_.vertical_tags.get_value_int(m_i_xy_right_);
-		t_xy_right_ = static_cast<float>(spike_classification_parameters_->i_xy_right) / m_delta_t_;
+		t_xy_right_ = static_cast<float>(spike_classification_parameters_->i_xy_right) / delta_ms_;
 		mm_t_xy_right_.m_bEntryDone = TRUE;
 		on_en_change_edit_right2();
 	}
 	else if (short_value == m_i_xy_left_)
 	{
 		spike_classification_parameters_->i_xy_left = chart_measures_.vertical_tags.get_value_int(m_i_xy_left_);
-		t_xy_left_ = static_cast<float>(spike_classification_parameters_->i_xy_left) / m_delta_t_;
+		t_xy_left_ = static_cast<float>(spike_classification_parameters_->i_xy_left) / delta_ms_;
 		mm_t_xy_left_.m_bEntryDone = TRUE;
 		on_en_change_edit_left2();
 	}
@@ -621,17 +608,17 @@ void ViewSpikeSort::change_vertical_tag_xy_chart(const short short_value)
 
 void ViewSpikeSort::change_horizontal_tag_xy_chart(const short short_value)
 {
-	if (short_value == m_i_tag_low_)
+	if (short_value == measures_low_)
 	{
-		spike_classification_parameters_->lower_threshold = chart_measures_.horizontal_tags.get_value_int(m_i_tag_low_);
-		lower_threshold_mv_ = static_cast<float>(spike_classification_parameters_->lower_threshold) * m_delta_mv_;
+		spike_classification_parameters_->lower_threshold = chart_measures_.horizontal_tags.get_value_int(measures_low_);
+		lower_threshold_mv_ = static_cast<float>(spike_classification_parameters_->lower_threshold) * delta_mv_;
 		mm_lower_threshold_mv_.m_bEntryDone = TRUE;
 		on_en_change_lower_threshold();
 	}
-	else if (short_value == m_i_tag_up_)
+	else if (short_value == measures_up_)
 	{
-		spike_classification_parameters_->upper_threshold = chart_measures_.horizontal_tags.get_value_int(m_i_tag_up_);
-		upper_threshold_mv_ = static_cast<float>(spike_classification_parameters_->upper_threshold) * m_delta_mv_;
+		spike_classification_parameters_->upper_threshold = chart_measures_.horizontal_tags.get_value_int(measures_up_);
+		upper_threshold_mv_ = static_cast<float>(spike_classification_parameters_->upper_threshold) * delta_mv_;
 		mm_upper_threshold_mv_.m_bEntryDone = TRUE;
 		on_en_change_upper_threshold();
 	}
@@ -762,23 +749,23 @@ void ViewSpikeSort::on_measure()
 		switch (spike_classification_parameters_->i_parameter)
 		{
 		case 1: // value at t1
-			m_pSpkList->measure_amplitude_at_t(spike_classification_parameters_->i_cursor_t1);
+			m_pSpkList->measure_amplitude_at_t(spike_classification_parameters_->shape_t1);
 			b_measure_done_ = TRUE;
 			break;
 		case 2: // value at t2
-			m_pSpkList->measure_amplitude_at_t(spike_classification_parameters_->i_cursor_t2);
+			m_pSpkList->measure_amplitude_at_t(spike_classification_parameters_->shape_t2);
 			b_measure_done_ = TRUE;
 			break;
 
 		case 3: // value at t2- value at t1
-			m_pSpkList->measure_amplitude_at_t2_minus_at_t1(spike_classification_parameters_->i_cursor_t1, spike_classification_parameters_->i_cursor_t2);
+			m_pSpkList->measure_amplitude_at_t2_minus_at_t1(spike_classification_parameters_->shape_t1, spike_classification_parameters_->shape_t2);
 			b_measure_done_ = TRUE;
 			break;
 
 		case 0: // max - min between t1 and t2
 		case 4: // max-min vs t_max-t_min
 		default:
-			m_pSpkList->measure_amplitude_min_to_max(spike_classification_parameters_->i_cursor_t1, spike_classification_parameters_->i_cursor_t2);
+			m_pSpkList->measure_amplitude_min_to_max(spike_classification_parameters_->shape_t1, spike_classification_parameters_->shape_t2);
 			break;
 		}
 
@@ -788,8 +775,8 @@ void ViewSpikeSort::on_measure()
 	chart_shape_.set_source_data(m_pSpkList, GetDocument());
 	chart_spike_bar_.set_source_data(m_pSpkList, GetDocument());
 
-	chart_measures_.horizontal_tags.set_value_int(m_i_tag_low_, spike_classification_parameters_->lower_threshold);
-	chart_measures_.horizontal_tags.set_value_int(m_i_tag_up_, spike_classification_parameters_->upper_threshold);
+	chart_measures_.horizontal_tags.set_value_int(measures_low_, spike_classification_parameters_->lower_threshold);
+	chart_measures_.horizontal_tags.set_value_int(measures_up_, spike_classification_parameters_->upper_threshold);
 
 	on_format_gain_adjust();
 	UpdateData(FALSE);
@@ -797,8 +784,8 @@ void ViewSpikeSort::on_measure()
 
 void ViewSpikeSort::update_gain()
 {
-	const auto y_we = static_cast<int>((measure_max_mv_ - measure_min_mv_) / m_delta_mv_);
-	const auto y_wo = static_cast<int>((measure_max_mv_ + measure_min_mv_) / 2 / m_delta_mv_);
+	const auto y_we = static_cast<int>((measure_max_mv_ - measure_min_mv_) / delta_mv_);
+	const auto y_wo = static_cast<int>((measure_max_mv_ + measure_min_mv_) / 2 / delta_mv_);
 
 	chart_measures_.set_yw_ext_org(y_we, y_wo);
 	build_histogram();
@@ -852,13 +839,13 @@ void ViewSpikeSort::build_histogram()
 	chart_histogram_.build_hist_from_document(pdb_doc, b_all_files_, l_first_, l_last_,
 		measure_min_mv_, measure_max_mv_, histogram_bin_mv_);
 
-	chart_histogram_.vertical_tags.set_value_mv(m_i_tag_low_, lower_threshold_mv_);
-	chart_histogram_.vertical_tags.set_value_mv(m_i_tag_up_, upper_threshold_mv_);
+	chart_histogram_.vertical_tags.set_value_mv(measures_low_, lower_threshold_mv_);
+	chart_histogram_.vertical_tags.set_value_mv(measures_up_, upper_threshold_mv_);
 }
 
 void ViewSpikeSort::on_format_center_curve()
 {
-	GetDocument()->center_spike_amplitude_all_spikes_between_t1_and_t2(static_cast<boolean>(b_all_files_), -1, spike_classification_parameters_->i_cursor_t1, spike_classification_parameters_->i_cursor_t2);
+	GetDocument()->center_spike_amplitude_all_spikes_between_t1_and_t2(static_cast<boolean>(b_all_files_), -1, spike_classification_parameters_->shape_t1, spike_classification_parameters_->shape_t2);
 	short value_max, value_min;
 	if (!GetDocument()->get_max_min_amplitude_of_all_spikes(b_all_files_, TRUE, value_max, value_min))
 		return;
@@ -900,8 +887,8 @@ void ViewSpikeSort::gain_adjust_xy_and_histogram()
 	if (!GetDocument()->get_max_min_y1_of_all_spikes(static_cast<boolean>(b_all_files_), value_max, value_min))
 		return;
 
-	const auto upper2 = static_cast<short>(upper_threshold_mv_ / m_delta_mv_);
-	const auto lower2 = static_cast<short>(lower_threshold_mv_ / m_delta_mv_);
+	const auto upper2 = static_cast<short>(upper_threshold_mv_ / delta_mv_);
+	const auto lower2 = static_cast<short>(lower_threshold_mv_ / delta_mv_);
 	if (upper2 > value_max)
 		value_max = upper2;
 	if (lower2 < value_min)
@@ -912,8 +899,8 @@ void ViewSpikeSort::gain_adjust_xy_and_histogram()
 	chart_histogram_.set_xw_ext_org(y_we, y_wo - y_we / 2);
 
 	// adjust histogram
-	measure_max_mv_ = m_delta_mv_ * static_cast<float>(value_max);
-	measure_min_mv_ = m_delta_mv_ * static_cast<float>(value_min);
+	measure_max_mv_ = delta_mv_ * static_cast<float>(value_max);
+	measure_min_mv_ = delta_mv_ * static_cast<float>(value_min);
 	build_histogram();
 	const auto y_max = static_cast<int>(chart_histogram_.get_hist_max_value());
 	chart_histogram_.set_yw_ext_org(MulDiv(y_max, 10, 8), 0);
@@ -1077,8 +1064,8 @@ void ViewSpikeSort::on_tools_align_spikes()
 	chart_shape_.display_ex_data(p_mean0);
 
 	// for each spike, compute correlation and take max value correlation
-	const auto k_start = spike_classification_parameters_->i_cursor_t1; // start of template match
-	const auto k_end = spike_classification_parameters_->i_cursor_t2; // end of template match
+	const auto k_start = spike_classification_parameters_->shape_t1; // start of template match
+	const auto k_end = spike_classification_parameters_->shape_t2; // end of template match
 	if (k_end <= k_start)
 		return;
 	const auto j0 = k_start - (k_end - k_start) / 2; // start time lag
@@ -1286,7 +1273,7 @@ void ViewSpikeSort::update_file_scroll()
 	m_file_scroll_.SetScrollInfo(&m_file_scroll_infos_);
 }
 
-void ViewSpikeSort::select_spike_list(int current_index)
+void ViewSpikeSort::select_spike_list(const int current_index)
 {
 	m_pSpkList = m_pSpkDoc->set_spike_list_current_index(current_index);
 	ASSERT(m_pSpkList != NULL);
@@ -1300,13 +1287,13 @@ void ViewSpikeSort::on_en_change_edit_left2()
 {
 	if (mm_t_xy_left_.m_bEntryDone)
 	{
-		mm_t_xy_left_.OnEnChange(this, t_xy_left_, m_delta_t_, -m_delta_t_);
+		mm_t_xy_left_.OnEnChange(this, t_xy_left_, delta_ms_, -delta_ms_);
 		// check boundaries
 		if (t_xy_left_ >= t_xy_right_)
-			t_xy_left_ = t_xy_right_ - m_delta_t_;
+			t_xy_left_ = t_xy_right_ - delta_ms_;
 
 		// change display if necessary
-		const auto left = t_xy_left_ / m_delta_t_;
+		const auto left = t_xy_left_ / delta_ms_;
 		const auto it_left = static_cast<int>(left);
 		if (it_left != chart_measures_.vertical_tags.get_value_int(m_i_xy_left_))
 		{
@@ -1321,14 +1308,14 @@ void ViewSpikeSort::on_en_change_edit_right2()
 {
 	if (mm_t_xy_right_.m_bEntryDone)
 	{
-		mm_t_xy_right_.OnEnChange(this, t_xy_right_, m_delta_t_, -m_delta_t_);
+		mm_t_xy_right_.OnEnChange(this, t_xy_right_, delta_ms_, -delta_ms_);
 
 		// check boundaries
 		if (t_xy_right_ <= t_xy_left_)
-			t_xy_right_ = t_xy_left_ + m_delta_t_;
+			t_xy_right_ = t_xy_left_ + delta_ms_;
 
 		// change display if necessary
-		const auto right = t_xy_right_ / m_delta_t_;
+		const auto right = t_xy_right_ / delta_ms_;
 		const auto i_right = static_cast<int>(right);
 		if (i_right != chart_measures_.vertical_tags.get_value_int(m_i_xy_right_))
 		{
@@ -1417,13 +1404,13 @@ void ViewSpikeSort::on_en_change_lower_threshold()
 {
 	if (mm_lower_threshold_mv_.m_bEntryDone)
 	{
-		mm_lower_threshold_mv_.OnEnChange(this, lower_threshold_mv_, m_delta_mv_, -m_delta_mv_);
+		mm_lower_threshold_mv_.OnEnChange(this, lower_threshold_mv_, delta_mv_, -delta_mv_);
 		check_valid_threshold_limits();
 
-		chart_histogram_.move_vt_tag_to_val(hist_lower_threshold_, lower_threshold_mv_);
+		chart_histogram_.move_vt_tag_to_val(hist_low_, lower_threshold_mv_);
 
-		spike_classification_parameters_->lower_threshold = static_cast<int>(lower_threshold_mv_ / m_delta_mv_);
-		chart_measures_.move_hz_tag(m_i_tag_low_, spike_classification_parameters_->lower_threshold);
+		spike_classification_parameters_->lower_threshold = static_cast<int>(lower_threshold_mv_ / delta_mv_);
+		chart_measures_.move_hz_tag(measures_low_, spike_classification_parameters_->lower_threshold);
 
 		UpdateData(FALSE);
 	}
@@ -1433,13 +1420,13 @@ void ViewSpikeSort::on_en_change_upper_threshold()
 {
 	if (mm_upper_threshold_mv_.m_bEntryDone)
 	{
-		mm_upper_threshold_mv_.OnEnChange(this, upper_threshold_mv_, m_delta_mv_, -m_delta_mv_);
+		mm_upper_threshold_mv_.OnEnChange(this, upper_threshold_mv_, delta_mv_, -delta_mv_);
 		check_valid_threshold_limits();
 
-		chart_histogram_.move_vt_tag_to_val(hist_upper_threshold_, upper_threshold_mv_);
+		chart_histogram_.move_vt_tag_to_val(hist_up_, upper_threshold_mv_);
 
-		spike_classification_parameters_->upper_threshold = static_cast<int>(upper_threshold_mv_ / m_delta_mv_);
-		chart_measures_.move_hz_tag(m_i_tag_up_, spike_classification_parameters_->upper_threshold);
+		spike_classification_parameters_->upper_threshold = static_cast<int>(upper_threshold_mv_ / delta_mv_);
+		chart_measures_.move_hz_tag(measures_up_, spike_classification_parameters_->upper_threshold);
 
 		UpdateData(FALSE);
 	}
@@ -1449,19 +1436,19 @@ void ViewSpikeSort::on_en_change_shape_t1()
 {
 	if (mm_shape_t1_ms_.m_bEntryDone)
 	{
-		mm_shape_t1_ms_.OnEnChange(this, shape_t1_ms_, m_delta_t_, -m_delta_t_);
+		mm_shape_t1_ms_.OnEnChange(this, shape_t1_ms_, delta_ms_, -delta_ms_);
 		// check boundaries
 		if (shape_t1_ms_ < 0)
 			shape_t1_ms_ = 0.0f;
 		if (shape_t1_ms_ >= shape_t2_ms_)
-			shape_t1_ms_ = shape_t2_ms_ - m_delta_t_;
+			shape_t1_ms_ = shape_t2_ms_ - delta_ms_;
 
-		const auto it1 = static_cast<int>(shape_t1_ms_ / m_delta_t_);
-		if (it1 != chart_shape_.vertical_tags.get_value_int(shape_t1_))
+		const auto t1 = static_cast<int>(shape_t1_ms_ / delta_ms_);
+		if (t1 != chart_shape_.vertical_tags.get_value_int(shape_t1_))
 		{
-			spike_classification_parameters_->i_cursor_t1 = it1;
-			chart_shape_.move_vt_track(shape_t1_, spike_classification_parameters_->i_cursor_t1);
-			m_pSpkList->m_i_max_min_1_sl = spike_classification_parameters_->i_cursor_t1;
+			spike_classification_parameters_->shape_t1 = t1;
+			chart_shape_.move_vt_track(shape_t1_, spike_classification_parameters_->shape_t1);
+			m_pSpkList->shape_t1 = spike_classification_parameters_->shape_t1;
 		}
 		UpdateData(FALSE);
 	}
@@ -1471,21 +1458,21 @@ void ViewSpikeSort::on_en_change_shape_t2()
 {
 	if (mm_shape_t2_ms_.m_bEntryDone)
 	{
-		mm_shape_t2_ms_.OnEnChange(this, shape_t2_ms_, m_delta_t_, -m_delta_t_);
+		mm_shape_t2_ms_.OnEnChange(this, shape_t2_ms_, delta_ms_, -delta_ms_);
 
 		// check boundaries
 		if (shape_t2_ms_ < shape_t1_ms_)
-			shape_t2_ms_ = shape_t1_ms_ + m_delta_t_;
-		const auto t_max = (static_cast<float>(m_pSpkList->get_spike_length()) - 1.f) * m_delta_t_;
+			shape_t2_ms_ = shape_t1_ms_ + delta_ms_;
+		const auto t_max = (static_cast<float>(m_pSpkList->get_spike_length()) - 1.f) * delta_ms_;
 		if (shape_t2_ms_ >= t_max)
 			shape_t2_ms_ = t_max;
 
-		const auto it2 = static_cast<int>(shape_t2_ms_ / m_delta_t_);
+		const auto it2 = static_cast<int>(shape_t2_ms_ / delta_ms_);
 		if (it2 != chart_shape_.vertical_tags.get_value_int(shape_t2_))
 		{
-			spike_classification_parameters_->i_cursor_t2 = it2;
-			chart_shape_.move_vt_track(shape_t2_, spike_classification_parameters_->i_cursor_t2);
-			m_pSpkList->m_i_max_min_2_sl = spike_classification_parameters_->i_cursor_t2;
+			spike_classification_parameters_->shape_t2 = it2;
+			chart_shape_.move_vt_track(shape_t2_, spike_classification_parameters_->shape_t2);
+			m_pSpkList->shape_t2 = spike_classification_parameters_->shape_t2;
 		}
 		UpdateData(FALSE);
 	}

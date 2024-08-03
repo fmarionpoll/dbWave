@@ -33,7 +33,7 @@ protected:
 	CFont m_fntPropList;
 
 	static int m_noCol[]; // [26] succession of fields
-	static int m_propCol[N_TABLE_COLUMNS]; // no col (0 to 28), no group (1, 2, 3 or -1 if not displayed) and type ()
+	static int m_prop_col_[N_TABLE_COLUMNS]; // no col (0 to 28), no group (1, 2, 3 or -1 if not displayed) and type ()
 	CUIntArray m_typeProps;
 	CUIntArray m_iIDProps;
 	CUIntArray m_groupProps;
@@ -42,12 +42,12 @@ protected:
 	BOOL m_bchangedProperty;
 
 	int InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int icol0);
-	void UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup) const;
+	void UpdateGroupPropFromTable(CMFCPropertyGridProperty* p_group) const;
 	void InitPropList();
 	void UpdatePropList();
 	void SetPropListFont();
 	void UpdateTableFromProp();
-	void UpdateTableFromGroupProp(CMFCPropertyGridProperty* pGroup);
+	void UpdateTableFromGroupProp(const CMFCPropertyGridProperty* p_group);
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

@@ -28,8 +28,8 @@ public:
 	void LoadCustomState() override;
 	void SaveCustomState() override;
 
-	UINT m_nAppLook{};
-	BOOL m_bHiColorIcons = TRUE;
+	UINT app_look{};
+	BOOL hi_color_icons = TRUE;
 
 	BOOL PreTranslateMessage(MSG* pMsg) override;
 
@@ -83,6 +83,6 @@ public:
 	DECLARE_MESSAGE_MAP()
 };
 
-extern CdbWaveApp theApp;
+extern CdbWaveApp the_app;
 
-void DisplayDaoException(CDaoException* e, int iID);
+void DisplayDaoException(CDaoException* e, int i_id);

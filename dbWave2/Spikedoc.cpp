@@ -808,8 +808,8 @@ void CSpikeDoc::export_spk_attributes_one_file(CSharedFile* shared_file, const O
 		{
 			cs_dummy += _T("\tamplitude(mV)\ttime(ms)");
 			const auto rate_ms = rate / 1000.f;
-			const auto x_first = static_cast<float>(spike_list->m_i_max_min_1_sl) / rate_ms;
-			const auto x_last = static_cast<float>(spike_list->m_i_max_min_2_sl) / rate_ms;
+			const auto x_first = static_cast<float>(spike_list->shape_t1) / rate_ms;
+			const auto x_last = static_cast<float>(spike_list->shape_t2) / rate_ms;
 			CString cs;
 			cs.Format(_T(" [%.3f to %.3f]"), x_first, x_last);
 			cs_dummy += cs;
@@ -830,8 +830,8 @@ void CSpikeDoc::export_spk_attributes_one_file(CSharedFile* shared_file, const O
 	const auto volts_per_bin = spike_list->get_acq_volts_per_bin() * 1000.f;
 	const auto bin_zero = spike_list->get_acq_bin_zero();
 	int i_max, i_min;
-	const auto i_first = spike_list->m_i_max_min_1_sl;
-	const auto i_last = spike_list->m_i_max_min_2_sl;
+	const auto i_first = spike_list->shape_t1;
+	const auto i_last = spike_list->shape_t2;
 	const auto rate_ms = rate / 1000.f;
 
 	// export data: loop through all spikes

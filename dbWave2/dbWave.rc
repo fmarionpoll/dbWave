@@ -2694,7 +2694,7 @@ BEGIN
         END
         MENUITEM SEPARATOR
         MENUITEM "Detection p&arameters...",    ID_TOOLS_DETECT_PARMS
-        MENUITEM "Spike &parameters...",        ID_TOOLS_DETECTION_PARAMETERS
+        MENUITEM "Spike &parameters...",        ID_TOOLS_SPIKE_DETECTION_PARAMETERS
         MENUITEM "St&imulus parameters...",     ID_TOOLS_STIMULUS_DETECTION_PARAMETERS
         MENUITEM "Detect spikes and stim&ulus", ID_TOOLS_DETECT
         MENUITEM SEPARATOR
@@ -3766,8 +3766,7 @@ BEGIN
     ID_TOOLS_IMPORT_DATA_FILES "Import dbWave native data files"
     ID_TOOLS_IMPORT_SPIKE_FILES "Import descriptors from Awave spike files"
     ID_TOOLS_REMOVE_ARTEFACT_FILES 
-                            "Define parameters with overload or artefacts and to discard files corresponding to these criteria..."
-    ID_VIEW_DATA_FILE       "View data"
+                            "Data with overload or artefacts and to discard files corresponding to these criteria..."
 END
 
 STRINGTABLE

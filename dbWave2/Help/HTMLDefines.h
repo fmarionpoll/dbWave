@@ -63,7 +63,6 @@
 #define HID_OPTIONS_PRINTMARGINS                0x18025
 #define HID_TOOLS_DETECTION_OPTIONS             0x1802A
 #define HID_TOOLS_EDIT_TRANSFORM_SPIKES         0x1802B
-#define HID_TOOLS_EXPORTDATACOMMENTS            0x1802C
 #define HID_FORMAT_CENTER_CURVE                 0x18034
 #define HID_FORMAT_GAIN_ADJUST                  0x18035
 #define HID_FORMAT_SPLIT_CURVES                 0x18036
@@ -89,6 +88,7 @@
 #define HID_VIEW_LEFT_PANE                      0x180A5
 #define HID_VIEW_UPPER_PANE                     0x180A7
 #define HID_VIEW_DATABASE                       0x180A8
+#define HID_VIEW_DATA_FILE                      0x180A9
 #define HID_VIEW_SPIKE_DETECTION                0x180AA
 #define HID_VIEW_SPIKE_DISPLAY                  0x180AB
 #define HID_VIEW_SPIKE_SORTING_AMPLITUDE        0x180AC
@@ -144,7 +144,6 @@
 #define HID_TOOLS_IMPORT_DATA_FILES             0x18110
 #define HID_TOOLS_IMPORT_SPIKE_FILES            0x18111
 #define HID_TOOLS_REMOVE_ARTEFACT_FILES         0x18116
-#define HID_VIEW_DATA_FILE                      0x1811F
 #define HID_TOOLS_VERTICAL_CURSORS              0x18121
 #define HID_FORMAT_DATA_SERIES_ATTRIBUTES       0x18122
 #define HID_HARDWARE_AD_CHANNELS                0x18123
@@ -152,6 +151,7 @@
 #define HID_OPTIONS_PRINT_MARGINS               0x18127
 #define HID_CHECK_FILTER_PANE                   0x18128
 #define HID_CHECK_PROPERTIES_PANE               0x18129
+#define HID_TOOLS_SPIKE_DETECTION_PARAMETERS    0x1812C
 #define HID_TOOLS_IMPORT                        0x18149
 #define HID_TOOLS_PATHS_RELATIVE                0x1814B
 #define HID_TOOLS_PATHS_ABSOLUTE                0x1814C

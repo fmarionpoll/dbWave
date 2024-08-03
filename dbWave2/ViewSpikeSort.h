@@ -61,10 +61,10 @@ protected:
 	ChartSpikeHist chart_histogram_;
 	CEditCtrl mm_lower_threshold_mv_;
 	float lower_threshold_mv_{ 0.f };
-	int hist_lower_threshold_{};
+	int hist_low_{};
 	CEditCtrl mm_upper_threshold_mv_;
 	float upper_threshold_mv_{ 1.f };
-	int hist_upper_threshold_{};
+	int hist_up_{};
 	CEditCtrl mm_histogram_bin_mv_;
 	float histogram_bin_mv_{ 0.1f };
 
@@ -81,15 +81,15 @@ protected:
 	SPK_CLASSIF* spike_classification_parameters_{};
 	OPTIONS_VIEWDATA* options_view_data_{};
 
-	int m_i_tag_low_ {};
-	int m_i_tag_up_ {};
+	int measures_low_ {};
+	int measures_up_ {};
 	int m_i_xy_right_ {};
 	int m_i_xy_left_ {};
 
-	const float m_time_unit_{ 1000.f }; // 1=s, 1000f=ms, 1e6=us
+	const float time_unit_{ 1000.f }; // 1=s, 1000f=ms, 1e6=us
 	const float mv_unit_ {1000.f};		// 1=V, 1000f=mV, 1e6=uV
-	float m_delta_mv_{};
-	float m_delta_t_{};
+	float delta_mv_{};
+	float delta_ms_{};
 
 	int m_measure_y1_max_{}; // max of array m_measure_y1
 	int m_measure_y1_min_{}; // min of array m_measure_y1
@@ -107,11 +107,11 @@ public:
 	}
 
 protected:
-	void load_saved_parameters();
+	void init_charts_from_saved_parameters();
 	void define_sub_classed_items();
 	void define_stretch_parameters();
 	void update_file_parameters();
-	void update_spike_file();
+	void load_current_spike_file();
 	void update_legends();
 	void select_spike(db_spike& spike_sel);
 	void update_gain();

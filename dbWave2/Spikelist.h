@@ -33,8 +33,8 @@ public:
 	int m_jitter_sl  {2};
 	int m_i_center_1_sl {0};
 	int m_i_center_2_sl {60};
-	int m_i_max_min_1_sl {0};
-	int m_i_max_min_2_sl {59};
+	int shape_t1 {0};
+	int shape_t2 {59};
 
 	// Description
 protected:

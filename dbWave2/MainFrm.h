@@ -10,8 +10,8 @@ class CMainFrame : public CMDIFrameWndEx
 	CMainFrame();
 
 	// Attributes
-	UINT m_SecondToolBarID;
-	CMFCToolBar* m_pSecondToolBar;
+	UINT m_second_tool_bar_id;
+	CMFCToolBar* m_p_second_tool_bar;
 	void ActivatePropertyPane(BOOL bActivate);
 	void ActivateFilterPane(BOOL bActivate);
 
@@ -39,9 +39,9 @@ protected: // control bar embedded members
 	CMFCOutlookBar outlook_bar_;
 	CMFCOutlookBarPane outlook_pane_;
 
-	BOOL CreateOutlookBar();
-	BOOL CreateDockingPropertiesPanes();
-	void SetDockingPropertiesPanesIcons(BOOL bHiColorIcons);
+	BOOL create_outlook_bar();
+	BOOL create_docking_properties_panes();
+	void set_docking_properties_panes_icons(BOOL b_hi_color_icons);
 	CdbWaveDoc* GetMDIActiveDocument();
 
 	// Generated message map functions

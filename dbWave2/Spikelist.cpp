@@ -63,8 +63,8 @@ void SpikeList::read_file_version1(CArchive& ar)
 {
 	m_i_center_1_sl = 0;
 	m_i_center_2_sl = spk_detect_parameters_.detect_pre_threshold;
-	m_i_max_min_1_sl = m_i_center_2_sl;
-	m_i_max_min_2_sl = get_spike_length() - 1;
+	shape_t1 = m_i_center_2_sl;
+	shape_t2 = get_spike_length() - 1;
 }
 
 void SpikeList::remove_artefacts()
@@ -218,8 +218,8 @@ void SpikeList::serialize_additional_data(CArchive& ar)
 		ar << n_parameters;
 		ar << m_i_center_1_sl;
 		ar << m_i_center_2_sl;
-		ar << m_i_max_min_1_sl;
-		ar << m_i_max_min_2_sl;
+		ar << shape_t1;
+		ar << shape_t2;
 	}
 	else
 	{
@@ -228,8 +228,8 @@ void SpikeList::serialize_additional_data(CArchive& ar)
 		if (n_parameters < 5) {
 			ar >> m_i_center_1_sl; n_parameters--;
 			ar >> m_i_center_2_sl; n_parameters--;
-			ar >> m_i_max_min_1_sl; n_parameters--;
-			ar >> m_i_max_min_2_sl; n_parameters--;
+			ar >> shape_t1; n_parameters--;
+			ar >> shape_t2; n_parameters--;
 			ASSERT(n_parameters < 1);
 		}
 	}
@@ -371,17 +371,17 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 		n_parameters--;
 		ar >> m_i_center_2_sl;
 		n_parameters--;
-		ar >> m_i_max_min_1_sl;
+		ar >> shape_t1;
 		n_parameters--;
-		ar >> m_i_max_min_2_sl;
+		ar >> shape_t2;
 		n_parameters--;
 	}
 	if (version < 3)
 	{
 		m_i_center_1_sl = 0;
 		m_i_center_2_sl = spk_detect_parameters_.detect_pre_threshold;
-		m_i_max_min_1_sl = m_i_center_2_sl;
-		m_i_max_min_2_sl = get_spike_length() - 1;
+		shape_t1 = m_i_center_2_sl;
+		shape_t2 = get_spike_length() - 1;
 	}
 }
 

@@ -22,8 +22,8 @@ SPK_CLASSIF& SPK_CLASSIF::operator =(const SPK_CLASSIF& arg)
 	{
 		data_transform = arg.data_transform; // transform mode
 		i_parameter = arg.i_parameter; // type of parameter measured
-		i_cursor_t1 = arg.i_cursor_t1; // position of first cursor
-		i_cursor_t2 = arg.i_cursor_t2; // position of second cursor
+		shape_t1 = arg.shape_t1; // position of first cursor
+		shape_t2 = arg.shape_t2; // position of second cursor
 		lower_threshold = arg.lower_threshold; // second threshold
 		upper_threshold = arg.upper_threshold; // first threshold
 		i_xy_right = arg.i_xy_right;
@@ -66,8 +66,8 @@ void SPK_CLASSIF::Serialize(CArchive& ar)
 		ar << w_version;
 		ar << static_cast<WORD>(data_transform);
 		ar << static_cast<WORD>(i_parameter);
-		ar << static_cast<WORD>(i_cursor_t1);
-		ar << static_cast<WORD>(i_cursor_t2);
+		ar << static_cast<WORD>(shape_t1);
+		ar << static_cast<WORD>(shape_t2);
 		ar << static_cast<WORD>(lower_threshold);
 		ar << static_cast<WORD>(upper_threshold);
 		constexpr auto dummy = static_cast<WORD>(0);
@@ -113,9 +113,9 @@ void SPK_CLASSIF::Serialize(CArchive& ar)
 		ar >> w1;
 		i_parameter = w1;
 		ar >> w1;
-		i_cursor_t1 = w1;
+		shape_t1 = w1;
 		ar >> w1;
-		i_cursor_t2 = w1;
+		shape_t2 = w1;
 		ar >> w1;
 		lower_threshold = w1;
 		ar >> w1;

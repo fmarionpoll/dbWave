@@ -71,8 +71,8 @@ void ViewdbWave::DoDataExchange(CDataExchange * pDX)
 void ViewdbWave::OnInitialUpdate()
 {
 	// init document and dbTableView
-	const auto dbwavedoc = GetDocument();
-	m_pSet = &dbwavedoc->db_table->m_mainTableSet;
+	const auto db_wave_doc = GetDocument();
+	m_pSet = &db_wave_doc->db_table->m_mainTableSet;
 	dbTableView::OnInitialUpdate();
 
 	subclass_dialog_controls();
@@ -307,8 +307,8 @@ void ViewdbWave::OnActivateView(BOOL bActivate, CView * pActivateView, CView * p
 	if (bActivate)
 	{
 		// make sure the secondary toolbar is not visible (none is defined for the database)
-		if (p_mainframe->m_pSecondToolBar != nullptr)
-			p_mainframe->ShowPane(p_mainframe->m_pSecondToolBar, FALSE, FALSE, TRUE);
+		if (p_mainframe->m_p_second_tool_bar != nullptr)
+			p_mainframe->ShowPane(p_mainframe->m_p_second_tool_bar, FALSE, FALSE, TRUE);
 		// load status
 		m_nStatus = static_cast<CChildFrame*>(p_mainframe->MDIGetActive())->m_n_status;
 		p_mainframe->PostMessageW(WM_MYMESSAGE, HINT_ACTIVATE_VIEW, reinterpret_cast<LPARAM>(pActivateView->GetDocument()));

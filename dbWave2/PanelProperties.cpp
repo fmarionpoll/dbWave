@@ -11,8 +11,6 @@
 #define new DEBUG_NEW
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CPropDockPane - properties docking panel that allows trapping command messages
 
 IMPLEMENT_DYNAMIC(CPropertiesPanel, CDockablePane)
 
@@ -52,7 +50,7 @@ int CPropertiesPanel::m_noCol[] = {
 	-1
 }; // 22-25 measures: n spikes, spikeclasses, flag, more
 
-int CPropertiesPanel::m_propCol[] = {
+int CPropertiesPanel::m_prop_col_[] = {
 	// TRUE = allow edit; list all possible columns
 	FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE,
 	TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE,
@@ -90,9 +88,6 @@ BEGIN_MESSAGE_MAP(CPropertiesPanel, CDockablePane)
 	ON_MESSAGE(WM_MYMESSAGE, OnMyMessage)
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CResourceViewBar message handlers
-
 void CPropertiesPanel::AdjustLayout()
 {
 	if (GetSafeHwnd() == nullptr || (AfxGetMainWnd() != nullptr && AfxGetMainWnd()->IsIconic()))
@@ -119,7 +114,6 @@ int CPropertiesPanel::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	const CRect rect_dummy(0, 0, 24, 24);
-	//const DWORD dw_view_style = WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_SORT | WS_BORDER | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 	if (!m_wndPropList.Create(WS_VISIBLE | WS_CHILD, rect_dummy, this, 2))
 		return -1; // fail to create
 	SetPropListFont();
@@ -128,13 +122,13 @@ int CPropertiesPanel::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_PROPERTIES);
 	m_wndToolBar.LoadToolBar(IDR_PROPERTIES, 0, 0, TRUE /* Is locked */);
 	m_wndToolBar.CleanUpLockedImages();
-	m_wndToolBar.LoadBitmap(theApp.m_bHiColorIcons ? IDB_PROPERTIES_HC : IDR_PROPERTIES, 0, 0, TRUE /* Locked */);
+	m_wndToolBar.LoadBitmap(the_app.hi_color_icons ? IDB_PROPERTIES_HC : IDR_PROPERTIES, 0, 0, TRUE /* Locked */);
 	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
 	m_wndToolBar.SetPaneStyle(
 		m_wndToolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM |
 			CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
 	m_wndToolBar.SetOwner(this);
-	// All commands will be routed via this control , not via the parent frame:
+	// All commands will be routed via this control, not via the parent frame:
 	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
 
 	AdjustLayout();
@@ -171,18 +165,17 @@ void CPropertiesPanel::UpdatePropList()
 	m_bchangedProperty = FALSE; // reset flag
 
 	// database general section
-	const int ipos = m_pDoc->db_get_current_record_position() + 1;
-	const int irows = m_pDoc->db_get_n_records();
-	if (irows == 0)
+	const int current_record_position = m_pDoc->db_get_current_record_position() + 1;
+	const int n_records = m_pDoc->db_get_n_records();
+	if (n_records == 0)
 		return;
 
-	const auto iprops = m_wndPropList.GetPropertyCount();
+	const auto property_count = m_wndPropList.GetPropertyCount();
 	const auto p_group0 = m_wndPropList.GetProperty(0);
-	//int nsubitems0 = p_group0->GetSubItemsCount();
-	(p_group0->GetSubItem(0)->SetValue(static_cast<_variant_t>(ipos)));
-	(p_group0->GetSubItem(1)->SetValue(static_cast<_variant_t>(irows)));
+	(p_group0->GetSubItem(0)->SetValue(static_cast<_variant_t>(current_record_position)));
+	(p_group0->GetSubItem(1)->SetValue(static_cast<_variant_t>(n_records)));
 
-	for (auto i = 1; i < iprops; i++)
+	for (auto i = 1; i < property_count; i++)
 	{
 		const auto p_group = m_wndPropList.GetProperty(i);
 		UpdateGroupPropFromTable(p_group);
@@ -190,16 +183,16 @@ void CPropertiesPanel::UpdatePropList()
 	m_bUpdateCombos = FALSE;
 }
 
-void CPropertiesPanel::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup) const
+void CPropertiesPanel::UpdateGroupPropFromTable(CMFCPropertyGridProperty* p_group) const
 {
 	auto p_db = m_pDoc->db_table;
 	DB_ITEMDESC desc;
-	const auto n_sub_items = pGroup->GetSubItemsCount();
-	CdbTableAssociated* p2linkedSet;
+	const auto n_sub_items = p_group->GetSubItemsCount();
+	CdbTableAssociated* p2_linked_set;
 
 	for (auto i = 0; i < n_sub_items; i++)
 	{
-		auto p_prop = pGroup->GetSubItem(i);
+		auto p_prop = p_group->GetSubItem(i);
 		const int i_column = p_prop->GetData();
 		p_db->get_record_item_value(i_column, &desc);
 		p_prop->ResetOriginalValue();
@@ -209,22 +202,22 @@ void CPropertiesPanel::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup
 		case FIELD_IND_FILEPATH:
 			p_prop->SetValue(desc.csVal);
 			p_prop->SetOriginalValue(desc.csVal);
-			p2linkedSet = p_db->m_mainTableSet.m_desc[i_column].plinkedSet;
-			if (m_bUpdateCombos || (p_prop->GetOptionCount() != p2linkedSet->GetRecordCount()))
+			p2_linked_set = p_db->m_mainTableSet.m_desc[i_column].plinkedSet;
+			if (m_bUpdateCombos || (p_prop->GetOptionCount() != p2_linked_set->GetRecordCount()))
 			{
 				p_prop->RemoveAllOptions();
 				COleVariant var_value1;
-				if (p2linkedSet->IsOpen() && !p2linkedSet->IsBOF())
+				if (p2_linked_set->IsOpen() && !p2_linked_set->IsBOF())
 				{
 					COleVariant var_value0;
-					p2linkedSet->MoveFirst();
-					while (!p2linkedSet->IsEOF())
+					p2_linked_set->MoveFirst();
+					while (!p2_linked_set->IsEOF())
 					{
-						p2linkedSet->GetFieldValue(0, var_value0);
+						p2_linked_set->GetFieldValue(0, var_value0);
 						CString cs = var_value0.bstrVal;
 						if (!cs.IsEmpty())
 							p_prop->AddOption(cs, TRUE);
-						p2linkedSet->MoveNext();
+						p2_linked_set->MoveNext();
 					}
 				}
 			}
@@ -255,54 +248,54 @@ void CPropertiesPanel::UpdateGroupPropFromTable(CMFCPropertyGridProperty* pGroup
 
 void CPropertiesPanel::UpdateTableFromProp()
 {
-	auto p_database = m_pDoc->db_table;
-	auto p_maintable_set = &p_database->m_mainTableSet;
-	m_bchangedProperty = FALSE; // reseet flag
-	p_maintable_set->Edit();
+	const auto p_database = m_pDoc->db_table;
+	const auto p_main_table_set = &p_database->m_mainTableSet;
+	m_bchangedProperty = FALSE; 
+	p_main_table_set->Edit();
 
-	const auto iprops = m_wndPropList.GetPropertyCount();
-	for (auto i = 1; i < iprops; i++)
+	const auto property_count = m_wndPropList.GetPropertyCount();
+	for (auto i = 1; i < property_count; i++)
 	{
 		const auto p_group = m_wndPropList.GetProperty(i);
 		UpdateTableFromGroupProp(p_group);
 	}
-	p_maintable_set->Update();
+	p_main_table_set->Update();
 }
 
-void CPropertiesPanel::UpdateTableFromGroupProp(CMFCPropertyGridProperty* pGroup)
+void CPropertiesPanel::UpdateTableFromGroupProp(const CMFCPropertyGridProperty* p_group)
 {
-	auto p_database = m_pDoc->db_table;
-	const auto nsubitems = pGroup->GetSubItemsCount();
+	const auto p_database = m_pDoc->db_table;
+	const auto sub_items_count = p_group->GetSubItemsCount();
 
-	for (auto i = 0; i < nsubitems; i++)
+	for (auto i = 0; i < sub_items_count; i++)
 	{
-		auto p_prop = pGroup->GetSubItem(i);
+		const auto p_prop = p_group->GetSubItem(i);
 		if (!p_prop->IsModified())
 			continue;
 
-		const int icol = p_prop->GetData();
+		const int prop_data_id = static_cast<int>(p_prop->GetData());
 		const auto prop_val = p_prop->GetValue();
-		auto pdesc = p_database->get_record_item_descriptor(icol);
-		if (pdesc == nullptr)
+		const auto record_item_descriptor = p_database->get_record_item_descriptor(prop_data_id);
+		if (record_item_descriptor == nullptr)
 			continue;
 
-		switch (pdesc->data_code_number)
+		switch (record_item_descriptor->data_code_number)
 		{
 		case FIELD_IND_TEXT:
 		case FIELD_IND_FILEPATH:
-			pdesc->csVal = prop_val.bstrVal;
+			record_item_descriptor->csVal = prop_val.bstrVal;
 			p_prop->ResetOriginalValue();
-			p_prop->SetOriginalValue(pdesc->csVal);
-			p_prop->SetValue(pdesc->csVal);
+			p_prop->SetOriginalValue(record_item_descriptor->csVal);
+			p_prop->SetValue(record_item_descriptor->csVal);
 			break;
 		case FIELD_TEXT:
-			pdesc->csVal = prop_val.bstrVal;
+			record_item_descriptor->csVal = prop_val.bstrVal;
 			p_prop->ResetOriginalValue();
-			p_prop->SetOriginalValue(pdesc->csVal);
-			p_prop->SetValue(pdesc->csVal);
+			p_prop->SetOriginalValue(record_item_descriptor->csVal);
+			p_prop->SetValue(record_item_descriptor->csVal);
 			break;
 		case FIELD_LONG:
-			pdesc->lVal = prop_val.lVal;
+			record_item_descriptor->lVal = prop_val.lVal;
 			p_prop->ResetOriginalValue();
 			p_prop->SetOriginalValue(prop_val.lVal);
 			p_prop->SetValue(prop_val.lVal);
@@ -311,7 +304,7 @@ void CPropertiesPanel::UpdateTableFromGroupProp(CMFCPropertyGridProperty* pGroup
 		default:
 			break;
 		}
-		p_database->set_record_item_value(icol, pdesc);
+		p_database->set_record_item_value(prop_data_id, record_item_descriptor);
 	}
 }
 
@@ -341,21 +334,21 @@ void CPropertiesPanel::InitPropList()
 	m_wndPropList.MarkModifiedProperties(TRUE, TRUE);
 
 	// get pointer to database specific object which contains recordsets
-	auto p_database = m_pDoc->db_table;
+	const auto p_database = m_pDoc->db_table;
 	auto m__i_id = ID_BASE;
 
 	// ------------------------------------------------------
-	auto p_group0 = new CMFCPropertyGridProperty(_T("Database"));
+	const auto p_group0 = new CMFCPropertyGridProperty(_T("Database"));
 	p_group0->SetData(m__i_id);
 	m__i_id++; // iID = 1000
-	const int ipos = p_database->m_mainTableSet.GetAbsolutePosition() + 1;
-	const int irows = p_database->m_mainTableSet.GetNRecords();
-	auto p_prop = new CMFCPropertyGridProperty(_T("current record"), static_cast<_variant_t>(ipos),
+	const int record_position = p_database->m_mainTableSet.GetAbsolutePosition() + 1;
+	const int records_count = p_database->m_mainTableSet.GetNRecords();
+	auto p_prop = new CMFCPropertyGridProperty(_T("current record"), static_cast<_variant_t>(record_position),
 	                                           _T("current record in the database (soft index)"));
 	p_prop->SetData(m__i_id);
 	m__i_id++; // iID = 1001
 	p_group0->AddSubItem(p_prop);
-	p_prop = new CMFCPropertyGridProperty(_T("total records"), static_cast<_variant_t>(irows),
+	p_prop = new CMFCPropertyGridProperty(_T("total records"), static_cast<_variant_t>(records_count),
 	                                      _T("number of records in the database"));
 	p_prop->SetData(m__i_id);
 	m__i_id++; // iID = 1002
@@ -366,26 +359,26 @@ void CPropertiesPanel::InitPropList()
 	const auto p_group1 = new CMFCPropertyGridProperty(_T("Acquisition"));
 	p_prop->SetData(m__i_id);
 	m__i_id++; // iID = 1003
-	auto icol0 = InitGroupFromTable(p_group1, 0);
+	auto i_col0 = InitGroupFromTable(p_group1, 0);
 	m_wndPropList.AddProperty(p_group1);
 
 	const auto p_group2 = new CMFCPropertyGridProperty(_T("Experimental conditions"));
 	p_prop->SetData(m__i_id);
 	m__i_id++; // iID = 1004
-	icol0 = InitGroupFromTable(p_group2, icol0);
+	i_col0 = InitGroupFromTable(p_group2, i_col0);
 	m_wndPropList.AddProperty(p_group2);
 
 	const auto p_group3 = new CMFCPropertyGridProperty(_T("Stimulus"));
 	p_prop->SetData(m__i_id);
 	m__i_id++; // iID = 1005
-	icol0 = InitGroupFromTable(p_group3, icol0);
+	i_col0 = InitGroupFromTable(p_group3, i_col0);
 	m_wndPropList.AddProperty(p_group3);
 
 	const auto p_group4 = new CMFCPropertyGridProperty(_T("Measures"));
 	p_prop->SetData(m__i_id);
 	//m__i_id++;		// iID = 1005
-	/*icol0 =*/
-	InitGroupFromTable(p_group4, icol0);
+	/*i_col0 =*/
+	InitGroupFromTable(p_group4, i_col0);
 	m_wndPropList.AddProperty(p_group4);
 
 	if (p_database && m_pDoc->db_get_n_records() > 0)
@@ -402,59 +395,58 @@ void CPropertiesPanel::InitPropList()
 
 int CPropertiesPanel::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int icol0)
 {
-	auto p_database = m_pDoc->db_table;
-	/*int nrecords = */
+	const auto p_database = m_pDoc->db_table;
 	p_database->m_mainTableSet.GetNRecords();
-	const int icol1 = sizeof(m_noCol) / sizeof(int);
-	if (icol0 > icol1) icol0 = icol1 - 1;
+	constexpr int i_col1 = sizeof(m_noCol) / sizeof(int);
+	if (icol0 > i_col1) icol0 = i_col1 - 1;
 	int i;
 
-	for (i = icol0; i < icol1; i++)
+	for (i = icol0; i < i_col1; i++)
 	{
-		const auto idesctab = m_noCol[i];
-		if (idesctab < 0)
+		const auto i_desc_tab = m_noCol[i];
+		if (i_desc_tab < 0)
 			break;
 
 		DB_ITEMDESC desc;
 		desc.csVal = _T("undefined");
 		desc.lVal = 0;
-		desc.data_code_number = p_database->m_mainTableSet.m_desc[idesctab].data_code_number;
+		desc.data_code_number = p_database->m_mainTableSet.m_desc[i_desc_tab].data_code_number;
 
 		CMFCPropertyGridProperty* p_prop = nullptr;
 		CString cs_comment;
-		CString cs_title = CdbTable::m_column_properties[idesctab].description;
+		CString cs_title = CdbTable::m_column_properties[i_desc_tab].description;
 
 		switch (desc.data_code_number)
 		{
 		case FIELD_IND_TEXT:
 		case FIELD_IND_FILEPATH:
 			cs_comment = _T("Field indirect text");
-			p_prop = new CMFCPropertyGridProperty(cs_title, desc.csVal, cs_comment, idesctab);
+			p_prop = new CMFCPropertyGridProperty(cs_title, desc.csVal, cs_comment, i_desc_tab);
 			break;
 		case FIELD_LONG:
 			cs_comment = _T("Field long");
-			p_prop = new CMFCPropertyGridProperty(cs_title, desc.lVal, cs_comment, idesctab);
+			p_prop = new CMFCPropertyGridProperty(cs_title, desc.lVal, cs_comment, i_desc_tab);
 			break;
 		case FIELD_TEXT:
 			cs_comment = _T("Field text");
-			p_prop = new CMFCPropertyGridProperty(cs_title, desc.csVal, cs_comment, idesctab);
+			p_prop = new CMFCPropertyGridProperty(cs_title, desc.csVal, cs_comment, i_desc_tab);
 			break;
 		case FIELD_DATE:
 		case FIELD_DATE_HMS:
 		case FIELD_DATE_YMD:
 			cs_comment = _T("Field date");
-			p_prop = new CMFCPropertyGridProperty(cs_title, desc.csVal, cs_comment, idesctab);
+			p_prop = new CMFCPropertyGridProperty(cs_title, desc.csVal, cs_comment, i_desc_tab);
 			break;
 		default:
 			cs_comment = _T("Field type unknown");
 			CString csValue = cs_comment;
-			p_prop = new CMFCPropertyGridProperty(cs_title, csValue, cs_comment, idesctab);
+			p_prop = new CMFCPropertyGridProperty(cs_title, csValue, cs_comment, i_desc_tab);
 			break;
 		}
 
 		// add a few infos
-		p_prop->AllowEdit(m_propCol[idesctab]);
-		p_prop->SetData(idesctab);
+		p_prop->AllowEdit(m_prop_col_[i_desc_tab]);
+		p_prop->SetData(i_desc_tab);
 		pGroup->AddSubItem(p_prop);
 	}
 	return i + 1;
@@ -541,9 +533,9 @@ LRESULT CPropertiesPanel::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_MDI_ACTIVATE:
 		{
-			auto* pmain = static_cast<CMDIFrameWndEx*>(AfxGetMainWnd());
+			const auto* main_window_frame = static_cast<CMDIFrameWndEx*>(AfxGetMainWnd());
 			BOOL b_maximized;
-			auto p_child = pmain->MDIGetActive(&b_maximized);
+			const auto p_child = main_window_frame->MDIGetActive(&b_maximized);
 			if (!p_child) return NULL;
 			const auto p_document = p_child->GetActiveDocument();
 			if (!p_document || !p_document->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
@@ -568,7 +560,7 @@ void CPropertiesPanel::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	m_pDoc = reinterpret_cast<CdbWaveDoc*>(pSender);
 	switch (LOWORD(lHint))
 	{
-	case HINT_CLOSE_FILE_MODIFIED: // save current file parms
+	case HINT_CLOSE_FILE_MODIFIED:
 		m_pDocOld = nullptr;
 		break;
 	case HINT_REQUERY:

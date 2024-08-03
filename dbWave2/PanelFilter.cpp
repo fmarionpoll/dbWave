@@ -106,7 +106,7 @@ void CFilterPanel::OnContextMenu(CWnd* p_wnd, CPoint point)
 	}
 
 	p_wnd_tree->SetFocus();
-	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);
+	the_app.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);
 }
 
 void CFilterPanel::AdjustLayout()
@@ -118,11 +118,10 @@ void CFilterPanel::AdjustLayout()
 	GetClientRect(rect_client);
 
 	const int cy_tlb = m_wnd_tool_bar_.CalcFixedLayout(FALSE, TRUE).cy;
-
-	m_wnd_tool_bar_.SetWindowPos(nullptr, rect_client.left, rect_client.top, rect_client.Width(), cy_tlb,
-	                          SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wnd_filter_view_.SetWindowPos(nullptr, rect_client.left + 1, rect_client.top + cy_tlb + 1, rect_client.Width() - 2,
-	                             rect_client.Height() - cy_tlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wnd_tool_bar_.SetWindowPos(nullptr, rect_client.left, rect_client.top, 
+		rect_client.Width(), cy_tlb,SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wnd_filter_view_.SetWindowPos(nullptr, rect_client.left + 1, rect_client.top + cy_tlb + 1,
+		rect_client.Width() - 2,rect_client.Height() - cy_tlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CFilterPanel::OnPaint()
@@ -190,7 +189,7 @@ void CFilterPanel::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	switch (LOWORD(lHint))
 	{
 	case HINT_CLOSE_FILE_MODIFIED: // save current file parameters
-		//m_pDocOld = NULL;
+		//m_p_doc_old_ = NULL;
 		break;
 
 	case HINT_REQUERY:
@@ -221,15 +220,13 @@ void CFilterPanel::InitFilterList()
 
 	// fill items of the combo (column heads to sort data)
 	dlg.SetStatus(_T("List categories available..."));
-	auto p_combo = static_cast<CMFCToolBarComboBoxButton*>(m_wnd_tool_bar_.GetButton(3));
+
+	const auto p_combo = static_cast<CMFCToolBarComboBoxButton*>(m_wnd_tool_bar_.GetButton(3));
 	ASSERT(ID_RECORD_SORT == m_wnd_tool_bar_.GetItemID(3));
 	if (p_combo->GetCount() <= 0)
 	{
 		for (auto i = 0; i < N_TABLE_COLUMNS; i++)
-		{
-			//p_combo->AddSortedItem(p_db->m_column_properties[i].descriptor, i);
 			p_combo->AddSortedItem(CdbTable::m_column_properties[i].description, i);
-		}
 	}
 	p_combo->SelectItem(p_db->m_mainTableSet.m_strSort);
 
@@ -249,13 +246,11 @@ void CFilterPanel::InitFilterList()
 	{
 		const auto i_col = m_no_col_[i];
 		const auto p_desc = p_db->get_record_item_descriptor(i_col);
-		m_h_tree_item_[i] = m_wnd_filter_view_.InsertItem(CdbTable::m_column_properties[i_col].description, TVI_ROOT); //hRoot);
-		//m_h_tree_item[i] = m_wndFilterView.InsertItem(p_db->m_column_properties[icol].descriptor, TVI_ROOT); //hRoot);
+		m_h_tree_item_[i] = m_wnd_filter_view_.InsertItem(CdbTable::m_column_properties[i_col].description, TVI_ROOT); 
 		m_wnd_filter_view_.SetItemData(m_h_tree_item_[i], m_no_col_[i]); // save table index into head of the list
 
 		cs_comment.Format(_T("Category %i: "), i);
 		cs_comment += CdbTable::m_column_properties[i_col].description;
-		//cs_comment += p_db->m_column_properties[i_col].descriptor;
 		dlg.SetStatus(cs_comment);
 
 		// collect data (array of unique descriptors)
