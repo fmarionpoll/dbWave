@@ -25,8 +25,8 @@ void ViewSpikeTemplates::DoDataExchange(CDataExchange* pDX)
 {
 	dbTableView::DoDataExchange(pDX);
 
-	DDX_Text(pDX, IDC_T1, m_t1);
-	DDX_Text(pDX, IDC_T2, m_t2);
+	DDX_Text(pDX, IDC_SHAPE_T1, m_t1);
+	DDX_Text(pDX, IDC_SHAPE_T2, m_t2);
 	DDX_Text(pDX, IDC_TIMEFIRST, time_first);
 	DDX_Text(pDX, IDC_TIMELAST, time_last);
 	DDX_Text(pDX, IDC_HITRATE, hit_rate);
@@ -51,8 +51,8 @@ BEGIN_MESSAGE_MAP(ViewSpikeTemplates, dbTableView)
 	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewSpikeTemplates::OnEnChangeTimefirst)
 	ON_EN_CHANGE(IDC_TIMELAST, &ViewSpikeTemplates::OnEnChangeTimelast)
 	ON_COMMAND(ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA, &ViewSpikeTemplates::OnFormatAlldata)
-	ON_COMMAND(ID_FORMAT_GAINADJUST, &ViewSpikeTemplates::OnFormatGainadjust)
-	ON_COMMAND(ID_FORMAT_CENTERCURVE, &ViewSpikeTemplates::OnFormatCentercurve)
+	ON_COMMAND(ID_FORMAT_GAIN_ADJUST, &ViewSpikeTemplates::OnFormatGainadjust)
+	ON_COMMAND(ID_FORMAT_CENTER_CURVE, &ViewSpikeTemplates::OnFormatCentercurve)
 	ON_BN_CLICKED(IDC_BUILD, &ViewSpikeTemplates::OnBuildTemplates)
 	ON_EN_CHANGE(IDC_HITRATE, &ViewSpikeTemplates::OnEnChangeHitrate)
 	ON_EN_CHANGE(IDC_TOLERANCE, &ViewSpikeTemplates::OnEnChangeTolerance)
@@ -65,8 +65,8 @@ BEGIN_MESSAGE_MAP(ViewSpikeTemplates, dbTableView)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB2, &ViewSpikeTemplates::OnTcnSelchangeTab2)
 	ON_NOTIFY(NM_CLICK, IDC_TAB2, &ViewSpikeTemplates::OnNMClickTab2)
 	ON_BN_CLICKED(IDC_DISPLAYSINGLECLASS, &ViewSpikeTemplates::OnBnClickedDisplaysingleclass)
-	ON_EN_CHANGE(IDC_T1, &ViewSpikeTemplates::OnEnChangeT1)
-	ON_EN_CHANGE(IDC_T2, &ViewSpikeTemplates::OnEnChangeT2)
+	ON_EN_CHANGE(IDC_SHAPE_T1, &ViewSpikeTemplates::OnEnChangeT1)
+	ON_EN_CHANGE(IDC_SHAPE_T2, &ViewSpikeTemplates::OnEnChangeT2)
 END_MESSAGE_MAP()
 
 void ViewSpikeTemplates::OnDestroy()
@@ -108,7 +108,7 @@ void ViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 void ViewSpikeTemplates::define_sub_classed_items()
 {
-	VERIFY(m_chart_spk_wnd_shape_.SubclassDlgItem(IDC_DISPLAYSPIKE, this));
+	VERIFY(m_chart_spk_wnd_shape_.SubclassDlgItem(IDC_CHART_SHAPE, this));
 	VERIFY(mm_spike_no_class_.SubclassDlgItem(IDC_EDIT2, this));
 	mm_spike_no_class_.ShowScrollBar(SB_VERT);
 	VERIFY(mm_time_first_.SubclassDlgItem(IDC_TIMEFIRST, this));
@@ -118,8 +118,8 @@ void ViewSpikeTemplates::define_sub_classed_items()
 	VERIFY(m_avg_list_.SubclassDlgItem(IDC_LIST1, this));
 	VERIFY(m_avg_all_list_.SubclassDlgItem(IDC_LIST3, this));
 
-	VERIFY(mm_t1_.SubclassDlgItem(IDC_T1, this));
-	VERIFY(mm_t2_.SubclassDlgItem(IDC_T2, this));
+	VERIFY(mm_t1_.SubclassDlgItem(IDC_SHAPE_T1, this));
+	VERIFY(mm_t2_.SubclassDlgItem(IDC_SHAPE_T2, this));
 
 	VERIFY(mm_hit_rate_.SubclassDlgItem(IDC_HITRATE, this));
 	mm_hit_rate_.ShowScrollBar(SB_VERT);

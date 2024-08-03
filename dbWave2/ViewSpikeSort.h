@@ -26,56 +26,57 @@ public:
 	// Form Data
 	enum { IDD = IDD_VIEWSPKSORT1 };
 
-	CComboBox m_combo_parameter;
-
-	float spike_shape_t1 { 0.f } ;
-	float spike_shape_t2 { 0.5f };
-	float m_time_unit { 1000.f }; // 1=s, 1000f=ms, 1e6=us
-
-	float histogram_lower_threshold { 0.f };
-	float histogram_upper_threshold {1.f};
-	float histogram_bin_mv{ 0.1f };
-
-	int sort_source_class {0};
-	int sort_destination_class {0};
-
-	float display_bars_time_left {0.f};
-	float display_bars_time_last {0.f};
-
-	float xy_max_amplitude_mv {0.f};
-	float xy_min_amplitude_mv  {0.f};
-
-	BOOL b_all_files  {false};
-	int m_spike_index  {-1};
-	int m_spike_index_class {0};
-	float t_xy_right  {1.f};
-	float t_xy_left {0.f};
-
-	// Attributes
 protected:
-	ChartSpikeHist chart_histogram_; 
-	ChartSpikeXY chart_xt_measures_; 
-	ChartSpikeShape chart_spike_shape_; 
-	ChartSpikeBar chart_spike_bar_; 
+	BOOL b_all_files_{ false };
 
-	CEditCtrl mm_t1_;
-	CEditCtrl mm_t2_;
-	CEditCtrl mm_limit_lower_;
-	CEditCtrl mm_limit_upper_;
-	CEditCtrl mm_source_class_;
-	CEditCtrl mm_destination_class_;
-	CEditCtrl mm_time_first_;
-	CEditCtrl mm_time_last_;
-	CEditCtrl mm_mv_min_;
-	CEditCtrl mm_mv_max_;
+	CComboBox combo_measure_type_;
 	CEditCtrl mm_spike_index_;
+	int spike_index_{ -1 };
 	CEditCtrl mm_spike_index_class_;
-	CEditCtrl mm_t_xy_right_;
-	CEditCtrl mm_t_xy_left_;
-	CEditCtrl mm_histogram_bin_mv_;
+	int spike_class_{ 0 };
 
-	ScrollBarEx m_file_scroll_; 
-	SCROLLINFO m_file_scroll_infos_{}; 
+	ChartSpikeShape chart_shape_;
+	CEditCtrl mm_shape_t1_ms_;
+	float shape_t1_ms_{ 0.f };
+	int shape_t1_{};
+	CEditCtrl mm_shape_t2_ms_;
+	float shape_t2_ms_{ 0.5f };
+	int shape_t2_{};
+
+	CEditCtrl mm_source_class_;
+	int sort_source_class_{ 0 };
+	CEditCtrl mm_destination_class_;
+	int sort_destination_class_{ 0 };
+
+	ChartSpikeBar chart_spike_bar_; 
+	ScrollBarEx m_file_scroll_;
+	SCROLLINFO m_file_scroll_infos_{};
+	CEditCtrl mm_time_first_s_;
+	float time_first_s_{ 0.f };
+	long l_first_{};
+	CEditCtrl mm_time_last_s_;
+	float time_last_s_{ 0.f };
+	long l_last_{};
+
+	ChartSpikeHist chart_histogram_;
+	CEditCtrl mm_lower_threshold_mv_;
+	float lower_threshold_mv_{ 0.f };
+	int hist_lower_threshold_{};
+	CEditCtrl mm_upper_threshold_mv_;
+	float upper_threshold_mv_{ 1.f };
+	int hist_upper_threshold_{};
+	CEditCtrl mm_histogram_bin_mv_;
+	float histogram_bin_mv_{ 0.1f };
+
+	ChartSpikeXY chart_measures_;
+	CEditCtrl mm_measure_min_mv_;
+	float measure_min_mv_{ 0.f };
+	CEditCtrl mm_measure_max_mv_;
+	float measure_max_mv_{ 0.f };
+	CEditCtrl mm_t_xy_right_;
+	float t_xy_right_{ 1.f };
+	CEditCtrl mm_t_xy_left_;
+	float t_xy_left_{ 0.f };
 
 	SPK_CLASSIF* spike_classification_parameters_{};
 	OPTIONS_VIEWDATA* options_view_data_{};
@@ -85,28 +86,24 @@ protected:
 	int m_i_xy_right_ {};
 	int m_i_xy_left_ {};
 
-	int m_spk_hist_upper_threshold_{};
-	int m_spk_hist_lower_threshold_{};
-	int m_spk_form_tag_left_{};
-	int m_spk_form_tag_right_{};
-
-	float mv_unit_ {1000.f}; // 1=V, 1000f=mV, 1e6=uV
+	const float m_time_unit_{ 1000.f }; // 1=s, 1000f=ms, 1e6=us
+	const float mv_unit_ {1000.f};		// 1=V, 1000f=mV, 1e6=uV
 	float m_delta_mv_{};
 	float m_delta_t_{};
+
 	int m_measure_y1_max_{}; // max of array m_measure_y1
 	int m_measure_y1_min_{}; // min of array m_measure_y1
 	boolean b_valid_extrema_ {false}; // tells if m_measure_y1_max_ & m_measure_y1_min_ are valid
-	long l_first_{}; 
-	long l_last_{}; 
-	boolean b_measure_done_ {false}; 
+
+	boolean b_measure_done_ {false};
 	int div_amplitude_by_  {1}; // value to adjust changes in amplitude / filter(s)
 
 	// Operations
 public:
 	void set_view_mouse_cursor(const int cursor_mode)
 	{
-		chart_xt_measures_.set_mouse_cursor_type(cursor_mode);
-		chart_spike_shape_.set_mouse_cursor_type(cursor_mode);
+		chart_measures_.set_mouse_cursor_type(cursor_mode);
+		chart_shape_.set_mouse_cursor_type(cursor_mode);
 	}
 
 protected:
@@ -145,7 +142,7 @@ protected:
 
 	// Generated message map functions
 public:
-	afx_msg void on_select_change_parameter();
+	afx_msg void on_select_change_measure_type();
 	afx_msg void on_sort();
 
 	afx_msg LRESULT on_my_message(WPARAM code, LPARAM l_param);
@@ -159,17 +156,17 @@ public:
 	afx_msg void on_tools_align_spikes();
 	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
 
-	afx_msg void on_en_change_lower();
-	afx_msg void on_en_change_upper();
-	afx_msg void on_en_change_t1();
-	afx_msg void on_en_change_t2();
-	afx_msg void on_en_change_source_spike_class();
-	afx_msg void on_en_change_destination_spike_class();
+	afx_msg void on_en_change_lower_threshold();
+	afx_msg void on_en_change_upper_threshold();
+	afx_msg void on_en_change_shape_t1();
+	afx_msg void on_en_change_shape_t2();
+	afx_msg void on_en_change_source_class();
+	afx_msg void on_en_change_destination_class();
 	afx_msg void on_en_change_time_first();
 	afx_msg void on_en_change_time_last();
-	afx_msg void on_en_change_mv_min();
-	afx_msg void on_en_change_mv_max();
-	afx_msg void on_en_change_no_spike();
+	afx_msg void on_en_change_min_mv();
+	afx_msg void on_en_change_max_mv();
+	afx_msg void on_en_change_spike_index();
 	afx_msg void on_en_change_spike_class();
 	afx_msg void on_en_change_edit_left2();
 	afx_msg void on_en_change_edit_right2();

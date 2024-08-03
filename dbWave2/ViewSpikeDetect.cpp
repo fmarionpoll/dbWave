@@ -80,13 +80,13 @@ BEGIN_MESSAGE_MAP(ViewSpikeDetection, dbTableView)
 	ON_COMMAND(ID_FORMAT_LASTFRAME, &ViewSpikeDetection::OnLastFrame)
 	ON_COMMAND(ID_FORMAT_SETORDINATES, &ViewSpikeDetection::OnFormatXscale)
 	ON_COMMAND(ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA, &ViewSpikeDetection::OnFormatAlldata)
-	ON_COMMAND(ID_FORMAT_CENTERCURVE, &ViewSpikeDetection::OnFormatYscaleCentercurve)
-	ON_COMMAND(ID_FORMAT_GAINADJUST, &ViewSpikeDetection::OnFormatYscaleGainadjust)
-	ON_COMMAND(ID_FORMAT_SPLITCURVES, &ViewSpikeDetection::OnFormatSplitcurves)
+	ON_COMMAND(ID_FORMAT_CENTER_CURVE, &ViewSpikeDetection::OnFormatYscaleCentercurve)
+	ON_COMMAND(ID_FORMAT_GAIN_ADJUST, &ViewSpikeDetection::OnFormatYscaleGainadjust)
+	ON_COMMAND(ID_FORMAT_SPLIT_CURVES, &ViewSpikeDetection::OnFormatSplitcurves)
 	ON_COMMAND(ID_TOOLS_DETECT_PARMS, &ViewSpikeDetection::OnToolsDetectionparameters)
 	ON_COMMAND(ID_TOOLS_DETECT, &ViewSpikeDetection::OnMeasureAll)
 	ON_COMMAND(ID_TOOLS_EDITSTIMULUS, &ViewSpikeDetection::OnToolsEditstimulus)
-	ON_COMMAND(ID_TOOLS_EDITSPIKES, &ViewSpikeDetection::OnToolsEdittransformspikes)
+	ON_COMMAND(ID_TOOLS_EDIT_SPIKES, &ViewSpikeDetection::OnToolsEdittransformspikes)
 	ON_COMMAND(ID_TOOLS_DATASERIES, &ViewSpikeDetection::OnToolsDataseries)
 	ON_COMMAND(ID_EDIT_COPY, &ViewSpikeDetection::OnEditCopy)
 	ON_COMMAND(ID_FILE_SAVE, &ViewSpikeDetection::OnFileSave)
@@ -530,7 +530,7 @@ void ViewSpikeDetection::define_stretch_parameters()
 	m_stretch_.newSlaveProp(IDC_STATICDISPLAYDETECT, SZEQ_XLEQ, YTEQ_YBEQ, IDC_DISPLAYDETECT);
 
 	// bottom right  ------------------------------------
-	m_stretch_.newProp(IDC_DISPLAYBARS, XLEQ_XREQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_CHART_BARS, XLEQ_XREQ, SZEQ_YBEQ);
 	m_stretch_.newProp(IDC_STATICDISPLAYBARS, SZEQ_XLEQ, SZEQ_YBEQ);
 
 	m_stretch_.newProp(IDC_DURATIONTEXT, SZEQ_XLEQ, SZEQ_YBEQ);
@@ -544,7 +544,7 @@ void ViewSpikeDetection::define_stretch_parameters()
 	m_stretch_.newProp(IDC_STATIC3, SZEQ_XLEQ, SZEQ_YBEQ);
 	m_stretch_.newProp(IDC_SPIKENO, SZEQ_XLEQ, SZEQ_YBEQ);
 	m_stretch_.newProp(IDC_ARTEFACT, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch_.newProp(IDC_DISPLAYSPIKES, SZEQ_XLEQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_DISPLAY_SPIKES, SZEQ_XLEQ, SZEQ_YBEQ);
 
 	m_stretch_.newProp(IDC_TIMEFIRST, SZEQ_XLEQ, SZEQ_YBEQ);
 	m_stretch_.newProp(IDC_TIMELAST, SZEQ_XREQ, SZEQ_YBEQ);
@@ -574,8 +574,8 @@ void ViewSpikeDetection::define_sub_classed_items()
 	VERIFY(mm_ichanselected2.SubclassDlgItem(IDC_CHANSELECTED2, this));
 
 	// control derived from CChartWnd
-	VERIFY(m_chart_spike_shape.SubclassDlgItem(IDC_DISPLAYSPIKES, this));
-	VERIFY(m_chart_spike_bar.SubclassDlgItem(IDC_DISPLAYBARS, this));
+	VERIFY(m_chart_spike_shape.SubclassDlgItem(IDC_DISPLAY_SPIKES, this));
+	VERIFY(m_chart_spike_bar.SubclassDlgItem(IDC_CHART_BARS, this));
 	VERIFY(m_chart_data_filtered.SubclassDlgItem(IDC_DISPLAYDETECT, this));
 	VERIFY(m_chart_data_source.SubclassDlgItem(IDC_DISPLAYDATA, this));
 

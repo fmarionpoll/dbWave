@@ -82,7 +82,7 @@ BOOL DlgSpikeEdit::OnInitDialog()
 	mm_spike_index.ShowScrollBar(SB_VERT);
 
 	// attach spike buffer
-	VERIFY(chart_spike_shape_.SubclassDlgItem(IDC_DISPLAYSPIKE_buttn, this));
+	VERIFY(chart_spike_shape_.SubclassDlgItem(IDC_CHART_SHAPE_buttn, this));
 	chart_spike_shape_.set_source_data(p_spk_list_, db_wave_doc);
 	chart_spike_shape_.set_range_mode(RANGE_ALL); // display mode (lines)
 	chart_spike_shape_.set_plot_mode(PLOT_BLACK, 0); // display also artefacts

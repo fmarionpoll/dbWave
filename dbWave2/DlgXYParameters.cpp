@@ -18,8 +18,8 @@ void DlgXYParameters::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_XZERO, m_xzero);
 	DDX_Text(pDX, IDC_YEXTENT, m_yextent);
 	DDX_Text(pDX, IDC_YZERO, m_yzero);
-	DDX_Check(pDX, IDC_DISPLAYSPIKES, m_bDisplayspikes);
-	DDX_Check(pDX, IDC_DISPLAYBARS, m_bDisplaybars);
+	DDX_Check(pDX, IDC_DISPLAY_SPIKES, m_bDisplayspikes);
+	DDX_Check(pDX, IDC_CHART_BARS, m_bDisplaybars);
 	DDX_Check(pDX, IDC_DISPLAYSOURCE, m_bDisplaysource);
 }
 

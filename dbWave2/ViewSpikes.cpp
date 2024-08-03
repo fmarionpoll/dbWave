@@ -61,9 +61,9 @@ BEGIN_MESSAGE_MAP(ViewSpikes, dbTableView)
 	ON_MESSAGE(WM_MYMESSAGE, &ViewSpikes::OnMyMessage)
 
 	ON_COMMAND(ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA, &ViewSpikes::OnFormatAlldata)
-	ON_COMMAND(ID_FORMAT_CENTERCURVE, &ViewSpikes::OnFormatCentercurve)
-	ON_COMMAND(ID_FORMAT_GAINADJUST, &ViewSpikes::OnFormatGainadjust)
-	ON_COMMAND(ID_TOOLS_EDITSPIKES, &ViewSpikes::OnToolsEdittransformspikes)
+	ON_COMMAND(ID_FORMAT_CENTER_CURVE, &ViewSpikes::OnFormatCentercurve)
+	ON_COMMAND(ID_FORMAT_GAIN_ADJUST, &ViewSpikes::OnFormatGainadjust)
+	ON_COMMAND(ID_TOOLS_EDIT_SPIKES, &ViewSpikes::OnToolsEdittransformspikes)
 	ON_COMMAND(ID_EDIT_COPY, &ViewSpikes::OnEditCopy)
 	ON_COMMAND(ID_FORMAT_PREVIOUSFRAME, &ViewSpikes::OnFormatPreviousframe)
 	ON_COMMAND(ID_FORMAT_NEXTFRAME, &ViewSpikes::OnFormatNextframe)
@@ -160,7 +160,7 @@ void ViewSpikes::set_add_spikes_mode(int mouse_cursor_type)
 	
 	b_add_spike_mode_ = set_add_spike_mode;
 	const int n_cmd_show = set_add_spike_mode ? SW_SHOW : SW_HIDE;
-	GetDlgItem(IDC_SOURCECLASS)->ShowWindow(n_cmd_show);
+	GetDlgItem(IDC_SOURCE_CLASS)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_DESTCLASS)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_EDIT4)->ShowWindow(n_cmd_show);
 	GetDlgItem(IDC_EDIT5)->ShowWindow(n_cmd_show);

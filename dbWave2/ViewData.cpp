@@ -37,9 +37,9 @@ BEGIN_MESSAGE_MAP(ViewData, dbTableView)
 	ON_COMMAND(ID_TOOLS_DATASERIES, &ViewData::OnToolsDataseries)
 	ON_COMMAND(ID_HARDWARE_ADCHANNELS, &ViewData::ADC_OnHardwareChannelsDlg)
 	ON_COMMAND(ID_HARDWARE_ADINTERVALS, &ViewData::ADC_OnHardwareIntervalsDlg)
-	ON_COMMAND(ID_FORMAT_CENTERCURVE, &ViewData::OnCenterCurve)
-	ON_COMMAND(ID_FORMAT_GAINADJUST, &ViewData::OnGainAdjustCurve)
-	ON_COMMAND(ID_FORMAT_SPLITCURVES, &ViewData::OnSplitCurves)
+	ON_COMMAND(ID_FORMAT_CENTER_CURVE, &ViewData::OnCenterCurve)
+	ON_COMMAND(ID_FORMAT_GAIN_ADJUST, &ViewData::OnGainAdjustCurve)
+	ON_COMMAND(ID_FORMAT_SPLIT_CURVES, &ViewData::OnSplitCurves)
 	ON_COMMAND(ID_FORMAT_FIRSTFRAME, &ViewData::OnFirstFrame)
 	ON_COMMAND(ID_FORMAT_LASTFRAME, &ViewData::OnLastFrame)
 	ON_MESSAGE(WM_MYMESSAGE, &ViewData::OnMyMessage)
@@ -576,7 +576,7 @@ void ViewData::update_channels_display_parameters()
 			float v_min = 0.;
 			for (auto i = 0; i < n_line_view_channels; i++)
 			{
-				// keep final gain constant even if ampli gain changed
+				// keep final gain constant even if amplifier gain changed
 				const CChanlistItem* p_chan = m_ChartDataWnd.get_channel_list_item(i);
 				p_chan->GetMaxMin(&max, &min);
 				const auto max_chan_i = p_chan->ConvertDataBinsToVolts(max);

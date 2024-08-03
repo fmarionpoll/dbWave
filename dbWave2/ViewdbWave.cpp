@@ -42,7 +42,7 @@ BEGIN_MESSAGE_MAP(ViewdbWave, dbTableView)
 	ON_BN_CLICKED(IDC_CHECK1, &ViewdbWave::OnBnClickedCheck1)
 	ON_BN_CLICKED(IDC_RADIOALLCLASSES, &ViewdbWave::OnBnClickedRadioallclasses)
 	ON_BN_CLICKED(IDC_RADIOONECLASS, &ViewdbWave::OnBnClickedRadiooneclass)
-	ON_BN_CLICKED(IDC_DISPLAYSPIKES, &ViewdbWave::OnBnClickedDisplaySpikes)
+	ON_BN_CLICKED(IDC_DISPLAY_SPIKES, &ViewdbWave::OnBnClickedDisplaySpikes)
 	ON_NOTIFY(HDN_ENDTRACK, 0, &ViewdbWave::OnHdnEndtrackListctrl)
 	ON_NOTIFY(LVN_COLUMNCLICK, IDC_LISTCTRL, &ViewdbWave::OnLvnColumnclickListctrl)
 	ON_NOTIFY(LVN_ITEMACTIVATE, IDC_LISTCTRL, &ViewdbWave::OnItemActivateListctrl)
@@ -163,7 +163,7 @@ void ViewdbWave::make_controls_stretchable()
 void ViewdbWave::display_data()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYDATA))->SetCheck(BST_CHECKED);
-	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYSPIKES))->SetCheck(BST_UNCHECKED);
+	static_cast<CButton*>(GetDlgItem(IDC_DISPLAY_SPIKES))->SetCheck(BST_UNCHECKED);
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYNOTHING))->SetCheck(BST_UNCHECKED);
 
 	GetDlgItem(IDC_RADIOALLCLASSES)->EnableWindow(FALSE);
@@ -181,7 +181,7 @@ void ViewdbWave::display_data()
 
 void ViewdbWave::display_spikes()
 {
-	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYSPIKES))->SetCheck(BST_CHECKED);
+	static_cast<CButton*>(GetDlgItem(IDC_DISPLAY_SPIKES))->SetCheck(BST_CHECKED);
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYDATA))->SetCheck(BST_UNCHECKED);
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYNOTHING))->SetCheck(BST_UNCHECKED);
 
@@ -212,7 +212,7 @@ void ViewdbWave::display_spikes()
 void ViewdbWave::display_nothing()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYDATA))->SetCheck(BST_UNCHECKED);
-	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYSPIKES))->SetCheck(BST_UNCHECKED);
+	static_cast<CButton*>(GetDlgItem(IDC_DISPLAY_SPIKES))->SetCheck(BST_UNCHECKED);
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYNOTHING))->SetCheck(BST_CHECKED);
 
 	GetDlgItem(IDC_FILTERCHECK)->EnableWindow(FALSE);
