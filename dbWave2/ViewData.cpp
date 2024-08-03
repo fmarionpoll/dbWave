@@ -27,40 +27,40 @@ IMPLEMENT_DYNCREATE(ViewData, dbTableView)
 
 BEGIN_MESSAGE_MAP(ViewData, dbTableView)
 	ON_WM_SIZE()
-	ON_BN_CLICKED(IDC_BIAS_button, &ViewData::OnClickedBias)
-	ON_BN_CLICKED(IDC_GAIN_button, &ViewData::OnClickedGain)
+	ON_BN_CLICKED(IDC_BIAS_button, &ViewData::on_clicked_bias)
+	ON_BN_CLICKED(IDC_GAIN_button, &ViewData::on_clicked_gain)
 	ON_WM_VSCROLL()
-	ON_COMMAND(ID_FORMAT_XSCALE, &ViewData::OnFormatXscale)
-	ON_COMMAND(ID_FORMAT_SET_ORDINATES, &ViewData::OnFormatYscale)
-	ON_COMMAND(ID_EDIT_COPY, &ViewData::OnEditCopy)
-	ON_UPDATE_COMMAND_UI(ID_EDIT_COPY, &ViewData::OnUpdateEditCopy)
-	ON_COMMAND(ID_TOOLS_DATA_SERIES, &ViewData::OnToolsDataseries)
-	ON_COMMAND(ID_HARDWARE_ADCHANNELS, &ViewData::ADC_OnHardwareChannelsDlg)
-	ON_COMMAND(ID_HARDWARE_AD_INTERVALS, &ViewData::ADC_OnHardwareIntervalsDlg)
-	ON_COMMAND(ID_FORMAT_CENTER_CURVE, &ViewData::OnCenterCurve)
-	ON_COMMAND(ID_FORMAT_GAIN_ADJUST, &ViewData::OnGainAdjustCurve)
-	ON_COMMAND(ID_FORMAT_SPLIT_CURVES, &ViewData::OnSplitCurves)
-	ON_COMMAND(ID_FORMAT_FIRST_FRAME, &ViewData::OnFirstFrame)
-	ON_COMMAND(ID_FORMAT_LAST_FRAME, &ViewData::OnLastFrame)
-	ON_MESSAGE(WM_MYMESSAGE, &ViewData::OnMyMessage)
-	ON_COMMAND(ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA, &ViewData::OnViewAlldata)
-	ON_COMMAND(ID_FORMAT_DATA_SERIES_ATTRIBUTES, &ViewData::OnFormatDataseriesattributes)
-	ON_COMMAND(ID_TOOLS_MEASURE_MODE, &ViewData::OnToolsMeasuremode)
-	ON_COMMAND(ID_TOOLS_MEASURE, &ViewData::OnToolsMeasure)
-	ON_COMMAND(ID_TOOLS_VERTICAL_TAGS, &ViewData::OnToolsVerticaltags)
-	ON_COMMAND(ID_TOOLS_HORIZONTAL_CURSORS, &ViewData::OnToolsHorizontalcursors)
-	ON_UPDATE_COMMAND_UI(ID_TOOLS_HORIZONTAL_CURSORS, &ViewData::OnUpdateToolsHorizontalcursors)
-	ON_UPDATE_COMMAND_UI(ID_TOOLS_VERTICAL_TAGS, &ViewData::OnUpdateToolsVerticaltags)
+	ON_COMMAND(ID_FORMAT_XSCALE, &ViewData::on_format_x_scale)
+	ON_COMMAND(ID_FORMAT_SET_ORDINATES, &ViewData::on_format_y_scale)
+	ON_COMMAND(ID_EDIT_COPY, &ViewData::on_edit_copy)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_COPY, &ViewData::on_update_edit_copy)
+	ON_COMMAND(ID_TOOLS_DATA_SERIES, &ViewData::on_tools_data_series)
+	ON_COMMAND(ID_HARDWARE_ADCHANNELS, &ViewData::adc_on_hardware_channels_dlg)
+	ON_COMMAND(ID_HARDWARE_AD_INTERVALS, &ViewData::adc_on_hardware_intervals_dlg)
+	ON_COMMAND(ID_FORMAT_CENTER_CURVE, &ViewData::on_center_curve)
+	ON_COMMAND(ID_FORMAT_GAIN_ADJUST, &ViewData::on_gain_adjust_curve)
+	ON_COMMAND(ID_FORMAT_SPLIT_CURVES, &ViewData::on_split_curves)
+	ON_COMMAND(ID_FORMAT_FIRST_FRAME, &ViewData::on_first_frame)
+	ON_COMMAND(ID_FORMAT_LAST_FRAME, &ViewData::on_last_frame)
+	ON_MESSAGE(WM_MYMESSAGE, &ViewData::on_my_message)
+	ON_COMMAND(ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA, &ViewData::on_view_all_data)
+	ON_COMMAND(ID_FORMAT_DATA_SERIES_ATTRIBUTES, &ViewData::on_format_data_series_attributes)
+	ON_COMMAND(ID_TOOLS_MEASURE_MODE, &ViewData::on_tools_measure_mode)
+	ON_COMMAND(ID_TOOLS_MEASURE, &ViewData::on_tools_measure)
+	ON_COMMAND(ID_TOOLS_VERTICAL_TAGS, &ViewData::on_tools_vertical_tags)
+	ON_COMMAND(ID_TOOLS_HORIZONTAL_CURSORS, &ViewData::on_tools_horizontal_cursors)
+	ON_UPDATE_COMMAND_UI(ID_TOOLS_HORIZONTAL_CURSORS, &ViewData::on_update_tools_horizontal_cursors)
+	ON_UPDATE_COMMAND_UI(ID_TOOLS_VERTICAL_TAGS, &ViewData::on_update_tools_vertical_tags)
 	ON_WM_HSCROLL()
-	ON_COMMAND(ID_HARDWARE_DEFINE_EXPERIMENT, &ViewData::ADC_OnHardwareDefineexperiment)
-	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewData::OnEnChangeTimefirst)
-	ON_EN_CHANGE(IDC_TIMELAST, &ViewData::OnEnChangeTimelast)
+	ON_COMMAND(ID_HARDWARE_DEFINE_EXPERIMENT, &ViewData::adc_on_hardware_define_experiment)
+	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewData::on_en_change_time_first)
+	ON_EN_CHANGE(IDC_TIMELAST, &ViewData::on_en_change_time_last)
 	ON_WM_SETFOCUS()
-	ON_COMMAND(ID_FORMAT_SET_ORDINATES, &ViewData::OnFormatYscale)
+	ON_COMMAND(ID_FORMAT_SET_ORDINATES, &ViewData::on_format_y_scale)
 	ON_COMMAND(ID_FILE_PRINT, dbTableView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, dbTableView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, dbTableView::OnFilePrintPreview)
-	ON_CBN_SELCHANGE(IDC_COMBOCHAN, &ViewData::OnCbnSelchangeCombochan)
+	ON_CBN_SELCHANGE(IDC_COMBOCHAN, &ViewData::on_cbn_sel_change_combo_chan)
 END_MESSAGE_MAP()
 
 ViewData::ViewData()
@@ -83,16 +83,16 @@ void ViewData::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT1, m_first_Hz_cursor);
 	DDX_Text(pDX, IDC_EDIT2, m_second_Hz_cursor);
 	DDX_Text(pDX, IDC_EDIT3, m_difference_second_minus_first);
-	DDX_Text(pDX, IDC_TIMEFIRST, m_time_first_abcissa);
-	DDX_Text(pDX, IDC_TIMELAST, m_time_last_abcissa);
+	DDX_Text(pDX, IDC_TIMEFIRST, m_time_first_abscissa);
+	DDX_Text(pDX, IDC_TIMELAST, m_time_last_abscissa);
 	DDX_Control(pDX, IDC_FILESCROLL, m_file_scroll_bar);
 	DDX_Control(pDX, IDC_COMBOCHAN, m_comboSelectChan);
 }
 
 void ViewData::define_sub_classed_items()
 {
-	VERIFY(m_scrolly.SubclassDlgItem(IDC_SCROLLY_scrollbar, this));
-	m_scrolly.SetScrollRange(0, 100);
+	VERIFY(scroll_y_.SubclassDlgItem(IDC_SCROLLY_scrollbar, this));
+	scroll_y_.SetScrollRange(0, 100);
 
 	// bitmap buttons: load icons & set buttons
 	m_hBias = AfxGetApp()->LoadIcon(IDI_BIAS);
@@ -103,8 +103,8 @@ void ViewData::define_sub_classed_items()
 	                                         reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_hZoom)));
 
 	VERIFY(m_ChartDataWnd.SubclassDlgItem(IDC_DISPLAY, this));
-	VERIFY(mm_time_first_abcissa.SubclassDlgItem(IDC_TIMEFIRST, this));
-	VERIFY(mm_time_last_abcissa.SubclassDlgItem(IDC_TIMELAST, this));
+	VERIFY(mm_time_first_abscissa.SubclassDlgItem(IDC_TIMEFIRST, this));
+	VERIFY(mm_time_last_abscissa.SubclassDlgItem(IDC_TIMELAST, this));
 	VERIFY(m_ADC_yRulerBar.SubclassDlgItem(IDC_YSCALE, this));
 	VERIFY(m_ADC_xRulerBar.SubclassDlgItem(IDC_XSCALE, this));
 }
@@ -152,16 +152,16 @@ void ViewData::OnInitialUpdate()
 	constexpr int legends_options = UPD_ABSCISSA | CHG_X_SCALE | UPD_ORDINATES | CHG_Y_SCALE;
 	m_bCommonScale = TRUE;
 	m_comboSelectChan.SetCurSel(m_ChartDataWnd.get_channel_list_size());
-	UpdateLegends(legends_options);
+	update_legends(legends_options);
 }
 
-void ViewData::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void ViewData::OnUpdate(CView* p_sender, const LPARAM l_hint, CObject* p_hint)
 {
 	if (!m_b_init_)
 		return;
 
 	auto i_update = NULL;
-	switch (LOWORD(lHint))
+	switch (LOWORD(l_hint))
 	{
 	case HINT_REPLACE_VIEW:
 		return;
@@ -180,43 +180,43 @@ void ViewData::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		i_update = UPD_ABSCISSA | UPD_X_SCALE | UPD_ORDINATES | UPD_Y_SCALE;
 		break;
 	}
-	UpdateLegends(i_update);
+	update_legends(i_update);
 	m_ChartDataWnd.Invalidate();
-	SetVBarMode(m_VBarMode);
+	set_v_bar_mode(m_VBarMode);
 }
 
-void ViewData::UpdateLegends(int legends_options)
+void ViewData::update_legends(int legends_options)
 {
-	if (!m_ChartDataWnd.IsDefined() && !m_b_valid_doc_)
+	if (!m_ChartDataWnd.is_defined() && !m_b_valid_doc_)
 		return;
 	if (legends_options & UPD_ABSCISSA)
-		UpdateFileScroll();
+		update_file_scroll();
 	if (legends_options & CHG_Y_SCALE)
 	{
-		UpdateHZtagsVal();
+		update_horizontal_tags_value();
 		legends_options |= CHG_Y_BAR;
 	}
 	if (legends_options & UPD_Y_SCALE)
 		legends_options |= CHG_Y_BAR;
 	if (legends_options & CHG_Y_BAR)
-		UpdateYZero(m_channel_selected, m_ChartDataWnd.get_channel_list_item(m_channel_selected)->GetYzero());
+		update_y_zero(m_channel_selected, m_ChartDataWnd.get_channel_list_item(m_channel_selected)->GetYzero());
 
 	UpdateData(FALSE);
 }
 
-void ViewData::OnClickedBias()
+void ViewData::on_clicked_bias()
 {
 	// set bias down and set gain up CButton
 	static_cast<CButton*>(GetDlgItem(IDC_BIAS_button))->SetState(1);
 	static_cast<CButton*>(GetDlgItem(IDC_GAIN_button))->SetState(0);
-	SetVBarMode(BAR_BIAS);
+	set_v_bar_mode(BAR_BIAS);
 }
 
-void ViewData::OnClickedGain()
+void ViewData::on_clicked_gain()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_BIAS_button))->SetState(0);
 	static_cast<CButton*>(GetDlgItem(IDC_GAIN_button))->SetState(1);
-	SetVBarMode(BAR_GAIN);
+	set_v_bar_mode(BAR_GAIN);
 }
 
 void ViewData::update_channel(const int channel)
@@ -236,25 +236,25 @@ void ViewData::update_channel(const int channel)
 		{
 			for (auto i = 0; i < m_ChartDataWnd.horizontal_tags.get_tag_list_size(); i++)
 				m_ChartDataWnd.horizontal_tags.set_channel(i, m_channel_selected);
-			UpdateHZtagsVal();
+			update_horizontal_tags_value();
 			m_ChartDataWnd.Invalidate();
 		}
-		UpdateLegends(UPD_ORDINATES | CHG_Y_SCALE);
+		update_legends(UPD_ORDINATES | CHG_Y_SCALE);
 	}
 }
 
-void ViewData::OnFormatYscale()
+void ViewData::on_format_y_scale()
 {
 	DlgDataViewOrdinates dlg;
 	dlg.m_pChartDataWnd = &m_ChartDataWnd;
 	dlg.m_Channel = m_channel_selected;
 	if (IDOK == dlg.DoModal())
-		UpdateLegends(UPD_ORDINATES | UPD_Y_SCALE | CHG_Y_BAR);
+		update_legends(UPD_ORDINATES | UPD_Y_SCALE | CHG_Y_BAR);
 
 	m_ChartDataWnd.Invalidate();
 }
 
-void ViewData::OnToolsDataseries()
+void ViewData::on_tools_data_series()
 {
 	// init dialog data
 	DlgDataSeries dlg;
@@ -264,10 +264,10 @@ void ViewData::OnToolsDataseries()
 	dlg.DoModal();
 
 	m_channel_selected = dlg.m_listindex;
-	UpdateLegends(UPD_Y_SCALE);
+	update_legends(UPD_Y_SCALE);
 }
 
-void ViewData::OnEditCopy()
+void ViewData::on_edit_copy()
 {
 	DlgCopyAs dlg;
 	dlg.m_nabcissa = options_view_data->hzResolution;
@@ -313,7 +313,7 @@ void ViewData::OnEditCopy()
 			*old_scope_struct = *new_scope_struct;
 			new_scope_struct->bDrawframe = options_view_data->bFrameRect;
 			new_scope_struct->bClipRect = options_view_data->bClipRect;
-			m_ChartDataWnd.Print(&m_dc, &rect);
+			m_ChartDataWnd.print(&m_dc, &rect);
 			*new_scope_struct = *old_scope_struct;
 
 			// print comments : set font
@@ -329,7 +329,7 @@ void ViewData::OnEditCopy()
 
 			CString comments = _T("Abcissa: ");
 			CString content;
-			content.Format(_T("%g - %g s"), m_time_first_abcissa, m_time_last_abcissa);
+			content.Format(_T("%g - %g s"), m_time_first_abscissa, m_time_last_abscissa);
 			comments += content;
 			m_dc.TextOut(x_column, y_pixels_row, comments);
 			y_pixels_row += line_height;
@@ -360,9 +360,9 @@ void ViewData::OnEditCopy()
 			ASSERT(h_emf_tmp != NULL);
 			if (OpenClipboard())
 			{
-				EmptyClipboard(); // prepare clipboard
+				EmptyClipboard(); 
 				SetClipboardData(CF_ENHMETAFILE, h_emf_tmp); // put data
-				CloseClipboard(); // close clipboard
+				CloseClipboard(); 
 			}
 			else
 			{
@@ -380,16 +380,16 @@ void ViewData::OnEditCopy()
 	}
 }
 
-void ViewData::OnUpdateEditCopy(CCmdUI* pCmdUI) 
+void ViewData::on_update_edit_copy(CCmdUI* p_cmd_ui) 
 {
-	pCmdUI->Enable(m_ChartDataWnd.IsDefined() != NULL); // if document has data
+	p_cmd_ui->Enable(m_ChartDataWnd.is_defined() != NULL); // if document has data
 }
 
-void ViewData::ADC_OnHardwareChannelsDlg() 
+void ViewData::adc_on_hardware_channels_dlg() 
 {
 	DlgADInputs dlg;
-	dlg.m_pwFormat = m_p_dat_Doc->get_waveformat();
-	dlg.m_pchArray = m_p_dat_Doc->get_wavechan_array();
+	dlg.m_pwFormat = m_p_dat_Doc->get_wave_format();
+	dlg.m_pchArray = m_p_dat_Doc->get_wave_channels_array();
 	if (IDOK == dlg.DoModal())
 	{
 		if(m_p_dat_Doc->acq_save_data_descriptors())
@@ -397,10 +397,10 @@ void ViewData::ADC_OnHardwareChannelsDlg()
 	}
 }
 
-void ViewData::ADC_OnHardwareIntervalsDlg() 
+void ViewData::adc_on_hardware_intervals_dlg() 
 {
 	DlgADIntervals dlg;
-	dlg.m_p_wave_format = m_p_dat_Doc->get_waveformat();
+	dlg.m_p_wave_format = m_p_dat_Doc->get_wave_format();
 	if (IDOK == dlg.DoModal())
 	{
 		if (m_p_dat_Doc->acq_save_data_descriptors())
@@ -408,7 +408,7 @@ void ViewData::ADC_OnHardwareIntervalsDlg()
 	}
 }
 
-void ViewData::chain_dialog(WORD i_id)
+void ViewData::chain_dialog(const WORD i_id)
 {
 	WORD menu_id;
 	switch (i_id)
@@ -425,14 +425,14 @@ void ViewData::chain_dialog(WORD i_id)
 	PostMessage(WM_COMMAND, menu_id, NULL);
 }
 
-void ViewData::OnFirstFrame()
+void ViewData::on_first_frame()
 {
-	OnFileScroll(SB_LEFT, 1L);
+	on_file_scroll(SB_LEFT, 1L);
 }
 
-void ViewData::OnLastFrame()
+void ViewData::on_last_frame()
 {
-	OnFileScroll(SB_RIGHT, 1L);
+	on_file_scroll(SB_RIGHT, 1L);
 }
 
 void ViewData::update_file_parameters(const BOOL b_update_interface)
@@ -454,17 +454,17 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 	}
 	m_p_dat_Doc = dbwave_doc->m_p_dat;
 	m_p_dat_Doc->read_data_infos();
-	const auto wave_format = m_p_dat_Doc->get_waveformat();
+	const auto wave_format = m_p_dat_Doc->get_wave_format();
 
 	if (b_first_update)
 	{
 		m_samplingRate = wave_format->sampling_rate_per_channel; 
-		m_time_first_abcissa = 0.0f; 
-		m_time_last_abcissa = static_cast<float>(m_p_dat_Doc->get_doc_channel_length()) / m_samplingRate;
+		m_time_first_abscissa = 0.0f; 
+		m_time_last_abscissa = static_cast<float>(m_p_dat_Doc->get_doc_channel_length()) / m_samplingRate;
 	}
 
 	// load parameters from current data file
-	m_ChartDataWnd.AttachDataFile(m_p_dat_Doc);
+	m_ChartDataWnd.attach_data_file(m_p_dat_Doc);
 	m_p_dat_Doc->SetModifiedFlag(FALSE);
 
 	// OPTION: display entire file	--	(inactive if multirow)
@@ -473,8 +473,8 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 
 	if (!options_view_data->bEntireRecord || options_view_data->bMultirowDisplay && !b_first_update)
 	{
-		l_first = static_cast<long>(m_time_first_abcissa * m_samplingRate);
-		l_last = static_cast<long>(m_time_last_abcissa * m_samplingRate);
+		l_first = static_cast<long>(m_time_first_abscissa * m_samplingRate);
+		l_last = static_cast<long>(m_time_last_abscissa * m_samplingRate);
 		if (l_last > m_p_dat_Doc->get_doc_channel_length() - 1) // last OK?
 			l_last = m_p_dat_Doc->get_doc_channel_length() - 1; // clip to the end of the file
 	}
@@ -505,8 +505,8 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 
 	// load real data from file and update time parameters
 	m_ChartDataWnd.get_data_from_doc(l_first, l_last); 
-	m_time_first_abcissa = static_cast<float>(m_ChartDataWnd.GetDataFirstIndex()) / m_samplingRate; 
-	m_time_last_abcissa = static_cast<float>(m_ChartDataWnd.GetDataLastIndex()) / m_samplingRate; 
+	m_time_first_abscissa = static_cast<float>(m_ChartDataWnd.get_data_first_index()) / m_samplingRate; 
+	m_time_last_abscissa = static_cast<float>(m_ChartDataWnd.get_data_last_index()) / m_samplingRate; 
 	m_channel_selected = 0; // select chan 0
 
 	if (!b_first_update)
@@ -533,8 +533,8 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 	// done
 	if (b_update_interface)
 	{
-		UpdateFileScroll();
-		UpdateLegends(UPD_ABSCISSA | CHG_X_SCALE | CHG_Y_SCALE);
+		update_file_scroll();
+		update_legends(UPD_ABSCISSA | CHG_X_SCALE | CHG_Y_SCALE);
 		m_ChartDataWnd.Invalidate();
 	}
 }
@@ -560,8 +560,8 @@ void ViewData::update_channels_display_parameters()
 			if (options_view_data->bCenterCurves)
 				y_zero = (max + min) / 2;
 
-			UpdateYExtent(i, y_extent);
-			UpdateYZero(i, y_zero);
+			update_y_extent(i, y_extent);
+			update_y_zero(i, y_zero);
 		}
 	}
 	else
@@ -591,8 +591,8 @@ void ViewData::update_channels_display_parameters()
 			y_extent = MulDiv(max - min + 1, 10, 8);
 			y_zero = (max + min) / 2;
 		}
-		UpdateYExtent(chan_0, y_extent);
-		UpdateYZero(chan_0, y_zero);
+		update_y_extent(chan_0, y_extent);
+		update_y_zero(chan_0, y_zero);
 	}
 	m_ChartDataWnd.Invalidate();
 }
@@ -614,10 +614,10 @@ void ViewData::set_cursor_associated_windows()
 
 	// change cursors value
 	if (m_cursor_state == CURSOR_CROSS && mdMO->wOption == 1)
-		UpdateHZtagsVal();
+		update_horizontal_tags_value();
 }
 
-void ViewData::UpdateHZtagsVal()
+void ViewData::update_horizontal_tags_value()
 {
 	if (m_ChartDataWnd.horizontal_tags.get_tag_list_size() <= 0)
 		return;
@@ -645,15 +645,15 @@ void ViewData::UpdateHZtagsVal()
 	GetDlgItem(IDC_EDIT3)->Invalidate();
 }
 
-LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT ViewData::on_my_message(const WPARAM w_param, const LPARAM l_param)
 {
 	//int j = HIWORD(lParam);		// control ID of sender
 	// code = 0: chan hit 			low_p = channel
 	// code = 1: cursor change		low_p = new cursor value
 	// code = 2: horizontal cursor hit	low_p = cursor index
-	int low_parameter = LOWORD(lParam); // value associated
+	int low_parameter = LOWORD(l_param); // value associated
 
-	switch (wParam)
+	switch (w_param)
 	{
 	case HINT_SET_MOUSE_CURSOR:
 		// save current cursors into document if cursor_state = 3
@@ -673,8 +673,8 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			}
 			else if (mdMO->wOption == 3) // detect stimulus
 			{
-				mdMO->wStimuluschan = m_ChartDataWnd.horizontal_tags.get_channel(0);
-				mdMO->wStimulusthresh = m_ChartDataWnd.horizontal_tags.get_value_int(0);
+				mdMO->wStimuluschan = static_cast<WORD>(m_ChartDataWnd.horizontal_tags.get_channel(0));
+				mdMO->wStimulusthresh =static_cast<WORD>(m_ChartDataWnd.horizontal_tags.get_value_int(0));
 				m_ChartDataWnd.horizontal_tags.remove_all_tags();
 			}
 			m_ChartDataWnd.Invalidate();
@@ -686,7 +686,7 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		m_cursor_state = m_ChartDataWnd.set_mouse_cursor_type(low_parameter);
 		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state, 0));
 
-	// recall cursors from document if cursorstate = 2
+	// recall cursors from document if cursor_state = 2
 		if (m_cursor_state == CURSOR_CROSS)
 		{
 			if (mdMO->wOption == 0)
@@ -702,7 +702,7 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 	case HINT_HIT_CHANNEL: // change channel if different
 		m_channel_selected = low_parameter;
-		UpdateLegends(UPD_ORDINATES | CHG_Y_SCALE);
+		update_legends(UPD_ORDINATES | CHG_Y_SCALE);
 		break;
 
 	case HINT_DEFINED_RECT:
@@ -710,8 +710,8 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			const auto rect = m_ChartDataWnd.get_defined_rect();
 			mdMO->wLimitSup = static_cast<WORD>(rect.top);
 			mdMO->wLimitInf = static_cast<WORD>(rect.bottom);
-			mdMO->lLimitLeft = m_ChartDataWnd.GetDataOffsetfromPixel(rect.left);
-			mdMO->lLimitRight = m_ChartDataWnd.GetDataOffsetfromPixel(rect.right);
+			mdMO->lLimitLeft = m_ChartDataWnd.get_data_offset_from_pixel(rect.left);
+			mdMO->lLimitRight = m_ChartDataWnd.get_data_offset_from_pixel(rect.right);
 		}
 	// action according to option
 		switch (mdMO->wOption)
@@ -737,7 +737,7 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 				m_p_dat_Doc->get_hz_tags_list()->copy_tag_list(&m_ChartDataWnd.horizontal_tags);
 				if (m_ChartDataWnd.horizontal_tags.get_tag_list_size() == 2)
 					set_cursor_associated_windows();
-				UpdateHZtagsVal();
+				update_horizontal_tags_value();
 			}
 			break;
 
@@ -757,13 +757,13 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		if (mdMO->wOption == 3)
 			mdMO->wStimulusthresh = m_ChartDataWnd.horizontal_tags.get_value_int(0);
 		else
-			UpdateHZtagsVal();
+			update_horizontal_tags_value();
 		break;
 
 	case HINT_VIEW_SIZE_CHANGED: // change zoom
-		UpdateLegends(UPD_ABSCISSA | CHG_X_SCALE | UPD_ORDINATES | CHG_Y_SCALE);
+		update_legends(UPD_ABSCISSA | CHG_X_SCALE | UPD_ORDINATES | CHG_Y_SCALE);
 		m_ChartDataWnd.Invalidate();
-		SetVBarMode(m_VBarMode);
+		set_v_bar_mode(m_VBarMode);
 		break;
 
 	case HINT_WINDOW_PROPS_CHANGED:
@@ -775,16 +775,16 @@ LRESULT ViewData::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-void ViewData::OnViewAlldata()
+void ViewData::on_view_all_data()
 {
 	m_ChartDataWnd.get_data_from_doc(0, GetDocument()->db_get_data_len() - 1);
-	UpdateLegends(UPD_ABSCISSA | CHG_X_SCALE);
+	update_legends(UPD_ABSCISSA | CHG_X_SCALE);
 	UpdateData(FALSE);
 	m_ChartDataWnd.Invalidate();
-	UpdateFileScroll();
+	update_file_scroll();
 }
 
-void ViewData::OnFormatDataseriesattributes()
+void ViewData::on_format_data_series_attributes()
 {
 	DlgDataSeriesFormat dlg;
 	dlg.m_pChartDataWnd = &m_ChartDataWnd;
@@ -796,11 +796,11 @@ void ViewData::OnFormatDataseriesattributes()
 	{
 		m_channel_selected = dlg.m_listindex;
 	}
-	UpdateLegends(UPD_Y_SCALE);
+	update_legends(UPD_Y_SCALE);
 	m_ChartDataWnd.Invalidate();
 }
 
-void ViewData::OnToolsVerticaltags()
+void ViewData::on_tools_vertical_tags()
 {
 	mdMO->wOption = 0;
 
@@ -810,7 +810,7 @@ void ViewData::OnToolsVerticaltags()
 	//MeasureProperties(1);
 }
 
-void ViewData::OnToolsHorizontalcursors()
+void ViewData::on_tools_horizontal_cursors()
 {
 	mdMO->wOption = 1;
 	// change cursor and tell parent that it has changed
@@ -819,7 +819,7 @@ void ViewData::OnToolsHorizontalcursors()
 	//MeasureProperties(0);
 }
 
-void ViewData::OnUpdateToolsHorizontalcursors(CCmdUI* pCmdUI)
+void ViewData::on_update_tools_horizontal_cursors(CCmdUI* pCmdUI)
 {
 	// 0=vertic tags, 1=horiz lines; 2=rectangle; 3=relative to stimulus
 	//BOOL flag = (mdMO->wOption ==1  && m_cursor_state == 2);
@@ -827,7 +827,7 @@ void ViewData::OnUpdateToolsHorizontalcursors(CCmdUI* pCmdUI)
 	pCmdUI->Enable(true);
 }
 
-void ViewData::OnUpdateToolsVerticaltags(CCmdUI* pCmdUI)
+void ViewData::on_update_tools_vertical_tags(CCmdUI* pCmdUI)
 {
 	// 0=vertic tags, 1=horiz lines; 2=rectangle; 3=relative to stimulus
 	//BOOL flag = (mdMO->wOption ==0 && m_cursor_state == 2);
@@ -835,22 +835,22 @@ void ViewData::OnUpdateToolsVerticaltags(CCmdUI* pCmdUI)
 	pCmdUI->Enable(true);
 }
 
-void ViewData::OnToolsMeasuremode()
+void ViewData::on_tools_measure_mode()
 {
-	MeasureProperties(2);
+	measure_properties(2);
 }
 
-void ViewData::OnToolsMeasure()
+void ViewData::on_tools_measure()
 {
-	MeasureProperties(3);
+	measure_properties(3);
 }
 
-void ViewData::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void ViewData::OnVScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar* p_scroll_bar)
 {
-	// formview scroll: if pointer null
-	if (pScrollBar == nullptr)
+	// form_view scroll: if pointer null
+	if (p_scroll_bar == nullptr)
 	{
-		dbTableView::OnVScroll(nSBCode, nPos, pScrollBar);
+		dbTableView::OnVScroll(n_sb_code, n_pos, p_scroll_bar);
 		return;
 	}
 
@@ -858,27 +858,27 @@ void ViewData::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	switch (m_VBarMode)
 	{
 	case BAR_GAIN:
-		OnGainScroll(nSBCode, nPos);
+		on_gain_scroll(n_sb_code, n_pos);
 		break;
 	case BAR_BIAS:
-		OnBiasScroll(nSBCode, nPos);
+		on_bias_scroll(n_sb_code, n_pos);
 	default:
 		break;
 	}
 }
 
-void ViewData::SetVBarMode(int bMode)
+void ViewData::set_v_bar_mode(const int b_mode)
 {
-	if (bMode == BAR_BIAS)
-		m_VBarMode = bMode;
+	if (b_mode == BAR_BIAS)
+		m_VBarMode = b_mode;
 	else
 		m_VBarMode = BAR_GAIN;
-	UpdateBiasScroll();
+	update_bias_scroll();
 }
 
-void ViewData::UpdateGainScroll()
+void ViewData::update_gain_scroll()
 {
-	m_scrolly.SetScrollPos(
+	scroll_y_.SetScrollPos(
 		MulDiv(
 			m_ChartDataWnd.get_channel_list_item(m_channel_selected)->GetYextent(),
 			100,
@@ -887,72 +887,72 @@ void ViewData::UpdateGainScroll()
 		TRUE);
 }
 
-void ViewData::OnGainScroll(UINT nSBCode, UINT nPos)
+void ViewData::on_gain_scroll(const UINT n_sb_code, const UINT n_pos)
 {
-	int yExtent = m_ChartDataWnd.get_channel_list_item(m_channel_selected)->GetYextent();
+	int y_extent = m_ChartDataWnd.get_channel_list_item(m_channel_selected)->GetYextent();
 	// get corresponding data
-	switch (nSBCode)
+	switch (n_sb_code)
 	{
-	case SB_LEFT: yExtent = Y_EXTENT_MIN;
+	case SB_LEFT: y_extent = Y_EXTENT_MIN;
 		break;
-	case SB_LINELEFT: yExtent -= yExtent / 10 + 1;
+	case SB_LINELEFT: y_extent -= y_extent / 10 + 1;
 		break;
-	case SB_LINERIGHT: yExtent += yExtent / 10 + 1;
+	case SB_LINERIGHT: y_extent += y_extent / 10 + 1;
 		break;
-	case SB_PAGELEFT: yExtent -= yExtent / 2 + 1;
+	case SB_PAGELEFT: y_extent -= y_extent / 2 + 1;
 		break;
-	case SB_PAGERIGHT: yExtent += yExtent + 1;
+	case SB_PAGERIGHT: y_extent += y_extent + 1;
 		break;
-	case SB_RIGHT: yExtent = Y_EXTENT_MAX;
+	case SB_RIGHT: y_extent = Y_EXTENT_MAX;
 		break;
 	case SB_THUMBPOSITION:
-	case SB_THUMBTRACK: yExtent = MulDiv(nPos - 50, Y_EXTENT_MAX, 100);
+	case SB_THUMBTRACK: y_extent = MulDiv(n_pos - 50, Y_EXTENT_MAX, 100);
 		break;
 	default: break;
 	}
 
 	// change y extent
-	if (yExtent > 0) //&& yExtent<=YEXTENT_MAX)
+	if (y_extent > 0) //&& yExtent<=Y_EXTENT_MAX)
 	{
-		UpdateYExtent(m_channel_selected, yExtent);
-		UpdateLegends(UPD_ORDINATES | CHG_Y_SCALE);
+		update_y_extent(m_channel_selected, y_extent);
+		update_legends(UPD_ORDINATES | CHG_Y_SCALE);
 	}
 	// update scrollBar
 	m_ChartDataWnd.Invalidate();
-	UpdateGainScroll();
+	update_gain_scroll();
 }
 
-void ViewData::UpdateBiasScroll()
+void ViewData::update_bias_scroll()
 {
-	CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
-	const auto i_pos = (pchan->GetYzero() - pchan->GetDataBinZero())
+	const CChanlistItem* p_chan_list_item = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
+	const auto i_pos = (p_chan_list_item->GetYzero() - p_chan_list_item->GetDataBinZero())
 		* 100 / static_cast<int>(Y_ZERO_SPAN) + 50;
-	m_scrolly.SetScrollPos(i_pos, TRUE);
-	UpdateLegends(UPD_ORDINATES | CHG_Y_SCALE);
+	scroll_y_.SetScrollPos(i_pos, TRUE);
+	update_legends(UPD_ORDINATES | CHG_Y_SCALE);
 }
 
-void ViewData::OnBiasScroll(UINT nSBCode, UINT nPos)
+void ViewData::on_bias_scroll(const UINT n_sb_code, const UINT n_pos)
 {
-	CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
-	auto l_size = pchan->GetYzero() - pchan->GetDataBinZero();
-	const auto yextent = pchan->GetYextent();
+	const CChanlistItem* p_chan_list_item = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
+	auto l_size = p_chan_list_item->GetYzero() - p_chan_list_item->GetDataBinZero();
+	const auto y_extent = p_chan_list_item->GetYextent();
 	// get corresponding data
-	switch (nSBCode)
+	switch (n_sb_code)
 	{
 	case SB_LEFT: l_size = Y_ZERO_MIN;
 		break;
-	case SB_LINELEFT: l_size -= yextent / 100 + 1;
+	case SB_LINELEFT: l_size -= y_extent / 100 + 1;
 		break;
-	case SB_LINERIGHT: l_size += yextent / 100 + 1;
+	case SB_LINERIGHT: l_size += y_extent / 100 + 1;
 		break;
-	case SB_PAGELEFT: l_size -= yextent / 10 + 1;
+	case SB_PAGELEFT: l_size -= y_extent / 10 + 1;
 		break;
-	case SB_PAGERIGHT: l_size += yextent / 10 + 1;
+	case SB_PAGERIGHT: l_size += y_extent / 10 + 1;
 		break;
 	case SB_RIGHT: l_size = Y_ZERO_MAX;
 		break;
 	case SB_THUMBPOSITION:
-	case SB_THUMBTRACK: l_size = (nPos - 50) * (Y_ZERO_SPAN / 100);
+	case SB_THUMBTRACK: l_size = (n_pos - 50) * (Y_ZERO_SPAN / 100);
 		break;
 	default: break;
 	}
@@ -960,67 +960,67 @@ void ViewData::OnBiasScroll(UINT nSBCode, UINT nPos)
 	// try to read data with this new size
 	if (l_size > Y_ZERO_MIN && l_size < Y_ZERO_MAX)
 	{
-		UpdateYZero(m_channel_selected, l_size + pchan->GetDataBinZero());
+		update_y_zero(m_channel_selected, l_size + p_chan_list_item->GetDataBinZero());
 	}
 	// update scrollBar
 	m_ChartDataWnd.Invalidate();
-	UpdateBiasScroll();
+	update_bias_scroll();
 }
 
-void ViewData::OnCenterCurve()
+void ViewData::on_center_curve()
 {
 	m_ChartDataWnd.center_chan(m_channel_selected);
 	m_ChartDataWnd.Invalidate();
 
-	CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
-	const auto yextent = pchan->GetYextent();
-	UpdateYExtent(m_channel_selected, yextent);
-	const auto yzero = pchan->GetYzero();
-	UpdateYZero(m_channel_selected, yzero);
+	const CChanlistItem* p_chan_list_item = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
+	const auto y_extent = p_chan_list_item->GetYextent();
+	update_y_extent(m_channel_selected, y_extent);
+	const auto y_zero = p_chan_list_item->GetYzero();
+	update_y_zero(m_channel_selected, y_zero);
 }
 
-void ViewData::OnGainAdjustCurve()
+void ViewData::on_gain_adjust_curve()
 {
 	m_ChartDataWnd.max_gain_chan(m_channel_selected);
 	m_ChartDataWnd.Invalidate();
 
-	CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
-	const auto yextent = pchan->GetYextent();
-	UpdateYExtent(m_channel_selected, yextent);
-	const auto yzero = pchan->GetYzero();
-	UpdateYZero(m_channel_selected, yzero);
-	UpdateLegends(CHG_Y_SCALE);
+	const CChanlistItem* p_chan_list_item = m_ChartDataWnd.get_channel_list_item(m_channel_selected);
+	const auto y_extent = p_chan_list_item->GetYextent();
+	update_y_extent(m_channel_selected, y_extent);
+	const auto y_zero = p_chan_list_item->GetYzero();
+	update_y_zero(m_channel_selected, y_zero);
+	update_legends(CHG_Y_SCALE);
 }
 
-void ViewData::OnSplitCurves()
+void ViewData::on_split_curves()
 {
-	const auto nchans = m_ChartDataWnd.get_channel_list_size(); // nb of data channels
-	const auto pxheight = m_ChartDataWnd.get_rect_height(); // height of the display area
-	const auto pxoffset = pxheight / nchans; // height for each channel
-	auto pxzero = (pxheight - pxoffset) / 2; // center first curve at
+	const auto n_channels = m_ChartDataWnd.get_channel_list_size(); // nb of data channels
+	const auto height = m_ChartDataWnd.get_rect_height(); // height of the display area
+	const auto offset = height / n_channels; // height for each channel
+	auto zero = (height - offset) / 2; // center first curve at
 
 	// split display area
 	int max, min;
-	for (auto i = 0; i < nchans; i++)
+	for (auto i = 0; i < n_channels; i++)
 	{
 		CChanlistItem* chan = m_ChartDataWnd.get_channel_list_item(i);
 		chan->GetMaxMin(&max, &min);
-		const auto iextent = MulDiv(max - min + 1, 100 * nchans, 100);
-		const auto ibias = MulDiv(pxzero, iextent, pxheight); // convert pixel into bins
-		const auto izero = (max + min) / 2 - ibias; // change bias
-		chan->SetYextent(iextent);
-		chan->SetYzero(izero);
-		pxzero -= pxoffset; // update position of next curve
+		const auto extent = MulDiv(max - min + 1, 100 * n_channels, 100);
+		const auto bias = MulDiv(zero, extent, height); // convert pixel into bins
+		const auto i_zero = (max + min) / 2 - bias; // change bias
+		chan->SetYextent(extent);
+		chan->SetYzero(i_zero);
+		zero -= offset; // update position of next curve
 	}
-	UpdateLegends(CHG_Y_SCALE);
+	update_legends(CHG_Y_SCALE);
 	m_ChartDataWnd.Invalidate();
 }
 
-void ViewData::OnFileScroll(UINT nSBCode, UINT nPos)
+void ViewData::on_file_scroll(UINT n_sb_code, UINT n_pos)
 {
 	auto b_result = FALSE;
 	// get corresponding data
-	switch (nSBCode)
+	switch (n_sb_code)
 	{
 	case SB_LEFT: // scroll to the start
 	case SB_LINELEFT: // scroll one line left
@@ -1028,12 +1028,12 @@ void ViewData::OnFileScroll(UINT nSBCode, UINT nPos)
 	case SB_PAGELEFT: // scroll one page left
 	case SB_PAGERIGHT: // scroll one page right
 	case SB_RIGHT: // scroll to end right
-		b_result = m_ChartDataWnd.scroll_data_from_doc(nSBCode);
+		b_result = m_ChartDataWnd.scroll_data_from_doc(n_sb_code);
 		break;
 	case SB_THUMBPOSITION: // scroll to pos = nPos
 	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
 		b_result = m_ChartDataWnd.get_data_from_doc(
-			(nPos * m_p_dat_Doc->get_doc_channel_length()) / 100L);
+			(n_pos * m_p_dat_Doc->get_doc_channel_length()) / 100L);
 		break;
 	default: // NOP: set position only
 		break;
@@ -1042,19 +1042,19 @@ void ViewData::OnFileScroll(UINT nSBCode, UINT nPos)
 	// adjust display
 	if (b_result)
 	{
-		UpdateLegends(UPD_ABSCISSA);
+		update_legends(UPD_ABSCISSA);
 		UpdateData(FALSE); // copy view object to controls
 		m_ChartDataWnd.Invalidate();
 	}
-	UpdateFileScroll();
+	update_file_scroll();
 }
 
-void ViewData::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void ViewData::OnHScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar* p_scroll_bar)
 {
 	// formview scroll: if pointer null
-	if (pScrollBar == nullptr)
+	if (p_scroll_bar == nullptr)
 	{
-		dbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
+		dbTableView::OnHScroll(n_sb_code, n_pos, p_scroll_bar);
 		return;
 	}
 
@@ -1062,19 +1062,19 @@ void ViewData::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	int l_first;
 	int l_last;
 	CString cs;
-	switch (nSBCode)
+	switch (n_sb_code)
 	{
 	case SB_THUMBTRACK:
 		m_file_scroll_bar.GetScrollInfo(&m_file_scroll_bar_infos, SIF_ALL);
 		l_first = m_file_scroll_bar_infos.nPos;
 		l_last = l_first + m_file_scroll_bar_infos.nPage - 1;
-		m_time_first_abcissa = static_cast<float>(l_first) / m_samplingRate;
-		m_time_last_abcissa = static_cast<float>(l_last) / m_samplingRate;
+		m_time_first_abscissa = static_cast<float>(l_first) / m_samplingRate;
+		m_time_last_abscissa = static_cast<float>(l_last) / m_samplingRate;
 		m_ChartDataWnd.get_data_from_doc(l_first, l_last);
 		m_ChartDataWnd.Invalidate();
-		cs.Format(_T("%.3f"), m_time_first_abcissa);
+		cs.Format(_T("%.3f"), m_time_first_abscissa);
 		SetDlgItemText(IDC_TIMEFIRST, cs);
-		cs.Format(_T("%.3f"), m_time_last_abcissa);
+		cs.Format(_T("%.3f"), m_time_last_abscissa);
 		SetDlgItemText(IDC_TIMELAST, cs);
 		break;
 
@@ -1084,23 +1084,23 @@ void ViewData::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		l_last = l_first + m_file_scroll_bar_infos.nPage - 1;
 		if (m_ChartDataWnd.get_data_from_doc(l_first, l_last))
 		{
-			UpdateLegends(UPD_ABSCISSA);
+			update_legends(UPD_ABSCISSA);
 			UpdateData(FALSE); // copy view object to controls
 			m_ChartDataWnd.Invalidate();
 		}
 
 		break;
 	default:
-		OnFileScroll(nSBCode, nPos);
+		on_file_scroll(n_sb_code, n_pos);
 		break;
 	}
 }
 
-void ViewData::MeasureProperties(int item)
+void ViewData::measure_properties(const int item)
 {
 	// make sure that cursor is ok
 	if (m_cursor_state != CURSOR_CROSS)
-		OnMyMessage(NULL, MAKELPARAM(CURSOR_CROSS, HINT_SET_MOUSE_CURSOR));
+		on_my_message(NULL, MAKELPARAM(CURSOR_CROSS, HINT_SET_MOUSE_CURSOR));
 
 	// save current data into data document
 	switch (mdMO->wOption)
@@ -1140,13 +1140,13 @@ void ViewData::save_modified_file()
 
 	if (m_p_dat_Doc->IsModified())
 	{
-		CString docname = GetDocument()->db_get_current_dat_file_name();
-		m_p_dat_Doc->save_document(docname);
+		CString doc_name = GetDocument()->db_get_current_dat_file_name();
+		m_p_dat_Doc->save_document(doc_name);
 	}
 	m_p_dat_Doc->SetModifiedFlag(FALSE);
 }
 
-void ViewData::ADC_OnHardwareDefineexperiment()
+void ViewData::adc_on_hardware_define_experiment()
 {
 	DlgdbEditRecord dlg;
 	dlg.m_pdbDoc = GetDocument();
@@ -1161,26 +1161,26 @@ void ViewData::ADC_OnHardwareDefineexperiment()
 	}
 }
 
-void ViewData::OnFormatXscale()
+void ViewData::on_format_x_scale()
 {
 	// init dialog data
 	DlgDataViewAbcissa dlg;
-	dlg.m_firstAbcissa = m_time_first_abcissa;
-	dlg.m_lastAbcissa = m_time_last_abcissa;
-	dlg.m_veryLastAbcissa = m_ChartDataWnd.GetDocumentLast() / m_samplingRate;
+	dlg.m_firstAbcissa = m_time_first_abscissa;
+	dlg.m_lastAbcissa = m_time_last_abscissa;
+	dlg.m_veryLastAbcissa = static_cast<float>(m_ChartDataWnd.get_document_last()) / m_samplingRate;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
-		m_time_first_abcissa = dlg.m_firstAbcissa * dlg.m_abcissaScale;
-		m_time_last_abcissa = dlg.m_lastAbcissa * dlg.m_abcissaScale;
-		m_ChartDataWnd.get_data_from_doc(static_cast<long>(m_time_first_abcissa * m_samplingRate),
-		                              static_cast<long>(m_time_last_abcissa * m_samplingRate));
-		UpdateLegends(UPD_ABSCISSA | UPD_X_SCALE | CHG_X_BAR);
+		m_time_first_abscissa = dlg.m_firstAbcissa * dlg.m_abcissaScale;
+		m_time_last_abscissa = dlg.m_lastAbcissa * dlg.m_abcissaScale;
+		m_ChartDataWnd.get_data_from_doc(static_cast<long>(m_time_first_abscissa * m_samplingRate),
+		                              static_cast<long>(m_time_last_abscissa * m_samplingRate));
+		update_legends(UPD_ABSCISSA | UPD_X_SCALE | CHG_X_BAR);
 	}
 }
 
-void ViewData::ComputePrinterPageSize()
+void ViewData::compute_printer_page_size()
 {
 	// magic to get printer dialog that would be used if we were printing!
 	CPrintDialog dlg(FALSE);
@@ -1203,7 +1203,7 @@ void ViewData::ComputePrinterPageSize()
 	m_print_rect_.top = options_view_data->topPageMargin;
 }
 
-void ViewData::PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo)
+void ViewData::print_file_bottom_page(CDC* p_dc, CPrintInfo* pInfo)
 {
 	auto t = CTime::GetCurrentTime();
 	TCHAR ch[256];
@@ -1211,29 +1211,29 @@ void ViewData::PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo)
 	         pInfo->m_nCurPage, pInfo->GetMaxPage(),
 	         t.GetDay(), t.GetMonth(), t.GetYear());
 
-	auto cs_dat_file = GetDocument()->db_get_current_dat_file_name();
-	const auto icount = cs_dat_file.ReverseFind(_T('\\'));
-	auto ch_date = cs_dat_file.Left(icount);
+	const auto cs_dat_file = GetDocument()->db_get_current_dat_file_name();
+	const auto i_count = cs_dat_file.ReverseFind(_T('\\'));
+	auto ch_date = cs_dat_file.Left(i_count);
 	ch_date = ch_date.Left(ch_date.GetLength() - 1) + ch;
 	p_dc->SetTextAlign(TA_CENTER);
 	p_dc->TextOut(options_view_data->horzRes / 2, options_view_data->vertRes - 57, ch_date);
 }
 
-CString ViewData::convert_file_index(long l_first, long l_last)
+CString ViewData::convert_file_index(const long l_first, const long l_last) const
 {
-	CString csUnit = _T(" s"); // get time,  prepare time unit
+	CString cs_unit = _T(" s"); 
 
-	TCHAR sz_value[64]; // buffer to receive ascii represent of values
+	TCHAR sz_value[64]; 
 	const auto psz_value = sz_value;
-	float x_scale_factor; // scale factor returned by changeunit
-	auto x = CNiceUnit::change_unit(static_cast<float>(l_first) / m_samplingRate, &csUnit, &x_scale_factor);
-	auto fraction = static_cast<int>((x - static_cast<int>(x)) * static_cast<float>(1000.)); // separate fractional part
-	wsprintf(psz_value, _T("time = %i.%03.3i - "), static_cast<int>(x), fraction); // print value
-	CString cs_comment = psz_value; // save ascii to string
+	float x_scale_factor; 
+	auto x = CNiceUnit::change_unit(static_cast<float>(l_first) / m_samplingRate, &cs_unit, &x_scale_factor);
+	auto fraction = static_cast<int>((x - static_cast<int>(x)) * static_cast<float>(1000.)); 
+	wsprintf(psz_value, _T("time = %i.%03.3i - "), static_cast<int>(x), fraction); 
+	CString cs_comment = psz_value;
 
-	x = l_last / (m_samplingRate * x_scale_factor); // same operations for last interval
+	x = static_cast<float>(l_last) / (m_samplingRate * x_scale_factor);
 	fraction = static_cast<int>((x - static_cast<int>(x)) * static_cast<float>(1000.));
-	wsprintf(psz_value, _T("%i.%03.3i %s"), static_cast<int>(x), fraction, static_cast<LPCTSTR>(csUnit));
+	wsprintf(psz_value, _T("%i.%03.3i %s"), static_cast<int>(x), fraction, static_cast<LPCTSTR>(cs_unit));
 	cs_comment += psz_value;
 	return cs_comment;
 }
@@ -1241,7 +1241,7 @@ CString ViewData::convert_file_index(long l_first, long l_last)
 BOOL ViewData::get_file_series_index_from_page(int page, int& file_number, long& l_first)
 {
 	// loop until we get all rows
-	const auto totalrows = m_nb_rows_per_page_ * (page - 1);
+	const auto total_rows = m_nb_rows_per_page_ * (page - 1);
 	l_first = m_l_print_first_;
 	file_number = 0; // file list index
 	if (options_view_data->bPrintSelection) // current file if selection only
@@ -1253,9 +1253,9 @@ BOOL ViewData::get_file_series_index_from_page(int page, int& file_number, long&
 	if (options_view_data->bEntireRecord)
 		very_last = m_p_dat_Doc->get_doc_channel_length() - 1;
 
-	for (auto row = 0; row < totalrows; row++)
+	for (auto row = 0; row < total_rows; row++)
 	{
-		if (!PrintGetNextRow(file_number, l_first, very_last))
+		if (!print_get_next_row(file_number, l_first, very_last))
 			break;
 	}
 
@@ -1269,7 +1269,7 @@ CString ViewData::get_file_infos()
 	const CString rc(_T("\n")); // next line
 
 	// document's name, date and time
-	const auto pwave_format = m_p_dat_Doc->get_waveformat();
+	const auto wave_format = m_p_dat_Doc->get_wave_format();
 	if (options_view_data->bDocName || options_view_data->bAcqDateTime) // print doc infos?
 	{
 		if (options_view_data->bDocName) // print file name
@@ -1278,7 +1278,7 @@ CString ViewData::get_file_infos()
 		}
 		if (options_view_data->bAcqDateTime) // print data acquisition date & time
 		{
-			const auto date = pwave_format->acquisition_time.Format(_T("%#d %B %Y %X")); //("%c");
+			const auto date = wave_format->acquisition_time.Format(_T("%#d %B %Y %X")); //("%c");
 			str_comment += date;
 		}
 		str_comment += rc;
@@ -1286,12 +1286,12 @@ CString ViewData::get_file_infos()
 
 	// document's main comment (print on multiple lines if necessary)
 	if (options_view_data->bAcqComment)
-		str_comment += pwave_format->get_comments(_T(" ")) + rc;
+		str_comment += wave_format->get_comments(_T(" ")) + rc;
 
 	return str_comment;
 }
 
-CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
+CString ViewData::print_bars(CDC* p_dc, const CRect* rect)
 {
 	CString str_comment;
 	const CString rc(_T("\n"));
@@ -1303,24 +1303,24 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 	CString cs_unit;
 	float x_scale_factor;
 	CPoint bar_origin(-10, -10); // origine barre à 10,10 pts de coin inf gauche rectangle
-	bar_origin.x += prect->left;
-	bar_origin.y += prect->bottom;
-	auto xbar_end = bar_origin;
-	auto ybar_end = bar_origin;
+	bar_origin.x += rect->left;
+	bar_origin.y += rect->bottom;
+	auto x_bar_end = bar_origin;
+	auto y_bar_end = bar_origin;
 
-	// same len ratio as displayed on viewdata
-	const auto horz_bar = m_ChartDataWnd.x_ruler.GetScaleUnitPixels(m_ChartDataWnd.get_rect_width());
-	ASSERT(horz_bar > 0);
+	// same len ratio as displayed on view_data
+	const auto horizontal_bar = m_ChartDataWnd.x_ruler.GetScaleUnitPixels(m_ChartDataWnd.get_rect_width());
+	ASSERT(horizontal_bar > 0);
 	const auto vert_bar = m_ChartDataWnd.y_ruler.GetScaleUnitPixels(m_ChartDataWnd.get_rect_height());
 	ASSERT(vert_bar > 0);
 
-	auto cs_comment = convert_file_index(m_ChartDataWnd.GetDataFirstIndex(), m_ChartDataWnd.GetDataLastIndex());
+	auto cs_comment = convert_file_index(m_ChartDataWnd.get_data_first_index(), m_ChartDataWnd.get_data_last_index());
 	if (options_view_data->bTimeScaleBar)
 	{
 		// print horizontal bar
-		xbar_end.x += horz_bar;
+		x_bar_end.x += horizontal_bar;
 		p_dc->MoveTo(bar_origin);
-		p_dc->LineTo(xbar_end);
+		p_dc->LineTo(x_bar_end);
 
 		// read text from control edit
 		CString cs;
@@ -1331,26 +1331,26 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 
 	if (options_view_data->bVoltageScaleBar)
 	{
-		ybar_end.y -= vert_bar;
+		y_bar_end.y -= vert_bar;
 		p_dc->MoveTo(bar_origin);
-		p_dc->LineTo(ybar_end);
+		p_dc->LineTo(y_bar_end);
 	}
 
 	// comments, bar value and chan settings for each channel
 	if (options_view_data->bChansComment || options_view_data->bVoltageScaleBar || options_view_data->bChanSettings)
 	{
 		const auto imax = m_ChartDataWnd.get_channel_list_size(); // number of data channels
-		for (auto ichan = 0; ichan < imax; ichan++) // loop
+		for (auto i_chan = 0; i_chan < imax; i_chan++) // loop
 		{
 			// boucler sur les commentaires de chan n a chan 0...
-			wsprintf(lpsz_val, _T("chan#%i "), ichan); // channel number
+			wsprintf(lpsz_val, _T("chan#%i "), i_chan); // channel number
 			cs_comment = lpsz_val;
 			if (options_view_data->bVoltageScaleBar) // bar scale value
 			{
 				cs_unit = _T(" V"); // provisional unit
 				auto z = static_cast<float>(m_ChartDataWnd.get_rect_height()) / 5
-					* m_ChartDataWnd.get_channel_list_volts_per_pixel(ichan);
-				auto x = CNiceUnit::change_unit(z, &cs_unit, &x_scale_factor); // convert
+					* m_ChartDataWnd.get_channel_list_volts_per_pixel(i_chan);
+				const auto x = CNiceUnit::change_unit(z, &cs_unit, &x_scale_factor); 
 
 				// approximate
 				auto j = static_cast<int>(x); // get int value
@@ -1375,7 +1375,7 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 			if (options_view_data->bChansComment)
 			{
 				str_comment += tab;
-				str_comment += m_ChartDataWnd.get_channel_list_item(ichan)->GetComment();
+				str_comment += m_ChartDataWnd.get_channel_list_item(i_chan)->GetComment();
 			}
 			str_comment += rc;
 
@@ -1383,11 +1383,11 @@ CString ViewData::PrintBars(CDC* p_dc, CRect* prect)
 			if (options_view_data->bChanSettings)
 			{
 				CString cs;
-				const WORD channb = m_ChartDataWnd.get_channel_list_item(ichan)->GetSourceChan();
-				const auto pchanArray = m_p_dat_Doc->get_wavechan_array();
-				const auto pChan = pchanArray->get_p_channel(channb);
-				cs.Format(_T("headstage=%s gain=%.0f  filter= %s - %i Hz"), (LPCTSTR)pChan->am_csheadstage,
-				          pChan->am_gaintotal, (LPCTSTR)pChan->am_csInputpos, pChan->am_lowpass);
+				const WORD chan_count = m_ChartDataWnd.get_channel_list_item(i_chan)->GetSourceChan();
+				const auto channels_array = m_p_dat_Doc->get_wave_channels_array();
+				const auto p_chan = channels_array->get_p_channel(chan_count);
+				cs.Format(_T("headstage=%s gain=%.0f  filter= %s - %i Hz"), (LPCTSTR)p_chan->am_csheadstage,
+				          p_chan->am_gaintotal, (LPCTSTR)p_chan->am_csInputpos, p_chan->am_lowpass);
 				str_comment += cs;
 				str_comment += rc;
 			}
@@ -1404,7 +1404,7 @@ BOOL ViewData::OnPreparePrinting(CPrintInfo* pInfo)
 		|| options_view_data->horzRes <= 0 // horizontal resolution defined?
 		|| options_view_data->horzRes != pInfo->m_rectDraw.Width() // same as infos provided
 		|| options_view_data->vertRes != pInfo->m_rectDraw.Height()) // by caller?
-		ComputePrinterPageSize();
+		compute_printer_page_size();
 
 	auto npages = print_get_n_pages();
 	pInfo->SetMaxPage(npages); //one page printing/preview
@@ -1442,8 +1442,8 @@ int ViewData::print_get_n_pages()
 	auto p_dbwave_doc = GetDocument();
 
 	// compute number of rows according to bmultirow & bentirerecord flag
-	m_l_print_first_ = m_ChartDataWnd.GetDataFirstIndex();
-	m_l_print_len_ = m_ChartDataWnd.GetDataLastIndex() - m_l_print_first_ + 1;
+	m_l_print_first_ = m_ChartDataWnd.get_data_first_index();
+	m_l_print_len_ = m_ChartDataWnd.get_data_last_index() - m_l_print_first_ + 1;
 	m_file_0_ = GetDocument()->db_get_current_record_position();
 	ASSERT(m_file_0_ >= 0);
 	m_files_count_ = 1;
@@ -1500,8 +1500,8 @@ int ViewData::print_get_n_pages()
 void ViewData::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_b_is_printing_ = TRUE;
-	m_l_first_0_ = m_ChartDataWnd.GetDataFirstIndex();
-	m_l_last0_ = m_ChartDataWnd.GetDataLastIndex();
+	m_l_first_0_ = m_ChartDataWnd.get_data_first_index();
+	m_l_last0_ = m_ChartDataWnd.get_data_last_index();
 	m_pixels_count_0_ = m_ChartDataWnd.get_rect_width();
 
 	//---------------------init objects-------------------------------------
@@ -1529,7 +1529,7 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	//RW2.OffsetRect(-RWhere.left, -RWhere.top);			// set RW2 origin = 0,0
 
 	p_dc->SetMapMode(MM_TEXT); // change map mode to text (1 pixel = 1 logical point)
-	PrintFileBottomPage(p_dc, pInfo); // print bottom - text, date, etc
+	print_file_bottom_page(p_dc, pInfo); // print bottom - text, date, etc
 
 	// --------------------- load data corresponding to the first row of current page
 	int filenumber; // file number and file index
@@ -1566,7 +1566,7 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 				l_last = very_last;
 			m_ChartDataWnd.get_data_from_doc(l_first, l_last); // load data from file
 			update_channels_display_parameters();
-			m_ChartDataWnd.Print(p_dc, &r_where); // print data
+			m_ChartDataWnd.print(p_dc, &r_where); // print data
 		}
 
 		// update display rectangle for next row
@@ -1582,10 +1582,10 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		if (l_first == m_l_print_first_) // first row = full comment
 		{
 			cs_comment += get_file_infos();
-			cs_comment += PrintBars(p_dc, &comment_rect); // bars and bar legends
+			cs_comment += print_bars(p_dc, &comment_rect); // bars and bar legends
 		}
 		else // other rows: time intervals only
-			cs_comment = convert_file_index(m_ChartDataWnd.GetDataFirstIndex(), m_ChartDataWnd.GetDataLastIndex());
+			cs_comment = convert_file_index(m_ChartDataWnd.get_data_first_index(), m_ChartDataWnd.get_data_last_index());
 
 		// print comments stored into cs_comment
 		comment_rect.OffsetRect(options_view_data->textseparator + comment_rect.Width(), 0);
@@ -1599,7 +1599,7 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		// update file parameters for next row --------------------------------------------
 		const auto ifile = filenumber;
-		if (!PrintGetNextRow(filenumber, l_first, very_last))
+		if (!print_get_next_row(filenumber, l_first, very_last))
 		{
 			i = m_nb_rows_per_page_;
 			break;
@@ -1615,7 +1615,7 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	*p_newparms = oldparms;
 }
 
-BOOL ViewData::PrintGetNextRow(int& file_number, long& l_first, long& very_last)
+BOOL ViewData::print_get_next_row(int& file_number, long& l_first, long& very_last)
 {
 	if (!options_view_data->bMultirowDisplay || !options_view_data->bEntireRecord)
 	{
@@ -1657,41 +1657,41 @@ void ViewData::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	update_file_parameters();
 }
 
-void ViewData::OnEnChangeTimefirst()
+void ViewData::on_en_change_time_first()
 {
-	if (mm_time_first_abcissa.m_bEntryDone)
+	if (mm_time_first_abscissa.m_bEntryDone)
 	{
-		mm_time_first_abcissa.OnEnChange(this, m_time_first_abcissa, 1.f, -1.f);
-		m_ChartDataWnd.get_data_from_doc(static_cast<long>(m_time_first_abcissa * m_samplingRate),
-		                              static_cast<long>(m_time_last_abcissa * m_samplingRate));
-		UpdateLegends(UPD_ABSCISSA | CHG_X_SCALE);
+		mm_time_first_abscissa.OnEnChange(this, m_time_first_abscissa, 1.f, -1.f);
+		m_ChartDataWnd.get_data_from_doc(static_cast<long>(m_time_first_abscissa * m_samplingRate),
+		                              static_cast<long>(m_time_last_abscissa * m_samplingRate));
+		update_legends(UPD_ABSCISSA | CHG_X_SCALE);
 		m_ChartDataWnd.Invalidate();
 	}
 }
 
-void ViewData::OnEnChangeTimelast()
+void ViewData::on_en_change_time_last()
 {
-	if (mm_time_last_abcissa.m_bEntryDone)
+	if (mm_time_last_abscissa.m_bEntryDone)
 	{
-		mm_time_last_abcissa.OnEnChange(this, m_time_last_abcissa, 1.f, -1.f);
-		m_ChartDataWnd.get_data_from_doc(static_cast<long>(m_time_first_abcissa * m_samplingRate),
-		                              static_cast<long>(m_time_last_abcissa * m_samplingRate));
-		UpdateLegends(UPD_ABSCISSA | CHG_X_SCALE);
+		mm_time_last_abscissa.OnEnChange(this, m_time_last_abscissa, 1.f, -1.f);
+		m_ChartDataWnd.get_data_from_doc(static_cast<long>(m_time_first_abscissa * m_samplingRate),
+		                              static_cast<long>(m_time_last_abscissa * m_samplingRate));
+		update_legends(UPD_ABSCISSA | CHG_X_SCALE);
 		m_ChartDataWnd.Invalidate();
 	}
 }
 
-void ViewData::UpdateFileScroll()
+void ViewData::update_file_scroll()
 {
 	m_file_scroll_bar_infos.fMask = SIF_ALL | SIF_PAGE | SIF_POS;
 	m_file_scroll_bar_infos.nMin = 0;
 	m_file_scroll_bar_infos.nMax = GetDocument()->db_get_data_len();
-	m_file_scroll_bar_infos.nPos = m_ChartDataWnd.GetDataFirstIndex();
-	m_file_scroll_bar_infos.nPage = m_ChartDataWnd.GetDataLastIndex() - m_ChartDataWnd.GetDataFirstIndex() + 1;
+	m_file_scroll_bar_infos.nPos = m_ChartDataWnd.get_data_first_index();
+	m_file_scroll_bar_infos.nPage = m_ChartDataWnd.get_data_last_index() - m_ChartDataWnd.get_data_first_index() + 1;
 	m_file_scroll_bar.SetScrollInfo(&m_file_scroll_bar_infos);
 }
 
-void ViewData::OnCbnSelchangeCombochan()
+void ViewData::on_cbn_sel_change_combo_chan()
 {
 	const auto ichan = m_comboSelectChan.GetCurSel();
 	if (ichan < m_ChartDataWnd.get_channel_list_size())
@@ -1705,30 +1705,30 @@ void ViewData::OnCbnSelchangeCombochan()
 		m_channel_selected = 0;
 		CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(0);
 		const auto yextent = pchan->GetYextent();
-		UpdateYExtent(0, yextent);
+		update_y_extent(0, yextent);
 		const auto yzero = pchan->GetYzero();
-		UpdateYZero(0, yzero);
+		update_y_zero(0, yzero);
 	}
 }
 
-void ViewData::UpdateYExtent(int ichan, int yextent)
+void ViewData::update_y_extent(int i_chan, int y_extent)
 {
-	CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(ichan);
-	pchan->SetYextent(yextent);
+	CChanlistItem* pchan = m_ChartDataWnd.get_channel_list_item(i_chan);
+	pchan->SetYextent(y_extent);
 	if (m_comboSelectChan.GetCurSel() == m_ChartDataWnd.get_channel_list_size())
 	{
-		const auto yVoltsextent = pchan->GetVoltsperDataBin() * yextent;
+		const auto yVoltsextent = pchan->GetVoltsperDataBin() * y_extent;
 		m_ChartDataWnd.set_channel_list_volts_extent(-1, &yVoltsextent);
 	}
 }
 
-void ViewData::UpdateYZero(int ichan, int ybias)
+void ViewData::update_y_zero(int i_chan, int y_bias)
 {
-	CChanlistItem* chan = m_ChartDataWnd.get_channel_list_item(ichan);
-	chan->SetYzero(ybias);
+	CChanlistItem* chan = m_ChartDataWnd.get_channel_list_item(i_chan);
+	chan->SetYzero(y_bias);
 	if (m_comboSelectChan.GetCurSel() == m_ChartDataWnd.get_channel_list_size())
 	{
-		const auto yVoltsextent = chan->GetVoltsperDataBin() * ybias;
+		const auto yVoltsextent = chan->GetVoltsperDataBin() * y_bias;
 		m_ChartDataWnd.set_channel_list_volts_zero(-1, &yVoltsextent);
 	}
 }

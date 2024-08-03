@@ -2676,7 +2676,7 @@ BEGIN
     END
     POPUP "H&ardware"
     BEGIN
-        MENUITEM "&Input channels...",          ID_HARDWARE_AD_CHANNELS
+        MENUITEM "&Input channels...",          ID_HARDWARE_ADCHANNELS
         MENUITEM "Sampling &duration...",       ID_HARDWARE_AD_INTERVALS
         MENUITEM SEPARATOR
         MENUITEM "&Experiment...",              ID_HARDWARE_DEFINE_EXPERIMENT
@@ -2702,7 +2702,7 @@ BEGIN
         MENUITEM "Edit stim&ulus ...",          ID_TOOLS_EDIT_STIMULUS, INACTIVE
         MENUITEM SEPARATOR
         MENUITEM "Measu&re mode...",            ID_TOOLS_MEASURE_MODE
-        MENUITEM "&Vertical tags...",           ID_TOOLS_VERTICAL_TAGS
+        MENUITEM "&Vertical cursors...",        ID_TOOLS_VERTICAL_TAGS
         MENUITEM "&Horizontal cursors...",      ID_TOOLS_HORIZONTAL_CURSORS
         MENUITEM "&Measure!",                   ID_TOOLS_MEASURE
     END
@@ -3834,7 +3834,7 @@ BEGIN
     ID_VIEW_CURSOR_MODE_NORMAL 
                             "Normal mouse cursor - select curve and move up/down by dragging, drag curve lef/right, right click = screen properties"
     ID_TOOLS_MEASURE_MODE   "Define measure parameters"
-    ID_TOOLS_VERTICAL_TAGS  "Add, remove vertical tags...."
+    ID_TOOLS_VERTICAL_TAGS  "Add, remove vertical cursors...."
     ID_TOOLS_HORIZONTAL_CURSORS "Add, remove horizontal cursors..."
     ID_FORMAT_SET_ORDINATES "Scale vertical axis"
     ID_TOOLS_EXPORT_NUMBER_OF_SPIKES "Export spikes to a text document"

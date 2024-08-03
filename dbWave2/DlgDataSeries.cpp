@@ -45,8 +45,8 @@ BOOL DlgDataSeries::OnInitDialog()
 		m_listseries.AddString(m_pChartDataWnd->get_channel_list_item(i)->GetComment());
 
 	// doc channel comments
-	chanmax = (m_pdbDoc->get_waveformat())->scan_count;
-	const auto pchan_array = m_pdbDoc->get_wavechan_array();
+	chanmax = (m_pdbDoc->get_wave_format())->scan_count;
+	const auto pchan_array = m_pdbDoc->get_wave_channels_array();
 	for (i = 0; i < chanmax; i++)
 		m_ordinates.AddString(pchan_array->get_p_channel(i)->am_csComment);
 

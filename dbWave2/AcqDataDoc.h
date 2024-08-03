@@ -91,8 +91,8 @@ public:
 	long get_buffer_channel_index(long lPos) const { return (lPos - m_lBUFchanFirst); }
 	long get_buffer_channel_length() const { return m_lBUFchanSize; }
 
-	CWaveChanArray* get_wavechan_array() const { return &m_pWBuf->m_chanArray; }
-	CWaveFormat* get_waveformat() const { return &m_pWBuf->m_waveFormat; }
+	CWaveChanArray* get_wave_channels_array() const { return &m_pWBuf->m_chanArray; }
+	CWaveFormat* get_wave_format() const { return &m_pWBuf->m_waveFormat; }
 	TagList* get_hz_tags_list() const { return m_pWBuf->GetpHZtags(); }
 	TagList* get_vt_tags_list() const { return m_pWBuf->GetpVTtags(); }
 

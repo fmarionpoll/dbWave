@@ -184,8 +184,8 @@ void ViewSpikeDetection::OnActivateView(BOOL activate, CView* activated_view, CV
 
 void ViewSpikeDetection::update_legends()
 {
-	const auto l_first = m_chart_data_source.GetDataFirstIndex();
-	const auto l_last = m_chart_data_source.GetDataLastIndex();
+	const auto l_first = m_chart_data_source.get_data_first_index();
+	const auto l_last = m_chart_data_source.get_data_last_index();
 	m_chart_data_filtered.get_data_from_doc(l_first, l_last);
 
 	// draw charts
@@ -347,7 +347,7 @@ BOOL ViewSpikeDetection::check_detection_settings()
 	// get infos from data file
 	const auto data_file = GetDocument()->m_p_dat;
 	data_file->read_data_infos();
-	const auto wave_format = data_file->get_waveformat();
+	const auto wave_format = data_file->get_wave_format();
 
 	// check detection and extraction channels
 	if (m_p_detect_parameters->detect_channel < 0
@@ -376,7 +376,7 @@ boolean ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 		return false;
 
 	p_data_file->read_data_infos();
-	const auto wave_format = p_data_file->get_waveformat();
+	const auto wave_format = p_data_file->get_wave_format();
 
 	// if the number of data channels of the data source has changed, load a new set of parameters
 	// keep one array of spike detection parameters per data acquisition configuration (ie nb of acquisition channels)
@@ -403,8 +403,8 @@ boolean ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 		update_combos_detect_and_transforms();
 	}
 	// change doc attached to line view
-	m_chart_data_filtered.AttachDataFile(p_data_file);
-	m_chart_data_source.AttachDataFile(p_data_file);
+	m_chart_data_filtered.attach_data_file(p_data_file);
+	m_chart_data_source.attach_data_file(p_data_file);
 
 	// update source view display
 	if (m_chart_data_filtered.get_channel_list_size() < 1)
@@ -445,8 +445,8 @@ boolean ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 	}
 
 	// if browse through another file ; keep previous display parameters & load data
-	auto l_first = m_chart_data_filtered.GetDataFirstIndex();
-	auto l_last = m_chart_data_filtered.GetDataLastIndex();
+	auto l_first = m_chart_data_filtered.get_data_first_index();
+	auto l_last = m_chart_data_filtered.get_data_last_index();
 	if (options_view_data->bEntireRecord && bUpdateInterface)
 	{
 		l_first = 0;
@@ -462,9 +462,9 @@ boolean ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 		// adjust scroll bar (size of button and left/right limits)
 		m_filescroll_infos.fMask = SIF_ALL;
 		m_filescroll_infos.nMin = 0;
-		m_filescroll_infos.nMax = m_chart_data_filtered.GetDataLastIndex();
+		m_filescroll_infos.nMax = m_chart_data_filtered.get_data_last_index();
 		m_filescroll_infos.nPos = 0;
-		m_filescroll_infos.nPage = m_chart_data_filtered.GetDataLastIndex() - m_chart_data_filtered.GetDataFirstIndex() + 1;
+		m_filescroll_infos.nPage = m_chart_data_filtered.get_data_last_index() - m_chart_data_filtered.get_data_first_index() + 1;
 		m_filescroll.SetScrollInfo(&m_filescroll_infos);
 
 		m_datacomments = wave_format->get_comments(_T(" "));
@@ -478,8 +478,8 @@ void ViewSpikeDetection::update_combos_detect_and_transforms()
 {
 	const auto db_document = GetDocument();
 	const auto p_data_file = db_document->m_p_dat;
-	const auto channel_array = p_data_file->get_wavechan_array();
-	const auto wave_format = p_data_file->get_waveformat();
+	const auto channel_array = p_data_file->get_wave_channels_array();
+	const auto wave_format = p_data_file->get_wave_format();
 
 	// load channel names
 	CString comment;
@@ -683,8 +683,8 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 	case HINT_VIEW_SIZE_CHANGED:
 		if (i_id == m_chart_data_source.GetDlgCtrlID())
 		{
-			const auto l_first = m_chart_data_source.GetDataFirstIndex(); // get source data time range
-			const auto l_last = m_chart_data_source.GetDataLastIndex();
+			const auto l_first = m_chart_data_source.get_data_first_index(); // get source data time range
+			const auto l_last = m_chart_data_source.get_data_last_index();
 			m_chart_data_filtered.get_data_from_doc(l_first, l_last);
 		}
 		// else if(iID == m_displayDetect.GetDlgCtrlID())
@@ -703,8 +703,8 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 		if (m_cursor_state == CURSOR_CROSS)
 		{
 			const auto rect = m_chart_data_filtered.get_defined_rect();
-			int l_limit_left = m_chart_data_filtered.GetDataOffsetfromPixel(rect.left);
-			int l_limit_right = m_chart_data_filtered.GetDataOffsetfromPixel(rect.right);
+			int l_limit_left = m_chart_data_filtered.get_data_offset_from_pixel(rect.left);
+			int l_limit_right = m_chart_data_filtered.get_data_offset_from_pixel(rect.right);
 			if (l_limit_left > l_limit_right)
 			{
 				const int i = l_limit_right;
@@ -752,7 +752,7 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 	case HINT_L_MOUSE_BUTTON_DOWN_CTRL:
 		{
 			const int cx = LOWORD(lParam);
-			const int l_limit_left = m_chart_data_filtered.GetDataOffsetfromPixel(cx);
+			const int l_limit_left = m_chart_data_filtered.get_data_offset_from_pixel(cx);
 			m_pSpkDoc->m_stimulus_intervals.SetAtGrow(m_pSpkDoc->m_stimulus_intervals.n_items, l_limit_left);
 			m_pSpkDoc->m_stimulus_intervals.n_items++;
 			update_VT_tags();
@@ -859,8 +859,8 @@ void ViewSpikeDetection::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollB
 void ViewSpikeDetection::update_file_scroll()
 {
 	m_filescroll_infos.fMask = SIF_PAGE | SIF_POS;
-	m_filescroll_infos.nPos = m_chart_data_filtered.GetDataFirstIndex();
-	m_filescroll_infos.nPage = m_chart_data_filtered.GetDataLastIndex() - m_chart_data_filtered.GetDataFirstIndex() + 1;
+	m_filescroll_infos.nPos = m_chart_data_filtered.get_data_first_index();
+	m_filescroll_infos.nPage = m_chart_data_filtered.get_data_last_index() - m_chart_data_filtered.get_data_first_index() + 1;
 	m_filescroll.SetScrollInfo(&m_filescroll_infos);
 }
 
@@ -881,7 +881,7 @@ void ViewSpikeDetection::scroll_file(UINT nSBCode, UINT nPos)
 	case SB_THUMBPOSITION: // scroll to pos = nPos
 	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
 		b_result = m_chart_data_source.get_data_from_doc(
-			static_cast<long>(nPos) * (m_chart_data_source.GetDocumentLast()) / 100L);
+			static_cast<long>(nPos) * (m_chart_data_source.get_document_last()) / 100L);
 		break;
 	default: // NOP: set position only
 		break;
@@ -1021,7 +1021,7 @@ void ViewSpikeDetection::OnSelchangeDetectchan()
 	m_p_detect_parameters->detect_threshold_bin = channel_list_item->ConvertVoltsToDataBins(m_p_detect_parameters->detect_threshold_mv / 1000.f);
 	m_chart_data_filtered.move_hz_tag_to_val(0, m_p_detect_parameters->detect_threshold_bin);
 	m_chart_data_filtered.get_data_from_doc();
-	m_chart_data_filtered.AutoZoomChan(0);
+	m_chart_data_filtered.auto_zoom_chan(0);
 	m_chart_data_filtered.Invalidate();
 }
 
@@ -1032,7 +1032,7 @@ void ViewSpikeDetection::OnSelchangeTransform()
 	m_p_detect_parameters->b_changed = TRUE;
 	m_chart_data_filtered.set_channel_list_transform_mode(0, m_p_detect_parameters->detect_transform);
 	m_chart_data_filtered.get_data_from_doc();
-	m_chart_data_filtered.AutoZoomChan(0);
+	m_chart_data_filtered.auto_zoom_chan(0);
 	m_chart_data_filtered.Invalidate();
 	update_legend_detection_wnd();
 }
@@ -1065,7 +1065,7 @@ void ViewSpikeDetection::detect_all(BOOL bAll)
 	const auto p_dat = db_document->m_p_dat;
 	if (p_dat == nullptr)
 		return;
-	const auto wave_format = p_dat->get_waveformat();
+	const auto wave_format = p_dat->get_wave_format();
 	const auto chan_max = wave_format->scan_count - 1;
 	for (auto i = 0; i < m_spk_detect_array_current.GetSize(); i++)
 	{
@@ -1173,8 +1173,8 @@ int ViewSpikeDetection::detect_stimulus_1(int channel_index)
 	auto b_save_on = FALSE;
 
 	// get data detection limits and clip limits according to size of spikes
-	auto l_data_first = m_chart_data_filtered.GetDataFirstIndex();
-	const auto l_data_last = m_chart_data_filtered.GetDataLastIndex();
+	auto l_data_first = m_chart_data_filtered.get_data_first_index();
+	const auto l_data_last = m_chart_data_filtered.get_data_last_index();
 
 	// plot progress dialog box
 	DlgProgress dlg;
@@ -1307,8 +1307,8 @@ int ViewSpikeDetection::detect_method_1(WORD channel_index)
 		b_cross_upw = FALSE;
 
 	// get data detection limits and clip limits according to size of spikes
-	auto l_data_first = m_chart_data_filtered.GetDataFirstIndex(); // index first pt to test
-	auto l_data_last = m_chart_data_filtered.GetDataLastIndex(); // index last pt to test
+	auto l_data_first = m_chart_data_filtered.get_data_first_index(); // index first pt to test
+	auto l_data_last = m_chart_data_filtered.get_data_last_index(); // index last pt to test
 	if (l_data_first < pre_threshold + span)
 		l_data_first = static_cast<long>(pre_threshold) + span;
 	if (l_data_last > p_dat->get_doc_channel_length() - post_threshold - span)
@@ -1605,17 +1605,17 @@ void ViewSpikeDetection::align_display_to_current_spike()
 		return;
 
 	const auto l_spike_time = m_pSpkList->get_spike(m_spike_index)->get_time();
-	if (l_spike_time < m_chart_data_filtered.GetDataFirstIndex()
-		|| l_spike_time > m_chart_data_filtered.GetDataLastIndex())
+	if (l_spike_time < m_chart_data_filtered.get_data_first_index()
+		|| l_spike_time > m_chart_data_filtered.get_data_last_index())
 	{
-		const auto l_size = m_chart_data_filtered.GetDataLastIndex() - m_chart_data_filtered.GetDataFirstIndex();
+		const auto l_size = m_chart_data_filtered.get_data_last_index() - m_chart_data_filtered.get_data_first_index();
 		auto l_first = l_spike_time - l_size / 2;
 		if (l_first < 0)
 			l_first = 0;
 		auto l_last = l_first + l_size - 1;
-		if (l_last > m_chart_data_filtered.GetDocumentLast())
+		if (l_last > m_chart_data_filtered.get_document_last())
 		{
-			l_last = m_chart_data_filtered.GetDocumentLast();
+			l_last = m_chart_data_filtered.get_document_last();
 			l_first = l_last - l_size + 1;
 		}
 		m_chart_data_filtered.get_data_from_doc(l_first, l_last);
@@ -1792,7 +1792,7 @@ void ViewSpikeDetection::PrintDataCartridge(CDC* p_dc, ChartData* pDataChartWnd,
 	SCOPESTRUCT* p_struct = pDataChartWnd->get_scope_parameters();
 	const auto b_draw_f = p_struct->bDrawframe;
 	p_struct->bDrawframe = TRUE;
-	pDataChartWnd->Print(p_dc, prect, (options_view_data->bcontours == 1));
+	pDataChartWnd->print(p_dc, prect, (options_view_data->bcontours == 1));
 	p_struct->bDrawframe = b_draw_f;
 
 	// data vertical and horizontal bars
@@ -1961,7 +1961,7 @@ void ViewSpikeDetection::OnSelchangeDetectMode()
 	update_combo_box();
 	update_legend_detection_wnd();
 	m_chart_data_filtered.get_data_from_doc();
-	m_chart_data_filtered.AutoZoomChan(0);
+	m_chart_data_filtered.auto_zoom_chan(0);
 	m_chart_data_filtered.Invalidate();
 }
 
@@ -2125,7 +2125,7 @@ CString ViewSpikeDetection::PrintGetFileInfos()
 
 	// document's name, date and time
 	const auto p_data_file = GetDocument()->m_p_dat;
-	const auto wave_format = p_data_file->get_waveformat();
+	const auto wave_format = p_data_file->get_wave_format();
 	if (options_view_data->bDocName || options_view_data->bAcqDateTime)
 	{
 		if (options_view_data->bDocName) 
@@ -2157,7 +2157,7 @@ CString ViewSpikeDetection::PrintDataBars(CDC* p_dc, ChartData* pDataChartWnd, c
 	auto i_horizontal_bar = pDataChartWnd->get_rect_width() / 10; // initial horizontal bar length 1/10th of display rect
 	auto i_vertical_bar = pDataChartWnd->get_rect_height() / 3; // initial vertical bar height 1/3rd  of display rect
 
-	auto str_comment = PrintConvertFileIndex(pDataChartWnd->GetDataFirstIndex(), pDataChartWnd->GetDataLastIndex());
+	auto str_comment = PrintConvertFileIndex(pDataChartWnd->get_data_first_index(), pDataChartWnd->get_data_last_index());
 
 	///// horizontal time bar ///////////////////////////
 	if (options_view_data->bTimeScaleBar)
@@ -2229,7 +2229,7 @@ CString ViewSpikeDetection::PrintDataBars(CDC* p_dc, ChartData* pDataChartWnd, c
 			if (options_view_data->bChanSettings)
 			{
 				const auto source_channel = channel_item->GetSourceChan();
-				const auto wave_chan_array = GetDocument()->m_p_dat->get_wavechan_array();
+				const auto wave_chan_array = GetDocument()->m_p_dat->get_wave_channels_array();
 				const auto p_chan = wave_chan_array->get_p_channel(source_channel);
 				cs.Format(_T("headstage=%s  g=%li LP=%i  IN+=%s  IN-=%s"),
 					(LPCTSTR)p_chan->am_csheadstage, static_cast<long>(p_chan->am_gaintotal), p_chan->am_lowpass,
@@ -2420,8 +2420,8 @@ int ViewSpikeDetection::PrintGetNPages()
 	const auto p_document = GetDocument();
 
 	// compute number of rows according to b_multi_row & b_entire_record flag
-	m_l_print_first_ = m_chart_data_filtered.GetDataFirstIndex();
-	m_l_print_len_ = m_chart_data_filtered.GetDataLastIndex() - m_l_print_first_ + 1;
+	m_l_print_first_ = m_chart_data_filtered.get_data_first_index();
+	m_l_print_len_ = m_chart_data_filtered.get_data_last_index() - m_l_print_first_ + 1;
 	m_file_0_ = GetDocument()->db_get_current_record_position();
 	ASSERT(m_file_0_ >= 0);
 	m_files_count_ = 1;
@@ -2479,8 +2479,8 @@ int ViewSpikeDetection::PrintGetNPages()
 void ViewSpikeDetection::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_b_is_printing_ = TRUE;
-	m_l_first_0_ = m_chart_data_filtered.GetDataFirstIndex();
-	m_l_last0_ = m_chart_data_filtered.GetDataLastIndex();
+	m_l_first_0_ = m_chart_data_filtered.get_data_first_index();
+	m_l_last0_ = m_chart_data_filtered.get_data_last_index();
 	m_pixels_count_0_ = m_chart_data_filtered.get_rect_width();
 	PrintCreateFont();
 	p_dc->SetBkMode(TRANSPARENT);
@@ -2578,7 +2578,7 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		m_chart_data_filtered.get_channel_list_item(0)->SetflagPrintVisible(chan0Drawmode);
 		m_chart_data_filtered.resize_channels(rect_data_.Width(), 0);
 		m_chart_data_filtered.get_data_from_doc(index_first_data_point, l_last);
-		m_chart_data_filtered.Print(p_dc, &rect_data_);
+		m_chart_data_filtered.print(p_dc, &rect_data_);
 		p_dc->SelectClipRgn(nullptr);
 
 		// print spike bars 
@@ -2619,8 +2619,8 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		else
 		{
 			// other rows: time intervals only
-			cs_comment = PrintConvertFileIndex(m_chart_data_filtered.GetDataFirstIndex(),
-				m_chart_data_filtered.GetDataLastIndex());
+			cs_comment = PrintConvertFileIndex(m_chart_data_filtered.get_data_first_index(),
+				m_chart_data_filtered.get_data_last_index());
 		}
 
 		// print comments stored into cs_comment
@@ -2989,7 +2989,7 @@ void ViewSpikeDetection::update_detection_controls()
 	// check that spike detection parameters are compatible with current data doc
 	auto detection_channel = detect_parameters->detect_channel;
 	const auto p_dat = GetDocument()->m_p_dat;
-	const int scan_count = p_dat->get_waveformat()->scan_count;
+	const int scan_count = p_dat->get_wave_format()->scan_count;
 	if (detection_channel >= scan_count)
 		detection_channel = 0;
 

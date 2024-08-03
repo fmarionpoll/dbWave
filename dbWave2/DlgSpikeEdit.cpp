@@ -91,7 +91,7 @@ BOOL DlgSpikeEdit::OnInitDialog()
 	{
 		VERIFY(chart_data_.SubclassDlgItem(IDC_DISPLAREA_buttn, this));
 		chart_data_.set_b_use_dib(FALSE);
-		chart_data_.AttachDataFile(p_acq_data_doc_);
+		chart_data_.attach_data_file(p_acq_data_doc_);
 		const auto lv_size = chart_data_.get_rect_size();
 		chart_data_.resize_channels(lv_size.cx, 0); 
 		chart_data_.remove_all_channel_list_items();
@@ -253,9 +253,9 @@ void DlgSpikeEdit::load_source_view_data()
 	if (source_view_first < 0) 
 		source_view_first = 0; 
 	auto source_view_last = source_view_first + view_data_len_ - 1; 
-	if (source_view_last > chart_data_.GetDocumentLast()) 
+	if (source_view_last > chart_data_.get_document_last()) 
 	{
-		source_view_last = chart_data_.GetDocumentLast();
+		source_view_last = chart_data_.get_document_last();
 		source_view_first = source_view_last - view_data_len_ + 1;
 	}
 	// get data from doc

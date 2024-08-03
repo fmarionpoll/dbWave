@@ -142,7 +142,7 @@ BOOL CMeasureVTtagsPage::OnInitDialog()
 	VERIFY(mm_period.SubclassDlgItem(IDC_PERIOD, this));
 	VERIFY(mm_nperiods.SubclassDlgItem(IDC_NPERIODSEDIT, this));
 	VERIFY(mm_timeshift.SubclassDlgItem(IDC_TIMESHIFT, this));
-	m_verylast = static_cast<float>(m_pChartDataWnd->GetDocumentLast()) / m_samplingrate;
+	m_verylast = static_cast<float>(m_pChartDataWnd->get_document_last()) / m_samplingrate;
 	SetspacedTagsOptions();
 	m_duration = m_pMO->duration; // on/OFF duration (sec)
 	m_period = m_pMO->period; // period (sec)

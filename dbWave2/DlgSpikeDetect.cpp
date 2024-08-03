@@ -50,8 +50,8 @@ BOOL DlgSpikeDetect::OnInitDialog()
 	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->ResetContent();
 	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->ResetContent();
 
-	const auto pwave_format = m_dbDoc->get_waveformat();
-	const auto pchan_array = m_dbDoc->get_wavechan_array();
+	const auto pwave_format = m_dbDoc->get_wave_format();
+	const auto pchan_array = m_dbDoc->get_wave_channels_array();
 	int chanmax = pwave_format->scan_count;
 	m_scancount = chanmax;
 
@@ -276,7 +276,7 @@ void DlgSpikeDetect::UpdateSourceView() const
 	//int icursel3 = ((CComboBox*) GetDlgItem(IDC_EXTRACTCHAN))->GetCurSel();
 	m_pChartDataDetectWnd->set_channel_list_y(0, icursel, icursel2);
 	m_pChartDataDetectWnd->get_data_from_doc();
-	m_pChartDataDetectWnd->AutoZoomChan(0);
+	m_pChartDataDetectWnd->auto_zoom_chan(0);
 	m_pChartDataDetectWnd->Invalidate();
 }
 

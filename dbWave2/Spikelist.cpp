@@ -680,7 +680,7 @@ BOOL SpikeList::init_spike_list(const AcqDataDoc* acq_data_doc, const SPKDETECTP
 	auto flag = false;
 	if (acq_data_doc != nullptr)
 	{
-		const auto wave_format = acq_data_doc->get_waveformat();
+		const auto wave_format = acq_data_doc->get_wave_format();
 		data_encoding_mode_ = wave_format->mode_encoding;
 		bin_zero_ = wave_format->bin_zero;
 		sampling_rate_ = wave_format->sampling_rate_per_channel;

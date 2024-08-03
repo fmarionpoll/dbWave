@@ -1404,7 +1404,7 @@ CWaveFormat* CdbWaveDoc::get_wave_format(CString cs_filename, const BOOL is_dat_
 	{
 		const auto b_is_read_ok = m_p_dat->open_document(cs_filename);
 		if (b_is_read_ok)
-			p_wave_format = m_p_dat->get_waveformat();
+			p_wave_format = m_p_dat->get_wave_format();
 	}
 	else if (cs_filename.Find(_T(".spk")) > 0)
 	{
@@ -1587,7 +1587,7 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 		{
 			const auto p_dat = open_current_data_file();
 			ASSERT(p_dat != nullptr);
-			wave_format = p_dat->get_waveformat();
+			wave_format = p_dat->get_wave_format();
 			if (update_waveformat_from_database(wave_format)) {
 				if (!p_dat->acq_save_data_descriptors()) {
 					AfxMessageBox(_T("Error saving data descriptors\n"), MB_OK);
@@ -1635,7 +1635,7 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 		{
 			const auto p_dat = open_current_data_file();
 			ASSERT(p_dat != nullptr);
-			p_wave_format = m_p_dat->get_waveformat();
+			p_wave_format = m_p_dat->get_wave_format();
 			if (update_waveformat_from_database(p_wave_format))
 			{
 				if (!m_p_dat->acq_save_data_descriptors())
@@ -2416,7 +2416,7 @@ void CdbWaveDoc::remove_duplicate_files()
 			auto i_duplicate_file = -1;
 			if (b_ok)
 			{
-				const auto wave_format = m_p_dat->get_waveformat();
+				const auto wave_format = m_p_dat->get_wave_format();
 				o_time_file_current = wave_format->acquisition_time;
 				// loop to find if current file has a duplicate in the list of previous files stored in the array
 				for (auto i = 0; i < index_valid_records; i++)

@@ -973,19 +973,37 @@ void ChartWnd::display_horizontal_tags(CDC* p_dc)
 {
 	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
-	auto old_val = horizontal_tags.get_value_int(horizontal_tags.get_tag_list_size() - 1) - 1;
+
 	for (auto i_tag = horizontal_tags.get_tag_list_size() - 1; i_tag >= 0; i_tag--)
 	{
 		const auto k = horizontal_tags.get_value_int(i_tag);
-		if (k == old_val)
-			continue;
 		p_dc->MoveTo(m_x_wo_, k);
 		p_dc->LineTo(m_x_we_, k);
-		old_val = k;
 	}
+
 	p_dc->SelectObject(old_pen);
 	p_dc->SetROP2(old_rop2);
 }
+
+//void ChartWnd::display_horizontal_tags(CDC* p_dc)
+//{
+//	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
+//	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
+//	auto old_val = horizontal_tags.get_value_int(horizontal_tags.get_tag_list_size() - 1) - 1;
+//
+//	for (auto i_tag = horizontal_tags.get_tag_list_size() - 1; i_tag >= 0; i_tag--)
+//	{
+//		const auto k = horizontal_tags.get_value_int(i_tag);
+//		if (k == old_val)
+//			continue;
+//		p_dc->MoveTo(m_x_wo_, k);
+//		p_dc->LineTo(m_x_we_, k);
+//		old_val = k;
+//	}
+//
+//	p_dc->SelectObject(old_pen);
+//	p_dc->SetROP2(old_rop2);
+//}
 
 void ChartWnd::xor_horizontal_tag(const int y_point)
 {

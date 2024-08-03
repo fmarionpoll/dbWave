@@ -571,8 +571,8 @@ void DataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
 			p_wnd->get_scope_parameters()->crScopeFill = p_wnd->get_color(15);
 
 		ptr->pdataDoc->read_data_infos();
-		ptr->cs_comment = ptr->pdataDoc->get_waveformat()->get_comments(_T(" "));
-		p_wnd->AttachDataFile(ptr->pdataDoc);
+		ptr->cs_comment = ptr->pdataDoc->get_wave_format()->get_comments(_T(" "));
+		p_wnd->attach_data_file(ptr->pdataDoc);
 		p_wnd->load_all_channels(m_data_transform);
 		p_wnd->load_data_within_window(m_b_set_time_span, m_tFirst, m_tLast);
 		p_wnd->adjust_gain(m_b_set_mV_span, m_mV_span);

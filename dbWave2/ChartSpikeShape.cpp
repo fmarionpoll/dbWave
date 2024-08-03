@@ -140,6 +140,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 				// skip spikes with the wrong class
 				if (spike->get_class_id() != selected_class_)
 					continue;
+
 				// display data
 				p_spike_data = spike->get_p_data();
 				fill_polypoint_y_axis(p_spike_data);

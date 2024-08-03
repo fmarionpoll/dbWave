@@ -370,7 +370,7 @@ BOOL CSpikeDoc::OnOpenDocument(const LPCTSTR pszPathName)
 void CSpikeDoc::init_source_doc(const AcqDataDoc* p_document)
 {
 	// load parameters from file
-	const auto wave_format = p_document->get_waveformat();
+	const auto wave_format = p_document->get_wave_format();
 	m_acquisition_time_ = wave_format->acquisition_time;
 	m_acquisition_size_ = p_document->get_doc_channel_length();
 	m_acquisition_rate_ = wave_format->sampling_rate_per_channel;

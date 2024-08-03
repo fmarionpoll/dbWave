@@ -6,12 +6,12 @@
 BOOL ADAcqDataDoc::AcqDoc_DataAppendStop() const
 {
 	m_pXFile->DataAppendStop();
-	const auto p_wave_format = get_waveformat();
+	const auto p_wave_format = get_wave_format();
 	p_wave_format->sample_count = static_cast<long>(m_pXFile->m_ulbytescount / sizeof(short));
 	p_wave_format->duration = static_cast<float>(p_wave_format->sample_count) / static_cast<float>(p_wave_format->
 		scan_count)
 		/ p_wave_format->sampling_rate_per_channel;
-	m_pXFile->WriteDataInfos(p_wave_format, get_wavechan_array());
+	m_pXFile->WriteDataInfos(p_wave_format, get_wave_channels_array());
 	m_pXFile->Flush();
 	return TRUE;
 }

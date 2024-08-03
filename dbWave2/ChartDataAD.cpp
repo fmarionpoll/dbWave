@@ -6,11 +6,11 @@
 void ChartDataAD::start_display(int points_per_channel)
 {
 	// init parameters related to AD display
-	m_bADbuffers = TRUE; // yes, display ADbuffers
-	m_lADbufferdone = 0; // length of data already displayed
-	const auto envelope = envelope_ptr_array.GetAt(0);
+	m_b_ad_buffers_ = TRUE; // yes, display ADbuffers
+	m_l_ad_buffer_done_ = 0; // length of data already displayed
+	const auto envelope = envelope_ptr_array_.GetAt(0);
 	envelope->FillEnvelopeWithAbcissaEx(1, m_display_rect_.right - 1, points_per_channel);
-	envelope->ExportToAbcissa(m_PolyPoints);
+	envelope->ExportToAbcissa(m_poly_points_);
 	set_b_use_dib(FALSE);
 
 	// clear window before acquiring data
@@ -29,16 +29,16 @@ void ChartDataAD::start_display(int points_per_channel)
 void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 {
 	// check data wrap
-	if (m_lADbufferdone + samples_number > m_lxSize)
+	if (m_l_ad_buffer_done_ + samples_number > m_lx_size_)
 	{
-		const long pixels_left_until_end_of_Display = m_lxSize - m_lADbufferdone;
+		const long pixels_left_until_end_of_Display = m_lx_size_ - m_l_ad_buffer_done_;
 		if (pixels_left_until_end_of_Display > 0)
 		{
 			display_buffer(samples_buffer, pixels_left_until_end_of_Display);
 			samples_number -= pixels_left_until_end_of_Display;
-			samples_buffer += (pixels_left_until_end_of_Display * m_pDataFile->get_waveformat()->scan_count);
+			samples_buffer += (pixels_left_until_end_of_Display * m_p_data_file_->get_wave_format()->scan_count);
 		}
-		m_lADbufferdone = 0;
+		m_l_ad_buffer_done_ = 0;
 	}
 
 	// create device context and prepare bitmap to receive drawing commands
@@ -53,16 +53,16 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 		p_dc = &dc_mem;
 
 	// get first and last pixels of the interval to display
-	const int ad_pixel_first = MulDiv(m_lADbufferdone, m_npixels, m_lxSize);
-	int ad_pixel_last = MulDiv(m_lADbufferdone + samples_number - 1, m_npixels, m_lxSize);
+	const int ad_pixel_first = MulDiv(m_l_ad_buffer_done_, m_n_pixels_, m_lx_size_);
+	int ad_pixel_last = MulDiv(m_l_ad_buffer_done_ + samples_number - 1, m_n_pixels_, m_lx_size_);
 	if (ad_pixel_last > m_display_rect_.right - 2)
 		ad_pixel_last = m_display_rect_.right - 2;
 
 	const int display_pixels = ad_pixel_last - ad_pixel_first + 1;
-	const int display_data_points = display_pixels * m_dataperpixel;
+	const int display_data_points = display_pixels * m_data_per_pixel_;
 
 
-	const auto points_to_display = &m_PolyPoints[ad_pixel_first * m_dataperpixel * 2];
+	const auto points_to_display = &m_poly_points_[ad_pixel_first * m_data_per_pixel_ * 2];
 
 	CRect rect(ad_pixel_first, m_display_rect_.top, ad_pixel_last, m_display_rect_.bottom);
 	if (ad_pixel_first == 0)
@@ -76,14 +76,14 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 	p_dc->SetMapMode(MM_ANISOTROPIC);
 	p_dc->SetViewportExt(m_x_viewport_extent_, m_y_viewport_extent_);
 	p_dc->SetViewportOrg(m_x_viewport_origin_, m_y_viewport_origin_);
-	p_dc->SetWindowExt(m_npixels, m_y_viewport_extent_); //chanlist_item->GetYextent());
+	p_dc->SetWindowExt(m_n_pixels_, m_y_viewport_extent_); //chanlist_item->GetYextent());
 	p_dc->SetWindowOrg(0, 0); //chanlist_item->GetYzero());
 	const auto yVE = m_y_viewport_extent_;
 
-	for (int channel_number = 0; channel_number < chanlistitem_ptr_array.GetSize(); channel_number++)
+	for (int channel_number = 0; channel_number < chan_list_item_ptr_array_.GetSize(); channel_number++)
 	{
 		// load channel descriptors
-		const auto channel_item = chanlistitem_ptr_array[channel_number];
+		const auto channel_item = chan_list_item_ptr_array_[channel_number];
 		CPen temp_pen;
 		temp_pen.CreatePen(PS_SOLID, 0, color_table_[channel_item->GetColorIndex()]);
 		p_dc->SelectObject(&temp_pen);
@@ -93,10 +93,10 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 		auto p_data = samples_buffer + channel_number;
 		const auto y_zero = channel_item->GetYzero();
 		const auto y_extent = channel_item->GetYextent();
-		const int n_channels = m_pDataFile->get_waveformat()->scan_count;
+		const int n_channels = m_p_data_file_->get_wave_format()->scan_count;
 
 		// only one data point per pixel
-		if (m_dataperpixel > 1)
+		if (m_data_per_pixel_ > 1)
 		{
 			int number_of_elements_displayed = 0;
 			for (int i = 0; i < display_pixels; i++)
@@ -154,5 +154,5 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 			SRCCOPY);
 
 	dc_mem.SelectObject(bitmap_old);
-	m_lADbufferdone += samples_number;
+	m_l_ad_buffer_done_ += samples_number;
 }

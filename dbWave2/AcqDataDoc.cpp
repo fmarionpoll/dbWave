@@ -196,7 +196,7 @@ CString AcqDataDoc::get_data_file_infos(const OPTIONS_VIEWDATA* pVD) const
 	CString cs_dummy;
 	auto cs_out = GetPathName();
 	cs_out.MakeLower();
-	const auto waveformat = get_waveformat();
+	const auto waveformat = get_wave_format();
 
 	// date and time
 	if (pVD->bacqdate)
@@ -224,7 +224,7 @@ CString AcqDataDoc::get_data_file_infos(const OPTIONS_VIEWDATA* pVD) const
 		CString cs;
 		for (auto i_chan = 0; i_chan < waveformat->scan_count; i_chan++)
 		{
-			const auto p_chan = (get_wavechan_array())->get_p_channel(i_chan);
+			const auto p_chan = (get_wave_channels_array())->get_p_channel(i_chan);
 			if (pVD->bacqchcomment)
 				cs_out += sep + p_chan->am_csComment;
 			if (pVD->bacqchsetting)
@@ -251,7 +251,7 @@ void AcqDataDoc::export_data_file_to_txt_file(CStdioFile* pdataDest)
 	cs_out += sep;
 	pdataDest->WriteString(cs_out);
 
-	const auto p_wave_format = get_waveformat();
+	const auto p_wave_format = get_wave_format();
 	// date and time
 	cs_out = (p_wave_format->acquisition_time).Format(_T("acqdate= %#d %B %Y"));
 	cs_out += sep;
@@ -278,7 +278,7 @@ void AcqDataDoc::export_data_file_to_txt_file(CStdioFile* pdataDest)
 	cs_out = sep;
 	for (auto i_chan = 0; i_chan < p_wave_format->scan_count; i_chan++)
 	{
-		const auto p_chan = (get_wavechan_array())->get_p_channel(i_chan);
+		const auto p_chan = (get_wave_channels_array())->get_p_channel(i_chan);
 		cs_out += p_chan->am_csComment;
 		if (i_chan < p_wave_format->scan_count - 1)
 			cs_out += sep2;
@@ -294,7 +294,7 @@ void AcqDataDoc::export_data_file_to_txt_file(CStdioFile* pdataDest)
 		cs_out = sep;
 		for (auto channel = 0; channel < p_wave_format->scan_count; channel++)
 		{
-			const auto p_chan = (get_wavechan_array())->get_p_channel(channel);
+			const auto p_chan = (get_wave_channels_array())->get_p_channel(channel);
 			const auto value = get_value_from_buffer(channel, j);
 			const auto channel_gain = static_cast<double>(p_chan->am_gainheadstage)
 				* static_cast<double>(p_chan->am_gainAD)
@@ -359,7 +359,7 @@ BOOL AcqDataDoc::adjust_buffer(const int elements_count)
 		m_pWBuf = new CWaveBuf;
 
 	ASSERT(m_pWBuf != NULL);
-	const auto p_wf = get_waveformat();
+	const auto p_wf = get_wave_format();
 	m_lDOCchanLength = p_wf->get_nb_points_sampled_per_channel();
 	m_DOCnbchans = p_wf->scan_count;
 	p_wf->duration = static_cast<float>(m_lDOCchanLength) / p_wf->sampling_rate_per_channel;
@@ -383,7 +383,7 @@ BOOL AcqDataDoc::allocate_buffer()
 		m_pWBuf = new CWaveBuf;
 
 	ASSERT(m_pWBuf != NULL); // check object created properly
-	CWaveFormat* pwF = get_waveformat();
+	CWaveFormat* pwF = get_wave_format();
 
 	m_lDOCchanLength = pwF->get_nb_points_sampled_per_channel();
 	m_DOCnbchans = pwF->scan_count;
@@ -454,7 +454,7 @@ BOOL AcqDataDoc::read_data_block(long l_first)
 	{
 		short* p_buffer = m_pWBuf->get_pointer_to_raw_data_buffer();
 		ASSERT(p_buffer != NULL);
-		auto l_size = m_pXFile->ReadAdcData(l_first, m_lBUFSize * sizeof(short), p_buffer, get_wavechan_array());
+		auto l_size = m_pXFile->ReadAdcData(l_first, m_lBUFSize * sizeof(short), p_buffer, get_wave_channels_array());
 
 		// ugly patch: should fail if l_size < m_lBUFSize
 		m_lBUFchanLast = m_lBUFchanFirst + m_lBUFSize / m_DOCnbchans - 1;
@@ -512,7 +512,7 @@ short* AcqDataDoc::load_transformed_data(const long l_first, const long l_last, 
 		read_data_block(l_first - l_span); // but, just in case
 
 	auto n_points = static_cast<int>(l_last - l_first + 1);
-	const int n_channels = get_waveformat()->scan_count;
+	const int n_channels = get_wave_format()->scan_count;
 	ASSERT(source_channel < n_channels); // make sure this is a valid channel
 	const int i_offset = (l_first - m_lBUFchanFirst) * n_channels + source_channel;
 	auto lp_source = m_pWBuf->get_pointer_to_raw_data_buffer() + i_offset;
@@ -613,7 +613,7 @@ BOOL AcqDataDoc::build_transformed_data(const int transform_type, const int sour
 
 	// init parameters
 	auto lp_source = m_pWBuf->get_pointer_to_raw_data_buffer() + source_channel;
-	const int nb_channels = get_waveformat()->scan_count;
+	const int nb_channels = get_wave_format()->scan_count;
 	ASSERT(source_channel < nb_channels);
 
 	// adjust pointers according to n_span - (fringe data) and set flags erase these data at the end
@@ -730,7 +730,7 @@ BOOL AcqDataDoc::write_vt_tags(TagList* p_tags) const
 
 BOOL AcqDataDoc::acq_save_data_descriptors() const
 {
-	const auto flag = m_pXFile->WriteDataInfos(get_waveformat(), get_wavechan_array());
+	const auto flag = m_pXFile->WriteDataInfos(get_wave_format(), get_wave_channels_array());
 	m_pXFile->Flush();
 	return flag;
 }
@@ -796,16 +796,16 @@ BOOL AcqDataDoc::save_as(CString& new_name, BOOL b_check_over_write, const int i
 	}
 
 	// save data header
-	if (get_waveformat()->scan_count < get_wavechan_array()->chan_array_get_size())
+	if (get_wave_format()->scan_count < get_wave_channels_array()->chan_array_get_size())
 	{
-		const auto last_channel = get_waveformat()->scan_count - 1;
-		for (auto i = get_wavechan_array()->chan_array_get_size() - 1; i > last_channel; i--)
-			get_wavechan_array()->chan_array_remove_at(i);
+		const auto last_channel = get_wave_format()->scan_count - 1;
+		for (auto i = get_wave_channels_array()->chan_array_get_size() - 1; i > last_channel; i--)
+			get_wave_channels_array()->chan_array_remove_at(i);
 	}
 
 	// save data
 	p_new_doc->AcqDoc_DataAppendStart();
-	auto n_samples = get_waveformat()->sample_count;
+	auto n_samples = get_wave_format()->sample_count;
 
 	// position source file index to start of data
 	m_pXFile->Seek(m_pXFile->m_ulOffsetData, CFile::begin);

@@ -44,10 +44,8 @@ public:
 	virtual void set_scope_parameters(SCOPESTRUCT* p_struct);
 	virtual int set_mouse_cursor_type(int cursor_type);
 	virtual void zoom_data(CRect* prev_rect, CRect* new_rect);
-	virtual void display_vertical_tags(CDC* p_dc);
-	virtual void display_horizontal_tags(CDC* p_dc);
-	virtual void plot_data_to_dc(CDC* p_dc);
 
+	virtual void plot_data_to_dc(CDC* p_dc);
 	void erase_background(CDC* p_dc);
 	void plot_to_bitmap(CDC* p_dc);
 
@@ -66,8 +64,7 @@ public:
 	void set_mouse_cursor(int cursor_type);
 
 	void set_yw_ext_org(int extent, int zero);
-	void set_xw_ext_org(const int extent, const int zero)
-	{
+	void set_xw_ext_org(const int extent, const int zero) {
 		m_x_we_ = extent;
 		m_x_wo_ = zero;
 	}
@@ -85,16 +82,6 @@ public:
 	void set_y_scale_unit_value(float y);
 	void attach_external_x_ruler(RulerBar* p_x_ruler) { x_ruler_bar = p_x_ruler; }
 	void attach_external_y_ruler(RulerBar* p_y_ruler) { y_ruler_bar = p_y_ruler; }
-
-	void xor_vertical_tag(int x_point);
-	void xor_temp_vertical_tag(int x_point);
-	void xor_horizontal_tag(int y_point);
-
-	void reset_xor_tag()
-	{
-		m_pt_last_.x = -1;
-		m_pt_last_.y = -1;
-	}
 
 	void reflect_mouse_move_message(const HWND h_window) { m_hwnd_reflect_ = h_window; }
 	void set_cursor_max_on_dbl_click(const int imax) { cursor_index_max_ = imax; }
@@ -119,10 +106,21 @@ public:
 	RulerBar* x_ruler_bar {nullptr};
 	RulerBar* y_ruler_bar {nullptr};
 
-	TagList horizontal_tags {}; 
-	TagList vertical_tags {}; 
 	CString cs_bottom_comment {};
 	BOOL b_bottom_comment {false};
+
+	TagList vertical_tags{};
+	virtual void display_vertical_tags(CDC* p_dc);
+	void xor_vertical_tag(int x_point);
+	void xor_temp_vertical_tag(int x_point);
+
+	TagList horizontal_tags{};
+	virtual void display_horizontal_tags(CDC* p_dc);
+	void xor_horizontal_tag(int y_point);
+	void reset_xor_tag() {
+		m_pt_last_.x = -1;
+		m_pt_last_.y = -1;
+	}
 
 	// Implementation
 protected:

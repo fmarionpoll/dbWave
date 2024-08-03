@@ -109,7 +109,7 @@ BOOL DlgExportData::OnInitDialog()
 			m_timelast = static_cast<float>(pDat->get_vt_tags_list()->get_value_long(1));
 		else
 			m_timelast = static_cast<float>(pDat->get_doc_channel_length());
-		float chrate = pDat->get_waveformat()->sampling_rate_per_channel;
+		float chrate = pDat->get_wave_format()->sampling_rate_per_channel;
 		m_timefirst /= chrate;
 		m_timelast /= chrate;
 	}
@@ -250,7 +250,7 @@ void DlgExportData::Export()
 
 	// compute some parameters
 	m_pDat = m_dbDoc->m_p_dat; // pointer to data document
-	CWaveFormat* pwaveFormat = m_pDat->get_waveformat();
+	CWaveFormat* pwaveFormat = m_pDat->get_wave_format();
 	if (iivO.entire_file) // if all data, load
 	{
 		// intervals from data file
@@ -331,8 +331,8 @@ BOOL DlgExportData::ExportDataAsTextFile()
 	// LINE 3.......... file comment
 
 	csCharBuf.Format(_T("file :\t%s\r\n"), (LPCTSTR)m_filesource);
-	CWaveChanArray* pChanArray = m_pDat->get_wavechan_array();
-	CWaveFormat* pwaveFormat = m_pDat->get_waveformat();
+	CWaveChanArray* pChanArray = m_pDat->get_wave_channels_array();
+	CWaveFormat* pwaveFormat = m_pDat->get_wave_format();
 
 	CString csdate = (pwaveFormat->acquisition_time).Format("%#d %B %Y %X");
 	cs_dummy.Format(_T("date :\t%s\r\n"), (LPCTSTR)csdate);
@@ -465,7 +465,7 @@ BOOL DlgExportData::ExportDataAsSapidFile()
 		}
 	}
 	// last value is sampling rate
-	value = static_cast<short>(m_pDat->get_waveformat()->sampling_rate_per_channel);
+	value = static_cast<short>(m_pDat->get_wave_format()->sampling_rate_per_channel);
 	dataDest.Write(&value, sizeof(short));
 	dataDest.Flush();
 	dataDest.Close(); // close file
@@ -548,8 +548,8 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 	col--;
 	row++;
 	// date
-	const auto pwaveFormat = m_pDat->get_waveformat();
-	const auto pchanArray = m_pDat->get_wavechan_array();
+	const auto pwaveFormat = m_pDat->get_wave_format();
+	const auto pchanArray = m_pDat->get_wave_channels_array();
 
 	auto date = (pwaveFormat->acquisition_time).Format(_T("%#d %B %Y %X")); //("%c");
 	save_BIFF(&data_dest, BIFF_CHARS, row, col, "date");
@@ -800,10 +800,10 @@ BOOL DlgExportData::ExportDataAsdbWaveFile()
 	pDatDest->acq_create_file(m_filedest);
 
 	// load data header and save it into dest file
-	const auto pw_f_dest = pDatDest->get_waveformat();
-	auto pw_c_dest = pDatDest->get_wavechan_array();
-	const auto pw_f_source = m_pDat->get_waveformat();
-	const auto pw_c_source = m_pDat->get_wavechan_array();
+	const auto pw_f_dest = pDatDest->get_wave_format();
+	auto pw_c_dest = pDatDest->get_wave_channels_array();
+	const auto pw_f_source = m_pDat->get_wave_format();
+	const auto pw_c_source = m_pDat->get_wave_channels_array();
 	pw_f_dest->copy(pw_f_source);
 	pw_c_dest->Copy(pw_c_source);
 

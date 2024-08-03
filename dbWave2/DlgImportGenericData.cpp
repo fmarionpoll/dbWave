@@ -517,8 +517,8 @@ void DlgImportGenericData::UpdatePreview()
 	if (!m_bpreviewON)
 		return;
 
-	int ndocchans = m_AcqDataFile.get_waveformat()->scan_count;
-	m_ChartDataWnd.AttachDataFile(&m_AcqDataFile);
+	int ndocchans = m_AcqDataFile.get_wave_format()->scan_count;
+	m_ChartDataWnd.attach_data_file(&m_AcqDataFile);
 	CSize lsize = m_ChartDataWnd.get_rect_size();
 	m_ChartDataWnd.resize_channels(lsize.cx, m_AcqDataFile.get_doc_channel_length());
 	if (m_ChartDataWnd.get_channel_list_size() < ndocchans) // add envelopes if necessary
@@ -644,7 +644,7 @@ void DlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
 	pDataF->set_offset_to_data(m_skipNbytes);
 
 	pDataF->m_pWBuf->create_buffer_with_n_channels(piivO->nb_channels);
-	CWaveFormat* pwF = pDataF->get_waveformat();
+	CWaveFormat* pwF = pDataF->get_wave_format();
 
 	// define parameters within CWaveFormat
 	pwF->cs_comment = piivO->title;
@@ -670,7 +670,7 @@ void DlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
 		pwF->bin_zero = binspan / 2;
 
 	// copy ACQCHAN directly from iivO
-	pDataF->get_wavechan_array()->Copy(piivO->p_wave_chan_array);
+	pDataF->get_wave_channels_array()->Copy(piivO->p_wave_chan_array);
 
 	// UNUSED PARAMETERS FROM iivO :
 	//			BOOL	bSingleRun;

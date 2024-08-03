@@ -61,10 +61,10 @@ protected:
 	ChartSpikeHist chart_histogram_;
 	CEditCtrl mm_lower_threshold_mv_;
 	float lower_threshold_mv_{ 0.f };
-	int hist_low_{};
+	int tag_index_hist_low_{};
 	CEditCtrl mm_upper_threshold_mv_;
 	float upper_threshold_mv_{ 1.f };
-	int hist_up_{};
+	int tag_index_hist_up_{};
 	CEditCtrl mm_histogram_bin_mv_;
 	float histogram_bin_mv_{ 0.1f };
 
@@ -73,6 +73,9 @@ protected:
 	float measure_min_mv_{ 0.f };
 	CEditCtrl mm_measure_max_mv_;
 	float measure_max_mv_{ 0.f };
+	int tag_index_measures_low_{};
+	int tag_index_measures_up_{};
+
 	CEditCtrl mm_t_xy_right_;
 	float t_xy_right_{ 1.f };
 	CEditCtrl mm_t_xy_left_;
@@ -80,9 +83,7 @@ protected:
 
 	SPK_CLASSIF* spike_classification_parameters_{};
 	OPTIONS_VIEWDATA* options_view_data_{};
-
-	int measures_low_ {};
-	int measures_up_ {};
+	
 	int m_i_xy_right_ {};
 	int m_i_xy_left_ {};
 

@@ -212,7 +212,7 @@ void ViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
 	if (rect_vt_track_.PtInRect(point))
 	{
 		ReleaseCapture();
-		const int ii_time = chart_data_wnd_.GetDataOffsetfromPixel(point.x - rect_vt_track_.left);
+		const int ii_time = chart_data_wnd_.get_data_offset_from_pixel(point.x - rect_vt_track_.left);
 		jitter_ = m_jitter_ms;
 		auto b_check = TRUE;
 		if (nFlags & MK_CONTROL)
@@ -244,8 +244,8 @@ void ViewSpikes::change_zoom(LPARAM lParam)
 {
 	if (HIWORD(lParam) == IDC_DISPLAY_DAT)
 	{
-		l_first_ = chart_data_wnd_.GetDataFirstIndex();
-		l_last_ = chart_data_wnd_.GetDataLastIndex();
+		l_first_ = chart_data_wnd_.get_data_first_index();
+		l_last_ = chart_data_wnd_.get_data_last_index();
 	}
 	else if (HIWORD(lParam) == IDC_LISTCLASSES) //TODO [does not work! HIWORD(lParam)==1]
 	{
@@ -545,11 +545,11 @@ void ViewSpikes::update_data_file(const BOOL b_update_interface)
 		return;
 
 	chart_data_wnd_.set_b_use_dib(FALSE);
-	chart_data_wnd_.AttachDataFile(p_data_doc_);
+	chart_data_wnd_.attach_data_file(p_data_doc_);
 
 	const auto detect = m_pSpkList->get_detection_parameters();
 	int source_data_view = detect->extract_channel;
-	if (source_data_view >= p_data_doc_->get_waveformat()->scan_count)
+	if (source_data_view >= p_data_doc_->get_wave_format()->scan_count)
 	{
 		detect->extract_channel = 0;
 		source_data_view = 0;
@@ -557,7 +557,7 @@ void ViewSpikes::update_data_file(const BOOL b_update_interface)
 	if (detect->detect_what == DETECT_STIMULUS)
 	{
 		source_data_view = detect->detect_channel;
-		if (source_data_view >= p_data_doc_->get_waveformat()->scan_count)
+		if (source_data_view >= p_data_doc_->get_wave_format()->scan_count)
 		{
 			detect->detect_channel = 0;
 			source_data_view = 0;
@@ -596,7 +596,7 @@ void ViewSpikes::update_data_file(const BOOL b_update_interface)
 		file_scroll_infos_.nMin = 0;
 		file_scroll_infos_.nMax = p_data_doc_->get_doc_channel_length() - 1;
 		file_scroll_infos_.nPos = 0;
-		file_scroll_infos_.nPage = chart_data_wnd_.GetDataLastIndex() - chart_data_wnd_.GetDataFirstIndex() + 1;
+		file_scroll_infos_.nPage = chart_data_wnd_.get_data_last_index() - chart_data_wnd_.get_data_first_index() + 1;
 		file_scrollbar_.SetScrollInfo(&file_scroll_infos_);
 	}
 
@@ -1280,7 +1280,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 				p_dc->IntersectClipRect(&rw_bars); 
 			chart_data_wnd_.get_data_from_doc(l_first, l_last);
 			chart_data_wnd_.center_chan(0);
-			chart_data_wnd_.Print(p_dc, &rw_bars); 
+			chart_data_wnd_.print(p_dc, &rw_bars); 
 			p_dc->SelectClipRgn(nullptr);
 
 			extent = chart_data_wnd_.get_channel_list_item(0)->GetYextent();
@@ -1533,8 +1533,8 @@ void ViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	}
 
 	// adjust display
-	l_first_ = chart_data_wnd_.GetDataFirstIndex();
-	l_last_ = chart_data_wnd_.GetDataLastIndex();
+	l_first_ = chart_data_wnd_.get_data_first_index();
+	l_last_ = chart_data_wnd_.get_data_last_index();
 	update_legends(TRUE);
 	spike_class_listbox_.Invalidate();
 	chart_data_wnd_.Invalidate();
@@ -1558,7 +1558,7 @@ void ViewSpikes::scroll_file(const UINT n_sb_code, const UINT n_pos)
 		break;
 	case SB_THUMBPOSITION: 
 	case SB_THUMBTRACK: 
-		chart_data_wnd_.get_data_from_doc(MulDiv(static_cast<int>(n_pos), chart_data_wnd_.GetDocumentLast(), 100));
+		chart_data_wnd_.get_data_from_doc(MulDiv(static_cast<int>(n_pos), chart_data_wnd_.get_document_last(), 100));
 		break;
 	default:
 		break;
@@ -1568,8 +1568,8 @@ void ViewSpikes::scroll_file(const UINT n_sb_code, const UINT n_pos)
 void ViewSpikes::update_file_scroll()
 {
 	file_scroll_infos_.fMask = SIF_PAGE | SIF_POS;
-	file_scroll_infos_.nPos = chart_data_wnd_.GetDataFirstIndex();
-	file_scroll_infos_.nPage = chart_data_wnd_.GetDataLastIndex() - chart_data_wnd_.GetDataFirstIndex() + 1;
+	file_scroll_infos_.nPos = chart_data_wnd_.get_data_first_index();
+	file_scroll_infos_.nPage = chart_data_wnd_.get_data_last_index() - chart_data_wnd_.get_data_first_index() + 1;
 	file_scrollbar_.SetScrollInfo(&file_scroll_infos_);
 }
 
@@ -1648,7 +1648,7 @@ void ViewSpikes::OnEditCopy()
 		if (p_data_doc_ != nullptr)
 		{
 			chart_data_wnd_.center_chan(0);
-			chart_data_wnd_.Print(&mDC, &rw_bars);
+			chart_data_wnd_.print(&mDC, &rw_bars);
 
 			//auto extent = m_ChartDataWnd.get_channel_list_item(0)->Get_Y_extent();
 			rw_spikes.OffsetRect(0, r_height);

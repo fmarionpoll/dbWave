@@ -15,15 +15,14 @@ protected:
 	ViewData();
 
 	// Form Data
-public:
 	enum { IDD = IDD_VIEWDATA };
 
 	int m_channel_selected = 0;
 	float m_first_Hz_cursor = 0.;
 	float m_second_Hz_cursor = 0.;
 	float m_difference_second_minus_first = 0.;
-	float m_time_first_abcissa = 0.;
-	float m_time_last_abcissa = 0.;
+	float m_time_first_abscissa = 0.;
+	float m_time_last_abscissa = 0.;
 	float m_floatNDigits = 1000.; // 10(000) -> n digits displayed
 	BOOL m_bInitComment = true;
 
@@ -31,8 +30,8 @@ public:
 	CEditCtrl mm_first_Hz_cursor; 
 	CEditCtrl mm_second_Hz_cursor;
 	CEditCtrl mm_difference_second_minus_first; 
-	CEditCtrl mm_time_first_abcissa;
-	CEditCtrl mm_time_last_abcissa;
+	CEditCtrl mm_time_first_abscissa;
+	CEditCtrl mm_time_last_abscissa;
 	CComboBox m_comboSelectChan;
 	RulerBar m_ADC_yRulerBar;
 	RulerBar m_ADC_xRulerBar;
@@ -55,14 +54,13 @@ protected:
 	OPTIONS_VIEWDATA* options_view_data = nullptr;
 	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr;
 
-protected:
-	void PrintFileBottomPage(CDC* p_dc, CPrintInfo* pInfo);
-	CString convert_file_index(long l_first, long l_last);
-	void ComputePrinterPageSize();
+	void print_file_bottom_page(CDC* p_dc, CPrintInfo* pInfo);
+	CString convert_file_index(long l_first, long l_last) const;
+	void compute_printer_page_size();
 	CString get_file_infos();
-	CString PrintBars(CDC* p_dc, CRect* rect);
+	CString print_bars(CDC* p_dc, const CRect* rect);
 	BOOL get_file_series_index_from_page(int page, int& file_number, long& l_first);
-	BOOL PrintGetNextRow(int& file_number, long& l_first, long& very_last);
+	BOOL print_get_next_row(int& file_number, long& l_first, long& very_last);
 	void save_modified_file();
 	void update_file_parameters(BOOL b_update_interface = TRUE);
 	void update_channels_display_parameters();
@@ -71,30 +69,29 @@ protected:
 
 	BOOL m_bCommonScale = false;
 
-protected:
 	ScrollBarEx m_file_scroll_bar; // data position within file
 	SCROLLINFO m_file_scroll_bar_infos{}; // infos for scrollbar
 	int m_VBarMode = 0; // flag V scrollbar state
-	CScrollBar m_scrolly; // V scrollbar
+	CScrollBar scroll_y_; // V scrollbar
 
-	void OnFileScroll(UINT nSBCode, UINT nPos);
-	void OnGainScroll(UINT nSBCode, UINT nPos);
-	void UpdateYExtent(int ichan, int yextent);
-	void UpdateYZero(int ichan, int ybias);
-	void OnBiasScroll(UINT nSBCode, UINT nPos);
-	void UpdateGainScroll();
-	void UpdateBiasScroll();
-	void SetVBarMode(int bMode);
-	void UpdateFileScroll();
-	void UpdateLegends(int legends_options);
-	void UpdateHZtagsVal();
+	void on_file_scroll(UINT n_sb_code, UINT n_pos);
+	void on_gain_scroll(UINT n_sb_code, UINT n_pos);
+	void update_y_extent(int i_chan, int y_extent);
+	void update_y_zero(int i_chan, int y_bias);
+	void on_bias_scroll(UINT n_sb_code, UINT n_pos);
+	void update_gain_scroll();
+	void update_bias_scroll();
+	void set_v_bar_mode(int b_mode);
+	void update_file_scroll();
+	void update_legends(int legends_options);
+	void update_horizontal_tags_value();
 	void set_cursor_associated_windows();
 	void update_channel(int channel);
-	void MeasureProperties(int item);
+	void measure_properties(int item);
 
 	// Overrides
 protected:
-	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+	void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint) override;
 	void DoDataExchange(CDataExchange* pDX) override;
 	void OnInitialUpdate() override;
 	BOOL OnPreparePrinting(CPrintInfo* pInfo) override;
@@ -109,35 +106,35 @@ protected:
 public:
 	~ViewData() override;
 
-	afx_msg void OnClickedBias();
-	afx_msg void OnClickedGain();
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnFormatXscale();
-	afx_msg void OnFormatYscale();
-	afx_msg void OnEditCopy();
-	afx_msg void OnUpdateEditCopy(CCmdUI* pCmdUI);
-	afx_msg void OnToolsDataseries();
-	afx_msg void ADC_OnHardwareChannelsDlg();
-	afx_msg void ADC_OnHardwareIntervalsDlg();
-	afx_msg void OnCenterCurve();
-	afx_msg void OnGainAdjustCurve();
-	afx_msg void OnSplitCurves();
-	afx_msg void OnFirstFrame();
-	afx_msg void OnLastFrame();
-	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
-	afx_msg void OnViewAlldata();
-	afx_msg void OnFormatDataseriesattributes();
-	afx_msg void OnToolsMeasuremode();
-	afx_msg void OnToolsMeasure();
-	afx_msg void OnToolsVerticaltags();
-	afx_msg void OnToolsHorizontalcursors();
-	afx_msg void OnUpdateToolsHorizontalcursors(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateToolsVerticaltags(CCmdUI* pCmdUI);
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void ADC_OnHardwareDefineexperiment();
-	afx_msg void OnEnChangeTimefirst();
-	afx_msg void OnEnChangeTimelast();
-	afx_msg void OnCbnSelchangeCombochan();
+	afx_msg void on_clicked_bias();
+	afx_msg void on_clicked_gain();
+	afx_msg void OnVScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
+	afx_msg void on_format_x_scale();
+	afx_msg void on_format_y_scale();
+	afx_msg void on_edit_copy();
+	afx_msg void on_update_edit_copy(CCmdUI* p_cmd_ui);
+	afx_msg void on_tools_data_series();
+	afx_msg void adc_on_hardware_channels_dlg();
+	afx_msg void adc_on_hardware_intervals_dlg();
+	afx_msg void on_center_curve();
+	afx_msg void on_gain_adjust_curve();
+	afx_msg void on_split_curves();
+	afx_msg void on_first_frame();
+	afx_msg void on_last_frame();
+	afx_msg LRESULT on_my_message(WPARAM w_param, LPARAM l_param);
+	afx_msg void on_view_all_data();
+	afx_msg void on_format_data_series_attributes();
+	afx_msg void on_tools_measure_mode();
+	afx_msg void on_tools_measure();
+	afx_msg void on_tools_vertical_tags();
+	afx_msg void on_tools_horizontal_cursors();
+	afx_msg void on_update_tools_horizontal_cursors(CCmdUI* pCmdUI);
+	afx_msg void on_update_tools_vertical_tags(CCmdUI* pCmdUI);
+	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
+	afx_msg void adc_on_hardware_define_experiment();
+	afx_msg void on_en_change_time_first();
+	afx_msg void on_en_change_time_last();
+	afx_msg void on_cbn_sel_change_combo_chan();
 
 	DECLARE_MESSAGE_MAP()
 };

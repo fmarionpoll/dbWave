@@ -261,7 +261,7 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 {
 	// get scale factor for channel and sampling rate
 	m_mVperBin = m_pChartDataWnd->get_channel_list_item(channel)->GetVoltsperDataBin() * 1000.0f;
-	const auto rate = m_pdatDoc->get_waveformat()->sampling_rate_per_channel;
+	const auto rate = m_pdatDoc->get_wave_format()->sampling_rate_per_channel;
 
 	auto output_column = (m_col - 1) * m_nbdatacols + 1; // output data into column icol
 	auto item = m_listResults.GetItemCount(); // compute which line will receive data

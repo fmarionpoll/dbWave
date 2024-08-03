@@ -207,7 +207,7 @@ BOOL DlgImportFiles::ImportATFFile()
 	// describe data
 	m_xinstgain = 100.; // tentative value (top to min=2000 mV)
 	m_xrate = 10000.0f; // tentative value
-	CWaveFormat* pwF = pTo->get_waveformat();
+	CWaveFormat* pwF = pTo->get_wave_format();
 	pwF->full_scale_volts = 20.0f; // 20 V full scale
 	pwF->bin_span = 65536; // 16 bits resolution
 	pwF->bin_zero = 0; // ?
@@ -221,8 +221,8 @@ BOOL DlgImportFiles::ImportATFFile()
 
 	for (int i = 0; i < m_scan_count; i++)
 	{
-		int ichan = (pTo->get_wavechan_array())->chan_array_add();
-		CWaveChan* pChannel = (pTo->get_wavechan_array())->get_p_channel(ichan);
+		int ichan = (pTo->get_wave_channels_array())->chan_array_add();
+		CWaveChan* pChannel = (pTo->get_wave_channels_array())->get_p_channel(ichan);
 		pChannel->am_gaintotal = static_cast<float>(m_xinstgain);
 		m_dspan[i] = 20000. / m_xinstgain; // span= 20 V max to min
 		m_dbinval[i] = m_dspan[i] / 65536.; // divide voltage span into 2exp16 bins
@@ -282,7 +282,7 @@ line 11-	0	141.144	0.0317383
 			if (xmin > xmax)
 				xmax = xmin;
 			float xtotal = static_cast<float>(xmax * 2.);
-			CWaveChan* pChannel = (pTo->get_wavechan_array())->get_p_channel(ichan);
+			CWaveChan* pChannel = (pTo->get_wave_channels_array())->get_p_channel(ichan);
 			pChannel->am_gaintotal = 20000. / xtotal;
 		}
 
@@ -297,7 +297,7 @@ line 11-	0	141.144	0.0317383
 			i++;
 			AfxExtractSubString(csdummy2, csLine, i, ',');
 			csdummy2.Replace('"', ' ');
-			CWaveChan* pChannel = (pTo->get_wavechan_array())->get_p_channel(ichan);
+			CWaveChan* pChannel = (pTo->get_wave_channels_array())->get_p_channel(ichan);
 			pChannel->am_csComment = csdummy2;
 		}
 
@@ -387,7 +387,7 @@ line 11-	0	141.144	0.0317383
 			}
 
 			// update rate
-			CWaveFormat* pwF = pTo->get_waveformat();
+			CWaveFormat* pwF = pTo->get_wave_format();
 			float xxrate = static_cast<float>(compteurtotal / (dtime_end - dtime_start));
 			pwF->sampling_rate_per_channel = xxrate;
 		}
@@ -421,7 +421,7 @@ BOOL DlgImportFiles::GetExperimentParameters(const AcqDataDoc* pTo) const
 	const BOOL flag = dlg.DoModal();
 	if (IDOK == flag)
 	{
-		CWaveFormat* pwFTo = pTo->get_waveformat();
+		CWaveFormat* pwFTo = pTo->get_wave_format();
 		const CWaveFormat* pwFDlg = &pacqD->waveFormat;
 
 		pwFTo->cs_ad_card_name = pwFDlg->cs_ad_card_name;
@@ -447,8 +447,8 @@ BOOL DlgImportFiles::GetExperimentParameters(const AcqDataDoc* pTo) const
 BOOL DlgImportFiles::GetAcquisitionParameters(AcqDataDoc* pTo)
 {
 	DlgADInputs dlg2;
-	dlg2.m_pwFormat = pTo->get_waveformat();
-	dlg2.m_pchArray = pTo->get_wavechan_array();
+	dlg2.m_pwFormat = pTo->get_wave_format();
+	dlg2.m_pchArray = pTo->get_wave_channels_array();
 
 	// invoke dialog box
 	const BOOL flag = dlg2.DoModal();
@@ -456,7 +456,7 @@ BOOL DlgImportFiles::GetAcquisitionParameters(AcqDataDoc* pTo)
 	{
 		for (int i = 0; i < m_scan_count; i++)
 		{
-			CWaveChan* pChannel = (pTo->get_wavechan_array())->get_p_channel(i);
+			CWaveChan* pChannel = (pTo->get_wave_channels_array())->get_p_channel(i);
 			m_xinstgain = pChannel->am_gaintotal;
 			m_dspan[i] = 20000. / m_xinstgain; // span= 20 V max to min
 			m_dbinval[i] = m_dspan[i] / 65536.; // divide voltage span into 2exp16 bins

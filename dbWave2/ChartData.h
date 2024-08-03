@@ -21,73 +21,71 @@ public:
 	BOOL	get_smooth_data_from_doc(int i_option);
 	BOOL	scroll_data_from_doc(WORD n_sb_code);
 
-	int		resize_channels(int n_pixels, long l_size); // change size of display chans, load data if necessary
-	BOOL	AttachDataFile(AcqDataDoc* pDataFile);
-	BOOL	IsDefined() const { return (chanlistitem_ptr_array.GetSize() > 0); } // is data defined?
-	AcqDataDoc* GetpDataFile() const { return m_pDataFile; }
+	int		resize_channels(int n_pixels, long l_size); 
+	BOOL	attach_data_file(AcqDataDoc* p_data_file);
+	BOOL	is_defined() const { return (chan_list_item_ptr_array_.GetSize() > 0); } 
+	AcqDataDoc* get_p_data_file() const { return m_p_data_file_; }
 
 	// export representation of data to the clipboard
-	BOOL	copy_as_text(int i_option, int i_unit, int n_abcissa);
+	BOOL	copy_as_text(int i_option, int i_unit, int n_abscissa);
 	LPTSTR	get_ascii_line(LPTSTR lp_copy, int i_unit);
 	LPTSTR	get_ascii_envelope(LPTSTR lp_copy, int i_unit);
 
 	// Helper functions
-	long	GetNxPixels() const { return m_npixels; } // number of pixels defined in this window
-	long	GetDataFirstIndex() const { return m_lxFirst; } // document index of first abscissa
-	long	GetDataLastIndex() const { return m_lxLast; } // document index of last abscissa
-	long	GetDataSize() const { return m_lxSize; } // nb of data pts displayed
-	long	GetPageSize() const { return m_lxPage; } // size of page increment used to browse through doc
-	long	GetLineSize() const { return m_lxLine; } // size of line increment used to browse through doc
-	long	GetDocumentLast() const { return m_lxVeryLast; } // index of document's last pt
-	long	GetDataOffsetfromPixel(int pix) const {
-				return static_cast<long>(pix) * (m_lxLast - m_lxFirst + 1) / static_cast<long>(m_display_rect_.right) + m_lxFirst; }
+	long	get_nx_pixels() const { return m_n_pixels_; } // number of pixels defined in this window
+	long	get_data_first_index() const { return m_lx_first_; } 
+	long	get_data_last_index() const { return m_lx_last_; } 
+	long	get_data_size() const { return m_lx_size_; } 
+	long	get_page_size() const { return m_lx_page_; } 
+	long	get_line_size() const { return m_lx_line_; } 
+	long	get_document_last() const { return m_lx_very_last_; } 
+	long	get_data_offset_from_pixel(const int pix) const {
+				return static_cast<long>(pix) * (m_lx_last_ - m_lx_first_ + 1) / static_cast<long>(m_display_rect_.right) + m_lx_first_; }
 
 	void update_page_line_size(); // update page and line size parameters
 
 	// Attributes
 protected:
-	// these variables define the curves displayed on the screen (data from doc)
-	AcqDataDoc*	m_pDataFile = nullptr; // pointer to data source file
-	CArray<CChanlistItem*, CChanlistItem*> chanlistitem_ptr_array;
-	// list of display items (abscissa, Envelope, disp. parms)
-	CArray<CEnvelope*, CEnvelope*> envelope_ptr_array; // list of Envelopes
-	CArray<CPoint, CPoint> m_PolyPoints; // array with abscissa & ordinates
-	CHighLight m_highlighted;
-	CScale m_scale;
+	AcqDataDoc*	m_p_data_file_ = nullptr; 
+	CArray<CChanlistItem*, CChanlistItem*> chan_list_item_ptr_array_;
+	CArray<CEnvelope*, CEnvelope*> envelope_ptr_array_; 
+	CArray<CPoint, CPoint> m_poly_points_; 
+	CHighLight m_highlighted_;
+	CScale m_scale_;
 
-	int m_npixels = 1; // nb pixels displayed horizontally
-	int m_dataperpixel = 1; // nb of data point per pixel
-	long m_lxVeryLast = 1; // end of document
-	long m_lxPage{}; // size of page increment / file index
-	long m_lxLine{}; // size of line increment / file index
-	long m_lxSize = 1; // nb of data pts represented in a Envelope
-	long m_lxFirst = 0; // file index of 1rst pt in the Envelopes
-	long m_lxLast = 1; // file index of last pt in the Envelopes
-	float m_samplingrate{};
-	BOOL m_btrackCurve = false; // track curve if hit
+	int m_n_pixels_ = 1; // nb pixels displayed horizontally
+	int m_data_per_pixel_ = 1; // nb of data point per pixel
+	long m_lx_very_last_ = 1; // end of document
+	long m_lx_page_{}; // size of page increment / file index
+	long m_lx_line_{}; // size of line increment / file index
+	long m_lx_size_ = 1; // nb of data pts represented in a Envelope
+	long m_lx_first_ = 0; // file index of 1rst pt in the Envelopes
+	long m_lx_last_ = 1; // file index of last pt in the Envelopes
+	float m_sampling_rate_{};
+	BOOL m_b_track_curve_ = false; // track curve if hit
 
-	int m_XORnelmts{}; // curve tracking parameters
-	int m_hitcurve{}; // ibid  which curve was hitted if any
-	int m_XORxext{}; // ibid  x extent
-	int m_XORyext{}; // ibid  y extent
-	int m_zero{}; // ibid. zero
+	int m_xor_n_elements_{}; // curve tracking parameters
+	int m_hit_curve_{}; // ibid  which curve was hit if any
+	int m_xor_x_ext_{}; // ibid  x extent
+	int m_xor_y_ext_{}; // ibid  y extent
+	int m_zero_{}; // ibid. zero
 
-	BOOL m_bADbuffers = false; // flag when AD buffers are in displayed
-	long m_lADbufferdone{}; // position of incoming data along m_lxSize
+	BOOL m_b_ad_buffers_ = false; // flag when AD buffers are in displayed
+	long m_l_ad_buffer_done_{}; // position of incoming data along m_lxSize
 
-	BOOL m_bPrintHZcursor{}; // default=FALSE
-	BOOL m_btrackspike = false; // track spike with vertic cursor
-	int m_tracklen = 60; // length of waveform to track
-	int m_trackoffset = 20; // offset of waveform from cursor
-	int m_trackchannel = 0; // lineview channel
+	BOOL m_b_print_hz_cursor_{}; // default=FALSE
+	BOOL m_b_track_spike_ = false; // track spike with vertical cursor
+	int m_track_len_ = 60; // length of waveform to track
+	int m_track_offset_ = 20; // offset of waveform from cursor
+	int m_track_channel_ = 0; // line_view channel
 
 	// ChanList operations
 public:
-	int		get_channel_list_size() const { return chanlistitem_ptr_array.GetSize(); }
+	int		get_channel_list_size() const { return chan_list_item_ptr_array_.GetSize(); }
 	void	remove_all_channel_list_items();
 	int		add_channel_list_item(int ns, int mode);
 	int		remove_channel_list_item(int i_chan);
-	CChanlistItem* get_channel_list_item(int item) const { return chanlistitem_ptr_array.GetAt(item); }
+	CChanlistItem* get_channel_list_item(int item) const { return chan_list_item_ptr_array_.GetAt(item); }
 
 	int		set_channel_list_transform_mode(int i_chan, int i_mode);
 	int		set_channel_list_source_channel(int i_channel, int acq_channel);
@@ -103,29 +101,29 @@ public:
 
 	float get_time_per_pixel() const
 	{
-		return static_cast<float>(GetDataSize()) / m_pDataFile->get_waveformat()->sampling_rate_per_channel / static_cast<float>(
+		return static_cast<float>(get_data_size()) / m_p_data_file_->get_wave_format()->sampling_rate_per_channel / static_cast<float>(
 			get_rect_width());
 	}
 
 	int get_channel_list_bin_to_y_pixel(int chan, int bin)
 	{
-		return MulDiv(bin - chanlistitem_ptr_array[chan]->GetYzero(), m_y_viewport_extent_,
-		              chanlistitem_ptr_array[chan]->GetYextent()) + m_y_viewport_origin_;
+		return MulDiv(bin - chan_list_item_ptr_array_[chan]->GetYzero(), m_y_viewport_extent_,
+		              chan_list_item_ptr_array_[chan]->GetYextent()) + m_y_viewport_origin_;
 	}
 
 	int get_channel_list_y_pixels_to_bin(const int chan, const int y_pixel_relative_to_top_client_window)
 	{
-		return chanlistitem_ptr_array[chan]->GetYzero() + 
+		return chan_list_item_ptr_array_[chan]->GetYzero() + 
 				MulDiv(y_pixel_relative_to_top_client_window - m_y_viewport_origin_,
-					chanlistitem_ptr_array[chan]->GetYextent(), 
+					chan_list_item_ptr_array_[chan]->GetYextent(), 
 					m_y_viewport_extent_);
 	}
 
 	SCOPESTRUCT* get_scope_parameters() override;
-	void	set_scope_parameters(SCOPESTRUCT* pStruct) override;
-	void	AutoZoomChan(int i) const;
-	void	center_chan(int i) const;
-	void	max_gain_chan(int i) const;
+	void	set_scope_parameters(SCOPESTRUCT* p_struct) override;
+	void	auto_zoom_chan(int channel_index) const;
+	void	center_chan(int channel_index) const;
+	void	max_gain_chan(int channel_index) const;
 	void	split_channels() const;
 	void	update_chan_list_from_doc();
 	void	update_chan_list_max_span();
@@ -133,13 +131,13 @@ public:
 	void	set_highlight_data(const CDWordArray* p_intervals);
 	void	set_highlight_data(const CHighLight& source);
 	void	set_track_spike(BOOL b_track_spike, int track_len, int track_offset, int track_channel);
-	void	move_hz_tag_to_val(int itag, int ival);
+	void	move_hz_tag_to_val(int i_tag, int i_eval);
 	void	update_x_ruler();
 	void	update_y_ruler();
 	void	plot_data_to_dc(CDC* p_dc) override;
 	void	zoom_data(CRect* previous_rect, CRect* new_rect) override;
 
-	void	Print(CDC* p_dc, CRect* rect, BOOL bCenterline = FALSE);
+	void	print(CDC* p_dc, const CRect* p_rect, BOOL b_center_line = FALSE);
 
 	void	adjust_gain(boolean b_set_span_mv, float span_mv_value) const;
 	void	load_data_within_window(boolean set_time_span, float t_first, float t_last);
@@ -152,10 +150,10 @@ protected:
 	void	display_vt_tags_long_value(CDC* p_dc);
 	void	display_hz_tags_for_channel(CDC* p_dc, int i_chan, const CChanlistItem* p_channel);
 
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonDown(UINT n_flags, CPoint point);
+	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT n_flags, CPoint point);
 
 	DECLARE_MESSAGE_MAP()
 };
