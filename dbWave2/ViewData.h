@@ -18,41 +18,41 @@ protected:
 	enum { IDD = IDD_VIEWDATA };
 
 	int m_channel_selected = 0;
-	float m_first_Hz_cursor = 0.;
-	float m_second_Hz_cursor = 0.;
+	float m_first_hz_cursor = 0.;
+	float m_second_hz_cursor = 0.;
 	float m_difference_second_minus_first = 0.;
 	float m_time_first_abscissa = 0.;
 	float m_time_last_abscissa = 0.;
-	float m_floatNDigits = 1000.; // 10(000) -> n digits displayed
-	BOOL m_bInitComment = true;
+	float m_float_n_digits = 1000.; // 10(000) -> n digits displayed
+	BOOL m_b_init_comment = true;
 
-	ChartData m_ChartDataWnd{}; 
-	CEditCtrl mm_first_Hz_cursor; 
-	CEditCtrl mm_second_Hz_cursor;
+	ChartData m_chart_data_wnd{}; 
+	CEditCtrl mm_first_hz_cursor; 
+	CEditCtrl mm_second_hz_cursor;
 	CEditCtrl mm_difference_second_minus_first; 
 	CEditCtrl mm_time_first_abscissa;
 	CEditCtrl mm_time_last_abscissa;
-	CComboBox m_comboSelectChan;
-	RulerBar m_ADC_yRulerBar;
-	RulerBar m_ADC_xRulerBar;
+	CComboBox m_combo_select_chan;
+	RulerBar m_adc_y_ruler_bar;
+	RulerBar m_adc_x_ruler_bar;
 
 protected:
 	// parameters related to data display and to document
-	AcqDataDoc* m_p_dat_Doc = nullptr;
+	AcqDataDoc* m_p_dat_ = nullptr;
 	BOOL m_b_valid_doc_ = false;
-	float m_samplingRate = 1.;
-	int m_cursor_state = 0;
-	int m_VBar_pixel_ratio = 30; 
-	int m_HBar_pixel_ratio = 10; 
-	int m_current_file_index = 0;
+	float m_sampling_rate_ = 1.;
+	int m_cursor_state_ = 0;
+	int m_v_bar_pixel_ratio_ = 30; 
+	int m_h_bar_pixel_ratio_ = 10; 
+	int m_current_file_index_ = 0;
 
-	HICON m_hBias = nullptr;
-	HICON m_hZoom = nullptr;
-	int scan_count = 0;
-	float channel_rate = 0.;
+	HICON m_h_bias_ = nullptr;
+	HICON m_h_zoom_ = nullptr;
+	int scan_count_ = 0;
+	float channel_rate_ = 0.;
 
-	OPTIONS_VIEWDATA* options_view_data = nullptr;
-	OPTIONS_VIEWDATAMEASURE* mdMO = nullptr;
+	OPTIONS_VIEWDATA* options_view_data_ = nullptr;
+	OPTIONS_VIEWDATAMEASURE* options_view_data_measures_ = nullptr;
 
 	void print_file_bottom_page(CDC* p_dc, CPrintInfo* pInfo);
 	CString convert_file_index(long l_first, long l_last) const;
@@ -69,9 +69,9 @@ protected:
 
 	BOOL m_bCommonScale = false;
 
-	ScrollBarEx m_file_scroll_bar; // data position within file
-	SCROLLINFO m_file_scroll_bar_infos{}; // infos for scrollbar
-	int m_VBarMode = 0; // flag V scrollbar state
+	ScrollBarEx file_scroll_bar_; // data position within file
+	SCROLLINFO file_scroll_bar_infos_{}; // infos for scrollbar
+	int m_v_bar_mode_ = 0; // flag V scrollbar state
 	CScrollBar scroll_y_; // V scrollbar
 
 	void on_file_scroll(UINT n_sb_code, UINT n_pos);
@@ -94,10 +94,10 @@ protected:
 	void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint) override;
 	void DoDataExchange(CDataExchange* pDX) override;
 	void OnInitialUpdate() override;
-	BOOL OnPreparePrinting(CPrintInfo* pInfo) override;
-	void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	void OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
-	void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
+	BOOL OnPreparePrinting(CPrintInfo* p_info) override;
+	void OnBeginPrinting(CDC* p_dc, CPrintInfo* p_info) override;
+	void OnPrint(CDC* p_dc, CPrintInfo* p_info) override;
+	void OnEndPrinting(CDC* p_dc, CPrintInfo* p_info) override;
 
 	void define_sub_classed_items();
 	void define_stretch_parameters();

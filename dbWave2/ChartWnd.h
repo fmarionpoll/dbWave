@@ -163,12 +163,12 @@ protected:
 	int hc_trapped_{}; // cursor index trapped by the mouse
 	int track_mode_ = TRACK_OFF;
 
-	int m_x_wo_ = 0; // x origin, extent / window & view
+	int m_x_wo_ = 0; 
 	int m_x_we_ = 1;
 	int m_x_viewport_origin_ = 0;
 	int m_x_viewport_extent_ = 1;
 
-	int m_y_wo_ = 0; // y origin, extent / window & view
+	int m_y_wo_ = 0; 
 	int m_y_we_ = 1;
 	int m_y_viewport_origin_ = 0;
 	int m_y_viewport_extent_ = 1;
@@ -180,10 +180,10 @@ protected:
 	CRect m_client_rect_{};
 	CRect m_display_rect_{};
 
-	int cx_jitter_; // mouse horizontal hitter
-	int cy_jitter_; // mouse vertical jitter
-	CRect rect_zoom_from_; // temp rect
-	CRect rect_zoom_to_; // temp rect
+	int cx_mouse_jitter_; 
+	int cy_mouse_jitter_; 
+	CRect rect_zoom_from_; 
+	CRect rect_zoom_to_; 
 	int i_undo_zoom_ = 0; // 1: rect+ ; -1: rect- ; 0: none stored (not implemented)
 
 	BOOL m_b_allow_props_ = true;

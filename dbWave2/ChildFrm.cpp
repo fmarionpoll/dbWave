@@ -312,16 +312,6 @@ LRESULT CChildFrame::on_my_message(WPARAM w_param, LPARAM l_param)
 	case HINT_SET_MOUSE_CURSOR:
 	{
 		const short low_param = LOWORD(l_param);
-		//switch (lowp)
-		//{
-		//case CURSOR_ZOOM:
-		//case CURSOR_MEASURE:
-		//case CURSOR_VERTICAL:
-		//	break;
-		//default:
-		//	m_cursor_state=CURSOR_ARROW;
-		//	break;
-		//}
 		m_cursor_state = low_param;
 	}
 	break;

@@ -14,7 +14,6 @@ public:
 	DECLARE_SERIAL(ChartData)
 	void	Serialize(CArchive& ar) override;
 
-public:
 	BOOL	get_data_from_doc();
 	BOOL	get_data_from_doc(long l_first);
 	BOOL	get_data_from_doc(long l_first, long l_last);
@@ -105,7 +104,7 @@ public:
 			get_rect_width());
 	}
 
-	int get_channel_list_bin_to_y_pixel(int chan, int bin)
+	int get_channel_list_bin_to_y_pixel(const int chan, const int bin)
 	{
 		return MulDiv(bin - chan_list_item_ptr_array_[chan]->GetYzero(), m_y_viewport_extent_,
 		              chan_list_item_ptr_array_[chan]->GetYextent()) + m_y_viewport_origin_;
@@ -150,10 +149,10 @@ protected:
 	void	display_vt_tags_long_value(CDC* p_dc);
 	void	display_hz_tags_for_channel(CDC* p_dc, int i_chan, const CChanlistItem* p_channel);
 
-	afx_msg void OnLButtonDown(UINT n_flags, CPoint point);
-	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnMouseMove(UINT n_flags, CPoint point);
+	afx_msg void OnLButtonDown(UINT n_flags, CPoint point) override;
+	afx_msg void OnLButtonUp(UINT n_flags, CPoint point) override;
+	afx_msg void OnSize(UINT n_type, int cx, int cy) override;
+	afx_msg void OnMouseMove(UINT n_flags, CPoint point) override;
 
 	DECLARE_MESSAGE_MAP()
 };

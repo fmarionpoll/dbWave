@@ -945,9 +945,9 @@ void ChartData::display_vt_tags_long_value(CDC* p_dc)
 	p_dc->SetROP2(old_rop2);
 }
 
-void ChartData::OnSize(UINT nType, int cx, int cy)
+void ChartData::OnSize(UINT n_type, int cx, int cy)
 {
-	ChartWnd::OnSize(nType, cx, cy);
+	ChartWnd::OnSize(n_type, cx, cy);
 	if (!is_defined() || m_p_data_file_ == nullptr)
 		return;
 
@@ -1462,8 +1462,8 @@ int ChartData::does_cursor_hit_curve(const CPoint point)
 	const auto i_channels = chan_list_item_ptr_array_.GetUpperBound();
 	auto chan_list_item = chan_list_item_ptr_array_[0]->pEnvelopeAbcissa;
 	const auto x_extent = chan_list_item->GetnElements();
-	int index1 = point.x - cx_jitter_;
-	auto index2 = index1 + cx_jitter_;
+	int index1 = point.x - cx_mouse_jitter_;
+	auto index2 = index1 + cx_mouse_jitter_;
 	if (index1 < 0) index1 = 0; 
 	if (index2 > (get_rect_width() - 1)) index2 = get_rect_width() - 1;
 
@@ -1483,7 +1483,7 @@ int ChartData::does_cursor_hit_curve(const CPoint point)
 	{
 		// convert device coordinates into value
 		const auto i_val = get_channel_list_y_pixels_to_bin(chan, point.y);
-		const auto i_jitter = MulDiv(cy_jitter_, get_channel_list_item(chan)->GetYextent(), -m_y_viewport_extent_);
+		const auto i_jitter = MulDiv(cy_mouse_jitter_, get_channel_list_item(chan)->GetYextent(), -m_y_viewport_extent_);
 		const auto val_max = i_val + i_jitter; // mouse max
 		const auto val_min = i_val - i_jitter; // mouse min
 		chan_list_item = chan_list_item_ptr_array_[chan]->pEnvelopeOrdinates;
@@ -1590,12 +1590,12 @@ void ChartData::highlight_data(CDC* p_dc, int chan)
 			continue; // next if out of range
 
 		// clip data if out of range
-		if (l_first < m_lx_first_) // minimum interval
+		if (l_first < m_lx_first_)
 			l_first = m_lx_first_;
-		if (l_last > m_lx_last_) // maximum interval
+		if (l_last > m_lx_last_) 
 			l_last = m_lx_last_;
 
-		// compute corresponding interval (assume same m_scale for all chans... (!!)
+		// compute corresponding interval (assume same m_scale for all channels... (!!)
 		auto i_first = m_scale_.get_which_interval(l_first - m_lx_first_);
 		if (i_first < 0)
 			continue;

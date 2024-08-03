@@ -75,8 +75,8 @@ ChartWnd::ChartWnd()
 	m_client_rect_ = CRect(0, 0, 10, 10); // minimal size of the button
 	adjust_display_rect(&m_client_rect_);
 
-	cx_jitter_ = GetSystemMetrics(SM_CXDOUBLECLK);
-	cy_jitter_ = GetSystemMetrics(SM_CYDOUBLECLK);
+	cx_mouse_jitter_ = GetSystemMetrics(SM_CXDOUBLECLK);
+	cy_mouse_jitter_ = GetSystemMetrics(SM_CYDOUBLECLK);
 	black_dotted_pen_.CreatePen(PS_DOT, 0, color_table_[BLACK_COLOR]);
 
 	// set colored CPen objects
@@ -622,7 +622,7 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 				hc_trapped_ = hit_vertical_tag_pixel(static_cast<int>(point.x));
 			else
 			{
-				file_position_equivalent_to_mouse_jitter_ = static_cast<long>(cx_jitter_) * (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1) / static_cast<long>(
+				file_position_equivalent_to_mouse_jitter_ = static_cast<long>(cx_mouse_jitter_) * (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1) / static_cast<long>(
 					m_display_rect_.Width());
 				const auto lx = static_cast<long>(point.x) * (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1) / static_cast<long>(
 					m_display_rect_.Width()) + file_position_first_left_pixel_;
