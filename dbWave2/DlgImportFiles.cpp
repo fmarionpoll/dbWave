@@ -38,7 +38,7 @@ void DlgImportFiles::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(DlgImportFiles, CDialog)
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDCANCEL, &DlgImportFiles::OnBnClickedCancel)
-	ON_BN_CLICKED(ID_STARTSTOP, &DlgImportFiles::ADC_OnBnClickedStartstop)
+	ON_BN_CLICKED(ID_START_STOP, &DlgImportFiles::ADC_OnBnClickedStartstop)
 END_MESSAGE_MAP()
 
 // CImportFilesDlg message handlers

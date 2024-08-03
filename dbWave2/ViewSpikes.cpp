@@ -65,10 +65,10 @@ BEGIN_MESSAGE_MAP(ViewSpikes, dbTableView)
 	ON_COMMAND(ID_FORMAT_GAIN_ADJUST, &ViewSpikes::OnFormatGainadjust)
 	ON_COMMAND(ID_TOOLS_EDIT_SPIKES, &ViewSpikes::OnToolsEdittransformspikes)
 	ON_COMMAND(ID_EDIT_COPY, &ViewSpikes::OnEditCopy)
-	ON_COMMAND(ID_FORMAT_PREVIOUSFRAME, &ViewSpikes::OnFormatPreviousframe)
-	ON_COMMAND(ID_FORMAT_NEXTFRAME, &ViewSpikes::OnFormatNextframe)
-	ON_COMMAND(ID_RECORD_SHIFTLEFT, &ViewSpikes::OnHScrollLeft)
-	ON_COMMAND(ID_RECORD_SHIFTRIGHT, &ViewSpikes::OnHScrollRight)
+	ON_COMMAND(ID_FORMAT_PREVIOUS_FRAME, &ViewSpikes::OnFormatPreviousframe)
+	ON_COMMAND(ID_FORMAT_NEXT_FRAME, &ViewSpikes::OnFormatNextframe)
+	ON_COMMAND(ID_RECORD_SHIFT_LEFT, &ViewSpikes::OnHScrollLeft)
+	ON_COMMAND(ID_RECORD_SHIFT_RIGHT, &ViewSpikes::OnHScrollRight)
 	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
 
@@ -242,7 +242,7 @@ void ViewSpikes::set_mouse_cursor(const short param_value)
 
 void ViewSpikes::change_zoom(LPARAM lParam)
 {
-	if (HIWORD(lParam) == IDC_DISPLAYDAT)
+	if (HIWORD(lParam) == IDC_DISPLAY_DAT)
 	{
 		l_first_ = chart_data_wnd_.GetDataFirstIndex();
 		l_last_ = chart_data_wnd_.GetDataLastIndex();
@@ -435,7 +435,7 @@ void ViewSpikes::define_sub_classed_items()
 	VERIFY(spike_class_listbox_.SubclassDlgItem(IDC_LISTCLASSES, this));
 	VERIFY(mm_time_first_.SubclassDlgItem(IDC_TIMEFIRST, this));
 	VERIFY(mm_time_last_.SubclassDlgItem(IDC_TIMELAST, this));
-	VERIFY(chart_data_wnd_.SubclassDlgItem(IDC_DISPLAYDAT, this));
+	VERIFY(chart_data_wnd_.SubclassDlgItem(IDC_DISPLAY_DAT, this));
 	VERIFY(mm_zoom_.SubclassDlgItem(IDC_EDIT3, this));
 	mm_zoom_.ShowScrollBar(SB_VERT);
 	VERIFY(mm_class_source_.SubclassDlgItem(IDC_EDIT4, this));
@@ -461,7 +461,7 @@ void ViewSpikes::define_stretch_parameters()
 	m_stretch_.newProp(IDC_LISTCLASSES, XLEQ_XREQ, YTEQ_YBEQ);
 	m_stretch_.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
 
-	m_stretch_.newProp(IDC_DISPLAYDAT, XLEQ_XREQ, SZEQ_YTEQ);
+	m_stretch_.newProp(IDC_DISPLAY_DAT, XLEQ_XREQ, SZEQ_YTEQ);
 	m_stretch_.newProp(IDC_TIMEINTERVALS, SZEQ_XLEQ, SZEQ_YBEQ);
 	m_stretch_.newProp(IDC_TIMEFIRST, SZEQ_XLEQ, SZEQ_YBEQ);
 	m_stretch_.newProp(IDC_TIMELAST, SZEQ_XREQ, SZEQ_YBEQ);
@@ -500,7 +500,7 @@ void ViewSpikes::OnInitialUpdate()
 	GetDlgItem(IDC_LISTCLASSES)->GetWindowRect(&rect);
 	spike_class_listbox_.set_row_height(spk_classification_parameters_->row_height);
 	CRect rect2;
-	GetDlgItem(IDC_DISPLAYDAT)->GetWindowRect(&rect2);
+	GetDlgItem(IDC_DISPLAY_DAT)->GetWindowRect(&rect2);
 	const int left_col_width = rect2.left - rect.left - 2;
 	spike_class_listbox_.set_left_column_width(left_col_width);
 	if (spk_classification_parameters_->col_text < 0)
@@ -525,7 +525,7 @@ void ViewSpikes::OnInitialUpdate()
 	update_file_parameters(TRUE);
 	if (b_add_spike_mode_)
 	{
-		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_CURSORMODE_MEASURE, NULL);
+		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_CURSOR_MODE_MEASURE, NULL);
 		chart_data_wnd_.set_track_spike(b_add_spike_mode_, spk_detection_parameters_->extract_n_points, spk_detection_parameters_->detect_pre_threshold,
 		                             spk_detection_parameters_->extract_channel);
 	}

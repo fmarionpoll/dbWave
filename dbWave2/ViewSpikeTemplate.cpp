@@ -37,7 +37,7 @@ void ViewSpikeTemplates::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK1, m_b_all_files);
 	DDX_Control(pDX, IDC_TAB1, m_tab1_ctrl);
 	DDX_Control(pDX, IDC_TAB2, m_tabCtrl);
-	DDX_Check(pDX, IDC_DISPLAYSINGLECLASS, b_display_single_class);
+	DDX_Check(pDX, IDC_DISPLAY_SINGLE_CLASS, b_display_single_class);
 }
 
 BEGIN_MESSAGE_MAP(ViewSpikeTemplates, dbTableView)
@@ -64,7 +64,7 @@ BEGIN_MESSAGE_MAP(ViewSpikeTemplates, dbTableView)
 	ON_EN_CHANGE(IDC_IFIRSTSORTEDCLASS, &ViewSpikeTemplates::OnEnChangeIfirstsortedclass)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB2, &ViewSpikeTemplates::OnTcnSelchangeTab2)
 	ON_NOTIFY(NM_CLICK, IDC_TAB2, &ViewSpikeTemplates::OnNMClickTab2)
-	ON_BN_CLICKED(IDC_DISPLAYSINGLECLASS, &ViewSpikeTemplates::OnBnClickedDisplaysingleclass)
+	ON_BN_CLICKED(IDC_DISPLAY_SINGLE_CLASS, &ViewSpikeTemplates::OnBnClickedDisplaysingleclass)
 	ON_EN_CHANGE(IDC_SHAPE_T1, &ViewSpikeTemplates::OnEnChangeT1)
 	ON_EN_CHANGE(IDC_SHAPE_T2, &ViewSpikeTemplates::OnEnChangeT2)
 END_MESSAGE_MAP()

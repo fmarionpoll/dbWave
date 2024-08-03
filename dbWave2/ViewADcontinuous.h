@@ -126,7 +126,7 @@ protected:
 	BOOL InitOutput_AD();
 	void UpdateViewDataFinal();
 	void display_ol_da_error_message(const CHAR* error_string) const;
-	void ChainDialog(WORD iID);
+	void ChainDialog(WORD i_id);
 
 	short* ADC_Transfer(short* source_data, const CWaveFormat* pWFormat);
 	void under_sample_buffer(short* pRawDataBuf, short* pDTbuf0, const CWaveFormat* pWFormat, const int under_sample_factor);

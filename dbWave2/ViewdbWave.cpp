@@ -25,13 +25,13 @@ BEGIN_MESSAGE_MAP(ViewdbWave, dbTableView)
 	ON_WM_DESTROY()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
-	ON_COMMAND(ID_RECORD_PAGEUP, &ViewdbWave::OnRecordPageup)
-	ON_COMMAND(ID_RECORD_PAGEDOWN, &ViewdbWave::OnRecordPagedown)
+	ON_COMMAND(ID_RECORD_PAGE_UP, &ViewdbWave::OnRecordPageup)
+	ON_COMMAND(ID_RECORD_PAGE_DOWN, &ViewdbWave::OnRecordPagedown)
 	ON_COMMAND(ID_FILE_PRINT, dbTableView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, dbTableView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, dbTableView::OnFilePrintPreview)
 	ON_BN_CLICKED(IDC_DISPLAYDATA, &ViewdbWave::OnBnClickedData)
-	ON_BN_CLICKED(IDC_DISPLAYNOTHING, &ViewdbWave::OnBnClickedDisplayNothing)
+	ON_BN_CLICKED(IDC_DISPLAY_NOTHING, &ViewdbWave::OnBnClickedDisplayNothing)
 	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewdbWave::OnEnChangeTimefirst)
 	ON_EN_CHANGE(IDC_TIMELAST, &ViewdbWave::OnEnChangeTimelast)
 	ON_EN_CHANGE(IDC_AMPLITUDESPAN, &ViewdbWave::OnEnChangeAmplitudespan)
@@ -164,7 +164,7 @@ void ViewdbWave::display_data()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYDATA))->SetCheck(BST_CHECKED);
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAY_SPIKES))->SetCheck(BST_UNCHECKED);
-	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYNOTHING))->SetCheck(BST_UNCHECKED);
+	static_cast<CButton*>(GetDlgItem(IDC_DISPLAY_NOTHING))->SetCheck(BST_UNCHECKED);
 
 	GetDlgItem(IDC_RADIOALLCLASSES)->EnableWindow(FALSE);
 	GetDlgItem(IDC_RADIOONECLASS)->EnableWindow(FALSE);
@@ -183,7 +183,7 @@ void ViewdbWave::display_spikes()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAY_SPIKES))->SetCheck(BST_CHECKED);
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYDATA))->SetCheck(BST_UNCHECKED);
-	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYNOTHING))->SetCheck(BST_UNCHECKED);
+	static_cast<CButton*>(GetDlgItem(IDC_DISPLAY_NOTHING))->SetCheck(BST_UNCHECKED);
 
 	GetDlgItem(IDC_FILTERCHECK)->EnableWindow(FALSE);
 	GetDlgItem(IDC_RADIOALLCLASSES)->EnableWindow(TRUE);
@@ -213,7 +213,7 @@ void ViewdbWave::display_nothing()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYDATA))->SetCheck(BST_UNCHECKED);
 	static_cast<CButton*>(GetDlgItem(IDC_DISPLAY_SPIKES))->SetCheck(BST_UNCHECKED);
-	static_cast<CButton*>(GetDlgItem(IDC_DISPLAYNOTHING))->SetCheck(BST_CHECKED);
+	static_cast<CButton*>(GetDlgItem(IDC_DISPLAY_NOTHING))->SetCheck(BST_CHECKED);
 
 	GetDlgItem(IDC_FILTERCHECK)->EnableWindow(FALSE);
 	GetDlgItem(IDC_RADIOALLCLASSES)->EnableWindow(FALSE);
@@ -350,7 +350,7 @@ void ViewdbWave::OnDblclkListctrl(NMHDR * pNMHDR, LRESULT * pResult)
 {
 	*pResult = 0;
 	// quit the current view and switch to spike detection view
-	GetParent()->PostMessage(WM_COMMAND, static_cast<WPARAM>(ID_VIEW_SPIKEDETECTION), static_cast<LPARAM>(NULL));
+	GetParent()->PostMessage(WM_COMMAND, static_cast<WPARAM>(ID_VIEW_SPIKE_DETECTION), static_cast<LPARAM>(NULL));
 }
 
 LRESULT ViewdbWave::OnMyMessage(WPARAM wParam, LPARAM lParam)

@@ -13,8 +13,8 @@
 #endif
 
 
-// the numbers here are those of m_pszTableCol - they define the order of appearance of the different parameteres
-int CFilterPanel::m_noCol[] = {
+// the numbers here are those of m_pszTableCol - they define the order of appearance of the different parameters
+int CFilterPanel::m_no_col_[] = {
 	CH_EXPT_ID,
 	CH_IDINSECT, CH_IDSENSILLUM, CH_INSECT_ID, CH_SENSILLUM_ID,
 	CH_LOCATION_ID, CH_STRAIN_ID, CH_SEX_ID, CH_OPERATOR_ID,
@@ -33,7 +33,7 @@ BEGIN_MESSAGE_MAP(CFilterPanel, CDockablePane)
 	ON_WM_SIZE()
 	ON_WM_CONTEXTMENU()
 	ON_COMMAND(ID_UPDATE, OnUpdateTree)
-	ON_COMMAND(ID_APPLYFILTER, OnApplyFilter)
+	ON_COMMAND(ID_APPLY_FILTER, OnApplyFilter)
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
 	ON_MESSAGE(WM_MYMESSAGE, OnMyMessage)
@@ -52,22 +52,22 @@ int CFilterPanel::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	rect_dummy.SetRectEmpty();
 
 	// Create view:
-	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS;
-	if (!m_wndFilterView.Create(dwViewStyle, rect_dummy, this, IDC_TREE1))
+	constexpr DWORD dw_view_style = WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS;
+	if (!m_wnd_filter_view_.Create(dw_view_style, rect_dummy, this, IDC_TREE1))
 		return -1; // fail to create
 
-	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EXPLORER);
-	m_wndToolBar.LoadToolBar(IDR_EXPLORER, 0, 0, TRUE /* Is locked */);
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
-	m_wndToolBar.SetPaneStyle(
-		m_wndToolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM |
+	m_wnd_tool_bar_.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EXPLORER);
+	m_wnd_tool_bar_.LoadToolBar(IDR_EXPLORER, 0, 0, TRUE /* Is locked */);
+	m_wnd_tool_bar_.SetPaneStyle(m_wnd_tool_bar_.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
+	m_wnd_tool_bar_.SetPaneStyle(
+		m_wnd_tool_bar_.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM |
 			CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
-	m_wndToolBar.ReplaceButton(
+	m_wnd_tool_bar_.ReplaceButton(
 		ID_RECORD_SORT,
 		CMFCToolBarComboBoxButton(ID_RECORD_SORT, /*GetCmdMgr()->GetCmdImage(ID_RECORD_SORT)*/ NULL, CBS_DROPDOWN));
 
-	m_wndToolBar.SetOwner(this);
-	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
+	m_wnd_tool_bar_.SetOwner(this);
+	m_wnd_tool_bar_.SetRouteCommandsViaFrame(FALSE);
 	// All commands will be routed via this control , not via the parent frame:
 
 	AdjustLayout();
@@ -82,7 +82,7 @@ void CFilterPanel::OnSize(UINT nType, int cx, int cy)
 
 void CFilterPanel::OnContextMenu(CWnd* p_wnd, CPoint point)
 {
-	auto p_wnd_tree = static_cast<CTreeCtrl*>(&m_wndFilterView);
+	const auto p_wnd_tree = static_cast<CTreeCtrl*>(&m_wnd_filter_view_);
 	ASSERT_VALID(p_wnd_tree);
 
 	if (p_wnd != p_wnd_tree)
@@ -117,11 +117,11 @@ void CFilterPanel::AdjustLayout()
 	CRect rect_client;
 	GetClientRect(rect_client);
 
-	const int cy_tlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
+	const int cy_tlb = m_wnd_tool_bar_.CalcFixedLayout(FALSE, TRUE).cy;
 
-	m_wndToolBar.SetWindowPos(nullptr, rect_client.left, rect_client.top, rect_client.Width(), cy_tlb,
+	m_wnd_tool_bar_.SetWindowPos(nullptr, rect_client.left, rect_client.top, rect_client.Width(), cy_tlb,
 	                          SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndFilterView.SetWindowPos(nullptr, rect_client.left + 1, rect_client.top + cy_tlb + 1, rect_client.Width() - 2,
+	m_wnd_filter_view_.SetWindowPos(nullptr, rect_client.left + 1, rect_client.top + cy_tlb + 1, rect_client.Width() - 2,
 	                             rect_client.Height() - cy_tlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
@@ -130,7 +130,7 @@ void CFilterPanel::OnPaint()
 	CPaintDC dc(this); // device context for painting
 
 	CRect rect_tree;
-	m_wndFilterView.GetWindowRect(rect_tree);
+	m_wnd_filter_view_.GetWindowRect(rect_tree);
 	ScreenToClient(rect_tree);
 
 	rect_tree.InflateRect(1, 1);
@@ -140,40 +140,40 @@ void CFilterPanel::OnPaint()
 void CFilterPanel::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
-	m_wndFilterView.SetFocus();
+	m_wnd_filter_view_.SetFocus();
 }
 
 void CFilterPanel::OnUpdateTree()
 {
-	m_pDocOld = nullptr;
+	m_p_doc_old_ = nullptr;
 	InitFilterList();
 }
 
 LRESULT CFilterPanel::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	//auto p_app = (CdbWaveApp*)AfxGetApp();
-	//short lowp = LOWORD(lParam);
-	//short highp = HIWORD(lParam);
+	//short low_p = LO_WORD(lParam);
+	//short high_p = HI_WORD(lParam);
 
 	switch (wParam)
 	{
 	case HINT_ACTIVATE_VIEW:
-		m_pDoc = reinterpret_cast<CdbWaveDoc*>(lParam);
-		if (m_pDoc != m_pDocOld)
+		m_p_doc_ = reinterpret_cast<CdbWaveDoc*>(lParam);
+		if (m_p_doc_ != m_p_doc_old_)
 			InitFilterList();
 		break;
 
 	case HINT_MDI_ACTIVATE:
 		{
-			auto* pmain = static_cast<CMainFrame*>(AfxGetMainWnd());
+			const auto* p_main = static_cast<CMainFrame*>(AfxGetMainWnd());
 			BOOL b_maximized;
-			auto p_child = pmain->MDIGetActive(&b_maximized);
+			const auto p_child = p_main->MDIGetActive(&b_maximized);
 			if (!p_child)
 				return NULL;
 			const auto p_document = p_child->GetActiveDocument();
 			if (!p_document || !p_document->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
 				return NULL;
-			m_pDoc = static_cast<CdbWaveDoc*>(p_document);
+			m_p_doc_ = static_cast<CdbWaveDoc*>(p_document);
 			InitFilterList();
 		}
 		break;
@@ -186,15 +186,15 @@ LRESULT CFilterPanel::OnMyMessage(WPARAM wParam, LPARAM lParam)
 
 void CFilterPanel::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	m_pDoc = reinterpret_cast<CdbWaveDoc*>(pSender);
+	m_p_doc_ = reinterpret_cast<CdbWaveDoc*>(pSender);
 	switch (LOWORD(lHint))
 	{
-	case HINT_CLOSE_FILE_MODIFIED: // save current file parms
+	case HINT_CLOSE_FILE_MODIFIED: // save current file parameters
 		//m_pDocOld = NULL;
 		break;
 
 	case HINT_REQUERY:
-		m_pDocOld = nullptr;
+		m_p_doc_old_ = nullptr;
 
 	case HINT_DOC_HAS_CHANGED:
 	case HINT_DOC_MOVE_RECORD:
@@ -207,11 +207,11 @@ void CFilterPanel::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 void CFilterPanel::InitFilterList()
 {
-	if (m_pDocOld == m_pDoc)
+	if (m_p_doc_old_ == m_p_doc_)
 		return;
-	m_pDocOld = m_pDoc;
+	m_p_doc_old_ = m_p_doc_;
 
-	auto p_db = m_pDoc->db_table;
+	const auto p_db = m_p_doc_->db_table;
 	ASSERT(p_db);
 
 	// setup dialog box
@@ -221,8 +221,8 @@ void CFilterPanel::InitFilterList()
 
 	// fill items of the combo (column heads to sort data)
 	dlg.SetStatus(_T("List categories available..."));
-	auto p_combo = static_cast<CMFCToolBarComboBoxButton*>(m_wndToolBar.GetButton(3));
-	ASSERT(ID_RECORD_SORT == m_wndToolBar.GetItemID(3));
+	auto p_combo = static_cast<CMFCToolBarComboBoxButton*>(m_wnd_tool_bar_.GetButton(3));
+	ASSERT(ID_RECORD_SORT == m_wnd_tool_bar_.GetItemID(3));
 	if (p_combo->GetCount() <= 0)
 	{
 		for (auto i = 0; i < N_TABLE_COLUMNS; i++)
@@ -237,98 +237,96 @@ void CFilterPanel::InitFilterList()
 	dlg.SetStatus(_T("Populate categories..."));
 	if (p_db->m_mainTableSet.IsBOF() && p_db->m_mainTableSet.IsEOF())
 		return;
-	m_wndFilterView.LockWindowUpdate(); // prevent screen upate (and flicker)
-	if (m_wndFilterView.GetCount() > 0)
-		m_wndFilterView.DeleteAllItems();
+	m_wnd_filter_view_.LockWindowUpdate(); // prevent screen update (and flicker)
+	if (m_wnd_filter_view_.GetCount() > 0)
+		m_wnd_filter_view_.DeleteAllItems();
 
 	auto i = 0;
 	p_db->m_mainTableSet.BuildAndSortIDArrays();
 
 	CString cs_comment;
-	while (m_noCol[i] > 0)
+	while (m_no_col_[i] > 0)
 	{
-		const auto icol = m_noCol[i];
-		const auto pdesc = p_db->get_record_item_descriptor(icol);
-		m_htreeitem[i] = m_wndFilterView.InsertItem(CdbTable::m_column_properties[icol].description, TVI_ROOT); //hRoot);
-		//m_htreeitem[i] = m_wndFilterView.InsertItem(p_db->m_column_properties[icol].descriptor, TVI_ROOT); //hRoot);
-		m_wndFilterView.SetItemData(m_htreeitem[i], m_noCol[i]); // save table index into head of the list
+		const auto i_col = m_no_col_[i];
+		const auto p_desc = p_db->get_record_item_descriptor(i_col);
+		m_h_tree_item_[i] = m_wnd_filter_view_.InsertItem(CdbTable::m_column_properties[i_col].description, TVI_ROOT); //hRoot);
+		//m_h_tree_item[i] = m_wndFilterView.InsertItem(p_db->m_column_properties[icol].descriptor, TVI_ROOT); //hRoot);
+		m_wnd_filter_view_.SetItemData(m_h_tree_item_[i], m_no_col_[i]); // save table index into head of the list
 
 		cs_comment.Format(_T("Category %i: "), i);
-		cs_comment += CdbTable::m_column_properties[icol].description;
-		//cs_comment += p_db->m_column_properties[icol].descriptor;
+		cs_comment += CdbTable::m_column_properties[i_col].description;
+		//cs_comment += p_db->m_column_properties[i_col].descriptor;
 		dlg.SetStatus(cs_comment);
 
 		// collect data (array of unique descriptors)
-		switch (pdesc->data_code_number)
+		switch (p_desc->data_code_number)
 		{
 		case FIELD_IND_TEXT:
 		case FIELD_IND_FILEPATH:
-			PopulateItemFromLinkedTable(pdesc);
+			PopulateItemFromLinkedTable(p_desc);
 			break;
 		case FIELD_LONG:
-			PopulateItemFromTableLong(pdesc);
+			PopulateItemFromTableLong(p_desc);
 			break;
 		case FIELD_DATE_YMD:
-			PopulateItemFromTablewithDate(pdesc);
+			PopulateItemFromTablewithDate(p_desc);
 			break;
 		default:
 			break;
 		}
 
 		// create subitems
-		auto isum = 0;
-		HTREEITEM htree_item = nullptr;
-		TVCS_CHECKSTATE bcheck = TVCS_UNCHECKED;
-		auto nitems = 0;
-		for (auto j = 0; j < pdesc->csElementsArray.GetSize(); j++)
+		auto i_sum = 0;
+		HTREEITEM h_tree_item = nullptr;
+		TVCS_CHECKSTATE b_check = TVCS_UNCHECKED;
+		auto n_items = 0;
+		for (auto j = 0; j < p_desc->csElementsArray.GetSize(); j++)
 		{
 			cs_comment.Format(_T("Create subitem %i"), j);
 			dlg.SetStatus(cs_comment);
 
-			htree_item = m_wndFilterView.InsertItem(pdesc->csElementsArray.GetAt(j), m_htreeitem[i]);
-			bcheck = TVCS_CHECKED;
-			auto cs_elmtj = pdesc->csElementsArray.GetAt(j);
-			if (pdesc->b_array_filter)
+			h_tree_item = m_wnd_filter_view_.InsertItem(p_desc->csElementsArray.GetAt(j), m_h_tree_item_[i]);
+			b_check = TVCS_CHECKED;
+			auto cs_element_j = p_desc->csElementsArray.GetAt(j);
+			if (p_desc->b_array_filter)
 			{
-				bcheck = TVCS_UNCHECKED;
-				for (auto k = 0; k < pdesc->cs_array_filter.GetSize(); k++)
+				b_check = TVCS_UNCHECKED;
+				for (auto k = 0; k < p_desc->cs_array_filter.GetSize(); k++)
 				{
-					if (cs_elmtj.CompareNoCase(pdesc->cs_array_filter.GetAt(k)) == 0)
+					if (cs_element_j.CompareNoCase(p_desc->cs_array_filter.GetAt(k)) == 0)
 					{
-						bcheck = TVCS_CHECKED;
+						b_check = TVCS_CHECKED;
 						break;
 					}
 				}
 			}
-			else if (pdesc->b_single_filter)
+			else if (p_desc->b_single_filter)
 			{
-				if (cs_elmtj.CompareNoCase(pdesc->cs_param_single_filter) != 0)
-					bcheck = TVCS_UNCHECKED;
+				if (cs_element_j.CompareNoCase(p_desc->cs_param_single_filter) != 0)
+					b_check = TVCS_UNCHECKED;
 			}
-			m_wndFilterView.SetCheck(htree_item, bcheck);
-			isum += bcheck; // count number of positive checks (no check=0, check = 1)
-			nitems++;
+			m_wnd_filter_view_.SetCheck(h_tree_item, b_check);
+			i_sum += b_check; // count number of positive checks (no check=0, check = 1)
+			n_items++;
 		}
 		// trick needed here because if the first item is checked and not the others, then the parent stays in the initial state
 		// namely "checked" (because at that moment it did not have other children)
-		if (isum == 1 && htree_item != nullptr)
+		if (i_sum == 1 && h_tree_item != nullptr)
 		{
-			m_wndFilterView.SetCheck(htree_item, TVCS_CHECKED);
-			m_wndFilterView.SetCheck(htree_item, bcheck);
+			m_wnd_filter_view_.SetCheck(h_tree_item, TVCS_CHECKED);
+			m_wnd_filter_view_.SetCheck(h_tree_item, b_check);
 		}
-		if (isum < nitems)
-			m_wndFilterView.Expand(m_htreeitem[i], TVE_EXPAND);
+		if (i_sum < n_items)
+			m_wnd_filter_view_.Expand(m_h_tree_item_[i], TVE_EXPAND);
 		i++;
 	}
-	m_wndFilterView.UnlockWindowUpdate();
+	m_wnd_filter_view_.UnlockWindowUpdate();
 }
 
 void CFilterPanel::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 {
-	CString cs; // to construct insect and sensillum number (for example)
-	CString str; // to store FindFirst filter
-	auto p_set = &m_pDoc->db_table->m_mainTableSet;
-	const auto cscolhead = pdesc->header_name;
+	const auto p_set = &m_p_doc_->db_table->m_mainTableSet;
+	const auto cs_col_head = pdesc->header_name;
 	const auto array_size = pdesc->liArray.GetSize();
 	if (pdesc->b_array_filter)
 	{
@@ -340,12 +338,14 @@ void CFilterPanel::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 	}
 	else
 	{
+		CString str;
+		CString cs;
 		pdesc->csElementsArray.RemoveAll();
 		for (auto i = 0; i < array_size; i++)
 		{
 			const auto i_id = pdesc->liArray.GetAt(i);
-			// add string only if found into p_maintable_set...
-			str.Format(_T("%s=%li"), (LPCTSTR)cscolhead, i_id);
+			// add string only if found into p_main_table_set...
+			str.Format(_T("%s=%li"), (LPCTSTR)cs_col_head, i_id);
 			const auto flag = p_set->FindFirst(str);
 			if (flag != 0)
 			{
@@ -362,34 +362,34 @@ void CFilterPanel::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 
 void CFilterPanel::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 {
-	CString cs;
 	auto str2 = pdesc->header_name;
 	ASSERT(!str2.IsEmpty());
 
-	auto plinked_set = pdesc->plinkedSet;
-	auto p_set = &m_pDoc->db_table->m_mainTableSet;
+	auto p_linked_set = pdesc->plinkedSet;
+	auto p_set = &m_p_doc_->db_table->m_mainTableSet;
 	if (pdesc->b_array_filter)
 		return;
 
 	if (pdesc->b_single_filter)
 	{
-		pdesc->cs_param_single_filter = plinked_set->get_string_from_id(pdesc->l_param_single_filter);
+		pdesc->cs_param_single_filter = p_linked_set->get_string_from_id(pdesc->l_param_single_filter);
 	}
 	else
 	{
 		// loop over the whole content of the attached table
 		pdesc->csElementsArray.RemoveAll();
 		pdesc->liArray.RemoveAll();
-		if (plinked_set->IsOpen() && !plinked_set->IsBOF())
+		if (p_linked_set->IsOpen() && !p_linked_set->IsBOF())
 		{
+			CString cs;
 			COleVariant var_value0, var_value1;
-			plinked_set->MoveFirst();
-			while (!plinked_set->IsEOF())
+			p_linked_set->MoveFirst();
+			while (!p_linked_set->IsEOF())
 			{
-				plinked_set->GetFieldValue(0, var_value0);
-				plinked_set->GetFieldValue(1, var_value1);
+				p_linked_set->GetFieldValue(0, var_value0);
+				p_linked_set->GetFieldValue(1, var_value1);
 				const auto i_id = var_value1.lVal;
-				// add string only if found into p_maintable_set...
+				// add string only if found into p_main_table_set...
 				cs.Format(_T("%s=%li"), (LPCTSTR)pdesc->header_name, i_id);
 				const auto flag = p_set->FindFirst(cs);
 				if (flag != 0)
@@ -397,7 +397,7 @@ void CFilterPanel::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 					InsertAlphabetic(var_value0.bstrVal, pdesc->csElementsArray);
 					pdesc->liArray.Add(i_id);
 				}
-				plinked_set->MoveNext();
+				p_linked_set->MoveNext();
 			}
 		}
 	}
@@ -406,10 +406,9 @@ void CFilterPanel::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 void CFilterPanel::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 {
 	CString cs; // to construct date
-	const auto cscolhead = pdesc->header_name;
-	CString str; // to construct filter
-	auto p_maintable_set = &m_pDoc->db_table->m_mainTableSet;
-	const auto array_size = p_maintable_set->m_desc[CH_ACQDATE_DAY].tiArray.GetSize();
+	const auto cs_column_head = pdesc->header_name;
+	const auto p_main_table_set = &m_p_doc_->db_table->m_mainTableSet;
+	const auto array_size = p_main_table_set->m_desc[CH_ACQDATE_DAY].tiArray.GetSize();
 
 	if (pdesc->b_array_filter)
 	{
@@ -422,14 +421,15 @@ void CFilterPanel::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 	}
 	else
 	{
+		CString str;
 		pdesc->csElementsArray.RemoveAll();
 		for (auto i = 0; i < array_size; i++)
 		{
-			auto o_time = p_maintable_set->m_desc[CH_ACQDATE_DAY].tiArray.GetAt(i);
+			auto o_time = p_main_table_set->m_desc[CH_ACQDATE_DAY].tiArray.GetAt(i);
 			cs = o_time.Format(_T("%m/%d/%y")); // filter needs to be constructed as month-day-year
-			str.Format(_T("%s=#%s#"), (LPCTSTR)cscolhead, (LPCTSTR)cs);
-			const auto flag = p_maintable_set->FindFirst(str);
-			if (flag != 0) // add string only if found into p_maintable_set...
+			str.Format(_T("%s=#%s#"), (LPCTSTR)cs_column_head, (LPCTSTR)cs);
+			const auto flag = p_main_table_set->FindFirst(str);
+			if (flag != 0) // add string only if found into p_main_table_set...
 			{
 				cs = o_time.Format(VAR_DATEVALUEONLY);
 				pdesc->csElementsArray.Add(cs);
@@ -443,8 +443,8 @@ void CFilterPanel::InsertAlphabetic(const CString& cs, CStringArray& csArray)
 	auto k = 0;
 	for (auto i = 0; i < csArray.GetSize(); i++, k++)
 	{
-		const auto& cscomp = csArray.GetAt(k);
-		const auto j = cs.CompareNoCase(cscomp);
+		const auto& cs_comp = csArray.GetAt(k);
+		const auto j = cs.CompareNoCase(cs_comp);
 		if (j < 0)
 			break;
 	}
@@ -454,12 +454,12 @@ void CFilterPanel::InsertAlphabetic(const CString& cs, CStringArray& csArray)
 void CFilterPanel::BuildFilterItemIndirectionFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
 {
 	auto i = 0;
-	for (auto item = startItem; item != nullptr; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
+	for (auto item = startItem; item != nullptr; item = m_wnd_filter_view_.GetNextItem(item, TVGN_NEXT), i++)
 	{
-		const auto state = m_wndFilterView.GetCheck(item);
+		const auto state = m_wnd_filter_view_.GetCheck(item);
 		if (state == TVCS_CHECKED)
 		{
-			auto cs = m_wndFilterView.GetItemText(item);
+			auto cs = m_wnd_filter_view_.GetItemText(item);
 			for (auto j = 0; j < pdesc->liArray.GetSize(); j++)
 			{
 				const auto li = pdesc->liArray.GetAt(j);
@@ -478,12 +478,12 @@ void CFilterPanel::BuildFilterItemIndirectionFromTree(DB_ITEMDESC* pdesc, HTREEI
 void CFilterPanel::BuildFilterItemLongFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
 {
 	auto i = 0;
-	for (auto item = startItem; item != nullptr; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
+	for (auto item = startItem; item != nullptr; item = m_wnd_filter_view_.GetNextItem(item, TVGN_NEXT), i++)
 	{
-		const auto state = m_wndFilterView.GetCheck(item);
+		const auto state = m_wnd_filter_view_.GetCheck(item);
 		if (state == TVCS_CHECKED)
 		{
-			auto cs = m_wndFilterView.GetItemText(item);
+			auto cs = m_wnd_filter_view_.GetItemText(item);
 			const auto li = pdesc->liArray.GetAt(i);
 			pdesc->l_param_filter_array.Add(li);
 			pdesc->cs_array_filter.Add(cs);
@@ -494,12 +494,12 @@ void CFilterPanel::BuildFilterItemLongFromTree(DB_ITEMDESC* pdesc, HTREEITEM sta
 void CFilterPanel::BuildFilterItemDateFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
 {
 	auto i = 0;
-	for (auto item = startItem; item != nullptr; item = m_wndFilterView.GetNextItem(item, TVGN_NEXT), i++)
+	for (auto item = startItem; item != nullptr; item = m_wnd_filter_view_.GetNextItem(item, TVGN_NEXT), i++)
 	{
-		const auto state = m_wndFilterView.GetCheck(item);
+		const auto state = m_wnd_filter_view_.GetCheck(item);
 		if (state == TVCS_CHECKED)
 		{
-			auto cs_filter_checked = m_wndFilterView.GetItemText(item);
+			auto cs_filter_checked = m_wnd_filter_view_.GetItemText(item);
 			COleDateTime o_time;
 			o_time.ParseDateTime(cs_filter_checked);
 			pdesc->data_time_array_filter.Add(o_time);
@@ -510,43 +510,43 @@ void CFilterPanel::BuildFilterItemDateFromTree(DB_ITEMDESC* pdesc, HTREEITEM sta
 
 void CFilterPanel::OnApplyFilter()
 {
-	if (!m_pDoc)
+	if (!m_p_doc_)
 		return;
-	auto p_db = m_pDoc->db_table;
+	auto p_db = m_p_doc_->db_table;
 
 	auto i = 0;
-	while (m_noCol[i] > 0)
+	while (m_no_col_[i] > 0)
 	{
-		const auto h_parent = m_htreeitem[i];
+		const auto h_parent = m_h_tree_item_[i];
 		i++;
 
-		const int icol = m_wndFilterView.GetItemData(h_parent);
-		auto pdesc = p_db->get_record_item_descriptor(icol);
+		const int i_col = m_wnd_filter_view_.GetItemData(h_parent);
+		const auto p_desc = p_db->get_record_item_descriptor(i_col);
 		//if root is checked (or unchecked), it means no item is selected - remove flag
-		const auto state_root = m_wndFilterView.GetCheck(h_parent);
+		const auto state_root = m_wnd_filter_view_.GetCheck(h_parent);
 		if ((state_root == TVCS_CHECKED) || (state_root == TVCS_UNCHECKED))
 		{
-			pdesc->b_array_filter = FALSE;
+			p_desc->b_array_filter = FALSE;
 		}
-		// else if foot is undeterminate build filter
+		// else if foot is un-determinate build filter
 		else
 		{
-			pdesc->b_array_filter = TRUE;
-			pdesc->l_param_filter_array.RemoveAll();
-			pdesc->cs_array_filter.RemoveAll();
-			pdesc->data_time_array_filter.RemoveAll();
-			const auto start_item = m_wndFilterView.GetNextItem(h_parent, TVGN_CHILD);
-			switch (pdesc->data_code_number)
+			p_desc->b_array_filter = TRUE;
+			p_desc->l_param_filter_array.RemoveAll();
+			p_desc->cs_array_filter.RemoveAll();
+			p_desc->data_time_array_filter.RemoveAll();
+			const auto start_item = m_wnd_filter_view_.GetNextItem(h_parent, TVGN_CHILD);
+			switch (p_desc->data_code_number)
 			{
 			case FIELD_IND_TEXT:
 			case FIELD_IND_FILEPATH:
-				BuildFilterItemIndirectionFromTree(pdesc, start_item);
+				BuildFilterItemIndirectionFromTree(p_desc, start_item);
 				break;
 			case FIELD_LONG:
-				BuildFilterItemLongFromTree(pdesc, start_item);
+				BuildFilterItemLongFromTree(p_desc, start_item);
 				break;
 			case FIELD_DATE_YMD:
-				BuildFilterItemDateFromTree(pdesc, start_item);
+				BuildFilterItemDateFromTree(p_desc, start_item);
 				break;
 			default:
 				ASSERT(false);
@@ -558,28 +558,28 @@ void CFilterPanel::OnApplyFilter()
 	// update recordset and tell other views...
 	p_db->m_mainTableSet.BuildFilters();
 	p_db->m_mainTableSet.RefreshQuery();
-	m_pDoc->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
+	m_p_doc_->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CFilterPanel::OnSortRecords()
 {
-	auto p_database = m_pDoc->db_table;
+	auto p_database = m_p_doc_->db_table;
 	ASSERT(p_database);
-	const auto p_combo = static_cast<CMFCToolBarComboBoxButton*>(m_wndToolBar.GetButton(3));
-	ASSERT(ID_RECORD_SORT == m_wndToolBar.GetItemID(3));
+	const auto p_combo = static_cast<CMFCToolBarComboBoxButton*>(m_wnd_tool_bar_.GetButton(3));
+	ASSERT(ID_RECORD_SORT == m_wnd_tool_bar_.GetItemID(3));
 
-	const auto isel = p_combo->GetCurSel();
-	ASSERT(isel != CB_ERR);
-	const int i = p_combo->GetItemData(isel);
-	p_database->m_mainTableSet.m_strSort = p_database->m_column_properties[i].header_name;
+	const auto i_sel = p_combo->GetCurSel();
+	ASSERT(i_sel != CB_ERR);
+	const int i = p_combo->GetItemData(i_sel);
+	p_database->m_mainTableSet.m_strSort = CdbTable::m_column_properties[i].header_name;
 
 	p_database->m_mainTableSet.RefreshQuery();
-	m_pDoc->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
+	m_p_doc_->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
 }
 
 void CFilterPanel::SelectNext(BOOL bNext)
 {
-	const auto p_tree = static_cast<CTreeCtrl*>(&m_wndFilterView);
+	const auto p_tree = static_cast<CTreeCtrl*>(&m_wnd_filter_view_);
 	ASSERT_VALID(p_tree);
 	auto h_item = p_tree->GetSelectedItem();
 	if (!p_tree->ItemHasChildren(h_item))
@@ -588,33 +588,33 @@ void CFilterPanel::SelectNext(BOOL bNext)
 		return;
 
 	auto count = 0;
-	HTREEITEM hlastselected = nullptr;
-	auto nselected = 0;
+	HTREEITEM h_last_selected = nullptr;
+	auto n_selected = 0;
 	auto h_kid = p_tree->GetChildItem(h_item);
 	do
 	{
 		const auto state = static_cast<CQuadStateTree*>(p_tree)->GetCheck(h_kid);
 		if (state == TVCS_CHECKED)
 		{
-			hlastselected = h_kid;
-			nselected++;
+			h_last_selected = h_kid;
+			n_selected++;
 		}
 		count++;
 	}
 	while ((h_kid = p_tree->GetNextSiblingItem(h_kid)));
 
 	// if single selection select next item on the list and deselect current; update
-	if (nselected == 1)
+	if (n_selected == 1)
 	{
 		HTREEITEM h_next;
 		if (bNext)
-			h_next = p_tree->GetNextSiblingItem(hlastselected);
+			h_next = p_tree->GetNextSiblingItem(h_last_selected);
 		else
-			h_next = p_tree->GetPrevSiblingItem(hlastselected);
+			h_next = p_tree->GetPrevSiblingItem(h_last_selected);
 		if (h_next == nullptr)
 			return;
 		static_cast<CQuadStateTree*>(p_tree)->SetCheck(h_next, TVCS_CHECKED);
-		static_cast<CQuadStateTree*>(p_tree)->SetCheck(hlastselected, TVCS_UNCHECKED);
+		static_cast<CQuadStateTree*>(p_tree)->SetCheck(h_last_selected, TVCS_UNCHECKED);
 		OnApplyFilter();
 	}
 }

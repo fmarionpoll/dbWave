@@ -234,7 +234,7 @@ BOOL ViewSpikeHist::OnMove(UINT nIDMoveCommand)
 	auto p_document = GetDocument();
 	if (p_document->db_get_current_spk_file_name(TRUE).IsEmpty())
 	{
-		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
+		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_SPIKE_DETECTION, NULL);
 		return false;
 	}
 

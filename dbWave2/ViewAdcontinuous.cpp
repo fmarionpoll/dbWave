@@ -56,8 +56,8 @@ void ViewADcontinuous::DoDataExchange(CDataExchange * pDX)
 BEGIN_MESSAGE_MAP(ViewADcontinuous, CFormView)
 	ON_MESSAGE(WM_MYMESSAGE, &ViewADcontinuous::OnMyMessage)
 	ON_COMMAND(ID_HARDWARE_ADCHANNELS, &ViewADcontinuous::OnInputChannels)
-	ON_COMMAND(ID_HARDWARE_ADINTERVALS, &ViewADcontinuous::OnSamplingMode)
-	ON_COMMAND(ID_HARDWARE_DEFINEEXPERIMENT, &ViewADcontinuous::OnHardwareDefineexperiment)
+	ON_COMMAND(ID_HARDWARE_AD_INTERVALS, &ViewADcontinuous::OnSamplingMode)
+	ON_COMMAND(ID_HARDWARE_DEFINE_EXPERIMENT, &ViewADcontinuous::OnHardwareDefineexperiment)
 	ON_WM_SIZE()
 	ON_WM_DESTROY()
 	ON_WM_CTLCOLOR()
@@ -858,21 +858,21 @@ void ViewADcontinuous::OnSamplingMode()
 		ChainDialog(dlg.m_postmessage);
 }
 
-void ViewADcontinuous::ChainDialog(WORD iID)
+void ViewADcontinuous::ChainDialog(const WORD i_id)
 {
-	WORD menuID;
-	switch (iID)
+	WORD menu_id;
+	switch (i_id)
 	{
 	case IDC_ADINTERVALS:
-		menuID = ID_HARDWARE_ADINTERVALS;
+		menu_id = ID_HARDWARE_AD_INTERVALS;
 		break;
 	case IDC_ADCHANNELS:
-		menuID = ID_HARDWARE_ADCHANNELS;
+		menu_id = ID_HARDWARE_ADCHANNELS;
 		break;
 	default:
 		return;
 	}
-	PostMessage(WM_COMMAND, menuID, NULL);
+	PostMessage(WM_COMMAND, menu_id, NULL);
 }
 
 void ViewADcontinuous::OnTriggerError_ADC()

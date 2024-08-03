@@ -88,7 +88,7 @@ BOOL dbTableView::OnMove(UINT nIDMoveCommand)
 	auto p_document = GetDocument();
 	if (m_auto_detect && p_document->db_get_current_spk_file_name(TRUE).IsEmpty())
 	{
-		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_SPIKEDETECTION, NULL);
+		GetParent()->PostMessage(WM_COMMAND, ID_VIEW_SPIKE_DETECTION, NULL);
 	}
 	p_document->update_all_views_db_wave(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 	return flag;

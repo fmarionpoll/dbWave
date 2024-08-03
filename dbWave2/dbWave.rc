@@ -90,7 +90,7 @@ FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     CONTROL         "&Data",IDC_DISPLAYDATA,"Button",BS_AUTORADIOBUTTON | WS_GROUP,12,11,37,11
     CONTROL         "&Spikes",IDC_DISPLAY_SPIKES,"Button",BS_AUTORADIOBUTTON,12,34,37,11
-    CONTROL         "&Nothing",IDC_DISPLAYNOTHING,"Button",BS_AUTORADIOBUTTON,12,72,37,11
+    CONTROL         "&Nothing",IDC_DISPLAY_NOTHING,"Button",BS_AUTORADIOBUTTON,12,72,37,11
     CONTROL         "List1",IDC_LISTCTRL,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_OWNERDATA | WS_BORDER | WS_TABSTOP,73,0,233,185,WS_EX_STATICEDGE
     GROUPBOX        "Display",IDC_STATIC,5,2,63,99
     CONTROL         "fil&tered",IDC_FILTERCHECK,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | BS_TOP | BS_MULTILINE | WS_TABSTOP,17,23,39,10
@@ -763,7 +763,7 @@ IDD_VIEWSPIKES DIALOGEX 0, 0, 396, 182
 STYLE DS_SETFONT | WS_CHILD
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    CONTROL         "IDC_DISPLAYDAT",IDC_DISPLAYDAT,"Button",BS_OWNERDRAW | WS_TABSTOP,136,6,246,111
+    CONTROL         "IDC_DISPLAY_DAT",IDC_DISPLAY_DAT,"Button",BS_OWNERDRAW | WS_TABSTOP,136,6,246,111
     LTEXT           "se&lect :",IDC_STATIC3,9,45,24,8
     EDITTEXT        IDC_NSPIKES,34,42,47,13,ES_AUTOHSCROLL
     RTEXT           "&class :",IDC_STATIC2,12,58,21,8
@@ -908,7 +908,7 @@ BEGIN
     LTEXT           "index first template",IDC_TFIRSTSORTEDCLASS,14,166,59,8
     EDITTEXT        IDC_IFIRSTSORTEDCLASS,91,164,28,14,ES_AUTOHSCROLL | ES_NUMBER
     CONTROL         "",IDC_TAB2,"SysTabControl32",TCS_BOTTOM | TCS_MULTILINE,0,189,521,15
-    CONTROL         "Display single class",IDC_DISPLAYSINGLECLASS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,35,77,10
+    CONTROL         "Display single class",IDC_DISPLAY_SINGLE_CLASS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,35,77,10
     LTEXT           "t1 (ms)",IDC_STATIC9,92,78,22,8
     EDITTEXT        IDC_SHAPE_T1,118,77,33,12,ES_MULTILINE | ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
     EDITTEXT        IDC_SHAPE_T2,166,77,33,12,ES_MULTILINE | ES_AUTOHSCROLL | NOT WS_BORDER,WS_EX_STATICEDGE
@@ -1471,7 +1471,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "Import files to dbWave..."
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "&Start",ID_STARTSTOP,259,7,50,21
+    DEFPUSHBUTTON   "&Start",ID_START_STOP,259,7,50,21
     PUSHBUTTON      "Cancel",IDCANCEL,259,29,50,14
     LTEXT           "Convert file ",IDC_STATIC,8,31,39,8
     LTEXT           "total files",IDC_STATIC,112,31,28,8
@@ -2622,19 +2622,19 @@ BEGIN
     POPUP "&View"
     BEGIN
         MENUITEM "Data&base",                   ID_VIEW_DATABASE
-        MENUITEM "&Data file",                  ID_VIEW_DATAFILE
-        MENUITEM "Spi&ke detection",            ID_VIEW_SPIKEDETECTION
-        MENUITEM "Sp&ike display",              ID_VIEW_SPIKEDISPLAY
-        MENUITEM "Spike s&orting (amplitude)",  ID_VIEW_SPIKESORTINGAMPLITUDE
-        MENUITEM "Spike sorting (t&emplates)",  ID_VIEW_SPIKESORTINGTEMPLATES
-        MENUITEM "Spike time se&ries",          ID_VIEW_SPIKETIMESERIES
-        MENUITEM "Ac&quire data",               ID_VIEW_ACQUIREDATA
+        MENUITEM "&Data file",                  ID_VIEW_DATA_FILE
+        MENUITEM "Spi&ke detection",            ID_VIEW_SPIKE_DETECTION
+        MENUITEM "Sp&ike display",              ID_VIEW_SPIKE_DISPLAY
+        MENUITEM "Spike s&orting (amplitude)",  ID_VIEW_SPIKE_SORTING_AMPLITUDE
+        MENUITEM "Spike sorting (t&emplates)",  ID_VIEW_SPIKE_SORTING_TEMPLATES
+        MENUITEM "Spike time se&ries",          ID_VIEW_SPIKE_TIME_SERIES
+        MENUITEM "Ac&quire data",               ID_VIEW_ACQUIRE_DATA
         MENUITEM SEPARATOR
         POPUP "&Cursor mode..."
         BEGIN
-            MENUITEM "&Normal",                     ID_VIEW_CURSORMODE_NORMAL, CHECKED
-            MENUITEM "Zoom &in",                    ID_VIEW_CURSORMODE_ZOOMIN
-            MENUITEM "&Measure",                    ID_VIEW_CURSORMODE_MEASURE
+            MENUITEM "&Normal",                     ID_VIEW_CURSOR_MODE_NORMAL, CHECKED
+            MENUITEM "Zoom &in",                    ID_VIEW_CURSOR_MODE_ZOOMIN
+            MENUITEM "&Measure",                    ID_VIEW_CURSOR_MODE_MEASURE
         END
         MENUITEM SEPARATOR
         POPUP "&Toolbars and Docking Windows"
@@ -2662,8 +2662,8 @@ BEGIN
     POPUP "Forma&t"
     BEGIN
         MENUITEM "&X scale...",                 ID_FORMAT_XSCALE
-        MENUITEM "F&irst frame\tShift+Home",    ID_FORMAT_FIRSTFRAME
-        MENUITEM "&Last frame\tShift+End",      ID_FORMAT_LASTFRAME
+        MENUITEM "F&irst frame\tShift+Home",    ID_FORMAT_FIRST_FRAME
+        MENUITEM "&Last frame\tShift+End",      ID_FORMAT_LAST_FRAME
         MENUITEM "&All data\tCtrl Up",          ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA
         MENUITEM SEPARATOR
         MENUITEM "&Y scale...",                 ID_FORMAT_ORDINATES
@@ -2671,15 +2671,15 @@ BEGIN
         MENUITEM "&Gain adjust",                ID_FORMAT_GAIN_ADJUST
         MENUITEM "&Split curves",               ID_FORMAT_SPLIT_CURVES
         MENUITEM SEPARATOR
-        MENUITEM "Data series a&ttributes...",  ID_FORMAT_DATASERIESATTRIBUTES
-        MENUITEM "C&opy settings to all curves", ID_FORMAT_COPYSETTINGSTOALL
+        MENUITEM "Data series a&ttributes...",  ID_FORMAT_DATA_SERIES_ATTRIBUTES
+        MENUITEM "C&opy settings to all curves", ID_FORMAT_COPY_SETTINGS_TO_ALL
     END
     POPUP "H&ardware"
     BEGIN
-        MENUITEM "&Input channels...",          ID_HARDWARE_ADCHANNELS
-        MENUITEM "Sampling &duration...",       ID_HARDWARE_ADINTERVALS
+        MENUITEM "&Input channels...",          ID_HARDWARE_AD_CHANNELS
+        MENUITEM "Sampling &duration...",       ID_HARDWARE_AD_INTERVALS
         MENUITEM SEPARATOR
-        MENUITEM "&Experiment...",              ID_HARDWARE_DEFINEEXPERIMENT
+        MENUITEM "&Experiment...",              ID_HARDWARE_DEFINE_EXPERIMENT
     END
     POPUP "Tool&s"
     BEGIN
@@ -2699,7 +2699,7 @@ BEGIN
         MENUITEM "Detect spikes and stim&ulus", ID_TOOLS_DETECT
         MENUITEM SEPARATOR
         MENUITEM "&Edit && transform spikes...", ID_TOOLS_EDIT_SPIKES
-        MENUITEM "Edit stim&ulus ...",          ID_TOOLS_EDITSTIMULUS, INACTIVE
+        MENUITEM "Edit stim&ulus ...",          ID_TOOLS_EDIT_STIMULUS, INACTIVE
         MENUITEM SEPARATOR
         MENUITEM "Measu&re mode...",            ID_TOOLS_MEASURE_MODE
         MENUITEM "&Vertical tags...",           ID_TOOLS_VERTICAL_TAGS
@@ -2708,10 +2708,10 @@ BEGIN
     END
     POPUP "&Options"
     BEGIN
-        MENUITEM "&Browse mode...",             ID_OPTIONS_BROWSEMODE
-        MENUITEM "&Printing format...",         ID_OPTIONS_PRINTMARGINS
+        MENUITEM "&Browse mode...",             ID_OPTIONS_BROWSE_MODE
+        MENUITEM "&Printing format...",         ID_OPTIONS_PRINT_MARGINS
         MENUITEM SEPARATOR
-        MENUITEM "&Load/save options...",       ID_OPTIONS_LOADSAVE
+        MENUITEM "&Load/save options...",       ID_OPTIONS_LOAD_SAVE
     END
     POPUP "&Window"
     BEGIN
@@ -2767,27 +2767,27 @@ BEGIN
         MENUITEM "&Next Record\tCtrl +",        ID_RECORD_NEXT
         MENUITEM "&Last Record\tCtrl End",      ID_RECORD_LAST
         MENUITEM SEPARATOR
-        MENUITEM "&Delete current record\tCtrl D", ID_RECORD_DELETECURRENT
+        MENUITEM "&Delete current record\tCtrl D", ID_RECORD_DELETE_CURRENT
     END
     POPUP "&View"
     BEGIN
         MENUITEM "Database",                    ID_VIEW_DATABASE
-        MENUITEM "&Data file",                  ID_VIEW_DATAFILE
-        MENUITEM "Spi&ke detection",            ID_VIEW_SPIKEDETECTION
-        MENUITEM "Sp&ike display",              ID_VIEW_SPIKEDISPLAY
-        MENUITEM "Spike s&orting (amplitude)",  ID_VIEW_SPIKESORTINGAMPLITUDE
-        MENUITEM "Spike sorting (&templates)",  ID_VIEW_SPIKESORTINGTEMPLATES
-        MENUITEM "Spike time se&ries",          ID_VIEW_SPIKETIMESERIES
-        MENUITEM "&Acquire data",               ID_VIEW_ACQUIREDATA
+        MENUITEM "&Data file",                  ID_VIEW_DATA_FILE
+        MENUITEM "Spi&ke detection",            ID_VIEW_SPIKE_DETECTION
+        MENUITEM "Sp&ike display",              ID_VIEW_SPIKE_DISPLAY
+        MENUITEM "Spike s&orting (amplitude)",  ID_VIEW_SPIKE_SORTING_AMPLITUDE
+        MENUITEM "Spike sorting (&templates)",  ID_VIEW_SPIKE_SORTING_TEMPLATES
+        MENUITEM "Spike time se&ries",          ID_VIEW_SPIKE_TIME_SERIES
+        MENUITEM "&Acquire data",               ID_VIEW_ACQUIRE_DATA
         MENUITEM SEPARATOR
         POPUP "&Cursor mode..."
         BEGIN
-            MENUITEM "&Normal",                     ID_VIEW_CURSORMODE_NORMAL, CHECKED
-            MENUITEM "Zoom &in",                    ID_VIEW_CURSORMODE_ZOOMIN
-            MENUITEM "&Set tags",                   ID_VIEW_CURSORMODE_MEASURE
+            MENUITEM "&Normal",                     ID_VIEW_CURSOR_MODE_NORMAL, CHECKED
+            MENUITEM "Zoom &in",                    ID_VIEW_CURSOR_MODE_ZOOMIN
+            MENUITEM "&Set tags",                   ID_VIEW_CURSOR_MODE_MEASURE
         END
-        MENUITEM "Shift view to the left\tCtrl Arrow Left", ID_RECORD_SHIFTLEFT
-        MENUITEM "Shift view to right\tCtrl Arrow Right", ID_RECORD_SHIFTRIGHT
+        MENUITEM "Shift view to the left\tCtrl Arrow Left", ID_RECORD_SHIFT_LEFT
+        MENUITEM "Shift view to right\tCtrl Arrow Right", ID_RECORD_SHIFT_RIGHT
         MENUITEM SEPARATOR
         POPUP "&Toolbars and Docking Windows"
         BEGIN
@@ -2815,10 +2815,10 @@ BEGIN
     BEGIN
         MENUITEM "&X scale...",                 ID_FORMAT_XSCALE
         MENUITEM "&All data\tCtrl Up",          ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA
-        MENUITEM "F&irst frame\tHome",          ID_FORMAT_FIRSTFRAME
-        MENUITEM "&Previous frame\tPage Up",    ID_FORMAT_PREVIOUSFRAME
-        MENUITEM "Ne&xt frame\tPage Down",      ID_FORMAT_NEXTFRAME
-        MENUITEM "&Last frame\tEnd",            ID_FORMAT_LASTFRAME
+        MENUITEM "F&irst frame\tHome",          ID_FORMAT_FIRST_FRAME
+        MENUITEM "&Previous frame\tPage Up",    ID_FORMAT_PREVIOUS_FRAME
+        MENUITEM "Ne&xt frame\tPage Down",      ID_FORMAT_NEXT_FRAME
+        MENUITEM "&Last frame\tEnd",            ID_FORMAT_LAST_FRAME
         MENUITEM SEPARATOR
         MENUITEM "&Y scale...",                 ID_FORMAT_SET_ORDINATES
         MENUITEM "&Center curve",               ID_FORMAT_CENTER_CURVE
@@ -2841,14 +2841,14 @@ BEGIN
     END
     POPUP "&Options"
     BEGIN
-        MENUITEM "&Browse mode...",             ID_OPTIONS_BROWSEMODE
-        MENUITEM "&Printing format...",         ID_OPTIONS_PRINTMARGINS
-        MENUITEM "&Measure mode...",            ID_OPTIONS_MEASUREMODE
+        MENUITEM "&Browse mode...",             ID_OPTIONS_BROWSE_MODE
+        MENUITEM "&Printing format...",         ID_OPTIONS_PRINT_MARGINS
+        MENUITEM "&Measure mode...",            ID_OPTIONS_MEASURE_MODE
         MENUITEM SEPARATOR
-        MENUITEM "&Load/save options...",       ID_OPTIONS_LOADSAVEOPTIONS
+        MENUITEM "&Load/save options...",       ID_OPTIONS_LOAD_SAVE_OPTIONS
         POPUP "&Import options"
         BEGIN
-            MENUITEM "&Generic data file...",       ID_OPTIONS_IMPORTOPTIONS_GENERICDATAFILE
+            MENUITEM "&Generic data file...",       ID_OPTIONS_IMPORT_OPTIONS_GENERIC_DATA_FILE
         END
     END
     POPUP "&Window"
@@ -2904,26 +2904,26 @@ BEGIN
         MENUITEM "&Previous Record\tCtrl Arrow Up", ID_RECORD_PREV
         MENUITEM "&Next Record\tCtrl Arrow Down", ID_RECORD_NEXT
         MENUITEM "&Last Record\tCtrl End",      ID_RECORD_LAST
-        MENUITEM "Page &Up\tCtrl Page Up",      ID_RECORD_PAGEUP
-        MENUITEM "Page Down\tCtrl Page Down ",  ID_RECORD_PAGEDOWN
+        MENUITEM "Page &Up\tCtrl Page Up",      ID_RECORD_PAGE_UP
+        MENUITEM "Page Down\tCtrl Page Down ",  ID_RECORD_PAGE_DOWN
         MENUITEM SEPARATOR
-        MENUITEM "&Goto record ...\tCtrl G",    ID_RECORD_GOTORECORD
+        MENUITEM "&Goto record ...\tCtrl G",    ID_RECORD_GOTO_RECORD
         MENUITEM "&Add record\tCtrl A",         ID_RECORD_ADD
-        MENUITEM "&Delete current record\tCtrl D", ID_RECORD_DELETECURRENT
+        MENUITEM "&Delete current record\tCtrl D", ID_RECORD_DELETE_CURRENT
     END
     POPUP "&View"
     BEGIN
         MENUITEM "Database",                    ID_VIEW_DATABASE
-        MENUITEM "&Data file",                  ID_VIEW_DATAFILE
-        MENUITEM "Spi&ke detection",            ID_VIEW_SPIKEDETECTION
-        MENUITEM "Sp&ike display",              ID_VIEW_SPIKEDISPLAY
-        MENUITEM "Spike s&orting (amplitude)",  ID_VIEW_SPIKESORTINGAMPLITUDE
-        MENUITEM "Spike sorting (templates)",   ID_VIEW_SPIKESORTINGTEMPLATES
-        MENUITEM "Spike time se&ries",          ID_VIEW_SPIKETIMESERIES
-        MENUITEM "Ac&quire data",               ID_VIEW_ACQUIREDATA
+        MENUITEM "&Data file",                  ID_VIEW_DATA_FILE
+        MENUITEM "Spi&ke detection",            ID_VIEW_SPIKE_DETECTION
+        MENUITEM "Sp&ike display",              ID_VIEW_SPIKE_DISPLAY
+        MENUITEM "Spike s&orting (amplitude)",  ID_VIEW_SPIKE_SORTING_AMPLITUDE
+        MENUITEM "Spike sorting (templates)",   ID_VIEW_SPIKE_SORTING_TEMPLATES
+        MENUITEM "Spike time se&ries",          ID_VIEW_SPIKE_TIME_SERIES
+        MENUITEM "Ac&quire data",               ID_VIEW_ACQUIRE_DATA
         MENUITEM SEPARATOR
-        MENUITEM "Shift view to the left\tCtrl Arrow Left", ID_RECORD_SHIFTLEFT
-        MENUITEM "Shift view to right\tCtrl Arrow Right", ID_RECORD_SHIFTRIGHT
+        MENUITEM "Shift view to the left\tCtrl Arrow Left", ID_RECORD_SHIFT_LEFT
+        MENUITEM "Shift view to right\tCtrl Arrow Right", ID_RECORD_SHIFT_RIGHT
         MENUITEM SEPARATOR
         POPUP "Application &Look"
         BEGIN
@@ -2946,7 +2946,7 @@ BEGIN
             MENUITEM "<placeholder>",               ID_VIEW_TOOLBAR
         END
         MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
-        MENUITEM "Update views",                ID_VIEW_UPDATEVIEWS
+        MENUITEM "Update views",                ID_VIEW_UPDATE_VIEWS
     END
     POPUP "&Tools"
     BEGIN
@@ -3007,10 +3007,10 @@ IDR_POPUP_SORT MENU
 BEGIN
     POPUP "Sorting"
     BEGIN
-        MENUITEM "&Sort Alphabeticaly",         ID_SORTING_SORTALPHABETIC
-        MENUITEM "Sort by &Type",               ID_SORTING_SORTBYTYPE
-        MENUITEM "Sort by Acc&ess",             ID_SORTING_SORTBYACCESS
-        MENUITEM "Group by t&ype",              ID_SORTING_GROUPBYTYPE
+        MENUITEM "&Sort Alphabeticaly",         ID_SORTING_SORT_ALPHABETIC
+        MENUITEM "Sort by &Type",               ID_SORTING_SORT_BY_TYPE
+        MENUITEM "Sort by Acc&ess",             ID_SORTING_SORT_BY_ACCESS
+        MENUITEM "Group by t&ype",              ID_SORTING_GROUP_BY_TYPE
     END
 END
 
@@ -3087,16 +3087,16 @@ BEGIN
     "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
     "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
     "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
-    VK_HOME,        ID_FORMAT_FIRSTFRAME,   VIRTKEY, SHIFT, NOINVERT
-    VK_END,         ID_FORMAT_LASTFRAME,    VIRTKEY, SHIFT, NOINVERT
-    VK_NEXT,        ID_FORMAT_NEXTFRAME,    VIRTKEY, SHIFT, NOINVERT
-    VK_PRIOR,       ID_FORMAT_PREVIOUSFRAME, VIRTKEY, SHIFT, NOINVERT
+    VK_HOME,        ID_FORMAT_FIRST_FRAME,  VIRTKEY, SHIFT, NOINVERT
+    VK_END,         ID_FORMAT_LAST_FRAME,   VIRTKEY, SHIFT, NOINVERT
+    VK_NEXT,        ID_FORMAT_NEXT_FRAME,   VIRTKEY, SHIFT, NOINVERT
+    VK_PRIOR,       ID_FORMAT_PREVIOUS_FRAME, VIRTKEY, SHIFT, NOINVERT
     VK_F1,          ID_HELP,                VIRTKEY, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
     "D",            ID_RECORD_DELETE,       VIRTKEY, CONTROL, NOINVERT
-    "E",            ID_RECORD_EDITMODE,     VIRTKEY, CONTROL, NOINVERT
-    "F",            ID_RECORD_FILTERMODE,   VIRTKEY, CONTROL, NOINVERT
+    "E",            ID_RECORD_EDIT_MODE,    VIRTKEY, CONTROL, NOINVERT
+    "F",            ID_RECORD_FILTER_MODE,  VIRTKEY, CONTROL, NOINVERT
     VK_HOME,        ID_RECORD_FIRST,        VIRTKEY, CONTROL, NOINVERT
     VK_END,         ID_RECORD_LAST,         VIRTKEY, CONTROL, NOINVERT
     VK_ADD,         ID_RECORD_NEXT,         VIRTKEY, CONTROL, NOINVERT
@@ -3120,32 +3120,32 @@ BEGIN
     "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
     "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
     "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
-    VK_HOME,        ID_FORMAT_FIRSTFRAME,   VIRTKEY, NOINVERT
-    VK_END,         ID_FORMAT_LASTFRAME,    VIRTKEY, NOINVERT
-    VK_NEXT,        ID_FORMAT_NEXTFRAME,    VIRTKEY, NOINVERT
-    VK_PRIOR,       ID_FORMAT_PREVIOUSFRAME, VIRTKEY, NOINVERT
+    VK_HOME,        ID_FORMAT_FIRST_FRAME,  VIRTKEY, NOINVERT
+    VK_END,         ID_FORMAT_LAST_FRAME,   VIRTKEY, NOINVERT
+    VK_NEXT,        ID_FORMAT_NEXT_FRAME,   VIRTKEY, NOINVERT
+    VK_PRIOR,       ID_FORMAT_PREVIOUS_FRAME, VIRTKEY, NOINVERT
     VK_F1,          ID_HELP,                VIRTKEY, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
     "A",            ID_RECORD_ADD,          VIRTKEY, CONTROL, NOINVERT
-    "D",            ID_RECORD_DELETECURRENT, VIRTKEY, CONTROL, NOINVERT
-    "E",            ID_RECORD_EDITMODE,     VIRTKEY, CONTROL, NOINVERT
-    "F",            ID_RECORD_FILTERMODE,   VIRTKEY, CONTROL, NOINVERT
+    "D",            ID_RECORD_DELETE_CURRENT, VIRTKEY, CONTROL, NOINVERT
+    "E",            ID_RECORD_EDIT_MODE,    VIRTKEY, CONTROL, NOINVERT
+    "F",            ID_RECORD_FILTER_MODE,  VIRTKEY, CONTROL, NOINVERT
     VK_HOME,        ID_RECORD_FIRST,        VIRTKEY, CONTROL, NOINVERT
-    "G",            ID_RECORD_GOTORECORD,   VIRTKEY, CONTROL, NOINVERT
+    "G",            ID_RECORD_GOTO_RECORD,  VIRTKEY, CONTROL, NOINVERT
     VK_END,         ID_RECORD_LAST,         VIRTKEY, CONTROL, NOINVERT
     VK_DOWN,        ID_RECORD_NEXT,         VIRTKEY, CONTROL, NOINVERT
-    VK_NEXT,        ID_RECORD_PAGEDOWN,     VIRTKEY, NOINVERT
-    VK_PRIOR,       ID_RECORD_PAGEUP,       VIRTKEY, NOINVERT
+    VK_NEXT,        ID_RECORD_PAGE_DOWN,    VIRTKEY, NOINVERT
+    VK_PRIOR,       ID_RECORD_PAGE_UP,      VIRTKEY, NOINVERT
     VK_UP,          ID_RECORD_PREV,         VIRTKEY, CONTROL, NOINVERT
     VK_ESCAPE,      ID_RECORD_REFRESH,      VIRTKEY, NOINVERT
-    VK_LEFT,        ID_RECORD_SHIFTLEFT,    VIRTKEY, CONTROL, NOINVERT
-    "I",            ID_RECORD_SHIFTRIGHT,   VIRTKEY, CONTROL, NOINVERT
-    VK_RIGHT,       ID_RECORD_SHIFTRIGHT,   VIRTKEY, CONTROL, NOINVERT
+    VK_LEFT,        ID_RECORD_SHIFT_LEFT,   VIRTKEY, CONTROL, NOINVERT
+    "I",            ID_RECORD_SHIFT_RIGHT,  VIRTKEY, CONTROL, NOINVERT
+    VK_RIGHT,       ID_RECORD_SHIFT_RIGHT,  VIRTKEY, CONTROL, NOINVERT
     "B",            ID_VIEW_DATABASE,       VIRTKEY, CONTROL, NOINVERT
     VK_TAB,         ID_VIEW_NEXTVIEW,       VIRTKEY, CONTROL, NOINVERT
     VK_TAB,         ID_VIEW_PREVIOUSVIEW,   VIRTKEY, SHIFT, CONTROL, NOINVERT
-    VK_RETURN,      ID_VIEW_SWAPPREVIOUSVIEW, VIRTKEY, CONTROL, NOINVERT
+    VK_RETURN,      ID_VIEW_SWAP_PREVIOUS_VIEW, VIRTKEY, CONTROL, NOINVERT
     VK_F1,          ID_CONTEXT_HELP,        VIRTKEY, SHIFT, NOINVERT
 END
 
@@ -3164,32 +3164,32 @@ BEGIN
     "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
     "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
     "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
-    VK_HOME,        ID_FORMAT_FIRSTFRAME,   VIRTKEY, NOINVERT
-    VK_END,         ID_FORMAT_LASTFRAME,    VIRTKEY, NOINVERT
-    VK_NEXT,        ID_FORMAT_NEXTFRAME,    VIRTKEY, NOINVERT
-    VK_PRIOR,       ID_FORMAT_PREVIOUSFRAME, VIRTKEY, NOINVERT
+    VK_HOME,        ID_FORMAT_FIRST_FRAME,  VIRTKEY, NOINVERT
+    VK_END,         ID_FORMAT_LAST_FRAME,   VIRTKEY, NOINVERT
+    VK_NEXT,        ID_FORMAT_NEXT_FRAME,   VIRTKEY, NOINVERT
+    VK_PRIOR,       ID_FORMAT_PREVIOUS_FRAME, VIRTKEY, NOINVERT
     VK_F1,          ID_HELP,                VIRTKEY, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
     "A",            ID_RECORD_ADD,          VIRTKEY, CONTROL, NOINVERT
-    "D",            ID_RECORD_DELETECURRENT, VIRTKEY, CONTROL, NOINVERT
-    "E",            ID_RECORD_EDITMODE,     VIRTKEY, CONTROL, NOINVERT
-    "F",            ID_RECORD_FILTERMODE,   VIRTKEY, CONTROL, NOINVERT
+    "D",            ID_RECORD_DELETE_CURRENT, VIRTKEY, CONTROL, NOINVERT
+    "E",            ID_RECORD_EDIT_MODE,    VIRTKEY, CONTROL, NOINVERT
+    "F",            ID_RECORD_FILTER_MODE,  VIRTKEY, CONTROL, NOINVERT
     VK_HOME,        ID_RECORD_FIRST,        VIRTKEY, CONTROL, NOINVERT
-    "G",            ID_RECORD_GOTORECORD,   VIRTKEY, CONTROL, NOINVERT
+    "G",            ID_RECORD_GOTO_RECORD,  VIRTKEY, CONTROL, NOINVERT
     VK_END,         ID_RECORD_LAST,         VIRTKEY, CONTROL, NOINVERT
     VK_DOWN,        ID_RECORD_NEXT,         VIRTKEY, CONTROL, NOINVERT
-    VK_NEXT,        ID_RECORD_PAGEDOWN,     VIRTKEY, NOINVERT
-    VK_PRIOR,       ID_RECORD_PAGEUP,       VIRTKEY, NOINVERT
+    VK_NEXT,        ID_RECORD_PAGE_DOWN,    VIRTKEY, NOINVERT
+    VK_PRIOR,       ID_RECORD_PAGE_UP,      VIRTKEY, NOINVERT
     VK_UP,          ID_RECORD_PREV,         VIRTKEY, CONTROL, NOINVERT
     VK_ESCAPE,      ID_RECORD_REFRESH,      VIRTKEY, NOINVERT
-    VK_LEFT,        ID_RECORD_SHIFTLEFT,    VIRTKEY, CONTROL, NOINVERT
-    "I",            ID_RECORD_SHIFTRIGHT,   VIRTKEY, CONTROL, NOINVERT
-    VK_RIGHT,       ID_RECORD_SHIFTRIGHT,   VIRTKEY, CONTROL, NOINVERT
+    VK_LEFT,        ID_RECORD_SHIFT_LEFT,   VIRTKEY, CONTROL, NOINVERT
+    "I",            ID_RECORD_SHIFT_RIGHT,  VIRTKEY, CONTROL, NOINVERT
+    VK_RIGHT,       ID_RECORD_SHIFT_RIGHT,  VIRTKEY, CONTROL, NOINVERT
     "B",            ID_VIEW_DATABASE,       VIRTKEY, CONTROL, NOINVERT
     VK_TAB,         ID_VIEW_NEXTVIEW,       VIRTKEY, CONTROL, NOINVERT
     VK_TAB,         ID_VIEW_PREVIOUSVIEW,   VIRTKEY, SHIFT, CONTROL, NOINVERT
-    VK_RETURN,      ID_VIEW_SWAPPREVIOUSVIEW, VIRTKEY, CONTROL, NOINVERT
+    VK_RETURN,      ID_VIEW_SWAP_PREVIOUS_VIEW, VIRTKEY, CONTROL, NOINVERT
     VK_F1,          ID_CONTEXT_HELP,        VIRTKEY, SHIFT, NOINVERT
 END
 
@@ -3208,32 +3208,32 @@ BEGIN
     "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
     "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
     "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
-    VK_HOME,        ID_FORMAT_FIRSTFRAME,   VIRTKEY, NOINVERT
-    VK_END,         ID_FORMAT_LASTFRAME,    VIRTKEY, NOINVERT
-    VK_NEXT,        ID_FORMAT_NEXTFRAME,    VIRTKEY, NOINVERT
-    VK_PRIOR,       ID_FORMAT_PREVIOUSFRAME, VIRTKEY, NOINVERT
+    VK_HOME,        ID_FORMAT_FIRST_FRAME,  VIRTKEY, NOINVERT
+    VK_END,         ID_FORMAT_LAST_FRAME,   VIRTKEY, NOINVERT
+    VK_NEXT,        ID_FORMAT_NEXT_FRAME,   VIRTKEY, NOINVERT
+    VK_PRIOR,       ID_FORMAT_PREVIOUS_FRAME, VIRTKEY, NOINVERT
     VK_F1,          ID_HELP,                VIRTKEY, NOINVERT
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
     "A",            ID_RECORD_ADD,          VIRTKEY, CONTROL, NOINVERT
-    "D",            ID_RECORD_DELETECURRENT, VIRTKEY, CONTROL, NOINVERT
-    "E",            ID_RECORD_EDITMODE,     VIRTKEY, CONTROL, NOINVERT
-    "F",            ID_RECORD_FILTERMODE,   VIRTKEY, CONTROL, NOINVERT
+    "D",            ID_RECORD_DELETE_CURRENT, VIRTKEY, CONTROL, NOINVERT
+    "E",            ID_RECORD_EDIT_MODE,    VIRTKEY, CONTROL, NOINVERT
+    "F",            ID_RECORD_FILTER_MODE,  VIRTKEY, CONTROL, NOINVERT
     VK_HOME,        ID_RECORD_FIRST,        VIRTKEY, CONTROL, NOINVERT
-    "G",            ID_RECORD_GOTORECORD,   VIRTKEY, CONTROL, NOINVERT
+    "G",            ID_RECORD_GOTO_RECORD,  VIRTKEY, CONTROL, NOINVERT
     VK_END,         ID_RECORD_LAST,         VIRTKEY, CONTROL, NOINVERT
     VK_DOWN,        ID_RECORD_NEXT,         VIRTKEY, CONTROL, NOINVERT
-    VK_NEXT,        ID_RECORD_PAGEDOWN,     VIRTKEY, NOINVERT
-    VK_PRIOR,       ID_RECORD_PAGEUP,       VIRTKEY, NOINVERT
+    VK_NEXT,        ID_RECORD_PAGE_DOWN,    VIRTKEY, NOINVERT
+    VK_PRIOR,       ID_RECORD_PAGE_UP,      VIRTKEY, NOINVERT
     VK_UP,          ID_RECORD_PREV,         VIRTKEY, CONTROL, NOINVERT
     VK_ESCAPE,      ID_RECORD_REFRESH,      VIRTKEY, NOINVERT
-    VK_LEFT,        ID_RECORD_SHIFTLEFT,    VIRTKEY, CONTROL, NOINVERT
-    "I",            ID_RECORD_SHIFTRIGHT,   VIRTKEY, CONTROL, NOINVERT
-    VK_RIGHT,       ID_RECORD_SHIFTRIGHT,   VIRTKEY, CONTROL, NOINVERT
+    VK_LEFT,        ID_RECORD_SHIFT_LEFT,   VIRTKEY, CONTROL, NOINVERT
+    "I",            ID_RECORD_SHIFT_RIGHT,  VIRTKEY, CONTROL, NOINVERT
+    VK_RIGHT,       ID_RECORD_SHIFT_RIGHT,  VIRTKEY, CONTROL, NOINVERT
     "B",            ID_VIEW_DATABASE,       VIRTKEY, CONTROL, NOINVERT
     VK_TAB,         ID_VIEW_NEXTVIEW,       VIRTKEY, CONTROL, NOINVERT
     VK_TAB,         ID_VIEW_PREVIOUSVIEW,   VIRTKEY, SHIFT, CONTROL, NOINVERT
-    VK_RETURN,      ID_VIEW_SWAPPREVIOUSVIEW, VIRTKEY, CONTROL, NOINVERT
+    VK_RETURN,      ID_VIEW_SWAP_PREVIOUS_VIEW, VIRTKEY, CONTROL, NOINVERT
     VK_F1,          ID_CONTEXT_HELP,        VIRTKEY, SHIFT, NOINVERT
 END
 
@@ -3314,9 +3314,9 @@ END
 IDR_PROPERTIES TOOLBAR 16, 15
 BEGIN
     BUTTON      ID_EXPAND_ALL
-    BUTTON      ID_SORTPROPERTIES
-    BUTTON      IDC_UPDATEINFOS
-    BUTTON      IDC_EDITINFOS
+    BUTTON      ID_SORT_PROPERTIES
+    BUTTON      IDC_UPDATE_INFOS
+    BUTTON      IDC_EDIT_INFOS
 END
 
 IDR_MENU_IMAGES TOOLBAR 16, 15
@@ -3326,10 +3326,10 @@ BEGIN
     BUTTON      ID_WINDOW_CASCADE
     BUTTON      ID_WINDOW_TILE_HORZ
     BUTTON      ID_TOOLS_MACRO
-    BUTTON      ID_SORTING_SORTALPHABETIC
-    BUTTON      ID_SORTING_SORTBYTYPE
-    BUTTON      ID_SORTING_SORTBYACCESS
-    BUTTON      ID_SORTING_GROUPBYTYPE
+    BUTTON      ID_SORTING_SORT_ALPHABETIC
+    BUTTON      ID_SORTING_SORT_BY_TYPE
+    BUTTON      ID_SORTING_SORT_BY_ACCESS
+    BUTTON      ID_SORTING_GROUP_BY_TYPE
 END
 
 IDR_MAINFRAME_256 TOOLBAR 16, 15
@@ -3752,40 +3752,48 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_RECORD_EDITMODE      "Changes to any field are stored in the database"
+    ID_RECORD_EDIT_MODE     "Changes to any field are stored in the database"
     ID_RECORD_ADD           "Add a new record"
     ID_RECORD_REFRESH       "Import a file from another format"
     ID_RECORD_DELETE        "Delete record"
-    ID_RECORD_FILTERMODE    "Selected items define which records are viewed"
-    ID_TOOLS_OPENDATAFILES  "Open dat files corresponding to the list of files in the text"
+    ID_RECORD_FILTER_MODE   "Selected items define which records are viewed"
+    ID_TOOLS_OPEN_DATA_FILES 
+                            "Open dat files corresponding to the list of files in the text"
 END
 
 STRINGTABLE
 BEGIN
-    ID_TOOLS_IMPORT_DATAFILES "Import dbWave native data files"
-    ID_TOOLS_IMPORT_SPIKEFILES "Import descriptors from Awave spike files"
+    ID_TOOLS_IMPORT_DATA_FILES "Import dbWave native data files"
+    ID_TOOLS_IMPORT_SPIKE_FILES "Import descriptors from Awave spike files"
+    ID_TOOLS_REMOVE_ARTEFACT_FILES 
+                            "Define parameters with overload or artefacts and to discard files corresponding to these criteria..."
+    ID_VIEW_DATA_FILE       "View data"
+END
+
+STRINGTABLE
+BEGIN
     ID_TOOLS_IMPORT_DATABASE 
                             "Merge existing dbWave database (mdb) with current database..."
-    ID_TOOLS_TRANSFERFILES  "Transfer to new directory..."
-    ID_TOOLS_IMPORT_ATFFILES "Import text files exported from pClamp"
+    ID_TOOLS_TRANSFER_FILES "Transfer to new directory..."
+    ID_TOOLS_IMPORT_ATF_FILES "Import text files exported from pClamp"
 END
 
 STRINGTABLE
 BEGIN
-    ID_RECORD_PAGEUP        "Display next page of records"
-    ID_RECORD_PAGEDOWN      "Display previous page of records"
-    ID_RECORD_SHIFTLEFT     "Shift display left (page left)"
-    ID_RECORD_SHIFTRIGHT    "Shift display right (page right)"
-    ID_TOOLS_IMPORT_SYNTECHASCIIFILES "Import Syntech Ascii files"
-    ID_VIEW_UPPERPANE       "View upper pane (file name and stimulus description) ..."
+    ID_RECORD_PAGE_UP       "Display next page of records"
+    ID_RECORD_PAGE_DOWN     "Display previous page of records"
+    ID_RECORD_SHIFT_LEFT    "Shift display left (page left)"
+    ID_RECORD_SHIFT_RIGHT   "Shift display right (page right)"
+    ID_TOOLS_IMPORT_SYNTECH_ASCII_FILES "Import Syntech Ascii files"
+    ID_VIEW_UPPER_PANE      "View upper pane (file name and stimulus description) ..."
     ID_VIEW_DATABASE        "View database content"
-    ID_VIEW_DATAFILE        "View data"
-    ID_VIEW_SPIKEDETECTION  "Detect spikes from data files"
-    ID_VIEW_SPIKEDISPLAY    "Display spikes and classes"
-    ID_VIEW_SPIKESORTINGAMPLITUDE "Sort spikes on amplitude criteria"
-    ID_VIEW_SPIKESORTINGTEMPLATES "Sort spikes using templates"
-    ID_VIEW_SPIKETIMESERIES "Display peristimulus histograms, spike interval hist, and autocorrelations"
-    ID_VIEW_ACQUIREDATA     "Acquire data with A/D card - display and save as file"
+    ID_VIEW_SPIKE_DETECTION "Detect spikes from data files"
+    ID_VIEW_SPIKE_DISPLAY   "Display spikes and classes"
+    ID_VIEW_SPIKE_SORTING_AMPLITUDE "Sort spikes on amplitude criteria"
+    ID_VIEW_SPIKE_SORTING_TEMPLATES "Sort spikes using templates"
+    ID_VIEW_SPIKE_TIME_SERIES 
+                            "Display peristimulus histograms, spike interval hist, and autocorrelations"
+    ID_VIEW_ACQUIRE_DATA    "Acquire data with A/D card - display and save as file"
 END
 
 STRINGTABLE
@@ -3803,78 +3811,84 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_HARDWARE_ADINTERVALS "Data acquisition sampling duration"
-    ID_TOOLS_DETECTSPIKES   "Detect spikes and stimulus according to parameters defined\nDetect spikes"
-    ID_TOOLS_DETECTIONPARAMETERS 
+    ID_FORMAT_DATA_SERIES_ATTRIBUTES 
+                            "Display raw data or a transform; add/delete curves"
+    ID_HARDWARE_AD_INTERVALS "Data acquisition sampling duration"
+    ID_OPTIONS_PRINT_MARGINS "Define print margins..."
+END
+
+STRINGTABLE
+BEGIN
+    ID_TOOLS_DETECT_SPIKES  "Detect spikes and stimulus according to parameters defined\nDetect spikes"
+    ID_TOOLS_DETECTION_PARAMETERS 
                             "Spike detection parameters (channels, threshold level, spike duration, etc.)"
-    ID_OPTIONS_BROWSEMODE   "Define how data are displayed when a new file is selected.."
-    ID_OPTIONS_PRINTMARGINS "Define print margins..."
-    ID_VIEW_CURSORMODE_NORMAL 
-                            "Normal mouse cursor - select curve and move up/down by dragging, drag curve lef/right, right click = screen properties"
-    ID_VIEW_CURSORMODE_ZOOMIN 
-                            "Mouse in zoom mode - right click to reduce, left click and drag to define zoom rectangle"
-    ID_TOOLS_DETECTIONOPTION "Detection options: spikes, stimulus, ..."
-    ID_TOOLS_EDITTRANSFORMSPIKES 
+    ID_OPTIONS_BROWSE_MODE  "Define how data are displayed when a new file is selected.."
+    ID_TOOLS_DETECTION_OPTIONS "Detection options: spikes, stimulus, ..."
+    ID_TOOLS_EDIT_TRANSFORM_SPIKES 
                             "Edit and transform individual spikes stored in spike list (shortcut: double-click on corresp. bar)"
-    ID_TOOLS_EXPORTDATACOMMENTS 
+END
+
+STRINGTABLE
+BEGIN
+    ID_VIEW_CURSOR_MODE_ZOOMIN 
+                            "Mouse in zoom mode - right click to reduce, left click and drag to define zoom rectangle"
+    ID_VIEW_CURSOR_MODE_NORMAL 
+                            "Normal mouse cursor - select curve and move up/down by dragging, drag curve lef/right, right click = screen properties"
+    ID_TOOLS_MEASURE_MODE   "Define measure parameters"
+    ID_TOOLS_VERTICAL_TAGS  "Add, remove vertical tags...."
+    ID_TOOLS_HORIZONTAL_CURSORS "Add, remove horizontal cursors..."
+    ID_FORMAT_SET_ORDINATES "Scale vertical axis"
+    ID_TOOLS_EXPORT_NUMBER_OF_SPIKES "Export spikes to a text document"
+    ID_TOOLS_EXPORT_DATA_COMMENTS 
                             "Export infos/data header to the clipboard...."
 END
 
 STRINGTABLE
 BEGIN
-    ID_OPTIONS_LOADSAVEOPTIONS 
+    ID_OPTIONS_LOAD_SAVE_OPTIONS 
                             "Load or save options from/in a configuration file..."
 END
 
 STRINGTABLE
 BEGIN
-    ID_FORMAT_DATASERIESATTRIBUTES 
-                            "Display raw data or a transform; add/delete curves"
-    ID_VIEW_CURSORMODE_MEASURE 
+    ID_VIEW_CURSOR_MODE_MEASURE 
                             "Measure mouse cursor - display and move vertical or horizontal dotted lines to perform interactive measures"
 END
 
 STRINGTABLE
 BEGIN
     ID_FORMAT_XSCALE        "Scale horizontal axis"
-    ID_TOOLS_ALIGNSPIKES    "Align spikes"
-    ID_TOOLS_DATASERIES     "Edit parameters to display data"
-    ID_HARDWARE_DEFINEEXPERIMENT 
+    ID_TOOLS_ALIGN_SPIKES   "Align spikes"
+    ID_TOOLS_DATA_SERIES    "Edit parameters to display data"
+    ID_HARDWARE_DEFINE_EXPERIMENT 
                             "Description of the experimental parameters associated with the current data file"
     ID_HARDWARE_ADCHANNELS  "A/D card input channels"
 END
 
 STRINGTABLE
 BEGIN
-    ID_FORMAT_CENTER_CURVE   "Center the data curve(s) in the in the middle of the screen"
-    ID_FORMAT_GAIN_ADJUST    "Adjust gain of data curves so that they use all the vertical scale"
-    ID_FORMAT_SPLIT_CURVES   "Ajust gain and offset of each curves to split them across the screen"
-    ID_FORMAT_SETORDINATES  "Scale vertical axis"
-    ID_FORMAT_FIRSTFRAME    "Display the start of the data recording set"
-    ID_FORMAT_LASTFRAME     "Display the end of the data recording set"
+    ID_FORMAT_CENTER_CURVE  "Center the data curve(s) in the in the middle of the screen"
+    ID_FORMAT_GAIN_ADJUST   "Adjust gain of data curves so that they use all the vertical scale"
+    ID_FORMAT_SPLIT_CURVES  "Ajust gain and offset of each curves to split them across the screen"
+    ID_FORMAT_FIRST_FRAME   "Display the start of the data recording set"
+    ID_FORMAT_LAST_FRAME    "Display the end of the data recording set"
     ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA 
                             "Display the entire data recording set"
-    ID_TOOLS_EXPORTNUMBEROFSPIKES "Export spikes to a text document"
 END
 
 STRINGTABLE
 BEGIN
-    ID_TOOLS_MEASUREMODE    "Define measure parameters"
     ID_TOOLS_MEASURE        "Measure parameters from data according to mode selected"
-    ID_TOOLS_VERTICALTAGS   "Add, remove vertical tags...."
-    ID_TOOLS_HORIZONTALCURSORS "Add, remove horizontal cursors..."
-    ID_RECORD_GOTORECORD    "Go to record at a given position...\nGoto record"
+    ID_RECORD_GOTO_RECORD   "Go to record at a given position...\nGoto record"
 END
 
 STRINGTABLE
 BEGIN
-    ID_TOOLS_REMOVEARTEFACTFILES 
-                            "Define parameters with overload or artefacts and to discard files corresponding to these criteria..."
     ID_VIEW_PREVIOUSVIEW    "View previous display mode"
     ID_VIEW_NEXTVIEW        "Select next available view"
-    ID_VIEW_SWAPPREVIOUSVIEW "Replace current view with the previous one"
-    ID_FORMAT_PREVIOUSFRAME "Display previous data frame"
-    ID_FORMAT_NEXTFRAME     "Display next data frame"
+    ID_VIEW_SWAP_PREVIOUS_VIEW "Replace current view with the previous one"
+    ID_FORMAT_PREVIOUS_FRAME "Display previous data frame"
+    ID_FORMAT_NEXT_FRAME    "Display next data frame"
 END
 
 STRINGTABLE
@@ -3884,17 +3898,18 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_TOOLS_REMOVEDUPLICATEFILES "Remove duplicate records from the database"
-    ID_TOOLS_RESTOREDELETEDFILES 
+    ID_TOOLS_REMOVE_DUPLICATE_FILES 
+                            "Remove duplicate records from the database"
+    ID_TOOLS_RESTORE_DELETED_FILES 
                             "Restore files which have been labeled with ""*.datdel"" in the directories where other data files are stored"
 END
 
 STRINGTABLE
 BEGIN
-    ID_TOOLS_EXPORTDATAFILE "Export a file to another format"
-    ID_TOOLS_REMOVEMISSINGFILENAMES 
+    ID_TOOLS_EXPORT_DATA_FILE "Export a file to another format"
+    ID_TOOLS_REMOVE_MISSING_FILE_NAMES 
                             "Remove records which point to missing data files"
-    ID_TOOLS_CHECKCONSISTENCYOFLISTS 
+    ID_TOOLS_CHECK_CONSISTENCY_OF_LISTS 
                             "Remove from the database the spike files which are not stored in the same directory or with a different name than the source data file"
 END
 
@@ -3916,12 +3931,12 @@ END
 STRINGTABLE
 BEGIN
     ID_UPDATE               "Scan database again and refresh values\nRefresh"
-    ID_APPLYFILTER          "Save changes made to the filters and select corresponding records\nApply filter"
+    ID_APPLY_FILTER         "Save changes made to the filters and select corresponding records\nApply filter"
     ID_RECORD_SORT          "Sort records according to different properties. By default: date & time of acquisition\nSort records"
-    ID_TOOLS_EDITSPIKES     "Edit spike (time and vertical offset)"
+    ID_TOOLS_EDIT_SPIKES    "Edit spike (time and vertical offset)"
     ID_TOOLS_DETECT_PARMS   "Define spike and stimulus detection parameters"
     ID_TOOLS_DETECT         "Detect spikes and stimulus and save results in a ""spk"" file"
-    ID_TOOLS_CHECKCONSISTENCY 
+    ID_TOOLS_CHECK_CONSISTENCY 
                             "Remove spike files which are not stored in the same directory or with a different name than the source data file"
 END
 
@@ -3951,9 +3966,9 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_TOOLS_SYNCHRO_ALLFILES 
+    ID_TOOLS_SYNCHRO_ALL_FILES 
                             "Synchronize information of all records of the database into data files"
-    ID_TOOLS_SYNCHRO_CURRENTFILE 
+    ID_TOOLS_SYNCHRO_CURRENT_FILE 
                             "Synchronize infos from current record with that of the corresponding data file"
 END
 
@@ -3964,8 +3979,8 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_TOOLS_COMPACTDATABASE "Compact database"
-    ID_TOOLS_REMOVEUNUSED   "Remove un-used entries in database"
+    ID_TOOLS_COMPACT_DATABASE "Compact database"
+    ID_TOOLS_REMOVE_UNUSED  "Remove un-used entries in database"
 END
 
 #endif    // English (United States) resources

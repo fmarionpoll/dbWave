@@ -40,10 +40,10 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 	ON_MESSAGE(WM_MYMESSAGE, &CMainFrame::OnMyMessage)
 	ON_WM_SETTINGCHANGE()
 
-	ON_COMMAND(ID_CHECK_FILTERPANE, &CMainFrame::OnCheckFilterpane)
-	ON_UPDATE_COMMAND_UI(ID_CHECK_FILTERPANE, &CMainFrame::OnUpdateCheckFilterpane)
-	ON_COMMAND(ID_CHECK_PROPERTIESPANE, &CMainFrame::OnCheckPropertiespane)
-	ON_UPDATE_COMMAND_UI(ID_CHECK_PROPERTIESPANE, &CMainFrame::OnUpdateCheckPropertiespane)
+	ON_COMMAND(ID_CHECK_FILTER_PANE, &CMainFrame::OnCheckFilterpane)
+	ON_UPDATE_COMMAND_UI(ID_CHECK_FILTER_PANE, &CMainFrame::OnUpdateCheckFilterpane)
+	ON_COMMAND(ID_CHECK_PROPERTIES_PANE, &CMainFrame::OnCheckPropertiespane)
+	ON_UPDATE_COMMAND_UI(ID_CHECK_PROPERTIES_PANE, &CMainFrame::OnUpdateCheckPropertiespane)
 
 	ON_COMMAND(ID_HELP_FINDER, &CMDIFrameWndEx::OnHelpFinder)
 	ON_COMMAND(ID_HELP, &CMDIFrameWndEx::OnHelp)
@@ -59,15 +59,15 @@ CMainFrame::CMainFrame()
 {
 	m_SecondToolBarID = 0;
 	m_pSecondToolBar = nullptr;
-	m_bPropertiesPaneVisible = TRUE;
-	m_bFilterPaneVisible = TRUE;
+	is_properties_panel_visible_ = TRUE;
+	is_filter_pane_visible_ = TRUE;
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
 }
 
 CMainFrame::~CMainFrame()
 {
-	m_wndOutlookPane.ClearAll();
-	m_wndOutlookPane.RemoveAllButtons();
+	outlook_pane_.ClearAll();
+	outlook_pane_.RemoveAllButtons();
 	SAFE_DELETE(m_pSecondToolBar)
 }
 
@@ -78,14 +78,14 @@ void CMainFrame::OnDestroy()
 
 void CMainFrame::ActivatePropertyPane(BOOL bActivate)
 {
-	if (bActivate != panel_properties.IsVisible())
-		panel_properties.ShowPane(bActivate, FALSE, FALSE);
+	if (bActivate != panel_properties_.IsVisible())
+		panel_properties_.ShowPane(bActivate, FALSE, FALSE);
 }
 
 void CMainFrame::ActivateFilterPane(BOOL bActivate)
 {
-	if (bActivate != panel_filter.IsVisible())
-		panel_filter.ShowPane(bActivate, FALSE, FALSE);
+	if (bActivate != panel_filter_.IsVisible())
+		panel_filter_.ShowPane(bActivate, FALSE, FALSE);
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -102,15 +102,15 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableMDITabbedGroups(TRUE, mdi_tab_params);
 
 	// Create the ribbon bar
-	if (!m_wndRibbonBar.Create(this))
+	if (!ribbon_bar_.Create(this))
 	{
 		TRACE0("Failed to create ribbon bar\n");
 		return -1; //Failed to create ribbon bar
 	}
-	m_wndRibbonBar.LoadFromResource(IDR_RIBBON);
+	ribbon_bar_.LoadFromResource(IDR_RIBBON);
 
 	// status bar
-	if (!m_wndStatusBar.Create(this))
+	if (!status_bar_.Create(this))
 	{
 		TRACE0("Failed to create status bar\n");
 		return -1; // fail to create
@@ -140,10 +140,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	// enable docking and attach
 	// TODO - see model VS as they have more calls here
-	panel_filter.EnableDocking(CBRS_ALIGN_ANY);
-	DockPane(&panel_filter);
-	panel_properties.EnableDocking(CBRS_ALIGN_ANY);
-	DockPane(&panel_properties);
+	panel_filter_.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&panel_filter_);
+	panel_properties_.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&panel_properties_);
 
 	// set the visual manager and style based on persisted value
 	OnApplicationLook(theApp.m_nAppLook);
@@ -190,7 +190,7 @@ BOOL CMainFrame::CreateDockingPropertiesPanes()
 	CString str_filter_view;
 	auto b_name_valid = str_filter_view.LoadString(IDS_FILTERPANE);
 	ASSERT(b_name_valid);
-	if (!panel_filter.Create(str_filter_view, this, CRect(0, 0, 200, 200), TRUE,
+	if (!panel_filter_.Create(str_filter_view, this, CRect(0, 0, 200, 200), TRUE,
 	                         ID_PANE_FILTERWND,
 	                         WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
 	{
@@ -202,7 +202,7 @@ BOOL CMainFrame::CreateDockingPropertiesPanes()
 	CString str_properties_view;
 	b_name_valid = str_properties_view.LoadString(IDS_PROPERTIESPANE);
 	ASSERT(b_name_valid);
-	if (!panel_properties.Create(str_properties_view, this, CRect(0, 0, 200, 200), TRUE,
+	if (!panel_properties_.Create(str_properties_view, this, CRect(0, 0, 200, 200), TRUE,
 	                             ID_PANE_PROPERTIESWND,
 	                             WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT |
 	                             CBRS_FLOAT_MULTI))
@@ -223,7 +223,7 @@ void CMainFrame::SetDockingPropertiesPanesIcons(BOOL bHiColorIcons)
 		                                                               IDI_FILE_VIEW),
 	                                                               IMAGE_ICON, GetSystemMetrics(SM_CXSMICON),
 	                                                               GetSystemMetrics(SM_CYSMICON), 0));
-	panel_filter.SetIcon(h_filter_pane_icon, FALSE);
+	panel_filter_.SetIcon(h_filter_pane_icon, FALSE);
 
 	const auto h_properties_pane_icon = static_cast<HICON>(::LoadImage(AfxGetResourceHandle(),
 	                                                                   MAKEINTRESOURCE(
@@ -231,7 +231,7 @@ void CMainFrame::SetDockingPropertiesPanesIcons(BOOL bHiColorIcons)
 		                                                                   IDI_PROPERTIES_WND),
 	                                                                   IMAGE_ICON, GetSystemMetrics(SM_CXSMICON),
 	                                                                   GetSystemMetrics(SM_CYSMICON), 0));
-	panel_properties.SetIcon(h_properties_pane_icon, FALSE);
+	panel_properties_.SetIcon(h_properties_pane_icon, FALSE);
 
 	UpdateMDITabbedBarsIcons();
 }
@@ -250,12 +250,12 @@ BOOL CMainFrame::CreateOutlookBar()
 	CMFCOutlookBarTabCtrl::EnableAnimation();
 	constexpr auto nInitialWidth = 60;
 	const CString strCaption = _T("Shortcuts");
-	if (!m_wndOutlookBar.Create(strCaption, this, CRect(0, 0, nInitialWidth, nInitialWidth), ID_VIEW_OUTLOOKBAR,
+	if (!outlook_bar_.Create(strCaption, this, CRect(0, 0, nInitialWidth, nInitialWidth), ID_VIEW_OUTLOOKBAR,
 	                            WS_CHILD | WS_VISIBLE | CBRS_LEFT))
 		return FALSE; // fail to create
 
 	// create the choices toolbar and fill it with images, buttons and text
-	auto* pShortcutsBarContainer = DYNAMIC_DOWNCAST(CMFCOutlookBarTabCtrl, m_wndOutlookBar.GetUnderlyingWindow());
+	auto* pShortcutsBarContainer = DYNAMIC_DOWNCAST(CMFCOutlookBarTabCtrl, outlook_bar_.GetUnderlyingWindow());
 	if (pShortcutsBarContainer == nullptr)
 		return FALSE;
 
@@ -275,33 +275,33 @@ BOOL CMainFrame::CreateOutlookBar()
 	} Buttons[N_BUTTONS] = {
 			// command ID              button style                        image index
 			{ID_VIEW_DATABASE, IDS_BTTNDATABASE, dw_style, 0},
-			{ID_VIEW_DATAFILE, IDS_BTTNDATA, dw_style, 1},
-			{ID_VIEW_SPIKEDETECTION, IDS_BTTNDETECT, dw_style, 2},
-			{ID_VIEW_SPIKEDISPLAY, IDS_BTTNSPIKES, dw_style, 3},
-			{ID_VIEW_SPIKESORTINGAMPLITUDE,IDS_BTTNSORT, dw_style, 4},
-			{ID_VIEW_SPIKESORTINGTEMPLATES,IDS_BTTNTEMPLATES, dw_style, 5},
-			{ID_VIEW_SPIKETIMESERIES, IDS_BTTNTIMESERIES, dw_style, 6},
-			{ID_VIEW_ACQUIREDATA, IDS_BTTNACQDATA, dw_style, 7}
+			{ID_VIEW_DATA_FILE, IDS_BTTNDATA, dw_style, 1},
+			{ID_VIEW_SPIKE_DETECTION, IDS_BTTNDETECT, dw_style, 2},
+			{ID_VIEW_SPIKE_DISPLAY, IDS_BTTNSPIKES, dw_style, 3},
+			{ID_VIEW_SPIKE_SORTING_AMPLITUDE,IDS_BTTNSORT, dw_style, 4},
+			{ID_VIEW_SPIKE_SORTING_TEMPLATES,IDS_BTTNTEMPLATES, dw_style, 5},
+			{ID_VIEW_SPIKE_TIME_SERIES, IDS_BTTNTIMESERIES, dw_style, 6},
+			{ID_VIEW_ACQUIRE_DATA, IDS_BTTNACQDATA, dw_style, 7}
 		};
 
 	// Create first page:
-	m_wndOutlookPane.Create(&m_wndOutlookBar, AFX_DEFAULT_TOOLBAR_STYLE, ID_PANE_OUTLOOKBAR);
-	m_wndOutlookPane.SetOwner(this);
-	m_wndOutlookPane.EnableTextLabels();
-	m_wndOutlookPane.EnableDocking(CBRS_ALIGN_ANY);
+	outlook_pane_.Create(&outlook_bar_, AFX_DEFAULT_TOOLBAR_STYLE, ID_PANE_OUTLOOKBAR);
+	outlook_pane_.SetOwner(this);
+	outlook_pane_.EnableTextLabels();
+	outlook_pane_.EnableDocking(CBRS_ALIGN_ANY);
 
 	for (int i = 0; i < N_BUTTONS; i++)
 	{
 		CString str;
 		if (!str.LoadString(Buttons[i].string_id))
 			str = _T("??");
-		m_wndOutlookPane.AddButton(img1.ExtractIconW(i), str, Buttons[i].id);
-		m_wndOutlookPane.SetButtonInfo(i,
+		outlook_pane_.AddButton(img1.ExtractIconW(i), str, Buttons[i].id);
+		outlook_pane_.SetButtonInfo(i,
 		                               Buttons[i].id, // command id
 		                               Buttons[i].style, // buttons style
 		                               Buttons[i].i_image); // index of image in bitmap
 	}
-	pShortcutsBarContainer->AddTab(&m_wndOutlookPane, _T("Views"), static_cast<UINT>(-1), FALSE);
+	pShortcutsBarContainer->AddTab(&outlook_pane_, _T("Views"), static_cast<UINT>(-1), FALSE);
 	img1.Detach();
 
 	return TRUE;
@@ -373,7 +373,7 @@ void CMainFrame::OnApplicationLook(UINT id)
 		CDockingManager::SetDockingMode(DT_SMART);
 	}
 
-	m_wndRibbonBar.SetWindows7Look(b_windows7);
+	ribbon_bar_.SetWindows7Look(b_windows7);
 	RedrawWindow(nullptr, nullptr, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
 	theApp.WriteInt(_T("ApplicationLook"), static_cast<int>(theApp.m_nAppLook));
 }
@@ -409,7 +409,7 @@ LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp, LPARAM lp)
 
 void CMainFrame::OnOptions()
 {
-	const auto p_options_dlg = new CMFCRibbonCustomizeDialog(this, &m_wndRibbonBar);
+	const auto p_options_dlg = new CMFCRibbonCustomizeDialog(this, &ribbon_bar_);
 	ASSERT(p_options_dlg != NULL);
 
 	p_options_dlg->DoModal();
@@ -442,64 +442,64 @@ void CMainFrame::OnViewPropertiesWindow()
 {
 	// Show or activate the pane, depending on current state.  The
 	// pane can only be closed via the [x] button on the pane frame.
-	panel_properties.ShowPane(TRUE, FALSE, TRUE);
-	panel_properties.SetFocus();
-	m_bPropertiesPaneVisible = TRUE;
+	panel_properties_.ShowPane(TRUE, FALSE, TRUE);
+	panel_properties_.SetFocus();
+	is_properties_panel_visible_ = TRUE;
 }
 
 void CMainFrame::OnUpdateViewPropertiesWindow(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(TRUE);
-	m_bPropertiesPaneVisible = TRUE;
+	is_properties_panel_visible_ = TRUE;
 }
 
 void CMainFrame::OnViewFilterWindow()
 {
 	// Show or activate the pane, depending on current state.  The
 	// pane can only be closed via the [x] button on the pane frame.
-	panel_filter.ShowPane(TRUE, FALSE, TRUE);
-	panel_filter.SetFocus();
-	m_bFilterPaneVisible = TRUE;
+	panel_filter_.ShowPane(TRUE, FALSE, TRUE);
+	panel_filter_.SetFocus();
+	is_filter_pane_visible_ = TRUE;
 }
 
 void CMainFrame::OnUpdateViewFilterWindow(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(TRUE);
-	m_bFilterPaneVisible = TRUE;
+	is_filter_pane_visible_ = TRUE;
 }
 
 void CMainFrame::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	panel_properties.OnUpdate(pSender, lHint, pHint);
-	panel_filter.OnUpdate(pSender, lHint, pHint);
+	panel_properties_.OnUpdate(pSender, lHint, pHint);
+	panel_filter_.OnUpdate(pSender, lHint, pHint);
 }
 
 LRESULT CMainFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	// pass message to PropertiesPane
-	panel_properties.OnMyMessage(wParam, lParam);
-	panel_filter.OnMyMessage(wParam, lParam);
+	panel_properties_.OnMyMessage(wParam, lParam);
+	panel_filter_.OnMyMessage(wParam, lParam);
 	return 0L;
 }
 
 void CMainFrame::OnCheckFilterpane()
 {
-	m_bFilterPaneVisible = !m_bFilterPaneVisible;
-	panel_filter.ShowPane(m_bFilterPaneVisible, FALSE, TRUE);
+	is_filter_pane_visible_ = !is_filter_pane_visible_;
+	panel_filter_.ShowPane(is_filter_pane_visible_, FALSE, TRUE);
 }
 
 void CMainFrame::OnUpdateCheckFilterpane(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(m_bFilterPaneVisible);
+	pCmdUI->SetCheck(is_filter_pane_visible_);
 }
 
 void CMainFrame::OnCheckPropertiespane()
 {
-	m_bPropertiesPaneVisible = !m_bPropertiesPaneVisible;
-	panel_properties.ShowPane(m_bPropertiesPaneVisible, FALSE, TRUE);
+	is_properties_panel_visible_ = !is_properties_panel_visible_;
+	panel_properties_.ShowPane(is_properties_panel_visible_, FALSE, TRUE);
 }
 
 void CMainFrame::OnUpdateCheckPropertiespane(CCmdUI* pCmdUI)
 {
-	pCmdUI->SetCheck(m_bPropertiesPaneVisible);
+	pCmdUI->SetCheck(is_properties_panel_visible_);
 }

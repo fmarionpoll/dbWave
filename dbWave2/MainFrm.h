@@ -27,17 +27,17 @@ class CMainFrame : public CMDIFrameWndEx
 #endif
 
 protected: // control bar embedded members
-	BOOL m_bPropertiesPaneVisible;
-	BOOL m_bFilterPaneVisible;
+	BOOL is_properties_panel_visible_;
+	BOOL is_filter_pane_visible_;
 
-	CMFCRibbonStatusBar m_wndStatusBar;
-	CMFCRibbonBar m_wndRibbonBar;
-	CMFCRibbonApplicationButton m_MainButton;
-	CMFCToolBarImages m_UserImages;
-	CPropertiesPanel panel_properties;
-	CFilterPanel panel_filter;
-	CMFCOutlookBar m_wndOutlookBar;
-	CMFCOutlookBarPane m_wndOutlookPane;
+	CMFCRibbonStatusBar status_bar_;
+	CMFCRibbonBar ribbon_bar_;
+	CMFCRibbonApplicationButton ribbon_application_button_;
+	CMFCToolBarImages user_images_;
+	CPropertiesPanel panel_properties_;
+	CFilterPanel panel_filter_;
+	CMFCOutlookBar outlook_bar_;
+	CMFCOutlookBarPane outlook_pane_;
 
 	BOOL CreateOutlookBar();
 	BOOL CreateDockingPropertiesPanes();

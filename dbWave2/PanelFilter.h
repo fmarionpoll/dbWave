@@ -20,13 +20,13 @@ public:
 
 	// Attributes
 protected:
-	CQuadStateTree m_wndFilterView;
-	CFilterToolBar m_wndToolBar;
+	CQuadStateTree m_wnd_filter_view_;
+	CFilterToolBar m_wnd_tool_bar_;
 
-	CdbWaveDoc* m_pDoc{nullptr};
-	CdbWaveDoc* m_pDocOld{nullptr};
-	static int m_noCol[]; // [26] succession of fields that can be filtered
-	HTREEITEM m_htreeitem[26]{};
+	CdbWaveDoc* m_p_doc_{nullptr};
+	CdbWaveDoc* m_p_doc_old_{nullptr};
+	static int m_no_col_[]; // [26] succession of fields that can be filtered
+	HTREEITEM m_h_tree_item_[26]{};
 
 	void InitFilterList();
 	void PopulateItemFromTableLong(DB_ITEMDESC* pdesc);
