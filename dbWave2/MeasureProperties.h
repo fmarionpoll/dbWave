@@ -27,7 +27,7 @@ public:
 	CdbWaveDoc* m_pdbDoc{};
 	AcqDataDoc* m_pdatDoc{};
 
-	OPTIONS_VIEWDATAMEASURE* m_pMO{};
+	OPTIONS_VIEW_DATA_MEASURE* m_pMO{};
 	int m_currentchan{};
 	float m_samplingrate{};
 

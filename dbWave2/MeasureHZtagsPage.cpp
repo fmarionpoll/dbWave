@@ -179,10 +179,10 @@ void CMeasureHZtagsPage::OnOK()
 	auto p_tags_list = m_pdatDoc->get_hz_tags_list();
 	p_tags_list->copy_tag_list(&m_pChartDataWnd->horizontal_tags);
 	m_pMO->b_changed = TRUE;
-	if (m_pMO->wOption != 1)
+	if (m_pMO->w_option != 1)
 	{
 		m_pChartDataWnd->horizontal_tags.remove_all_tags();
-		if (m_pMO->wOption == 0)
+		if (m_pMO->w_option == 0)
 			m_pChartDataWnd->vertical_tags.copy_tag_list(m_pdatDoc->get_vt_tags_list());
 	}
 	CPropertyPage::OnOK();
@@ -191,10 +191,10 @@ void CMeasureHZtagsPage::OnOK()
 void CMeasureHZtagsPage::OnCancel()
 {
 	// restore initial state of HZcursors
-	if (m_pMO->wOption != 1)
+	if (m_pMO->w_option != 1)
 	{
 		m_pChartDataWnd->horizontal_tags.remove_all_tags();
-		if (m_pMO->wOption == 0)
+		if (m_pMO->w_option == 0)
 			m_pChartDataWnd->vertical_tags.copy_tag_list(m_pdatDoc->get_vt_tags_list());
 	}
 	else

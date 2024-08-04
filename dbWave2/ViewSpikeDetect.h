@@ -65,7 +65,7 @@ protected:
 	int m_i_detect_parameters = 0;
 
 	OPTIONS_VIEWDATA* options_view_data = nullptr;
-	OPTIONS_VIEWDATAMEASURE* options_view_data_measure = nullptr;
+	OPTIONS_VIEW_DATA_MEASURE* options_view_data_measure = nullptr;
 
 	float m_samplingRate = 0.f;
 	float m_spkWndAmplitude = 1.f;

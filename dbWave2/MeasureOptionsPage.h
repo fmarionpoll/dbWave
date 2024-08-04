@@ -3,7 +3,7 @@
 #include "AcqDataDoc.h"
 #include "ChartData.h"
 #include "Editctrl.h"
-#include "OPTIONS_VIEWDATAMEASURE.h"
+#include "OPTIONS_VIEW_DATA_MEASURE.h"
 
 class CMeasureOptionsPage : public CPropertyPage
 {
@@ -33,7 +33,7 @@ public:
 	UINT m_uiStimulusThreshold;
 	UINT m_uiStimuluschan;
 	// input parameters
-	OPTIONS_VIEWDATAMEASURE* m_pMO{};
+	OPTIONS_VIEW_DATA_MEASURE* m_pMO{};
 	CdbWaveDoc* m_pdbDoc{};
 	AcqDataDoc* m_pdatDoc{};
 	ChartData* m_pChartDataWnd{};

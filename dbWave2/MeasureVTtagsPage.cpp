@@ -81,26 +81,26 @@ BOOL CMeasureVTtagsPage::GetVTtagVal(int index)
 
 void CMeasureVTtagsPage::SetspacedTagsOptions()
 {
-	static_cast<CButton*>(GetDlgItem(IDC_RADIO1))->SetCheck(m_pMO->bSetTagsforCompleteFile);
-	static_cast<CButton*>(GetDlgItem(IDC_RADIO2))->SetCheck(m_pMO->bSetTagsforCompleteFile);
+	static_cast<CButton*>(GetDlgItem(IDC_RADIO1))->SetCheck(m_pMO->b_set_tags_for_complete_file);
+	static_cast<CButton*>(GetDlgItem(IDC_RADIO2))->SetCheck(m_pMO->b_set_tags_for_complete_file);
 	// validate dependent edit box accordingly
-	GetDlgItem(IDC_NPERIODSSTATIC)->EnableWindow(!m_pMO->bSetTagsforCompleteFile);
-	GetDlgItem(IDC_NPERIODSEDIT)->EnableWindow(!m_pMO->bSetTagsforCompleteFile);
+	GetDlgItem(IDC_NPERIODSSTATIC)->EnableWindow(!m_pMO->b_set_tags_for_complete_file);
+	GetDlgItem(IDC_NPERIODSEDIT)->EnableWindow(!m_pMO->b_set_tags_for_complete_file);
 }
 
 void CMeasureVTtagsPage::OnSetDuplicateMode()
 {
-	m_pMO->bSetTagsforCompleteFile = static_cast<CButton*>(GetDlgItem(IDC_RADIO1))->GetCheck();
+	m_pMO->b_set_tags_for_complete_file = static_cast<CButton*>(GetDlgItem(IDC_RADIO1))->GetCheck();
 	SetspacedTagsOptions();
 }
 
 void CMeasureVTtagsPage::OnCancel()
 {
 	OnDeleteSeries();
-	if (m_pMO->wOption != 0)
+	if (m_pMO->w_option != 0)
 	{
 		m_pChartDataWnd->vertical_tags.remove_all_tags();
-		if (m_pMO->wOption == 1)
+		if (m_pMO->w_option == 1)
 			m_pChartDataWnd->horizontal_tags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
 	}
 	CPropertyPage::OnCancel();
@@ -111,10 +111,10 @@ void CMeasureVTtagsPage::OnOK()
 	auto p_tag_list = m_pdatDoc->get_vt_tags_list();
 	p_tag_list->copy_tag_list(&m_pChartDataWnd->vertical_tags);
 	m_pMO->b_changed = TRUE;
-	if (m_pMO->wOption != 0)
+	if (m_pMO->w_option != 0)
 	{
 		m_pChartDataWnd->vertical_tags.remove_all_tags();
-		if (m_pMO->wOption == 1)
+		if (m_pMO->w_option == 1)
 			m_pChartDataWnd->horizontal_tags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
 	}
 	CPropertyPage::OnOK();
@@ -125,7 +125,7 @@ BOOL CMeasureVTtagsPage::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 
 	// set check button
-	static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(m_pMO->bSaveTags);
+	static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(m_pMO->b_save_tags);
 
 	// save initial state of VTtags
 	//TODO bug here
@@ -146,8 +146,8 @@ BOOL CMeasureVTtagsPage::OnInitDialog()
 	SetspacedTagsOptions();
 	m_duration = m_pMO->duration; // on/OFF duration (sec)
 	m_period = m_pMO->period; // period (sec)
-	m_nperiods = m_pMO->nperiods; // nb of duplicates
-	m_timeshift = m_pMO->timeshift; // shift tags
+	m_nperiods = m_pMO->n_periods; // nb of duplicates
+	m_timeshift = m_pMO->time_shift; // shift tags
 	UpdateData(FALSE);
 
 	return TRUE; // return TRUE unless you set the focus to a control
@@ -171,7 +171,7 @@ void CMeasureVTtagsPage::OnRemove()
 
 void CMeasureVTtagsPage::OnCheck1()
 {
-	m_pMO->bSaveTags = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
+	m_pMO->b_save_tags = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
 }
 
 void CMeasureVTtagsPage::OnEnChangeItem()
@@ -248,7 +248,7 @@ void CMeasureVTtagsPage::OnEnChangeNperiodsedit()
 		// update dependent parameters
 		if (m_nperiods < 1)
 			m_nperiods = 1;
-		m_pMO->nperiods = m_nperiods;
+		m_pMO->n_periods = m_nperiods;
 		UpdateData(FALSE);
 	}
 }
@@ -259,7 +259,7 @@ void CMeasureVTtagsPage::OnEnChangeTimeshift()
 	{
 		mm_timeshift.OnEnChange(this, m_timeshift, 1.f, -1.f);
 		// update dependent parameters
-		m_pMO->timeshift = m_timeshift;
+		m_pMO->time_shift = m_timeshift;
 		UpdateData(FALSE);
 	}
 }
@@ -284,7 +284,7 @@ void CMeasureVTtagsPage::OnAddTags()
 	float time_end;
 
 	// compute limits
-	if (!m_pMO->bSetTagsforCompleteFile)
+	if (!m_pMO->b_set_tags_for_complete_file)
 	{
 		m_nbtags = m_pChartDataWnd->vertical_tags.get_tag_list_size();
 		time = m_pChartDataWnd->vertical_tags.get_value_long(m_nbtags - 1) / m_samplingrate;

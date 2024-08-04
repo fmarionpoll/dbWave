@@ -800,7 +800,7 @@
     <ClCompile Include="OPTIONS_IMPORT.cpp" />
     <ClCompile Include="OPTIONS_OUTPUTDATA.cpp" />
     <ClCompile Include="OPTIONS_VIEWDATA.cpp" />
-    <ClCompile Include="OPTIONS_VIEWDATAMEASURE.cpp" />
+    <ClCompile Include="OPTIONS_VIEW_DATA_MEASURE.cpp" />
     <ClCompile Include="OPTIONS_VIEWSPIKES.cpp" />
     <ClCompile Include="OUTPUTPARMS.cpp" />
     <ClCompile Include="SCOPECHANNEL.cpp" />
@@ -1386,7 +1386,7 @@
     <ClInclude Include="OPTIONS_IMPORT.h" />
     <ClInclude Include="OPTIONS_OUTPUTDATA.h" />
     <ClInclude Include="OPTIONS_VIEWDATA.h" />
-    <ClInclude Include="OPTIONS_VIEWDATAMEASURE.h" />
+    <ClInclude Include="OPTIONS_VIEW_DATA_MEASURE.h" />
     <ClInclude Include="OPTIONS_VIEWSPIKES.h" />
     <ClInclude Include="OUTPUTPARMS.h" />
     <ClInclude Include="SCOPECHANNEL.h" />

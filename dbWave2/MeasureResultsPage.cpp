@@ -67,38 +67,38 @@ void CMeasureResultsPage::OutputTitle()
 	CString cs_cols = _T("");
 	m_nbdatacols = 0;
 
-	switch (m_pMO->wOption)
+	switch (m_pMO->w_option)
 	{
 	// ......................  vertical tags
 	case 0:
-		if (m_pMO->bDatalimits)
+		if (m_pMO->b_data_limits)
 		{
-			if (!m_pMO->btime) cs_cols += _T("\tt1(mV)\tt2(mV)");
+			if (!m_pMO->b_time) cs_cols += _T("\tt1(mV)\tt2(mV)");
 			else cs_cols += _T("\tt1(mV)\tt1(s)\tt2(mV)\tt2(s)");
 		}
-		if (m_pMO->bDiffDatalimits)
+		if (m_pMO->b_diff_data_limits)
 		{
 			cs_cols += _T("\tt2-t1(mV)");
-			if (m_pMO->btime) cs_cols += _T("\tt2-t1(s)");
+			if (m_pMO->b_time) cs_cols += _T("\tt2-t1(s)");
 		}
-		if (m_pMO->bExtrema)
+		if (m_pMO->b_extrema)
 		{
-			if (!m_pMO->btime) cs_cols += _T("\tMax(mV)\tmin(mV)");
+			if (!m_pMO->b_time) cs_cols += _T("\tMax(mV)\tmin(mV)");
 			else cs_cols += _T("\tMax(mV)\tMax(s)\tmin(mV)\tmin(s)");
 		}
-		if (m_pMO->bDiffExtrema)
+		if (m_pMO->b_diff_extrema)
 		{
 			cs_cols += _T("\tDiff(mV)");
-			if (m_pMO->btime) cs_cols += _T("\tdiff(s)");
+			if (m_pMO->b_time) cs_cols += _T("\tdiff(s)");
 		}
-		if (m_pMO->bHalfrisetime) cs_cols += _T("\t1/2rise(s)");
-		if (m_pMO->bHalfrecovery) cs_cols += _T("\t1/2reco(s)");
+		if (m_pMO->b_half_rise_time) cs_cols += _T("\t1/2rise(s)");
+		if (m_pMO->b_half_recovery) cs_cols += _T("\t1/2reco(s)");
 		break;
 
 	// ......................  horizontal cursors
 	case 1:
-		if (m_pMO->bDatalimits) cs_cols += _T("\tv1(mV)\tv2(mV)");
-		if (m_pMO->bDiffDatalimits) cs_cols += _T("\tv2-v1(mV)");
+		if (m_pMO->b_data_limits) cs_cols += _T("\tv1(mV)\tv2(mV)");
+		if (m_pMO->b_diff_data_limits) cs_cols += _T("\tv2-v1(mV)");
 		break;
 
 	// ......................  rectangle area
@@ -118,10 +118,10 @@ void CMeasureResultsPage::OutputTitle()
 		auto channel_last = m_pChartDataWnd->get_channel_list_size() - 1; // requested
 		const auto n_pixels_mv = (m_listResults.GetStringWidth(_T("0.000000")) * 3) / 2;
 
-		if (!m_pMO->bAllChannels) // else if flag set
+		if (!m_pMO->b_all_channels) // else if flag set
 		{
 			// restrict to a single chan
-			channel_first = m_pMO->wSourceChan; // single channel
+			channel_first = m_pMO->w_source_channel; // single channel
 			channel_last = channel_first;
 		}
 		m_nbdatacols = 0;
@@ -137,7 +137,7 @@ void CMeasureResultsPage::OutputTitle()
 			auto p_token = _tcstok_s(p_string, separators, &next_token);
 			while (p_token != nullptr)
 			{
-				if (m_pMO->bAllChannels)
+				if (m_pMO->b_all_channels)
 					wsprintf(m_szT, _T("ch%i-%s"), channel, p_token);
 				else
 					psz_t = p_token;
@@ -281,13 +281,13 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 	CString cs_dummy;
 	float x_dummy;
 	const CString cs_fmt(_T("\t%f"));
-	if (m_pMO->bDatalimits)
+	if (m_pMO->b_data_limits)
 	{
 		x_dummy = static_cast<float>(m_first) * m_mVperBin;
 		cs_dummy.Format(cs_fmt, x_dummy);
 		m_listResults.SetItemText(item, output_column, cs_dummy);
 		output_column++;
-		if (m_pMO->btime)
+		if (m_pMO->b_time)
 		{
 			x_dummy = static_cast<float>(l1) / rate;
 			cs_dummy.Format(cs_fmt, x_dummy);
@@ -299,7 +299,7 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 		cs_dummy.Format(cs_fmt, x_dummy);
 		m_listResults.SetItemText(item, output_column, cs_dummy);
 		output_column++;
-		if (m_pMO->btime)
+		if (m_pMO->b_time)
 		{
 			x_dummy = static_cast<float>(l2) / rate;
 			cs_dummy.Format(cs_fmt, x_dummy);
@@ -308,13 +308,13 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 		}
 	}
 
-	if (m_pMO->bDiffDatalimits)
+	if (m_pMO->b_diff_data_limits)
 	{
 		x_dummy = static_cast<float>(m_last - m_first) * m_mVperBin;
 		cs_dummy.Format(cs_fmt, x_dummy);
 		m_listResults.SetItemText(item, output_column, cs_dummy);
 		output_column++;
-		if (m_pMO->btime)
+		if (m_pMO->b_time)
 		{
 			x_dummy = (static_cast<float>(l2) - l1) / rate;
 			cs_dummy.Format(cs_fmt, x_dummy);
@@ -324,13 +324,13 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 	}
 
 	// measure max and min (value, time)
-	if (m_pMO->bExtrema)
+	if (m_pMO->b_extrema)
 	{
 		x_dummy = static_cast<float>(m_max) * m_mVperBin;
 		cs_dummy.Format(cs_fmt, x_dummy);
 		m_listResults.SetItemText(item, output_column, cs_dummy);
 		output_column++;
-		if (m_pMO->btime)
+		if (m_pMO->b_time)
 		{
 			x_dummy = static_cast<float>(m_imax) / rate;
 			cs_dummy.Format(cs_fmt, x_dummy);
@@ -341,7 +341,7 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 		cs_dummy.Format(cs_fmt, x_dummy);
 		m_listResults.SetItemText(item, output_column, cs_dummy);
 		output_column++;
-		if (m_pMO->btime)
+		if (m_pMO->b_time)
 		{
 			x_dummy = static_cast<float>(m_imin) / rate;
 			cs_dummy.Format(cs_fmt, x_dummy);
@@ -351,13 +351,13 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 	}
 
 	// difference between extrema (value, time)
-	if (m_pMO->bDiffExtrema)
+	if (m_pMO->b_diff_extrema)
 	{
 		x_dummy = static_cast<float>(m_max - m_min) * m_mVperBin;
 		cs_dummy.Format(cs_fmt, x_dummy);
 		m_listResults.SetItemText(item, output_column, cs_dummy);
 		output_column++;
-		if (m_pMO->btime)
+		if (m_pMO->b_time)
 		{
 			x_dummy = static_cast<float>(m_imax - m_imin) / rate;
 			cs_dummy.Format(cs_fmt, x_dummy);
@@ -366,12 +366,12 @@ void CMeasureResultsPage::MeasureWithinInterval(const int channel, const int lin
 	}
 
 	// time necessary to reach half of the amplitude
-	if (m_pMO->bHalfrisetime)
+	if (m_pMO->b_half_rise_time)
 	{
 	}
 
 	// time necessary to regain half of the initial amplitude
-	if (m_pMO->bHalfrecovery)
+	if (m_pMO->b_half_recovery)
 	{
 	}
 }
@@ -436,7 +436,7 @@ void CMeasureResultsPage::MeasureBetweenHZ(const int channel, const int line, co
 	const CString cs_fmt(_T("\t%f"));
 
 	// output data according to options : data value at limits
-	if (m_pMO->bDatalimits)
+	if (m_pMO->b_data_limits)
 	{
 		x_dummy = static_cast<float>(v1) * m_mVperBin;
 		cs_dummy.Format(cs_fmt, x_dummy);
@@ -449,7 +449,7 @@ void CMeasureResultsPage::MeasureBetweenHZ(const int channel, const int line, co
 		column_1++;
 	}
 
-	if (m_pMO->bDiffDatalimits)
+	if (m_pMO->b_diff_data_limits)
 	{
 		x_dummy = static_cast<float>(v2 - v1) * m_mVperBin;
 		cs_dummy.Format(cs_fmt, x_dummy);
@@ -485,7 +485,7 @@ BOOL CMeasureResultsPage::MeasureParameters()
 	ASSERT(current_file_index >= 0);
 	auto i_first = current_file_index;
 	auto i_last = i_first;
-	if (m_pMO->bAllFiles)
+	if (m_pMO->b_all_files)
 	{
 		i_first = 0;
 		i_last = m_pdbDoc->db_get_n_records() - 1;
@@ -536,9 +536,9 @@ BOOL CMeasureResultsPage::MeasureParameters()
 			// output title for this data set
 			auto i_chan_0 = 0;
 			auto i_chan_1 = m_pChartDataWnd->get_channel_list_size() - 1;
-			if (!m_pMO->bAllChannels)
+			if (!m_pMO->b_all_channels)
 			{
-				i_chan_0 = m_pMO->wSourceChan;
+				i_chan_0 = m_pMO->w_source_channel;
 				i_chan_1 = i_chan_0;
 			}
 			if (i_chan_0 >= m_pChartDataWnd->get_channel_list_size())
@@ -550,7 +550,7 @@ BOOL CMeasureResultsPage::MeasureParameters()
 			for (auto i_chan = i_chan_0; i_chan <= i_chan_1; i_chan++)
 			{
 				// measure according to option
-				switch (m_pMO->wOption)
+				switch (m_pMO->w_option)
 				{
 				// ......................  vertical tags
 				case 0: MeasureFromVTtags(i_chan);
