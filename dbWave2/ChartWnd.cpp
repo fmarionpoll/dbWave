@@ -597,22 +597,21 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 		switch (cursor_type_)
 		{
 		// track horizontal & VT cursors if mouse HIT
-		case 0: // arrow (default)
-		case CURSOR_CROSS: // cross (measure mode) (2)
+		case 0: 
+		case CURSOR_CROSS: 
 			if (n_flags & MK_CONTROL)
 				post_my_message(HINT_L_MOUSE_BUTTON_DOWN_CTRL, MAKELONG(point.x, point.y));
 
-			track_mode_ = TRACK_RECT; // flag track_rect
+			track_mode_ = TRACK_RECT; 
 
 		// test HZ tags - if OK, then start tracking & init variables & flags
 			hc_trapped_ = hit_horizontal_tag(point.y);
 			if (hc_trapped_ >= 0)
 			{
 				track_mode_ = TRACK_HZ_TAG;
-				m_pt_last_.x = 0; // set initial coordinates
+				m_pt_last_.x = 0; 
 				m_pt_last_.y = horizontal_tags.get_pixel(hc_trapped_);
 				m_pt_first_ = m_pt_last_;
-				// tell parent that HZ_tag was selected
 				send_my_message(HINT_HIT_HZ_TAG, hc_trapped_);
 				break;
 			}
@@ -640,7 +639,6 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 				else
 					m_pt_last_.x = vertical_tags.get_pixel(hc_trapped_);
 				m_pt_last_.y = 0;
-				// tell parent that VT_tag was selected
 				send_my_message(HINT_HIT_VERT_TAG, hc_trapped_);
 				break;
 			}
@@ -763,7 +761,7 @@ void ChartWnd::left_button_up_horizontal_tag(const UINT n_flags, CPoint point)
 	post_my_message(HINT_CHANGE_HZ_TAG, hc_trapped_);
 }
 
-void ChartWnd::OnRButtonDown(const UINT nFlags, const CPoint point)
+void ChartWnd::OnRButtonDown(const UINT n_flags, const CPoint point)
 {
 	switch (cursor_type_)
 	{
@@ -777,7 +775,7 @@ void ChartWnd::OnRButtonDown(const UINT nFlags, const CPoint point)
 		break;
 	case CURSOR_VERTICAL:
 	default:
-		CWnd::OnRButtonDown(nFlags, point);
+		CWnd::OnRButtonDown(n_flags, point);
 		break;
 	}
 }

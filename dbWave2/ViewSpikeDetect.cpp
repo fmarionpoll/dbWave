@@ -1808,7 +1808,7 @@ void ViewSpikeDetection::PrintDataCartridge(CDC* p_dc, ChartData* pDataChartWnd,
 void ViewSpikeDetection::OnEditCopy()
 {
 	DlgCopyAs dlg;
-	dlg.m_nabcissa = options_view_data->hzResolution;
+	dlg.m_nabscissa = options_view_data->hzResolution;
 	dlg.m_nordinates = options_view_data->vtResolution;
 	dlg.m_bgraphics = options_view_data->bgraphics;
 	dlg.m_ioption = options_view_data->bcontours;
@@ -1820,11 +1820,11 @@ void ViewSpikeDetection::OnEditCopy()
 		options_view_data->bgraphics = dlg.m_bgraphics;
 		options_view_data->bcontours = dlg.m_ioption;
 		options_view_data->bunits = dlg.m_iunit;
-		options_view_data->hzResolution = dlg.m_nabcissa;
+		options_view_data->hzResolution = dlg.m_nabscissa;
 		options_view_data->vtResolution = dlg.m_nordinates;
 
 		if (!dlg.m_bgraphics)
-			m_chart_data_filtered.copy_as_text(dlg.m_ioption, dlg.m_iunit, dlg.m_nabcissa);
+			m_chart_data_filtered.copy_as_text(dlg.m_ioption, dlg.m_iunit, dlg.m_nabscissa);
 		else
 		{
 			serialize_windows_state(b_save);
@@ -1873,7 +1873,7 @@ void ViewSpikeDetection::OnEditCopy()
 			row += line_height;
 
 			// abscissa
-			comments = _T("Abcissa: ");
+			comments = _T("Abscissa: ");
 			CString content;
 			GetDlgItem(IDC_TIMEFIRST)->GetWindowText(content);
 			comments += content;

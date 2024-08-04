@@ -133,8 +133,8 @@ void ChartSpikeHistVert::plot_data_to_dc(CDC* p_dc)
 void ChartSpikeHistVert::plotHistogram(CDC* p_dc, CDWordArray* p_dw, int color)
 {
 	CRect rect_histog;
-	rect_histog.bottom = m_abcissaminval - m_binsize;
-	rect_histog.top = m_abcissaminval;
+	rect_histog.bottom = m_abscissaminval - m_binsize;
+	rect_histog.top = m_abscissaminval;
 	rect_histog.left = 0;
 	for (auto i = 1; i < p_dw->GetSize(); i++)
 	{
@@ -188,7 +188,7 @@ LPTSTR ChartSpikeHistVert::ExportAscii(LPTSTR lp)
 {
 	// print all ordinates line-by-line, differnt classes on same line
 	lp += wsprintf(lp, _T("Histogram\nnbins=%i\nnclasses=%i"), m_nbins, histogram_ptr_array.GetSize());
-	lp += wsprintf(lp, _T("\nmax=%i\nmin=%i"), m_abcissamaxval, m_abcissaminval);
+	lp += wsprintf(lp, _T("\nmax=%i\nmin=%i"), m_abscissamaxval, m_abscissaminval);
 	// export classes & points
 	lp += wsprintf(lp, _T("classes;\n"));
 	int i;
@@ -420,8 +420,8 @@ void ChartSpikeHistVert::getExtents()
 
 	if (m_y_we_ == 1) // && m_yWO == 0)
 	{
-		m_y_we_ = m_abcissamaxval - m_abcissaminval + 1;
-		m_y_wo_ = m_abcissaminval;
+		m_y_we_ = m_abscissamaxval - m_abscissaminval + 1;
+		m_y_wo_ = m_abscissaminval;
 	}
 }
 
@@ -478,8 +478,8 @@ void ChartSpikeHistVert::getHistogLimits(int ihist)
 void ChartSpikeHistVert::reSize_And_Clear_Histograms(int nbins, int max, int min)
 {
 	m_binsize = (max - min + 1) / nbins + 1; // set bin size
-	m_abcissaminval = min; // set min
-	m_abcissamaxval = min + nbins * m_binsize; // set max
+	m_abscissaminval = min; // set min
+	m_abscissamaxval = min + nbins * m_binsize; // set max
 
 	m_nbins = nbins;
 	for (auto j = histogram_ptr_array.GetUpperBound(); j >= 0; j--)
@@ -544,11 +544,11 @@ void ChartSpikeHistVert::buildHistFromSpikeList(SpikeList* p_spk_list, long l_fi
 		if (ii_time < l_first || ii_time > l_last)
 			continue;
 		auto y1 = spike_element->get_y1();
-		if (y1 > m_abcissamaxval || y1 < m_abcissaminval)
+		if (y1 > m_abscissamaxval || y1 < m_abscissaminval)
 			continue;
 
 		// increment corresponding histogram interval into the first histogram (general, displayed in grey)
-		const auto index = (y1 - m_abcissaminval) / m_binsize + 1;
+		const auto index = (y1 - m_abscissaminval) / m_binsize + 1;
 		auto dw_data = p_dword_array->GetAt(index) + 1;
 		p_dword_array->SetAt(index, dw_data);
 

@@ -1576,7 +1576,7 @@ void ViewSpikes::update_file_scroll()
 void ViewSpikes::OnEditCopy()
 {
 	DlgCopyAs dlg;
-	dlg.m_nabcissa = options_view_data_->hzResolution;
+	dlg.m_nabscissa = options_view_data_->hzResolution;
 	dlg.m_nordinates = options_view_data_->vtResolution;
 	dlg.m_bgraphics = options_view_data_->bgraphics;
 	dlg.m_ioption = options_view_data_->bcontours;
@@ -1588,7 +1588,7 @@ void ViewSpikes::OnEditCopy()
 		options_view_data_->bgraphics = dlg.m_bgraphics;
 		options_view_data_->bcontours = dlg.m_ioption;
 		options_view_data_->bunits = dlg.m_iunit;
-		options_view_data_->hzResolution = dlg.m_nabcissa;
+		options_view_data_->hzResolution = dlg.m_nabscissa;
 		options_view_data_->vtResolution = dlg.m_nordinates;
 
 		// output rectangle requested by user

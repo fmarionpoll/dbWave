@@ -9,8 +9,8 @@ void ChartDataAD::start_display(int points_per_channel)
 	m_b_ad_buffers_ = TRUE; // yes, display ADbuffers
 	m_l_ad_buffer_done_ = 0; // length of data already displayed
 	const auto envelope = envelope_ptr_array_.GetAt(0);
-	envelope->FillEnvelopeWithAbcissaEx(1, m_display_rect_.right - 1, points_per_channel);
-	envelope->ExportToAbcissa(m_poly_points_);
+	envelope->fill_envelope_with_abscissa_ex(1, m_display_rect_.right - 1, points_per_channel);
+	envelope->ExportToAbscissa(m_poly_points_);
 	set_b_use_dib(FALSE);
 
 	// clear window before acquiring data

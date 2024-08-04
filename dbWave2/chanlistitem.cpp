@@ -26,9 +26,9 @@ CChanlistItem::CChanlistItem()
 
 CChanlistItem::CChanlistItem(CEnvelope* p_envelope_X, const int index_x, CEnvelope* p_envelope_Y, const int index_y)
 {
-	pEnvelopeAbcissa = p_envelope_X;
+	pEnvelopeAbscissa = p_envelope_X;
 	pEnvelopeOrdinates = p_envelope_Y;
-	dl_indexabcissa = index_x;
+	dl_indexabscissa = index_x;
 	dl_indexordinates = index_y;
 }
 
@@ -60,7 +60,7 @@ void CChanlistItem::Serialize(CArchive& ar)
 		ar << dl_databinzero; // value of zero volts
 		ar << dl_databinspan; // nb of bins encoding values within envelope
 		ar << dl_bHZtagsPrint; // print HZ tags flag
-		ar << dl_indexabcissa;
+		ar << dl_indexabscissa;
 		ar << dl_indexordinates;
 	}
 	else
@@ -74,21 +74,21 @@ void CChanlistItem::Serialize(CArchive& ar)
 		ar >> dl_databinzero; // value of zero volts
 		ar >> dl_databinspan; // nb of bins encoding values within envelope
 		ar >> dl_bHZtagsPrint; // print HZ tags flag
-		ar >> dl_indexabcissa;
+		ar >> dl_indexabscissa;
 		ar >> dl_indexordinates;
 	}
 }
 
 void CChanlistItem::GetEnvelopeArrayIndexes(int& ix, int& iy) const
 {
-	ix = dl_indexabcissa;
+	ix = dl_indexabscissa;
 	iy = dl_indexordinates;
 }
 
 void CChanlistItem::SetEnvelopeArrays(CEnvelope* px, int ix, CEnvelope* py, int iy)
 {
-	dl_indexabcissa = ix;
+	dl_indexabscissa = ix;
 	dl_indexordinates = iy;
-	pEnvelopeAbcissa = px;
+	pEnvelopeAbscissa = px;
 	pEnvelopeOrdinates = py;
 }

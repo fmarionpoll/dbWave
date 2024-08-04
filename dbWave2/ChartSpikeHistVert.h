@@ -24,8 +24,8 @@ protected:
 	SpikeList* m_pSL = nullptr;
 
 	int m_binsize = 0; // size of one bin
-	int m_abcissaminval = 0; // minimum value from which histogram is built (abscissa)
-	int m_abcissamaxval = 0; // maximum value (abscissa max)
+	int m_abscissaminval = 0; // minimum value from which histogram is built (abscissa)
+	int m_abscissamaxval = 0; // maximum value (abscissa max)
 	int m_nbins; // n bins within histogram
 
 	DWORD m_lmax = 0; // value max
@@ -35,8 +35,8 @@ protected:
 
 public:
 	int GetBinsize() const { return m_binsize; }
-	int GetBinMinval() const { return m_abcissaminval; }
-	int GetBinMaxVal() const { return m_abcissamaxval; }
+	int GetBinMinval() const { return m_abscissaminval; }
+	int GetBinMaxVal() const { return m_abscissamaxval; }
 	int GetnBins() const { return m_nbins; }
 	int GetHistMaxPos() const { return m_imax; }
 	DWORD GetHistMax() const { return m_lmax; }

@@ -222,7 +222,7 @@ protected:
 	afx_msg virtual void OnLButtonUp(UINT n_flags, CPoint point);
 	afx_msg virtual void OnLButtonDblClk(UINT n_flags, CPoint point);
 	afx_msg virtual void OnRButtonUp(UINT n_flags, CPoint point);
-	afx_msg virtual void OnRButtonDown(UINT nFlags, CPoint point);
+	afx_msg virtual void OnRButtonDown(UINT n_flags, CPoint point);
 
 	DECLARE_MESSAGE_MAP()
 };

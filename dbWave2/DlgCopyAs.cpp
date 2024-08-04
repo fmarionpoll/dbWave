@@ -14,7 +14,7 @@ DlgCopyAs::DlgCopyAs(CWnd* p_parent /*=NULL*/)
 void DlgCopyAs::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_NABCISSA, m_nabcissa);
+	DDX_Text(pDX, IDC_NABCISSA, m_nabscissa);
 	DDX_Text(pDX, IDC_NORDINATES, m_nordinates);
 }
 

@@ -7,7 +7,7 @@ public:
 
 	enum { IDD = IDD_COPYAS };
 
-	int m_nabcissa{ 0 };
+	int m_nabscissa{ 0 };
 	int m_nordinates{ 0 };
 	int m_ioption{ 0 };
 	int m_iunit{ 0 };

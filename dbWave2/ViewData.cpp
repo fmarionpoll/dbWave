@@ -16,7 +16,7 @@
 #include "DlgCopyAs.h"
 #include "DlgDataSeries.h"
 #include "DlgDataSeriesFormat.h"
-#include "DlgDataViewAbcissa.h"
+#include "DlgDataViewAbscissa.h"
 #include "DlgDataViewOrdinates.h"
 
 #ifdef _DEBUG
@@ -270,7 +270,7 @@ void ViewData::on_tools_data_series()
 void ViewData::on_edit_copy()
 {
 	DlgCopyAs dlg;
-	dlg.m_nabcissa = options_view_data_->hzResolution;
+	dlg.m_nabscissa = options_view_data_->hzResolution;
 	dlg.m_nordinates = options_view_data_->vtResolution;
 	dlg.m_bgraphics = options_view_data_->bgraphics;
 	dlg.m_ioption = options_view_data_->bcontours;
@@ -282,11 +282,11 @@ void ViewData::on_edit_copy()
 		options_view_data_->bgraphics = dlg.m_bgraphics;
 		options_view_data_->bcontours = dlg.m_ioption;
 		options_view_data_->bunits = dlg.m_iunit;
-		options_view_data_->hzResolution = dlg.m_nabcissa;
+		options_view_data_->hzResolution = dlg.m_nabscissa;
 		options_view_data_->vtResolution = dlg.m_nordinates;
 
 		if (!dlg.m_bgraphics)
-			m_chart_data_wnd.copy_as_text(dlg.m_ioption, dlg.m_iunit, dlg.m_nabcissa);
+			m_chart_data_wnd.copy_as_text(dlg.m_ioption, dlg.m_iunit, dlg.m_nabscissa);
 		else
 		{
 			CRect old_rect;
@@ -327,7 +327,7 @@ void ViewData::on_edit_copy()
 			auto y_pixels_row = 0;
 			constexpr auto x_column = 10;
 
-			CString comments = _T("Abcissa: ");
+			CString comments = _T("Abscissa: ");
 			CString content;
 			content.Format(_T("%g - %g s"), m_time_first_abscissa, m_time_last_abscissa);
 			comments += content;
@@ -1161,16 +1161,16 @@ void ViewData::adc_on_hardware_define_experiment()
 void ViewData::on_format_x_scale()
 {
 	// init dialog data
-	DlgDataViewAbcissa dlg;
-	dlg.m_firstAbcissa = m_time_first_abscissa;
-	dlg.m_lastAbcissa = m_time_last_abscissa;
-	dlg.m_veryLastAbcissa = static_cast<float>(m_chart_data_wnd.get_document_last()) / m_sampling_rate_;
+	DlgDataViewAbscissa dlg;
+	dlg.m_firstAbscissa = m_time_first_abscissa;
+	dlg.m_lastAbscissa = m_time_last_abscissa;
+	dlg.m_veryLastAbscissa = static_cast<float>(m_chart_data_wnd.get_document_last()) / m_sampling_rate_;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
-		m_time_first_abscissa = dlg.m_firstAbcissa * dlg.m_abcissaScale;
-		m_time_last_abscissa = dlg.m_lastAbcissa * dlg.m_abcissaScale;
+		m_time_first_abscissa = dlg.m_firstAbscissa * dlg.m_abscissaScale;
+		m_time_last_abscissa = dlg.m_lastAbscissa * dlg.m_abscissaScale;
 		m_chart_data_wnd.get_data_from_doc(static_cast<long>(m_time_first_abscissa * m_sampling_rate_),
 		                              static_cast<long>(m_time_last_abscissa * m_sampling_rate_));
 		update_legends(UPD_ABSCISSA | UPD_X_SCALE | CHG_X_BAR);

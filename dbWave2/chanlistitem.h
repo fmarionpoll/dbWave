@@ -10,7 +10,7 @@ public:
 
 	void InitDisplayParms(WORD new_penwidth, WORD new_color, int new_zero, int new_yextent, WORD new_drawmode = 1);
 public:
-	CEnvelope* pEnvelopeAbcissa{ nullptr }; // pointer to abscissa Envelope
+	CEnvelope* pEnvelopeAbscissa{ nullptr }; // pointer to abscissa Envelope
 	CEnvelope* pEnvelopeOrdinates{ nullptr }; // pointer to ordinates	Envelope
 	CString dl_comment{}; // comment (40 chars initially)
 	void GetEnvelopeArrayIndexes(int& x, int& y) const;
@@ -29,7 +29,7 @@ protected:
 	long dl_databinspan{4096}; // nb of bins encoding values within envelope
 
 	BOOL dl_bHZtagsPrint{false}; // print HZ tags flag
-	int dl_indexabcissa{0};
+	int dl_indexabscissa{0};
 	int dl_indexordinates{0};
 
 	// helpers

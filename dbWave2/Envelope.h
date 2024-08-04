@@ -40,11 +40,11 @@ protected:
 
 	// Operations
 public:
-	void FillEnvelopeWithAbcissa(int npixels, int npoints);
-	void FillEnvelopeWithAbcissaEx(int pixfirst, int pixlast, int ndatapoints);
-	void GetMeanToAbcissa(CArray<CPoint, CPoint>& dest);
+	void fill_envelope_with_abscissa(int npixels, int npoints);
+	void fill_envelope_with_abscissa_ex(int pixfirst, int pixlast, int ndatapoints);
+	void get_mean_to_abscissa(CArray<CPoint, CPoint>& dest);
 	void GetMeanToOrdinates(CArray<CPoint, CPoint>& dest);
-	void ExportToAbcissa(CArray<CPoint, CPoint>& dest);
+	void ExportToAbscissa(CArray<CPoint, CPoint>& dest);
 	void ExportToOrdinates(CArray<CPoint, CPoint>& dest);
 
 	//----------description

@@ -159,7 +159,7 @@ void CTemplateWnd::plot_data_to_dc(CDC* p_dc)
 	prepare_dc(p_dc);
 
 	if (m_ptsArea.GetSize() != m_tpllen * 2)
-		InitPolypointAbcissa();
+		InitPolypointAbscissa();
 
 	// transfer to polypoint, adjust amplitude & plot
 	FillOrdinatesAtscale(FALSE);
@@ -204,7 +204,7 @@ void CTemplateWnd::GetExtents()
 	}
 }
 
-void CTemplateWnd::InitPolypointAbcissa()
+void CTemplateWnd::InitPolypointAbscissa()
 {
 	m_ptsArea.SetSize(m_tpllen * 2 + 1);
 	m_ptsAvg.SetSize(m_tpllen);

@@ -84,7 +84,7 @@ CEnvelope::CEnvelope(WORD npixels, int dataperpixel, int ns, int mode, int span)
 	m_span = span;
 }
 
-void CEnvelope::FillEnvelopeWithAbcissa(int npixels, int npoints)
+void CEnvelope::fill_envelope_with_abscissa(int npixels, int npoints)
 {
 	// fill Envelope with data series, step 1
 	const auto n = m_Envelope.GetSize();
@@ -122,7 +122,7 @@ void CEnvelope::FillEnvelopeWithAbcissa(int npixels, int npoints)
 //	xlast	= last abscissa
 // return nDataperPixel
 
-void CEnvelope::FillEnvelopeWithAbcissaEx(int pixfirst, int pixlast, int ndatapoints)
+void CEnvelope::fill_envelope_with_abscissa_ex(int pixfirst, int pixlast, int ndatapoints)
 {
 	const auto n = m_Envelope.GetSize();
 
@@ -147,7 +147,7 @@ void CEnvelope::FillEnvelopeWithAbcissaEx(int pixfirst, int pixlast, int ndatapo
 	}
 }
 
-void CEnvelope::ExportToAbcissa(CArray<CPoint, CPoint>& dest)
+void CEnvelope::ExportToAbscissa(CArray<CPoint, CPoint>& dest)
 {
 	for (auto i = 0; i < m_Envelope.GetSize(); i++)
 		dest.GetAt(i).x = m_Envelope[i];
@@ -185,7 +185,7 @@ void CEnvelope::Serialize(CArchive& ar)
 // copy average of 2 consecutive pts (ie (max + min)/2)
 // used by lineview to indicate where curves are dragged by the mouse
 
-void CEnvelope::GetMeanToAbcissa(CArray<CPoint, CPoint>& dest)
+void CEnvelope::get_mean_to_abscissa(CArray<CPoint, CPoint>& dest)
 {
 	auto lp_source = &m_Envelope[0]; // source data: a Envelope
 	auto jdest = 0;

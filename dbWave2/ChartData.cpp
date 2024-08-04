@@ -51,7 +51,7 @@ int ChartData::add_channel_list_item(int ns, int mode)
 		auto* p_envelope = new CEnvelope(static_cast<WORD>(m_n_pixels_ * m_data_per_pixel_), m_data_per_pixel_, 0, -1, 0);
 		ASSERT(p_envelope != NULL);
 		envelope_ptr_array_.Add(p_envelope);
-		p_envelope->FillEnvelopeWithAbcissa(m_n_pixels_ * m_data_per_pixel_, m_lx_size_);
+		p_envelope->fill_envelope_with_abscissa(m_n_pixels_ * m_data_per_pixel_, m_lx_size_);
 	}
 
 	// create new Envelope and store pointer into Envelopes_list
@@ -444,7 +444,7 @@ int ChartData::resize_channels(const int n_pixels, const long l_size)
 			p_envelope->SetEnvelopeSize(n_points, m_data_per_pixel_);
 		}
 		p_envelope = envelope_ptr_array_.GetAt(0);
-		p_envelope->FillEnvelopeWithAbcissa(m_n_pixels_, m_lx_size_); // store data series
+		p_envelope->fill_envelope_with_abscissa(m_n_pixels_, m_lx_size_); // store data series
 	}
 
 	// read data and update page and line sizes / file browse
@@ -859,13 +859,13 @@ void ChartData::plot_data_to_dc(CDC* p_dc)
 		if (chan_list_item->GetPenWidth() == 0)
 			continue;
 
-		if (p_x != chan_list_item->pEnvelopeAbcissa)
+		if (p_x != chan_list_item->pEnvelopeAbscissa)
 		{
-			p_x = chan_list_item->pEnvelopeAbcissa;
+			p_x = chan_list_item->pEnvelopeAbscissa;
 			n_elements = p_x->GetEnvelopeSize();
 			if (m_poly_points_.GetSize() != n_elements * 2)
 				m_poly_points_.SetSize(n_elements * 2);
-			p_x->ExportToAbcissa(m_poly_points_);
+			p_x->ExportToAbscissa(m_poly_points_);
 		}
 
 		const auto pY = chan_list_item->pEnvelopeOrdinates;
@@ -997,11 +997,11 @@ void ChartData::print(CDC* p_dc, const CRect* p_rect, const BOOL b_center_line)
 		get_smooth_data_from_doc(b_center_line);
 
 	const auto p_envelope = envelope_ptr_array_.GetAt(0);
-	p_envelope->FillEnvelopeWithAbcissaEx(x_vo, x_ve, m_lx_size_);
+	p_envelope->fill_envelope_with_abscissa_ex(x_vo, x_ve, m_lx_size_);
 
 	// display all channels
 	auto n_elements = 0;
-	auto p_x = chan_list_item_ptr_array_[0]->pEnvelopeAbcissa;
+	auto p_x = chan_list_item_ptr_array_[0]->pEnvelopeAbscissa;
 	const BOOL b_poly_line = (p_dc->m_hAttribDC == nullptr) || (p_dc->GetDeviceCaps(LINECAPS) & LC_POLYLINE);
 	auto color = BLACK_COLOR;
 	const auto old_pen = p_dc->SelectObject(&pen_table_[color]);
@@ -1014,10 +1014,10 @@ void ChartData::print(CDC* p_dc, const CRect* p_rect, const BOOL b_center_line)
 			continue;
 
 		// display: load abscissa   ----------------------------------------------
-		if (p_x != chan_list_item->pEnvelopeAbcissa)
+		if (p_x != chan_list_item->pEnvelopeAbscissa)
 		{
-			p_x = chan_list_item->pEnvelopeAbcissa; // load pointer to abscissa
-			p_x->ExportToAbcissa(m_poly_points_); // copy abscissa to polypts buffer
+			p_x = chan_list_item->pEnvelopeAbscissa; // load pointer to abscissa
+			p_x->ExportToAbscissa(m_poly_points_); // copy abscissa to polypts buffer
 			n_elements = p_x->GetEnvelopeSize(); // update nb of elements
 		}
 		// display: load ordinates ---------------------------------------------
@@ -1315,11 +1315,11 @@ void ChartData::OnLButtonDown(const UINT n_flags, const CPoint point)
 		file_position_last_right_pixel_ = m_lx_last_;
 	}
 
-	// call base class to test for horiz cursor or XORing rectangle
+	// call base class to test for horizontal cursor or XORing rectangle
 	ChartWnd::OnLButtonDown(n_flags, point);
 
 	// if cursor mode = 0 and no tag hit detected, mouse mode=track rect
-	// test curve hit -- specific to lineview, if hit curve, track curve instead
+	// test curve hit -- specific to line_view, if hit curve, track curve instead
 	if (current_cursor_mode_ == 0 && hc_trapped_ < 0) // test if cursor hits a curve
 	{
 		track_mode_ = TRACK_RECT;
@@ -1331,10 +1331,10 @@ void ChartData::OnLButtonDown(const UINT n_flags, const CPoint point)
 
 			// modify polypoint and prepare for XORing curve tracked with mouse
 			const auto chan_list_item = chan_list_item_ptr_array_[m_hit_curve_];
-			const auto p_x = chan_list_item->pEnvelopeAbcissa; // display: load abscissa
-			p_x->GetMeanToAbcissa(m_poly_points_);
-			m_xor_n_elements_ = p_x->GetEnvelopeSize() / 2; // nb of elements
-			m_xor_x_ext_ = p_x->GetnElements() / 2; // extent
+			const auto p_x = chan_list_item->pEnvelopeAbscissa;
+			p_x->get_mean_to_abscissa(m_poly_points_);
+			m_xor_n_elements_ = p_x->GetEnvelopeSize() / 2; 
+			m_xor_x_ext_ = p_x->GetnElements() / 2; 
 
 			const auto p_y = chan_list_item->pEnvelopeOrdinates; // load ordinates
 			p_y->GetMeanToOrdinates(m_poly_points_);
@@ -1353,8 +1353,8 @@ void ChartData::OnLButtonDown(const UINT n_flags, const CPoint point)
 	if (track_mode_ == TRACK_HZ_TAG)
 	{
 		const auto chan_list_item = chan_list_item_ptr_array_[horizontal_tags.get_channel(hc_trapped_)];
-		m_y_we_ = chan_list_item->GetYextent(); // store extent
-		m_y_wo_ = chan_list_item->GetYzero(); // store zero
+		m_y_we_ = chan_list_item->GetYextent(); 
+		m_y_wo_ = chan_list_item->GetYzero(); 
 	}
 }
 
@@ -1376,7 +1376,7 @@ void ChartData::OnMouseMove(const UINT n_flags, const CPoint point)
 
 void ChartData::OnLButtonUp(const UINT n_flags, CPoint point)
 {
-	release_cursor();
+	
 	switch (track_mode_)
 	{
 	case TRACK_CURVE:
@@ -1454,13 +1454,14 @@ void ChartData::OnLButtonUp(const UINT n_flags, CPoint point)
 	default:
 		break;
 	}
+	release_cursor();
 }
 
 int ChartData::does_cursor_hit_curve(const CPoint point)
 {
 	auto channel_found = -1; // output value
 	const auto i_channels = chan_list_item_ptr_array_.GetUpperBound();
-	auto chan_list_item = chan_list_item_ptr_array_[0]->pEnvelopeAbcissa;
+	auto chan_list_item = chan_list_item_ptr_array_[0]->pEnvelopeAbscissa;
 	const auto x_extent = chan_list_item->GetnElements();
 	int index1 = point.x - cx_mouse_jitter_;
 	auto index2 = index1 + cx_mouse_jitter_;
