@@ -2,7 +2,7 @@
 #include "dbWaveDoc.h"
 #include "AcqDataDoc.h"
 #include "Editctrl.h"
-#include "OPTIONS_VIEW_DATA_MEASURE.h"
+#include "OPTIONS_DATA_MEASURE.h"
 
 
 class CMeasureHZtagsPage : public CPropertyPage
@@ -23,7 +23,7 @@ public:
 	int m_nbcursors;
 
 	// input parameters
-	OPTIONS_VIEW_DATA_MEASURE* m_pMO;
+	OPTIONS_DATA_MEASURE* m_pMO;
 	CdbWaveDoc* m_pdbDoc;
 	AcqDataDoc* m_pdatDoc;
 	ChartData* m_pChartDataWnd;

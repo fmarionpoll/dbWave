@@ -142,7 +142,7 @@ void ViewData::OnInitialUpdate()
 	// init relation with document, display data, adjust parameters
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	options_view_data_ = &(p_app->options_view_data);
-	options_view_data_measures_ = &(p_app->options_view_data_measure);
+	options_data_measures_ = &(p_app->options_view_data_measure);
 
 	// set data file
 	dbTableView::OnInitialUpdate();
@@ -231,7 +231,7 @@ void ViewData::update_channel(const int channel)
 		UpdateData(FALSE);
 	else 
 	{
-		if (m_cursor_state_ == CURSOR_CROSS && options_view_data_measures_->w_option == 1
+		if (m_cursor_state_ == CURSOR_CROSS && options_data_measures_->w_option == 1
 			&& chart_data.horizontal_tags.get_tag_list_size() > 0)
 		{
 			for (auto i = 0; i < chart_data.horizontal_tags.get_tag_list_size(); i++)
@@ -600,7 +600,7 @@ void ViewData::update_channels_display_parameters()
 void ViewData::set_cursor_associated_windows()
 {
 	auto n_cmd_show = SW_HIDE;
-	if (m_cursor_state_ == CURSOR_CROSS && options_view_data_measures_->w_option == 1
+	if (m_cursor_state_ == CURSOR_CROSS && options_data_measures_->w_option == 1
 		&& chart_data.horizontal_tags.get_tag_list_size() > 0)
 		n_cmd_show = SW_SHOW;
 
@@ -613,7 +613,7 @@ void ViewData::set_cursor_associated_windows()
 	GetDlgItem(IDC_EDIT3)->ShowWindow(n_cmd_show);
 
 	// change cursors value
-	if (m_cursor_state_ == CURSOR_CROSS && options_view_data_measures_->w_option == 1)
+	if (m_cursor_state_ == CURSOR_CROSS && options_data_measures_->w_option == 1)
 		update_horizontal_tags_value();
 }
 
@@ -650,22 +650,22 @@ void ViewData::set_mouse_cursor(int low_parameter)
 	// save current cursors into document if cursor_state = 3
 	if (m_cursor_state_ == CURSOR_CROSS)
 	{
-		if (options_view_data_measures_->w_option == 0) // vertical cursors
+		if (options_data_measures_->w_option == 0) // vertical cursors
 		{
 			const auto p_tag_list = m_p_dat_->get_vt_tags_list();
 			p_tag_list->copy_tag_list(&chart_data.vertical_tags);
 			chart_data.vertical_tags.remove_all_tags();
 		}
-		else if (options_view_data_measures_->w_option == 1) // horizontal cursors
+		else if (options_data_measures_->w_option == 1) // horizontal cursors
 		{
 			const auto p_tag_list = m_p_dat_->get_hz_tags_list();
 			p_tag_list->copy_tag_list(&chart_data.horizontal_tags);
 			chart_data.horizontal_tags.remove_all_tags();
 		}
-		else if (options_view_data_measures_->w_option == 3) // detect stimulus
+		else if (options_data_measures_->w_option == 3) // detect stimulus
 		{
-			options_view_data_measures_->w_stimulus_channel = static_cast<WORD>(chart_data.horizontal_tags.get_channel(0));
-			options_view_data_measures_->w_stimulus_threshold = static_cast<WORD>(chart_data.horizontal_tags.get_value_int(0));
+			options_data_measures_->w_stimulus_channel = static_cast<WORD>(chart_data.horizontal_tags.get_channel(0));
+			options_data_measures_->w_stimulus_threshold = static_cast<WORD>(chart_data.horizontal_tags.get_value_int(0));
 			chart_data.horizontal_tags.remove_all_tags();
 		}
 		chart_data.Invalidate();
@@ -681,12 +681,12 @@ void ViewData::set_mouse_cursor(int low_parameter)
 	// recall cursors from document if cursor_state = 2
 	if (m_cursor_state_ == CURSOR_CROSS)
 	{
-		if (options_view_data_measures_->w_option == 0)
+		if (options_data_measures_->w_option == 0)
 			chart_data.vertical_tags.copy_tag_list(m_p_dat_->get_vt_tags_list());
-		else if (options_view_data_measures_->w_option == 1)
+		else if (options_data_measures_->w_option == 1)
 			chart_data.horizontal_tags.copy_tag_list(m_p_dat_->get_hz_tags_list());
-		else if (options_view_data_measures_->w_option == 3)
-			chart_data.horizontal_tags.add_tag(options_view_data_measures_->w_stimulus_threshold, options_view_data_measures_->w_stimulus_channel);
+		else if (options_data_measures_->w_option == 3)
+			chart_data.horizontal_tags.add_tag(options_data_measures_->w_stimulus_threshold, options_data_measures_->w_stimulus_channel);
 		chart_data.Invalidate();
 	}
 	set_cursor_associated_windows();
@@ -694,23 +694,24 @@ void ViewData::set_mouse_cursor(int low_parameter)
 
 void ViewData::add_vertical_cursors_from_defined_rectangle()
 {
+	int j2=1;
 	// if no VT tags, then take those of rectangle, or limits of line_view
-	chart_data.vertical_tags.add_l_tag(options_view_data_measures_->l_limit_left, 0);
-	if (options_view_data_measures_->l_limit_right != options_view_data_measures_->l_limit_left)
-		chart_data.vertical_tags.add_l_tag(options_view_data_measures_->l_limit_right, 0);
-
+	const int j1 = chart_data.vertical_tags.add_l_tag(options_data_measures_->l_limit_left, 0);
+	if (options_data_measures_->l_limit_right != options_data_measures_->l_limit_left)
+		j2 = chart_data.vertical_tags.add_l_tag(options_data_measures_->l_limit_right, 0);
+	TRACE("value of tag %d = %d\n", j1, options_data_measures_->l_limit_left);
+	TRACE("value of tag %d = %d\n", j2, options_data_measures_->l_limit_right);
 	// store new VT tags into document
 	m_p_dat_->get_vt_tags_list()->copy_tag_list(&chart_data.vertical_tags);
 }
 
 void ViewData::add_horizontal_cursors_from_defined_rectangle()
 {
-	//CChanlistItem* pchan = m_chart_data_wnd.get_channel_list_item(m_channel_selected);
-	chart_data.horizontal_tags.add_tag(chart_data.get_channel_list_y_pixels_to_bin(m_channel_selected, options_view_data_measures_->w_limit_sup),
+	chart_data.horizontal_tags.add_tag(chart_data.get_channel_list_y_pixels_to_bin(m_channel_selected, options_data_measures_->w_limit_sup),
 		m_channel_selected);
-	if (options_view_data_measures_->w_limit_inf != options_view_data_measures_->w_limit_sup)
+	if (options_data_measures_->w_limit_inf != options_data_measures_->w_limit_sup)
 		chart_data.horizontal_tags.add_tag(
-			chart_data.get_channel_list_y_pixels_to_bin(m_channel_selected, options_view_data_measures_->w_limit_inf), m_channel_selected);
+			chart_data.get_channel_list_y_pixels_to_bin(m_channel_selected, options_data_measures_->w_limit_inf), m_channel_selected);
 	m_p_dat_->get_hz_tags_list()->copy_tag_list(&chart_data.horizontal_tags);
 
 	if (chart_data.horizontal_tags.get_tag_list_size() == 2)
@@ -740,13 +741,13 @@ LRESULT ViewData::on_my_message(const WPARAM w_param, const LPARAM l_param)
 	case HINT_DEFINED_RECT:
 		{
 			const auto rect = chart_data.get_defined_rect();
-			options_view_data_measures_->w_limit_sup = static_cast<WORD>(rect.top);
-			options_view_data_measures_->w_limit_inf = static_cast<WORD>(rect.bottom);
-			options_view_data_measures_->l_limit_left = chart_data.get_data_offset_from_pixel(rect.left);
-			options_view_data_measures_->l_limit_right = chart_data.get_data_offset_from_pixel(rect.right);
+			options_data_measures_->w_limit_sup = static_cast<WORD>(rect.top);
+			options_data_measures_->w_limit_inf = static_cast<WORD>(rect.bottom);
+			options_data_measures_->l_limit_left = chart_data.get_data_offset_from_pixel(rect.left);
+			options_data_measures_->l_limit_right = chart_data.get_data_offset_from_pixel(rect.right);
 		}
 	// action according to option
-		switch (options_view_data_measures_->w_option)
+		switch (options_data_measures_->w_option)
 		{
 		case 0: 
 			add_vertical_cursors_from_defined_rectangle();
@@ -769,8 +770,8 @@ LRESULT ViewData::on_my_message(const WPARAM w_param, const LPARAM l_param)
 		break;
 
 	case HINT_CHANGE_HZ_TAG: // horizontal tag has changed 	low_p = tag nb
-		if (options_view_data_measures_->w_option == 3)
-			options_view_data_measures_->w_stimulus_threshold = static_cast<WORD>(chart_data.horizontal_tags.get_value_int(0));
+		if (options_data_measures_->w_option == 3)
+			options_data_measures_->w_stimulus_threshold = static_cast<WORD>(chart_data.horizontal_tags.get_value_int(0));
 		else
 			update_horizontal_tags_value();
 		break;
@@ -817,7 +818,7 @@ void ViewData::on_format_data_series_attributes()
 
 void ViewData::on_tools_vertical_tags()
 {
-	options_view_data_measures_->w_option = 0;
+	options_data_measures_->w_option = 0;
 	m_cursor_state_ = chart_data.set_mouse_cursor_type(CURSOR_CROSS);
 	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state_, 0));
 	//MeasureProperties(1);
@@ -825,7 +826,7 @@ void ViewData::on_tools_vertical_tags()
 
 void ViewData::on_tools_horizontal_cursors()
 {
-	options_view_data_measures_->w_option = 1;
+	options_data_measures_->w_option = 1;
 	m_cursor_state_ = chart_data.set_mouse_cursor_type(CURSOR_CROSS);
 	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state_, 0));
 	//MeasureProperties(0);
@@ -1102,7 +1103,7 @@ void ViewData::measure_properties(const int item)
 		on_my_message(NULL, MAKELPARAM(CURSOR_CROSS, HINT_SET_MOUSE_CURSOR));
 
 	// save current data into data document
-	switch (options_view_data_measures_->w_option)
+	switch (options_data_measures_->w_option)
 	{
 	case 0:
 		m_p_dat_->get_vt_tags_list()->copy_tag_list(&chart_data.vertical_tags);
@@ -1111,8 +1112,8 @@ void ViewData::measure_properties(const int item)
 		m_p_dat_->get_hz_tags_list()->copy_tag_list(&chart_data.horizontal_tags);
 		break;
 	case 3:
-		options_view_data_measures_->w_stimulus_channel = static_cast<WORD>(chart_data.horizontal_tags.get_channel(0));
-		options_view_data_measures_->w_stimulus_threshold = static_cast<WORD>(chart_data.horizontal_tags.get_value_int(0));
+		options_data_measures_->w_stimulus_channel = static_cast<WORD>(chart_data.horizontal_tags.get_channel(0));
+		options_data_measures_->w_stimulus_threshold = static_cast<WORD>(chart_data.horizontal_tags.get_value_int(0));
 		break;
 	default: break;
 	}
@@ -1123,7 +1124,7 @@ void ViewData::measure_properties(const int item)
 	dlg.m_samplingrate = m_sampling_rate_;
 	dlg.m_pdatDoc = m_p_dat_;
 	dlg.m_pdbDoc = GetDocument();
-	dlg.m_pMO = options_view_data_measures_;
+	dlg.m_pMO = options_data_measures_;
 	dlg.m_currentchan = m_channel_selected;
 
 	dlg.DoModal();

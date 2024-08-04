@@ -2,7 +2,7 @@
 #include "ChartSpikeShape.h"
 #include "dbTableView.h"
 #include "Editctrl.h"
-#include "OPTIONS_VIEW_DATA_MEASURE.h"
+#include "OPTIONS_DATA_MEASURE.h"
 #include "SPK_CLASSIF.h"
 #include "TemplateListWnd.h"
 
@@ -50,7 +50,7 @@ protected:
 	ChartSpikeShape m_chart_spk_wnd_shape_;
 
 	OPTIONS_VIEWDATA* options_view_data_ = nullptr; 
-	OPTIONS_VIEW_DATA_MEASURE* options_view_data_measure_ = nullptr; 
+	OPTIONS_DATA_MEASURE* options_view_data_measure_ = nullptr; 
 	SPK_CLASSIF* spike_classification_parameters_ = nullptr; 
 	SCROLLINFO scroll_file_pos_infos_{};
 	long l_first_ = 0;

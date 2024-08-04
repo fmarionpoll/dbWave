@@ -52,7 +52,7 @@ protected:
 	float channel_rate_ = 0.;
 
 	OPTIONS_VIEWDATA* options_view_data_ = nullptr;
-	OPTIONS_VIEW_DATA_MEASURE* options_view_data_measures_ = nullptr;
+	OPTIONS_DATA_MEASURE* options_data_measures_ = nullptr;
 
 	void print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_info);
 	CString convert_file_index(long l_first, long l_last) const;

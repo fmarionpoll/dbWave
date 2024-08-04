@@ -930,6 +930,7 @@ void ChartData::display_vt_tags_long_value(CDC* p_dc)
 	{
 		constexpr auto y0 = 0;
 		const auto lk = vertical_tags.get_value_long(j);
+		TRACE("value of tag %d = %d\n",j, lk);
 		if (lk < m_lx_first_ || lk > m_lx_last_)
 			continue;
 		const auto k = MulDiv(lk - m_lx_first_, m_display_rect_.Width(), m_lx_last_ - m_lx_first_ + 1);
