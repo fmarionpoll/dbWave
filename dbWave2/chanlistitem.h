@@ -41,11 +41,11 @@ public:
 	WORD GetflagPrintVisible() const { return dl_bprint; }
 	float GetVoltsperDataBin() const { return dl_datavoltspbin; }
 	BOOL GetHZtagsPrintFlag() const { return dl_bHZtagsPrint; }
-	void GetMaxMin(int* pmax, int* pmin) const { pEnvelopeOrdinates->GetEnvelopeMaxMin(pmax, pmin); }
-	int GetBinAt(int index) const { return pEnvelopeOrdinates->GetPointAt(index); }
+	void GetMaxMin(int* pmax, int* pmin) const { pEnvelopeOrdinates->get_envelope_max_min(pmax, pmin); }
+	int GetBinAt(int index) const { return pEnvelopeOrdinates->get_point_at(index); }
 	CString GetComment() { return dl_comment; }
-	int GetSourceChan() const { return pEnvelopeOrdinates->GetSourceChan(); }
-	int GetTransformMode() const { return pEnvelopeOrdinates->GetSourceMode(); }
+	int GetSourceChan() const { return pEnvelopeOrdinates->get_source_chan(); }
+	int GetTransformMode() const { return pEnvelopeOrdinates->get_source_mode(); }
 
 	int GetDataBinZero() const { return dl_databinzero; }
 	int GetDataBinSpan() const { return dl_databinspan; }

@@ -137,11 +137,11 @@ void ChartData::update_chan_list_max_span()
 	auto imax = 0;
 	for (auto i = envelope_ptr_array_.GetUpperBound(); i > 0; i--)
 	{
-		const auto j = envelope_ptr_array_[i]->GetDocbufferSpan();
+		const auto j = envelope_ptr_array_[i]->get_doc_buffer_span();
 		if (j > imax)
 			imax = j;
 	}
-	envelope_ptr_array_[0]->SetDocbufferSpan(imax);
+	envelope_ptr_array_[0]->set_doc_buffer_span(imax);
 }
 
 void ChartData::update_chan_list_from_doc()
@@ -150,9 +150,9 @@ void ChartData::update_chan_list_from_doc()
 	{
 		const auto chan_list_item = chan_list_item_ptr_array_[i];
 		const auto p_ord = chan_list_item->pEnvelopeOrdinates;
-		const auto ns = p_ord->GetSourceChan();
-		const auto mode = p_ord->GetSourceMode();
-		p_ord->SetDocbufferSpan(m_p_data_file_->get_transformed_data_span(mode));
+		const auto ns = p_ord->get_source_chan();
+		const auto mode = p_ord->get_source_mode();
+		p_ord->set_doc_buffer_span(m_p_data_file_->get_transformed_data_span(mode));
 		const auto wave_chan_array = m_p_data_file_->get_wave_channels_array();
 		const auto p_chan = wave_chan_array->get_p_channel(ns);
 		chan_list_item->dl_comment = p_chan->am_csComment;
@@ -168,8 +168,8 @@ void ChartData::update_gain_settings(const int i_chan)
 {
 	CChanlistItem* p_chan = chan_list_item_ptr_array_[i_chan];
 	const auto p_ord = p_chan->pEnvelopeOrdinates;
-	const auto ns = p_ord->GetSourceChan();
-	const auto mode = p_ord->GetSourceMode();
+	const auto ns = p_ord->get_source_chan();
+	const auto mode = p_ord->get_source_mode();
 	float doc_volts_per_bin;
 	m_p_data_file_->get_volts_per_bin(ns, &doc_volts_per_bin, mode);
 	const auto volts_per_data_bin = p_chan->GetVoltsperDataBin();
@@ -199,8 +199,8 @@ int ChartData::set_channel_list_source_channel(const int i_channel, const int ac
 	// change channel
 	const auto chan_list_item = chan_list_item_ptr_array_[i_channel];
 	const auto p_ord = chan_list_item->pEnvelopeOrdinates;
-	p_ord->SetSourceChan(acq_channel);
-	const auto mode = p_ord->GetSourceMode();
+	p_ord->set_source_chan(acq_channel);
+	const auto mode = p_ord->get_source_mode();
 	// modify comment
 	const auto wave_chan_array = m_p_data_file_->get_wave_channels_array();
 	const auto p_channel = wave_chan_array->get_p_channel(acq_channel);
@@ -290,8 +290,8 @@ int ChartData::set_channel_list_transform_mode(const int i_chan, const int i_mod
 	// change transform mode
 	const auto chan_list_item = chan_list_item_ptr_array_[i_chan];
 	const auto p_ord = chan_list_item->pEnvelopeOrdinates;
-	const auto ns = p_ord->GetSourceChan();
-	p_ord->SetSourceMode(i_mode, m_p_data_file_->get_transformed_data_span(i_mode));
+	const auto ns = p_ord->get_source_chan();
+	p_ord->set_source_mode(i_mode, m_p_data_file_->get_transformed_data_span(i_mode));
 
 	// modify comment
 	const auto wave_chan_array = m_p_data_file_->get_wave_channels_array();
@@ -441,7 +441,7 @@ int ChartData::resize_channels(const int n_pixels, const long l_size)
 		for (auto i_envelope = 0; i_envelope < n_envelopes; i_envelope++)
 		{
 			p_envelope = envelope_ptr_array_.GetAt(i_envelope);
-			p_envelope->SetEnvelopeSize(n_points, m_data_per_pixel_);
+			p_envelope->set_envelope_size(n_points, m_data_per_pixel_);
 		}
 		p_envelope = envelope_ptr_array_.GetAt(0);
 		p_envelope->fill_envelope_with_abscissa(m_n_pixels_, m_lx_size_); // store data series
@@ -488,7 +488,7 @@ BOOL ChartData::attach_data_file(AcqDataDoc* p_data_file)
 	for (auto i = n_envelopes; i > 0; i--) // ! Envelope(0)=abscissa
 	{
 		const auto p_envelope = envelope_ptr_array_.GetAt(i);
-		if (p_envelope->GetSourceChan() > scan_count)
+		if (p_envelope->get_source_chan() > scan_count)
 		{
 			delete p_envelope;
 			envelope_ptr_array_.RemoveAt(i);
@@ -524,7 +524,7 @@ BOOL ChartData::get_data_from_doc()
 	if (envelope_ptr_array_.GetSize() < 1)
 		return FALSE;
 	auto p_cont = envelope_ptr_array_.GetAt(0);
-	const auto n_span = p_cont->GetDocbufferSpan(); // additional pts necessary
+	const auto n_span = p_cont->get_doc_buffer_span(); // additional pts necessary
 
 	// loop through all pixels if data buffer is longer than data displayed
 	// within one pixel...
@@ -560,17 +560,17 @@ BOOL ChartData::get_data_from_doc()
 			{
 				p_cont = envelope_ptr_array_.GetAt(i_envelope);
 
-				const auto source_chan = p_cont->GetSourceChan(); 
-				const auto source_mode = p_cont->GetSourceMode(); 
+				const auto source_chan = p_cont->get_source_chan(); 
+				const auto source_mode = p_cont->get_source_mode(); 
 				if (source_mode > 0)
 				{
 					const auto lp_data = m_p_data_file_->load_transformed_data(l_first, index_last_point_in_pixel, source_mode, source_chan);
-					p_cont->FillEnvelopeWithMxMi(pixel_i, lp_data, 1, n_points, b_new);
+					p_cont->fill_envelope_with_max_min(pixel_i, lp_data, 1, n_points, b_new);
 				}
 				else 
 				{
 					const auto lp_data = m_p_data_file_->get_raw_data_element(source_chan, l_first);
-					p_cont->FillEnvelopeWithMxMi(pixel_i, lp_data, scan_count, n_points, b_new);
+					p_cont->fill_envelope_with_max_min(pixel_i, lp_data, scan_count, n_points, b_new);
 				}
 			}
 			b_new = FALSE;
@@ -603,7 +603,7 @@ BOOL ChartData::get_smooth_data_from_doc(const int i_option)
 	short* lp_data; // pointer used later
 	// max nb of points spanning around raw data pt stored in array(0)
 	auto p_cont = envelope_ptr_array_.GetAt(0);
-	const auto doc_buffer_span = p_cont->GetDocbufferSpan(); // additional pts necessary
+	const auto doc_buffer_span = p_cont->get_doc_buffer_span(); // additional pts necessary
 
 	// loop through all pixels if data buffer is longer than data displayed
 	// within one pixel...
@@ -638,8 +638,8 @@ BOOL ChartData::get_smooth_data_from_doc(const int i_option)
 			{
 				p_cont = envelope_ptr_array_.GetAt(i_envelope);
 
-				const auto source_chan = p_cont->GetSourceChan();
-				const auto source_mode = p_cont->GetSourceMode();
+				const auto source_chan = p_cont->get_source_chan();
+				const auto source_mode = p_cont->get_source_mode();
 				int intervals = n_channels;
 				if (source_mode > 0) 
 				{
@@ -648,7 +648,7 @@ BOOL ChartData::get_smooth_data_from_doc(const int i_option)
 				}
 				else 
 					lp_data = m_p_data_file_->get_raw_data_element(source_chan, l_first);
-				p_cont->FillEnvelopeWithSmoothMxMi(pixel, lp_data, intervals, n_points, b_new, i_option);
+				p_cont->fill_envelope_with_smooth_mx_mi(pixel, lp_data, intervals, n_points, b_new, i_option);
 			}
 			b_new = FALSE;
 			l_first = l_buf_chan_last + 1;
@@ -862,14 +862,14 @@ void ChartData::plot_data_to_dc(CDC* p_dc)
 		if (p_x != chan_list_item->pEnvelopeAbscissa)
 		{
 			p_x = chan_list_item->pEnvelopeAbscissa;
-			n_elements = p_x->GetEnvelopeSize();
+			n_elements = p_x->get_envelope_size();
 			if (m_poly_points_.GetSize() != n_elements * 2)
 				m_poly_points_.SetSize(n_elements * 2);
-			p_x->ExportToAbscissa(m_poly_points_);
+			p_x->export_to_abscissa(m_poly_points_);
 		}
 
 		const auto pY = chan_list_item->pEnvelopeOrdinates;
-		pY->ExportToOrdinates(m_poly_points_);
+		pY->export_to_ordinates(m_poly_points_);
 
 		for (auto j = 0; j < n_elements; j++)
 		{
@@ -1017,12 +1017,12 @@ void ChartData::print(CDC* p_dc, const CRect* p_rect, const BOOL b_center_line)
 		if (p_x != chan_list_item->pEnvelopeAbscissa)
 		{
 			p_x = chan_list_item->pEnvelopeAbscissa; // load pointer to abscissa
-			p_x->ExportToAbscissa(m_poly_points_); // copy abscissa to polypts buffer
-			n_elements = p_x->GetEnvelopeSize(); // update nb of elements
+			p_x->export_to_abscissa(m_poly_points_); // copy abscissa to polypts buffer
+			n_elements = p_x->get_envelope_size(); // update nb of elements
 		}
 		// display: load ordinates ---------------------------------------------
 		const auto p_y = chan_list_item->pEnvelopeOrdinates; // load pointer to ordinates
-		p_y->ExportToOrdinates(m_poly_points_); // copy ordinates to polypts buffer
+		p_y->export_to_ordinates(m_poly_points_); // copy ordinates to polypts buffer
 
 		// change extent, org and color ----------------------------------------
 		const auto y_extent = chan_list_item->GetYextent();
@@ -1199,7 +1199,7 @@ LPTSTR ChartData::get_ascii_envelope(LPTSTR lp_copy, const int i_unit)
 {
 	// time intervals
 	const auto i_channels = chan_list_item_ptr_array_.GetUpperBound();
-	const auto n_points = envelope_ptr_array_.GetAt(0)->GetEnvelopeSize();
+	const auto n_points = envelope_ptr_array_.GetAt(0)->get_envelope_size();
 	// loop through all points
 	for (auto j = 0; j < n_points; j++)
 	{
@@ -1207,7 +1207,7 @@ LPTSTR ChartData::get_ascii_envelope(LPTSTR lp_copy, const int i_unit)
 		for (auto i = 0; i <= i_channels; i++) // scan all channels
 		{
 			const auto chan_list_item = chan_list_item_ptr_array_[i];
-			const int k = (chan_list_item->pEnvelopeOrdinates)->GetPointAt(j);
+			const int k = (chan_list_item->pEnvelopeOrdinates)->get_point_at(j);
 			if (i_unit == 1)
 			{
 				lp_copy += wsprintf(lp_copy, _T("%f\t"),
@@ -1229,7 +1229,7 @@ LPTSTR ChartData::get_ascii_line(LPTSTR lp_copy, const int i_unit)
 {
 	// time intervals
 	const auto i_channels = chan_list_item_ptr_array_.GetUpperBound();
-	const auto n_points = envelope_ptr_array_.GetAt(0)->GetEnvelopeSize();
+	const auto n_points = envelope_ptr_array_.GetAt(0)->get_envelope_size();
 	// loop through all points
 	for (auto j = 0; j < n_points; j += m_data_per_pixel_)
 	{
@@ -1237,10 +1237,10 @@ LPTSTR ChartData::get_ascii_line(LPTSTR lp_copy, const int i_unit)
 		for (auto i = 0; i <= i_channels; i++) // scan all channels
 		{
 			const auto chan_list_item = chan_list_item_ptr_array_[i];
-			int k = (chan_list_item->pEnvelopeOrdinates)->GetPointAt(j);
+			int k = (chan_list_item->pEnvelopeOrdinates)->get_point_at(j);
 			if (m_data_per_pixel_ > 1)
 			{
-				k += (chan_list_item->pEnvelopeOrdinates)->GetPointAt(j + 1);
+				k += (chan_list_item->pEnvelopeOrdinates)->get_point_at(j + 1);
 				k = k / 2;
 			}
 			if (i_unit == 1)
@@ -1333,11 +1333,11 @@ void ChartData::OnLButtonDown(const UINT n_flags, const CPoint point)
 			const auto chan_list_item = chan_list_item_ptr_array_[m_hit_curve_];
 			const auto p_x = chan_list_item->pEnvelopeAbscissa;
 			p_x->get_mean_to_abscissa(m_poly_points_);
-			m_xor_n_elements_ = p_x->GetEnvelopeSize() / 2; 
-			m_xor_x_ext_ = p_x->GetnElements() / 2; 
+			m_xor_n_elements_ = p_x->get_envelope_size() / 2; 
+			m_xor_x_ext_ = p_x->get_n_elements() / 2; 
 
 			const auto p_y = chan_list_item->pEnvelopeOrdinates; // load ordinates
-			p_y->GetMeanToOrdinates(m_poly_points_);
+			p_y->get_mean_to_ordinates(m_poly_points_);
 			m_xor_y_ext_ = chan_list_item->GetYextent(); // store extent
 			m_zero_ = chan_list_item->GetYzero(); // store zero
 			m_pt_first_ = point; // save first point
@@ -1462,7 +1462,7 @@ int ChartData::does_cursor_hit_curve(const CPoint point)
 	auto channel_found = -1; // output value
 	const auto i_channels = chan_list_item_ptr_array_.GetUpperBound();
 	auto chan_list_item = chan_list_item_ptr_array_[0]->pEnvelopeAbscissa;
-	const auto x_extent = chan_list_item->GetnElements();
+	const auto x_extent = chan_list_item->get_n_elements();
 	int index1 = point.x - cx_mouse_jitter_;
 	auto index2 = index1 + cx_mouse_jitter_;
 	if (index1 < 0) index1 = 0; 
@@ -1492,7 +1492,7 @@ int ChartData::does_cursor_hit_curve(const CPoint point)
 		// loop around horizontal jitter...
 		for (auto index = index1; index < index2 && channel_found < 0; index++)
 		{
-			int k_max = chan_list_item->GetPointAt(index); // get chan Envelope data point
+			int k_max = chan_list_item->get_point_at(index); // get chan Envelope data point
 			// special case: one point per pixel
 			if (m_data_per_pixel_ == 1)
 			{
@@ -1507,7 +1507,7 @@ int ChartData::does_cursor_hit_curve(const CPoint point)
 			else
 			{
 				index++;
-				int k_min = chan_list_item->GetPointAt(index); // get min
+				int k_min = chan_list_item->get_point_at(index); // get min
 				if (k_min > k_max) // ensure that k1=max
 				{
 					const auto k = k_max;

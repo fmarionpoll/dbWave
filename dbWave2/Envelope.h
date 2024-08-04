@@ -24,61 +24,61 @@ public:
 	DECLARE_SERIAL(CEnvelope)
 
 public:
-	CEnvelope(WORD npixels); // create Envelope with npoints
-	CEnvelope(WORD npixels, int dataperpixel, int ns, int mode, int span);
+	CEnvelope(WORD n_pixels); // create Envelope with n_points
+	CEnvelope(WORD n_pixels, int data_per_pixel, int ns, int mode, int span);
 	void Serialize(CArchive& ar) override;
 
 	// Attributes
 protected:
-	int m_sourceMode; // operation on raw data (nop, deriv, ...)
-	int m_sourceChan; // source channel
-	int m_span; // additionnal data pts necessary to compute transform
-	int m_dataperpixel; // 2=simple envelope, 1=raw data
-	int m_npixels; // nb of valid elements in the array
-	CArray<short, short> m_Envelope; // Envelope array
-	short* getMaxMin(int nelements, short* lpData, int nchans, short& i_min, short& i_max, long& y);
+	int m_source_mode_; // operation on raw data (nop, deriv, ...)
+	int m_source_chan_; // source channel
+	int m_span_; // additional data pts necessary to compute transform
+	int m_data_per_pixel_; // 2=simple envelope, 1=raw data
+	int m_n_pixels_; // nb of valid elements in the array
+	CArray<short, short> m_envelope_; // Envelope array
+	short* get_max_min(int n_elements, short* lp_data, int n_channels, short& i_min, short& i_max, long& y);
 
 	// Operations
 public:
-	void fill_envelope_with_abscissa(int npixels, int npoints);
-	void fill_envelope_with_abscissa_ex(int pixfirst, int pixlast, int ndatapoints);
+	void fill_envelope_with_abscissa(int n_pixels, int n_points);
+	void fill_envelope_with_abscissa_ex(int pix_first, int pix_last, int n_data_points);
 	void get_mean_to_abscissa(CArray<CPoint, CPoint>& dest);
-	void GetMeanToOrdinates(CArray<CPoint, CPoint>& dest);
-	void ExportToAbscissa(CArray<CPoint, CPoint>& dest);
-	void ExportToOrdinates(CArray<CPoint, CPoint>& dest);
+	void get_mean_to_ordinates(CArray<CPoint, CPoint>& dest);
+	void export_to_abscissa(CArray<CPoint, CPoint>& dest);
+	void export_to_ordinates(CArray<CPoint, CPoint>& dest);
 
 	//----------description
-	int GetDocbufferSpan() const { return m_span; }
-	void SetDocbufferSpan(int span) { m_span = span; }
+	int get_doc_buffer_span() const { return m_span_; }
+	void set_doc_buffer_span(int span) { m_span_ = span; }
 
 	//----------Envelope array
-	short* GetElmtAdr(int i) { return &m_Envelope[i]; }
-	int GetSourceMode() const { return m_sourceMode; }
-	int GetSourceChan() const { return m_sourceChan; }
-	int GetEnvelopeSize() const { return m_Envelope.GetSize(); }
-	int GetnElements() const { return m_npixels; }
-	int GetAt(int j) const { return m_Envelope[j]; }
+	short* get_element(int i) { return &m_envelope_[i]; }
+	int get_source_mode() const { return m_source_mode_; }
+	int get_source_chan() const { return m_source_chan_; }
+	int get_envelope_size() const { return m_envelope_.GetSize(); }
+	int get_n_elements() const { return m_n_pixels_; }
+	int get_at(int j) const { return m_envelope_[j]; }
 
-	void SetSourceMode(int n, int span)
+	void set_source_mode(int n, int span)
 	{
-		m_sourceMode = n;
-		m_span = span;
+		m_source_mode_ = n;
+		m_span_ = span;
 	}
 
-	void SetSourceChan(int n) { m_sourceChan = n; }
-	void SetPointAt(int j, int val) { m_Envelope[j] = val; }
+	void set_source_chan(const int n) { m_source_chan_ = n; }
+	void set_point_at(const int j, const int val) { m_envelope_[j] = val; }
 
 	void set_envelope_source_data(const int chan, const int transform)
 	{
-		m_sourceChan = chan;
-		m_sourceMode = transform;
+		m_source_chan_ = chan;
+		m_source_mode_ = transform;
 	}
 
-	short GetPointAt(const int i) { return static_cast<short>(m_Envelope[i]); }
+	short get_point_at(const int i) { return static_cast<short>(m_envelope_[i]); }
 
-	void SetEnvelopeSize(int npixels, int ndataperpixel);
-	void FillEnvelopeWithMxMi(int ifirst, short* lpData, int nchans, int nelmts, BOOL bNew);
-	void FillEnvelopeWithSmoothMxMi(int ifirst, short* lpData, int nchans, int nelmts, BOOL bNew, int ioption);
-	void GetEnvelopeMaxMin(int* max, int* min);
-	void GetEnvelopeMaxMinBetweenPoints(int ifirstpixel, int ilastpixel, int* max, int* min);
+	void set_envelope_size(int n_pixels, int n_data_per_pixel);
+	void fill_envelope_with_max_min(int i_first, short* lp_data, int n_channels, int n_elements, BOOL b_new);
+	void fill_envelope_with_smooth_mx_mi(int i_first, short* lp_data, int n_channels, int n_elements, BOOL b_new, int i_option);
+	void get_envelope_max_min(int* max, int* min);
+	void get_envelope_max_min_between_points(int i_first_pixel, int i_last_pixel, int* max, int* min);
 };

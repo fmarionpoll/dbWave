@@ -1283,7 +1283,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="USBPxxPARAMETERS.cpp" />
-    <ClCompile Include="DlgDataViewAbcissa.cpp">
+    <ClCompile Include="DlgDataViewAbscissa.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1549,7 +1549,7 @@
     <ClInclude Include="TemplateWnd.h" />
     <ClInclude Include="DlgTransferFiles.h" />
     <ClInclude Include="USBPxxPARAMETERS.h" />
-    <ClInclude Include="DlgDataViewAbcissa.h" />
+    <ClInclude Include="DlgDataViewAbscissa.h" />
     <ClInclude Include="DlgDataViewOrdinates.h" />
     <ClInclude Include="DlgDataSeries.h" />
     <ClInclude Include="ViewADcontinuous.h" />

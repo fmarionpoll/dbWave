@@ -57,51 +57,51 @@ IMPLEMENT_SERIAL(CEnvelope, CObject, 0 /* schema number*/)
 
 CEnvelope::CEnvelope()
 {
-	m_sourceMode = 0; // operation on raw data (nop, deriv, ...)
-	m_sourceChan = 0; // source channel
-	m_dataperpixel = 2; // Envelope w. max/min
-	m_npixels = 0;
-	m_span = 0;
+	m_source_mode_ = 0; // operation on raw data (nop, deriv, ...)
+	m_source_chan_ = 0; // source channel
+	m_data_per_pixel_ = 2; // Envelope w. max/min
+	m_n_pixels_ = 0;
+	m_span_ = 0;
 }
 
-CEnvelope::CEnvelope(WORD npixels)
+CEnvelope::CEnvelope(const WORD n_pixels)
 {
-	m_dataperpixel = 2; // Envelope w. max/min
-	m_npixels = npixels;
-	m_Envelope.SetSize(m_npixels, m_dataperpixel);
-	m_sourceMode = 0; // operation on raw data (nop, deriv, ...)
-	m_sourceChan = 0; // source channel
-	m_span = 0;
+	m_data_per_pixel_ = 2; // Envelope w. max/min
+	m_n_pixels_ = n_pixels;
+	m_envelope_.SetSize(m_n_pixels_, m_data_per_pixel_);
+	m_source_mode_ = 0; // operation on raw data (nop, derivative, ...)
+	m_source_chan_ = 0;
+	m_span_ = 0;
 }
 
-CEnvelope::CEnvelope(WORD npixels, int dataperpixel, int ns, int mode, int span)
+CEnvelope::CEnvelope(const WORD n_pixels, const int data_per_pixel, const int ns, const int mode, const int span)
 {
-	m_dataperpixel = dataperpixel; // Envelope w. max/min
-	m_npixels = npixels;
-	m_Envelope.SetSize(m_npixels * m_dataperpixel);
-	m_sourceMode = mode;
-	m_sourceChan = ns;
-	m_span = span;
+	m_data_per_pixel_ = data_per_pixel; // Envelope w. max/min
+	m_n_pixels_ = n_pixels;
+	m_envelope_.SetSize(m_n_pixels_ * m_data_per_pixel_);
+	m_source_mode_ = mode;
+	m_source_chan_ = ns;
+	m_span_ = span;
 }
 
-void CEnvelope::fill_envelope_with_abscissa(int npixels, int npoints)
+void CEnvelope::fill_envelope_with_abscissa(int n_pixels, int n_points)
 {
 	// fill Envelope with data series, step 1
-	const auto n = m_Envelope.GetSize();
-	if (m_dataperpixel == 1)
+	const auto n = m_envelope_.GetSize();
+	if (m_data_per_pixel_ == 1)
 		for (auto i = 0; i < n; i++)
-			m_Envelope[i] = i;
+			m_envelope_[i] = i;
 	// OR fill Envelope with data series, step 2
 	else
 	{
-		if (npixels > npoints)
+		if (n_pixels > n_points)
 		{
 			auto j = 0;
 			for (auto i = 0; i < n; i += 2, j++)
 			{
-				const auto ix = MulDiv(npixels, j, npoints);
-				m_Envelope[i] = ix;
-				m_Envelope[i + 1] = ix;
+				const auto ix = MulDiv(n_pixels, j, n_points);
+				m_envelope_[i] = ix;
+				m_envelope_[i + 1] = ix;
 			}
 		}
 		else
@@ -109,8 +109,8 @@ void CEnvelope::fill_envelope_with_abscissa(int npixels, int npoints)
 			auto j = 0;
 			for (auto i = 0; i < n; i += 2, j++)
 			{
-				m_Envelope[i] = j;
-				m_Envelope[i + 1] = j;
+				m_envelope_[i] = j;
+				m_envelope_[i + 1] = j;
 			}
 		}
 	}
@@ -122,17 +122,17 @@ void CEnvelope::fill_envelope_with_abscissa(int npixels, int npoints)
 //	xlast	= last abscissa
 // return nDataperPixel
 
-void CEnvelope::fill_envelope_with_abscissa_ex(int pixfirst, int pixlast, int ndatapoints)
+void CEnvelope::fill_envelope_with_abscissa_ex(int pix_first, int pix_last, int n_data_points)
 {
-	const auto n = m_Envelope.GetSize();
+	const auto n = m_envelope_.GetSize();
 
 	// fill Envelope with data series, step 1
-	if (m_dataperpixel == 1)
+	if (m_data_per_pixel_ == 1)
 	{
 		for (auto i = 0; i < n; i++)
 		{
-			const auto ifirst = MulDiv(ndatapoints, i, n) + pixfirst;
-			m_Envelope[i] = ifirst;
+			const auto i_first = MulDiv(n_data_points, i, n) + pix_first;
+			m_envelope_[i] = i_first;
 		}
 	}
 	// OR fill Envelope with data series, step 2
@@ -140,44 +140,44 @@ void CEnvelope::fill_envelope_with_abscissa_ex(int pixfirst, int pixlast, int nd
 	{
 		for (auto i = 0; i < n; i += 2)
 		{
-			const auto ifirst = i / 2 + pixfirst;
-			m_Envelope[i] = ifirst;
-			m_Envelope[i + 1] = ifirst;
+			const auto i_first = i / 2 + pix_first;
+			m_envelope_[i] = i_first;
+			m_envelope_[i + 1] = i_first;
 		}
 	}
 }
 
-void CEnvelope::ExportToAbscissa(CArray<CPoint, CPoint>& dest)
+void CEnvelope::export_to_abscissa(CArray<CPoint, CPoint>& dest)
 {
-	for (auto i = 0; i < m_Envelope.GetSize(); i++)
-		dest.GetAt(i).x = m_Envelope[i];
+	for (auto i = 0; i < m_envelope_.GetSize(); i++)
+		dest.GetAt(i).x = m_envelope_[i];
 }
 
-void CEnvelope::ExportToOrdinates(CArray<CPoint, CPoint>& dest)
+void CEnvelope::export_to_ordinates(CArray<CPoint, CPoint>& dest)
 {
-	for (auto i = 0; i < m_Envelope.GetSize(); i++)
-		dest.GetAt(i).y = m_Envelope[i];
+	for (auto i = 0; i < m_envelope_.GetSize(); i++)
+		dest.GetAt(i).y = m_envelope_[i];
 }
 
 void CEnvelope::Serialize(CArchive& ar)
 {
-	m_Envelope.Serialize(ar); // Envelope array
+	m_envelope_.Serialize(ar); // Envelope array
 
 	if (ar.IsStoring())
 	{
-		ar << m_sourceMode; // operation on raw data (nop, deriv, ...)
-		ar << m_sourceChan; // source channel
-		ar << m_span; // additionnal data pts necessary to compute transform
-		ar << m_dataperpixel; // 2=simple envelope, 1=raw data
-		ar << m_npixels; // nb of valid elements in the array
+		ar << m_source_mode_; 
+		ar << m_source_chan_;
+		ar << m_span_;
+		ar << m_data_per_pixel_;
+		ar << m_n_pixels_;
 	}
 	else
 	{
-		ar >> m_sourceMode; // operation on raw data (nop, deriv, ...)
-		ar >> m_sourceChan; // source channel
-		ar >> m_span; // additionnal data pts necessary to compute transform
-		ar >> m_dataperpixel; // 2=simple envelope, 1=raw data
-		ar >> m_npixels; // nb of valid elements in the array
+		ar >> m_source_mode_; 
+		ar >> m_source_chan_; 
+		ar >> m_span_;
+		ar >> m_data_per_pixel_; 
+		ar >> m_n_pixels_;
 	}
 }
 
@@ -187,9 +187,9 @@ void CEnvelope::Serialize(CArchive& ar)
 
 void CEnvelope::get_mean_to_abscissa(CArray<CPoint, CPoint>& dest)
 {
-	auto lp_source = &m_Envelope[0]; // source data: a Envelope
+	auto lp_source = &m_envelope_[0]; // source data: a Envelope
 	auto jdest = 0;
-	for (auto i = m_Envelope.GetSize() / 2; i > 0; i--)
+	for (auto i = m_envelope_.GetSize() / 2; i > 0; i--)
 	{
 		dest[jdest].x = (*lp_source / 2 + *(lp_source + 1) / 2); // copy half value
 		jdest++;
@@ -197,11 +197,11 @@ void CEnvelope::get_mean_to_abscissa(CArray<CPoint, CPoint>& dest)
 	}
 }
 
-void CEnvelope::GetMeanToOrdinates(CArray<CPoint, CPoint>& dest)
+void CEnvelope::get_mean_to_ordinates(CArray<CPoint, CPoint>& dest)
 {
-	auto lp_source = &m_Envelope[0]; // source data: a Envelope
+	auto lp_source = &m_envelope_[0]; // source data: a Envelope
 	auto jdest = 0;
-	for (auto i = m_Envelope.GetSize() / 2; i > 0; i--)
+	for (auto i = m_envelope_.GetSize() / 2; i > 0; i--)
 	{
 		dest[jdest].y = (*lp_source / 2 + *(lp_source + 1) / 2); // copy half value
 		jdest++;
@@ -209,11 +209,11 @@ void CEnvelope::GetMeanToOrdinates(CArray<CPoint, CPoint>& dest)
 	}
 }
 
-void CEnvelope::SetEnvelopeSize(int npixels, int ndataperpixel)
+void CEnvelope::set_envelope_size(int n_pixels, int n_data_per_pixel)
 {
-	m_dataperpixel = ndataperpixel;
-	m_npixels = npixels * ndataperpixel;
-	m_Envelope.SetSize(m_npixels);
+	m_data_per_pixel_ = n_data_per_pixel;
+	m_n_pixels_ = n_pixels * n_data_per_pixel;
+	m_envelope_.SetSize(m_n_pixels_);
 }
 
 // parameters:
@@ -222,10 +222,10 @@ void CEnvelope::SetEnvelopeSize(int npixels, int ndataperpixel)
 // 		short 	nchans		- number of interleaved channels in the raw data array
 // 		short 	nelmts		- number of data to deal with
 
-void CEnvelope::FillEnvelopeWithMxMi(int ifirst, short* lp_data, int nchans, int nelmts, BOOL b_new)
+void CEnvelope::fill_envelope_with_max_min(int i_first, short* lp_data, int n_channels, int n_elements, BOOL b_new)
 {
-	auto lp_envelope = &m_Envelope[ifirst * m_dataperpixel];
-	if (m_dataperpixel == 1) // only one data point per pixel
+	auto lp_envelope = &m_envelope_[i_first * m_data_per_pixel_];
+	if (m_data_per_pixel_ == 1) // only one data point per pixel
 	{
 		*lp_envelope = *lp_data; // simply copy data
 		return;
@@ -239,7 +239,7 @@ void CEnvelope::FillEnvelopeWithMxMi(int ifirst, short* lp_data, int nchans, int
 		i_max = *(lp_envelope + 1);
 	}
 
-	while (nelmts > 0) // scan nb elements
+	while (n_elements > 0) // scan nb elements
 	{
 		// designed by scale
 		const auto idata = *lp_data; // load value
@@ -247,8 +247,8 @@ void CEnvelope::FillEnvelopeWithMxMi(int ifirst, short* lp_data, int nchans, int
 			i_min = idata; // change min
 		else if (idata > i_max)
 			i_max = idata; // change max
-		lp_data += nchans; // update data pointer
-		nelmts--;
+		lp_data += n_channels; // update data pointer
+		n_elements--;
 	}
 
 	*lp_envelope = i_max; // store max
@@ -256,58 +256,58 @@ void CEnvelope::FillEnvelopeWithMxMi(int ifirst, short* lp_data, int nchans, int
 	*lp_envelope = i_min; // store min
 }
 
-short* CEnvelope::getMaxMin(int nelements, short* lpData, int nchans, short& i_min, short& i_max, long& y1)
+short* CEnvelope::get_max_min(int n_elements, short* lp_data, int n_channels, short& i_min, short& i_max, long& y1)
 {
 	y1 = 0;
-	int n = nelements;
+	int n = n_elements;
 	while (n > 0)
 	{
-		short idata = *lpData;
+		short idata = *lp_data;
 		y1 += idata;
 		if (idata < i_min)
 			i_min = idata;
 		else if (idata > i_max)
 			i_max = idata;
-		lpData += nchans;
+		lp_data += n_channels;
 		n--;
 	}
-	if (nelements > 0)
-		y1 = y1 / nelements;
-	return lpData;
+	if (n_elements > 0)
+		y1 = y1 / n_elements;
+	return lp_data;
 }
 
-void CEnvelope::FillEnvelopeWithSmoothMxMi(int ifirst, short* lpData, int nchans, int nelmts, BOOL bNew, int ioption)
+void CEnvelope::fill_envelope_with_smooth_mx_mi(int i_first, short* lp_data, int n_channels, int n_elements, BOOL b_new, int i_option)
 {
 	// simple case: save just the raw data
-	short* lp_envelope = &m_Envelope[ifirst * m_dataperpixel];
-	if (m_dataperpixel == 1) // only one data point per pixel
+	short* lp_envelope = &m_envelope_[i_first * m_data_per_pixel_];
+	if (m_data_per_pixel_ == 1) // only one data point per pixel
 	{
-		*lp_envelope = *lpData; // simply copy data
+		*lp_envelope = *lp_data; // simply copy data
 		return;
 	}
 
 	// more than 1 point per interval
 	// cut interval in 2 and store either [max, min] or [min, max] depending on the direction of the curve
 	// find direction by comparing the average point between the 2 sub-intervals
-	short i_max = *lpData; // init max
+	short i_max = *lp_data; // init max
 	short i_min = i_max; // init min
-	if (!bNew)
+	if (!b_new)
 	{
 		i_min = *lp_envelope;
 		i_max = *(lp_envelope + 1);
 	}
 
 	// first sub-interval
-	const int nelemts1 = nelmts / 2;
+	const int nelemts1 = n_elements / 2;
 	long y1 = 0;
-	lpData = getMaxMin(nelemts1, lpData, nchans, i_min, i_max, y1);
+	lp_data = get_max_min(nelemts1, lp_data, n_channels, i_min, i_max, y1);
 
 	// second sub-interval
-	const int nelemts2 = nelmts - nelemts1;
+	const int nelemts2 = n_elements - nelemts1;
 	long y2 = 0;
-	lpData = getMaxMin(nelemts2, lpData, nchans, i_min, i_max, y2);
+	lp_data = get_max_min(nelemts2, lp_data, n_channels, i_min, i_max, y2);
 
-	if (ioption == 0)
+	if (i_option == 0)
 	{
 		if (y1 > y2)
 		{
@@ -329,16 +329,16 @@ void CEnvelope::FillEnvelopeWithSmoothMxMi(int ifirst, short* lpData, int nchans
 
 // GetEnvelopeMaxMin
 
-void CEnvelope::GetEnvelopeMaxMin(int* max, int* min)
+void CEnvelope::get_envelope_max_min(int* max, int* min)
 {
-	short maxval = m_Envelope[2];
+	short maxval = m_envelope_[2];
 	short minval = maxval;
-	const int npixels = m_Envelope.GetSize();
+	const int npixels = m_envelope_.GetSize();
 
 	// loop over envelope and discard last 2 and first 2 points
 	for (auto i = 3; i < npixels - 2; i++)
 	{
-		short val = m_Envelope[i];
+		short val = m_envelope_[i];
 		if (val > maxval)
 			maxval = val;
 		if (val < minval)
@@ -348,13 +348,13 @@ void CEnvelope::GetEnvelopeMaxMin(int* max, int* min)
 	*max = static_cast<int>(maxval);
 }
 
-void CEnvelope::GetEnvelopeMaxMinBetweenPoints(int ifirstpixel, int ilastpixel, int* max, int* min)
+void CEnvelope::get_envelope_max_min_between_points(int i_first_pixel, int i_last_pixel, int* max, int* min)
 {
-	short maxval = m_Envelope[ifirstpixel];
+	short maxval = m_envelope_[i_first_pixel];
 	short minval = maxval;
-	for (int i = ifirstpixel + 1; i <= ilastpixel; i++)
+	for (int i = i_first_pixel + 1; i <= i_last_pixel; i++)
 	{
-		short val = m_Envelope[i];
+		short val = m_envelope_[i];
 		if (val > maxval)
 			maxval = val;
 		if (val < minval)

@@ -201,7 +201,7 @@
     <ClCompile Include="TemplateWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DlgDataViewAbcissa.cpp">
+    <ClCompile Include="DlgDataViewAbscissa.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DlgDataViewOrdinates.cpp">
@@ -695,7 +695,7 @@
     <ClInclude Include="TemplateWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DlgDataViewAbcissa.h">
+    <ClInclude Include="DlgDataViewAbscissa.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DlgDataViewOrdinates.h">
