@@ -102,7 +102,7 @@ void ViewData::define_sub_classed_items()
 	GetDlgItem(IDC_GAIN_button)->SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON),
 	                                         reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_h_zoom_)));
 
-	VERIFY(m_chart_data_wnd.SubclassDlgItem(IDC_DISPLAY, this));
+	VERIFY(chart_data.SubclassDlgItem(IDC_DISPLAY, this));
 	VERIFY(mm_time_first_abscissa.SubclassDlgItem(IDC_TIMEFIRST, this));
 	VERIFY(mm_time_last_abscissa.SubclassDlgItem(IDC_TIMELAST, this));
 	VERIFY(m_adc_y_ruler_bar.SubclassDlgItem(IDC_YSCALE, this));
@@ -131,11 +131,11 @@ void ViewData::OnInitialUpdate()
 {
 	define_sub_classed_items();
 
-	m_adc_y_ruler_bar.AttachScopeWnd(&m_chart_data_wnd, FALSE);
-	m_adc_x_ruler_bar.AttachScopeWnd(&m_chart_data_wnd, TRUE);
-	m_chart_data_wnd.attach_external_x_ruler(&m_adc_x_ruler_bar);
-	m_chart_data_wnd.attach_external_y_ruler(&m_adc_y_ruler_bar);
-	m_chart_data_wnd.b_nice_grid = TRUE;
+	m_adc_y_ruler_bar.AttachScopeWnd(&chart_data, FALSE);
+	m_adc_x_ruler_bar.AttachScopeWnd(&chart_data, TRUE);
+	chart_data.attach_external_x_ruler(&m_adc_x_ruler_bar);
+	chart_data.attach_external_y_ruler(&m_adc_y_ruler_bar);
+	chart_data.b_nice_grid = TRUE;
 
 	define_stretch_parameters();
 
@@ -148,10 +148,10 @@ void ViewData::OnInitialUpdate()
 	dbTableView::OnInitialUpdate();
 	update_file_parameters(TRUE); 
 
-	m_chart_data_wnd.set_scope_parameters(&(options_view_data_->viewdata));
+	chart_data.set_scope_parameters(&(options_view_data_->viewdata));
 	constexpr int legends_options = UPD_ABSCISSA | CHG_X_SCALE | UPD_ORDINATES | CHG_Y_SCALE;
 	m_bCommonScale = TRUE;
-	m_combo_select_chan.SetCurSel(m_chart_data_wnd.get_channel_list_size());
+	m_combo_select_chan.SetCurSel(chart_data.get_channel_list_size());
 	update_legends(legends_options);
 }
 
@@ -181,13 +181,13 @@ void ViewData::OnUpdate(CView* p_sender, const LPARAM l_hint, CObject* p_hint)
 		break;
 	}
 	update_legends(i_update);
-	m_chart_data_wnd.Invalidate();
+	chart_data.Invalidate();
 	set_v_bar_mode(m_v_bar_mode_);
 }
 
 void ViewData::update_legends(int legends_options)
 {
-	if (!m_chart_data_wnd.is_defined() && !m_b_valid_doc_)
+	if (!chart_data.is_defined() && !m_b_valid_doc_)
 		return;
 	if (legends_options & UPD_ABSCISSA)
 		update_file_scroll();
@@ -199,7 +199,7 @@ void ViewData::update_legends(int legends_options)
 	if (legends_options & UPD_Y_SCALE)
 		legends_options |= CHG_Y_BAR;
 	if (legends_options & CHG_Y_BAR)
-		update_y_zero(m_channel_selected, m_chart_data_wnd.get_channel_list_item(m_channel_selected)->GetYzero());
+		update_y_zero(m_channel_selected, chart_data.get_channel_list_item(m_channel_selected)->GetYzero());
 
 	UpdateData(FALSE);
 }
@@ -222,8 +222,8 @@ void ViewData::on_clicked_gain()
 void ViewData::update_channel(const int channel)
 {
 	m_channel_selected = channel;
-	if (m_channel_selected > m_chart_data_wnd.get_channel_list_size() - 1) 
-		m_channel_selected = m_chart_data_wnd.get_channel_list_size() - 1; 
+	if (m_channel_selected > chart_data.get_channel_list_size() - 1) 
+		m_channel_selected = chart_data.get_channel_list_size() - 1; 
 	else if (m_channel_selected < 0) 
 		m_channel_selected = 0;
 
@@ -232,12 +232,12 @@ void ViewData::update_channel(const int channel)
 	else 
 	{
 		if (m_cursor_state_ == CURSOR_CROSS && options_view_data_measures_->wOption == 1
-			&& m_chart_data_wnd.horizontal_tags.get_tag_list_size() > 0)
+			&& chart_data.horizontal_tags.get_tag_list_size() > 0)
 		{
-			for (auto i = 0; i < m_chart_data_wnd.horizontal_tags.get_tag_list_size(); i++)
-				m_chart_data_wnd.horizontal_tags.set_channel(i, m_channel_selected);
+			for (auto i = 0; i < chart_data.horizontal_tags.get_tag_list_size(); i++)
+				chart_data.horizontal_tags.set_channel(i, m_channel_selected);
 			update_horizontal_tags_value();
-			m_chart_data_wnd.Invalidate();
+			chart_data.Invalidate();
 		}
 		update_legends(UPD_ORDINATES | CHG_Y_SCALE);
 	}
@@ -246,19 +246,19 @@ void ViewData::update_channel(const int channel)
 void ViewData::on_format_y_scale()
 {
 	DlgDataViewOrdinates dlg;
-	dlg.m_pChartDataWnd = &m_chart_data_wnd;
+	dlg.m_pChartDataWnd = &chart_data;
 	dlg.m_Channel = m_channel_selected;
 	if (IDOK == dlg.DoModal())
 		update_legends(UPD_ORDINATES | UPD_Y_SCALE | CHG_Y_BAR);
 
-	m_chart_data_wnd.Invalidate();
+	chart_data.Invalidate();
 }
 
 void ViewData::on_tools_data_series()
 {
 	// init dialog data
 	DlgDataSeries dlg;
-	dlg.m_pChartDataWnd = &m_chart_data_wnd;
+	dlg.m_pChartDataWnd = &chart_data;
 	dlg.m_pdbDoc = m_p_dat_;
 	dlg.m_listindex = m_channel_selected;
 	dlg.DoModal();
@@ -286,14 +286,14 @@ void ViewData::on_edit_copy()
 		options_view_data_->vtResolution = dlg.m_nordinates;
 
 		if (!dlg.m_bgraphics)
-			m_chart_data_wnd.copy_as_text(dlg.m_ioption, dlg.m_iunit, dlg.m_nabscissa);
+			chart_data.copy_as_text(dlg.m_ioption, dlg.m_iunit, dlg.m_nabscissa);
 		else
 		{
 			CRect old_rect;
-			m_chart_data_wnd.GetWindowRect(&old_rect);
+			chart_data.GetWindowRect(&old_rect);
 
 			CRect rect(0, 0, options_view_data_->hzResolution, options_view_data_->vtResolution);
-			m_pixels_count_0_ = m_chart_data_wnd.get_rect_width();
+			m_pixels_count_0_ = chart_data.get_rect_width();
 
 			// create metafile
 			CMetaFileDC m_dc;
@@ -309,11 +309,11 @@ void ViewData::on_edit_copy()
 			m_dc.SetAttribDC(attrib_dc.GetSafeHdc()); // from current screen
 
 			const auto old_scope_struct= new SCOPESTRUCT();
-			SCOPESTRUCT* new_scope_struct = m_chart_data_wnd.get_scope_parameters();
+			SCOPESTRUCT* new_scope_struct = chart_data.get_scope_parameters();
 			*old_scope_struct = *new_scope_struct;
 			new_scope_struct->bDrawframe = options_view_data_->bFrameRect;
 			new_scope_struct->bClipRect = options_view_data_->bClipRect;
-			m_chart_data_wnd.print(&m_dc, &rect);
+			chart_data.print(&m_dc, &rect);
 			*new_scope_struct = *old_scope_struct;
 
 			// print comments : set font
@@ -333,20 +333,20 @@ void ViewData::on_edit_copy()
 			comments += content;
 			m_dc.TextOut(x_column, y_pixels_row, comments);
 			y_pixels_row += line_height;
-			comments.Format(_T("Vertical bar (ch. 0) = %g mV"), m_chart_data_wnd.y_ruler.GetScaleIncrement());
+			comments.Format(_T("Vertical bar (ch. 0) = %g mV"), chart_data.y_ruler.GetScaleIncrement());
 			m_dc.TextOut(x_column, y_pixels_row, comments);
 			y_pixels_row += line_height;
-			comments.Format(_T("Horizontal bar = %g s"), m_chart_data_wnd.x_ruler.GetScaleIncrement());
+			comments.Format(_T("Horizontal bar = %g s"), chart_data.x_ruler.GetScaleIncrement());
 			m_dc.TextOut(x_column, y_pixels_row, comments);
 			y_pixels_row += line_height;
 
 			// bars
 			const auto p_old_brush = static_cast<CBrush*>(m_dc.SelectStockObject(BLACK_BRUSH));
 			m_dc.MoveTo(0, y_pixels_row);
-			const auto bottom = m_chart_data_wnd.y_ruler.GetScaleUnitPixels(rect.Height());
+			const auto bottom = chart_data.y_ruler.GetScaleUnitPixels(rect.Height());
 			m_dc.LineTo(0, y_pixels_row - bottom);
 			m_dc.MoveTo(0, y_pixels_row);
-			const auto left = m_chart_data_wnd.x_ruler.GetScaleUnitPixels(rect.Width());
+			const auto left = chart_data.x_ruler.GetScaleUnitPixels(rect.Width());
 			m_dc.LineTo(left, y_pixels_row);
 
 			m_dc.SelectObject(p_old_brush);
@@ -373,16 +373,16 @@ void ViewData::on_edit_copy()
 			}
 
 			// restore initial conditions
-			m_chart_data_wnd.resize_channels(m_pixels_count_0_, 0);
-			m_chart_data_wnd.get_data_from_doc();
-			m_chart_data_wnd.Invalidate();
+			chart_data.resize_channels(m_pixels_count_0_, 0);
+			chart_data.get_data_from_doc();
+			chart_data.Invalidate();
 		}
 	}
 }
 
 void ViewData::on_update_edit_copy(CCmdUI* p_cmd_ui) 
 {
-	p_cmd_ui->Enable(m_chart_data_wnd.is_defined() != NULL); // if document has data
+	p_cmd_ui->Enable(chart_data.is_defined() != NULL); 
 }
 
 void ViewData::adc_on_hardware_channels_dlg() 
@@ -464,14 +464,14 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 	}
 
 	// load parameters from current data file
-	m_chart_data_wnd.attach_data_file(m_p_dat_);
+	chart_data.attach_data_file(m_p_dat_);
 	m_p_dat_->SetModifiedFlag(FALSE);
 
 	// OPTION: display entire file	--	(inactive if multirow)
 	long l_first = 0;
 	long l_last = m_p_dat_->get_doc_channel_length() - 1;
 
-	if (!options_view_data_->bEntireRecord || options_view_data_->bMultirowDisplay && !b_first_update)
+	if (!options_view_data_->b_complete_record || options_view_data_->b_multiple_rows && !b_first_update)
 	{
 		l_first = static_cast<long>(m_time_first_abscissa * m_sampling_rate_);
 		l_last = static_cast<long>(m_time_last_abscissa * m_sampling_rate_);
@@ -481,7 +481,7 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 	m_sampling_rate_ = wave_format->sampling_rate_per_channel; // update sampling rate
 
 	// display all channels
-	auto chan_list_size = m_chart_data_wnd.get_channel_list_size();
+	auto chan_list_size = chart_data.get_channel_list_size();
 	
 	// display all channels (TRUE) / no : loop through all doc channels & add if necessary
 	if (options_view_data_->bAllChannels || chan_list_size == 0)
@@ -491,22 +491,22 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 			auto b_present = FALSE;
 			for (auto j = chan_list_size - 1; j >= 0; j--)
 			{
-				if ((b_present = (m_chart_data_wnd.get_channel_list_item(j)->GetSourceChan() == doc_channel)))
+				if ((b_present = (chart_data.get_channel_list_item(j)->GetSourceChan() == doc_channel)))
 					break;
 			}
 			if (!b_present)
 			{
-				m_chart_data_wnd.add_channel_list_item(doc_channel, 0);
+				chart_data.add_channel_list_item(doc_channel, 0);
 				chan_list_size++;
 			}
-			m_chart_data_wnd.get_channel_list_item(doc_channel)->SetColor(static_cast<WORD>(doc_channel));
+			chart_data.get_channel_list_item(doc_channel)->SetColor(static_cast<WORD>(doc_channel));
 		}
 	}
 
 	// load real data from file and update time parameters
-	m_chart_data_wnd.get_data_from_doc(l_first, l_last); 
-	m_time_first_abscissa = static_cast<float>(m_chart_data_wnd.get_data_first_index()) / m_sampling_rate_; 
-	m_time_last_abscissa = static_cast<float>(m_chart_data_wnd.get_data_last_index()) / m_sampling_rate_; 
+	chart_data.get_data_from_doc(l_first, l_last); 
+	m_time_first_abscissa = static_cast<float>(chart_data.get_data_first_index()) / m_sampling_rate_; 
+	m_time_last_abscissa = static_cast<float>(chart_data.get_data_last_index()) / m_sampling_rate_; 
 	m_channel_selected = 0; // select chan 0
 
 	if (!b_first_update)
@@ -514,11 +514,11 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 
 	// fill combo
 	m_combo_select_chan.ResetContent();
-	for (auto i = 0; i < m_chart_data_wnd.get_channel_list_size(); i++)
+	for (auto i = 0; i < chart_data.get_channel_list_size(); i++)
 	{
 		CString cs;
 		cs.Format(_T("channel %i - "), i);
-		cs = cs + m_chart_data_wnd.get_channel_list_item(i)->GetComment();
+		cs = cs + chart_data.get_channel_list_item(i)->GetComment();
 		m_combo_select_chan.AddString(cs);
 	}
 	if (scan_count_ > 1)
@@ -528,20 +528,20 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 	if (!m_bCommonScale)
 		m_combo_select_chan.SetCurSel(0);
 	else
-		m_combo_select_chan.SetCurSel(m_chart_data_wnd.get_channel_list_size());
+		m_combo_select_chan.SetCurSel(chart_data.get_channel_list_size());
 
 	// done
 	if (b_update_interface)
 	{
 		update_file_scroll();
 		update_legends(UPD_ABSCISSA | CHG_X_SCALE | CHG_Y_SCALE);
-		m_chart_data_wnd.Invalidate();
+		chart_data.Invalidate();
 	}
 }
 
 void ViewData::update_channels_display_parameters()
 {
-	const auto n_line_view_channels = m_chart_data_wnd.get_channel_list_size();
+	const auto n_line_view_channels = chart_data.get_channel_list_size();
 	int max;
 	int min;
 	if (!m_bCommonScale)
@@ -549,7 +549,7 @@ void ViewData::update_channels_display_parameters()
 		for (auto i = 0; i < n_line_view_channels; i++)
 		{
 			// keep final gain constant even if amplifier gain has changed
-			const CChanlistItem* chan_list_item = m_chart_data_wnd.get_channel_list_item(i);
+			const CChanlistItem* chan_list_item = chart_data.get_channel_list_item(i);
 			chan_list_item->GetMaxMin(&max, &min);
 			auto y_extent = chan_list_item->GetYextent();
 			auto y_zero = chan_list_item->GetYzero();
@@ -567,7 +567,7 @@ void ViewData::update_channels_display_parameters()
 	else
 	{
 		constexpr auto chan_0 = 0;
-		const CChanlistItem* p_chan0 = m_chart_data_wnd.get_channel_list_item(chan_0);
+		const CChanlistItem* p_chan0 = chart_data.get_channel_list_item(chan_0);
 		auto y_extent = p_chan0->GetYextent();
 		auto y_zero = p_chan0->GetYzero();
 		if (options_view_data_->bMaximizeGain)
@@ -577,7 +577,7 @@ void ViewData::update_channels_display_parameters()
 			for (auto i = 0; i < n_line_view_channels; i++)
 			{
 				// keep final gain constant even if amplifier gain changed
-				const CChanlistItem* p_chan = m_chart_data_wnd.get_channel_list_item(i);
+				const CChanlistItem* p_chan = chart_data.get_channel_list_item(i);
 				p_chan->GetMaxMin(&max, &min);
 				const auto max_chan_i = p_chan->ConvertDataBinsToVolts(max);
 				const auto min_chan_i = p_chan->ConvertDataBinsToVolts(min);
@@ -594,14 +594,14 @@ void ViewData::update_channels_display_parameters()
 		update_y_extent(chan_0, y_extent);
 		update_y_zero(chan_0, y_zero);
 	}
-	m_chart_data_wnd.Invalidate();
+	chart_data.Invalidate();
 }
 
 void ViewData::set_cursor_associated_windows()
 {
 	auto n_cmd_show = SW_HIDE;
 	if (m_cursor_state_ == CURSOR_CROSS && options_view_data_measures_->wOption == 1
-		&& m_chart_data_wnd.horizontal_tags.get_tag_list_size() > 0)
+		&& chart_data.horizontal_tags.get_tag_list_size() > 0)
 		n_cmd_show = SW_SHOW;
 
 	// change windows state: edit windows
@@ -619,14 +619,14 @@ void ViewData::set_cursor_associated_windows()
 
 void ViewData::update_horizontal_tags_value()
 {
-	if (m_chart_data_wnd.horizontal_tags.get_tag_list_size() <= 0)
+	if (chart_data.horizontal_tags.get_tag_list_size() <= 0)
 		return;
-	const auto v1 = m_chart_data_wnd.horizontal_tags.get_value_int(0);
-	auto itag = 0;
-	if (m_chart_data_wnd.horizontal_tags.get_tag_list_size() > 1)
-		itag = 1;
-	const auto v2 = m_chart_data_wnd.horizontal_tags.get_value_int(itag);
-	const auto mv_per_bin = m_chart_data_wnd.get_channel_list_item(m_channel_selected)->GetVoltsperDataBin() * 1000.0f;
+	const auto v1 = chart_data.horizontal_tags.get_value_int(0);
+	auto i_tag = 0;
+	if (chart_data.horizontal_tags.get_tag_list_size() > 1)
+		i_tag = 1;
+	const auto v2 = chart_data.horizontal_tags.get_value_int(i_tag);
+	const auto mv_per_bin = chart_data.get_channel_list_item(m_channel_selected)->GetVoltsperDataBin() * 1000.0f;
 	m_first_hz_cursor = static_cast<float>(v1) * mv_per_bin;
 	m_second_hz_cursor = static_cast<float>(v2) * mv_per_bin;
 	m_difference_second_minus_first = m_first_hz_cursor - m_second_hz_cursor;
@@ -645,59 +645,91 @@ void ViewData::update_horizontal_tags_value()
 	GetDlgItem(IDC_EDIT3)->Invalidate();
 }
 
+void ViewData::set_mouse_cursor(int low_parameter)
+{
+	// save current cursors into document if cursor_state = 3
+	if (m_cursor_state_ == CURSOR_CROSS)
+	{
+		if (options_view_data_measures_->wOption == 0) // vertical cursors
+		{
+			const auto p_tag_list = m_p_dat_->get_vt_tags_list();
+			p_tag_list->copy_tag_list(&chart_data.vertical_tags);
+			chart_data.vertical_tags.remove_all_tags();
+		}
+		else if (options_view_data_measures_->wOption == 1) // horizontal cursors
+		{
+			const auto p_tag_list = m_p_dat_->get_hz_tags_list();
+			p_tag_list->copy_tag_list(&chart_data.horizontal_tags);
+			chart_data.horizontal_tags.remove_all_tags();
+		}
+		else if (options_view_data_measures_->wOption == 3) // detect stimulus
+		{
+			options_view_data_measures_->wStimuluschan = static_cast<WORD>(chart_data.horizontal_tags.get_channel(0));
+			options_view_data_measures_->wStimulusthresh = static_cast<WORD>(chart_data.horizontal_tags.get_value_int(0));
+			chart_data.horizontal_tags.remove_all_tags();
+		}
+		chart_data.Invalidate();
+	}
+	// change cursor value (+1), clip to upper cursor value
+	if (low_parameter > CURSOR_CROSS)
+		low_parameter = 0;
+
+	// change cursor and tell parent that it has changed
+	m_cursor_state_ = chart_data.set_mouse_cursor_type(low_parameter);
+	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state_, 0));
+
+	// recall cursors from document if cursor_state = 2
+	if (m_cursor_state_ == CURSOR_CROSS)
+	{
+		if (options_view_data_measures_->wOption == 0)
+			chart_data.vertical_tags.copy_tag_list(m_p_dat_->get_vt_tags_list());
+		else if (options_view_data_measures_->wOption == 1)
+			chart_data.horizontal_tags.copy_tag_list(m_p_dat_->get_hz_tags_list());
+		else if (options_view_data_measures_->wOption == 3)
+			chart_data.horizontal_tags.add_tag(options_view_data_measures_->wStimulusthresh, options_view_data_measures_->wStimuluschan);
+		chart_data.Invalidate();
+	}
+	set_cursor_associated_windows();
+}
+
+void ViewData::add_vertical_cursors_from_defined_rectangle()
+{
+	// if no VT tags, then take those of rectangle, or limits of line_view
+	chart_data.vertical_tags.add_l_tag(options_view_data_measures_->lLimitLeft, 0);
+	if (options_view_data_measures_->lLimitRight != options_view_data_measures_->lLimitLeft)
+		chart_data.vertical_tags.add_l_tag(options_view_data_measures_->lLimitRight, 0);
+
+	// store new VT tags into document
+	m_p_dat_->get_vt_tags_list()->copy_tag_list(&chart_data.vertical_tags);
+}
+
+void ViewData::add_horizontal_cursors_from_defined_rectangle()
+{
+	//CChanlistItem* pchan = m_chart_data_wnd.get_channel_list_item(m_channel_selected);
+	chart_data.horizontal_tags.add_tag(chart_data.get_channel_list_y_pixels_to_bin(m_channel_selected, options_view_data_measures_->wLimitSup),
+		m_channel_selected);
+	if (options_view_data_measures_->wLimitInf != options_view_data_measures_->wLimitSup)
+		chart_data.horizontal_tags.add_tag(
+			chart_data.get_channel_list_y_pixels_to_bin(m_channel_selected, options_view_data_measures_->wLimitInf), m_channel_selected);
+	m_p_dat_->get_hz_tags_list()->copy_tag_list(&chart_data.horizontal_tags);
+
+	if (chart_data.horizontal_tags.get_tag_list_size() == 2)
+		set_cursor_associated_windows();
+	update_horizontal_tags_value();
+}
+
 LRESULT ViewData::on_my_message(const WPARAM w_param, const LPARAM l_param)
 {
 	//int j = HIWORD(lParam);		// control ID of sender
 	// code = 0: chan hit 			low_p = channel
 	// code = 1: cursor change		low_p = new cursor value
 	// code = 2: horizontal cursor hit	low_p = cursor index
-	int low_parameter = LOWORD(l_param); // value associated
+	const int low_parameter = LOWORD(l_param); // value associated
 
 	switch (w_param)
 	{
 	case HINT_SET_MOUSE_CURSOR:
-		// save current cursors into document if cursor_state = 3
-		if (m_cursor_state_ == CURSOR_CROSS)
-		{
-			if (options_view_data_measures_->wOption == 0) // vertical cursors
-			{
-				const auto p_tag_list = m_p_dat_->get_vt_tags_list();
-				p_tag_list->copy_tag_list(&m_chart_data_wnd.vertical_tags);
-				m_chart_data_wnd.vertical_tags.remove_all_tags();
-			}
-			else if (options_view_data_measures_->wOption == 1) // horizontal cursors
-			{
-				const auto p_tag_list = m_p_dat_->get_hz_tags_list();
-				p_tag_list->copy_tag_list(&m_chart_data_wnd.horizontal_tags);
-				m_chart_data_wnd.horizontal_tags.remove_all_tags();
-			}
-			else if (options_view_data_measures_->wOption == 3) // detect stimulus
-			{
-				options_view_data_measures_->wStimuluschan = static_cast<WORD>(m_chart_data_wnd.horizontal_tags.get_channel(0));
-				options_view_data_measures_->wStimulusthresh =static_cast<WORD>(m_chart_data_wnd.horizontal_tags.get_value_int(0));
-				m_chart_data_wnd.horizontal_tags.remove_all_tags();
-			}
-			m_chart_data_wnd.Invalidate();
-		}
-	// change cursor value (+1), clip to upper cursor value
-		if (low_parameter > CURSOR_CROSS)
-			low_parameter = 0;
-	// change cursor and tell parent that it has changed
-		m_cursor_state_ = m_chart_data_wnd.set_mouse_cursor_type(low_parameter);
-		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state_, 0));
-
-	// recall cursors from document if cursor_state = 2
-		if (m_cursor_state_ == CURSOR_CROSS)
-		{
-			if (options_view_data_measures_->wOption == 0)
-				m_chart_data_wnd.vertical_tags.copy_tag_list(m_p_dat_->get_vt_tags_list());
-			else if (options_view_data_measures_->wOption == 1)
-				m_chart_data_wnd.horizontal_tags.copy_tag_list(m_p_dat_->get_hz_tags_list());
-			else if (options_view_data_measures_->wOption == 3)
-				m_chart_data_wnd.horizontal_tags.add_tag(options_view_data_measures_->wStimulusthresh, options_view_data_measures_->wStimuluschan);
-			m_chart_data_wnd.Invalidate();
-		}
-		set_cursor_associated_windows();
+		set_mouse_cursor(low_parameter);
 		break;
 
 	case HINT_HIT_CHANNEL: // change channel if different
@@ -707,42 +739,25 @@ LRESULT ViewData::on_my_message(const WPARAM w_param, const LPARAM l_param)
 
 	case HINT_DEFINED_RECT:
 		{
-			const auto rect = m_chart_data_wnd.get_defined_rect();
+			const auto rect = chart_data.get_defined_rect();
 			options_view_data_measures_->wLimitSup = static_cast<WORD>(rect.top);
 			options_view_data_measures_->wLimitInf = static_cast<WORD>(rect.bottom);
-			options_view_data_measures_->lLimitLeft = m_chart_data_wnd.get_data_offset_from_pixel(rect.left);
-			options_view_data_measures_->lLimitRight = m_chart_data_wnd.get_data_offset_from_pixel(rect.right);
+			options_view_data_measures_->lLimitLeft = chart_data.get_data_offset_from_pixel(rect.left);
+			options_view_data_measures_->lLimitRight = chart_data.get_data_offset_from_pixel(rect.right);
 		}
 	// action according to option
 		switch (options_view_data_measures_->wOption)
 		{
-		// ......................  vertical tags
-		case 0: // if no VTtags, then take those of rectangle, or limits of lineview
-			m_chart_data_wnd.vertical_tags.add_l_tag(options_view_data_measures_->lLimitLeft, 0);
-			if (options_view_data_measures_->lLimitRight != options_view_data_measures_->lLimitLeft)
-				m_chart_data_wnd.vertical_tags.add_l_tag(options_view_data_measures_->lLimitRight, 0);
-		// store new VT tags into document
-			m_p_dat_->get_vt_tags_list()->copy_tag_list(&m_chart_data_wnd.vertical_tags);
+		case 0: 
+			add_vertical_cursors_from_defined_rectangle();
 			break;
 
-		// ......................  horizontal cursors
-		case 1: // if no HZcursors, take those of rectangle or limits of lineview
-			{
-				CChanlistItem* pchan = m_chart_data_wnd.get_channel_list_item(m_channel_selected);
-				m_chart_data_wnd.horizontal_tags.add_tag(m_chart_data_wnd.get_channel_list_y_pixels_to_bin(m_channel_selected, options_view_data_measures_->wLimitSup),
-				                               m_channel_selected);
-				if (options_view_data_measures_->wLimitInf != options_view_data_measures_->wLimitSup)
-					m_chart_data_wnd.horizontal_tags.add_tag(
-						m_chart_data_wnd.get_channel_list_y_pixels_to_bin(m_channel_selected, options_view_data_measures_->wLimitInf), m_channel_selected);
-				m_p_dat_->get_hz_tags_list()->copy_tag_list(&m_chart_data_wnd.horizontal_tags);
-				if (m_chart_data_wnd.horizontal_tags.get_tag_list_size() == 2)
-					set_cursor_associated_windows();
-				update_horizontal_tags_value();
-			}
+		case 1: 
+			add_horizontal_cursors_from_defined_rectangle();
 			break;
 
 		// ......................  rectangle area
-		//case 2:				// parameters are already within lineview and mdMO
+		//case 2:				// parameters are already within line_view and mdMO
 		//	break;
 		// ......................  detect stimulus and then measure
 		//case 3:				// if not displayed, plot HZ detection cursor
@@ -750,24 +765,24 @@ LRESULT ViewData::on_my_message(const WPARAM w_param, const LPARAM l_param)
 		default:
 			break;
 		}
-		m_chart_data_wnd.Invalidate();
+		chart_data.Invalidate();
 		break;
 
-	case HINT_CHANGE_HZ_TAG: // horizontal tag has changed 	lowp = tag nb
+	case HINT_CHANGE_HZ_TAG: // horizontal tag has changed 	low_p = tag nb
 		if (options_view_data_measures_->wOption == 3)
-			options_view_data_measures_->wStimulusthresh = m_chart_data_wnd.horizontal_tags.get_value_int(0);
+			options_view_data_measures_->wStimulusthresh = static_cast<WORD>(chart_data.horizontal_tags.get_value_int(0));
 		else
 			update_horizontal_tags_value();
 		break;
 
 	case HINT_VIEW_SIZE_CHANGED: // change zoom
 		update_legends(UPD_ABSCISSA | CHG_X_SCALE | UPD_ORDINATES | CHG_Y_SCALE);
-		m_chart_data_wnd.Invalidate();
+		chart_data.Invalidate();
 		set_v_bar_mode(m_v_bar_mode_);
 		break;
 
 	case HINT_WINDOW_PROPS_CHANGED:
-		options_view_data_->viewdata = *(m_chart_data_wnd.get_scope_parameters());
+		options_view_data_->viewdata = *(chart_data.get_scope_parameters());
 		break;
 	default:
 		break;
@@ -777,17 +792,17 @@ LRESULT ViewData::on_my_message(const WPARAM w_param, const LPARAM l_param)
 
 void ViewData::on_view_all_data()
 {
-	m_chart_data_wnd.get_data_from_doc(0, GetDocument()->db_get_data_len() - 1);
+	chart_data.get_data_from_doc(0, GetDocument()->db_get_data_len() - 1);
 	update_legends(UPD_ABSCISSA | CHG_X_SCALE);
 	UpdateData(FALSE);
-	m_chart_data_wnd.Invalidate();
+	chart_data.Invalidate();
 	update_file_scroll();
 }
 
 void ViewData::on_format_data_series_attributes()
 {
 	DlgDataSeriesFormat dlg;
-	dlg.m_pChartDataWnd = &m_chart_data_wnd;
+	dlg.m_pChartDataWnd = &chart_data;
 	dlg.m_pdbDoc = m_p_dat_;
 	dlg.m_listindex = m_channel_selected;
 
@@ -797,13 +812,13 @@ void ViewData::on_format_data_series_attributes()
 		m_channel_selected = dlg.m_listindex;
 	}
 	update_legends(UPD_Y_SCALE);
-	m_chart_data_wnd.Invalidate();
+	chart_data.Invalidate();
 }
 
 void ViewData::on_tools_vertical_tags()
 {
 	options_view_data_measures_->wOption = 0;
-	m_cursor_state_ = m_chart_data_wnd.set_mouse_cursor_type(CURSOR_CROSS);
+	m_cursor_state_ = chart_data.set_mouse_cursor_type(CURSOR_CROSS);
 	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state_, 0));
 	//MeasureProperties(1);
 }
@@ -811,25 +826,19 @@ void ViewData::on_tools_vertical_tags()
 void ViewData::on_tools_horizontal_cursors()
 {
 	options_view_data_measures_->wOption = 1;
-	m_cursor_state_ = m_chart_data_wnd.set_mouse_cursor_type(CURSOR_CROSS);
+	m_cursor_state_ = chart_data.set_mouse_cursor_type(CURSOR_CROSS);
 	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state_, 0));
 	//MeasureProperties(0);
 }
 
-void ViewData::on_update_tools_horizontal_cursors(CCmdUI* pCmdUI)
+void ViewData::on_update_tools_horizontal_cursors(CCmdUI* p_cmd_ui)
 {
-	// 0=vertic tags, 1=horiz lines; 2=rectangle; 3=relative to stimulus
-	//BOOL flag = (mdMO->wOption ==1  && m_cursor_state == 2);
-	//pCmdUI->Enable(flag);
-	pCmdUI->Enable(true);
+	p_cmd_ui->Enable(true);
 }
 
-void ViewData::on_update_tools_vertical_tags(CCmdUI* pCmdUI)
+void ViewData::on_update_tools_vertical_tags(CCmdUI* p_cmd_ui)
 {
-	// 0=vertic tags, 1=horiz lines; 2=rectangle; 3=relative to stimulus
-	//BOOL flag = (mdMO->wOption ==0 && m_cursor_state == 2);
-	//pCmdUI->Enable(flag);
-	pCmdUI->Enable(true);
+	p_cmd_ui->Enable(true);
 }
 
 void ViewData::on_tools_measure_mode()
@@ -877,7 +886,7 @@ void ViewData::update_gain_scroll()
 {
 	scroll_y_.SetScrollPos(
 		MulDiv(
-			m_chart_data_wnd.get_channel_list_item(m_channel_selected)->GetYextent(),
+			chart_data.get_channel_list_item(m_channel_selected)->GetYextent(),
 			100,
 			Y_EXTENT_MAX)
 		+ 50,
@@ -886,7 +895,7 @@ void ViewData::update_gain_scroll()
 
 void ViewData::on_gain_scroll(const UINT n_sb_code, const UINT n_pos)
 {
-	int y_extent = m_chart_data_wnd.get_channel_list_item(m_channel_selected)->GetYextent();
+	int y_extent = chart_data.get_channel_list_item(m_channel_selected)->GetYextent();
 	// get corresponding data
 	switch (n_sb_code)
 	{
@@ -903,7 +912,7 @@ void ViewData::on_gain_scroll(const UINT n_sb_code, const UINT n_pos)
 	case SB_RIGHT: y_extent = Y_EXTENT_MAX;
 		break;
 	case SB_THUMBPOSITION:
-	case SB_THUMBTRACK: y_extent = MulDiv(n_pos - 50, Y_EXTENT_MAX, 100);
+	case SB_THUMBTRACK: y_extent = MulDiv(static_cast<int>(n_pos) - 50, Y_EXTENT_MAX, 100);
 		break;
 	default: break;
 	}
@@ -915,13 +924,13 @@ void ViewData::on_gain_scroll(const UINT n_sb_code, const UINT n_pos)
 		update_legends(UPD_ORDINATES | CHG_Y_SCALE);
 	}
 	// update scrollBar
-	m_chart_data_wnd.Invalidate();
+	chart_data.Invalidate();
 	update_gain_scroll();
 }
 
 void ViewData::update_bias_scroll()
 {
-	const CChanlistItem* p_chan_list_item = m_chart_data_wnd.get_channel_list_item(m_channel_selected);
+	const CChanlistItem* p_chan_list_item = chart_data.get_channel_list_item(m_channel_selected);
 	const auto i_pos = (p_chan_list_item->GetYzero() - p_chan_list_item->GetDataBinZero())
 		* 100 / static_cast<int>(Y_ZERO_SPAN) + 50;
 	scroll_y_.SetScrollPos(i_pos, TRUE);
@@ -930,27 +939,20 @@ void ViewData::update_bias_scroll()
 
 void ViewData::on_bias_scroll(const UINT n_sb_code, const UINT n_pos)
 {
-	const CChanlistItem* p_chan_list_item = m_chart_data_wnd.get_channel_list_item(m_channel_selected);
+	const CChanlistItem* p_chan_list_item = chart_data.get_channel_list_item(m_channel_selected);
 	auto l_size = p_chan_list_item->GetYzero() - p_chan_list_item->GetDataBinZero();
 	const auto y_extent = p_chan_list_item->GetYextent();
 	// get corresponding data
 	switch (n_sb_code)
 	{
-	case SB_LEFT: l_size = Y_ZERO_MIN;
-		break;
-	case SB_LINELEFT: l_size -= y_extent / 100 + 1;
-		break;
-	case SB_LINERIGHT: l_size += y_extent / 100 + 1;
-		break;
-	case SB_PAGELEFT: l_size -= y_extent / 10 + 1;
-		break;
-	case SB_PAGERIGHT: l_size += y_extent / 10 + 1;
-		break;
-	case SB_RIGHT: l_size = Y_ZERO_MAX;
-		break;
+	case SB_LEFT:		l_size = Y_ZERO_MIN; break;
+	case SB_LINELEFT:	l_size -= y_extent / 100 + 1; break;
+	case SB_LINERIGHT:	l_size += y_extent / 100 + 1; break;
+	case SB_PAGELEFT:	l_size -= y_extent / 10 + 1; break;
+	case SB_PAGERIGHT:	l_size += y_extent / 10 + 1; break;
+	case SB_RIGHT:		l_size = Y_ZERO_MAX; break;
 	case SB_THUMBPOSITION:
-	case SB_THUMBTRACK: l_size = (n_pos - 50) * (Y_ZERO_SPAN / 100);
-		break;
+	case SB_THUMBTRACK: l_size = (static_cast<int>(n_pos) - 50) * (Y_ZERO_SPAN / 100); break;
 	default: break;
 	}
 
@@ -960,16 +962,16 @@ void ViewData::on_bias_scroll(const UINT n_sb_code, const UINT n_pos)
 		update_y_zero(m_channel_selected, l_size + p_chan_list_item->GetDataBinZero());
 	}
 	// update scrollBar
-	m_chart_data_wnd.Invalidate();
+	chart_data.Invalidate();
 	update_bias_scroll();
 }
 
 void ViewData::on_center_curve()
 {
-	m_chart_data_wnd.center_chan(m_channel_selected);
-	m_chart_data_wnd.Invalidate();
+	chart_data.center_chan(m_channel_selected);
+	chart_data.Invalidate();
 
-	const CChanlistItem* p_chan_list_item = m_chart_data_wnd.get_channel_list_item(m_channel_selected);
+	const CChanlistItem* p_chan_list_item = chart_data.get_channel_list_item(m_channel_selected);
 	const auto y_extent = p_chan_list_item->GetYextent();
 	update_y_extent(m_channel_selected, y_extent);
 	const auto y_zero = p_chan_list_item->GetYzero();
@@ -978,10 +980,10 @@ void ViewData::on_center_curve()
 
 void ViewData::on_gain_adjust_curve()
 {
-	m_chart_data_wnd.max_gain_chan(m_channel_selected);
-	m_chart_data_wnd.Invalidate();
+	chart_data.max_gain_chan(m_channel_selected);
+	chart_data.Invalidate();
 
-	const CChanlistItem* p_chan_list_item = m_chart_data_wnd.get_channel_list_item(m_channel_selected);
+	const CChanlistItem* p_chan_list_item = chart_data.get_channel_list_item(m_channel_selected);
 	const auto y_extent = p_chan_list_item->GetYextent();
 	update_y_extent(m_channel_selected, y_extent);
 	const auto y_zero = p_chan_list_item->GetYzero();
@@ -991,8 +993,8 @@ void ViewData::on_gain_adjust_curve()
 
 void ViewData::on_split_curves()
 {
-	const auto n_channels = m_chart_data_wnd.get_channel_list_size(); // nb of data channels
-	const auto height = m_chart_data_wnd.get_rect_height(); // height of the display area
+	const auto n_channels = chart_data.get_channel_list_size(); // nb of data channels
+	const auto height = chart_data.get_rect_height(); // height of the display area
 	const auto offset = height / n_channels; // height for each channel
 	auto zero = (height - offset) / 2; // center first curve at
 
@@ -1000,7 +1002,7 @@ void ViewData::on_split_curves()
 	int max, min;
 	for (auto i = 0; i < n_channels; i++)
 	{
-		CChanlistItem* chan = m_chart_data_wnd.get_channel_list_item(i);
+		CChanlistItem* chan = chart_data.get_channel_list_item(i);
 		chan->GetMaxMin(&max, &min);
 		const auto extent = MulDiv(max - min + 1, 100 * n_channels, 100);
 		const auto bias = MulDiv(zero, extent, height); // convert pixel into bins
@@ -1010,7 +1012,7 @@ void ViewData::on_split_curves()
 		zero -= offset; // update position of next curve
 	}
 	update_legends(CHG_Y_SCALE);
-	m_chart_data_wnd.Invalidate();
+	chart_data.Invalidate();
 }
 
 void ViewData::on_file_scroll(UINT n_sb_code, UINT n_pos)
@@ -1025,11 +1027,11 @@ void ViewData::on_file_scroll(UINT n_sb_code, UINT n_pos)
 	case SB_PAGELEFT: // scroll one page left
 	case SB_PAGERIGHT: // scroll one page right
 	case SB_RIGHT: // scroll to end right
-		b_result = m_chart_data_wnd.scroll_data_from_doc(n_sb_code);
+		b_result = chart_data.scroll_data_from_doc(n_sb_code);
 		break;
 	case SB_THUMBPOSITION: // scroll to pos = nPos
 	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
-		b_result = m_chart_data_wnd.get_data_from_doc(
+		b_result = chart_data.get_data_from_doc(
 			(n_pos * m_p_dat_->get_doc_channel_length()) / 100L);
 		break;
 	default: // NOP: set position only
@@ -1041,7 +1043,7 @@ void ViewData::on_file_scroll(UINT n_sb_code, UINT n_pos)
 	{
 		update_legends(UPD_ABSCISSA);
 		UpdateData(FALSE); // copy view object to controls
-		m_chart_data_wnd.Invalidate();
+		chart_data.Invalidate();
 	}
 	update_file_scroll();
 }
@@ -1064,11 +1066,11 @@ void ViewData::OnHScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar* p_s
 	case SB_THUMBTRACK:
 		file_scroll_bar_.GetScrollInfo(&file_scroll_bar_infos_, SIF_ALL);
 		l_first = file_scroll_bar_infos_.nPos;
-		l_last = l_first + file_scroll_bar_infos_.nPage - 1;
+		l_last = l_first + static_cast<int>(file_scroll_bar_infos_.nPage) - 1;
 		m_time_first_abscissa = static_cast<float>(l_first) / m_sampling_rate_;
 		m_time_last_abscissa = static_cast<float>(l_last) / m_sampling_rate_;
-		m_chart_data_wnd.get_data_from_doc(l_first, l_last);
-		m_chart_data_wnd.Invalidate();
+		chart_data.get_data_from_doc(l_first, l_last);
+		chart_data.Invalidate();
 		cs.Format(_T("%.3f"), m_time_first_abscissa);
 		SetDlgItemText(IDC_TIMEFIRST, cs);
 		cs.Format(_T("%.3f"), m_time_last_abscissa);
@@ -1078,12 +1080,12 @@ void ViewData::OnHScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar* p_s
 	case SB_THUMBPOSITION:
 		file_scroll_bar_.GetScrollInfo(&file_scroll_bar_infos_, SIF_ALL);
 		l_first = file_scroll_bar_infos_.nPos;
-		l_last = l_first + file_scroll_bar_infos_.nPage - 1;
-		if (m_chart_data_wnd.get_data_from_doc(l_first, l_last))
+		l_last =  l_first + static_cast<int>(file_scroll_bar_infos_.nPage) - 1;
+		if (chart_data.get_data_from_doc(l_first, l_last))
 		{
 			update_legends(UPD_ABSCISSA);
 			UpdateData(FALSE); // copy view object to controls
-			m_chart_data_wnd.Invalidate();
+			chart_data.Invalidate();
 		}
 
 		break;
@@ -1103,21 +1105,21 @@ void ViewData::measure_properties(const int item)
 	switch (options_view_data_measures_->wOption)
 	{
 	case 0:
-		m_p_dat_->get_vt_tags_list()->copy_tag_list(&m_chart_data_wnd.vertical_tags);
+		m_p_dat_->get_vt_tags_list()->copy_tag_list(&chart_data.vertical_tags);
 		break;
 	case 1:
-		m_p_dat_->get_hz_tags_list()->copy_tag_list(&m_chart_data_wnd.horizontal_tags);
+		m_p_dat_->get_hz_tags_list()->copy_tag_list(&chart_data.horizontal_tags);
 		break;
 	case 3:
-		options_view_data_measures_->wStimuluschan = m_chart_data_wnd.horizontal_tags.get_channel(0);
-		options_view_data_measures_->wStimulusthresh = m_chart_data_wnd.horizontal_tags.get_value_int(0);
+		options_view_data_measures_->wStimuluschan = static_cast<WORD>(chart_data.horizontal_tags.get_channel(0));
+		options_view_data_measures_->wStimulusthresh = static_cast<WORD>(chart_data.horizontal_tags.get_value_int(0));
 		break;
 	default: break;
 	}
 
 	// call routine and pass parameters
 	CMeasureProperties dlg(nullptr, item);
-	dlg.m_pChartDataWnd = &m_chart_data_wnd;
+	dlg.m_pChartDataWnd = &chart_data;
 	dlg.m_samplingrate = m_sampling_rate_;
 	dlg.m_pdatDoc = m_p_dat_;
 	dlg.m_pdbDoc = GetDocument();
@@ -1125,7 +1127,7 @@ void ViewData::measure_properties(const int item)
 	dlg.m_currentchan = m_channel_selected;
 
 	dlg.DoModal();
-	m_chart_data_wnd.Invalidate();
+	chart_data.Invalidate();
 	set_cursor_associated_windows();
 }
 
@@ -1150,10 +1152,10 @@ void ViewData::adc_on_hardware_define_experiment()
 
 	if (IDOK == dlg.DoModal())
 	{
-		auto p_dbwave_doc = GetDocument();
+		const auto p_dbwave_doc = GetDocument();
 		const auto record_id = p_dbwave_doc->db_get_current_record_id();
 		GetDocument()->update_all_views_db_wave(nullptr, HINT_DOC_HAS_CHANGED, nullptr);
-		p_dbwave_doc->db_move_to_id(record_id);
+		BOOL success = p_dbwave_doc->db_move_to_id(record_id);
 		p_dbwave_doc->update_all_views_db_wave(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 	}
 }
@@ -1164,14 +1166,14 @@ void ViewData::on_format_x_scale()
 	DlgDataViewAbscissa dlg;
 	dlg.m_firstAbscissa = m_time_first_abscissa;
 	dlg.m_lastAbscissa = m_time_last_abscissa;
-	dlg.m_veryLastAbscissa = static_cast<float>(m_chart_data_wnd.get_document_last()) / m_sampling_rate_;
+	dlg.m_veryLastAbscissa = static_cast<float>(chart_data.get_document_last()) / m_sampling_rate_;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
 		m_time_first_abscissa = dlg.m_firstAbscissa * dlg.m_abscissaScale;
 		m_time_last_abscissa = dlg.m_lastAbscissa * dlg.m_abscissaScale;
-		m_chart_data_wnd.get_data_from_doc(static_cast<long>(m_time_first_abscissa * m_sampling_rate_),
+		chart_data.get_data_from_doc(static_cast<long>(m_time_first_abscissa * m_sampling_rate_),
 		                              static_cast<long>(m_time_last_abscissa * m_sampling_rate_));
 		update_legends(UPD_ABSCISSA | UPD_X_SCALE | CHG_X_BAR);
 	}
@@ -1200,12 +1202,12 @@ void ViewData::compute_printer_page_size()
 	m_print_rect_.top = options_view_data_->topPageMargin;
 }
 
-void ViewData::print_file_bottom_page(CDC* p_dc, CPrintInfo* pInfo)
+void ViewData::print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_info)
 {
 	auto t = CTime::GetCurrentTime();
 	TCHAR ch[256];
 	wsprintf(ch, _T("  page %d:%d %d-%d-%d"), // %d:%d",
-	         pInfo->m_nCurPage, pInfo->GetMaxPage(),
+	         p_info->m_nCurPage, p_info->GetMaxPage(),
 	         t.GetDay(), t.GetMonth(), t.GetYear());
 
 	const auto cs_dat_file = GetDocument()->db_get_current_dat_file_name();
@@ -1244,10 +1246,10 @@ BOOL ViewData::get_file_series_index_from_page(int page, int& file_number, long&
 	if (options_view_data_->bPrintSelection) // current file if selection only
 		file_number = m_file_0_;
 	else
-		GetDocument()->db_move_first();
+		BOOL success = GetDocument()->db_move_first();
 
 	auto very_last = m_l_print_first_ + m_l_print_len_;
-	if (options_view_data_->bEntireRecord)
+	if (options_view_data_->b_complete_record)
 		very_last = m_p_dat_->get_doc_channel_length() - 1;
 
 	for (auto row = 0; row < total_rows; row++)
@@ -1288,7 +1290,7 @@ CString ViewData::get_file_infos()
 	return str_comment;
 }
 
-CString ViewData::print_bars(CDC* p_dc, const CRect* rect)
+CString ViewData::print_bars(CDC* p_dc, const CRect* rect) const
 {
 	CString str_comment;
 	const CString rc(_T("\n"));
@@ -1306,12 +1308,12 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect)
 	auto y_bar_end = bar_origin;
 
 	// same len ratio as displayed on view_data
-	const auto horizontal_bar = m_chart_data_wnd.x_ruler.GetScaleUnitPixels(m_chart_data_wnd.get_rect_width());
+	const auto horizontal_bar = chart_data.x_ruler.GetScaleUnitPixels(chart_data.get_rect_width());
 	ASSERT(horizontal_bar > 0);
-	const auto vert_bar = m_chart_data_wnd.y_ruler.GetScaleUnitPixels(m_chart_data_wnd.get_rect_height());
+	const auto vert_bar = chart_data.y_ruler.GetScaleUnitPixels(chart_data.get_rect_height());
 	ASSERT(vert_bar > 0);
 
-	auto cs_comment = convert_file_index(m_chart_data_wnd.get_data_first_index(), m_chart_data_wnd.get_data_last_index());
+	auto cs_comment = convert_file_index(chart_data.get_data_first_index(), chart_data.get_data_last_index());
 	if (options_view_data_->bTimeScaleBar)
 	{
 		// print horizontal bar
@@ -1321,7 +1323,7 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect)
 
 		// read text from control edit
 		CString cs;
-		cs.Format(_T(" bar= %g"), m_chart_data_wnd.x_ruler.GetScaleIncrement());
+		cs.Format(_T(" bar= %g"), chart_data.x_ruler.GetScaleIncrement());
 		cs_comment += cs;
 		str_comment += cs_comment + rc;
 	}
@@ -1336,7 +1338,7 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect)
 	// comments, bar value and chan settings for each channel
 	if (options_view_data_->bChansComment || options_view_data_->bVoltageScaleBar || options_view_data_->bChanSettings)
 	{
-		const auto channels_list_size = m_chart_data_wnd.get_channel_list_size(); 
+		const auto channels_list_size = chart_data.get_channel_list_size(); 
 		for (auto i_chan = 0; i_chan < channels_list_size; i_chan++) // loop
 		{
 			wsprintf(lpsz_val, _T("chan#%i "), i_chan); 
@@ -1344,8 +1346,8 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect)
 			if (options_view_data_->bVoltageScaleBar) 
 			{
 				cs_unit = _T(" V"); 
-				auto z = static_cast<float>(m_chart_data_wnd.get_rect_height()) / 5
-					* m_chart_data_wnd.get_channel_list_volts_per_pixel(i_chan);
+				auto z = static_cast<float>(chart_data.get_rect_height()) / 5
+					* chart_data.get_channel_list_volts_per_pixel(i_chan);
 				const auto x = CNiceUnit::change_unit(z, &cs_unit, &x_scale_factor); 
 
 				// approximate
@@ -1371,7 +1373,7 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect)
 			if (options_view_data_->bChansComment)
 			{
 				str_comment += tab;
-				str_comment += m_chart_data_wnd.get_channel_list_item(i_chan)->GetComment();
+				str_comment += chart_data.get_channel_list_item(i_chan)->GetComment();
 			}
 			str_comment += rc;
 
@@ -1379,7 +1381,7 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect)
 			if (options_view_data_->bChanSettings)
 			{
 				CString cs;
-				const WORD chan_count = m_chart_data_wnd.get_channel_list_item(i_chan)->GetSourceChan();
+				const WORD chan_count = static_cast<WORD>(chart_data.get_channel_list_item(i_chan)->GetSourceChan());
 				const auto channels_array = m_p_dat_->get_wave_channels_array();
 				const auto p_chan = channels_array->get_p_channel(chan_count);
 				cs.Format(_T("headstage=%s gain=%.0f  filter= %s - %i Hz"), (LPCTSTR)p_chan->am_csheadstage,
@@ -1402,8 +1404,8 @@ BOOL ViewData::OnPreparePrinting(CPrintInfo* p_info)
 		|| options_view_data_->vertRes != p_info->m_rectDraw.Height()) // by caller?
 		compute_printer_page_size();
 
-	auto npages = print_get_n_pages();
-	p_info->SetMaxPage(npages); //one page printing/preview
+	auto pages_count = print_get_n_pages();
+	p_info->SetMaxPage(pages_count); //one-page printing/preview
 	p_info->m_nNumPreviewPages = 1; // preview 1 pages at a time
 	p_info->m_pPD->m_pd.Flags &= ~PD_NOSELECTION; // allow print only selection
 
@@ -1419,8 +1421,8 @@ BOOL ViewData::OnPreparePrinting(CPrintInfo* p_info)
 	if (options_view_data_->bPrintSelection != p_info->m_pPD->PrintSelection())
 	{
 		options_view_data_->bPrintSelection = p_info->m_pPD->PrintSelection();
-		npages = print_get_n_pages();
-		p_info->SetMaxPage(npages);
+		pages_count = print_get_n_pages();
+		p_info->SetMaxPage(pages_count);
 	}
 
 	return TRUE;
@@ -1434,34 +1436,34 @@ int ViewData::print_get_n_pages()
 	if (m_nb_rows_per_page_ == 0) // prevent zero pages
 		m_nb_rows_per_page_ = 1;
 
-	int ntotal_rows; // number of rectangles -- or nb of rows
-	auto p_dbwave_doc = GetDocument();
+	int total_rows; // number of rectangles -- or nb of rows
+	const auto p_dbwave_doc = GetDocument();
 
-	// compute number of rows according to bmultirow & bentirerecord flag
-	m_l_print_first_ = m_chart_data_wnd.get_data_first_index();
-	m_l_print_len_ = m_chart_data_wnd.get_data_last_index() - m_l_print_first_ + 1;
+	// compute number of rows according to b_multi_row & b_entire_record flag
+	m_l_print_first_ = chart_data.get_data_first_index();
+	m_l_print_len_ = chart_data.get_data_last_index() - m_l_print_first_ + 1;
 	m_file_0_ = GetDocument()->db_get_current_record_position();
 	ASSERT(m_file_0_ >= 0);
 	m_files_count_ = 1;
-	auto ifile0 = m_file_0_;
-	auto ifile1 = m_file_0_;
+	auto file0 = m_file_0_;
+	auto file1 = m_file_0_;
 	if (!options_view_data_->bPrintSelection)
 	{
-		ifile0 = 0;
+		file0 = 0;
 		m_files_count_ = p_dbwave_doc->db_get_n_records();
-		ifile1 = m_files_count_;
+		file1 = m_files_count_;
 	}
 
-	// only one row per file
-	if (!options_view_data_->bMultirowDisplay || !options_view_data_->bEntireRecord)
-		ntotal_rows = m_files_count_;
+	// one row per file
+	if (!options_view_data_->b_multiple_rows || !options_view_data_->b_complete_record)
+		total_rows = m_files_count_;
 
-	// multirows per file
+	// multiple rows per file
 	else
 	{
-		ntotal_rows = 0;
-		p_dbwave_doc->db_set_current_record_position(ifile0);
-		for (auto i = ifile0; i < ifile1; i++, p_dbwave_doc->db_move_next())
+		total_rows = 0;
+		BOOL success = p_dbwave_doc->db_set_current_record_position(file0);
+		for (auto i = file0; i < file1; i++, p_dbwave_doc->db_move_next())
 		{
 			// get size of document for all files
 			auto len = p_dbwave_doc->db_get_data_len();
@@ -1472,33 +1474,33 @@ int ViewData::print_get_n_pages()
 				p_dbwave_doc->db_set_data_len(len);
 			}
 			len -= m_l_print_first_;
-			auto nrows = len / m_l_print_len_; // how many rows for this file?
-			if (len > nrows * m_l_print_len_) // remainder?
-				nrows++;
-			ntotal_rows += static_cast<int>(nrows); // update nb of rows
+			auto row_count = len / m_l_print_len_; // how many rows for this file?
+			if (len > row_count * m_l_print_len_) 
+				row_count++;
+			total_rows += static_cast<int>(row_count);
 		}
 	}
 
 	if (m_file_0_ >= 0)
 	{
-		p_dbwave_doc->db_set_current_record_position(m_file_0_);
-		p_dbwave_doc->open_current_data_file();
+		const BOOL success = p_dbwave_doc->db_set_current_record_position(m_file_0_);
+		if (success) 
+			p_dbwave_doc->open_current_data_file();
 	}
 
-	// npages
-	int npages = ntotal_rows / m_nb_rows_per_page_;
-	if (ntotal_rows > m_nb_rows_per_page_ * npages)
-		npages++;
+	int pages_count = total_rows / m_nb_rows_per_page_;
+	if (total_rows > m_nb_rows_per_page_ * pages_count)
+		pages_count++;
 
-	return npages;
+	return pages_count;
 }
 
 void ViewData::OnBeginPrinting(CDC* p_dc, CPrintInfo* p_info)
 {
 	m_b_is_printing_ = TRUE;
-	m_l_first_0_ = m_chart_data_wnd.get_data_first_index();
-	m_l_last0_ = m_chart_data_wnd.get_data_last_index();
-	m_pixels_count_0_ = m_chart_data_wnd.get_rect_width();
+	m_l_first_0_ = chart_data.get_data_first_index();
+	m_l_last0_ = chart_data.get_data_last_index();
+	m_pixels_count_0_ = chart_data.get_rect_width();
 
 	//---------------------init objects-------------------------------------
 	memset(&m_log_font_, 0, sizeof(LOGFONT)); // prepare font
@@ -1528,21 +1530,21 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 	print_file_bottom_page(p_dc, p_info); // print bottom - text, date, etc
 
 	// --------------------- load data corresponding to the first row of current page
-	int filenumber; // file number and file index
+	int file_number; // file number and file index
 	long l_first; // index first data point / first file
 	auto very_last = m_l_print_first_ + m_l_print_len_; // index last data point / current file
-	const int curpage = p_info->m_nCurPage; // get current page number
-	get_file_series_index_from_page(curpage, filenumber, l_first);
+	const int current_page = static_cast<int>(p_info->m_nCurPage); // get current page number
+	get_file_series_index_from_page(current_page, file_number, l_first);
 	if (l_first < GetDocument()->db_get_data_len() - 1)
 		update_file_parameters();
-	if (options_view_data_->bEntireRecord)
+	if (options_view_data_->b_complete_record)
 		very_last = GetDocument()->db_get_data_len() - 1;
 
-	SCOPESTRUCT oldparms;
-	SCOPESTRUCT* p_newparms = m_chart_data_wnd.get_scope_parameters();
-	oldparms = *p_newparms;
-	p_newparms->bDrawframe = options_view_data_->bFrameRect;
-	p_newparms->bClipRect = options_view_data_->bClipRect;
+	SCOPESTRUCT old_scope_structure;
+	SCOPESTRUCT* scope_structure = chart_data.get_scope_parameters();
+	old_scope_structure = *scope_structure;
+	scope_structure->bDrawframe = options_view_data_->bFrameRect;
+	scope_structure->bClipRect = options_view_data_->bClipRect;
 
 	// loop through all files	--------------------------------------------------------
 	const int old_dc = p_dc->SaveDC(); // save DC
@@ -1560,9 +1562,9 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 		{
 			if (l_last > very_last) // check end across file length
 				l_last = very_last;
-			m_chart_data_wnd.get_data_from_doc(l_first, l_last); // load data from file
+			chart_data.get_data_from_doc(l_first, l_last); // load data from file
 			update_channels_display_parameters();
-			m_chart_data_wnd.print(p_dc, &r_where); // print data
+			chart_data.print(p_dc, &r_where); // print data
 		}
 
 		// update display rectangle for next row
@@ -1581,7 +1583,7 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 			cs_comment += print_bars(p_dc, &comment_rect); // bars and bar legends
 		}
 		else // other rows: time intervals only
-			cs_comment = convert_file_index(m_chart_data_wnd.get_data_first_index(), m_chart_data_wnd.get_data_last_index());
+			cs_comment = convert_file_index(chart_data.get_data_first_index(), chart_data.get_data_last_index());
 
 		// print comments stored into cs_comment
 		comment_rect.OffsetRect(options_view_data_->textseparator + comment_rect.Width(), 0);
@@ -1594,13 +1596,13 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 		p_dc->SetTextAlign(ui_flag);
 
 		// update file parameters for next row --------------------------------------------
-		const auto ifile = filenumber;
-		if (!print_get_next_row(filenumber, l_first, very_last))
+		const auto i_file = file_number;
+		if (!print_get_next_row(file_number, l_first, very_last))
 		{
-			i = m_nb_rows_per_page_;
+			//i = m_nb_rows_per_page_;
 			break;
 		}
-		if (ifile != filenumber)
+		if (i_file != file_number)
 			update_file_parameters(FALSE);
 	}
 	p_dc->RestoreDC(old_dc); // restore Display context
@@ -1608,21 +1610,21 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 	// end of file loop : restore initial conditions
 	if (m_p_old_font_ != nullptr)
 		p_dc->SelectObject(m_p_old_font_);
-	*p_newparms = oldparms;
+	*scope_structure = old_scope_structure;
 }
 
 BOOL ViewData::print_get_next_row(int& file_number, long& l_first, long& very_last)
 {
-	if (!options_view_data_->bMultirowDisplay || !options_view_data_->bEntireRecord)
+	if (!options_view_data_->b_multiple_rows || !options_view_data_->b_complete_record)
 	{
 		file_number++;
 		if (file_number >= m_files_count_)
 			return FALSE;
 
-		GetDocument()->db_move_next();
-		if (l_first < GetDocument()->db_get_data_len() - 1)
+		const BOOL success = GetDocument()->db_move_next();
+		if (success && l_first < GetDocument()->db_get_data_len() - 1)
 		{
-			if (options_view_data_->bEntireRecord)
+			if (options_view_data_->b_complete_record)
 				very_last = GetDocument()->db_get_data_len() - 1;
 		}
 	}
@@ -1635,9 +1637,12 @@ BOOL ViewData::print_get_next_row(int& file_number, long& l_first, long& very_la
 			if (file_number >= m_files_count_) // last file ??
 				return FALSE;
 
-			GetDocument()->db_move_next();
-			very_last = GetDocument()->db_get_data_len() - 1;
-			l_first = m_l_print_first_;
+			const BOOL success = GetDocument()->db_move_next();
+			if (success)
+			{
+				very_last = GetDocument()->db_get_data_len() - 1;
+				l_first = m_l_print_first_;
+			}
 		}
 	}
 	return TRUE;
@@ -1647,10 +1652,12 @@ void ViewData::OnEndPrinting(CDC* p_dc, CPrintInfo* p_info)
 {
 	m_font_print_.DeleteObject();
 	m_b_is_printing_ = FALSE;
-	GetDocument()->db_set_current_record_position(m_file_0_);
-	m_chart_data_wnd.resize_channels(m_pixels_count_0_, 0);
-	m_chart_data_wnd.get_data_from_doc(m_l_first_0_, m_l_last0_);
-	update_file_parameters();
+	if (GetDocument()->db_set_current_record_position(m_file_0_))
+	{
+		chart_data.resize_channels(m_pixels_count_0_, 0);
+		chart_data.get_data_from_doc(m_l_first_0_, m_l_last0_);
+		update_file_parameters();
+	}
 }
 
 void ViewData::on_en_change_time_first()
@@ -1658,10 +1665,10 @@ void ViewData::on_en_change_time_first()
 	if (mm_time_first_abscissa.m_bEntryDone)
 	{
 		mm_time_first_abscissa.OnEnChange(this, m_time_first_abscissa, 1.f, -1.f);
-		m_chart_data_wnd.get_data_from_doc(static_cast<long>(m_time_first_abscissa * m_sampling_rate_),
+		chart_data.get_data_from_doc(static_cast<long>(m_time_first_abscissa * m_sampling_rate_),
 		                              static_cast<long>(m_time_last_abscissa * m_sampling_rate_));
 		update_legends(UPD_ABSCISSA | CHG_X_SCALE);
-		m_chart_data_wnd.Invalidate();
+		chart_data.Invalidate();
 	}
 }
 
@@ -1670,61 +1677,61 @@ void ViewData::on_en_change_time_last()
 	if (mm_time_last_abscissa.m_bEntryDone)
 	{
 		mm_time_last_abscissa.OnEnChange(this, m_time_last_abscissa, 1.f, -1.f);
-		m_chart_data_wnd.get_data_from_doc(static_cast<long>(m_time_first_abscissa * m_sampling_rate_),
+		chart_data.get_data_from_doc(static_cast<long>(m_time_first_abscissa * m_sampling_rate_),
 		                              static_cast<long>(m_time_last_abscissa * m_sampling_rate_));
 		update_legends(UPD_ABSCISSA | CHG_X_SCALE);
-		m_chart_data_wnd.Invalidate();
+		chart_data.Invalidate();
 	}
 }
 
 void ViewData::update_file_scroll()
 {
-	file_scroll_bar_infos_.fMask = SIF_ALL | SIF_PAGE | SIF_POS;
+	file_scroll_bar_infos_.fMask = SIF_ALL | SIF_PAGE| SIF_POS;
 	file_scroll_bar_infos_.nMin = 0;
 	file_scroll_bar_infos_.nMax = GetDocument()->db_get_data_len();
-	file_scroll_bar_infos_.nPos = m_chart_data_wnd.get_data_first_index();
-	file_scroll_bar_infos_.nPage = m_chart_data_wnd.get_data_last_index() - m_chart_data_wnd.get_data_first_index() + 1;
+	file_scroll_bar_infos_.nPos = chart_data.get_data_first_index();
+	file_scroll_bar_infos_.nPage = chart_data.get_data_last_index() - chart_data.get_data_first_index() + 1;
 	file_scroll_bar_.SetScrollInfo(&file_scroll_bar_infos_);
 }
 
 void ViewData::on_cbn_sel_change_combo_chan()
 {
-	const auto ichan = m_combo_select_chan.GetCurSel();
-	if (ichan < m_chart_data_wnd.get_channel_list_size())
+	const auto i_chan = m_combo_select_chan.GetCurSel();
+	if (i_chan < chart_data.get_channel_list_size())
 	{
 		m_bCommonScale = FALSE;
-		update_channel(ichan);
+		update_channel(i_chan);
 	}
 	else
 	{
 		m_bCommonScale = TRUE;
 		m_channel_selected = 0;
-		CChanlistItem* pchan = m_chart_data_wnd.get_channel_list_item(0);
-		const auto yextent = pchan->GetYextent();
-		update_y_extent(0, yextent);
-		const auto yzero = pchan->GetYzero();
-		update_y_zero(0, yzero);
+		const CChanlistItem* p_chan = chart_data.get_channel_list_item(0);
+		const auto y_extent = p_chan->GetYextent();
+		update_y_extent(0, y_extent);
+		const auto y_zero = p_chan->GetYzero();
+		update_y_zero(0, y_zero);
 	}
 }
 
-void ViewData::update_y_extent(int i_chan, int y_extent)
+void ViewData::update_y_extent(const int i_chan, const int y_extent)
 {
-	CChanlistItem* pchan = m_chart_data_wnd.get_channel_list_item(i_chan);
-	pchan->SetYextent(y_extent);
-	if (m_combo_select_chan.GetCurSel() == m_chart_data_wnd.get_channel_list_size())
+	CChanlistItem* p_chan = chart_data.get_channel_list_item(i_chan);
+	p_chan->SetYextent(y_extent);
+	if (m_combo_select_chan.GetCurSel() == chart_data.get_channel_list_size())
 	{
-		const auto yVoltsextent = pchan->GetVoltsperDataBin() * y_extent;
-		m_chart_data_wnd.set_channel_list_volts_extent(-1, &yVoltsextent);
+		const auto y_volts_extent = p_chan->GetVoltsperDataBin() * static_cast<float>(y_extent);
+		chart_data.set_channel_list_volts_extent(-1, &y_volts_extent);
 	}
 }
 
-void ViewData::update_y_zero(int i_chan, int y_bias)
+void ViewData::update_y_zero(const int i_chan, const int y_bias)
 {
-	CChanlistItem* chan = m_chart_data_wnd.get_channel_list_item(i_chan);
+	CChanlistItem* chan = chart_data.get_channel_list_item(i_chan);
 	chan->SetYzero(y_bias);
-	if (m_combo_select_chan.GetCurSel() == m_chart_data_wnd.get_channel_list_size())
+	if (m_combo_select_chan.GetCurSel() == chart_data.get_channel_list_size())
 	{
-		const auto yVoltsextent = chan->GetVoltsperDataBin() * y_bias;
-		m_chart_data_wnd.set_channel_list_volts_zero(-1, &yVoltsextent);
+		const auto y_volts_extent = chan->GetVoltsperDataBin() * static_cast<float>(y_bias);
+		chart_data.set_channel_list_volts_zero(-1, &y_volts_extent);
 	}
 }

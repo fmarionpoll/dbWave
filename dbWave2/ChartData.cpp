@@ -57,7 +57,7 @@ int ChartData::add_channel_list_item(int ns, int mode)
 	// create new Envelope and store pointer into Envelopes_list
 	auto span = 0;
 	if (m_p_data_file_ != nullptr)
-		span = m_p_data_file_->get_transformed_data_span(mode);
+		span = AcqDataDoc::get_transformed_data_span(mode);
 	auto* p_envelope_y = new CEnvelope(static_cast<WORD>(m_n_pixels_), m_data_per_pixel_, ns, mode, span);
 	ASSERT(p_envelope_y != NULL);
 	const auto j = envelope_ptr_array_.Add(p_envelope_y);
@@ -85,7 +85,7 @@ int ChartData::add_channel_list_item(int ns, int mode)
 		update_chan_list_max_span(); 
 		if (mode > 0) 
 			p_chan_list_item->dl_comment = 
-			(m_p_data_file_->get_transform_name(mode)).Left(8) + ": " + p_chan_list_item->dl_comment;
+			(AcqDataDoc::get_transform_name(mode)).Left(8) + ": " + p_chan_list_item->dl_comment;
 	}
 	return index_new_chan;
 }
@@ -152,13 +152,13 @@ void ChartData::update_chan_list_from_doc()
 		const auto p_ord = chan_list_item->pEnvelopeOrdinates;
 		const auto ns = p_ord->get_source_chan();
 		const auto mode = p_ord->get_source_mode();
-		p_ord->set_doc_buffer_span(m_p_data_file_->get_transformed_data_span(mode));
+		p_ord->set_doc_buffer_span(AcqDataDoc::get_transformed_data_span(mode));
 		const auto wave_chan_array = m_p_data_file_->get_wave_channels_array();
 		const auto p_chan = wave_chan_array->get_p_channel(ns);
 		chan_list_item->dl_comment = p_chan->am_csComment;
 		if (mode > 0)
 			chan_list_item->dl_comment = 
-			 (m_p_data_file_->get_transform_name(mode)).Left(6) + ": " + chan_list_item->dl_comment;
+			 (AcqDataDoc::get_transform_name(mode)).Left(6) + ": " + chan_list_item->dl_comment;
 		update_gain_settings(i);
 	}
 	update_chan_list_max_span(); 
@@ -174,7 +174,7 @@ void ChartData::update_gain_settings(const int i_chan)
 	m_p_data_file_->get_volts_per_bin(ns, &doc_volts_per_bin, mode);
 	const auto volts_per_data_bin = p_chan->GetVoltsperDataBin();
 	const auto wave_format = m_p_data_file_->get_wave_format();
-	if (doc_volts_per_bin != volts_per_data_bin)
+	if (doc_volts_per_bin > volts_per_data_bin || doc_volts_per_bin < volts_per_data_bin)
 	{
 		p_chan->SetDataBinFormat(wave_format->bin_zero, wave_format->bin_span);
 		p_chan->SetDataVoltsFormat(doc_volts_per_bin, wave_format->full_scale_volts);
@@ -206,7 +206,7 @@ int ChartData::set_channel_list_source_channel(const int i_channel, const int ac
 	const auto p_channel = wave_chan_array->get_p_channel(acq_channel);
 	chan_list_item->dl_comment = p_channel->am_csComment;
 	if (mode > 0)
-		chan_list_item->dl_comment = (m_p_data_file_->get_transform_name(mode)).Left(6) + _T(": ") + chan_list_item->
+		chan_list_item->dl_comment = (AcqDataDoc::get_transform_name(mode)).Left(6) + _T(": ") + chan_list_item->
 			dl_comment;
 	update_gain_settings(i_channel);
 	return acq_channel;
@@ -214,17 +214,15 @@ int ChartData::set_channel_list_source_channel(const int i_channel, const int ac
 
 void ChartData::set_channel_list_y(const int i_chan, int acq_chan, const int transform)
 {
-	// change channel
 	const auto chan_list_item = chan_list_item_ptr_array_[i_chan];
 	chan_list_item->SetOrdinatesSourceData(acq_chan, transform);
-	// modify comment
-	const auto p_channelArray = m_p_data_file_->get_wave_channels_array();
-	if (acq_chan >= p_channelArray->chan_array_get_size())
+	const auto p_channel_array = m_p_data_file_->get_wave_channels_array();
+	if (acq_chan >= p_channel_array->chan_array_get_size())
 		acq_chan = 0;
-	const auto p_channel = p_channelArray->get_p_channel(acq_chan);
+	const auto p_channel = p_channel_array->get_p_channel(acq_chan);
 	chan_list_item->dl_comment = p_channel->am_csComment;
 	if (transform > 0)
-		chan_list_item->dl_comment = (m_p_data_file_->get_transform_name(transform)).Left(6) + _T(": ") + chan_list_item->
+		chan_list_item->dl_comment = (AcqDataDoc::get_transform_name(transform)).Left(6) + _T(": ") + chan_list_item->
 			dl_comment;
 }
 
@@ -280,8 +278,8 @@ void ChartData::set_channel_list_volts_zero(const int i_chan, const float* p_val
 int ChartData::set_channel_list_transform_mode(const int i_chan, const int i_mode)
 {
 	// check if transform is allowed
-	if (!m_p_data_file_->is_wb_transform_allowed(i_mode) || // ? is transform allowed
-		!m_p_data_file_->init_wb_transform_buffer()) // ? is init OK
+	if (!AcqDataDoc::is_wb_transform_allowed(i_mode) ||
+		!m_p_data_file_->init_wb_transform_buffer()) 
 	{
 		AfxMessageBox(IDS_LNVERR02, MB_OK);
 		return -1;
@@ -291,14 +289,14 @@ int ChartData::set_channel_list_transform_mode(const int i_chan, const int i_mod
 	const auto chan_list_item = chan_list_item_ptr_array_[i_chan];
 	const auto p_ord = chan_list_item->pEnvelopeOrdinates;
 	const auto ns = p_ord->get_source_chan();
-	p_ord->set_source_mode(i_mode, m_p_data_file_->get_transformed_data_span(i_mode));
+	p_ord->set_source_mode(i_mode, AcqDataDoc::get_transformed_data_span(i_mode));
 
 	// modify comment
 	const auto wave_chan_array = m_p_data_file_->get_wave_channels_array();
 	const auto p_channel = wave_chan_array->get_p_channel(ns);
 	chan_list_item->dl_comment = p_channel->am_csComment;
 	if (i_mode > 0)
-		chan_list_item->dl_comment = (m_p_data_file_->get_transform_name(i_mode)).Left(8)
+		chan_list_item->dl_comment = (AcqDataDoc::get_transform_name(i_mode)).Left(8)
 			+ _T(": ") + chan_list_item->dl_comment;
 	update_gain_settings(i_chan);
 	update_chan_list_max_span();
@@ -839,18 +837,16 @@ void ChartData::plot_data_to_dc(CDC* p_dc)
 	p_dc->SetViewportOrg(m_display_rect_.left, m_display_rect_.Height() / 2);
 	p_dc->SetViewportExt(m_display_rect_.Width(), -m_display_rect_.Height());
 	p_dc->SetWindowExt(m_display_rect_.Width(), m_display_rect_.Height());
-
 	p_dc->SetWindowOrg(0, 0);
 
 	const auto y_ve = m_display_rect_.Height();
 	CEnvelope* p_x = nullptr;
 	auto n_elements = 0;
-
 	constexpr auto color = BLACK_COLOR;
 	const auto old_pen = p_dc->SelectObject(&pen_table_[color]);
 
 	// display loop:
-	for (auto i_channel = chan_list_item_ptr_array_.GetUpperBound(); i_channel >= 0; i_channel--) // scan all channels
+	for (auto i_channel = chan_list_item_ptr_array_.GetUpperBound(); i_channel >= 0; i_channel--) 
 	{
 		const auto chan_list_item = chan_list_item_ptr_array_[i_channel];
 		const auto w_ext = chan_list_item->GetYextent();
@@ -868,8 +864,8 @@ void ChartData::plot_data_to_dc(CDC* p_dc)
 			p_x->export_to_abscissa(m_poly_points_);
 		}
 
-		const auto pY = chan_list_item->pEnvelopeOrdinates;
-		pY->export_to_ordinates(m_poly_points_);
+		const auto p_y = chan_list_item->pEnvelopeOrdinates;
+		p_y->export_to_ordinates(m_poly_points_);
 
 		for (auto j = 0; j < n_elements; j++)
 		{
@@ -966,8 +962,8 @@ void ChartData::print(CDC* p_dc, const CRect* p_rect, const BOOL b_center_line)
 	const auto old_rect = m_client_rect_;
 
 	// prepare DC
-	const auto old_map_mode = p_dc->SetMapMode(MM_TEXT); // change map mode to text (1 pixel = 1 logical point)
-	m_client_rect_ = *p_rect; //CRect(0,0, pRect->GetRectWidth(), pRect->GetRectHeight());
+	const auto old_map_mode = p_dc->SetMapMode(MM_TEXT); 
+	m_client_rect_ = *p_rect; 
 	adjust_display_rect(p_rect);
 	erase_background(p_dc);
 	// clip curves
@@ -1016,13 +1012,13 @@ void ChartData::print(CDC* p_dc, const CRect* p_rect, const BOOL b_center_line)
 		// display: load abscissa   ----------------------------------------------
 		if (p_x != chan_list_item->pEnvelopeAbscissa)
 		{
-			p_x = chan_list_item->pEnvelopeAbscissa; // load pointer to abscissa
-			p_x->export_to_abscissa(m_poly_points_); // copy abscissa to polypts buffer
-			n_elements = p_x->get_envelope_size(); // update nb of elements
+			p_x = chan_list_item->pEnvelopeAbscissa; 
+			p_x->export_to_abscissa(m_poly_points_);
+			n_elements = p_x->get_envelope_size(); 
 		}
 		// display: load ordinates ---------------------------------------------
 		const auto p_y = chan_list_item->pEnvelopeOrdinates; // load pointer to ordinates
-		p_y->export_to_ordinates(m_poly_points_); // copy ordinates to polypts buffer
+		p_y->export_to_ordinates(m_poly_points_); 
 
 		// change extent, org and color ----------------------------------------
 		const auto y_extent = chan_list_item->GetYextent();
@@ -1040,16 +1036,16 @@ void ChartData::print(CDC* p_dc, const CRect* p_rect, const BOOL b_center_line)
 		}
 		//  display points ----------------------------------------------------
 		if (b_poly_line)
-			p_dc->Polyline(&m_poly_points_[0], n_elements); // draw curve
+			p_dc->Polyline(&m_poly_points_[0], n_elements); 
 		else
 		{
-			p_dc->MoveTo(m_poly_points_[0]); // move pen to first pair of coords
+			p_dc->MoveTo(m_poly_points_[0]); 
 			for (auto j = 0; j < n_elements; j++)
-				p_dc->LineTo(m_poly_points_[j]); // draw lines
+				p_dc->LineTo(m_poly_points_[j]); 
 		}
 
 		//display associated cursors ------------------------------------------
-		if (horizontal_tags.get_tag_list_size() > 0) // print HZ cursors if any?
+		if (horizontal_tags.get_tag_list_size() > 0) 
 		{
 			// select pen and display mode
 			CPen pen_light_grey(PS_SOLID, 0, color_table_[SILVER_COLOR]);
@@ -1260,9 +1256,9 @@ LPTSTR ChartData::get_ascii_line(LPTSTR lp_copy, const int i_unit)
 
 // in order to move a curve vertically with the cursor, a special envelope is
 // stored within the p_data array and displayed using XOR mode.
-// this curve has 2 times less points (median) to speed up the display
+// this curve has 2 times fewer points (median) to speed up the display
 // Although CClientDC is claimed as attached to the client area of the button
-// ("this"), moving the curve along the vertical direction will draw outside of
+// ("this"), moving the curve along the vertical direction will draw outside
 // the client area, suggesting that it is necessary to clip the client area...
 // this code was also tested with m_dibSurf: XOR to DIB surface, then redraw the
 // client area by fast BitBlt. This latter method was less efficient (slower)
@@ -1349,7 +1345,7 @@ void ChartData::OnLButtonDown(const UINT n_flags, const CPoint point)
 		}
 	}
 
-	// if horizontal cursor hit -- specific .. deal with variable gain
+	// if horizontal cursor hit
 	if (track_mode_ == TRACK_HZ_TAG)
 	{
 		const auto chan_list_item = chan_list_item_ptr_array_[horizontal_tags.get_channel(hc_trapped_)];
@@ -1396,7 +1392,6 @@ void ChartData::OnLButtonUp(const UINT n_flags, CPoint point)
 
 	case TRACK_VT_TAG:
 		{
-			// convert pix into data value and back again
 			const auto l_val = static_cast<long>(point.x) * (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1) / static_cast<long>(m_display_rect_.
 				right) + file_position_first_left_pixel_;
 			vertical_tags.set_value_long(hc_trapped_, l_val);
@@ -1634,14 +1629,14 @@ void ChartData::Serialize(CArchive& ar)
 
 	if (ar.IsStoring())
 	{
-		ar << m_data_per_pixel_; // nb of data point per pixel
-		ar << m_lx_very_last_; // end of document
-		ar << m_lx_page_; // size of page increment / file index
-		ar << m_lx_line_; // size of line increment / file index
-		ar << m_lx_size_; // nb of data pts represented in a Envelope
-		ar << m_lx_first_; // file index of 1rst pt in the Envelopes
-		ar << m_lx_last_; // file index of last pt in the Envelopes
-		ar << m_n_pixels_; // nb pixels displayed horizontally
+		ar << m_data_per_pixel_; 
+		ar << m_lx_very_last_;
+		ar << m_lx_page_;
+		ar << m_lx_line_; 
+		ar << m_lx_size_; 
+		ar << m_lx_first_; 
+		ar << m_lx_last_;
+		ar << m_n_pixels_; 
 
 		const auto n_envelopes = envelope_ptr_array_.GetSize();
 		ar << n_envelopes;
@@ -1656,14 +1651,14 @@ void ChartData::Serialize(CArchive& ar)
 	}
 	else
 	{
-		ar >> m_data_per_pixel_; // nb of data point per pixel
-		ar >> m_lx_very_last_; // end of document
-		ar >> m_lx_page_; // size of page increment / file index
-		ar >> m_lx_line_; // size of line increment / file index
-		ar >> m_lx_size_; // nb of data pts represented in a Envelope
-		ar >> m_lx_first_; // file index of 1rst pt in the Envelopes
-		ar >> m_lx_last_; // file index of last pt in the Envelopes
-		ar >> m_n_pixels_; // nb pixels displayed horizontally
+		ar >> m_data_per_pixel_; 
+		ar >> m_lx_very_last_; 
+		ar >> m_lx_page_; 
+		ar >> m_lx_line_; 
+		ar >> m_lx_size_; 
+		ar >> m_lx_first_; 
+		ar >> m_lx_last_; 
+		ar >> m_n_pixels_; 
 
 		int n_envelopes;
 		ar >> n_envelopes;

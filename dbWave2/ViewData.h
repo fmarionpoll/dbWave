@@ -26,7 +26,7 @@ protected:
 	float m_float_n_digits = 1000.; // 10(000) -> n digits displayed
 	BOOL m_b_init_comment = true;
 
-	ChartData m_chart_data_wnd{}; 
+	ChartData chart_data{}; 
 	CEditCtrl mm_first_hz_cursor; 
 	CEditCtrl mm_second_hz_cursor;
 	CEditCtrl mm_difference_second_minus_first; 
@@ -54,11 +54,11 @@ protected:
 	OPTIONS_VIEWDATA* options_view_data_ = nullptr;
 	OPTIONS_VIEWDATAMEASURE* options_view_data_measures_ = nullptr;
 
-	void print_file_bottom_page(CDC* p_dc, CPrintInfo* pInfo);
+	void print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_info);
 	CString convert_file_index(long l_first, long l_last) const;
 	void compute_printer_page_size();
 	CString get_file_infos();
-	CString print_bars(CDC* p_dc, const CRect* rect);
+	CString print_bars(CDC* p_dc, const CRect* rect) const;
 	BOOL get_file_series_index_from_page(int page, int& file_number, long& l_first);
 	BOOL print_get_next_row(int& file_number, long& l_first, long& very_last);
 	void save_modified_file();
@@ -85,6 +85,9 @@ protected:
 	void update_file_scroll();
 	void update_legends(int legends_options);
 	void update_horizontal_tags_value();
+	void set_mouse_cursor(int low_parameter);
+	void add_vertical_cursors_from_defined_rectangle();
+	void add_horizontal_cursors_from_defined_rectangle();
 	void set_cursor_associated_windows();
 	void update_channel(int channel);
 	void measure_properties(int item);
@@ -128,8 +131,8 @@ public:
 	afx_msg void on_tools_measure();
 	afx_msg void on_tools_vertical_tags();
 	afx_msg void on_tools_horizontal_cursors();
-	afx_msg void on_update_tools_horizontal_cursors(CCmdUI* pCmdUI);
-	afx_msg void on_update_tools_vertical_tags(CCmdUI* pCmdUI);
+	afx_msg void on_update_tools_horizontal_cursors(CCmdUI* p_cmd_ui);
+	afx_msg void on_update_tools_vertical_tags(CCmdUI* p_cmd_ui);
 	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
 	afx_msg void adc_on_hardware_define_experiment();
 	afx_msg void on_en_change_time_first();

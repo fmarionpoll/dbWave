@@ -325,7 +325,7 @@ void ViewSpikeSort::update_file_parameters()
 	const BOOL first_update = (m_pSpkDoc == nullptr);
 	load_current_spike_file();
 
-	if (first_update || options_view_data_->bEntireRecord)
+	if (first_update || options_view_data_->b_complete_record)
 	{
 		if (m_pSpkDoc == nullptr)
 			return;

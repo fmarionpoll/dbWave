@@ -46,8 +46,8 @@ public:
 
 	// how data are displayed from file to file
 	BOOL bAllChannels{true}; // display all channels
-	BOOL bEntireRecord{true}; // display entire record
-	BOOL bMultirowDisplay{false}; // display one record on consecutive lines
+	BOOL b_complete_record{true}; // display entire record
+	BOOL b_multiple_rows{false}; // display one record on consecutive lines
 	BOOL bSplitCurves{true}; // arrange curves so that they are distributed vertically
 	BOOL bMaximizeGain{true}; // maximize gain
 	BOOL bCenterCurves{true}; // center curves

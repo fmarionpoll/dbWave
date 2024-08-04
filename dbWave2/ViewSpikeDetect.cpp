@@ -447,7 +447,7 @@ boolean ViewSpikeDetection::update_data_file(BOOL bUpdateInterface)
 	// if browse through another file ; keep previous display parameters & load data
 	auto l_first = m_chart_data_filtered.get_data_first_index();
 	auto l_last = m_chart_data_filtered.get_data_last_index();
-	if (options_view_data->bEntireRecord && bUpdateInterface)
+	if (options_view_data->b_complete_record && bUpdateInterface)
 	{
 		l_first = 0;
 		l_last = p_data_file->get_doc_channel_length() - 1;
@@ -2073,7 +2073,7 @@ BOOL ViewSpikeDetection::PrintGetFileSeriesIndexFromPage(int page, int& file_num
 		GetDocument()->db_move_first();
 
 	auto very_last = m_l_print_first_ + m_l_print_len_;
-	if (options_view_data->bEntireRecord)
+	if (options_view_data->b_complete_record)
 		very_last = GetDocument()->db_get_data_len() - 1;
 
 	for (auto row = 0; row < total_rows; row++)
@@ -2087,7 +2087,7 @@ BOOL ViewSpikeDetection::PrintGetFileSeriesIndexFromPage(int page, int& file_num
 
 BOOL ViewSpikeDetection::PrintGetNextRow(int& file_index, long& l_first, long& very_last)
 {
-	if (!options_view_data->bMultirowDisplay || !options_view_data->bEntireRecord)
+	if (!options_view_data->b_multiple_rows || !options_view_data->b_complete_record)
 	{
 		file_index++;
 		if (file_index >= m_files_count_)
@@ -2096,7 +2096,7 @@ BOOL ViewSpikeDetection::PrintGetNextRow(int& file_index, long& l_first, long& v
 		GetDocument()->db_move_next();
 		if (l_first < GetDocument()->db_get_data_len() - 1)
 		{
-			if (options_view_data->bEntireRecord)
+			if (options_view_data->b_complete_record)
 				very_last = GetDocument()->db_get_data_len() - 1;
 		}
 	}
@@ -2435,7 +2435,7 @@ int ViewSpikeDetection::PrintGetNPages()
 	}
 
 	// only one row per file
-	if (!options_view_data->bMultirowDisplay || !options_view_data->bEntireRecord)
+	if (!options_view_data->b_multiple_rows || !options_view_data->b_complete_record)
 		n_total_rows = m_files_count_;
 
 	// multiple rows per file
@@ -2540,7 +2540,7 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	PrintGetFileSeriesIndexFromPage(current_page_number, file_index, index_first_data_point);
 	if (index_first_data_point < GetDocument()->db_get_data_len() - 1)
 		update_file_parameters(FALSE);
-	if (options_view_data->bEntireRecord)
+	if (options_view_data->b_complete_record)
 		index_last_data_point = GetDocument()->db_get_data_len() - 1;
 
 	// loop through all files	--------------------------------------------------------

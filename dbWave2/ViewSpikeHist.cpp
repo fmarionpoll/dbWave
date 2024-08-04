@@ -1404,7 +1404,7 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 		if (m_pvdS->babsolutetime)
 		{
 			auto nrows = 1;
-			if (mdPM->bMultirowDisplay)
+			if (mdPM->b_multiple_rows)
 			{
 				nrows = p_spike_doc_->get_acq_size() / ii_frame_length;
 				if (nrows * ii_frame_length < p_spike_doc_->get_acq_size())

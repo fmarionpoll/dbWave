@@ -84,34 +84,31 @@ public:
 	void	remove_all_channel_list_items();
 	int		add_channel_list_item(int ns, int mode);
 	int		remove_channel_list_item(int i_chan);
-	CChanlistItem* get_channel_list_item(int item) const { return chan_list_item_ptr_array_.GetAt(item); }
-
+	
 	int		set_channel_list_transform_mode(int i_chan, int i_mode);
 	int		set_channel_list_source_channel(int i_channel, int acq_channel);
 	void	set_channel_list_y(int i_chan, int acq_chan, int transform);
 	void	set_channel_list_volts_extent(int i_chan, const float* p_value);
 	void	set_channel_list_volts_zero(int i_chan, const float* p_value);
 
-	float get_channel_list_volts_per_pixel(const int item) const
-	{
+	CChanlistItem* get_channel_list_item(const int item) const { return chan_list_item_ptr_array_.GetAt(item); }
+
+	float get_channel_list_volts_per_pixel(const int item) const {
 		const CChanlistItem* channel_item = get_channel_list_item(item);
 		return (static_cast<float>(channel_item->GetYextent()) * channel_item->GetVoltsperDataBin() / static_cast<float>(-m_y_viewport_extent_));
 	}
 
-	float get_time_per_pixel() const
-	{
-		return static_cast<float>(get_data_size()) / m_p_data_file_->get_wave_format()->sampling_rate_per_channel / static_cast<float>(
-			get_rect_width());
+	float get_time_per_pixel() const{
+		return static_cast<float>(get_data_size()) / m_p_data_file_->get_wave_format()->sampling_rate_per_channel
+					/ static_cast<float>(get_rect_width());
 	}
 
-	int get_channel_list_bin_to_y_pixel(const int chan, const int bin)
-	{
+	int get_channel_list_bin_to_y_pixel(const int chan, const int bin) {
 		return MulDiv(bin - chan_list_item_ptr_array_[chan]->GetYzero(), m_y_viewport_extent_,
 		              chan_list_item_ptr_array_[chan]->GetYextent()) + m_y_viewport_origin_;
 	}
 
-	int get_channel_list_y_pixels_to_bin(const int chan, const int y_pixel_relative_to_top_client_window)
-	{
+	int get_channel_list_y_pixels_to_bin(const int chan, const int y_pixel_relative_to_top_client_window) {
 		return chan_list_item_ptr_array_[chan]->GetYzero() + 
 				MulDiv(y_pixel_relative_to_top_client_window - m_y_viewport_origin_,
 					chan_list_item_ptr_array_[chan]->GetYextent(), 
@@ -133,9 +130,9 @@ public:
 	void	move_hz_tag_to_val(int i_tag, int i_eval);
 	void	update_x_ruler();
 	void	update_y_ruler();
+
 	void	plot_data_to_dc(CDC* p_dc) override;
 	void	zoom_data(CRect* previous_rect, CRect* new_rect) override;
-
 	void	print(CDC* p_dc, const CRect* p_rect, BOOL b_center_line = FALSE);
 
 	void	adjust_gain(boolean b_set_span_mv, float span_mv_value) const;

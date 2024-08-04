@@ -1112,7 +1112,7 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 			if (p_dbwave_doc->get_db_n_spike_classes() > max_classes_)
 				max_classes_ = p_dbwave_doc->get_db_n_spike_classes();
 
-			if (options_view_data_->bMultirowDisplay)
+			if (options_view_data_->b_multiple_rows)
 			{
 				const auto len = p_dbwave_doc->db_get_data_len() - m_l_print_first_; // file length
 				auto n_rows = len / m_l_print_len_; // how many rows for this file?
@@ -1124,7 +1124,7 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 	}
 
 	// multiple rows?
-	if (!options_view_data_->bMultirowDisplay)
+	if (!options_view_data_->b_multiple_rows)
 		nb_rect = m_files_count_;
 
 	// n pages
@@ -1148,7 +1148,7 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 	{
 		n_pages = 1;
 		m_files_count_ = 1;
-		if (options_view_data_->bMultirowDisplay)
+		if (options_view_data_->b_multiple_rows)
 		{
 			const auto l_first0 = spike_class_listbox_.get_time_first();
 			const auto l_last0 = spike_class_listbox_.get_time_last();
@@ -1393,8 +1393,8 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		// if index next point is past the end of the file
 		// OR not entire record and not multiple row display
 		if ((l_first >= very_last)
-			|| (!options_view_data_->bEntireRecord &&
-				!options_view_data_->bMultirowDisplay))
+			|| (!options_view_data_->b_complete_record &&
+				!options_view_data_->b_multiple_rows))
 		{
 			file_index++; // next index
 			if (file_index < m_files_count_) // last file ??

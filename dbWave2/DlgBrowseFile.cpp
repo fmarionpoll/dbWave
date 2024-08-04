@@ -34,10 +34,10 @@ BOOL DlgBrowseFile::OnInitDialog()
 	{
 		m_allchannels = mfBR->bAllChannels;
 		m_centercurves = mfBR->bCenterCurves;
-		m_completefile = mfBR->bEntireRecord;
+		m_completefile = mfBR->b_complete_record;
 		m_splitcurves = mfBR->bSplitCurves;
 		m_maximizegain = mfBR->bMaximizeGain;
-		m_multirowdisplay = mfBR->bMultirowDisplay;
+		m_multirowdisplay = mfBR->b_multiple_rows;
 		m_keepforeachfile = mfBR->bKeepForEachFile;
 	}
 	UpdateData(FALSE);
@@ -49,10 +49,10 @@ void DlgBrowseFile::OnOK()
 	UpdateData(TRUE);
 	mfBR->bAllChannels = m_allchannels;
 	mfBR->bCenterCurves = m_centercurves;
-	mfBR->bEntireRecord = m_completefile;
+	mfBR->b_complete_record = m_completefile;
 	mfBR->bSplitCurves = m_splitcurves;
 	mfBR->bMaximizeGain = m_maximizegain;
-	mfBR->bMultirowDisplay = m_multirowdisplay;
+	mfBR->b_multiple_rows = m_multirowdisplay;
 	mfBR->bKeepForEachFile = m_keepforeachfile;
 	mfBR->b_changed = TRUE;
 	CDialog::OnOK();
