@@ -202,15 +202,17 @@ void ChartSpikeXY::display_hz_tags(CDC* p_dc)
 {
 	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
-	const auto x1 = m_display_rect_.left;
-	const auto x2 = m_display_rect_.right;
+
+	const auto x_left = m_x_wo_; // m_display_rect_.left;
+	const auto x_right = m_x_we_; // m_display_rect_.right;
 	for (auto i = horizontal_tags.get_tag_list_size() - 1; i >= 0; i--)
 	{
 		const auto k = horizontal_tags.get_value_int(i);
-		const auto y1 = MulDiv(k - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
-		p_dc->MoveTo(x1, y1);
-		p_dc->LineTo(x2, y1);
+		const auto y = MulDiv(k - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+		p_dc->MoveTo(x_left, y);
+		p_dc->LineTo(x_right, y);
 	}
+
 	p_dc->SelectObject(old_pen);
 	p_dc->SetROP2(old_rop2);
 }
