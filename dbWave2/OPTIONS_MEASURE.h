@@ -5,12 +5,12 @@ constexpr auto MEASURE_HORIZONTAL = 1;	// horizontal lines
 constexpr auto MEASURE_RECTANGLE = 3;
 constexpr auto MEASURE_STIMULUS = 3;
 
-class OPTIONS_DATA_MEASURE : public CObject
+class OPTIONS_MEASURE : public CObject
 {
-	DECLARE_SERIAL(OPTIONS_DATA_MEASURE)
-	OPTIONS_DATA_MEASURE();
-	~OPTIONS_DATA_MEASURE() override;
-	OPTIONS_DATA_MEASURE& operator =(const OPTIONS_DATA_MEASURE& arg);
+	DECLARE_SERIAL(OPTIONS_MEASURE)
+	OPTIONS_MEASURE();
+	~OPTIONS_MEASURE() override;
+	OPTIONS_MEASURE& operator =(const OPTIONS_MEASURE& arg);
 	void Serialize(CArchive& ar) override;
 
 public:

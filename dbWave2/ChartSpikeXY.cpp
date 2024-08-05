@@ -112,12 +112,6 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 				highlight_spike(spike);
 			}
 		}
-
-		////display cursors
-		//if (horizontal_tags.get_tag_list_size() > 0)
-		//	display_hz_tags(p_dc);
-		//if (vertical_tags.get_tag_list_size() > 0)
-		//	display_vt_tags(p_dc);
 	}
 
 	// restore resources

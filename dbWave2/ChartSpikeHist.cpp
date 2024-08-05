@@ -122,12 +122,6 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 			display_histogram(p_dc, p_dw, color);
 	}
 
-	//// display cursors
-	//if (horizontal_tags.get_tag_list_size() > 0)
-	//	display_horizontal_tags(p_dc);
-	//if (vertical_tags.get_tag_list_size() > 0) 
-	//	display_vertical_tags(p_dc);
-
 	p_dc->SetBkColor(background_color);
 	p_dc->RestoreDC(n_saved_dc);
 

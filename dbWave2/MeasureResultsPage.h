@@ -1,7 +1,7 @@
 #pragma once
 #include "dbWaveDoc.h"
 #include "AcqDataDoc.h"
-#include "OPTIONS_DATA_MEASURE.h"
+#include "OPTIONS_MEASURE.h"
 
 class CMeasureResultsPage : public CPropertyPage
 {
@@ -22,7 +22,7 @@ public:
 	ChartData* m_pChartDataWnd;
 	CdbWaveDoc* m_pdbDoc;
 	AcqDataDoc* m_pdatDoc{};
-	OPTIONS_DATA_MEASURE* m_pMO{};
+	OPTIONS_MEASURE* m_pMO{};
 	int m_currentchan{};
 
 protected:

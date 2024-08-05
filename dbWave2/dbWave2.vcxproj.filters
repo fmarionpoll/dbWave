@@ -441,7 +441,7 @@
     <ClCompile Include="OPTIONS_VIEWDATA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OPTIONS_DATA_MEASURE.cpp">
+    <ClCompile Include="OPTIONS_MEASURE.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ChartDataAD.cpp">
@@ -1025,7 +1025,7 @@
     <ClInclude Include="OPTIONS_IMPORT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OPTIONS_DATA_MEASURE.h">
+    <ClInclude Include="OPTIONS_MEASURE.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OPTIONS_VIEWSPIKES.h">

@@ -8,7 +8,7 @@
 
 #include "dbMultiDocTemplate.h"
 #include "OPTIONS_INPUTDATA.h"
-#include "OPTIONS_DATA_MEASURE.h"
+#include "OPTIONS_MEASURE.h"
 #include "OPTIONS_IMPORT.h"
 #include "OPTIONS_OUTPUTDATA.h"
 #include "OPTIONS_VIEWDATA.h"
@@ -55,7 +55,7 @@ public:
 
 	OPTIONS_VIEWDATA options_view_data;
 	OPTIONS_VIEWSPIKES options_view_spikes;
-	OPTIONS_DATA_MEASURE options_view_data_measure;
+	OPTIONS_MEASURE options_view_data_measure;
 	OPTIONS_IMPORT options_import;
 	OPTIONS_INPUTDATA options_acq_data;
 	OPTIONS_OUTPUTDATA options_output_data;

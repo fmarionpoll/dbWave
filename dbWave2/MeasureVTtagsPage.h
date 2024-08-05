@@ -2,7 +2,7 @@
 #include "dbWaveDoc.h"
 #include "AcqDataDoc.h"
 #include "Editctrl.h"
-#include "OPTIONS_DATA_MEASURE.h"
+#include "OPTIONS_MEASURE.h"
 
 
 class CMeasureVTtagsPage : public CPropertyPage
@@ -26,7 +26,7 @@ public:
 	float m_duration;
 
 	// input parameters
-	OPTIONS_DATA_MEASURE* m_pMO; // init on call
+	OPTIONS_MEASURE* m_pMO; // init on call
 	CdbWaveDoc* m_pdbDoc;
 	AcqDataDoc* m_pdatDoc;
 	ChartData* m_pChartDataWnd;

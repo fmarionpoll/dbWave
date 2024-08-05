@@ -5,7 +5,7 @@
 #include "dbTableView.h"
 #include "ChartData.h"
 #include "Editctrl.h"
-#include "OPTIONS_DATA_MEASURE.h"
+#include "OPTIONS_MEASURE.h"
 #include "SPK_CLASSIF.h"
 #include "SPKDETECTPARM.h"
 
@@ -116,7 +116,7 @@ protected:
 
 	// page format printing parameters (pixel unit)
 	OPTIONS_VIEWDATA* options_view_data_ = nullptr; 
-	OPTIONS_DATA_MEASURE* options_view_data_measure_ = nullptr; 
+	OPTIONS_MEASURE* options_view_data_measure_ = nullptr; 
 	SPK_CLASSIF* spk_classification_parameters_ = nullptr;
 	SPKDETECTPARM* spk_detection_parameters_ = nullptr; 
 
