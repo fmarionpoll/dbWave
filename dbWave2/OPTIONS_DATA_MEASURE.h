@@ -1,5 +1,10 @@
 ﻿#pragma once
 
+constexpr auto MEASURE_VERTICAL = 0;	// vertical tags
+constexpr auto MEASURE_HORIZONTAL = 1;	// horizontal lines
+constexpr auto MEASURE_RECTANGLE = 3;
+constexpr auto MEASURE_STIMULUS = 3;
+
 class OPTIONS_DATA_MEASURE : public CObject
 {
 	DECLARE_SERIAL(OPTIONS_DATA_MEASURE)
@@ -30,7 +35,7 @@ public:
 	BOOL b_all_files{false}; // measure on all files (default=FALSE)
 
 	// limits
-	WORD w_option{2}; // 0=vertical tags, 1=horizontal lines{}; 2=rectangle{}; 3=relative to stimulus
+	WORD w_option{2}; // MEASURE_VERTICAL=vertical tags, MEASURE_HORIZONTAL=horizontal lines; MEASURE_RECTANGLE=rectangle; MEASURE_STIMULUS=relative to stimulus
 	WORD w_stimulus_channel{0}; // if wOption=2: stimulus channel
 	WORD w_stimulus_threshold{2048}; // if wOption=2: stimulus threshold
 	float f_stimulus_offset{0.f}; // if wOption=2: offset interval (default=0)

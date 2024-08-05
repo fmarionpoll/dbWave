@@ -7,6 +7,7 @@ class Tag : public CObject
 	Tag();
 	Tag(int ref_chan);
 	Tag(int val, int ref_chan);
+	Tag(long l_val, int ref_chan);
 	Tag(long long ticks);
 	Tag(const Tag& hc);
 	~Tag();

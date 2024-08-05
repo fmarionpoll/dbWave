@@ -88,7 +88,7 @@ protected:
 	void set_mouse_cursor(int low_parameter);
 	void add_vertical_cursors_from_defined_rectangle();
 	void add_horizontal_cursors_from_defined_rectangle();
-	void set_cursor_associated_windows();
+	void update_controls_according_to_cursor_selected();
 	void update_channel(int channel);
 	void measure_properties(int item);
 

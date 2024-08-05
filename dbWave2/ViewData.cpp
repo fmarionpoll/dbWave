@@ -231,7 +231,7 @@ void ViewData::update_channel(const int channel)
 		UpdateData(FALSE);
 	else 
 	{
-		if (m_cursor_state_ == CURSOR_CROSS && options_data_measures_->w_option == 1
+		if (m_cursor_state_ == CURSOR_CROSS && options_data_measures_->w_option == MEASURE_HORIZONTAL
 			&& chart_data.horizontal_tags.get_tag_list_size() > 0)
 		{
 			for (auto i = 0; i < chart_data.horizontal_tags.get_tag_list_size(); i++)
@@ -597,10 +597,10 @@ void ViewData::update_channels_display_parameters()
 	chart_data.Invalidate();
 }
 
-void ViewData::set_cursor_associated_windows()
+void ViewData::update_controls_according_to_cursor_selected()
 {
 	auto n_cmd_show = SW_HIDE;
-	if (m_cursor_state_ == CURSOR_CROSS && options_data_measures_->w_option == 1
+	if (m_cursor_state_ == CURSOR_CROSS && options_data_measures_->w_option == MEASURE_HORIZONTAL
 		&& chart_data.horizontal_tags.get_tag_list_size() > 0)
 		n_cmd_show = SW_SHOW;
 
@@ -613,7 +613,7 @@ void ViewData::set_cursor_associated_windows()
 	GetDlgItem(IDC_EDIT3)->ShowWindow(n_cmd_show);
 
 	// change cursors value
-	if (m_cursor_state_ == CURSOR_CROSS && options_data_measures_->w_option == 1)
+	if (m_cursor_state_ == CURSOR_CROSS && options_data_measures_->w_option == MEASURE_HORIZONTAL)
 		update_horizontal_tags_value();
 }
 
@@ -650,19 +650,19 @@ void ViewData::set_mouse_cursor(int low_parameter)
 	// save current cursors into document if cursor_state = 3
 	if (m_cursor_state_ == CURSOR_CROSS)
 	{
-		if (options_data_measures_->w_option == 0) // vertical cursors
+		if (options_data_measures_->w_option == MEASURE_VERTICAL) 
 		{
 			const auto p_tag_list = m_p_dat_->get_vt_tags_list();
 			p_tag_list->copy_tag_list(&chart_data.vertical_tags);
 			chart_data.vertical_tags.remove_all_tags();
 		}
-		else if (options_data_measures_->w_option == 1) // horizontal cursors
+		else if (options_data_measures_->w_option == MEASURE_HORIZONTAL) // horizontal cursors
 		{
 			const auto p_tag_list = m_p_dat_->get_hz_tags_list();
 			p_tag_list->copy_tag_list(&chart_data.horizontal_tags);
 			chart_data.horizontal_tags.remove_all_tags();
 		}
-		else if (options_data_measures_->w_option == 3) // detect stimulus
+		else if (options_data_measures_->w_option == MEASURE_STIMULUS) // detect stimulus
 		{
 			options_data_measures_->w_stimulus_channel = static_cast<WORD>(chart_data.horizontal_tags.get_channel(0));
 			options_data_measures_->w_stimulus_threshold = static_cast<WORD>(chart_data.horizontal_tags.get_value_int(0));
@@ -681,26 +681,24 @@ void ViewData::set_mouse_cursor(int low_parameter)
 	// recall cursors from document if cursor_state = 2
 	if (m_cursor_state_ == CURSOR_CROSS)
 	{
-		if (options_data_measures_->w_option == 0)
+		if (options_data_measures_->w_option == MEASURE_VERTICAL)
 			chart_data.vertical_tags.copy_tag_list(m_p_dat_->get_vt_tags_list());
-		else if (options_data_measures_->w_option == 1)
+		else if (options_data_measures_->w_option == MEASURE_HORIZONTAL)
 			chart_data.horizontal_tags.copy_tag_list(m_p_dat_->get_hz_tags_list());
-		else if (options_data_measures_->w_option == 3)
+		else if (options_data_measures_->w_option == MEASURE_STIMULUS)
 			chart_data.horizontal_tags.add_tag(options_data_measures_->w_stimulus_threshold, options_data_measures_->w_stimulus_channel);
 		chart_data.Invalidate();
 	}
-	set_cursor_associated_windows();
+	update_controls_according_to_cursor_selected();
 }
 
 void ViewData::add_vertical_cursors_from_defined_rectangle()
 {
-	int j2=1;
 	// if no VT tags, then take those of rectangle, or limits of line_view
-	const int j1 = chart_data.vertical_tags.add_l_tag(options_data_measures_->l_limit_left, 0);
+	chart_data.vertical_tags.add_l_tag(options_data_measures_->l_limit_left, 0);
 	if (options_data_measures_->l_limit_right != options_data_measures_->l_limit_left)
-		j2 = chart_data.vertical_tags.add_l_tag(options_data_measures_->l_limit_right, 0);
-	TRACE("value of tag %d = %d\n", j1, options_data_measures_->l_limit_left);
-	TRACE("value of tag %d = %d\n", j2, options_data_measures_->l_limit_right);
+		chart_data.vertical_tags.add_l_tag(options_data_measures_->l_limit_right, 0);
+
 	// store new VT tags into document
 	m_p_dat_->get_vt_tags_list()->copy_tag_list(&chart_data.vertical_tags);
 }
@@ -715,7 +713,7 @@ void ViewData::add_horizontal_cursors_from_defined_rectangle()
 	m_p_dat_->get_hz_tags_list()->copy_tag_list(&chart_data.horizontal_tags);
 
 	if (chart_data.horizontal_tags.get_tag_list_size() == 2)
-		set_cursor_associated_windows();
+		update_controls_according_to_cursor_selected();
 	update_horizontal_tags_value();
 }
 
@@ -770,7 +768,7 @@ LRESULT ViewData::on_my_message(const WPARAM w_param, const LPARAM l_param)
 		break;
 
 	case HINT_CHANGE_HZ_TAG: // horizontal tag has changed 	low_p = tag nb
-		if (options_data_measures_->w_option == 3)
+		if (options_data_measures_->w_option == MEASURE_STIMULUS)
 			options_data_measures_->w_stimulus_threshold = static_cast<WORD>(chart_data.horizontal_tags.get_value_int(0));
 		else
 			update_horizontal_tags_value();
@@ -818,7 +816,7 @@ void ViewData::on_format_data_series_attributes()
 
 void ViewData::on_tools_vertical_tags()
 {
-	options_data_measures_->w_option = 0;
+	options_data_measures_->w_option = MEASURE_VERTICAL;
 	m_cursor_state_ = chart_data.set_mouse_cursor_type(CURSOR_CROSS);
 	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state_, 0));
 	//MeasureProperties(1);
@@ -826,7 +824,7 @@ void ViewData::on_tools_vertical_tags()
 
 void ViewData::on_tools_horizontal_cursors()
 {
-	options_data_measures_->w_option = 1;
+	options_data_measures_->w_option = MEASURE_HORIZONTAL;
 	m_cursor_state_ = chart_data.set_mouse_cursor_type(CURSOR_CROSS);
 	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state_, 0));
 	//MeasureProperties(0);
@@ -1016,7 +1014,7 @@ void ViewData::on_split_curves()
 	chart_data.Invalidate();
 }
 
-void ViewData::on_file_scroll(UINT n_sb_code, UINT n_pos)
+void ViewData::on_file_scroll(const UINT n_sb_code, const UINT n_pos)
 {
 	auto b_result = FALSE;
 	// get corresponding data
@@ -1028,12 +1026,12 @@ void ViewData::on_file_scroll(UINT n_sb_code, UINT n_pos)
 	case SB_PAGELEFT: // scroll one page left
 	case SB_PAGERIGHT: // scroll one page right
 	case SB_RIGHT: // scroll to end right
-		b_result = chart_data.scroll_data_from_doc(n_sb_code);
+		b_result = chart_data.scroll_data_from_doc(static_cast<WORD>(n_sb_code));
 		break;
 	case SB_THUMBPOSITION: // scroll to pos = nPos
 	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
 		b_result = chart_data.get_data_from_doc(
-			(n_pos * m_p_dat_->get_doc_channel_length()) / 100L);
+			(static_cast<long>(n_pos) * m_p_dat_->get_doc_channel_length()) / 100L);
 		break;
 	default: // NOP: set position only
 		break;
@@ -1043,7 +1041,7 @@ void ViewData::on_file_scroll(UINT n_sb_code, UINT n_pos)
 	if (b_result)
 	{
 		update_legends(UPD_ABSCISSA);
-		UpdateData(FALSE); // copy view object to controls
+		UpdateData(FALSE); 
 		chart_data.Invalidate();
 	}
 	update_file_scroll();
@@ -1051,7 +1049,7 @@ void ViewData::on_file_scroll(UINT n_sb_code, UINT n_pos)
 
 void ViewData::OnHScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar* p_scroll_bar)
 {
-	// formview scroll: if pointer null
+	// form_view scroll: if pointer null
 	if (p_scroll_bar == nullptr)
 	{
 		dbTableView::OnHScroll(n_sb_code, n_pos, p_scroll_bar);
@@ -1129,7 +1127,7 @@ void ViewData::measure_properties(const int item)
 
 	dlg.DoModal();
 	chart_data.Invalidate();
-	set_cursor_associated_windows();
+	update_controls_according_to_cursor_selected();
 }
 
 void ViewData::save_modified_file()
@@ -1156,8 +1154,8 @@ void ViewData::adc_on_hardware_define_experiment()
 		const auto p_dbwave_doc = GetDocument();
 		const auto record_id = p_dbwave_doc->db_get_current_record_id();
 		GetDocument()->update_all_views_db_wave(nullptr, HINT_DOC_HAS_CHANGED, nullptr);
-		BOOL success = p_dbwave_doc->db_move_to_id(record_id);
-		p_dbwave_doc->update_all_views_db_wave(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
+		if(p_dbwave_doc->db_move_to_id(record_id))
+		 p_dbwave_doc->update_all_views_db_wave(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 	}
 }
 
@@ -1463,10 +1461,11 @@ int ViewData::print_get_n_pages()
 	else
 	{
 		total_rows = 0;
-		BOOL success = p_dbwave_doc->db_set_current_record_position(file0);
 		for (auto i = file0; i < file1; i++, p_dbwave_doc->db_move_next())
 		{
-			// get size of document for all files
+			const BOOL success = p_dbwave_doc->db_set_current_record_position(i);
+			if (!success)
+				continue;
 			auto len = p_dbwave_doc->db_get_data_len();
 			if (len <= 0)
 			{
@@ -1687,7 +1686,7 @@ void ViewData::on_en_change_time_last()
 
 void ViewData::update_file_scroll()
 {
-	file_scroll_bar_infos_.fMask = SIF_ALL | SIF_PAGE| SIF_POS;
+	file_scroll_bar_infos_.fMask = SIF_ALL; // | SIF_PAGE | SIF_POS;
 	file_scroll_bar_infos_.nMin = 0;
 	file_scroll_bar_infos_.nMax = GetDocument()->db_get_data_len();
 	file_scroll_bar_infos_.nPos = chart_data.get_data_first_index();

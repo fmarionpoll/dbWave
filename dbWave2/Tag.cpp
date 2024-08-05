@@ -22,6 +22,12 @@ Tag::Tag(const int val, const int ref_chan)
 	value_int = val;
 }
 
+Tag::Tag(const long l_val, const int ref_chan)
+{
+	ref_channel = ref_chan;
+	value_long = l_val;
+}
+
 Tag::Tag(const long long ticks)
 {
 	l_ticks = ticks;
@@ -38,8 +44,7 @@ Tag::Tag(const Tag& hc)
 }
 
 Tag::~Tag()
-{
-}
+= default;
 
 Tag& Tag::operator =(const Tag& arg)
 {
@@ -70,7 +75,6 @@ void Tag::Serialize(CArchive& ar)
 	else
 	{
 		const int n_version = ar.GetObjectSchema();
-
 		WORD w1;
 		ar >> w1;
 		ref_channel = w1;
@@ -80,10 +84,8 @@ void Tag::Serialize(CArchive& ar)
 		value_int = w1;
 		ar >> value_long;
 		ar >> m_cs_comment;
-
 		if (n_version > 0)
 			ar >> value_mv;
-
 	}
 }
 

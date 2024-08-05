@@ -97,10 +97,10 @@ void CMeasureVTtagsPage::OnSetDuplicateMode()
 void CMeasureVTtagsPage::OnCancel()
 {
 	OnDeleteSeries();
-	if (m_pMO->w_option != 0)
+	if (m_pMO->w_option != MEASURE_VERTICAL)
 	{
 		m_pChartDataWnd->vertical_tags.remove_all_tags();
-		if (m_pMO->w_option == 1)
+		if (m_pMO->w_option == MEASURE_HORIZONTAL)
 			m_pChartDataWnd->horizontal_tags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
 	}
 	CPropertyPage::OnCancel();
@@ -111,10 +111,10 @@ void CMeasureVTtagsPage::OnOK()
 	auto p_tag_list = m_pdatDoc->get_vt_tags_list();
 	p_tag_list->copy_tag_list(&m_pChartDataWnd->vertical_tags);
 	m_pMO->b_changed = TRUE;
-	if (m_pMO->w_option != 0)
+	if (m_pMO->w_option != MEASURE_VERTICAL)
 	{
 		m_pChartDataWnd->vertical_tags.remove_all_tags();
-		if (m_pMO->w_option == 1)
+		if (m_pMO->w_option == MEASURE_HORIZONTAL)
 			m_pChartDataWnd->horizontal_tags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
 	}
 	CPropertyPage::OnOK();
