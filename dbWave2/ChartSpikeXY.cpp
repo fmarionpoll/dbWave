@@ -113,16 +113,22 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 			}
 		}
 
-		//display cursors
-		if (horizontal_tags.get_tag_list_size() > 0)
-			display_hz_tags(p_dc);
-		if (vertical_tags.get_tag_list_size() > 0)
-			display_vt_tags(p_dc);
+		////display cursors
+		//if (horizontal_tags.get_tag_list_size() > 0)
+		//	display_hz_tags(p_dc);
+		//if (vertical_tags.get_tag_list_size() > 0)
+		//	display_vt_tags(p_dc);
 	}
 
 	// restore resources
 	p_dc->SetBkColor(saved_background_color);
 	p_dc->RestoreDC(saved_dc);
+
+	//display cursors
+	if (horizontal_tags.get_tag_list_size() > 0)
+		display_hz_tags(p_dc);
+	if (vertical_tags.get_tag_list_size() > 0)
+		display_vt_tags(p_dc);
 
 	// restore selection to initial file
 	if (display_all_files_)

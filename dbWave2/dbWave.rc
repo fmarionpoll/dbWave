@@ -1191,7 +1191,7 @@ BEGIN
     EDITTEXT        IDC_FLAGVALUE,432,2,28,13,ES_AUTOHSCROLL | ES_WANTRETURN | ES_NUMBER
     CONTROL         "",IDC_SPINFLAGVALUE,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,449,2,11,14
     PUSHBUTTON      "&Clear",IDC_REMOVEFLAG,462,2,24,13
-    PUSHBUTTON      "&Edit record...",IDC_EDITINFOS,409,16,77,14
+    PUSHBUTTON      "&Edit record...",IDC_EDIT_INFOS,409,16,77,14
     LTEXT           "position",IDC_STATICCURRPOS,2,2,84,12,SS_CENTERIMAGE | SS_ENDELLIPSIS | WS_BORDER
     CTEXT           "date:xx/xx/XX",IDC_ACQDATETIME,89,2,76,12,SS_CENTERIMAGE | SS_ENDELLIPSIS,WS_EX_STATICEDGE
     LTEXT           "ID:",IDC_STATICID,2,16,84,11,SS_CENTERIMAGE | SS_ENDELLIPSIS | WS_BORDER
@@ -3949,12 +3949,12 @@ BEGIN
     IDS_FILTERPANE          "Filter Pane"
     IDS_PROPERTIESPANE      "Properties pane"
     IDS_SHORTCUTS           "Shortcuts"
-    IDC_UPDATEINFOS         "Save changes made on the current selected record\nUpdate record"
+    IDC_UPDATE_INFOS         "Save changes made on the current selected record\nUpdate record"
 END
 
 STRINGTABLE
 BEGIN
-    IDC_EDITINFOS           "Open a dialog box which enable to change each property\nEdit and change records..."
+    IDC_EDIT_INFOS           "Open a dialog box which enable to change each property\nEdit and change records..."
 END
 
 STRINGTABLE

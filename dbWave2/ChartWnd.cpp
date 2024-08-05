@@ -953,8 +953,8 @@ void ChartWnd::display_vertical_tags(CDC* p_dc)
 {
 	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
-	const auto y0 = MulDiv(0 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
-	const auto y1 = MulDiv(m_display_rect_.bottom - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+	const auto y0 = m_y_wo_; // MulDiv(0 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+	const auto y1 = m_y_we_; // MulDiv(m_display_rect_.bottom - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
 
 	for (auto j = vertical_tags.get_tag_list_size() - 1; j >= 0; j--)
 	{
@@ -986,7 +986,7 @@ void ChartWnd::display_horizontal_tags(CDC* p_dc)
 //void ChartWnd::display_horizontal_tags(CDC* p_dc)
 //{
 //	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
-//	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
+//	const auto old_rop2 = p_dc->SetROP2(R2_NOT_XOR_PEN);
 //	auto old_val = horizontal_tags.get_value_int(horizontal_tags.get_tag_list_size() - 1) - 1;
 //
 //	for (auto i_tag = horizontal_tags.get_tag_list_size() - 1; i_tag >= 0; i_tag--)

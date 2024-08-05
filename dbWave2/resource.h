@@ -122,7 +122,7 @@
 #define IDD_VIEWSPKTEMPLATES            170
 #define ID_SHORTCUTS_PANE_1             171
 #define IDR_SORT                        171
-#define IDC_UPDATEINFOS                 172
+#define IDC_UPDATE_INFOS                 172
 #define IDC_VERTMIN                     172
 #define ID_VIEW_FILTERWND               173
 #define IDR_POPUP_SORT                  173
@@ -688,7 +688,7 @@
 #define IDC_LEFTSHIFT                   1332
 #define IDC_AMPLITUDESPAN               1335
 #define IDC_CHECKFILENAME               1336
-#define IDC_EDITINFOS                   1337
+#define IDC_EDIT_INFOS                   1337
 #define IDC_SPIKEPOINTS                 1342
 #define IDC_SETFLAG                     1344
 #define IDC_EDIT_NAMESPK                1346
@@ -959,8 +959,8 @@
 #define ID_OPTIONS_PRINT_MARGINS        33063
 #define ID_CHECK_FILTER_PANE            33064
 #define ID_CHECK_PROPERTIES_PANE        33065
-#define IDC_UPDATE_INFOS                33066
-#define IDC_EDIT_INFOS                  33067
+
+
 #define ID_TOOLS_SPIKE_DETECTION_PARAMETERS 33068
 #define ID_TOOLS_IMPORT                 33097
 #define ID_TOOLS_PATHS_RELATIVE         33099

@@ -109,7 +109,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 			}
 		}
 
-		plot_histogram(p_dc, p_dw, color);
+		display_histogram(p_dc, p_dw, color);
 	}
 
 	// plot selected class (one histogram)
@@ -119,17 +119,24 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 		CDWordArray* p_dw = nullptr;
 		get_class_array(selected_class_, p_dw);
 		if (p_dw != nullptr)
-			plot_histogram(p_dc, p_dw, color);
+			display_histogram(p_dc, p_dw, color);
 	}
+
+	//// display cursors
+	//if (horizontal_tags.get_tag_list_size() > 0)
+	//	display_horizontal_tags(p_dc);
+	//if (vertical_tags.get_tag_list_size() > 0) 
+	//	display_vertical_tags(p_dc);
+
+	p_dc->SetBkColor(background_color);
+	p_dc->RestoreDC(n_saved_dc);
 
 	// display cursors
 	if (horizontal_tags.get_tag_list_size() > 0)
 		display_horizontal_tags(p_dc);
-	if (vertical_tags.get_tag_list_size() > 0) 
+	if (vertical_tags.get_tag_list_size() > 0)
 		display_vertical_tags(p_dc);
 
-	p_dc->SetBkColor(background_color);
-	p_dc->RestoreDC(n_saved_dc);
 }
 
 void ChartSpikeHist::display_vertical_tags(CDC* p_dc)
@@ -154,7 +161,7 @@ void ChartSpikeHist::display_vertical_tags(CDC* p_dc)
 	p_dc->SetROP2(old_rop2);
 }
 
-void ChartSpikeHist::plot_histogram(CDC* p_dc, const CDWordArray* p_dw, const int color) const
+void ChartSpikeHist::display_histogram(CDC* p_dc, const CDWordArray* p_dw, const int color) const
 {
 	CRect rect_histogram;
 	double interval = abscissa_min_mv_;

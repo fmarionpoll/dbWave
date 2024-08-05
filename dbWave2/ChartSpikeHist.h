@@ -33,12 +33,12 @@ protected:
 	int i_last_{}; // index last interval with data
 
 public:
-	double get_hist_bin_mv() const { return abscissa_bin_mv_; }
-	double get_hist_bin_min_mv() const { return abscissa_min_mv_; }
-	double get_hist_bin_max_mv() const { return abscissa_max_mv_; }
-	int get_hist_n_bins() const { return abscissa_n_bins_; }
-	int get_hist_max_bin_index() const { return i_max_; }
-	DWORD get_hist_max_value() const { return l_max_; }
+	double	get_hist_bin_mv() const { return abscissa_bin_mv_; }
+	double	get_hist_bin_min_mv() const { return abscissa_min_mv_; }
+	double	get_hist_bin_max_mv() const { return abscissa_max_mv_; }
+	int		get_hist_n_bins() const { return abscissa_n_bins_; }
+	int		get_hist_max_bin_index() const { return i_max_; }
+	DWORD	get_hist_max_value() const { return l_max_; }
 
 	void build_hist_from_document(CdbWaveDoc* p_document, BOOL b_all_files, long l_first, long l_last, 
 									double min_mv, double max_mv, double bin_mv);
@@ -58,7 +58,8 @@ protected:
 	void resize_histograms(double bin_mv, double max_mv, double min_mv);
 	void get_histogram_limits(int i_hist);
 	void get_extents();
-	void plot_histogram(CDC* p_dc, const CDWordArray* p_dw, int color) const;
+
+	void display_histogram(CDC* p_dc, const CDWordArray* p_dw, int color) const;
 
 	void get_class_array(int i_class, CDWordArray*& p_dw);
 	CDWordArray* init_class_array(int n_bins, int spike_class);
