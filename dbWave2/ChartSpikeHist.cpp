@@ -71,21 +71,10 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	const int n_saved_dc = p_dc->SaveDC();
 	prepare_dc(p_dc);
 
-	int color;
 	// save background color which is changed by later calls to FillSolidRect
 	// when doing so, pens created with PS_DOT pattern and with XOR_PEN do
 	// not work properly. Restoring the background color solves the pb.
-	const auto background_color = p_dc->GetBkColor();
-	switch (plot_mode_)
-	{
-	case PLOT_BLACK:
-	case PLOT_ONE_CLASS_ONLY:
-		color = BLACK_COLOR;
-		break;
-	default:
-		color = SILVER_COLOR;
-		break;
-	}
+	const auto old_background_color = p_dc->GetBkColor();
 
 	//loop to display all histograms (but not the selected one)
 	for (auto i_histogram = 0; i_histogram < histogram_array_.GetSize(); i_histogram++)
@@ -94,45 +83,51 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 		if (0 == p_dw->GetSize())
 			continue;
 
+		int color_index = BLACK_COLOR;
 		if (i_histogram > 0)
 		{
 			const auto spike_class = static_cast<int>(p_dw->GetAt(0));
-			color = BLACK_COLOR;
 			if (PLOT_ONE_CLASS_ONLY == plot_mode_ && spike_class != selected_class_)
 				continue;
 			if (PLOT_CLASS_COLORS == plot_mode_)
-				color = spike_class % NB_COLORS;
+				color_index = spike_class % NB_COLORS;
 			else if (plot_mode_ == PLOT_ONE_CLASS && spike_class == selected_class_)
 			{
-				color = BLACK_COLOR;
+				color_index = BLACK_COLOR;
 				continue;
 			}
 		}
 
-		display_histogram(p_dc, p_dw, color);
+		display_histogram(p_dc, p_dw, color_index);
 	}
 
 	// plot selected class (one histogram)
 	if (plot_mode_ == PLOT_ONE_CLASS)
 	{
-		color = BLACK_COLOR;
 		CDWordArray* p_dw = nullptr;
 		get_class_array(selected_class_, p_dw);
 		if (p_dw != nullptr)
-			display_histogram(p_dc, p_dw, color);
+			display_histogram(p_dc, p_dw, BLACK_COLOR);
 	}
 
-	p_dc->SetBkColor(background_color);
-	p_dc->RestoreDC(n_saved_dc);
-
+	p_dc->SetBkColor(old_background_color);
+	
 	// display cursors
 	if (horizontal_tags.get_tag_list_size() > 0)
 		display_horizontal_tags(p_dc);
-	if (vertical_tags.get_tag_list_size() > 0)
-		display_vertical_tags(p_dc);
+	if (vertical_tags.get_tag_list_size() > 0) {
+		TRACE("display VT\n");
+		const auto wo = MulDiv(0 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+		const auto we = MulDiv(m_display_rect_.bottom - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+		display_vertical_tags(p_dc, wo, we );
+	}
+
+	p_dc->RestoreDC(n_saved_dc);
+
 
 }
 
+/*
 void ChartSpikeHist::display_vertical_tags(CDC* p_dc)
 {
 	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
@@ -154,6 +149,7 @@ void ChartSpikeHist::display_vertical_tags(CDC* p_dc)
 	p_dc->SelectObject(old_pen);
 	p_dc->SetROP2(old_rop2);
 }
+*/
 
 void ChartSpikeHist::display_histogram(CDC* p_dc, const CDWordArray* p_dw, const int color) const
 {

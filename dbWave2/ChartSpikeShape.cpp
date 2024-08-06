@@ -151,12 +151,18 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 		if (p_spike_list_->get_spike_flag_array_count() > 0)
 			draw_flagged_spikes(p_dc);
 
+		// restore resource
+		p_dc->SelectObject(old_pen);
+
 		// display tags
 		if (horizontal_tags.get_tag_list_size() > 0)
 			display_horizontal_tags(p_dc);
 
-		if (vertical_tags.get_tag_list_size() > 0)
-			display_vertical_tags(p_dc);
+		if (vertical_tags.get_tag_list_size() > 0) {
+			const int wo = MulDiv(0 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+			const int we = MulDiv(m_display_rect_.bottom - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+			display_vertical_tags(p_dc, wo, we);
+		}
 
 		// display text
 		if (b_text_ && plot_mode_ == PLOT_ONE_CLASS_ONLY)
@@ -165,9 +171,6 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			wsprintf(num, _T("%i"), get_selected_class());
 			p_dc->TextOut(1, 1, num);
 		}
-
-		// restore resource
-		p_dc->SelectObject(old_pen);
 	}
 
 	// display selected spike
@@ -179,24 +182,6 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 
 	// restore resources
 	p_dc->RestoreDC(n_saved_dc);
-}
-
-void ChartSpikeShape::display_vertical_tags(CDC* p_dc)
-{
-	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
-	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
-	const auto y0 = MulDiv(0 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
-	const auto y1 = MulDiv(m_display_rect_.bottom - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
-
-	for (auto j = vertical_tags.get_tag_list_size() - 1; j >= 0; j--)
-	{
-		const auto k = vertical_tags.get_value_int(j);
-		p_dc->MoveTo(k, y0);
-		p_dc->LineTo(k, y1);
-	}
-
-	p_dc->SelectObject(old_pen);
-	p_dc->SetROP2(old_rop2);
 }
 
 void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)

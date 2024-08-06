@@ -318,12 +318,12 @@ void ChartSpikeXY::select_spike(const db_spike& new_spike_selected)
 	}
 }
 
-void ChartSpikeXY::OnLButtonUp(UINT nFlags, CPoint point)
+void ChartSpikeXY::OnLButtonUp(UINT n_flags, CPoint point)
 {
 	switch (track_mode_)
 	{
 	case TRACK_HZ_TAG:
-		left_button_up_horizontal_tag(nFlags, point);
+		left_button_up_horizontal_tag(n_flags, point);
 		break;
 
 	case TRACK_VT_TAG:
@@ -333,14 +333,14 @@ void ChartSpikeXY::OnLButtonUp(UINT nFlags, CPoint point)
 			vertical_tags.set_value_int(hc_trapped_, val);
 			point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 			xor_vertical_tag(point.x);
-			ChartSpike::OnLButtonUp(nFlags, point);
+			ChartSpike::OnLButtonUp(n_flags, point);
 			post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
 		}
 		break;
 
 	default:
 		{
-			ChartSpike::OnLButtonUp(nFlags, point);
+			ChartSpike::OnLButtonUp(n_flags, point);
 			CRect rect_out(m_pt_first_.x, m_pt_first_.y, m_pt_last_.x, m_pt_last_.y);
 			constexpr auto jitter = 3;
 			if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
@@ -375,7 +375,7 @@ void ChartSpikeXY::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 }
 
-void ChartSpikeXY::OnLButtonDown(const UINT nFlags, const CPoint point)
+void ChartSpikeXY::OnLButtonDown(const UINT n_flags, const CPoint point)
 {
 	// compute pixel position of tags
 	if (horizontal_tags.get_tag_list_size() > 0)
@@ -394,7 +394,7 @@ void ChartSpikeXY::OnLButtonDown(const UINT nFlags, const CPoint point)
 	}
 
 	// track rectangle or HZ tag?
-	ChartSpike::OnLButtonDown(nFlags, point);
+	ChartSpike::OnLButtonDown(n_flags, point);
 	if (current_cursor_mode_ != 0 || hc_trapped_ >= 0) // do nothing else if mode != 0
 	{
 		if (track_mode_ == TRACK_HZ_TAG || track_mode_ == TRACK_VT_TAG)
@@ -406,7 +406,7 @@ void ChartSpikeXY::OnLButtonDown(const UINT nFlags, const CPoint point)
 	if (spike_hit_.spike_index >= 0)
 	{
 		release_cursor(); 
-		if (nFlags & MK_SHIFT)
+		if (n_flags & MK_SHIFT)
 			post_my_message(HINT_HIT_SPIKE_SHIFT, NULL);
 
 		else
@@ -447,7 +447,7 @@ void ChartSpikeXY::zoom_data(CRect* rect_from, CRect* rect_dest)
 	post_my_message(HINT_CHANGE_HZ_LIMITS, NULL);
 }
 
-void ChartSpikeXY::OnLButtonDblClk(UINT nFlags, CPoint point)
+void ChartSpikeXY::OnLButtonDblClk(UINT n_flags, CPoint point)
 {
 	/*if (spike_selected_.spike_index < 0 || spike_hit_.spike_index < 0)
 		ChartSpike::OnLButtonDblClk(nFlags, point);
@@ -455,7 +455,7 @@ void ChartSpikeXY::OnLButtonDblClk(UINT nFlags, CPoint point)
 		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), BN_DOUBLECLICKED),
 		                         reinterpret_cast<LPARAM>(m_hWnd));*/
 	if ((spike_selected_.spike_index < 0 && p_spike_list_->get_spike_flag_array_count() < 1) || spike_hit_.spike_index < 0)
-		ChartSpike::OnLButtonDblClk(nFlags, point);
+		ChartSpike::OnLButtonDblClk(n_flags, point);
 	else
 	{
 		if (spike_selected_.spike_index >= 0)

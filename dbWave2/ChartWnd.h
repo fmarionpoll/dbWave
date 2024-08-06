@@ -40,12 +40,80 @@ public:
 
 	virtual BOOL Create(LPCTSTR lpsz_window_name, DWORD dw_style, const RECT& rect, CWnd* p_parent_wnd, UINT n_id,
 	                    CCreateContext* p_context = nullptr);
+protected:
+	static int cursors_count_;
+	static HCURSOR cursors_[NB_CURSORS];
+	static int cursors_drag_mode_[NB_CURSORS]; // cursor mode: 0=invert rect; 1=catch object
+	int cursor_index_max_{ NB_CURSORS };
+	int cursor_type_{ 0 };
+	int old_cursor_type_{ 0 };
+	HCURSOR handle_current_cursor_{};
+	int current_cursor_mode_{ 0 }; // current cursor drag mode
+	static COLORREF color_table_[NB_COLORS]; // array with color ref
+
+	CPen pen_table_[NB_COLORS]; // table with CPen objects (same colors as color table)
+	BOOL b_left_mouse_button_down_ = false;
+	BOOL b_use_dib_{ false };
+	CDC plot_dc_{};
+	CWordArray array_mark_{};
+	CPen black_dotted_pen_{};
+	CString cs_empty_;
+	SCOPESTRUCT scope_structure_{};
+
+	int plot_mode_ = 0;
+	int index_color_background_ = SILVER_COLOR;
+	int index_color_selected_ = BLACK_COLOR;
+	BOOL b_erase_background_ = TRUE; // erase background (flag)
+	BOOL b_vertical_tags_as_long_ = FALSE; // flag: TRUE if VT tags are defined as long
+	long file_position_first_left_pixel_ = 0; // file position of first left pixel
+	long file_position_last_right_pixel_ = 0; // file position of last right pixel
+	long file_position_equivalent_to_mouse_jitter_{}; // file position range corresponding mouse jitter
+
+	// plotting options - parameters for PLOT_WITHIN_BOUNDS
+	int plot_within_mode_{};
+	int lower_limit_{};
+	int upper_limit_{};
+	int color_index_within_limits_{};
+	int color_index_outside_limits_{};
+
+	// mouse tracking modes
+	int hc_trapped_{}; // cursor index trapped by the mouse
+	int track_mode_ = TRACK_OFF;
+
+	int m_x_wo_ = 0;
+	int m_x_we_ = 1;
+	int m_x_viewport_origin_ = 0;
+	int m_x_viewport_extent_ = 1;
+
+	int m_y_wo_ = 0;
+	int m_y_we_ = 1;
+	int m_y_viewport_origin_ = 0;
+	int m_y_viewport_extent_ = 1;
+
+	int m_cur_track_{}; // threshold  tracked
+	CPoint m_pt_first_{};
+	CPoint m_pt_curr_{};
+	CPoint m_pt_last_{};
+	CRect m_client_rect_{};
+	CRect m_display_rect_{};
+
+	int cx_mouse_jitter_;
+	int cy_mouse_jitter_;
+	CRect rect_zoom_from_;
+	CRect rect_zoom_to_;
+	int i_undo_zoom_ = 0; // 1: rect+ ; -1: rect- ; 0: none stored (not implemented)
+
+	BOOL m_b_allow_props_ = true;
+	HWND m_hwnd_reflect_ = nullptr;
+	Tag* m_temp_vertical_tag_ = nullptr;
+
+public:
+	virtual void plot_data_to_dc(CDC* p_dc);
 	virtual SCOPESTRUCT* get_scope_parameters();
 	virtual void set_scope_parameters(SCOPESTRUCT* p_struct);
 	virtual int set_mouse_cursor_type(int cursor_type);
 	virtual void zoom_data(CRect* prev_rect, CRect* new_rect);
 
-	virtual void plot_data_to_dc(CDC* p_dc);
 	void erase_background(CDC* p_dc);
 	void plot_to_bitmap(CDC* p_dc);
 
@@ -85,7 +153,6 @@ public:
 
 	void reflect_mouse_move_message(const HWND h_window) { m_hwnd_reflect_ = h_window; }
 	void set_cursor_max_on_dbl_click(const int imax) { cursor_index_max_ = imax; }
-	void plot_to_bitmap(CBitmap* p_bitmap);
 	void draw_grid(CDC* p_dc);
 	void adjust_display_rect(const CRect* p_rect);
 	BOOL get_b_draw_frame() const { return scope_structure_.bDrawframe; }
@@ -110,7 +177,7 @@ public:
 	BOOL b_bottom_comment {false};
 
 	TagList vertical_tags{};
-	virtual void display_vertical_tags(CDC* p_dc);
+	virtual void display_vertical_tags(CDC* p_dc, int wo, int we);
 	void xor_vertical_tag(int x_point);
 	void xor_temp_vertical_tag(int x_point);
 
@@ -124,73 +191,6 @@ public:
 
 	// Implementation
 protected:
-	static int cursors_count_; 
-	static HCURSOR cursors_[NB_CURSORS]; 
-	static int cursors_drag_mode_[NB_CURSORS]; // cursor mode: 0=invert rect; 1=catch object
-	int cursor_index_max_  {NB_CURSORS};
-	int cursor_type_  {0}; 
-	int old_cursor_type_  {0};
-	HCURSOR handle_current_cursor_ {}; 
-	int current_cursor_mode_ {0}; // current cursor drag mode
-	static COLORREF color_table_[NB_COLORS]; // array with color ref
-
-	CPen pen_table_[NB_COLORS]; // table with CPen objects (same colors as color table)
-	BOOL b_left_mouse_button_down_ = false;
-	BOOL b_use_dib_ {false};
-	CDC plot_dc_ {};
-	CWordArray array_mark_ {};
-	CPen black_dotted_pen_ {};
-	CString cs_empty_;
-	SCOPESTRUCT scope_structure_ {};
-
-	int plot_mode_ = 0;
-	int index_color_background_ = SILVER_COLOR;
-	int index_color_selected_ = BLACK_COLOR;
-	BOOL b_erase_background_ = TRUE; // erase background (flag)
-	BOOL b_vertical_tags_as_long_ = FALSE; // flag: TRUE if VT tags are defined as long
-	long file_position_first_left_pixel_ = 0; // file position of first left pixel
-	long file_position_last_right_pixel_ = 0; // file position of last right pixel
-	long file_position_equivalent_to_mouse_jitter_{}; // file position range corresponding mouse jitter
-
-	// plotting options - parameters for PLOT_WITHIN_BOUNDS
-	int plot_within_mode_{};
-	int lower_limit_{};
-	int upper_limit_{};
-	int color_index_within_limits_{};
-	int color_index_outside_limits_{};
-
-	// mouse tracking modes
-	int hc_trapped_{}; // cursor index trapped by the mouse
-	int track_mode_ = TRACK_OFF;
-
-	int m_x_wo_ = 0; 
-	int m_x_we_ = 1;
-	int m_x_viewport_origin_ = 0;
-	int m_x_viewport_extent_ = 1;
-
-	int m_y_wo_ = 0; 
-	int m_y_we_ = 1;
-	int m_y_viewport_origin_ = 0;
-	int m_y_viewport_extent_ = 1;
-
-	int m_cur_track_{}; // threshold  tracked
-	CPoint m_pt_first_{};
-	CPoint m_pt_curr_{};
-	CPoint m_pt_last_{};
-	CRect m_client_rect_{};
-	CRect m_display_rect_{};
-
-	int cx_mouse_jitter_; 
-	int cy_mouse_jitter_; 
-	CRect rect_zoom_from_; 
-	CRect rect_zoom_to_; 
-	int i_undo_zoom_ = 0; // 1: rect+ ; -1: rect- ; 0: none stored (not implemented)
-
-	BOOL m_b_allow_props_ = true;
-	HWND m_hwnd_reflect_ = nullptr;
-	Tag* m_temp_vertical_tag_ = nullptr;
-
-
 	void PreSubclassWindow() override;
 	virtual int hit_curve(CPoint point);
 

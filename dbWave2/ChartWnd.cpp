@@ -676,9 +676,9 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 	case TRACK_HZ_TAG:
 		if (point.y != m_pt_curr_.y)
 		{
+			xor_horizontal_tag(point.y);
 			m_pt_curr_ = point;
 			const auto val = MulDiv(point.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
-			xor_horizontal_tag(point.y);
 			horizontal_tags.set_value_int(hc_trapped_, val);
 			post_my_message(HINT_MOVE_HZ_TAG, hc_trapped_);
 		}
@@ -688,7 +688,7 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 	case TRACK_VT_TAG:
 		if (point.x != m_pt_curr_.x)
 		{
-			xor_vertical_tag(point.x); // move cursor to new pixel
+			xor_vertical_tag(point.x); 
 			m_pt_curr_ = point;
 			vertical_tags.set_pixel(hc_trapped_, point.x);
 			if (!b_vertical_tags_as_long_)
@@ -949,18 +949,16 @@ void ChartWnd::invert_tracker(const CPoint point)
 	m_pt_last_ = point;
 }
 
-void ChartWnd::display_vertical_tags(CDC* p_dc)
+void ChartWnd::display_vertical_tags(CDC* p_dc, const int wo, const int we)
 {
 	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
-	const auto y0 = m_y_wo_; // MulDiv(0 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
-	const auto y1 = m_y_we_; // MulDiv(m_display_rect_.bottom - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
 
 	for (auto j = vertical_tags.get_tag_list_size() - 1; j >= 0; j--)
 	{
 		const auto k = vertical_tags.get_value_int(j);
-		p_dc->MoveTo(k, y0);
-		p_dc->LineTo(k, y1);
+		p_dc->MoveTo(k, wo);
+		p_dc->LineTo(k, we);
 	}
 
 	p_dc->SelectObject(old_pen);
@@ -983,50 +981,36 @@ void ChartWnd::display_horizontal_tags(CDC* p_dc)
 	p_dc->SetROP2(old_rop2);
 }
 
-//void ChartWnd::display_horizontal_tags(CDC* p_dc)
-//{
-//	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
-//	const auto old_rop2 = p_dc->SetROP2(R2_NOT_XOR_PEN);
-//	auto old_val = horizontal_tags.get_value_int(horizontal_tags.get_tag_list_size() - 1) - 1;
-//
-//	for (auto i_tag = horizontal_tags.get_tag_list_size() - 1; i_tag >= 0; i_tag--)
-//	{
-//		const auto k = horizontal_tags.get_value_int(i_tag);
-//		if (k == old_val)
-//			continue;
-//		p_dc->MoveTo(m_x_wo_, k);
-//		p_dc->LineTo(m_x_we_, k);
-//		old_val = k;
-//	}
-//
-//	p_dc->SelectObject(old_pen);
-//	p_dc->SetROP2(old_rop2);
-//}
 
 void ChartWnd::xor_horizontal_tag(const int y_point)
 {
 	if (m_pt_last_.y == y_point)
 		return;
-	CClientDC dc(this);
 
+	CClientDC dc(this);
 	const auto old_pen = dc.SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = dc.SetROP2(R2_NOTXORPEN);
 	dc.IntersectClipRect(&m_display_rect_);
 
+	// erase old
 	dc.MoveTo(m_display_rect_.left, m_pt_last_.y);
 	dc.LineTo(m_display_rect_.right, m_pt_last_.y);
+	// display new
 	dc.MoveTo(m_display_rect_.left, y_point);
 	dc.LineTo(m_display_rect_.right, y_point);
+	m_pt_last_.y = y_point;
 
 	dc.SetROP2(old_rop2);
 	dc.SelectObject(old_pen);
-	m_pt_last_.y = y_point;
+	
 }
 
 void ChartWnd::xor_vertical_tag(const int x_point)
 {
-	CClientDC dc(this);
+	if (m_pt_last_.x == x_point)
+		return;
 
+	CClientDC dc(this);
 	const auto old_pen = dc.SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = dc.SetROP2(R2_NOTXORPEN);
 	dc.IntersectClipRect(&m_client_rect_); 
@@ -1036,10 +1020,10 @@ void ChartWnd::xor_vertical_tag(const int x_point)
 
 	dc.MoveTo(x_point, m_display_rect_.top);
 	dc.LineTo(x_point, m_display_rect_.bottom);
+	m_pt_last_.x = x_point;
 
 	dc.SetROP2(old_rop2);
 	dc.SelectObject(old_pen);
-	m_pt_last_.x = x_point;
 }
 
 void ChartWnd::xor_temp_vertical_tag(const int x_point)
@@ -1101,15 +1085,6 @@ void ChartWnd::Serialize(CArchive& ar)
 		ar >> m_y_viewport_extent_;
 	}
 	scope_structure_.Serialize(ar);
-}
-
-void ChartWnd::plot_to_bitmap(CBitmap* p_bitmap)
-{
-	CClientDC dc(this);
-	CDC mem_dc;
-	mem_dc.CreateCompatibleDC(&dc);
-	mem_dc.SelectObject(p_bitmap);
-	plot_data_to_dc(&mem_dc);
 }
 
 int ChartWnd::hit_curve(CPoint point)

@@ -62,7 +62,7 @@ protected:
 	void buildHistFromSpikeList(SpikeList* p_spk_list, long l_first, long l_last, int max, int min, int nbins,
 	                            BOOL bNew);
 	void getExtents();
-	void plotHistogram(CDC* p_dc, CDWordArray* p_dw, int color);
+	void plotHistogram(CDC* p_dc, const CDWordArray* p_dw, int color) const;
 
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

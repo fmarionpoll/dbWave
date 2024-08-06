@@ -126,26 +126,30 @@ void ChartSpikeHistVert::plot_data_to_dc(CDC* p_dc)
 	if (horizontal_tags.get_tag_list_size() > 0) // display horizontal tags
 		display_horizontal_tags(p_dc);
 	if (vertical_tags.get_tag_list_size() > 0) // display vertical tags
-		display_vertical_tags(p_dc);
+	{
+		const auto wo = MulDiv(0 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+		const auto we = MulDiv(m_display_rect_.bottom - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+		display_vertical_tags(p_dc, wo, we);
+	}
 	p_dc->RestoreDC(n_saved_dc);
 }
 
-void ChartSpikeHistVert::plotHistogram(CDC* p_dc, CDWordArray* p_dw, int color)
+void ChartSpikeHistVert::plotHistogram(CDC* p_dc, const CDWordArray* p_dw, const int color) const
 {
-	CRect rect_histog;
-	rect_histog.bottom = m_abscissaminval - m_binsize;
-	rect_histog.top = m_abscissaminval;
-	rect_histog.left = 0;
+	CRect rect_histogram;
+	rect_histogram.bottom = m_abscissaminval - m_binsize;
+	rect_histogram.top = m_abscissaminval;
+	rect_histogram.left = 0;
 	for (auto i = 1; i < p_dw->GetSize(); i++)
 	{
-		rect_histog.bottom += m_binsize;
-		rect_histog.top += m_binsize;
+		rect_histogram.bottom += m_binsize;
+		rect_histogram.top += m_binsize;
 
-		rect_histog.right = static_cast<int>(p_dw->GetAt(i));
-		if (rect_histog.top > 0)
+		rect_histogram.right = static_cast<int>(p_dw->GetAt(i));
+		if (rect_histogram.top > 0)
 		{
-			p_dc->MoveTo(rect_histog.bottom, rect_histog.left);
-			p_dc->FillSolidRect(rect_histog, color_table_[color]);
+			p_dc->MoveTo(rect_histogram.bottom, rect_histogram.left);
+			p_dc->FillSolidRect(rect_histogram, color_table_[color]);
 		}
 	}
 }
