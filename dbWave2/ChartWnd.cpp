@@ -676,7 +676,7 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 	case TRACK_HZ_TAG:
 		if (point.y != m_pt_curr_.y)
 		{
-			xor_horizontal_tag(point.y);
+			xor_horizontal(point.y);
 			m_pt_curr_ = point;
 			const auto val = MulDiv(point.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
 			horizontal_tags.set_value_int(hc_trapped_, val);
@@ -688,7 +688,7 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 	case TRACK_VT_TAG:
 		if (point.x != m_pt_curr_.x)
 		{
-			xor_vertical_tag(point.x); 
+			xor_vertical(point.x); 
 			m_pt_curr_ = point;
 			vertical_tags.set_pixel(hc_trapped_, point.x);
 			if (!b_vertical_tags_as_long_)
@@ -756,7 +756,7 @@ void ChartWnd::left_button_up_horizontal_tag(const UINT n_flags, CPoint point)
 	horizontal_tags.set_value_int(hc_trapped_, data_value);
 
 	point.y = MulDiv(data_value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
-	xor_horizontal_tag(point.y);
+	xor_horizontal(point.y);
 	ChartWnd::OnLButtonUp(n_flags, point);
 	post_my_message(HINT_CHANGE_HZ_TAG, hc_trapped_);
 }
@@ -982,7 +982,7 @@ void ChartWnd::display_horizontal_tags(CDC* p_dc)
 }
 
 
-void ChartWnd::xor_horizontal_tag(const int y_point)
+void ChartWnd::xor_horizontal(const int y_point)
 {
 	if (m_pt_last_.y == y_point)
 		return;
@@ -1005,7 +1005,7 @@ void ChartWnd::xor_horizontal_tag(const int y_point)
 	
 }
 
-void ChartWnd::xor_vertical_tag(const int x_point)
+void ChartWnd::xor_vertical(const int x_point)
 {
 	if (m_pt_last_.x == x_point)
 		return;
@@ -1033,7 +1033,7 @@ void ChartWnd::xor_temp_vertical_tag(const int x_point)
 		m_temp_vertical_tag_ = new Tag;
 		m_pt_last_.x = -1;
 	}
-	xor_vertical_tag(x_point);
+	xor_vertical(x_point);
 	m_temp_vertical_tag_->pixel = x_point;
 }
 

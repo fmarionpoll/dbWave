@@ -141,13 +141,14 @@ public:
 	int get_yw_org() const { return m_y_wo_; }
 	int get_xw_extent() const { return m_x_we_; }
 	int get_xw_org() const { return m_x_wo_; }
+	int get_nx_scale_cells() const { return scope_structure_.iXCells; }
+	int	get_ny_scale_cells() const { return scope_structure_.iYCells; }
 
 	auto set_n_x_scale_cells(int i_cells, int i_ticks = 0, int i_tick_line = 0) -> void;
 	void set_ny_scale_cells(int i_cells, int i_ticks = 0, int i_tick_line = 0);
-	int get_nx_scale_cells() const { return scope_structure_.iXCells; }
-	int get_ny_scale_cells() const { return scope_structure_.iYCells; }
 	void set_x_scale_unit_value(float x);
 	void set_y_scale_unit_value(float y);
+
 	void attach_external_x_ruler(RulerBar* p_x_ruler) { x_ruler_bar = p_x_ruler; }
 	void attach_external_y_ruler(RulerBar* p_y_ruler) { y_ruler_bar = p_y_ruler; }
 
@@ -178,12 +179,12 @@ public:
 
 	TagList vertical_tags{};
 	virtual void display_vertical_tags(CDC* p_dc, int wo, int we);
-	void xor_vertical_tag(int x_point);
+	void xor_vertical(int x_point);
 	void xor_temp_vertical_tag(int x_point);
 
 	TagList horizontal_tags{};
 	virtual void display_horizontal_tags(CDC* p_dc);
-	void xor_horizontal_tag(int y_point);
+	void xor_horizontal(int y_point);
 	void reset_xor_tag() {
 		m_pt_last_.x = -1;
 		m_pt_last_.y = -1;

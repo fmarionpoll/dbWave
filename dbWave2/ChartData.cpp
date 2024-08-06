@@ -1398,7 +1398,7 @@ void ChartData::OnLButtonUp(const UINT n_flags, CPoint point)
 			point.x = static_cast<int>((l_val - file_position_first_left_pixel_) 
 				* static_cast<long>(m_display_rect_.right) 
 				/ (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1));
-			xor_vertical_tag(point.x);
+			xor_vertical(point.x);
 			post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
 			track_mode_ = TRACK_OFF;
 		}
@@ -1530,7 +1530,7 @@ void ChartData::move_hz_tag_to_val(int i, int val)
 	m_pt_last_.y = MulDiv(horizontal_tags.get_value_int(i) - m_zero_, m_y_viewport_extent_, m_xor_y_ext_) + m_y_viewport_origin_;
 	CPoint point;
 	point.y = MulDiv(val - m_zero_, m_y_viewport_extent_, m_xor_y_ext_) + m_y_viewport_origin_;
-	xor_horizontal_tag(point.y);
+	xor_horizontal(point.y);
 	horizontal_tags.set_value_int(i, val);
 }
 

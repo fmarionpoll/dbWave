@@ -289,7 +289,7 @@ void ChartSpikeXY::move_hz_tag(const int index, const int new_value)
 {
 	m_pt_last_.y = MulDiv(horizontal_tags.get_value_int(index) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
 	const auto y_pixel = MulDiv(new_value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
-	xor_horizontal_tag(y_pixel);
+	xor_horizontal(y_pixel);
 	horizontal_tags.set_value_int(index, new_value);
 }
 
@@ -297,7 +297,7 @@ void ChartSpikeXY::move_vt_tag(const int index, const int new_value)
 {
 	m_pt_last_.x = MulDiv(vertical_tags.get_value_int(index) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 	const auto x_pixel = MulDiv(new_value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	xor_vertical_tag(x_pixel);
+	xor_vertical(x_pixel);
 	vertical_tags.set_value_int(index, new_value);
 }
 
@@ -332,7 +332,7 @@ void ChartSpikeXY::OnLButtonUp(UINT n_flags, CPoint point)
 			const auto val = MulDiv(m_pt_last_.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
 			vertical_tags.set_value_int(hc_trapped_, val);
 			point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-			xor_vertical_tag(point.x);
+			xor_vertical(point.x);
 			ChartSpike::OnLButtonUp(n_flags, point);
 			post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
 		}

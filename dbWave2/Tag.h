@@ -17,10 +17,10 @@ class Tag : public CObject
 	long write(CFile* p_data_file);
 	BOOL read(CFile* p_data_file);
 
-	// Management procedures
-public:
+	//data
 	int ref_channel = -1;		// channel associated (-1) if none
 	int pixel = -1;
+	int old_pixel = -1;			// value stored (<0: none)
 	int value_int = 0;			// line value (for horizontal bar)
 	long value_long = -1;		// assoc long value (for vertical bar)
 	long long l_ticks = 0;		// length in ticks

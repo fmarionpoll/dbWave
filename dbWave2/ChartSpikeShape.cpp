@@ -292,6 +292,15 @@ void ChartSpikeShape::draw_spike_on_dc(const Spike* spike, CDC * p_dc)
 	p_dc->RestoreDC(n_saved_dc);
 }
 
+void ChartSpikeShape::move_vt_track(const int i_track, const int new_value)
+{
+	CPoint point;
+	m_pt_last_.x = MulDiv(vertical_tags.get_value_int(i_track) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	vertical_tags.set_value_int(i_track, new_value);
+	point.x = MulDiv(new_value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	xor_vertical(point.x);
+}
+
 void ChartSpikeShape::OnLButtonUp(const UINT n_flags, CPoint point)
 {
 	if (!b_left_mouse_button_down_)
@@ -317,7 +326,7 @@ void ChartSpikeShape::OnLButtonUp(const UINT n_flags, CPoint point)
 		const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
 		vertical_tags.set_value_int(hc_trapped_, val);
 		point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-		xor_vertical_tag(point.x);
+		xor_vertical(point.x);
 		ChartSpike::OnLButtonUp(n_flags, point);
 		post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
 	}
@@ -643,7 +652,7 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 		p_dc->SelectObject(&pen_table_[index_color_selected_]);
 		for (auto spike_index = spike_index_last; spike_index >= spike_index_first; spike_index--)
 		{
-			Spike* spike = p_spike_list_->get_spike(spike_index);
+			const Spike* spike = p_spike_list_->get_spike(spike_index);
 			if (range_mode_ == RANGE_TIME_INTERVALS)
 			{
 				const auto spike_time = spike->get_time();
@@ -696,15 +705,6 @@ void ChartSpikeShape::plot_array_to_dc(CDC * p_dc, short* p_array)
 	}
 }
 
-void ChartSpikeShape::move_vt_track(int i_track, int new_value)
-{
-	CPoint point;
-	m_pt_last_.x = MulDiv(vertical_tags.get_value_int(i_track) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	vertical_tags.set_value_int(i_track, new_value);
-	point.x = MulDiv(new_value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	xor_vertical_tag(point.x);
-}
-
 void ChartSpikeShape::Serialize(CArchive & ar)
 {
 	int dummy_int = 1;
@@ -713,36 +713,36 @@ void ChartSpikeShape::Serialize(CArchive & ar)
 		ChartSpike::Serialize(ar);
 		polyline_points_.Serialize(ar);
 
-		ar << range_mode_; // display range (time OR storage index)
-		ar << l_first_; // time first (real time = index/sampling rate)
-		ar << l_last_; // time last
-		ar << index_first_spike_; // index first spike
-		ar << index_last_spike_; // index last spike
-		ar << current_class_; // selected class (different color) (-1 = display all)
+		ar << range_mode_; 
+		ar << l_first_; 
+		ar << l_last_; 
+		ar << index_first_spike_; 
+		ar << index_last_spike_; 
+		ar << current_class_;
 		ar << dummy_int;
-		ar << color_selected_spike_; // color selected spike (index / color table)
+		ar << color_selected_spike_; 
 		ar << dummy_int; 
-		ar << selected_class_; // index class selected
-		ar << b_text_; // allow text default false
-		ar << selected_class_; // dummy
+		ar << selected_class_; 
+		ar << b_text_; 
+		ar << selected_class_; 
 	}
 	else
 	{
 		ChartSpike::Serialize(ar);
 		polyline_points_.Serialize(ar);
 
-		ar >> range_mode_; // display range (time OR storage index)
-		ar >> l_first_; // time first (real time = index/sampling rate)
-		ar >> l_last_; // time last
-		ar >> index_first_spike_; // index first spike
-		ar >> index_last_spike_; // index last spike
-		ar >> current_class_; // selected class (different color) (-1 = display all)
+		ar >> range_mode_; 
+		ar >> l_first_;
+		ar >> l_last_; 
+		ar >> index_first_spike_; 
+		ar >> index_last_spike_; 
+		ar >> current_class_; 
 		ar >> dummy_int;
-		ar >> color_selected_spike_; // color selected spike (index / color table)
+		ar >> color_selected_spike_; 
 		ar >> dummy_int; 
-		ar >> selected_class_; // index class selected
-		ar >> b_text_; // allow text default false
-		ar >> selected_class_; // dummy
+		ar >> selected_class_; 
+		ar >> b_text_; 
+		ar >> selected_class_; 
 	}
 }
 

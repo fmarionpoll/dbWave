@@ -138,7 +138,6 @@ void ChartSpikeHist::display_vertical_tags(CDC* p_dc)
 	for (auto tag_index = vertical_tags.get_tag_list_size() - 1; tag_index >= 0; tag_index--)
 	{
 		const auto value_mv = vertical_tags.get_value_mv(tag_index);
-
 		const int value = convert_mv_to_abscissa(value_mv);
 		const auto k = MulDiv(value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 		p_dc->MoveTo(k, y0);
@@ -178,7 +177,7 @@ void ChartSpikeHist::move_hz_tag_to_val(const int tag_index, const int value)
 	m_pt_last_.y = MulDiv(horizontal_tags.get_value_int(tag_index) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
 
 	const auto j = MulDiv(value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
-	xor_horizontal_tag(j);
+	xor_horizontal(j);
 	horizontal_tags.set_value_int(tag_index, value);
 }
 
@@ -188,7 +187,7 @@ void ChartSpikeHist::move_vt_tag_to_val(const int tag_index, const double value_
 
 	const int value = convert_mv_to_abscissa(value_mv);
 	const auto j = MulDiv(value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	xor_vertical_tag(j);
+	xor_vertical(j);
 
 	vertical_tags.set_value_int(tag_index, j);
 	vertical_tags.set_value_mv(tag_index, value_mv);
@@ -253,7 +252,7 @@ void ChartSpikeHist::OnLButtonUp(const UINT n_flags, CPoint point)
 			const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
 			vertical_tags.set_value_int(hc_trapped_, val);
 			point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-			xor_vertical_tag(point.x);
+			xor_vertical(point.x);
 			ChartSpike::OnLButtonUp(n_flags, point);
 			post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
 		}
