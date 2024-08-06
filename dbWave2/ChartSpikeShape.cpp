@@ -181,6 +181,24 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 	p_dc->RestoreDC(n_saved_dc);
 }
 
+void ChartSpikeShape::display_vertical_tags(CDC* p_dc)
+{
+	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
+	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
+	const auto y0 = MulDiv(0 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+	const auto y1 = MulDiv(m_display_rect_.bottom - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+
+	for (auto j = vertical_tags.get_tag_list_size() - 1; j >= 0; j--)
+	{
+		const auto k = vertical_tags.get_value_int(j);
+		p_dc->MoveTo(k, y0);
+		p_dc->LineTo(k, y1);
+	}
+
+	p_dc->SelectObject(old_pen);
+	p_dc->SetROP2(old_rop2);
+}
+
 void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
 {
 	const auto n_saved_dc = p_dc->SaveDC();

@@ -40,6 +40,7 @@ public:
 
 	// non-inline functions
 	void plot_data_to_dc(CDC* p_dc) override;
+	void display_vertical_tags(CDC* p_dc) override;
 	void zoom_data(CRect* r_from, CRect* r_dest) override;
 
 	void print(CDC* p_dc, const CRect* rect);
