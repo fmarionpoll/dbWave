@@ -73,7 +73,7 @@ BOOL CMeasureVTtagsPage::GetVTtagVal(int index)
 	if (index < 0 || index >= m_nbtags)
 		return FALSE;
 	m_index = index;
-	const auto lk = m_pChartDataWnd->vertical_tags.get_value_long(m_index);
+	const auto lk = m_pChartDataWnd->vertical_tags.get_tag_value_long(m_index);
 	m_timesec = static_cast<float>(lk) / m_samplingrate;
 
 	return TRUE;
@@ -271,7 +271,7 @@ void CMeasureVTtagsPage::OnShiftTags()
 {
 	const auto offset = static_cast<long>(m_timeshift * m_samplingrate);
 	for (auto i = 0; i < m_nbtags; i++)
-		m_pChartDataWnd->vertical_tags.set_value_long(i, m_pChartDataWnd->vertical_tags.get_value_long(i) + offset);
+		m_pChartDataWnd->vertical_tags.set_value_long(i, m_pChartDataWnd->vertical_tags.get_tag_value_long(i) + offset);
 	// update data
 	m_pChartDataWnd->Invalidate();
 	GetVTtagVal(m_index);
@@ -287,7 +287,7 @@ void CMeasureVTtagsPage::OnAddTags()
 	if (!m_pMO->b_set_tags_for_complete_file)
 	{
 		m_nbtags = m_pChartDataWnd->vertical_tags.get_tag_list_size();
-		time = m_pChartDataWnd->vertical_tags.get_value_long(m_nbtags - 1) / m_samplingrate;
+		time = m_pChartDataWnd->vertical_tags.get_tag_value_long(m_nbtags - 1) / m_samplingrate;
 		time_end = m_period * static_cast<float>(m_nperiods) + time;
 		// delete this one which will be re-created within the loop
 		m_pChartDataWnd->vertical_tags.remove_tag(m_nbtags - 1);

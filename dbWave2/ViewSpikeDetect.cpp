@@ -734,9 +734,9 @@ LRESULT ViewSpikeDetection::OnMyMessage(const WPARAM wParam, const LPARAM lParam
 		{
 			int lvalue = m_pSpkDoc->m_stimulus_intervals.GetAt(threshold);
 			if (i_id == m_chart_data_filtered.GetDlgCtrlID())
-				lvalue = m_chart_data_filtered.vertical_tags.get_value_long(threshold);
+				lvalue = m_chart_data_filtered.vertical_tags.get_tag_value_long(threshold);
 			else if (i_id == m_chart_data_source.GetDlgCtrlID())
-				lvalue = m_chart_data_source.vertical_tags.get_value_long(threshold);
+				lvalue = m_chart_data_source.vertical_tags.get_tag_value_long(threshold);
 
 			m_pSpkDoc->m_stimulus_intervals.SetAt(threshold, lvalue);
 			update_VT_tags();

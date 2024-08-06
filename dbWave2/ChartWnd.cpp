@@ -610,7 +610,7 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 			{
 				track_mode_ = TRACK_HZ_TAG;
 				m_pt_last_.x = 0; 
-				m_pt_last_.y = horizontal_tags.get_pixel(hc_trapped_);
+				m_pt_last_.y = horizontal_tags.get_tag_pixel(hc_trapped_);
 				m_pt_first_ = m_pt_last_;
 				send_my_message(HINT_HIT_HZ_TAG, hc_trapped_);
 				break;
@@ -633,11 +633,11 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 			{
 				track_mode_ = TRACK_VT_TAG;
 				if (b_vertical_tags_as_long_)
-					m_pt_last_.x = static_cast<int>((vertical_tags.get_value_long(hc_trapped_) - file_position_first_left_pixel_) 
+					m_pt_last_.x = static_cast<int>((vertical_tags.get_tag_value_long(hc_trapped_) - file_position_first_left_pixel_) 
 						* static_cast<long>(m_display_rect_.Width()) 
 						/ (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1));
 				else
-					m_pt_last_.x = vertical_tags.get_pixel(hc_trapped_);
+					m_pt_last_.x = vertical_tags.get_tag_pixel(hc_trapped_);
 				m_pt_last_.y = 0;
 				send_my_message(HINT_HIT_VERT_TAG, hc_trapped_);
 				break;
@@ -891,7 +891,7 @@ int ChartWnd::hit_horizontal_tag(const int y)
 	for (auto i = 0; i < j; i++) 
 	{
 		constexpr auto jitter = 3;
-		const auto val = horizontal_tags.get_pixel(i); 
+		const auto val = horizontal_tags.get_tag_pixel(i); 
 		if (val <= y + jitter && val >= y - jitter)
 		{
 			hit_cursor = i;
@@ -899,39 +899,6 @@ int ChartWnd::hit_horizontal_tag(const int y)
 		}
 	}
 	return hit_cursor;
-}
-
-int ChartWnd::hit_vertical_tag_long(const long lx)
-{
-	auto chit = -1; 
-	const auto j = vertical_tags.get_tag_list_size();
-	for (auto i = 0; i < j; i++) 
-	{
-		const auto l_val = vertical_tags.get_value_long(i);
-		if (l_val <= lx + file_position_equivalent_to_mouse_jitter_ && l_val >= lx - file_position_equivalent_to_mouse_jitter_)
-		{
-			chit = i;
-			break;
-		}
-	}
-	return chit;
-}
-
-int ChartWnd::hit_vertical_tag_pixel(int x)
-{
-	auto chit = -1; 
-	const auto j = vertical_tags.get_tag_list_size();
-	for (auto i = 0; i < j; i++) 
-	{
-		constexpr auto jitter = 3;
-		const auto val = vertical_tags.get_pixel(i);
-		if (val <= x + jitter && val >= x - jitter)
-		{
-			chit = i;
-			break;
-		}
-	}
-	return chit;
 }
 
 void ChartWnd::invert_tracker(const CPoint point)

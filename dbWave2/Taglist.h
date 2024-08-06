@@ -35,14 +35,17 @@ public:
 	double get_value_mv(int i_tag);
 
 	void set_pixel(int tag_index, int pixel_value);
-	int get_pixel(int tag_index);
+	int get_tag_pixel(int tag_index);
 
 	void set_value_long(int tag_index, long value); 
-	long get_value_long(int tag_index);
+	long get_tag_value_long(int tag_index);
 
 	void set_comment(int tag_index, const CString& comment);
 	CString get_comment(int tag_index); 
 
 	long write(CFile* p_data_file);
 	BOOL read(CFile* p_data_file);
+
+	int hit_vertical_tag_long(long lx, long jitter);
+	int hit_vertical_tag_pixel(int x, int jitter);
 };

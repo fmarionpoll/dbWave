@@ -929,7 +929,7 @@ void ChartData::display_vt_tags_long_value(CDC* p_dc)
 	for (auto j = vertical_tags.get_tag_list_size() - 1; j >= 0; j--)
 	{
 		constexpr auto y0 = 0;
-		const auto lk = vertical_tags.get_value_long(j);
+		const auto lk = vertical_tags.get_tag_value_long(j);
 		if (lk < m_lx_first_ || lk > m_lx_last_)
 			continue;
 		const auto k = MulDiv(lk - m_lx_first_, m_display_rect_.Width(), m_lx_last_ - m_lx_first_ + 1);
@@ -1081,7 +1081,7 @@ void ChartData::print(CDC* p_dc, const CRect* p_rect, const BOOL b_center_line)
 		const int k_size = p_rect->right - k0;
 		for (auto j = vertical_tags.get_tag_list_size() - 1; j >= 0; j--)
 		{
-			const auto lk = vertical_tags.get_value_long(j); // get value
+			const auto lk = vertical_tags.get_tag_value_long(j); // get value
 			if (lk < m_lx_first_ || lk > m_lx_last_)
 				continue;
 			const int k = k0 + (lk - m_lx_first_) * k_size / (m_lx_last_ - m_lx_first_ + 1);

@@ -142,7 +142,7 @@ void TagList::set_pixel(const int tag_index, const int pixel_value)
 		tag->pixel = pixel_value;
 }
 
-int TagList::get_pixel(const int tag_index)
+int TagList::get_tag_pixel(const int tag_index)
 {
 	const auto tag = tag_ptr_array_.GetAt(tag_index);
 	if (tag != nullptr)
@@ -157,7 +157,7 @@ void TagList::set_value_long(const int tag_index, const long value)
 		tag->value_long = value;
 }
 
-long TagList::get_value_long(const int tag_index)
+long TagList::get_tag_value_long(const int tag_index)
 {
 	const auto tag = tag_ptr_array_.GetAt(tag_index);
 	if (tag != nullptr)
@@ -247,4 +247,40 @@ BOOL TagList::read(CFile* p_data_file)
 		tag_ptr_array_.Add(tag);
 	}
 	return TRUE;
+}
+
+int TagList::hit_vertical_tag_long(const long lx, const long jitter)
+{
+	auto chit = -1;
+	const auto array_size = tag_ptr_array_.GetSize();
+	const long max = lx + jitter;
+	const long min = lx - jitter;
+	for (auto i = 0; i < array_size; i++)
+	{
+		const auto l_val = get_tag_value_long(i);
+		if (l_val <= max && l_val >= min)
+		{
+			chit = i;
+			break;
+		}
+	}
+	return chit;
+}
+
+int TagList::hit_vertical_tag_pixel(const int x, const int jitter)
+{
+	auto chit = -1;
+	const auto j = get_tag_list_size();
+	const int max = x + jitter;
+	const int min = x - jitter;
+	for (auto i = 0; i < j; i++)
+	{
+		const auto val = get_tag_pixel(i);
+		if (val <= max && val >= min)
+		{
+			chit = i;
+			break;
+		}
+	}
+	return chit;
 }

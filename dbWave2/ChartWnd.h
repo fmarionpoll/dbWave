@@ -203,8 +203,15 @@ protected:
 	void post_my_message(int code, int code_parameter) const;
 	void invert_tracker(CPoint point); // invert rectangle when mouse-left is down
 	int hit_horizontal_tag(int y); // test if point is on a horizontal tag line
-	int hit_vertical_tag_pixel(int x); // test if point is on a vertical tag line
-	int hit_vertical_tag_long(long lx); // test if point is on a vertical tag line
+	int hit_vertical_tag_pixel(const int x)
+	{
+		return vertical_tags.hit_vertical_tag_pixel(x, 3);
+	}
+	int hit_vertical_tag_long(const long lx)
+	{
+		return vertical_tags.hit_vertical_tag_long(lx, file_position_equivalent_to_mouse_jitter_);
+	}
+
 	void zoom_in();
 	void zoom_out();
 	void zoom_pop();
