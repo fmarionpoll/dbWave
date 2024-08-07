@@ -154,20 +154,23 @@ void ChartSpikeHistVert::plotHistogram(CDC* p_dc, const CDWordArray* p_dw, const
 	}
 }
 
-void ChartSpikeHistVert::MoveHZtagtoVal(int i, int val)
+void ChartSpikeHistVert::MoveHZtagtoVal(const int i_tag, const int val)
 {
-	m_pt_last_.y = MulDiv(horizontal_tags.get_value_int(i) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+	m_pt_last_.y = MulDiv(horizontal_tags.get_value_int(i_tag) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
 	const auto j = MulDiv(val - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
 	xor_horizontal(j);
-	horizontal_tags.set_value_int(i, val);
+	horizontal_tags.set_value_int(i_tag, val);
 }
 
-void ChartSpikeHistVert::MoveVTtagtoVal(int itag, int ival)
+void ChartSpikeHistVert::MoveVTtagtoVal(const int i_tag, const int val)
 {
-	m_pt_last_.x = MulDiv(vertical_tags.get_value_int(itag) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	const auto j = MulDiv(ival - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	xor_vertical(j);
-	vertical_tags.set_value_int(itag, ival);
+	//m_pt_last_.x = MulDiv(vertical_tags.get_value_int(i_tag) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	//const auto j = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+
+	Tag* p_tag = vertical_tags.get_tag(i_tag);
+	p_tag->value_int = val;
+	const auto pixels = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	xor_vertical(pixels, p_tag->swap_pixel(pixels));
 }
 
 void ChartSpikeHistVert::getClassArray(int iclass, CDWordArray*& pDW)
@@ -213,34 +216,40 @@ LPTSTR ChartSpikeHistVert::ExportAscii(LPTSTR lp)
 	return lp;
 }
 
-void ChartSpikeHistVert::OnLButtonUp(UINT nFlags, CPoint point)
+void ChartSpikeHistVert::OnLButtonUp(const UINT n_flags, const CPoint point)
 {
 	// test if horizontal tag was tracked
 	switch (track_mode_)
 	{
 	case TRACK_HZ_TAG:
-		left_button_up_horizontal_tag(nFlags, point);
+		left_button_up_horizontal_tag(n_flags, point);
 		break;
 
 	case TRACK_VT_TAG:
 		// vertical tag was tracked
 		{
 			// convert pix into data value and back again
-			const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
+			/*const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
 			vertical_tags.set_value_int(hc_trapped_, val);
 			point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-			xor_vertical(point.x);
-			ChartSpike::OnLButtonUp(nFlags, point);
+			xor_vertical(point.x);*/
+
+			Tag* p_tag = vertical_tags.get_tag(hc_trapped_);
+			const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
+			p_tag->value_int = val;
+			xor_vertical(point.x, p_tag->swap_pixel(point.x));
+
+			ChartSpike::OnLButtonUp(n_flags, point);
 			post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
 		}
 		break;
 
 	case TRACK_RECT:
 		{
-			ChartSpike::OnLButtonUp(nFlags, point); // else release mouse
+			ChartSpike::OnLButtonUp(n_flags, point); // else release mouse
 
 			// none: zoom data or offset display
-			ChartSpike::OnLButtonUp(nFlags, point);
+			ChartSpike::OnLButtonUp(n_flags, point);
 			CRect rect_out(m_pt_first_.x, m_pt_first_.y, m_pt_last_.x, m_pt_last_.y);
 			const int jitter = 3;
 			if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))

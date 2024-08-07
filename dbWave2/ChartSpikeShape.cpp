@@ -294,11 +294,16 @@ void ChartSpikeShape::draw_spike_on_dc(const Spike* spike, CDC * p_dc)
 
 void ChartSpikeShape::move_vt_track(const int i_track, const int new_value)
 {
-	CPoint point;
-	m_pt_last_.x = MulDiv(vertical_tags.get_value_int(i_track) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	vertical_tags.set_value_int(i_track, new_value);
-	point.x = MulDiv(new_value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	xor_vertical(point.x);
+	//CPoint point;
+	//m_pt_last_.x = MulDiv(vertical_tags.get_value_int(i_track) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	//vertical_tags.set_value_int(i_track, new_value);
+	//point.x = MulDiv(new_value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	//xor_vertical(point.x);
+
+	Tag* p_tag = vertical_tags.get_tag(i_track);
+	const auto pixels = MulDiv(vertical_tags.get_value_int(i_track) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	p_tag->value_int = new_value;
+	xor_vertical(pixels, p_tag->swap_pixel(pixels));
 }
 
 void ChartSpikeShape::OnLButtonUp(const UINT n_flags, CPoint point)
@@ -323,10 +328,17 @@ void ChartSpikeShape::OnLButtonUp(const UINT n_flags, CPoint point)
 	case TRACK_VT_TAG:
 	{
 		// convert pix into data value and back again
+		//const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
+		//vertical_tags.set_value_int(hc_trapped_, val);
+		//point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+		//xor_vertical(point.x);
+
+		Tag* p_tag = vertical_tags.get_tag(hc_trapped_);// TODO: is this double conversion necessary???
 		const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
-		vertical_tags.set_value_int(hc_trapped_, val);
-		point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-		xor_vertical(point.x);
+		//point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+		p_tag->value_int = val;
+		xor_vertical(point.x, p_tag->swap_pixel(point.x));
+
 		ChartSpike::OnLButtonUp(n_flags, point);
 		post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
 	}

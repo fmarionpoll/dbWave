@@ -293,12 +293,18 @@ void ChartSpikeXY::move_hz_tag(const int index, const int new_value)
 	horizontal_tags.set_value_int(index, new_value);
 }
 
-void ChartSpikeXY::move_vt_tag(const int index, const int new_value)
+void ChartSpikeXY::move_vt_tag(const int tag_index, const int new_value)
 {
-	m_pt_last_.x = MulDiv(vertical_tags.get_value_int(index) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	const auto x_pixel = MulDiv(new_value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	xor_vertical(x_pixel);
-	vertical_tags.set_value_int(index, new_value);
+	//m_pt_last_.x = MulDiv(vertical_tags.get_value_int(tag_index) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	//const auto x_pixel = MulDiv(new_value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	//xor_vertical(x_pixel);
+
+	Tag* p_tag = vertical_tags.get_tag(tag_index);
+	const auto pixels = MulDiv(new_value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	p_tag->value_int = new_value;
+	xor_vertical(pixels, p_tag->swap_pixel(pixels));
+
+	vertical_tags.set_value_int(tag_index, new_value);
 }
 
 void ChartSpikeXY::select_spike(const db_spike& new_spike_selected)
@@ -329,10 +335,16 @@ void ChartSpikeXY::OnLButtonUp(UINT n_flags, CPoint point)
 	case TRACK_VT_TAG:
 		{
 			// convert pix into data value
+			//const auto val = MulDiv(m_pt_last_.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
+			//vertical_tags.set_value_int(hc_trapped_, val);
+			//point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+			//xor_vertical(point.x);
+
+			Tag* p_tag = vertical_tags.get_tag(hc_trapped_);
 			const auto val = MulDiv(m_pt_last_.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
-			vertical_tags.set_value_int(hc_trapped_, val);
-			point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-			xor_vertical(point.x);
+			p_tag->value_int = val;
+			xor_vertical(point.x, p_tag->swap_pixel(point.x));
+
 			ChartSpike::OnLButtonUp(n_flags, point);
 			post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
 		}

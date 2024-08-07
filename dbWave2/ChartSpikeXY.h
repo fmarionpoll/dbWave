@@ -34,7 +34,7 @@ public:
 	void highlight_spike(const Spike* spike);
 
 	void move_hz_tag(int index, int new_value);
-	void move_vt_tag(int index, int new_value);
+	void move_vt_tag(int tag_index, int new_value);
 
 	void display_all_files(const BOOL b_on, CdbWaveDoc* p_document)
 	{

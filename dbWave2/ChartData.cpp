@@ -1392,13 +1392,17 @@ void ChartData::OnLButtonUp(const UINT n_flags, CPoint point)
 
 	case TRACK_VT_TAG:
 		{
-			const auto l_val = static_cast<long>(point.x) * (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1) / static_cast<long>(m_display_rect_.
-				right) + file_position_first_left_pixel_;
-			vertical_tags.set_value_long(hc_trapped_, l_val);
-			point.x = static_cast<int>((l_val - file_position_first_left_pixel_) 
-				* static_cast<long>(m_display_rect_.right) 
+			const auto l_val = static_cast<long>(point.x)
+				* (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1)
+				/ static_cast<long>(m_display_rect_.right) + file_position_first_left_pixel_;
+			point.x = static_cast<int>((l_val - file_position_first_left_pixel_)
+				* static_cast<long>(m_display_rect_.right)
 				/ (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1));
-			xor_vertical(point.x);
+
+			Tag* p_tag = vertical_tags.get_tag(hc_trapped_);
+			p_tag->value_long = l_val;
+			xor_vertical(point.x, p_tag->swap_pixel(point.x));
+
 			post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
 			track_mode_ = TRACK_OFF;
 		}

@@ -179,7 +179,7 @@ public:
 
 	TagList vertical_tags{};
 	virtual void display_vertical_tags(CDC* p_dc, int wo, int we);
-	void xor_vertical(int x_point);
+	void xor_vertical(int x_new, int x_old);
 	void xor_temp_vertical_tag(int x_point);
 
 	TagList horizontal_tags{};

@@ -183,14 +183,15 @@ void ChartSpikeHist::move_hz_tag_to_val(const int tag_index, const int value)
 
 void ChartSpikeHist::move_vt_tag_to_val(const int tag_index, const double value_mv)
 {
-	m_pt_last_.x = MulDiv(vertical_tags.get_value_int(tag_index) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-
+	Tag* p_tag = vertical_tags.get_tag(tag_index);
+	p_tag->value_mv = value_mv;
+	//m_pt_last_.x = MulDiv(vertical_tags.get_value_int(tag_index) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	m_pt_last_.x = p_tag->pixel;
 	const int value = convert_mv_to_abscissa(value_mv);
-	const auto j = MulDiv(value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	xor_vertical(j);
-
-	vertical_tags.set_value_int(tag_index, j);
-	vertical_tags.set_value_mv(tag_index, value_mv);
+	p_tag->value_int = value;
+	const auto pixel = MulDiv(value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	xor_vertical(pixel, p_tag->swap_pixel(pixel));
+	
 }
 
 void ChartSpikeHist::get_class_array(const int i_class, CDWordArray*& p_dw)
@@ -250,9 +251,11 @@ void ChartSpikeHist::OnLButtonUp(const UINT n_flags, CPoint point)
 		{
 			// convert pix into data value and back again
 			const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
-			vertical_tags.set_value_int(hc_trapped_, val);
-			point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-			xor_vertical(point.x);
+			Tag* p_tag = vertical_tags.get_tag(hc_trapped_);
+			p_tag->value_int = val;
+			//point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+			xor_vertical(point.x, p_tag->swap_pixel(point.x));
+
 			ChartSpike::OnLButtonUp(n_flags, point);
 			post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
 		}

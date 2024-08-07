@@ -46,8 +46,8 @@ public:
 
 	void RemoveHistData();
 	LPTSTR ExportAscii(LPTSTR lp); // export ascii data
-	void MoveVTtagtoVal(int itag, int ival);
-	void MoveHZtagtoVal(int itag, int ival);
+	void MoveVTtagtoVal(int i_tag, int val);
+	void MoveHZtagtoVal(int i_tag, int val);
 
 	void zoom_data(CRect* prevRect, CRect* newRect) override;
 	void plot_data_to_dc(CDC* p_dc) override;
@@ -64,7 +64,7 @@ protected:
 	void getExtents();
 	void plotHistogram(CDC* p_dc, const CDWordArray* p_dw, int color) const;
 
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnSize(UINT nType, int cx, int cy);

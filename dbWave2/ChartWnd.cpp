@@ -688,19 +688,24 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 	case TRACK_VT_TAG:
 		if (point.x != m_pt_curr_.x)
 		{
-			xor_vertical(point.x); 
+			//xor_vertical(point.x);
+			Tag* p_tag = vertical_tags.get_tag(hc_trapped_);
+			//const auto val = MulDiv(m_pt_last_.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
+			//p_tag->value_int = val;
+			xor_vertical(point.x, p_tag->swap_pixel(point.x));
+
 			m_pt_curr_ = point;
-			vertical_tags.set_pixel(hc_trapped_, point.x);
+			//vertical_tags.set_pixel(hc_trapped_, point.x);
 			if (!b_vertical_tags_as_long_)
 			{
 				const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
-				vertical_tags.set_value_int(hc_trapped_, val);
+				p_tag->value_int = val;
 			}
 			else
 			{
 				const auto lvalue = static_cast<long>(point.x) * (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1) / static_cast<long>(
 					m_display_rect_.Width()) + file_position_first_left_pixel_;
-				vertical_tags.set_value_long(hc_trapped_, lvalue);
+				p_tag->value_long = lvalue;
 			}
 			post_my_message(HINT_MOVE_VERT_TAG, hc_trapped_);
 		}
@@ -962,6 +967,7 @@ void ChartWnd::xor_horizontal(const int y_point)
 	// erase old
 	dc.MoveTo(m_display_rect_.left, m_pt_last_.y);
 	dc.LineTo(m_display_rect_.right, m_pt_last_.y);
+
 	// display new
 	dc.MoveTo(m_display_rect_.left, y_point);
 	dc.LineTo(m_display_rect_.right, y_point);
@@ -972,22 +978,24 @@ void ChartWnd::xor_horizontal(const int y_point)
 	
 }
 
-void ChartWnd::xor_vertical(const int x_point)
+void ChartWnd::xor_vertical(const int x_new, const int x_old)
 {
-	if (m_pt_last_.x == x_point)
-		return;
-
 	CClientDC dc(this);
 	const auto old_pen = dc.SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = dc.SetROP2(R2_NOTXORPEN);
-	dc.IntersectClipRect(&m_client_rect_); 
+	dc.IntersectClipRect(&m_client_rect_);
 
-	dc.MoveTo(m_pt_last_.x, m_display_rect_.top);
-	dc.LineTo(m_pt_last_.x, m_display_rect_.bottom);
+	if (x_old >= 0)
+	{
+		dc.MoveTo(x_old, m_display_rect_.top);
+		dc.LineTo(x_old, m_display_rect_.bottom);
+	}
 
-	dc.MoveTo(x_point, m_display_rect_.top);
-	dc.LineTo(x_point, m_display_rect_.bottom);
-	m_pt_last_.x = x_point;
+	if (x_new >= 0)
+	{
+		dc.MoveTo(x_new, m_display_rect_.top);
+		dc.LineTo(x_new, m_display_rect_.bottom);
+	}
 
 	dc.SetROP2(old_rop2);
 	dc.SelectObject(old_pen);
@@ -996,12 +1004,9 @@ void ChartWnd::xor_vertical(const int x_point)
 void ChartWnd::xor_temp_vertical_tag(const int x_point)
 {
 	if (m_temp_vertical_tag_ == nullptr)
-	{
 		m_temp_vertical_tag_ = new Tag;
-		m_pt_last_.x = -1;
-	}
-	xor_vertical(x_point);
-	m_temp_vertical_tag_->pixel = x_point;
+
+	xor_vertical(x_point, m_temp_vertical_tag_->swap_pixel(x_point));
 }
 
 SCOPESTRUCT* ChartWnd::get_scope_parameters()
