@@ -680,7 +680,7 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 			m_pt_curr_ = point;
 			const auto val = MulDiv(point.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
 			hz_tags.set_value_int(hc_trapped_, val);
-			post_my_message(HINT_MOVE_HZ_TAG, hc_trapped_);
+			send_my_message(HINT_MOVE_HZ_TAG, hc_trapped_);
 		}
 		break;
 
@@ -707,7 +707,7 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 					m_display_rect_.Width()) + file_position_first_left_pixel_;
 				p_tag->value_long = lvalue;
 			}
-			post_my_message(HINT_MOVE_VERT_TAG, hc_trapped_);
+			send_my_message(HINT_MOVE_VERT_TAG, hc_trapped_);
 		}
 		break;
 

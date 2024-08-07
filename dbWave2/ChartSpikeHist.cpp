@@ -116,14 +116,9 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	// display cursors
 	if (hz_tags.get_tag_list_size() > 0)
 		display_hz_tags(p_dc);
-	if (vt_tags.get_tag_list_size() > 0) {
-		const auto wo = MulDiv(0 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
-		const auto we = MulDiv(m_display_rect_.bottom - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+
+	if (vt_tags.get_tag_list_size() > 0) 
 		display_vt_tags(p_dc);
-	}
-
-	
-
 
 }
 

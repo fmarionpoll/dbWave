@@ -1359,9 +1359,9 @@ void ChartData::OnMouseMove(const UINT n_flags, const CPoint point)
 	switch (track_mode_)
 	{
 	case TRACK_CURVE:
-		curve_xor(); // erase past curve and compute new zero
+		curve_xor(); 
 		m_zero_ = MulDiv(point.y - m_pt_first_.y, m_xor_y_ext_, -m_y_viewport_extent_) + m_cur_track_;
-		curve_xor(); // plot new curve
+		curve_xor(); 
 		break;
 
 	default:

@@ -184,8 +184,6 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 		const Spike* spike = dbwave_doc_->get_spike(spike_selected_);
 		draw_spike_on_dc(spike, p_dc);
 	}
-
-	
 }
 
 void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
