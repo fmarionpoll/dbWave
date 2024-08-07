@@ -57,8 +57,8 @@ BOOL CMeasureHZtagsPage::GetHZcursorVal(const int index)
 	if (index < 0 || index >= m_nbcursors)
 		return FALSE;
 	m_index = index;
-	m_datachannel = m_pChartDataWnd->horizontal_tags.get_channel(index);
-	int k = m_pChartDataWnd->horizontal_tags.get_value_int(m_index);
+	m_datachannel = m_pChartDataWnd->hz_tags.get_channel(index);
+	int k = m_pChartDataWnd->hz_tags.get_value_int(m_index);
 	m_mvlevel = m_pChartDataWnd->get_channel_list_item(m_datachannel)->ConvertDataBinsToVolts(k) * 1000.f;
 
 	return TRUE;
@@ -70,7 +70,7 @@ void CMeasureHZtagsPage::OnCenter()
 	CChanlistItem* pchan = m_pChartDataWnd->get_channel_list_item(m_datachannel);
 	pchan->GetMaxMin(&max, &min);
 	const auto val = (max + min) / 2;
-	m_pChartDataWnd->horizontal_tags.set_value_int(m_index, val);
+	m_pChartDataWnd->hz_tags.set_value_int(m_index, val);
 	m_pChartDataWnd->Invalidate();
 	m_mvlevel = pchan->ConvertDataBinsToVolts(val) * 1000.f;
 	UpdateData(FALSE);
@@ -80,7 +80,7 @@ void CMeasureHZtagsPage::OnRemove()
 {
 	if (m_index >= 0 && m_index < m_nbcursors)
 	{
-		m_pChartDataWnd->horizontal_tags.remove_tag(m_index);
+		m_pChartDataWnd->hz_tags.remove_tag(m_index);
 		m_nbcursors--;
 	}
 	if (m_index > m_nbcursors - 1)
@@ -103,7 +103,7 @@ void CMeasureHZtagsPage::OnEnChangeDatachannel()
 			m_datachannel = m_pChartDataWnd->get_channel_list_size() - 1;
 		if (m_nbcursors > 0 && m_index >= 0 && m_index < m_nbcursors)
 		{
-			m_pChartDataWnd->horizontal_tags.set_channel(m_index, m_datachannel);
+			m_pChartDataWnd->hz_tags.set_channel(m_index, m_datachannel);
 			m_pChartDataWnd->Invalidate();
 		}
 		UpdateData(FALSE);
@@ -135,7 +135,7 @@ void CMeasureHZtagsPage::OnEnChangeMvlevel()
 		{
 			const auto val = m_pChartDataWnd->get_channel_list_item(m_datachannel)->ConvertVoltsToDataBins(
 				m_mvlevel / 1000.0f);
-			m_pChartDataWnd->horizontal_tags.set_value_int(m_index, val);
+			m_pChartDataWnd->hz_tags.set_value_int(m_index, val);
 			m_pChartDataWnd->Invalidate();
 		}
 	}
@@ -148,7 +148,7 @@ void CMeasureHZtagsPage::OnAdjust()
 	// get nb cursors / m_datachannel
 	auto n_cursors = 0;
 	for (auto i = m_nbcursors - 1; i >= 0; i--)
-		if (m_pChartDataWnd->horizontal_tags.get_channel(i) == m_datachannel)
+		if (m_pChartDataWnd->hz_tags.get_channel(i) == m_datachannel)
 			n_cursors++;
 
 	// then split cursors across m_datachannel span
@@ -162,14 +162,14 @@ void CMeasureHZtagsPage::OnAdjust()
 	auto val = min;
 	for (auto i = 0; i < m_nbcursors; i++)
 	{
-		if (m_pChartDataWnd->horizontal_tags.get_channel(i) == m_datachannel)
+		if (m_pChartDataWnd->hz_tags.get_channel(i) == m_datachannel)
 		{
-			m_pChartDataWnd->horizontal_tags.set_value_int(i, val);
+			m_pChartDataWnd->hz_tags.set_value_int(i, val);
 			val += dv;
 		}
 	}
 	m_pChartDataWnd->Invalidate();
-	val = m_pChartDataWnd->horizontal_tags.get_value_int(m_index);
+	val = m_pChartDataWnd->hz_tags.get_value_int(m_index);
 	m_mvlevel = m_pChartDataWnd->get_channel_list_item(m_datachannel)->ConvertDataBinsToVolts(val) * 1000.f;
 	UpdateData(FALSE);
 }
@@ -177,13 +177,13 @@ void CMeasureHZtagsPage::OnAdjust()
 void CMeasureHZtagsPage::OnOK()
 {
 	auto p_tags_list = m_pdatDoc->get_hz_tags_list();
-	p_tags_list->copy_tag_list(&m_pChartDataWnd->horizontal_tags);
+	p_tags_list->copy_tag_list(&m_pChartDataWnd->hz_tags);
 	m_pMO->b_changed = TRUE;
 	if (m_pMO->w_option != MEASURE_HORIZONTAL)
 	{
-		m_pChartDataWnd->horizontal_tags.remove_all_tags();
+		m_pChartDataWnd->hz_tags.remove_all_tags();
 		if (m_pMO->w_option == MEASURE_VERTICAL)
-			m_pChartDataWnd->vertical_tags.copy_tag_list(m_pdatDoc->get_vt_tags_list());
+			m_pChartDataWnd->vt_tags.copy_tag_list(m_pdatDoc->get_vt_tags_list());
 	}
 	CPropertyPage::OnOK();
 }
@@ -193,12 +193,12 @@ void CMeasureHZtagsPage::OnCancel()
 	// restore initial state of HZcursors
 	if (m_pMO->w_option != MEASURE_HORIZONTAL)
 	{
-		m_pChartDataWnd->horizontal_tags.remove_all_tags();
+		m_pChartDataWnd->hz_tags.remove_all_tags();
 		if (m_pMO->w_option == MEASURE_VERTICAL)
-			m_pChartDataWnd->vertical_tags.copy_tag_list(m_pdatDoc->get_vt_tags_list());
+			m_pChartDataWnd->vt_tags.copy_tag_list(m_pdatDoc->get_vt_tags_list());
 	}
 	else
-		m_pChartDataWnd->horizontal_tags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
+		m_pChartDataWnd->hz_tags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
 	m_pChartDataWnd->Invalidate();
 	CPropertyPage::OnCancel();
 }
@@ -207,10 +207,10 @@ BOOL CMeasureHZtagsPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	m_pChartDataWnd->horizontal_tags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
-	m_pChartDataWnd->vertical_tags.remove_all_tags();
+	m_pChartDataWnd->hz_tags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
+	m_pChartDataWnd->vt_tags.remove_all_tags();
 	m_pChartDataWnd->Invalidate();
-	m_nbcursors = m_pChartDataWnd->horizontal_tags.get_tag_list_size();
+	m_nbcursors = m_pChartDataWnd->hz_tags.get_tag_list_size();
 	GetHZcursorVal(0);
 
 	// sublassed edits
@@ -225,7 +225,7 @@ BOOL CMeasureHZtagsPage::OnInitDialog()
 
 void CMeasureHZtagsPage::OnDeleteAll()
 {
-	m_pChartDataWnd->horizontal_tags.remove_all_tags();
+	m_pChartDataWnd->hz_tags.remove_all_tags();
 	m_pChartDataWnd->Invalidate();
 	m_nbcursors = 0;
 	GetHZcursorVal(0);

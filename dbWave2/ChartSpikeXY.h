@@ -24,8 +24,6 @@ protected:
 	boolean is_spike_within_limits(const Spike* spike) const;
 
 	void get_extents();
-	void display_hz_tags(CDC* p_dc);
-	void display_vt_tags(CDC* p_dc);
 
 	// Helpers and public procedures
 public:

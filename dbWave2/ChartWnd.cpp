@@ -102,8 +102,8 @@ ChartWnd::~ChartWnd()
 				DestroyCursor(cursors_[i]);
 		}
 	}
-	horizontal_tags.remove_all_tags(); 
-	vertical_tags.remove_all_tags(); 
+	hz_tags.remove_all_tags(); 
+	vt_tags.remove_all_tags(); 
 	delete m_temp_vertical_tag_;
 
 	// delete array of pens
@@ -610,7 +610,7 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 			{
 				track_mode_ = TRACK_HZ_TAG;
 				m_pt_last_.x = 0; 
-				m_pt_last_.y = horizontal_tags.get_tag_pixel(hc_trapped_);
+				m_pt_last_.y = hz_tags.get_tag_pixel(hc_trapped_);
 				m_pt_first_ = m_pt_last_;
 				send_my_message(HINT_HIT_HZ_TAG, hc_trapped_);
 				break;
@@ -633,11 +633,11 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 			{
 				track_mode_ = TRACK_VT_TAG;
 				if (b_vertical_tags_as_long_)
-					m_pt_last_.x = static_cast<int>((vertical_tags.get_tag_value_long(hc_trapped_) - file_position_first_left_pixel_) 
+					m_pt_last_.x = static_cast<int>((vt_tags.get_tag_value_long(hc_trapped_) - file_position_first_left_pixel_) 
 						* static_cast<long>(m_display_rect_.Width()) 
 						/ (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1));
 				else
-					m_pt_last_.x = vertical_tags.get_tag_pixel(hc_trapped_);
+					m_pt_last_.x = vt_tags.get_tag_pixel(hc_trapped_);
 				m_pt_last_.y = 0;
 				send_my_message(HINT_HIT_VERT_TAG, hc_trapped_);
 				break;
@@ -676,10 +676,10 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 	case TRACK_HZ_TAG:
 		if (point.y != m_pt_curr_.y)
 		{
-			xor_horizontal(point.y);
+			xor_hz_tag(point.y);
 			m_pt_curr_ = point;
 			const auto val = MulDiv(point.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
-			horizontal_tags.set_value_int(hc_trapped_, val);
+			hz_tags.set_value_int(hc_trapped_, val);
 			post_my_message(HINT_MOVE_HZ_TAG, hc_trapped_);
 		}
 		break;
@@ -689,10 +689,10 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 		if (point.x != m_pt_curr_.x)
 		{
 			//xor_vertical(point.x);
-			Tag* p_tag = vertical_tags.get_tag(hc_trapped_);
+			Tag* p_tag = vt_tags.get_tag(hc_trapped_);
 			//const auto val = MulDiv(m_pt_last_.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
 			//p_tag->value_int = val;
-			xor_vertical(point.x, p_tag->swap_pixel(point.x));
+			xor_vt_tag(point.x, p_tag->swap_pixel(point.x));
 
 			m_pt_curr_ = point;
 			//vertical_tags.set_pixel(hc_trapped_, point.x);
@@ -758,10 +758,10 @@ void ChartWnd::left_button_up_horizontal_tag(const UINT n_flags, CPoint point)
 {
 	// convert pix into data value
 	const auto data_value = MulDiv(m_pt_last_.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
-	horizontal_tags.set_value_int(hc_trapped_, data_value);
+	hz_tags.set_value_int(hc_trapped_, data_value);
 
 	point.y = MulDiv(data_value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
-	xor_horizontal(point.y);
+	xor_hz_tag(point.y);
 	ChartWnd::OnLButtonUp(n_flags, point);
 	post_my_message(HINT_CHANGE_HZ_TAG, hc_trapped_);
 }
@@ -892,11 +892,11 @@ void ChartWnd::zoom_in()
 int ChartWnd::hit_horizontal_tag(const int y)
 {
 	auto hit_cursor = -1; 
-	const auto j = horizontal_tags.get_tag_list_size();
+	const auto j = hz_tags.get_tag_list_size();
 	for (auto i = 0; i < j; i++) 
 	{
 		constexpr auto jitter = 3;
-		const auto val = horizontal_tags.get_tag_pixel(i); 
+		const auto val = hz_tags.get_tag_pixel(i); 
 		if (val <= y + jitter && val >= y - jitter)
 		{
 			hit_cursor = i;
@@ -921,32 +921,41 @@ void ChartWnd::invert_tracker(const CPoint point)
 	m_pt_last_ = point;
 }
 
-void ChartWnd::display_vertical_tags(CDC* p_dc, const int wo, const int we)
+void ChartWnd::display_vt_tags(CDC* p_dc)
 {
 	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
 
-	for (auto j = vertical_tags.get_tag_list_size() - 1; j >= 0; j--)
+	const auto y0 = m_display_rect_.top;
+	const auto y1 = m_display_rect_.bottom;
+
+	for (auto tag_index = vt_tags.get_tag_list_size() - 1; tag_index >= 0; tag_index--)
 	{
-		const auto k = vertical_tags.get_value_int(j);
-		p_dc->MoveTo(k, wo);
-		p_dc->LineTo(k, we);
+		Tag* p_tag = vt_tags.get_tag(tag_index);
+		p_tag->pixel = MulDiv(p_tag->value_int  - m_x_wo_, m_x_viewport_extent_, m_x_we_)
+					+ m_x_viewport_origin_;
+		p_dc->MoveTo(p_tag->pixel, y0);
+		p_dc->LineTo(p_tag->pixel, y1);
 	}
 
 	p_dc->SelectObject(old_pen);
 	p_dc->SetROP2(old_rop2);
 }
 
-void ChartWnd::display_horizontal_tags(CDC* p_dc)
+void ChartWnd::display_hz_tags(CDC* p_dc)
 {
 	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
 
-	for (auto i_tag = horizontal_tags.get_tag_list_size() - 1; i_tag >= 0; i_tag--)
+	const auto x0 = m_display_rect_.left; 
+	const auto x1 = m_display_rect_.right; 
+	for (auto tag_index = hz_tags.get_tag_list_size() - 1; tag_index >= 0; tag_index--)
 	{
-		const auto k = horizontal_tags.get_value_int(i_tag);
-		p_dc->MoveTo(m_x_wo_, k);
-		p_dc->LineTo(m_x_we_, k);
+		Tag* p_tag = hz_tags.get_tag(tag_index);
+		p_tag->pixel = MulDiv(p_tag->value_int - m_y_wo_, m_y_viewport_extent_, m_y_we_)
+			+ m_y_viewport_origin_;
+		p_dc->MoveTo(x0, p_tag->pixel);
+		p_dc->LineTo(x1, p_tag->pixel);
 	}
 
 	p_dc->SelectObject(old_pen);
@@ -954,7 +963,7 @@ void ChartWnd::display_horizontal_tags(CDC* p_dc)
 }
 
 
-void ChartWnd::xor_horizontal(const int y_point)
+void ChartWnd::xor_hz_tag(const int y_point)
 {
 	if (m_pt_last_.y == y_point)
 		return;
@@ -978,7 +987,7 @@ void ChartWnd::xor_horizontal(const int y_point)
 	
 }
 
-void ChartWnd::xor_vertical(const int x_new, const int x_old)
+void ChartWnd::xor_vt_tag(const int x_new, const int x_old)
 {
 	CClientDC dc(this);
 	const auto old_pen = dc.SelectObject(&black_dotted_pen_);
@@ -1001,12 +1010,12 @@ void ChartWnd::xor_vertical(const int x_new, const int x_old)
 	dc.SelectObject(old_pen);
 }
 
-void ChartWnd::xor_temp_vertical_tag(const int x_point)
+void ChartWnd::xor_temp_vt_tag(const int x_point)
 {
 	if (m_temp_vertical_tag_ == nullptr)
 		m_temp_vertical_tag_ = new Tag;
 
-	xor_vertical(x_point, m_temp_vertical_tag_->swap_pixel(x_point));
+	xor_vt_tag(x_point, m_temp_vertical_tag_->swap_pixel(x_point));
 }
 
 SCOPESTRUCT* ChartWnd::get_scope_parameters()

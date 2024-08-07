@@ -177,14 +177,15 @@ public:
 	CString cs_bottom_comment {};
 	BOOL b_bottom_comment {false};
 
-	TagList vertical_tags{};
-	virtual void display_vertical_tags(CDC* p_dc, int wo, int we);
-	void xor_vertical(int x_new, int x_old);
-	void xor_temp_vertical_tag(int x_point);
+	TagList vt_tags{};
+	virtual void display_vt_tags(CDC* p_dc);
+	void xor_vt_tag(int x_new, int x_old);
+	void xor_temp_vt_tag(int x_point);
 
-	TagList horizontal_tags{};
-	virtual void display_horizontal_tags(CDC* p_dc);
-	void xor_horizontal(int y_point);
+	TagList hz_tags{};
+	virtual void display_hz_tags(CDC* p_dc);
+	void xor_hz_tag(int y_point);
+
 	void reset_xor_tag() {
 		m_pt_last_.x = -1;
 		m_pt_last_.y = -1;
@@ -205,11 +206,11 @@ protected:
 	int hit_horizontal_tag(int y); // test if point is on a horizontal tag line
 	int hit_vertical_tag_pixel(const int x)
 	{
-		return vertical_tags.hit_vertical_tag_pixel(x, 3);
+		return vt_tags.hit_vertical_tag_pixel(x, 3);
 	}
 	int hit_vertical_tag_long(const long lx)
 	{
-		return vertical_tags.hit_vertical_tag_long(lx, file_position_equivalent_to_mouse_jitter_);
+		return vt_tags.hit_vertical_tag_long(lx, file_position_equivalent_to_mouse_jitter_);
 	}
 
 	void zoom_in();

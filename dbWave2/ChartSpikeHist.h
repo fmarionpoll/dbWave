@@ -60,7 +60,6 @@ public:
 	void move_hz_tag_to_val(int tag_index, int value);
 
 	void zoom_data(CRect* r_from, CRect* r_dest) override;
-	//	void display_vertical_tags(CDC* p_dc) override;
 	void plot_data_to_dc(CDC* p_dc) override;
 
 protected:

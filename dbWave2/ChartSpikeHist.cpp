@@ -111,18 +111,18 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	}
 
 	p_dc->SetBkColor(old_background_color);
+	p_dc->RestoreDC(n_saved_dc);
 	
 	// display cursors
-	if (horizontal_tags.get_tag_list_size() > 0)
-		display_horizontal_tags(p_dc);
-	if (vertical_tags.get_tag_list_size() > 0) {
-		TRACE("display VT\n");
+	if (hz_tags.get_tag_list_size() > 0)
+		display_hz_tags(p_dc);
+	if (vt_tags.get_tag_list_size() > 0) {
 		const auto wo = MulDiv(0 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
 		const auto we = MulDiv(m_display_rect_.bottom - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
-		display_vertical_tags(p_dc, wo, we );
+		display_vt_tags(p_dc);
 	}
 
-	p_dc->RestoreDC(n_saved_dc);
+	
 
 
 }
@@ -174,23 +174,23 @@ void ChartSpikeHist::display_histogram(CDC* p_dc, const CDWordArray* p_dw, const
 
 void ChartSpikeHist::move_hz_tag_to_val(const int tag_index, const int value)
 {
-	m_pt_last_.y = MulDiv(horizontal_tags.get_value_int(tag_index) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+	m_pt_last_.y = MulDiv(hz_tags.get_value_int(tag_index) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
 
 	const auto j = MulDiv(value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
-	xor_horizontal(j);
-	horizontal_tags.set_value_int(tag_index, value);
+	xor_hz_tag(j);
+	hz_tags.set_value_int(tag_index, value);
 }
 
 void ChartSpikeHist::move_vt_tag_to_val(const int tag_index, const double value_mv)
 {
-	Tag* p_tag = vertical_tags.get_tag(tag_index);
+	Tag* p_tag = vt_tags.get_tag(tag_index);
 	p_tag->value_mv = value_mv;
 	//m_pt_last_.x = MulDiv(vertical_tags.get_value_int(tag_index) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 	m_pt_last_.x = p_tag->pixel;
 	const int value = convert_mv_to_abscissa(value_mv);
 	p_tag->value_int = value;
 	const auto pixel = MulDiv(value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	xor_vertical(pixel, p_tag->swap_pixel(pixel));
+	xor_vt_tag(pixel, p_tag->swap_pixel(pixel));
 	
 }
 
@@ -251,10 +251,10 @@ void ChartSpikeHist::OnLButtonUp(const UINT n_flags, CPoint point)
 		{
 			// convert pix into data value and back again
 			const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
-			Tag* p_tag = vertical_tags.get_tag(hc_trapped_);
+			Tag* p_tag = vt_tags.get_tag(hc_trapped_);
 			p_tag->value_int = val;
 			//point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-			xor_vertical(point.x, p_tag->swap_pixel(point.x));
+			xor_vt_tag(point.x, p_tag->swap_pixel(point.x));
 
 			ChartSpike::OnLButtonUp(n_flags, point);
 			post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
@@ -306,16 +306,16 @@ void ChartSpikeHist::OnLButtonUp(const UINT n_flags, CPoint point)
 void ChartSpikeHist::OnLButtonDown(const UINT n_flags, const CPoint point)
 {
 	// compute pixel position of horizontal tags
-	if (horizontal_tags.get_tag_list_size() > 0)
+	if (hz_tags.get_tag_list_size() > 0)
 	{
-		for (auto i_cur = horizontal_tags.get_tag_list_size() - 1; i_cur >= 0; i_cur--)
-			horizontal_tags.set_pixel(i_cur, MulDiv(horizontal_tags.get_value_int(i_cur) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_);
+		for (auto i_cur = hz_tags.get_tag_list_size() - 1; i_cur >= 0; i_cur--)
+			hz_tags.set_pixel(i_cur, MulDiv(hz_tags.get_value_int(i_cur) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_);
 	}
 	// compute pixel position of vertical tags
-	if (vertical_tags.get_tag_list_size() > 0)
+	if (vt_tags.get_tag_list_size() > 0)
 	{
-		for (auto i_cur = vertical_tags.get_tag_list_size() - 1; i_cur >= 0; i_cur--) // loop through all tags
-			vertical_tags.set_pixel(i_cur, MulDiv(vertical_tags.get_value_int(i_cur) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_);
+		for (auto i_cur = vt_tags.get_tag_list_size() - 1; i_cur >= 0; i_cur--) // loop through all tags
+			vt_tags.set_pixel(i_cur, MulDiv(vt_tags.get_value_int(i_cur) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_);
 	}
 
 	ChartSpike::OnLButtonDown(n_flags, point);

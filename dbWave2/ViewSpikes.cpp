@@ -201,7 +201,7 @@ void ViewSpikes::OnMouseMove(UINT nFlags, CPoint point)
 		else
 			pt_vt_ = -1;
 		b_dummy_ = TRUE;
-		chart_data_wnd_.xor_temp_vertical_tag(pt_vt_);
+		chart_data_wnd_.xor_temp_vt_tag(pt_vt_);
 		spike_class_listbox_.xor_temp_vt_tag(pt_vt_);
 	}
 	dbTableView::OnMouseMove(nFlags, point);

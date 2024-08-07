@@ -175,8 +175,8 @@ void ViewSpikeTemplates::OnInitialUpdate()
 	k_tolerance = spike_classification_parameters_->k_tolerance;
 
 	m_chart_spk_wnd_shape_.set_plot_mode(PLOT_ONE_CLASS, 0);
-	spk_form_tag_left_ = m_chart_spk_wnd_shape_.vertical_tags.add_tag(spike_classification_parameters_->k_left, 0);
-	spk_form_tag_right_ = m_chart_spk_wnd_shape_.vertical_tags.add_tag(spike_classification_parameters_->k_right, 0);
+	spk_form_tag_left_ = m_chart_spk_wnd_shape_.vt_tags.add_tag(spike_classification_parameters_->k_left, 0);
+	spk_form_tag_right_ = m_chart_spk_wnd_shape_.vt_tags.add_tag(spike_classification_parameters_->k_right, 0);
 
 	update_file_parameters();
 	update_ctrl_tab1(0);
@@ -340,14 +340,14 @@ LRESULT ViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_CHANGE_VERT_TAG:
 		if (shortValue == spk_form_tag_left_)
 		{
-			spike_classification_parameters_->k_left = m_chart_spk_wnd_shape_.vertical_tags.get_value_int(spk_form_tag_left_);
+			spike_classification_parameters_->k_left = m_chart_spk_wnd_shape_.vt_tags.get_value_int(spk_form_tag_left_);
 			m_t1 = convert_spike_index_to_time(spike_classification_parameters_->k_left);
 			mm_t1_.m_bEntryDone = TRUE;
 			OnEnChangeT1();
 		}
 		else if (shortValue == spk_form_tag_right_)
 		{
-			spike_classification_parameters_->k_right = m_chart_spk_wnd_shape_.vertical_tags.get_value_int(spk_form_tag_right_);
+			spike_classification_parameters_->k_right = m_chart_spk_wnd_shape_.vt_tags.get_value_int(spk_form_tag_right_);
 			m_t2 = convert_spike_index_to_time(spike_classification_parameters_->k_right);
 			mm_t2_.m_bEntryDone = TRUE;
 			OnEnChangeT2();
@@ -1213,7 +1213,7 @@ void ViewSpikeTemplates::OnEnChangeT1()
 			m_t1 = m_t2 - delta;
 
 		const int it1 = convert_time_to_spike_index(m_t1);
-		if (it1 != m_chart_spk_wnd_shape_.vertical_tags.get_value_int(spk_form_tag_left_))
+		if (it1 != m_chart_spk_wnd_shape_.vt_tags.get_value_int(spk_form_tag_left_))
 		{
 			spike_classification_parameters_->k_left = it1;
 			m_chart_spk_wnd_shape_.move_vt_track(spk_form_tag_left_, spike_classification_parameters_->k_left);
@@ -1242,7 +1242,7 @@ void ViewSpikeTemplates::OnEnChangeT2()
 			m_t2 = t_max;
 		// change display if necessary
 		const int it2 = convert_time_to_spike_index(m_t2);
-		if (it2 != m_chart_spk_wnd_shape_.vertical_tags.get_value_int(spk_form_tag_right_))
+		if (it2 != m_chart_spk_wnd_shape_.vt_tags.get_value_int(spk_form_tag_right_))
 		{
 			spike_classification_parameters_->k_right = it2;
 			m_chart_spk_wnd_shape_.move_vt_track(spk_form_tag_right_, spike_classification_parameters_->k_right);

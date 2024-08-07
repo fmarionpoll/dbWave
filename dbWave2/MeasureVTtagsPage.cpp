@@ -73,7 +73,7 @@ BOOL CMeasureVTtagsPage::GetVTtagVal(int index)
 	if (index < 0 || index >= m_nbtags)
 		return FALSE;
 	m_index = index;
-	const auto lk = m_pChartDataWnd->vertical_tags.get_tag_value_long(m_index);
+	const auto lk = m_pChartDataWnd->vt_tags.get_tag_value_long(m_index);
 	m_timesec = static_cast<float>(lk) / m_samplingrate;
 
 	return TRUE;
@@ -99,9 +99,9 @@ void CMeasureVTtagsPage::OnCancel()
 	OnDeleteSeries();
 	if (m_pMO->w_option != MEASURE_VERTICAL)
 	{
-		m_pChartDataWnd->vertical_tags.remove_all_tags();
+		m_pChartDataWnd->vt_tags.remove_all_tags();
 		if (m_pMO->w_option == MEASURE_HORIZONTAL)
-			m_pChartDataWnd->horizontal_tags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
+			m_pChartDataWnd->hz_tags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
 	}
 	CPropertyPage::OnCancel();
 }
@@ -109,13 +109,13 @@ void CMeasureVTtagsPage::OnCancel()
 void CMeasureVTtagsPage::OnOK()
 {
 	auto p_tag_list = m_pdatDoc->get_vt_tags_list();
-	p_tag_list->copy_tag_list(&m_pChartDataWnd->vertical_tags);
+	p_tag_list->copy_tag_list(&m_pChartDataWnd->vt_tags);
 	m_pMO->b_changed = TRUE;
 	if (m_pMO->w_option != MEASURE_VERTICAL)
 	{
-		m_pChartDataWnd->vertical_tags.remove_all_tags();
+		m_pChartDataWnd->vt_tags.remove_all_tags();
 		if (m_pMO->w_option == MEASURE_HORIZONTAL)
-			m_pChartDataWnd->horizontal_tags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
+			m_pChartDataWnd->hz_tags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
 	}
 	CPropertyPage::OnOK();
 }
@@ -129,10 +129,10 @@ BOOL CMeasureVTtagsPage::OnInitDialog()
 
 	// save initial state of VTtags
 	//TODO bug here
-	m_pChartDataWnd->vertical_tags.copy_tag_list(m_pdatDoc->get_vt_tags_list());
-	m_pChartDataWnd->horizontal_tags.remove_all_tags();
+	m_pChartDataWnd->vt_tags.copy_tag_list(m_pdatDoc->get_vt_tags_list());
+	m_pChartDataWnd->hz_tags.remove_all_tags();
 	m_pChartDataWnd->Invalidate();
-	m_nbtags = m_pChartDataWnd->vertical_tags.get_tag_list_size();
+	m_nbtags = m_pChartDataWnd->vt_tags.get_tag_list_size();
 	GetVTtagVal(0);
 
 	// subclassed edits
@@ -158,7 +158,7 @@ void CMeasureVTtagsPage::OnRemove()
 {
 	if (m_index >= 0 && m_index < m_nbtags)
 	{
-		m_pChartDataWnd->vertical_tags.remove_tag(m_index);
+		m_pChartDataWnd->vt_tags.remove_tag(m_index);
 		m_nbtags--;
 	}
 	if (m_index > m_nbtags - 1)
@@ -203,7 +203,7 @@ void CMeasureVTtagsPage::OnEnChangeTimesec()
 		const auto lk = static_cast<long>(m_timesec * m_samplingrate);
 		if (m_index >= 0 && m_index < m_nbtags)
 		{
-			m_pChartDataWnd->vertical_tags.set_value_long(m_index, lk);
+			m_pChartDataWnd->vt_tags.set_value_long(m_index, lk);
 			m_pChartDataWnd->Invalidate();
 		}
 	}
@@ -271,7 +271,7 @@ void CMeasureVTtagsPage::OnShiftTags()
 {
 	const auto offset = static_cast<long>(m_timeshift * m_samplingrate);
 	for (auto i = 0; i < m_nbtags; i++)
-		m_pChartDataWnd->vertical_tags.set_value_long(i, m_pChartDataWnd->vertical_tags.get_tag_value_long(i) + offset);
+		m_pChartDataWnd->vt_tags.set_value_long(i, m_pChartDataWnd->vt_tags.get_tag_value_long(i) + offset);
 	// update data
 	m_pChartDataWnd->Invalidate();
 	GetVTtagVal(m_index);
@@ -286,11 +286,11 @@ void CMeasureVTtagsPage::OnAddTags()
 	// compute limits
 	if (!m_pMO->b_set_tags_for_complete_file)
 	{
-		m_nbtags = m_pChartDataWnd->vertical_tags.get_tag_list_size();
-		time = m_pChartDataWnd->vertical_tags.get_tag_value_long(m_nbtags - 1) / m_samplingrate;
+		m_nbtags = m_pChartDataWnd->vt_tags.get_tag_list_size();
+		time = m_pChartDataWnd->vt_tags.get_tag_value_long(m_nbtags - 1) / m_samplingrate;
 		time_end = m_period * static_cast<float>(m_nperiods) + time;
 		// delete this one which will be re-created within the loop
-		m_pChartDataWnd->vertical_tags.remove_tag(m_nbtags - 1);
+		m_pChartDataWnd->vt_tags.remove_tag(m_nbtags - 1);
 		m_nbtags--;
 	}
 	// total file, start at zero
@@ -305,8 +305,8 @@ void CMeasureVTtagsPage::OnAddTags()
 	auto n_intervals = 0.0f;
 	while (time <= time_end)
 	{
-		m_pChartDataWnd->vertical_tags.add_l_tag(static_cast<long>(time * m_samplingrate), 0);
-		m_pChartDataWnd->vertical_tags.add_l_tag(static_cast<long>((time + m_duration) * m_samplingrate), 0);
+		m_pChartDataWnd->vt_tags.add_l_tag(static_cast<long>(time * m_samplingrate), 0);
+		m_pChartDataWnd->vt_tags.add_l_tag(static_cast<long>((time + m_duration) * m_samplingrate), 0);
 		n_intervals++;
 		time = time0 + m_period * n_intervals;
 	}
@@ -319,14 +319,14 @@ void CMeasureVTtagsPage::OnDeleteSeries()
 {
 	// delete present tags
 	auto p_tags_list = m_pdatDoc->get_vt_tags_list();
-	m_pChartDataWnd->vertical_tags.copy_tag_list(p_tags_list);
+	m_pChartDataWnd->vt_tags.copy_tag_list(p_tags_list);
 	m_nbtags = p_tags_list->get_tag_list_size();
 	m_pChartDataWnd->Invalidate();
 }
 
 void CMeasureVTtagsPage::OnDeleteAll()
 {
-	m_pChartDataWnd->vertical_tags.remove_all_tags();
+	m_pChartDataWnd->vt_tags.remove_all_tags();
 	m_pChartDataWnd->Invalidate();
 	m_nbtags = 0;
 	GetVTtagVal(0);

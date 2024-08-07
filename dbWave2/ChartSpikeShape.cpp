@@ -30,10 +30,13 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 	if (b_erase_background_)
 		erase_background(p_dc);
 
-	const auto n_saved_dc = p_dc->SaveDC();
 	p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 	auto rect = m_display_rect_;
 	rect.DeflateRect(1, 1);
+
+	const auto n_saved_dc = p_dc->SaveDC();
+	const auto saved_background_color = p_dc->GetBkColor();
+
 	get_extents();
 	prepare_dc(p_dc);
 
@@ -151,17 +154,19 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 		if (p_spike_list_->get_spike_flag_array_count() > 0)
 			draw_flagged_spikes(p_dc);
 
-		// restore resource
+		// restore resources
 		p_dc->SelectObject(old_pen);
+		p_dc->SetBkColor(saved_background_color);
+		p_dc->RestoreDC(n_saved_dc);
 
 		// display tags
-		if (horizontal_tags.get_tag_list_size() > 0)
-			display_horizontal_tags(p_dc);
+		if (hz_tags.get_tag_list_size() > 0)
+			display_hz_tags(p_dc);
 
-		if (vertical_tags.get_tag_list_size() > 0) {
+		if (vt_tags.get_tag_list_size() > 0) {
 			const int wo = MulDiv(0 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
 			const int we = MulDiv(m_display_rect_.bottom - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
-			display_vertical_tags(p_dc, wo, we);
+			display_vt_tags(p_dc);
 		}
 
 		// display text
@@ -180,8 +185,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 		draw_spike_on_dc(spike, p_dc);
 	}
 
-	// restore resources
-	p_dc->RestoreDC(n_saved_dc);
+	
 }
 
 void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
@@ -300,10 +304,10 @@ void ChartSpikeShape::move_vt_track(const int i_track, const int new_value)
 	//point.x = MulDiv(new_value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 	//xor_vertical(point.x);
 
-	Tag* p_tag = vertical_tags.get_tag(i_track);
-	const auto pixels = MulDiv(vertical_tags.get_value_int(i_track) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	Tag* p_tag = vt_tags.get_tag(i_track);
+	const auto pixels = MulDiv(vt_tags.get_value_int(i_track) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 	p_tag->value_int = new_value;
-	xor_vertical(pixels, p_tag->swap_pixel(pixels));
+	xor_vt_tag(pixels, p_tag->swap_pixel(pixels));
 }
 
 void ChartSpikeShape::OnLButtonUp(const UINT n_flags, CPoint point)
@@ -333,11 +337,11 @@ void ChartSpikeShape::OnLButtonUp(const UINT n_flags, CPoint point)
 		//point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 		//xor_vertical(point.x);
 
-		Tag* p_tag = vertical_tags.get_tag(hc_trapped_);// TODO: is this double conversion necessary???
+		Tag* p_tag = vt_tags.get_tag(hc_trapped_);// TODO: is this double conversion necessary???
 		const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
 		//point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 		p_tag->value_int = val;
-		xor_vertical(point.x, p_tag->swap_pixel(point.x));
+		xor_vt_tag(point.x, p_tag->swap_pixel(point.x));
 
 		ChartSpike::OnLButtonUp(n_flags, point);
 		post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
@@ -387,10 +391,10 @@ void ChartSpikeShape::OnLButtonDown(const UINT n_flags, const CPoint point)
 {
 	b_left_mouse_button_down_ = TRUE;
 	// call base class to test for horizontal cursor or XORing rectangle
-	if (vertical_tags.get_tag_list_size() > 0)
+	if (vt_tags.get_tag_list_size() > 0)
 	{
-		for (auto i_tag = vertical_tags.get_tag_list_size() - 1; i_tag >= 0; i_tag--)
-			vertical_tags.set_pixel(i_tag, MulDiv(vertical_tags.get_value_int(i_tag) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_);
+		for (auto i_tag = vt_tags.get_tag_list_size() - 1; i_tag >= 0; i_tag--)
+			vt_tags.set_pixel(i_tag, MulDiv(vt_tags.get_value_int(i_tag) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_);
 	}
 
 	// track rectangle or VT_tag?

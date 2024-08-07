@@ -408,7 +408,7 @@ void SpikeClassListBox::xor_temp_vt_tag(const int x_point) const
 	for (auto i = 0; i < GetCount(); i++)
 	{
 		const auto row_item = get_row_item(i);
-		row_item->get_chart_bars()->xor_temp_vertical_tag(x_point);
+		row_item->get_chart_bars()->xor_temp_vt_tag(x_point);
 	}
 }
 
