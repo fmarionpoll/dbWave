@@ -61,6 +61,7 @@ public:
 
 	void zoom_data(CRect* r_from, CRect* r_dest) override;
 	void plot_data_to_dc(CDC* p_dc) override;
+	void transform_tags_in_mv_to_int();
 
 protected:
 	afx_msg void OnLButtonUp(UINT n_flags, CPoint point) override;

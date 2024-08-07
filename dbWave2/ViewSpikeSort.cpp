@@ -578,13 +578,13 @@ void ViewSpikeSort::change_vertical_tag_histogram(const short short_value)
 	{
 		spike_classification_parameters_->lower_threshold = chart_histogram_.vt_tags.get_value_int(tag_index_hist_low_);
 		lower_threshold_mv_ = static_cast<float>(spike_classification_parameters_->lower_threshold) * delta_mv_;
-		UpdateData(false);
+		on_en_change_lower_threshold();
 	}
 	else if (short_value == tag_index_hist_up_) // second tag
 	{
-		spike_classification_parameters_->upper_threshold = chart_histogram_.vt_tags.get_value_int(tag_index_hist_up_); // load new value
+		spike_classification_parameters_->upper_threshold = chart_histogram_.vt_tags.get_value_int(tag_index_hist_up_);
 		upper_threshold_mv_ = static_cast<float>(spike_classification_parameters_->upper_threshold) * delta_mv_;
-		UpdateData(false);
+		on_en_change_upper_threshold();
 	}
 }
 

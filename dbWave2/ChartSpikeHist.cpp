@@ -69,12 +69,8 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 		return;
 	}
 	const int n_saved_dc = p_dc->SaveDC();
-	prepare_dc(p_dc);
-
-	// save background color which is changed by later calls to FillSolidRect
-	// when doing so, pens created with PS_DOT pattern and with XOR_PEN do
-	// not work properly. Restoring the background color solves the pb.
 	const auto old_background_color = p_dc->GetBkColor();
+	prepare_dc(p_dc);
 
 	//loop to display all histograms (but not the selected one)
 	for (auto i_histogram = 0; i_histogram < histogram_array_.GetSize(); i_histogram++)
@@ -117,33 +113,23 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	if (hz_tags.get_tag_list_size() > 0)
 		display_hz_tags(p_dc);
 
-	if (vt_tags.get_tag_list_size() > 0) 
-		display_vt_tags(p_dc);
-
-}
-
-/*
-void ChartSpikeHist::display_vertical_tags(CDC* p_dc)
-{
-	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
-	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
-	const auto y0 = MulDiv(0 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
-	const auto y1 = MulDiv(m_display_rect_.bottom - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
-
-	for (auto tag_index = vertical_tags.get_tag_list_size() - 1; tag_index >= 0; tag_index--)
+	if (vt_tags.get_tag_list_size() > 0)
 	{
-		const auto value_mv = vertical_tags.get_value_mv(tag_index);
-		const int value = convert_mv_to_abscissa(value_mv);
-		const auto k = MulDiv(value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-		p_dc->MoveTo(k, y0);
-		p_dc->LineTo(k, y1);
-		vertical_tags.set_value_int(tag_index, k);
+		transform_tags_in_mv_to_int();
+		display_vt_tags(p_dc);
 	}
-
-	p_dc->SelectObject(old_pen);
-	p_dc->SetROP2(old_rop2);
 }
-*/
+
+void ChartSpikeHist::transform_tags_in_mv_to_int()
+{
+	for (auto tag_index = vt_tags.get_tag_list_size() - 1; tag_index >= 0; tag_index--)
+	{
+		Tag* p_tag = vt_tags.get_tag(tag_index);
+		const auto value_mv = vt_tags.get_value_mv(tag_index);
+		p_tag->value_int = convert_mv_to_abscissa(p_tag->value_mv);
+		p_tag->pixel =-1;
+	}
+}
 
 void ChartSpikeHist::display_histogram(CDC* p_dc, const CDWordArray* p_dw, const int color) const
 {
