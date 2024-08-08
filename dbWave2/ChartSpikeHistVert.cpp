@@ -154,15 +154,20 @@ void ChartSpikeHistVert::plotHistogram(CDC* p_dc, const CDWordArray* p_dw, const
 	}
 }
 
-void ChartSpikeHistVert::MoveHZtagtoVal(const int i_tag, const int val)
+void ChartSpikeHistVert::move_hz_tag_to_val(const int tag_index, const int value)
 {
-	m_pt_last_.y = MulDiv(hz_tags.get_value_int(i_tag) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
-	const auto j = MulDiv(val - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
-	xor_hz_tag(j);
-	hz_tags.set_value_int(i_tag, val);
+	//m_pt_last_.y = MulDiv(hz_tags.get_value_int(i_tag) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+	//const auto j = MulDiv(value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+	//xor_hz_tag(j);
+	//hz_tags.set_value_int(i_tag, val);
+
+	Tag* p_tag = hz_tags.get_tag(tag_index);
+	p_tag->value_int = value;
+	p_tag->pixel = MulDiv(value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+	xor_hz_tag(p_tag->pixel, p_tag->swap_pixel(p_tag->pixel));
 }
 
-void ChartSpikeHistVert::MoveVTtagtoVal(const int i_tag, const int val)
+void ChartSpikeHistVert::move_vt_tag_to_val(const int i_tag, const int val)
 {
 	//m_pt_last_.x = MulDiv(vertical_tags.get_value_int(i_tag) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 	//const auto j = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;

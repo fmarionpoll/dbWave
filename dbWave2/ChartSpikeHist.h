@@ -32,7 +32,10 @@ protected:
 	int i_first_{}; 
 	int i_last_{}; 
 
-	int convert_mv_to_abscissa(const double value) const {return static_cast<int>((value - abscissa_min_mv_) / abscissa_bin_mv_) + m_x_wo_;	}
+	int convert_mv_to_abscissa(const double value) const
+	{
+		return static_cast<int>((value - abscissa_min_mv_) * static_cast<float>(m_x_we_) / (abscissa_max_mv_ - abscissa_min_mv_)) + m_x_wo_;
+	}
 	int hit_curve(CPoint point) override;
 	void resize_histograms(double bin_mv, double max_mv, double min_mv);
 	void get_histogram_limits(int i_hist);
@@ -41,7 +44,7 @@ protected:
 	CDWordArray* init_class_array(int n_bins, int spike_class);
 	void build_hist_from_spike_list(SpikeList* p_spk_list, long l_first, long l_last, 
 								double min_mv, double max_mv, double bin_mv);
-	void display_histogram(CDC* p_dc, const CDWordArray* p_dw, int color) const;
+	void plot_histogram(CDC* p_dc, const CDWordArray* p_dw, int color);
 
 public:
 	double	get_hist_bin_mv() const { return abscissa_bin_mv_; }
@@ -61,7 +64,7 @@ public:
 
 	void zoom_data(CRect* r_from, CRect* r_dest) override;
 	void plot_data_to_dc(CDC* p_dc) override;
-	void transform_tags_in_mv_to_int();
+	void transform_tags_mv_to_int();
 
 protected:
 	afx_msg void OnLButtonUp(UINT n_flags, CPoint point) override;

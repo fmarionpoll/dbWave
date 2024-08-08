@@ -127,7 +127,7 @@ public:
 	void	set_highlight_data(const CDWordArray* p_intervals);
 	void	set_highlight_data(const CHighLight& source);
 	void	set_track_spike(BOOL b_track_spike, int track_len, int track_offset, int track_channel);
-	void	move_hz_tag_to_val(int i_tag, int i_eval);
+	void	move_hz_tag_to_val(int tag_index, int val_int);
 	void	update_x_ruler();
 	void	update_y_ruler();
 

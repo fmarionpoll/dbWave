@@ -94,7 +94,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 			}
 		}
 
-		display_histogram(p_dc, p_dw, color_index);
+		plot_histogram(p_dc, p_dw, color_index);
 	}
 
 	// plot selected class (one histogram)
@@ -103,7 +103,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 		CDWordArray* p_dw = nullptr;
 		get_class_array(selected_class_, p_dw);
 		if (p_dw != nullptr)
-			display_histogram(p_dc, p_dw, BLACK_COLOR);
+			plot_histogram(p_dc, p_dw, BLACK_COLOR);
 	}
 
 	p_dc->SetBkColor(old_background_color);
@@ -115,30 +115,31 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 
 	if (vt_tags.get_tag_list_size() > 0)
 	{
-		transform_tags_in_mv_to_int();
+		transform_tags_mv_to_int();
 		display_vt_tags(p_dc);
 	}
 }
 
-void ChartSpikeHist::transform_tags_in_mv_to_int()
+void ChartSpikeHist::transform_tags_mv_to_int()
 {
 	for (auto tag_index = vt_tags.get_tag_list_size() - 1; tag_index >= 0; tag_index--)
 	{
 		Tag* p_tag = vt_tags.get_tag(tag_index);
-		const auto value_mv = vt_tags.get_value_mv(tag_index);
 		p_tag->value_int = convert_mv_to_abscissa(p_tag->value_mv);
 		p_tag->pixel =-1;
 	}
 }
 
-void ChartSpikeHist::display_histogram(CDC* p_dc, const CDWordArray* p_dw, const int color) const
+void ChartSpikeHist::plot_histogram(CDC* p_dc, const CDWordArray* p_dw, const int color) 
 {
 	CRect rect_histogram;
 	double interval = abscissa_min_mv_;
+	const int n_bins = p_dw->GetSize();
+	abscissa_bin_mv_ = (abscissa_max_mv_ - abscissa_min_mv_) / n_bins;
 	rect_histogram.bottom = 0;
 	rect_histogram.right = convert_mv_to_abscissa(interval);
 
-	for (auto i = 1; i < p_dw->GetSize(); i++)
+	for (auto i = 1; i < n_bins; i++)
 	{
 		rect_histogram.left = rect_histogram.right;
 		interval += abscissa_bin_mv_;
@@ -155,24 +156,24 @@ void ChartSpikeHist::display_histogram(CDC* p_dc, const CDWordArray* p_dw, const
 
 void ChartSpikeHist::move_hz_tag_to_val(const int tag_index, const int value)
 {
-	m_pt_last_.y = MulDiv(hz_tags.get_value_int(tag_index) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+	//m_pt_last_.y = MulDiv(hz_tags.get_value_int(tag_index) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+	//const auto j = MulDiv(value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+	//xor_hz_tag(j);
+	//hz_tags.set_value_int(tag_index, value);
 
-	const auto j = MulDiv(value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
-	xor_hz_tag(j);
-	hz_tags.set_value_int(tag_index, value);
+	Tag* p_tag = hz_tags.get_tag(tag_index);
+	p_tag->value_int = value;
+	p_tag->pixel = MulDiv(value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+	xor_hz_tag(p_tag->pixel, p_tag->swap_pixel(p_tag->pixel));
 }
 
 void ChartSpikeHist::move_vt_tag_to_val(const int tag_index, const double value_mv)
 {
 	Tag* p_tag = vt_tags.get_tag(tag_index);
 	p_tag->value_mv = value_mv;
-	//m_pt_last_.x = MulDiv(vertical_tags.get_value_int(tag_index) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	m_pt_last_.x = p_tag->pixel;
-	const int value = convert_mv_to_abscissa(value_mv);
-	p_tag->value_int = value;
-	const auto pixel = MulDiv(value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	p_tag->value_int = convert_mv_to_abscissa(value_mv);
+	const auto pixel = MulDiv(p_tag->value_int - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
 	xor_vt_tag(pixel, p_tag->swap_pixel(pixel));
-	
 }
 
 void ChartSpikeHist::get_class_array(const int i_class, CDWordArray*& p_dw)

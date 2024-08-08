@@ -1525,17 +1525,21 @@ int ChartData::does_cursor_hit_curve(const CPoint point)
 	return channel_found;
 }
 
-void ChartData::move_hz_tag_to_val(int i, int val)
+void ChartData::move_hz_tag_to_val(const int tag_index, const int val_int)
 {
-	const auto chan = hz_tags.get_channel(i);
+	const auto chan = hz_tags.get_channel(tag_index);
 	const auto chan_list_item = chan_list_item_ptr_array_[chan];
 	m_xor_y_ext_ = chan_list_item->GetYextent();
 	m_zero_ = chan_list_item->GetYzero();
-	m_pt_last_.y = MulDiv(hz_tags.get_value_int(i) - m_zero_, m_y_viewport_extent_, m_xor_y_ext_) + m_y_viewport_origin_;
-	CPoint point;
-	point.y = MulDiv(val - m_zero_, m_y_viewport_extent_, m_xor_y_ext_) + m_y_viewport_origin_;
-	xor_hz_tag(point.y);
-	hz_tags.set_value_int(i, val);
+	//m_pt_last_.y = MulDiv(hz_tags.get_value_int(tag_index) - m_zero_, m_y_viewport_extent_, m_xor_y_ext_) + m_y_viewport_origin_;
+	//CPoint point;
+	//point.y = MulDiv(val_int - m_zero_, m_y_viewport_extent_, m_xor_y_ext_) + m_y_viewport_origin_;
+	//hz_tags.set_value_int(tag_index, val_int);
+	Tag* p_tag = hz_tags.get_tag(tag_index);
+	p_tag->value_int = val_int;
+	p_tag->pixel = MulDiv(val_int - m_zero_, m_y_viewport_extent_, m_xor_y_ext_) + m_y_viewport_origin_;
+	xor_hz_tag(p_tag->pixel, p_tag->swap_pixel(p_tag->pixel));
+	
 }
 
 void ChartData::set_highlight_data(const CHighLight& source)

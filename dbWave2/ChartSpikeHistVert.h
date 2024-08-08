@@ -46,8 +46,8 @@ public:
 
 	void RemoveHistData();
 	LPTSTR ExportAscii(LPTSTR lp); // export ascii data
-	void MoveVTtagtoVal(int i_tag, int val);
-	void MoveHZtagtoVal(int i_tag, int val);
+	void move_vt_tag_to_val(int i_tag, int val);
+	void move_hz_tag_to_val(int i_tag, int val);
 
 	void zoom_data(CRect* prevRect, CRect* newRect) override;
 	void plot_data_to_dc(CDC* p_dc) override;

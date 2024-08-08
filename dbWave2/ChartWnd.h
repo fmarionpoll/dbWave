@@ -184,7 +184,8 @@ public:
 
 	TagList hz_tags{};
 	virtual void display_hz_tags(CDC* p_dc);
-	void xor_hz_tag(int y_point);
+	//void xor_hz_tag(int y_point);
+	void xor_hz_tag(int y_new, int y_old);
 
 	void reset_xor_tag() {
 		m_pt_last_.x = -1;
