@@ -47,9 +47,9 @@ protected:
 	void draw_spike(const Spike* spike, int color_index);
 	void display_stimulus(CDC* p_dc, const CRect* rect) const;
 
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point) override;
+	afx_msg void OnLButtonUp(UINT n_flags, CPoint point) override;
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point) override;
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point) override;
+	afx_msg void OnLButtonDblClk(UINT n_flags, CPoint point) override;
 
 	DECLARE_MESSAGE_MAP()
 };

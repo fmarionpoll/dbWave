@@ -503,10 +503,10 @@ void ChartWnd::send_my_message(const int code, const int code_parameter) const
 	GetParent()->SendMessage(WM_MYMESSAGE, code, MAKELONG(code_parameter, GetDlgCtrlID()));
 }
 
-void ChartWnd::post_my_message(const int code, const int code_parameter) const
-{
-	GetParent()->PostMessage(WM_MYMESSAGE, code, MAKELONG(code_parameter, GetDlgCtrlID()));
-}
+//void ChartWnd::post_my_message(const int code, const int code_parameter) const
+//{
+//	GetParent()->PostMessage(WM_MYMESSAGE, code, MAKELONG(code_parameter, GetDlgCtrlID()));
+//}
 
 void ChartWnd::prepare_dc(CDC* p_dc, const CPrintInfo* p_info)
 {
@@ -573,7 +573,7 @@ void ChartWnd::OnLButtonDblClk(UINT n_flags, CPoint point)
 	int new_cursor = cursor_type_ + 1;
 	if (new_cursor >= cursor_index_max_)
 		new_cursor = 0;
-	post_my_message(HINT_SET_MOUSE_CURSOR, new_cursor);
+	send_my_message(HINT_SET_MOUSE_CURSOR, new_cursor);
 }
 
 void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
@@ -600,7 +600,7 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 		case 0: 
 		case CURSOR_CROSS: 
 			if (n_flags & MK_CONTROL)
-				post_my_message(HINT_L_MOUSE_BUTTON_DOWN_CTRL, MAKELONG(point.x, point.y));
+				send_my_message(HINT_L_MOUSE_BUTTON_DOWN_CTRL, MAKELONG(point.x, point.y));
 
 			track_mode_ = TRACK_RECT; 
 
@@ -681,7 +681,7 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 
 			m_pt_curr_ = point;
 			const auto val = MulDiv(point.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
-			hz_tags.set_value_int(hc_trapped_, val);
+			p_tag->value_int = val;
 			send_my_message(HINT_MOVE_HZ_TAG, hc_trapped_);
 		}
 		break;
@@ -694,7 +694,6 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 			xor_vt_tag(point.x, p_tag->swap_pixel(point.x));
 
 			m_pt_curr_ = point;
-			//vertical_tags.set_pixel(hc_trapped_, point.x);
 			if (!b_vertical_tags_as_long_)
 			{
 				const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
@@ -719,9 +718,7 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 			::GetWindowRect(m_hwnd_reflect_, &rect0);
 
 			// reflect mouse move message
-			::SendMessage(m_hwnd_reflect_,
-			              WM_MOUSEMOVE,
-			              n_flags,
+			::SendMessage(m_hwnd_reflect_, WM_MOUSEMOVE, n_flags,
 			              MAKELPARAM(point.x + (rect1.left - rect0.left),
 			                         point.y + (rect1.top - rect0.top)));
 		}
@@ -755,11 +752,8 @@ void ChartWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 
 void ChartWnd::left_button_up_horizontal_tag(const UINT n_flags, CPoint point)
 {
-	// convert pix into data value
 	Tag* p_tag = hz_tags.get_tag(hc_trapped_);
-	p_tag->value_int = MulDiv(m_pt_last_.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
-
-	point.y = MulDiv(p_tag->value_int - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+	p_tag->value_int = MulDiv(point.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
 	xor_hz_tag(point.y, p_tag->swap_pixel(point.y));
 
 	ChartWnd::OnLButtonUp(n_flags, point);
@@ -809,9 +803,9 @@ void ChartWnd::OnRButtonUp(const UINT n_flags, const CPoint point)
 			}
 		}
 		if (cursor_type_ == CURSOR_CROSS)
-			post_my_message(HINT_R_MOUSE_BUTTON_UP, NULL);
+			send_my_message(HINT_R_MOUSE_BUTTON_UP, NULL); // post?
 		else
-			post_my_message(HINT_SET_MOUSE_CURSOR, old_cursor_type_);
+			send_my_message(HINT_SET_MOUSE_CURSOR, old_cursor_type_); // post?
 		break;
 
 	case TRACK_OFF:
@@ -831,7 +825,7 @@ void ChartWnd::OnRButtonUp(const UINT n_flags, const CPoint point)
 				Invalidate();
 			}
 			else
-				post_my_message(HINT_WINDOW_PROPS_CHANGED, NULL);
+				send_my_message(HINT_WINDOW_PROPS_CHANGED, NULL); // post?
 			m_b_allow_props_ = TRUE;
 			delete params_old;
 		}
@@ -962,31 +956,6 @@ void ChartWnd::display_hz_tags(CDC* p_dc)
 	p_dc->SetROP2(old_rop2);
 }
 
-
-//void ChartWnd::xor_hz_tag(const int y_point)
-//{
-//	if (m_pt_last_.y == y_point)
-//		return;
-//
-//	CClientDC dc(this);
-//	const auto old_pen = dc.SelectObject(&black_dotted_pen_);
-//	const auto old_rop2 = dc.SetROP2(R2_NOTXORPEN);
-//	dc.IntersectClipRect(&m_display_rect_);
-//
-//	// erase old
-//	dc.MoveTo(m_display_rect_.left, m_pt_last_.y);
-//	dc.LineTo(m_display_rect_.right, m_pt_last_.y);
-//
-//	// display new
-//	dc.MoveTo(m_display_rect_.left, y_point);
-//	dc.LineTo(m_display_rect_.right, y_point);
-//	m_pt_last_.y = y_point;
-//
-//	dc.SetROP2(old_rop2);
-//	dc.SelectObject(old_pen);
-//	
-//}
-
 void ChartWnd::xor_hz_tag(const int y_new, const int y_old)
 {
 	CClientDC dc(this);
@@ -997,8 +966,8 @@ void ChartWnd::xor_hz_tag(const int y_new, const int y_old)
 	// erase old
 	if (y_old >= 0)
 	{
-		dc.MoveTo(m_display_rect_.left, m_pt_last_.y);
-		dc.LineTo(m_display_rect_.right, m_pt_last_.y);
+		dc.MoveTo(m_display_rect_.left, y_old);
+		dc.LineTo(m_display_rect_.right, y_old);
 	}
 
 	// display new

@@ -184,7 +184,6 @@ public:
 
 	TagList hz_tags{};
 	virtual void display_hz_tags(CDC* p_dc);
-	//void xor_hz_tag(int y_point);
 	void xor_hz_tag(int y_new, int y_old);
 
 	void reset_xor_tag() {
@@ -201,18 +200,16 @@ protected:
 	void capture_cursor();
 	void release_cursor();
 	void left_button_up_horizontal_tag(UINT n_flags, CPoint point);
+
 	void send_my_message(int code, int code_parameter) const;
-	void post_my_message(int code, int code_parameter) const;
-	void invert_tracker(CPoint point); // invert rectangle when mouse-left is down
-	int hit_horizontal_tag(int y); // test if point is on a horizontal tag line
-	int hit_vertical_tag_pixel(const int x)
-	{
-		return vt_tags.hit_vertical_tag_pixel(x, 3);
-	}
-	int hit_vertical_tag_long(const long lx)
-	{
-		return vt_tags.hit_vertical_tag_long(lx, file_position_equivalent_to_mouse_jitter_);
-	}
+	//void post_my_message(int code, int code_parameter) const;
+
+	void invert_tracker(CPoint point); 
+	int hit_horizontal_tag(int y); 
+	int hit_vertical_tag_pixel(const int x) {
+		return vt_tags.hit_vertical_tag_pixel(x, 3); }
+	int hit_vertical_tag_long(const long lx) {
+		return vt_tags.hit_vertical_tag_long(lx, file_position_equivalent_to_mouse_jitter_); }
 
 	void zoom_in();
 	void zoom_out();

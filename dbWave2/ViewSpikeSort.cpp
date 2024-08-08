@@ -666,12 +666,12 @@ LRESULT ViewSpikeSort::on_my_message(WPARAM code, LPARAM l_param)
 			change_vertical_tag_xy_chart(short_value);
 		break;
 
-	case HINT_CHANGE_HZ_TAG: // -------------  horizontal tag
+	case HINT_CHANGE_HZ_TAG:
 		if (HIWORD(l_param) == IDC_CHART_MEASURE)
 			change_horizontal_tag_xy_chart(short_value);
 		break;
 
-	case HINT_VIEW_SIZE_CHANGED: // ------------- change zoom
+	case HINT_VIEW_SIZE_CHANGED: 
 		update_legends();
 		break;
 

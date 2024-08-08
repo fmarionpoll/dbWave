@@ -308,11 +308,11 @@ void ChartSpikeShape::move_vt_track(const int i_track, const int new_value)
 	xor_vt_tag(pixels, p_tag->swap_pixel(pixels));
 }
 
-void ChartSpikeShape::OnLButtonUp(const UINT n_flags, CPoint point)
+void ChartSpikeShape::OnLButtonUp(const UINT n_flags, const CPoint point)
 {
 	if (!b_left_mouse_button_down_)
 	{
-		post_my_message(HINT_DROPPED, NULL);
+		send_my_message(HINT_DROPPED, NULL); // post?
 		return;
 	}
 
@@ -342,7 +342,7 @@ void ChartSpikeShape::OnLButtonUp(const UINT n_flags, CPoint point)
 		xor_vt_tag(point.x, p_tag->swap_pixel(point.x));
 
 		ChartSpike::OnLButtonUp(n_flags, point);
-		post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
+		send_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_); // post?
 	}
 	break;
 
@@ -355,7 +355,7 @@ void ChartSpikeShape::OnLButtonUp(const UINT n_flags, CPoint point)
 		if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 		{
 			if (cursor_type_ != CURSOR_ZOOM)
-				post_my_message(HINT_HIT_AREA, NULL);
+				send_my_message(HINT_HIT_AREA, NULL); // post?
 			else
 				zoom_in();
 			return;
@@ -368,14 +368,14 @@ void ChartSpikeShape::OnLButtonUp(const UINT n_flags, CPoint point)
 		case 0:
 			rect_out = rect_in;
 			rect_out.OffsetRect(m_pt_first_.x - m_pt_last_.x, m_pt_first_.y - m_pt_last_.y);
-			post_my_message(HINT_DEFINED_RECT, NULL);
+			send_my_message(HINT_DEFINED_RECT, NULL); // post?
 			break;
 		case CURSOR_ZOOM:
 			zoom_data(&rect_in, &rect_out);
 			rect_zoom_from_ = rect_in;
 			rect_zoom_to_ = rect_out;
 			i_undo_zoom_ = 1;
-			post_my_message(HINT_SET_MOUSE_CURSOR, old_cursor_type_);
+			send_my_message(HINT_SET_MOUSE_CURSOR, old_cursor_type_); // post?
 			break;
 		default:
 			break;
@@ -407,10 +407,10 @@ void ChartSpikeShape::OnLButtonDown(const UINT n_flags, const CPoint point)
 	{
 		release_cursor();
 		if (n_flags & MK_SHIFT)
-			post_my_message(HINT_HIT_SPIKE_SHIFT, NULL);
+			send_my_message(HINT_HIT_SPIKE_SHIFT, NULL); // post?
 
 		else
-			post_my_message(HINT_HIT_SPIKE, NULL);
+			send_my_message(HINT_HIT_SPIKE, NULL); // post?
 	}
 }
 
@@ -447,7 +447,7 @@ void ChartSpikeShape::zoom_data(CRect * r_from, CRect * r_dest)
 
 	// display
 	Invalidate();
-	post_my_message(HINT_CHANGE_ZOOM, 0);
+	send_my_message(HINT_CHANGE_ZOOM, 0); // post?
 }
 
 void ChartSpikeShape::OnLButtonDblClk(UINT n_flags, CPoint point)
@@ -458,13 +458,13 @@ void ChartSpikeShape::OnLButtonDblClk(UINT n_flags, CPoint point)
 	{
 		if (spike_selected_.spike_index >= 0)
 		{
-			post_my_message(HINT_DBL_CLK_SEL, spike_selected_.spike_index);
+			send_my_message(HINT_DBL_CLK_SEL, spike_selected_.spike_index); // post?
 		}
 		else
 		{
 			const auto selected_spike = hit_curve(point);
 			if (selected_spike > 0)
-				post_my_message(HINT_DBL_CLK_SEL, selected_spike);
+				send_my_message(HINT_DBL_CLK_SEL, selected_spike); // post?
 		}
 	}
 }

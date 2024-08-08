@@ -239,7 +239,7 @@ void ChartSpikeHist::OnLButtonUp(const UINT n_flags, CPoint point)
 			xor_vt_tag(point.x, p_tag->swap_pixel(point.x));
 
 			ChartSpike::OnLButtonUp(n_flags, point);
-			post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
+			send_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_); // post?
 		}
 		break;
 
@@ -254,7 +254,7 @@ void ChartSpikeHist::OnLButtonUp(const UINT n_flags, CPoint point)
 			if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 			{
 				if (cursor_type_ != CURSOR_ZOOM)
-					post_my_message(HINT_HIT_AREA, NULL);
+					send_my_message(HINT_HIT_AREA, NULL); // post?
 				else
 					zoom_in();
 				break; // exit: mouse movement was too small
@@ -311,7 +311,7 @@ void ChartSpikeHist::OnLButtonDown(const UINT n_flags, const CPoint point)
 	if (spike_hit_.spike_index >= 0)
 	{
 		release_cursor(); 
-		post_my_message(HINT_HIT_SPIKE, NULL);
+		send_my_message(HINT_HIT_SPIKE, NULL); // post?
 	}
 	else
 		release_cursor();
@@ -347,7 +347,7 @@ void ChartSpikeHist::zoom_data(CRect* r_from, CRect* r_dest)
 
 	// display
 	Invalidate();
-	post_my_message(HINT_CHANGE_ZOOM, 0);
+	send_my_message(HINT_CHANGE_ZOOM, 0); // post?
 }
 
 void ChartSpikeHist::OnLButtonDblClk(const UINT n_flags, const CPoint point)

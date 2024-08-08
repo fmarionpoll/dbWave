@@ -310,7 +310,7 @@ void ChartSpikeXY::OnLButtonUp(UINT n_flags, CPoint point)
 			xor_vt_tag(point.x, p_tag->swap_pixel(point.x));
 
 			ChartSpike::OnLButtonUp(n_flags, point);
-			post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
+			send_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_); // post?
 		}
 		break;
 
@@ -322,7 +322,7 @@ void ChartSpikeXY::OnLButtonUp(UINT n_flags, CPoint point)
 			if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 			{
 				if (cursor_type_ != CURSOR_ZOOM)
-					post_my_message(HINT_HIT_AREA, NULL);
+					send_my_message(HINT_HIT_AREA, NULL); // post?
 				else
 					zoom_in();
 				return; // exit: mouse movement was too small
@@ -383,10 +383,10 @@ void ChartSpikeXY::OnLButtonDown(const UINT n_flags, const CPoint point)
 	{
 		release_cursor(); 
 		if (n_flags & MK_SHIFT)
-			post_my_message(HINT_HIT_SPIKE_SHIFT, NULL);
+			send_my_message(HINT_HIT_SPIKE_SHIFT, NULL); // post?
 
 		else
-			post_my_message(HINT_HIT_SPIKE, NULL);
+			send_my_message(HINT_HIT_SPIKE, NULL); // post?
 	}
 }
 
@@ -420,7 +420,7 @@ void ChartSpikeXY::zoom_data(CRect* rect_from, CRect* rect_dest)
 	l_last_ = l_first_ + l_size - 1;
 	// display
 	Invalidate();
-	post_my_message(HINT_CHANGE_HZ_LIMITS, NULL);
+	send_my_message(HINT_CHANGE_HZ_LIMITS, NULL); // post?
 }
 
 void ChartSpikeXY::OnLButtonDblClk(UINT n_flags, CPoint point)
@@ -436,13 +436,13 @@ void ChartSpikeXY::OnLButtonDblClk(UINT n_flags, CPoint point)
 	{
 		if (spike_selected_.spike_index >= 0)
 		{
-			post_my_message(HINT_DBL_CLK_SEL, spike_selected_.spike_index);
+			send_my_message(HINT_DBL_CLK_SEL, spike_selected_.spike_index); // post?
 		}
 		else
 		{
 			const auto selected_spike = hit_curve(point);
 			if (selected_spike > 0)
-				post_my_message(HINT_DBL_CLK_SEL, selected_spike);
+				send_my_message(HINT_DBL_CLK_SEL, selected_spike); // post?
 		}
 	}
 }

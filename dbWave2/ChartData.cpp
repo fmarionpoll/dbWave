@@ -766,7 +766,7 @@ void ChartData::zoom_data(CRect* previous_rect, CRect* new_rect)
 		resize_channels(0, l_last - l_first + 1);
 		get_data_from_doc(l_first, l_last);
 	}
-	post_my_message(HINT_VIEW_SIZE_CHANGED, NULL);
+	send_my_message(HINT_VIEW_SIZE_CHANGED, NULL); // post?
 }
 
 void ChartData::update_x_ruler()
@@ -1332,15 +1332,15 @@ void ChartData::OnLButtonDown(const UINT n_flags, const CPoint point)
 			m_xor_n_elements_ = p_x->get_envelope_size() / 2; 
 			m_xor_x_ext_ = p_x->get_n_elements() / 2; 
 
-			const auto p_y = chan_list_item->pEnvelopeOrdinates; // load ordinates
+			const auto p_y = chan_list_item->pEnvelopeOrdinates;
 			p_y->get_mean_to_ordinates(m_poly_points_);
-			m_xor_y_ext_ = chan_list_item->GetYextent(); // store extent
-			m_zero_ = chan_list_item->GetYzero(); // store zero
-			m_pt_first_ = point; // save first point
-			m_cur_track_ = m_zero_; // use m_curTrack to store zero
+			m_xor_y_ext_ = chan_list_item->GetYextent();
+			m_zero_ = chan_list_item->GetYzero();
+			m_pt_first_ = point; 
+			m_cur_track_ = m_zero_;
 
 			curve_xor(); // xor curve
-			post_my_message(HINT_HIT_CHANNEL, m_hit_curve_); // tell parent chan selected
+			send_my_message(HINT_HIT_CHANNEL, m_hit_curve_);  // post?
 			return;
 		}
 	}
@@ -1381,7 +1381,7 @@ void ChartData::OnLButtonUp(const UINT n_flags, CPoint point)
 			const auto chan_list_item = chan_list_item_ptr_array_[m_hit_curve_];
 			chan_list_item->SetYzero(m_zero_);
 			track_mode_ = TRACK_OFF;
-			post_my_message(HINT_HIT_CHANNEL, m_hit_curve_);
+			send_my_message(HINT_HIT_CHANNEL, m_hit_curve_); // post?
 			Invalidate();
 		}
 		break;
@@ -1403,7 +1403,7 @@ void ChartData::OnLButtonUp(const UINT n_flags, CPoint point)
 			p_tag->value_long = l_val;
 			xor_vt_tag(point.x, p_tag->swap_pixel(point.x));
 
-			post_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
+			send_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_); // post?
 			track_mode_ = TRACK_OFF;
 		}
 		break;
@@ -1438,10 +1438,10 @@ void ChartData::OnLButtonUp(const UINT n_flags, CPoint point)
 				}
 				else
 					zoom_in();
-				post_my_message(HINT_SET_MOUSE_CURSOR, old_cursor_type_);
+				send_my_message(HINT_SET_MOUSE_CURSOR, old_cursor_type_); // post?
 				break;
 			case CURSOR_CROSS:
-				post_my_message(HINT_DEFINED_RECT, NULL);
+				send_my_message(HINT_DEFINED_RECT, NULL); // post?
 				break;
 			default:
 				break;

@@ -46,26 +46,28 @@ public:
 
 	void remove_hist_data();
 	LPTSTR export_ascii(LPTSTR lp); // export ascii data
-	void move_vt_tag_to_val(int i_tag, int val);
 
+	void move_vt_tag_to_val(int i_tag, int val);
+	void move_hz_tag_to_val(int tag_index, int value);
 	void zoom_data(CRect* prev_rect, CRect* new_rect) override;
 	void plot_data_to_dc(CDC* p_dc) override;
 
 	// implementation
 protected:
-	int hit_curve(CPoint point) override;
-	void size_and_clear_histograms(int n_bins, int max, int min);
 	void get_histogram_limits(int histogram_index);
 	void get_class_array(int i_class, CDWordArray*& p_dw);
+	void get_extents();
+
+	int hit_curve(CPoint point) override;
+	void size_and_clear_histograms(int n_bins, int max, int min);
 	CDWordArray* init_class_array(int n_bins, int spike_class);
 	void build_hist_from_spike_list(SpikeList* p_spk_list, long l_first, long l_last, int max, int min, int n_bins,
 	                            BOOL b_new);
-	void get_extents();
 	void plot_histogram(CDC* p_dc, const CDWordArray* p_dw, int color) const;
 
 	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonDblClk(UINT n_flags, CPoint point);
 	afx_msg void OnSize(UINT n_type, int cx, int cy);
 
 	DECLARE_MESSAGE_MAP()
