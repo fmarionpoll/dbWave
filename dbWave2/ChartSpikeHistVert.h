@@ -23,51 +23,50 @@ protected:
 	CArray<CDWordArray*, CDWordArray*> histogram_ptr_array; // array of DWord array containing histogram
 	SpikeList* m_pSL = nullptr;
 
-	int m_binsize = 0; // size of one bin
-	int m_abscissaminval = 0; // minimum value from which histogram is built (abscissa)
-	int m_abscissamaxval = 0; // maximum value (abscissa max)
-	int m_nbins; // n bins within histogram
+	int bin_size_ = 0; // size of one bin
+	int abscissa_min_val_ = 0; // minimum value from which histogram is built (abscissa)
+	int abscissa_max_val_ = 0; // maximum value (abscissa max)
+	int n_bins_; // n bins within histogram
 
-	DWORD m_lmax = 0; // value max
-	int m_imax{}; // index max
-	int m_ifirst{}; // index first interval with data
-	int m_ilast{}; // index last interval with data
+	DWORD m_lmax_ = 0; // value max
+	int m_imax_{}; // index max
+	int m_i_first_{}; // index first interval with data
+	int m_i_last_{}; // index last interval with data
 
 public:
-	int GetBinsize() const { return m_binsize; }
-	int GetBinMinval() const { return m_abscissaminval; }
-	int GetBinMaxVal() const { return m_abscissamaxval; }
-	int GetnBins() const { return m_nbins; }
-	int GetHistMaxPos() const { return m_imax; }
-	DWORD GetHistMax() const { return m_lmax; }
+	int get_bin_size() const { return bin_size_; }
+	int get_bin_min_val() const { return abscissa_min_val_; }
+	int get_bin_max_val() const { return abscissa_max_val_; }
+	int get_n_bins() const { return n_bins_; }
+	int get_hist_max_pos() const { return m_imax_; }
+	DWORD get_hist_max() const { return m_lmax_; }
 
-	void BuildHistFromDocument(CdbWaveDoc* p_document, BOOL ballFiles, long l_first, long l_last, int max, int min,
-	                           int nbins, BOOL bNew);
+	void build_hist_from_document(CdbWaveDoc* p_doc, BOOL b_all_files, long l_first, long l_last, int max, int min,
+	                           int n_bins, BOOL b_new);
 
-	void RemoveHistData();
-	LPTSTR ExportAscii(LPTSTR lp); // export ascii data
+	void remove_hist_data();
+	LPTSTR export_ascii(LPTSTR lp); // export ascii data
 	void move_vt_tag_to_val(int i_tag, int val);
-	void move_hz_tag_to_val(int i_tag, int val);
 
-	void zoom_data(CRect* prevRect, CRect* newRect) override;
+	void zoom_data(CRect* prev_rect, CRect* new_rect) override;
 	void plot_data_to_dc(CDC* p_dc) override;
 
 	// implementation
 protected:
 	int hit_curve(CPoint point) override;
-	void reSize_And_Clear_Histograms(int nbins, int max, int min);
-	void getHistogLimits(int ihist);
-	void getClassArray(int iclass, CDWordArray*& pDW);
-	CDWordArray* initClassArray(int nbins, int spike_class);
-	void buildHistFromSpikeList(SpikeList* p_spk_list, long l_first, long l_last, int max, int min, int nbins,
-	                            BOOL bNew);
-	void getExtents();
-	void plotHistogram(CDC* p_dc, const CDWordArray* p_dw, int color) const;
+	void size_and_clear_histograms(int n_bins, int max, int min);
+	void get_histogram_limits(int histogram_index);
+	void get_class_array(int i_class, CDWordArray*& p_dw);
+	CDWordArray* init_class_array(int n_bins, int spike_class);
+	void build_hist_from_spike_list(SpikeList* p_spk_list, long l_first, long l_last, int max, int min, int n_bins,
+	                            BOOL b_new);
+	void get_extents();
+	void plot_histogram(CDC* p_dc, const CDWordArray* p_dw, int color) const;
 
 	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnSize(UINT n_type, int cx, int cy);
 
 	DECLARE_MESSAGE_MAP()
 };
