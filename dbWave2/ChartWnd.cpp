@@ -72,8 +72,8 @@ ChartWnd::ChartWnd()
 
 	ChartWnd::set_mouse_cursor_type(0);
 
-	m_client_rect_ = CRect(0, 0, 10, 10); // minimal size of the button
-	adjust_display_rect(&m_client_rect_);
+	client_rect_ = CRect(0, 0, 10, 10); // minimal size of the button
+	adjust_display_rect(&client_rect_);
 
 	cx_mouse_jitter_ = GetSystemMetrics(SM_CXDOUBLECLK);
 	cy_mouse_jitter_ = GetSystemMetrics(SM_CYDOUBLECLK);
@@ -104,7 +104,7 @@ ChartWnd::~ChartWnd()
 	}
 	hz_tags.remove_all_tags(); 
 	vt_tags.remove_all_tags(); 
-	delete m_temp_vertical_tag_;
+	delete temp_vertical_tag_;
 
 	// delete array of pens
 	for (auto& i : pen_table_)
@@ -118,12 +118,12 @@ void ChartWnd::PreSubclassWindow()
 	CWnd::PreSubclassWindow();
 
 	// at this stage, assume that m_hWnd is valid
-	::GetClientRect(m_hWnd, &m_client_rect_);
-	adjust_display_rect(&m_client_rect_);
-	m_x_viewport_origin_ = m_display_rect_.left;
-	m_x_viewport_extent_ = m_display_rect_.Width();
-	m_y_viewport_origin_ = m_display_rect_.Height() / 2;
-	m_y_viewport_extent_ = -m_display_rect_.Height();
+	::GetClientRect(m_hWnd, &client_rect_);
+	adjust_display_rect(&client_rect_);
+	x_viewport_origin_ = display_rect_.left;
+	x_viewport_extent_ = display_rect_.Width();
+	y_viewport_origin_ = display_rect_.Height() / 2;
+	y_viewport_extent_ = -display_rect_.Height();
 }
 
 BEGIN_MESSAGE_MAP(ChartWnd, CWnd)
@@ -162,13 +162,13 @@ void ChartWnd::OnSize(const UINT n_type, const int cx, const int cy)
 void ChartWnd::set_display_area_size(const int cx, const int cy)
 {
 	// update coordinates
-	m_client_rect_.bottom = cy;
-	m_client_rect_.right = cx;
-	adjust_display_rect(&m_client_rect_);
-	m_x_viewport_origin_ = m_display_rect_.left;
-	m_x_viewport_extent_ = m_display_rect_.Width();
-	m_y_viewport_origin_ = m_display_rect_.Height() / 2;
-	m_y_viewport_extent_ = -m_display_rect_.Height();
+	client_rect_.bottom = cy;
+	client_rect_.right = cx;
+	adjust_display_rect(&client_rect_);
+	x_viewport_origin_ = display_rect_.left;
+	x_viewport_extent_ = display_rect_.Width();
+	y_viewport_origin_ = display_rect_.Height() / 2;
+	y_viewport_extent_ = -display_rect_.Height();
 }
 
 BOOL ChartWnd::OnEraseBkgnd(CDC* p_dc)
@@ -179,19 +179,19 @@ BOOL ChartWnd::OnEraseBkgnd(CDC* p_dc)
 void ChartWnd::plot_to_bitmap(CDC* p_dc)
 {
 	CBitmap bitmap_plot;
-	bitmap_plot.CreateBitmap(m_client_rect_.right, m_client_rect_.bottom, p_dc->GetDeviceCaps(PLANES),
+	bitmap_plot.CreateBitmap(client_rect_.right, client_rect_.bottom, p_dc->GetDeviceCaps(PLANES),
 	                         p_dc->GetDeviceCaps(BITSPIXEL), nullptr);
 	plot_dc_.CreateCompatibleDC(p_dc);
 	const auto p_old_plot_bitmap = plot_dc_.SelectObject(&bitmap_plot);
 	plot_data_to_dc(&plot_dc_);
-	p_dc->BitBlt(0, 0, m_display_rect_.right, m_display_rect_.bottom, &plot_dc_, 0, 0, SRCCOPY);
+	p_dc->BitBlt(0, 0, display_rect_.right, display_rect_.bottom, &plot_dc_, 0, 0, SRCCOPY);
 	plot_dc_.SelectObject(p_old_plot_bitmap);
 }
 
 void ChartWnd::OnPaint()
 {
 	CPaintDC dc(this);
-	dc.IntersectClipRect(&m_client_rect_);
+	dc.IntersectClipRect(&client_rect_);
 
 	if (!b_use_dib_)
 		plot_data_to_dc(&dc);
@@ -208,12 +208,12 @@ void ChartWnd::erase_background(CDC* p_dc)
 	// erase background around m_displayRect (assume only left and bottom areas)
 	if (b_nice_grid)
 	{
-		auto rect = m_client_rect_;
-		rect.right = m_display_rect_.left;
+		auto rect = client_rect_;
+		rect.right = display_rect_.left;
 		p_dc->FillSolidRect(rect, GetSysColor(COLOR_BTNFACE));
-		rect.top = m_display_rect_.bottom;
-		rect.right = m_client_rect_.right;
-		rect.left = m_display_rect_.left;
+		rect.top = display_rect_.bottom;
+		rect.right = client_rect_.right;
+		rect.left = display_rect_.left;
 		p_dc->FillSolidRect(rect, GetSysColor(COLOR_BTNFACE));
 	}
 	// erase display area
@@ -221,7 +221,7 @@ void ChartWnd::erase_background(CDC* p_dc)
 	brush.CreateSolidBrush(scope_structure_.crScopeFill);
 	const auto p_old_brush = p_dc->SelectObject(&brush);
 	const auto p_old_pen = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
-	p_dc->Rectangle(&m_display_rect_);
+	p_dc->Rectangle(&display_rect_);
 	p_dc->SelectObject(p_old_pen);
 	p_dc->SelectObject(p_old_brush);
 
@@ -231,7 +231,7 @@ void ChartWnd::erase_background(CDC* p_dc)
 
 void ChartWnd::draw_grid_evenly_spaced(CDC* p_dc) const
 {
-	auto rect = m_display_rect_;
+	auto rect = display_rect_;
 	rect.DeflateRect(1, 1);
 
 	// Standard grid is 8 high by 10 wide
@@ -287,7 +287,7 @@ void ChartWnd::draw_grid_evenly_spaced(CDC* p_dc) const
 
 void ChartWnd::draw_grid_from_ruler(CDC* p_dc, const Ruler* p_ruler) const
 {
-	auto rc_client = m_display_rect_;
+	auto rc_client = display_rect_;
 	rc_client.DeflateRect(1, 1);
 
 	// exit if length is not properly defined
@@ -343,7 +343,7 @@ void ChartWnd::draw_grid_from_ruler(CDC* p_dc, const Ruler* p_ruler) const
 
 void ChartWnd::draw_scale_from_ruler(CDC* p_dc, const Ruler* p_ruler)
 {
-	auto rc_client = m_display_rect_;
+	auto rc_client = display_rect_;
 	rc_client.DeflateRect(1, 1);
 
 	// exit if length is not properly defined
@@ -465,13 +465,13 @@ void ChartWnd::draw_grid_nicely_spaced(CDC* p_dc)
 
 void ChartWnd::adjust_display_rect(const CRect* p_rect)
 {
-	m_display_rect_ = *p_rect;
+	display_rect_ = *p_rect;
 	if (b_nice_grid)
 	{
 		if (y_ruler_bar == nullptr)
-			m_display_rect_.left += ordinates_width;
+			display_rect_.left += ordinates_width;
 		if (x_ruler_bar == nullptr)
-			m_display_rect_.bottom -= abscissa_height;
+			display_rect_.bottom -= abscissa_height;
 	}
 }
 
@@ -513,14 +513,14 @@ void ChartWnd::prepare_dc(CDC* p_dc, const CPrintInfo* p_info)
 	p_dc->SetMapMode(MM_ANISOTROPIC);
 	if (p_info == nullptr)
 	{
-		p_dc->SetViewportOrg(m_x_viewport_origin_, m_y_viewport_origin_);
-		p_dc->SetViewportExt(m_x_viewport_extent_, m_y_viewport_extent_);
-		if (m_y_we_ == 0)
-			m_y_we_ = 1024;
-		if (m_x_we_ == 0)
-			m_x_we_ = 1024;
-		p_dc->SetWindowExt(m_x_we_, m_y_we_);
-		p_dc->SetWindowOrg(m_x_wo_, m_y_wo_);
+		p_dc->SetViewportOrg(x_viewport_origin_, y_viewport_origin_);
+		p_dc->SetViewportExt(x_viewport_extent_, y_viewport_extent_);
+		if (y_we_ == 0)
+			y_we_ = 1024;
+		if (x_we_ == 0)
+			x_we_ = 1024;
+		p_dc->SetWindowExt(x_we_, y_we_);
+		p_dc->SetWindowOrg(x_wo_, y_wo_);
 	}
 }
 
@@ -543,14 +543,14 @@ void ChartWnd::set_mouse_cursor(const int cursor_type)
 
 void ChartWnd::set_yw_ext_org(const int extent, const int zero)
 {
-	m_y_we_ = extent;
-	m_y_wo_ = zero;
+	y_we_ = extent;
+	y_wo_ = zero;
 }
 
 void ChartWnd::capture_cursor()
 {
 	SetCapture();
-	auto rect_limit = m_display_rect_;
+	auto rect_limit = display_rect_;
 	ClientToScreen(rect_limit);
 	ClipCursor(rect_limit);
 }
@@ -578,20 +578,20 @@ void ChartWnd::OnLButtonDblClk(UINT n_flags, CPoint point)
 
 void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 {
-	if (m_hwnd_reflect_ != nullptr)
+	if (h_wnd_reflect_ != nullptr)
 	{
 		// convert coordinates
 		CRect rect0, rect1;
 		GetWindowRect(&rect1);
-		::GetWindowRect(m_hwnd_reflect_, &rect0);
-		::SendMessage(m_hwnd_reflect_, WM_LBUTTONDOWN, n_flags,
+		::GetWindowRect(h_wnd_reflect_, &rect0);
+		::SendMessage(h_wnd_reflect_, WM_LBUTTONDOWN, n_flags,
 		              MAKELPARAM(point.x + (rect1.left - rect0.left), point.y + (rect1.top - rect0.top)));
 	}
 	else
 	{
-		m_pt_first_ = point;
-		m_pt_last_ = point;
-		m_pt_curr_ = point;
+		pt_first_ = point;
+		pt_last_ = point;
+		pt_curr_ = point;
 
 		// take action according to cursor mode
 		switch (cursor_type_)
@@ -609,9 +609,9 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 			if (hc_trapped_ >= 0)
 			{
 				track_mode_ = TRACK_HZ_TAG;
-				m_pt_last_.x = 0; 
-				m_pt_last_.y = hz_tags.get_tag_pixel(hc_trapped_);
-				m_pt_first_ = m_pt_last_;
+				pt_last_.x = 0; 
+				pt_last_.y = hz_tags.get_tag_pixel(hc_trapped_);
+				pt_first_ = pt_last_;
 				send_my_message(HINT_HIT_HZ_TAG, hc_trapped_);
 				break;
 			}
@@ -622,9 +622,9 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 			else
 			{
 				file_position_equivalent_to_mouse_jitter_ = static_cast<long>(cx_mouse_jitter_) * (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1) / static_cast<long>(
-					m_display_rect_.Width());
+					display_rect_.Width());
 				const auto lx = static_cast<long>(point.x) * (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1) / static_cast<long>(
-					m_display_rect_.Width()) + file_position_first_left_pixel_;
+					display_rect_.Width()) + file_position_first_left_pixel_;
 				hc_trapped_ = hit_vertical_tag_long(lx);
 			}
 
@@ -633,12 +633,12 @@ void ChartWnd::OnLButtonDown(const UINT n_flags, const CPoint point)
 			{
 				track_mode_ = TRACK_VT_TAG;
 				if (b_vertical_tags_as_long_)
-					m_pt_last_.x = static_cast<int>((vt_tags.get_tag_value_long(hc_trapped_) - file_position_first_left_pixel_) 
-						* static_cast<long>(m_display_rect_.Width()) 
+					pt_last_.x = static_cast<int>((vt_tags.get_tag_value_long(hc_trapped_) - file_position_first_left_pixel_) 
+						* static_cast<long>(display_rect_.Width()) 
 						/ (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1));
 				else
-					m_pt_last_.x = vt_tags.get_tag_pixel(hc_trapped_);
-				m_pt_last_.y = 0;
+					pt_last_.x = vt_tags.get_tag_pixel(hc_trapped_);
+				pt_last_.y = 0;
 				send_my_message(HINT_HIT_VERT_TAG, hc_trapped_);
 				break;
 			}
@@ -674,13 +674,13 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 
 	// track horizontal tag : move tag, get value and send message
 	case TRACK_HZ_TAG:
-		if (point.y != m_pt_curr_.y)
+		if (point.y != pt_curr_.y)
 		{
 			Tag* p_tag = hz_tags.get_tag(hc_trapped_);
 			xor_hz_tag(point.y, p_tag->swap_pixel(point.y));
 
-			m_pt_curr_ = point;
-			const auto val = MulDiv(point.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+			pt_curr_ = point;
+			const auto val = MulDiv(point.y - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
 			p_tag->value_int = val;
 			send_my_message(HINT_MOVE_HZ_TAG, hc_trapped_);
 		}
@@ -688,21 +688,21 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 
 	// track vertical tag : move tag & update value
 	case TRACK_VT_TAG:
-		if (point.x != m_pt_curr_.x)
+		if (point.x != pt_curr_.x)
 		{
 			Tag* p_tag = vt_tags.get_tag(hc_trapped_);
 			xor_vt_tag(point.x, p_tag->swap_pixel(point.x));
 
-			m_pt_curr_ = point;
+			pt_curr_ = point;
 			if (!b_vertical_tags_as_long_)
 			{
-				const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
+				const auto val = MulDiv(point.x - x_viewport_origin_, x_we_, x_viewport_extent_) + x_wo_;
 				p_tag->value_int = val;
 			}
 			else
 			{
 				const auto lvalue = static_cast<long>(point.x) * (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1) / static_cast<long>(
-					m_display_rect_.Width()) + file_position_first_left_pixel_;
+					display_rect_.Width()) + file_position_first_left_pixel_;
 				p_tag->value_long = lvalue;
 			}
 			send_my_message(HINT_MOVE_VERT_TAG, hc_trapped_);
@@ -710,15 +710,15 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 		break;
 
 	default:
-		if (m_hwnd_reflect_ != nullptr)
+		if (h_wnd_reflect_ != nullptr)
 		{
 			// convert coordinates
 			CRect rect0, rect1;
 			GetWindowRect(&rect1);
-			::GetWindowRect(m_hwnd_reflect_, &rect0);
+			::GetWindowRect(h_wnd_reflect_, &rect0);
 
 			// reflect mouse move message
-			::SendMessage(m_hwnd_reflect_, WM_MOUSEMOVE, n_flags,
+			::SendMessage(h_wnd_reflect_, WM_MOUSEMOVE, n_flags,
 			              MAKELPARAM(point.x + (rect1.left - rect0.left),
 			                         point.y + (rect1.top - rect0.top)));
 		}
@@ -735,15 +735,15 @@ void ChartWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 			invert_tracker(point);
 		track_mode_ = TRACK_OFF;
 	}
-	else if (m_hwnd_reflect_ != nullptr)
+	else if (h_wnd_reflect_ != nullptr)
 	{
 		// convert coordinates
 		CRect rect0, rect1;
 		GetWindowRect(&rect1);
-		::GetWindowRect(m_hwnd_reflect_, &rect0);
+		::GetWindowRect(h_wnd_reflect_, &rect0);
 
 		// reflect mouse move message
-		::SendMessage(m_hwnd_reflect_, WM_LBUTTONUP, n_flags,
+		::SendMessage(h_wnd_reflect_, WM_LBUTTONUP, n_flags,
 		              MAKELPARAM(point.x + (rect1.left - rect0.left),
 		                         point.y + (rect1.top - rect0.top)));
 	}
@@ -753,7 +753,7 @@ void ChartWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 void ChartWnd::left_button_up_horizontal_tag(const UINT n_flags, CPoint point)
 {
 	Tag* p_tag = hz_tags.get_tag(hc_trapped_);
-	p_tag->value_int = MulDiv(point.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;
+	p_tag->value_int = MulDiv(point.y - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
 	xor_hz_tag(point.y, p_tag->swap_pixel(point.y));
 
 	ChartWnd::OnLButtonUp(n_flags, point);
@@ -766,8 +766,8 @@ void ChartWnd::OnRButtonDown(const UINT n_flags, const CPoint point)
 	{
 	case CURSOR_ZOOM:
 	case CURSOR_CROSS: // tracking type
-		m_pt_first_ = point;
-		m_pt_last_ = point;
+		pt_first_ = point;
+		pt_last_ = point;
 		track_mode_ = TRACK_RECT; // flag track_rect
 		invert_tracker(point); // invert rectangle
 		capture_cursor();
@@ -787,7 +787,7 @@ void ChartWnd::OnRButtonUp(const UINT n_flags, const CPoint point)
 		{
 			release_cursor();
 			// skip too small a rectangle (5 pixels?)
-			CRect rect_out(m_pt_first_.x, m_pt_first_.y, m_pt_last_.x, m_pt_last_.y);
+			CRect rect_out(pt_first_.x, pt_first_.y, pt_last_.x, pt_last_.y);
 			constexpr short jitter = 3;
 			if (rect_out.Height() < jitter && rect_out.Width() < jitter)
 			{
@@ -795,7 +795,7 @@ void ChartWnd::OnRButtonUp(const UINT n_flags, const CPoint point)
 			}
 			else
 			{
-				auto rect_in = m_display_rect_;
+				auto rect_in = display_rect_;
 				zoom_data(&rect_out, &rect_in);
 				rect_zoom_from_ = rect_out;
 				rect_zoom_to_ = rect_in;
@@ -810,13 +810,13 @@ void ChartWnd::OnRButtonUp(const UINT n_flags, const CPoint point)
 
 	case TRACK_OFF:
 		CWnd::OnRButtonUp(n_flags, point);
-		if (m_b_allow_props_)
+		if (b_allow_props_)
 		{
 			const auto params_old = new SCOPESTRUCT();
 			*params_old = scope_structure_;
 			DlgChartProps dlg;
 			dlg.m_pscope = this;
-			m_b_allow_props_ = FALSE; // inhibit properties
+			b_allow_props_ = FALSE; // inhibit properties
 
 			// if Cancel or Escape or anything else: restore previous values
 			if (IDOK != dlg.DoModal())
@@ -826,7 +826,7 @@ void ChartWnd::OnRButtonUp(const UINT n_flags, const CPoint point)
 			}
 			else
 				send_my_message(HINT_WINDOW_PROPS_CHANGED, NULL); // post?
-			m_b_allow_props_ = TRUE;
+			b_allow_props_ = TRUE;
 			delete params_old;
 		}
 		break;
@@ -856,7 +856,7 @@ void ChartWnd::zoom_out()
 	else
 	{
 		CClientDC dc(this);
-		rect_zoom_to_ = m_display_rect_;
+		rect_zoom_to_ = display_rect_;
 		rect_zoom_from_ = rect_zoom_to_;
 		const auto y_shrink = rect_zoom_to_.Height() / 4;
 		const auto x_shrink = rect_zoom_to_.Width() / 4;
@@ -873,7 +873,7 @@ void ChartWnd::zoom_in()
 	else
 	{
 		CClientDC dc(this);
-		rect_zoom_to_ = m_display_rect_;
+		rect_zoom_to_ = display_rect_;
 		rect_zoom_from_ = rect_zoom_to_;
 		const auto y_shrink = -rect_zoom_to_.Height() / 4;
 		const auto x_shrink = -rect_zoom_to_.Width() / 4;
@@ -906,13 +906,13 @@ void ChartWnd::invert_tracker(const CPoint point)
 	const auto old_brush = static_cast<CBrush*>(dc.SelectStockObject(NULL_BRUSH));
 	const auto old_rop = dc.SetROP2(R2_NOTXORPEN);
 	const auto old_pen = dc.SelectObject(&black_dotted_pen_);
-	dc.Rectangle(m_pt_first_.x, m_pt_first_.y, m_pt_last_.x, m_pt_last_.y);
-	dc.Rectangle(m_pt_first_.x, m_pt_first_.y, point.x, point.y);
+	dc.Rectangle(pt_first_.x, pt_first_.y, pt_last_.x, pt_last_.y);
+	dc.Rectangle(pt_first_.x, pt_first_.y, point.x, point.y);
 
 	dc.SelectObject(old_pen);
 	dc.SelectObject(old_brush);
 	dc.SetROP2(old_rop);
-	m_pt_last_ = point;
+	pt_last_ = point;
 }
 
 void ChartWnd::display_vt_tags(CDC* p_dc)
@@ -920,14 +920,14 @@ void ChartWnd::display_vt_tags(CDC* p_dc)
 	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
 
-	const auto y0 = m_display_rect_.top;
-	const auto y1 = m_display_rect_.bottom;
+	const auto y0 = display_rect_.top;
+	const auto y1 = display_rect_.bottom;
 
 	for (auto tag_index = vt_tags.get_tag_list_size() - 1; tag_index >= 0; tag_index--)
 	{
 		Tag* p_tag = vt_tags.get_tag(tag_index);
-		p_tag->pixel = MulDiv(p_tag->value_int  - m_x_wo_, m_x_viewport_extent_, m_x_we_)
-					+ m_x_viewport_origin_;
+		p_tag->pixel = MulDiv(p_tag->value_int  - x_wo_, x_viewport_extent_, x_we_)
+					+ x_viewport_origin_;
 		p_dc->MoveTo(p_tag->pixel, y0);
 		p_dc->LineTo(p_tag->pixel, y1);
 	}
@@ -941,13 +941,13 @@ void ChartWnd::display_hz_tags(CDC* p_dc)
 	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
 
-	const auto x0 = m_display_rect_.left; 
-	const auto x1 = m_display_rect_.right; 
+	const auto x0 = display_rect_.left; 
+	const auto x1 = display_rect_.right; 
 	for (auto tag_index = hz_tags.get_tag_list_size() - 1; tag_index >= 0; tag_index--)
 	{
 		Tag* p_tag = hz_tags.get_tag(tag_index);
-		p_tag->pixel = MulDiv(p_tag->value_int - m_y_wo_, m_y_viewport_extent_, m_y_we_)
-			+ m_y_viewport_origin_;
+		p_tag->pixel = MulDiv(p_tag->value_int - y_wo_, y_viewport_extent_, y_we_)
+			+ y_viewport_origin_;
 		p_dc->MoveTo(x0, p_tag->pixel);
 		p_dc->LineTo(x1, p_tag->pixel);
 	}
@@ -961,20 +961,20 @@ void ChartWnd::xor_hz_tag(const int y_new, const int y_old)
 	CClientDC dc(this);
 	const auto old_pen = dc.SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = dc.SetROP2(R2_NOTXORPEN);
-	dc.IntersectClipRect(&m_display_rect_);
+	dc.IntersectClipRect(&display_rect_);
 
 	// erase old
 	if (y_old >= 0)
 	{
-		dc.MoveTo(m_display_rect_.left, y_old);
-		dc.LineTo(m_display_rect_.right, y_old);
+		dc.MoveTo(display_rect_.left, y_old);
+		dc.LineTo(display_rect_.right, y_old);
 	}
 
 	// display new
 	if (y_new)
 	{
-		dc.MoveTo(m_display_rect_.left, y_new);
-		dc.LineTo(m_display_rect_.right, y_new);
+		dc.MoveTo(display_rect_.left, y_new);
+		dc.LineTo(display_rect_.right, y_new);
 	}
 
 	dc.SetROP2(old_rop2);
@@ -987,18 +987,18 @@ void ChartWnd::xor_vt_tag(const int x_new, const int x_old)
 	CClientDC dc(this);
 	const auto old_pen = dc.SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = dc.SetROP2(R2_NOTXORPEN);
-	dc.IntersectClipRect(&m_client_rect_);
+	dc.IntersectClipRect(&client_rect_);
 
 	if (x_old >= 0)
 	{
-		dc.MoveTo(x_old, m_display_rect_.top);
-		dc.LineTo(x_old, m_display_rect_.bottom);
+		dc.MoveTo(x_old, display_rect_.top);
+		dc.LineTo(x_old, display_rect_.bottom);
 	}
 
 	if (x_new >= 0)
 	{
-		dc.MoveTo(x_new, m_display_rect_.top);
-		dc.LineTo(x_new, m_display_rect_.bottom);
+		dc.MoveTo(x_new, display_rect_.top);
+		dc.LineTo(x_new, display_rect_.bottom);
 	}
 
 	dc.SetROP2(old_rop2);
@@ -1007,10 +1007,10 @@ void ChartWnd::xor_vt_tag(const int x_new, const int x_old)
 
 void ChartWnd::xor_temp_vt_tag(const int x_point)
 {
-	if (m_temp_vertical_tag_ == nullptr)
-		m_temp_vertical_tag_ = new Tag;
+	if (temp_vertical_tag_ == nullptr)
+		temp_vertical_tag_ = new Tag;
 
-	xor_vt_tag(x_point, m_temp_vertical_tag_->swap_pixel(x_point));
+	xor_vt_tag(x_point, temp_vertical_tag_->swap_pixel(x_point));
 }
 
 SCOPESTRUCT* ChartWnd::get_scope_parameters()
@@ -1035,30 +1035,30 @@ void ChartWnd::Serialize(CArchive& ar)
 		ar << plot_mode_;
 		ar << index_color_background_;
 		ar << index_color_selected_;
-		ar << m_x_wo_; // x origin, extent / window & view
-		ar << m_x_we_;
-		ar << m_y_wo_; // y origin, extent / window & view
-		ar << m_y_we_;
+		ar << x_wo_; // x origin, extent / window & view
+		ar << x_we_;
+		ar << y_wo_; // y origin, extent / window & view
+		ar << y_we_;
 
-		ar << m_x_viewport_origin_;
-		ar << m_x_viewport_extent_;
-		ar << m_y_viewport_origin_;
-		ar << m_y_viewport_extent_;
+		ar << x_viewport_origin_;
+		ar << x_viewport_extent_;
+		ar << y_viewport_origin_;
+		ar << y_viewport_extent_;
 	}
 	else
 	{
 		ar >> plot_mode_;
 		ar >> index_color_background_;
 		ar >> index_color_selected_;
-		ar >> m_x_wo_; // x origin, extent / window & view
-		ar >> m_x_we_;
-		ar >> m_y_wo_; // y origin, extent / window & view
-		ar >> m_y_we_;
+		ar >> x_wo_; // x origin, extent / window & view
+		ar >> x_we_;
+		ar >> y_wo_; // y origin, extent / window & view
+		ar >> y_we_;
 
-		ar >> m_x_viewport_origin_;
-		ar >> m_x_viewport_extent_;
-		ar >> m_y_viewport_origin_;
-		ar >> m_y_viewport_extent_;
+		ar >> x_viewport_origin_;
+		ar >> x_viewport_extent_;
+		ar >> y_viewport_origin_;
+		ar >> y_viewport_extent_;
 	}
 	scope_structure_.Serialize(ar);
 }

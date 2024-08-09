@@ -9,7 +9,7 @@ void ChartDataAD::start_display(int points_per_channel)
 	m_b_ad_buffers_ = TRUE; // yes, display ADbuffers
 	m_l_ad_buffer_done_ = 0; // length of data already displayed
 	const auto envelope = envelope_ptr_array_.GetAt(0);
-	envelope->fill_envelope_with_abscissa_ex(1, m_display_rect_.right - 1, points_per_channel);
+	envelope->fill_envelope_with_abscissa_ex(1, display_rect_.right - 1, points_per_channel);
 	envelope->export_to_abscissa(m_poly_points_);
 	set_b_use_dib(FALSE);
 
@@ -19,7 +19,7 @@ void ChartDataAD::start_display(int points_per_channel)
 
 	// print comment
 	dc.SelectObject(GetStockObject(DEFAULT_GUI_FONT));
-	auto rect = m_display_rect_;
+	auto rect = display_rect_;
 	rect.DeflateRect(1, 1);
 	CString cs = _T("Waiting for trigger");
 	const auto text_length = cs.GetLength();
@@ -55,8 +55,8 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 	// get first and last pixels of the interval to display
 	const int ad_pixel_first = MulDiv(m_l_ad_buffer_done_, m_n_pixels_, m_lx_size_);
 	int ad_pixel_last = MulDiv(m_l_ad_buffer_done_ + samples_number - 1, m_n_pixels_, m_lx_size_);
-	if (ad_pixel_last > m_display_rect_.right - 2)
-		ad_pixel_last = m_display_rect_.right - 2;
+	if (ad_pixel_last > display_rect_.right - 2)
+		ad_pixel_last = display_rect_.right - 2;
 
 	const int display_pixels = ad_pixel_last - ad_pixel_first + 1;
 	const int display_data_points = display_pixels * m_data_per_pixel_;
@@ -64,7 +64,7 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 
 	const auto points_to_display = &m_poly_points_[ad_pixel_first * m_data_per_pixel_ * 2];
 
-	CRect rect(ad_pixel_first, m_display_rect_.top, ad_pixel_last, m_display_rect_.bottom);
+	CRect rect(ad_pixel_first, display_rect_.top, ad_pixel_last, display_rect_.bottom);
 	if (ad_pixel_first == 0)
 		rect.left = 1;
 	rect.DeflateRect(0, 1);
@@ -74,11 +74,11 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 	auto* ppen_old = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 
 	p_dc->SetMapMode(MM_ANISOTROPIC);
-	p_dc->SetViewportExt(m_x_viewport_extent_, m_y_viewport_extent_);
-	p_dc->SetViewportOrg(m_x_viewport_origin_, m_y_viewport_origin_);
-	p_dc->SetWindowExt(m_n_pixels_, m_y_viewport_extent_); //chanlist_item->GetYextent());
+	p_dc->SetViewportExt(x_viewport_extent_, y_viewport_extent_);
+	p_dc->SetViewportOrg(x_viewport_origin_, y_viewport_origin_);
+	p_dc->SetWindowExt(m_n_pixels_, y_viewport_extent_); //chanlist_item->GetYextent());
 	p_dc->SetWindowOrg(0, 0); //chanlist_item->GetYzero());
-	const auto yVE = m_y_viewport_extent_;
+	const auto yVE = y_viewport_extent_;
 
 	for (int channel_number = 0; channel_number < chan_list_item_ptr_array_.GetSize(); channel_number++)
 	{

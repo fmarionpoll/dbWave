@@ -90,19 +90,6 @@ void TagList::set_value_int(const int i_tag, const int value)
 		p_cur->value_int = value;
 }
 
-void TagList::set_value_mv(const int i_tag, const double value)
-{
-	if (tag_ptr_array_.GetSize() <= i_tag)
-	{
-		for (auto i = tag_ptr_array_.GetSize(); i <= i_tag; i++)
-			add_tag(0, 0);
-		ASSERT(tag_ptr_array_.GetSize() >= i_tag);
-	}
-	const auto p_cur = tag_ptr_array_.GetAt(i_tag);
-	if (p_cur != nullptr)
-		p_cur->value_mv = value;
-}
-
 int TagList::get_value_int(const int i_tag)
 {
 	const auto tag = tag_ptr_array_.GetAt(i_tag);
@@ -110,15 +97,6 @@ int TagList::get_value_int(const int i_tag)
 		return tag->value_int;
 	return NULL;
 }
-
-double TagList::get_value_mv(const int i_tag)
-{
-	const auto tag = tag_ptr_array_.GetAt(i_tag);
-	if (tag != nullptr)
-		return tag->value_mv;
-	return NULL;
-}
-
 
 int TagList::get_channel(const int tag_index)
 {

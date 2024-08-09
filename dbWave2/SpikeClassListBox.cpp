@@ -412,15 +412,6 @@ void SpikeClassListBox::xor_temp_vt_tag(const int x_point) const
 	}
 }
 
-void SpikeClassListBox::reset_bars_xor_tag() const
-{
-	for (int i = 0; i < GetCount(); i++)
-	{
-		const auto row_item = get_row_item(i);
-		row_item->get_chart_bars()->reset_xor_tag();
-	}
-}
-
 void SpikeClassListBox::reflect_bar_mouse_move_message(const HWND h_wnd)
 {
 	h_wnd_bars_reflect_ = h_wnd;

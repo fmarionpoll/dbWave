@@ -81,7 +81,7 @@ protected:
 	CEditCtrl mm_t_xy_left_;
 	float t_xy_left_{ 0.f };
 
-	SPK_CLASSIF* spike_classification_parameters_{};
+	SPK_CLASSIF* spike_classification_{};
 	OPTIONS_VIEWDATA* options_view_data_{};
 	
 	int m_i_xy_right_ {};

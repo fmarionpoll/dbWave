@@ -57,7 +57,7 @@ public:
 	void change_spike_class(int spike_no, int new_class_id);
 	int set_mouse_cursor_type(int cursor_m) const;
 	void xor_temp_vt_tag(int x_point) const;
-	void reset_bars_xor_tag() const;
+
 	void reflect_bar_mouse_move_message(HWND h_wnd);
 	void set_cursor_max_on_dbl_click(const int i_max) { m_cursor_index_max_ = i_max; }
 

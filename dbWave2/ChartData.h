@@ -39,7 +39,7 @@ public:
 	long	get_line_size() const { return m_lx_line_; } 
 	long	get_document_last() const { return m_lx_very_last_; } 
 	long	get_data_offset_from_pixel(const int pix) const {
-				return static_cast<long>(pix) * (m_lx_last_ - m_lx_first_ + 1) / static_cast<long>(m_display_rect_.right) + m_lx_first_; }
+				return static_cast<long>(pix) * (m_lx_last_ - m_lx_first_ + 1) / static_cast<long>(display_rect_.right) + m_lx_first_; }
 
 	void update_page_line_size(); // update page and line size parameters
 
@@ -95,7 +95,7 @@ public:
 
 	float get_channel_list_volts_per_pixel(const int item) const {
 		const CChanlistItem* channel_item = get_channel_list_item(item);
-		return (static_cast<float>(channel_item->GetYextent()) * channel_item->GetVoltsperDataBin() / static_cast<float>(-m_y_viewport_extent_));
+		return (static_cast<float>(channel_item->GetYextent()) * channel_item->GetVoltsperDataBin() / static_cast<float>(-y_viewport_extent_));
 	}
 
 	float get_time_per_pixel() const{
@@ -104,15 +104,15 @@ public:
 	}
 
 	int get_channel_list_bin_to_y_pixel(const int chan, const int bin) {
-		return MulDiv(bin - chan_list_item_ptr_array_[chan]->GetYzero(), m_y_viewport_extent_,
-		              chan_list_item_ptr_array_[chan]->GetYextent()) + m_y_viewport_origin_;
+		return MulDiv(bin - chan_list_item_ptr_array_[chan]->GetYzero(), y_viewport_extent_,
+		              chan_list_item_ptr_array_[chan]->GetYextent()) + y_viewport_origin_;
 	}
 
 	int get_channel_list_y_pixels_to_bin(const int chan, const int y_pixel_relative_to_top_client_window) {
 		return chan_list_item_ptr_array_[chan]->GetYzero() + 
-				MulDiv(y_pixel_relative_to_top_client_window - m_y_viewport_origin_,
+				MulDiv(y_pixel_relative_to_top_client_window - y_viewport_origin_,
 					chan_list_item_ptr_array_[chan]->GetYextent(), 
-					m_y_viewport_extent_);
+					y_viewport_extent_);
 	}
 
 	SCOPESTRUCT* get_scope_parameters() override;

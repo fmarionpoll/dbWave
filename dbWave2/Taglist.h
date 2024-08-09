@@ -31,9 +31,6 @@ public:
 	void set_value_int(int i_tag, int value);
 	int get_value_int(int i_tag);
 
-	void set_value_mv(int i_tag, double value);
-	double get_value_mv(int i_tag);
-
 	void set_pixel(int tag_index, int pixel_value);
 	int get_tag_pixel(int tag_index);
 

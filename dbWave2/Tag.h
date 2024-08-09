@@ -18,7 +18,6 @@ class Tag : public CObject
 	int value_int = 0;			// line value (for horizontal bar)
 	long value_long = -1;		// assoc long value (for vertical bar)
 	long long l_ticks = 0;		// length in ticks
-	double value_mv = 0.;
 	CString m_cs_comment{};		// comment
 
 	Tag& operator =(const Tag& arg);

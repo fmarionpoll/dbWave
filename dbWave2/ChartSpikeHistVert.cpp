@@ -44,7 +44,7 @@ void ChartSpikeHistVert::remove_hist_data()
 
 void ChartSpikeHistVert::plot_data_to_dc(CDC* p_dc)
 {
-	if (m_display_rect_.right <= 0 && m_display_rect_.bottom <= 0)
+	if (display_rect_.right <= 0 && display_rect_.bottom <= 0)
 	{
 		CRect r;
 		GetWindowRect(&r);
@@ -58,7 +58,7 @@ void ChartSpikeHistVert::plot_data_to_dc(CDC* p_dc)
 	if (m_lmax_ == 0)
 	{
 		p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
-		auto rect = m_display_rect_;
+		auto rect = display_rect_;
 		rect.DeflateRect(1, 1);
 		const auto text_len = cs_empty_.GetLength();
 		p_dc->DrawText(cs_empty_, text_len, rect, DT_LEFT); //|DT_WORD BREAK);
@@ -160,7 +160,7 @@ void ChartSpikeHistVert::move_hz_tag_to_val(const int tag_index, const int value
 
 	Tag* p_tag = hz_tags.get_tag(tag_index);
 	p_tag->value_int = value;
-	p_tag->pixel = MulDiv(value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+	p_tag->pixel = MulDiv(value - y_wo_, y_viewport_extent_, y_we_) + y_viewport_origin_;
 	xor_hz_tag(p_tag->pixel, p_tag->swap_pixel(p_tag->pixel));
 }
 
@@ -171,7 +171,7 @@ void ChartSpikeHistVert::move_vt_tag_to_val(const int i_tag, const int val)
 
 	Tag* p_tag = vt_tags.get_tag(i_tag);
 	p_tag->value_int = val;
-	const auto pixels = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
+	const auto pixels = MulDiv(val - x_wo_, x_viewport_extent_, x_we_) + x_viewport_origin_;
 	xor_vt_tag(pixels, p_tag->swap_pixel(pixels));
 }
 
@@ -237,7 +237,7 @@ void ChartSpikeHistVert::OnLButtonUp(const UINT n_flags, const CPoint point)
 			xor_vertical(point.x);*/
 
 			Tag* p_tag = vt_tags.get_tag(hc_trapped_);
-			const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
+			const auto val = MulDiv(point.x - x_viewport_origin_, x_we_, x_viewport_extent_) + x_wo_;
 			p_tag->value_int = val;
 			xor_vt_tag(point.x, p_tag->swap_pixel(point.x));
 
@@ -252,7 +252,7 @@ void ChartSpikeHistVert::OnLButtonUp(const UINT n_flags, const CPoint point)
 
 			// none: zoom data or offset display
 			ChartSpike::OnLButtonUp(n_flags, point);
-			CRect rect_out(m_pt_first_.x, m_pt_first_.y, m_pt_last_.x, m_pt_last_.y);
+			CRect rect_out(pt_first_.x, pt_first_.y, pt_last_.x, pt_last_.y);
 			constexpr int jitter = 3;
 			if ((abs(rect_out.Height()) < jitter) && (abs(rect_out.Width()) < jitter))
 			{
@@ -264,12 +264,12 @@ void ChartSpikeHistVert::OnLButtonUp(const UINT n_flags, const CPoint point)
 			}
 
 			// perform action according to cursor type
-			auto rect_in = m_display_rect_;
+			auto rect_in = display_rect_;
 			switch (cursor_type_)
 			{
 			case 0:
 				rect_out = rect_in;
-				rect_out.OffsetRect(m_pt_first_.x - m_pt_last_.x, m_pt_first_.y - m_pt_last_.y);
+				rect_out.OffsetRect(pt_first_.x - pt_last_.x, pt_first_.y - pt_last_.y);
 				zoom_data(&rect_in, &rect_out);
 				break;
 			case CURSOR_ZOOM: // zoom operation
@@ -294,13 +294,13 @@ void ChartSpikeHistVert::OnLButtonDown(UINT nFlags, CPoint point)
 	if (hz_tags.get_tag_list_size() > 0)
 	{
 		for (auto i_cur = hz_tags.get_tag_list_size() - 1; i_cur >= 0; i_cur--)
-			hz_tags.set_pixel(i_cur, MulDiv(hz_tags.get_value_int(i_cur) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_);
+			hz_tags.set_pixel(i_cur, MulDiv(hz_tags.get_value_int(i_cur) - y_wo_, y_viewport_extent_, y_we_) + y_viewport_origin_);
 	}
 	// compute pixel position of vertical tags
 	if (vt_tags.get_tag_list_size() > 0)
 	{
 		for (auto i_cur = vt_tags.get_tag_list_size() - 1; i_cur >= 0; i_cur--) // loop through all tags
-			vt_tags.set_pixel(i_cur, MulDiv(vt_tags.get_value_int(i_cur) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_);
+			vt_tags.set_pixel(i_cur, MulDiv(vt_tags.get_value_int(i_cur) - x_wo_, x_viewport_extent_, x_we_) + x_viewport_origin_);
 	}
 	ChartSpike::OnLButtonDown(nFlags, point);
 	if (current_cursor_mode_ != 0 || hc_trapped_ >= 0) // do nothing else if mode != 0
@@ -322,18 +322,18 @@ void ChartSpikeHistVert::zoom_data(CRect* prev_rect, CRect* new_rect)
 	new_rect->NormalizeRect();
 
 	// change y gain & y offset
-	const auto y_we = m_y_we_; // save previous window extent
-	m_y_we_ = MulDiv(m_y_we_, new_rect->Height(), prev_rect->Height());
-	m_y_wo_ = m_y_wo_
-		- MulDiv(prev_rect->top - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_)
-		+ MulDiv(new_rect->top - m_y_viewport_origin_, y_we, m_y_viewport_extent_);
+	const auto y_we = y_we_; // save previous window extent
+	y_we_ = MulDiv(y_we_, new_rect->Height(), prev_rect->Height());
+	y_wo_ = y_wo_
+		- MulDiv(prev_rect->top - y_viewport_origin_, y_we_, y_viewport_extent_)
+		+ MulDiv(new_rect->top - y_viewport_origin_, y_we, y_viewport_extent_);
 
 	// change index of first and last pt displayed
-	const auto x_we = m_x_we_; // save previous window extent
-	m_x_we_ = MulDiv(m_x_we_, new_rect->Width(), prev_rect->Width());
-	m_x_wo_ = m_x_wo_
-		- MulDiv(prev_rect->left - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_)
-		+ MulDiv(new_rect->left - m_x_viewport_origin_, x_we, m_x_viewport_extent_);
+	const auto x_we = x_we_; // save previous window extent
+	x_we_ = MulDiv(x_we_, new_rect->Width(), prev_rect->Width());
+	x_wo_ = x_wo_
+		- MulDiv(prev_rect->left - x_viewport_origin_, x_we_, x_viewport_extent_)
+		+ MulDiv(new_rect->left - x_viewport_origin_, x_we, x_viewport_extent_);
 
 	// display
 	Invalidate();
@@ -355,8 +355,8 @@ int ChartSpikeHistVert::hit_curve(CPoint point)
 {
 	auto hit_spike = -1;
 	// convert device coordinates into logical coordinates
-	const auto delta_x = MulDiv(3, m_x_we_, m_x_viewport_extent_);
-	const auto mouse_x = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
+	const auto delta_x = MulDiv(3, x_we_, x_viewport_extent_);
+	const auto mouse_x = MulDiv(point.x - x_viewport_origin_, x_we_, x_viewport_extent_) + x_wo_;
 	auto mouse_x1 = mouse_x - delta_x;
 	auto mouse_x2 = mouse_x - delta_x;
 	if (mouse_x1 < 1)
@@ -368,8 +368,8 @@ int ChartSpikeHistVert::hit_curve(CPoint point)
 	if (mouse_x2 > n_bins_)
 		mouse_x2 = n_bins_;
 
-	const auto delta_y = MulDiv(3, m_y_we_, m_y_viewport_extent_);
-	const auto mouse_y = static_cast<DWORD>(MulDiv(point.y - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_)) + m_y_wo_ + delta_y;
+	const auto delta_y = MulDiv(3, y_we_, y_viewport_extent_);
+	const auto mouse_y = static_cast<DWORD>(MulDiv(point.y - y_viewport_origin_, y_we_, y_viewport_extent_)) + y_wo_ + delta_y;
 
 	// test selected histogram first (foreground)
 	const CDWordArray* p_dw = nullptr;
@@ -425,18 +425,18 @@ int ChartSpikeHistVert::hit_curve(CPoint point)
 
 void ChartSpikeHistVert::get_extents()
 {
-	if (m_x_we_ == 1) // && m_xWO == 0)
+	if (x_we_ == 1) // && m_xWO == 0)
 	{
 		if (m_lmax_ == 0)
 			get_histogram_limits(0);
-		m_x_we_ = static_cast<int>(m_lmax_);
-		m_x_wo_ = 0;
+		x_we_ = static_cast<int>(m_lmax_);
+		x_wo_ = 0;
 	}
 
-	if (m_y_we_ == 1) // && m_yWO == 0)
+	if (y_we_ == 1) // && m_yWO == 0)
 	{
-		m_y_we_ = abscissa_max_val_ - abscissa_min_val_ + 1;
-		m_y_wo_ = abscissa_min_val_;
+		y_we_ = abscissa_max_val_ - abscissa_min_val_ + 1;
+		y_wo_ = abscissa_min_val_;
 	}
 }
 
@@ -508,7 +508,7 @@ void ChartSpikeHistVert::size_and_clear_histograms(const int n_bins, const int m
 void ChartSpikeHistVert::OnSize(const UINT n_type, const int cx, const int cy)
 {
 	ChartSpike::OnSize(n_type, cx, cy);
-	m_y_viewport_origin_ = cy;
+	y_viewport_origin_ = cy;
 }
 
 CDWordArray* ChartSpikeHistVert::init_class_array(const int n_bins, const int spike_class)

@@ -39,7 +39,6 @@ Tag::Tag(const Tag& hc)
 	value_int = hc.value_int;
 	pixel = hc.pixel;
 	value_long = hc.value_long;
-	value_mv = hc.value_mv;
 	m_cs_comment = hc.m_cs_comment;
 }
 
@@ -56,7 +55,6 @@ Tag& Tag::operator =(const Tag& arg)
 		value_long = arg.value_long;
 		l_ticks = arg.l_ticks;
 		m_cs_comment = arg.m_cs_comment;
-		value_mv = arg.value_mv;
 	}
 	return *this;
 }
@@ -70,7 +68,6 @@ void Tag::Serialize(CArchive& ar)
 		ar << static_cast<WORD>(value_int);
 		ar << value_long;
 		ar << m_cs_comment;
-		ar << value_mv;
 	}
 	else
 	{
@@ -84,8 +81,6 @@ void Tag::Serialize(CArchive& ar)
 		value_int = w1;
 		ar >> value_long;
 		ar >> m_cs_comment;
-		if (n_version > 0)
-			ar >> value_mv;
 	}
 }
 

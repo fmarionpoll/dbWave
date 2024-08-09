@@ -152,8 +152,8 @@ void CTemplateWnd::plot_data_to_dc(CDC* p_dc)
 
 	// load resources and prepare context
 	const auto n_saved_dc = p_dc->SaveDC();
-	p_dc->SetViewportOrg(m_display_rect_.left, m_display_rect_.Height() / 2);
-	p_dc->SetViewportExt(m_display_rect_.Width(), -m_display_rect_.Height());
+	p_dc->SetViewportOrg(display_rect_.left, display_rect_.Height() / 2);
+	p_dc->SetViewportExt(display_rect_.Width(), -display_rect_.Height());
 
 	GetExtents();
 	prepare_dc(p_dc);
@@ -181,7 +181,7 @@ void CTemplateWnd::plot_data_to_dc(CDC* p_dc)
 
 void CTemplateWnd::GetExtents()
 {
-	if (m_y_we_ == 1) // && m_yWO == 0)
+	if (y_we_ == 1) // && m_yWO == 0)
 	{
 		auto p_sup = m_pMax0;
 		auto p_inf = m_pMin0;
@@ -193,14 +193,14 @@ void CTemplateWnd::GetExtents()
 			if (*p_inf < minval) minval = *p_inf;
 		}
 
-		m_y_we_ = maxval - minval + 2;
-		m_y_wo_ = (maxval + minval) / 2;
+		y_we_ = maxval - minval + 2;
+		y_wo_ = (maxval + minval) / 2;
 	}
 
-	if (m_x_we_ == 1) // && m_xWO == 0)
+	if (x_we_ == 1) // && m_xWO == 0)
 	{
-		m_x_we_ = m_tpllen;
-		m_x_wo_ = 0;
+		x_we_ = m_tpllen;
+		x_wo_ = 0;
 	}
 }
 
@@ -247,9 +247,9 @@ void CTemplateWnd::FillOrdinatesAtscale(BOOL bScale)
 	{
 		for (int i = 0; i < m_tpllen; i++, i1++, i2--)
 		{
-			m_ptsAvg[i].y = MulDiv(*p_avg - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
-			m_ptsArea[i1].y = MulDiv(*p_max - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
-			m_ptsArea[i2].y = MulDiv(*p_min - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
+			m_ptsAvg[i].y = MulDiv(*p_avg - y_wo_, y_viewport_extent_, y_we_) + y_viewport_origin_;
+			m_ptsArea[i1].y = MulDiv(*p_max - y_wo_, y_viewport_extent_, y_we_) + y_viewport_origin_;
+			m_ptsArea[i2].y = MulDiv(*p_min - y_wo_, y_viewport_extent_, y_we_) + y_viewport_origin_;
 			p_avg++;
 			p_max++;
 			p_min++;
@@ -283,8 +283,8 @@ void CTemplateWnd::SetTemplateLength(int len, int extent, int org)
 		org = 0;
 	if (extent < 0)
 		extent = m_tpllen - org;
-	m_x_we_ = extent;
-	m_x_wo_ = org;
+	x_we_ = extent;
+	x_wo_ = org;
 }
 
 void CTemplateWnd::tInit()
@@ -351,18 +351,18 @@ void CTemplateWnd::tSetdisplayData()
 
 double CTemplateWnd::tPowerOfpSum()
 {
-	mytype* p_sum = m_pSUM0 + m_x_wo_;
+	mytype* p_sum = m_pSUM0 + x_wo_;
 	double xi;
 	double x = 0.f;
-	const auto last = m_x_we_ + m_x_wo_;
+	const auto last = x_we_ + x_wo_;
 
-	for (auto i = m_x_wo_; i < last; i++, p_sum++)
+	for (auto i = x_wo_; i < last; i++, p_sum++)
 	{
 		xi = *p_sum;
 		x += xi * xi;
 	}
 	xi = m_nitems;
-	m_power = sqrt(x / m_x_we_) / xi;
+	m_power = sqrt(x / x_we_) / xi;
 	return m_power;
 }
 
@@ -379,20 +379,20 @@ BOOL CTemplateWnd::tGetNumberOfPointsWithin(short* p_source, int* hitrate)
 	if (!m_bValid) // we need valid limits..
 		tSetdisplayData();
 
-	int last = m_x_we_ + m_x_wo_;
-	int* pMean = m_pAvg + m_x_wo_;
-	int* pSup = m_pMax0 + m_x_wo_;
-	int* pInf = m_pMin0 + m_x_wo_;
-	short* p_data = p_source + m_x_wo_;
+	int last = x_we_ + x_wo_;
+	int* pMean = m_pAvg + x_wo_;
+	int* pSup = m_pMax0 + x_wo_;
+	int* pInf = m_pMin0 + x_wo_;
+	short* p_data = p_source + x_wo_;
 	int nwithin = 0;
 
-	for (int i = m_x_wo_; i < last; i++, p_data++, pSup++, pInf++)
+	for (int i = x_wo_; i < last; i++, p_data++, pSup++, pInf++)
 	{
 		if (*p_data <= *pSup && *p_data >= *pInf)
 			nwithin++;
 	}
 
-	int ihitrate = MulDiv(*hitrate, m_x_we_, 100);
+	int ihitrate = MulDiv(*hitrate, x_we_, 100);
 	return (nwithin >= ihitrate);
 }
 
@@ -408,12 +408,12 @@ double CTemplateWnd::tDist(short* p_source)
 	//	if (!m_bValid)				// we need valid limits..
 	//		tSetdisplayData();		// and also correct power
 
-	int last = m_x_we_ + m_x_wo_;
-	int* pMean = m_pAvg + m_x_wo_;
-	short* p_data = p_source + m_x_wo_;
+	int last = x_we_ + x_wo_;
+	int* pMean = m_pAvg + x_wo_;
+	short* p_data = p_source + x_wo_;
 	double ii = 0;
 
-	for (int i = m_x_wo_; i < last; i++, p_data++, pMean++)
+	for (int i = x_wo_; i < last; i++, p_data++, pMean++)
 	{
 		ii += abs(*pMean - *p_data);
 	}
@@ -465,19 +465,19 @@ void CTemplateWnd::tGlobalstats(double* gstd, double* gdist)
 	double xn = m_nitems;
 
 	//... compute global std and global distance
-	int last = m_x_we_ + m_x_wo_;
-	mytype* pSUM = m_pSUM0 + m_x_wo_;
-	mytype* pSUM2 = m_pSUM20 + m_x_wo_;
+	int last = x_we_ + x_wo_;
+	mytype* pSUM = m_pSUM0 + x_wo_;
+	mytype* pSUM2 = m_pSUM20 + x_wo_;
 	double ystd = 0;
 
-	for (int i = m_x_wo_; i < last; i++, pSUM++, pSUM2++)
+	for (int i = x_wo_; i < last; i++, pSUM++, pSUM2++)
 	{
 		ysum += *pSUM;
 		ysum2 += *pSUM2;
 		ystd += sqrt((*pSUM2 - *pSUM * *pSUM / xn) / (xn - 1.));
 	}
 
-	double x = xn * static_cast<double>(m_x_we_);
+	double x = xn * static_cast<double>(x_we_);
 	*gstd = sqrt((ysum2 - (ysum * ysum / x)) / (x - 1.));
 
 	//.... compute global distance

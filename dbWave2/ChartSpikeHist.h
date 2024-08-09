@@ -34,7 +34,7 @@ protected:
 
 	int convert_mv_to_abscissa(const double value) const
 	{
-		return static_cast<int>((value - abscissa_min_mv_) * static_cast<float>(m_x_we_) / (abscissa_max_mv_ - abscissa_min_mv_)) + m_x_wo_;
+		return static_cast<int>((value - abscissa_min_mv_) * static_cast<float>(x_we_) / (abscissa_max_mv_ - abscissa_min_mv_)) + x_wo_;
 	}
 	int hit_curve(CPoint point) override;
 	void resize_histograms(double bin_mv, double max_mv, double min_mv);
@@ -63,8 +63,7 @@ public:
 	void move_hz_tag_to_val(int tag_index, int value);
 
 	void zoom_data(CRect* r_from, CRect* r_dest) override;
-	void plot_data_to_dc(CDC* p_dc) override;
-	void transform_tags_mv_to_int();
+	void plot_data_to_dc(CDC* p_dc) override;;
 
 protected:
 	afx_msg void OnLButtonUp(UINT n_flags, CPoint point) override;

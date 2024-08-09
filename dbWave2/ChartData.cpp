@@ -783,7 +783,7 @@ void ChartData::update_y_ruler()
 		return;
 	
 	const auto bin_low = get_channel_list_y_pixels_to_bin(0, 0);
-	const auto bin_high = get_channel_list_y_pixels_to_bin(0, m_client_rect_.Height());
+	const auto bin_high = get_channel_list_y_pixels_to_bin(0, client_rect_.Height());
 
 	const CChanlistItem* p_channel = get_channel_list_item(0);
 	const auto y_first = static_cast<double>(p_channel->ConvertDataBinsToVolts(bin_low));
@@ -807,7 +807,7 @@ void ChartData::plot_data_to_dc(CDC* p_dc)
 		update_y_ruler();
 	}
 
-	auto rect = m_display_rect_;
+	auto rect = display_rect_;
 	rect.DeflateRect(1, 1);
 	p_dc->SelectObject(&h_font);
 
@@ -830,16 +830,16 @@ void ChartData::plot_data_to_dc(CDC* p_dc)
 	// save DC
 	const auto n_saved_dc = p_dc->SaveDC();
 	ASSERT(n_saved_dc != 0);
-	p_dc->IntersectClipRect(&m_display_rect_);
+	p_dc->IntersectClipRect(&display_rect_);
 
 	// prepare DC
 	p_dc->SetMapMode(MM_ANISOTROPIC);
-	p_dc->SetViewportOrg(m_display_rect_.left, m_display_rect_.Height() / 2);
-	p_dc->SetViewportExt(m_display_rect_.Width(), -m_display_rect_.Height());
-	p_dc->SetWindowExt(m_display_rect_.Width(), m_display_rect_.Height());
+	p_dc->SetViewportOrg(display_rect_.left, display_rect_.Height() / 2);
+	p_dc->SetViewportExt(display_rect_.Width(), -display_rect_.Height());
+	p_dc->SetWindowExt(display_rect_.Width(), display_rect_.Height());
 	p_dc->SetWindowOrg(0, 0);
 
-	const auto y_ve = m_display_rect_.Height();
+	const auto y_ve = display_rect_.Height();
 	CEnvelope* p_x = nullptr;
 	auto n_elements = 0;
 	constexpr auto color = BLACK_COLOR;
@@ -889,12 +889,12 @@ void ChartData::plot_data_to_dc(CDC* p_dc)
 		display_vt_tags_long_value(p_dc);
 
 	// temp tag
-	if (m_hwnd_reflect_ != nullptr && m_temp_vertical_tag_ != nullptr)
+	if (h_wnd_reflect_ != nullptr && temp_vertical_tag_ != nullptr)
 	{
 		const auto p_pen = p_dc->SelectObject(&black_dotted_pen_);
 		const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
-		p_dc->MoveTo(m_temp_vertical_tag_->pixel, 2);
-		p_dc->LineTo(m_temp_vertical_tag_->pixel, m_display_rect_.bottom - 2);
+		p_dc->MoveTo(temp_vertical_tag_->pixel, 2);
+		p_dc->LineTo(temp_vertical_tag_->pixel, display_rect_.bottom - 2);
 		p_dc->SetROP2(old_rop2);
 		p_dc->SelectObject(p_pen);
 	}
@@ -906,15 +906,15 @@ void ChartData::display_hz_tags_for_channel(CDC* p_dc, const int i_chan, const C
 	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
 	const auto w_ext = p_channel->GetYextent();
 	const auto w_org = p_channel->GetYzero();
-	const auto y_ve = m_display_rect_.Height();
+	const auto y_ve = display_rect_.Height();
 	for (auto i = hz_tags.get_tag_list_size() - 1; i >= 0; i--)
 	{
 		if (hz_tags.get_channel(i) != i_chan)
 			continue;
 		auto k = hz_tags.get_value_int(i);
 		k = MulDiv(static_cast<short>(k) - w_org, y_ve, w_ext);
-		p_dc->MoveTo(m_display_rect_.left, k);
-		p_dc->LineTo(m_display_rect_.right, k);
+		p_dc->MoveTo(display_rect_.left, k);
+		p_dc->LineTo(display_rect_.right, k);
 	}
 	p_dc->SetROP2(old_rop2);
 	p_dc->SelectObject(old_pen);
@@ -924,7 +924,7 @@ void ChartData::display_vt_tags_long_value(CDC* p_dc)
 {
 	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
-	const int y1 = m_display_rect_.bottom;
+	const int y1 = display_rect_.bottom;
 
 	for (auto j = vt_tags.get_tag_list_size() - 1; j >= 0; j--)
 	{
@@ -932,7 +932,7 @@ void ChartData::display_vt_tags_long_value(CDC* p_dc)
 		const auto lk = vt_tags.get_tag_value_long(j);
 		if (lk < m_lx_first_ || lk > m_lx_last_)
 			continue;
-		const auto k = MulDiv(lk - m_lx_first_, m_display_rect_.Width(), m_lx_last_ - m_lx_first_ + 1);
+		const auto k = MulDiv(lk - m_lx_first_, display_rect_.Width(), m_lx_last_ - m_lx_first_ + 1);
 		p_dc->MoveTo(k, y0);
 		p_dc->LineTo(k, y1);
 	}
@@ -959,24 +959,24 @@ void ChartData::print(CDC* p_dc, const CRect* p_rect, const BOOL b_center_line)
 	// save DC & old client rect
 	const auto n_saved_dc = p_dc->SaveDC();
 	ASSERT(n_saved_dc != 0);
-	const auto old_rect = m_client_rect_;
+	const auto old_rect = client_rect_;
 
 	// prepare DC
 	const auto old_map_mode = p_dc->SetMapMode(MM_TEXT); 
-	m_client_rect_ = *p_rect; 
+	client_rect_ = *p_rect; 
 	adjust_display_rect(p_rect);
 	erase_background(p_dc);
 	// clip curves
 	if (scope_structure_.bClipRect)
-		p_dc->IntersectClipRect(m_display_rect_);
+		p_dc->IntersectClipRect(display_rect_);
 	else
 		p_dc->SelectClipRgn(nullptr);
 
 	// adjust coordinates for anisotropic mode
-	const auto y_ve = -m_display_rect_.Height();
-	const int y_vo = m_display_rect_.top + m_display_rect_.Height() / 2;
-	const auto x_ve = m_display_rect_.Width();
-	const int x_vo = m_display_rect_.left;
+	const auto y_ve = -display_rect_.Height();
+	const int y_vo = display_rect_.top + display_rect_.Height() / 2;
+	const auto x_ve = display_rect_.Width();
+	const int x_vo = display_rect_.left;
 
 	// exit if no data defined
 	if (!is_defined())
@@ -986,7 +986,7 @@ void ChartData::print(CDC* p_dc, const CRect* p_rect, const BOOL b_center_line)
 	}
 
 	// change horizontal resolution;
-	resize_channels(m_display_rect_.Width(), m_lx_size_);
+	resize_channels(display_rect_.Width(), m_lx_size_);
 	if (!b_center_line)
 		get_data_from_doc();
 	else
@@ -1095,8 +1095,8 @@ void ChartData::print(CDC* p_dc, const CRect* p_rect, const BOOL b_center_line)
 	p_dc->SelectObject(old_pen); // restore old pen
 	p_dc->RestoreDC(n_saved_dc); // restore DC
 	p_dc->SetMapMode(old_map_mode); // restore map mode
-	m_client_rect_ = old_rect;
-	adjust_display_rect(&m_client_rect_);
+	client_rect_ = old_rect;
+	adjust_display_rect(&client_rect_);
 }
 
 BOOL ChartData::copy_as_text(const int i_option, const int i_unit, const int n_abscissa)
@@ -1271,11 +1271,11 @@ void ChartData::curve_xor()
 	CPen temp_pen;
 	temp_pen.CreatePen(PS_SOLID, 0, color_table_[SILVER_COLOR]);
 	const auto old_pen = p_dc->SelectObject(&temp_pen);
-	p_dc->IntersectClipRect(&m_display_rect_);
+	p_dc->IntersectClipRect(&display_rect_);
 
 	p_dc->SetMapMode(MM_ANISOTROPIC);
-	p_dc->SetViewportOrg(m_display_rect_.left, m_y_viewport_origin_);
-	p_dc->SetViewportExt(get_rect_width(), m_y_viewport_extent_);
+	p_dc->SetViewportOrg(display_rect_.left, y_viewport_origin_);
+	p_dc->SetViewportExt(get_rect_width(), y_viewport_extent_);
 	p_dc->SetWindowExt(m_xor_x_ext_, m_xor_y_ext_);
 	p_dc->SetWindowOrg(0, 0);
 
@@ -1336,8 +1336,8 @@ void ChartData::OnLButtonDown(const UINT n_flags, const CPoint point)
 			p_y->get_mean_to_ordinates(m_poly_points_);
 			m_xor_y_ext_ = chan_list_item->GetYextent();
 			m_zero_ = chan_list_item->GetYzero();
-			m_pt_first_ = point; 
-			m_cur_track_ = m_zero_;
+			pt_first_ = point; 
+			cur_track_ = m_zero_;
 
 			curve_xor(); // xor curve
 			send_my_message(HINT_HIT_CHANNEL, m_hit_curve_);  // post?
@@ -1349,8 +1349,8 @@ void ChartData::OnLButtonDown(const UINT n_flags, const CPoint point)
 	if (track_mode_ == TRACK_HZ_TAG)
 	{
 		const auto chan_list_item = chan_list_item_ptr_array_[hz_tags.get_channel(hc_trapped_)];
-		m_y_we_ = chan_list_item->GetYextent(); 
-		m_y_wo_ = chan_list_item->GetYzero(); 
+		y_we_ = chan_list_item->GetYextent(); 
+		y_wo_ = chan_list_item->GetYzero(); 
 	}
 }
 
@@ -1360,7 +1360,7 @@ void ChartData::OnMouseMove(const UINT n_flags, const CPoint point)
 	{
 	case TRACK_CURVE:
 		curve_xor(); 
-		m_zero_ = MulDiv(point.y - m_pt_first_.y, m_xor_y_ext_, -m_y_viewport_extent_) + m_cur_track_;
+		m_zero_ = MulDiv(point.y - pt_first_.y, m_xor_y_ext_, -y_viewport_extent_) + cur_track_;
 		curve_xor(); 
 		break;
 
@@ -1394,9 +1394,9 @@ void ChartData::OnLButtonUp(const UINT n_flags, CPoint point)
 		{
 			const auto l_val = static_cast<long>(point.x)
 				* (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1)
-				/ static_cast<long>(m_display_rect_.right) + file_position_first_left_pixel_;
+				/ static_cast<long>(display_rect_.right) + file_position_first_left_pixel_;
 			point.x = static_cast<int>((l_val - file_position_first_left_pixel_)
-				* static_cast<long>(m_display_rect_.right)
+				* static_cast<long>(display_rect_.right)
 				/ (file_position_last_right_pixel_ - file_position_first_left_pixel_ + 1));
 
 			Tag* p_tag = vt_tags.get_tag(hc_trapped_);
@@ -1411,12 +1411,12 @@ void ChartData::OnLButtonUp(const UINT n_flags, CPoint point)
 	case TRACK_RECT:
 		{
 			// skip too small a rectangle (5 pixels?)
-			CRect rect_out(m_pt_first_.x, m_pt_first_.y, m_pt_last_.x, m_pt_last_.y);
+			CRect rect_out(pt_first_.x, pt_first_.y, pt_last_.x, pt_last_.y);
 			constexpr auto jitter = 3;
 			const BOOL b_rect_ok = ((abs(rect_out.Height()) > jitter) || (abs(rect_out.Width()) > jitter));
 
 			// perform action according to cursor type
-			auto rect_in = m_display_rect_;
+			auto rect_in = display_rect_;
 			switch (cursor_type_)
 			{
 			case 0: // if no cursor, no curve track, then move display
@@ -1424,7 +1424,7 @@ void ChartData::OnLButtonUp(const UINT n_flags, CPoint point)
 				{
 					invert_tracker(point);
 					rect_out = rect_in;
-					rect_out.OffsetRect(m_pt_first_.x - m_pt_last_.x, m_pt_first_.y - m_pt_last_.y);
+					rect_out.OffsetRect(pt_first_.x - pt_last_.x, pt_first_.y - pt_last_.y);
 					zoom_data(&rect_in, &rect_out);
 				}
 				break;
@@ -1483,7 +1483,7 @@ int ChartData::does_cursor_hit_curve(const CPoint point)
 	{
 		// convert device coordinates into value
 		const auto i_val = get_channel_list_y_pixels_to_bin(chan, point.y);
-		const auto i_jitter = MulDiv(cy_mouse_jitter_, get_channel_list_item(chan)->GetYextent(), -m_y_viewport_extent_);
+		const auto i_jitter = MulDiv(cy_mouse_jitter_, get_channel_list_item(chan)->GetYextent(), -y_viewport_extent_);
 		const auto val_max = i_val + i_jitter; // mouse max
 		const auto val_min = i_val - i_jitter; // mouse min
 		chan_list_item = chan_list_item_ptr_array_[chan]->pEnvelopeOrdinates;
@@ -1537,7 +1537,7 @@ void ChartData::move_hz_tag_to_val(const int tag_index, const int val_int)
 	//hz_tags.set_value_int(tag_index, val_int);
 	Tag* p_tag = hz_tags.get_tag(tag_index);
 	p_tag->value_int = val_int;
-	p_tag->pixel = MulDiv(val_int - m_zero_, m_y_viewport_extent_, m_xor_y_ext_) + m_y_viewport_origin_;
+	p_tag->pixel = MulDiv(val_int - m_zero_, y_viewport_extent_, m_xor_y_ext_) + y_viewport_origin_;
 	xor_hz_tag(p_tag->pixel, p_tag->swap_pixel(p_tag->pixel));
 	
 }

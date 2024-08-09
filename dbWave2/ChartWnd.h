@@ -80,22 +80,22 @@ protected:
 	int hc_trapped_{}; // cursor index trapped by the mouse
 	int track_mode_ = TRACK_OFF;
 
-	int m_x_wo_ = 0;
-	int m_x_we_ = 1;
-	int m_x_viewport_origin_ = 0;
-	int m_x_viewport_extent_ = 1;
+	int x_wo_ = 0;
+	int x_we_ = 1;
+	int x_viewport_origin_ = 0;
+	int x_viewport_extent_ = 1;
 
-	int m_y_wo_ = 0;
-	int m_y_we_ = 1;
-	int m_y_viewport_origin_ = 0;
-	int m_y_viewport_extent_ = 1;
+	int y_wo_ = 0;
+	int y_we_ = 1;
+	int y_viewport_origin_ = 0;
+	int y_viewport_extent_ = 1;
 
-	int m_cur_track_{}; // threshold  tracked
-	CPoint m_pt_first_{};
-	CPoint m_pt_curr_{};
-	CPoint m_pt_last_{};
-	CRect m_client_rect_{};
-	CRect m_display_rect_{};
+	int cur_track_{}; // threshold  tracked
+	CPoint pt_first_{};
+	CPoint pt_curr_{};
+	CPoint pt_last_{};
+	CRect client_rect_{};
+	CRect display_rect_{};
 
 	int cx_mouse_jitter_;
 	int cy_mouse_jitter_;
@@ -103,9 +103,9 @@ protected:
 	CRect rect_zoom_to_;
 	int i_undo_zoom_ = 0; // 1: rect+ ; -1: rect- ; 0: none stored (not implemented)
 
-	BOOL m_b_allow_props_ = true;
-	HWND m_hwnd_reflect_ = nullptr;
-	Tag* m_temp_vertical_tag_ = nullptr;
+	BOOL b_allow_props_ = true;
+	HWND h_wnd_reflect_ = nullptr;
+	Tag* temp_vertical_tag_ = nullptr;
 
 public:
 	virtual void plot_data_to_dc(CDC* p_dc);
@@ -125,22 +125,22 @@ public:
 	void set_b_use_dib(BOOL b_set_plot); // use DIB or not
 	void set_display_area_size(int cx, int cy); // set size of the display area
 
-	CSize get_rect_size() const { return {m_display_rect_.Width() + 1, m_display_rect_.Height() + 1}; }
-	int get_rect_height() const { return m_display_rect_.Height() + 1; }
-	int get_rect_width() const { return m_display_rect_.Width() + 1; }
+	CSize get_rect_size() const { return {display_rect_.Width() + 1, display_rect_.Height() + 1}; }
+	int get_rect_height() const { return display_rect_.Height() + 1; }
+	int get_rect_width() const { return display_rect_.Width() + 1; }
 	int get_mouse_cursor_type() const { return cursor_type_; }
 	void set_mouse_cursor(int cursor_type);
 
 	void set_yw_ext_org(int extent, int zero);
 	void set_xw_ext_org(const int extent, const int zero) {
-		m_x_we_ = extent;
-		m_x_wo_ = zero;
+		x_we_ = extent;
+		x_wo_ = zero;
 	}
 
-	int get_yw_extent() const { return m_y_we_; }
-	int get_yw_org() const { return m_y_wo_; }
-	int get_xw_extent() const { return m_x_we_; }
-	int get_xw_org() const { return m_x_wo_; }
+	int get_yw_extent() const { return y_we_; }
+	int get_yw_org() const { return y_wo_; }
+	int get_xw_extent() const { return x_we_; }
+	int get_xw_org() const { return x_wo_; }
 	int get_nx_scale_cells() const { return scope_structure_.iXCells; }
 	int	get_ny_scale_cells() const { return scope_structure_.iYCells; }
 
@@ -152,13 +152,13 @@ public:
 	void attach_external_x_ruler(RulerBar* p_x_ruler) { x_ruler_bar = p_x_ruler; }
 	void attach_external_y_ruler(RulerBar* p_y_ruler) { y_ruler_bar = p_y_ruler; }
 
-	void reflect_mouse_move_message(const HWND h_window) { m_hwnd_reflect_ = h_window; }
+	void reflect_mouse_move_message(const HWND h_window) { h_wnd_reflect_ = h_window; }
 	void set_cursor_max_on_dbl_click(const int imax) { cursor_index_max_ = imax; }
 	void draw_grid(CDC* p_dc);
 	void adjust_display_rect(const CRect* p_rect);
 	BOOL get_b_draw_frame() const { return scope_structure_.bDrawframe; }
 	void set_b_draw_frame(const BOOL flag) { scope_structure_.bDrawframe = flag; }
-	CRect get_defined_rect() const { return {m_pt_first_.x, m_pt_first_.y, m_pt_last_.x, m_pt_last_.y}; }
+	CRect get_defined_rect() const { return {pt_first_.x, pt_first_.y, pt_last_.x, pt_last_.y}; }
 	void set_bottom_comment(const BOOL flag, const CString& cs)
 	{
 		cs_bottom_comment = cs;
@@ -186,11 +186,6 @@ public:
 	virtual void display_hz_tags(CDC* p_dc);
 	void xor_hz_tag(int y_new, int y_old);
 
-	void reset_xor_tag() {
-		m_pt_last_.x = -1;
-		m_pt_last_.y = -1;
-	}
-
 	// Implementation
 protected:
 	void PreSubclassWindow() override;
@@ -202,7 +197,6 @@ protected:
 	void left_button_up_horizontal_tag(UINT n_flags, CPoint point);
 
 	void send_my_message(int code, int code_parameter) const;
-	//void post_my_message(int code, int code_parameter) const;
 
 	void invert_tracker(CPoint point); 
 	int hit_horizontal_tag(int y); 
