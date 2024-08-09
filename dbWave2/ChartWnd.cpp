@@ -961,7 +961,7 @@ void ChartWnd::xor_hz_tag(const int y_new, const int y_old)
 	CClientDC dc(this);
 	const auto old_pen = dc.SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = dc.SetROP2(R2_NOTXORPEN);
-	dc.IntersectClipRect(&display_rect_);
+	dc.IntersectClipRect(&client_rect_);
 
 	// erase old
 	if (y_old >= 0)
@@ -979,7 +979,6 @@ void ChartWnd::xor_hz_tag(const int y_new, const int y_old)
 
 	dc.SetROP2(old_rop2);
 	dc.SelectObject(old_pen);
-
 }
 
 void ChartWnd::xor_vt_tag(const int x_new, const int x_old)

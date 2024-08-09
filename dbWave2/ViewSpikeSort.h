@@ -42,6 +42,7 @@ protected:
 	CEditCtrl mm_shape_t2_ms_;
 	float shape_t2_ms_{ 0.5f };
 	int shape_t2_{};
+	void change_chart_shape_vt_tag(short tag_index);
 
 	CEditCtrl mm_source_class_;
 	int sort_source_class_{ 0 };
@@ -67,6 +68,8 @@ protected:
 	int tag_index_hist_up_{};
 	CEditCtrl mm_histogram_bin_mv_;
 	float histogram_bin_mv_{ 0.1f };
+	void build_histogram();
+	void change_chart_histogram_vt_tag(short tag_index);
 
 	ChartSpikeXY chart_measures_;
 	CEditCtrl mm_measure_min_mv_;
@@ -75,6 +78,10 @@ protected:
 	float measure_max_mv_{ 0.f };
 	int tag_index_measures_low_{};
 	int tag_index_measures_up_{};
+	void activate_mode4();
+	void show_controls_for_mode4(int n_cmd_show) const;
+	void change_vertical_tag_xy_chart(short short_value);
+	void change_chart_measure_hz_tag(short short_value);
 
 	CEditCtrl mm_t_xy_right_;
 	float t_xy_right_{ 1.f };
@@ -114,28 +121,24 @@ protected:
 	void update_file_parameters();
 	void load_current_spike_file();
 	void update_legends();
+
 	void select_spike(db_spike& spike_sel);
 	void update_gain();
 	void update_file_scroll();
 	void scroll_file(UINT n_sb_code, UINT n_pos);
 	void select_spike_list(int current_index);
-	void activate_mode4();
-	void show_controls_for_mode4(int n_cmd_show) const;
-	void build_histogram();
+	
 	void clear_flag_all_spikes();
 	void check_valid_threshold_limits();
-	boolean open_dat_and_spk_files_of_selected_spike(const db_spike& spike_coords);
 
+	boolean open_dat_and_spk_files_of_selected_spike(const db_spike& spike_coords);
 	void all_charts_invalidate();
 	void all_charts_set_spike_list(SpikeList* spk_list);
 
 	void set_mouse_cursor(short short_value);
-	void change_hz_limits();
+	void change_file_time_first_and_last();
 	void hit_spike();
-	void change_vertical_tag_spike_shape(short short_value);
-	void change_vertical_tag_histogram(short short_value);
-	void change_vertical_tag_xy_chart(short short_value);
-	void change_horizontal_tag_xy_chart(short short_value);
+	
 	void save_windows_properties_to_options();
 
 	void gain_adjust_shape_and_bars();

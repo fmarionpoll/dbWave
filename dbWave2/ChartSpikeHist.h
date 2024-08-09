@@ -32,10 +32,6 @@ protected:
 	int i_first_{}; 
 	int i_last_{}; 
 
-	int convert_mv_to_abscissa(const double value) const
-	{
-		return static_cast<int>((value - abscissa_min_mv_) * static_cast<float>(x_we_) / (abscissa_max_mv_ - abscissa_min_mv_)) + x_wo_;
-	}
 	int hit_curve(CPoint point) override;
 	void resize_histograms(double bin_mv, double max_mv, double min_mv);
 	void get_histogram_limits(int i_hist);
@@ -59,11 +55,26 @@ public:
 
 	void clear_data();
 	LPTSTR export_ascii(LPTSTR lp);
-	void move_vt_tag_to_val(int tag_index, double value_mv);
+	void move_vt_tag_to_value_mv(int tag_index, double value_mv);
+	void set_vt_tag_to_value_mv(int tag_index, double value_mv);
 	void move_hz_tag_to_val(int tag_index, int value);
 
 	void zoom_data(CRect* r_from, CRect* r_dest) override;
 	void plot_data_to_dc(CDC* p_dc) override;;
+
+	int convert_mv_to_abscissa(const double value_mv) const
+	{
+		return static_cast<int>((value_mv - abscissa_min_mv_)
+			* static_cast<float>(x_we_)
+			/ (abscissa_max_mv_ - abscissa_min_mv_)) + x_wo_;
+	}
+
+	double convert_abscissa_to_mv(const int abscissa) const
+	{
+		return (static_cast<double>(abscissa) - static_cast<double>(x_wo_))
+			* (abscissa_max_mv_ - abscissa_min_mv_)
+			/ static_cast<double>(x_we_) + abscissa_min_mv_;
+	}
 
 protected:
 	afx_msg void OnLButtonUp(UINT n_flags, CPoint point) override;

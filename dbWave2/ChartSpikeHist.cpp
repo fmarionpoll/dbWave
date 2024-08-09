@@ -152,12 +152,21 @@ void ChartSpikeHist::move_hz_tag_to_val(const int tag_index, const int value)
 	xor_hz_tag(p_tag->pixel, p_tag->swap_pixel(p_tag->pixel));
 }
 
-void ChartSpikeHist::move_vt_tag_to_val(const int tag_index, const double value_mv)
+void ChartSpikeHist::move_vt_tag_to_value_mv(const int tag_index, const double value_mv)
 {
 	Tag* p_tag = vt_tags.get_tag(tag_index);
 	p_tag->value_int = convert_mv_to_abscissa(value_mv);
-	const auto pixel = MulDiv(p_tag->value_int - x_wo_, x_viewport_extent_, x_we_) + x_viewport_origin_;
+	const auto pixel = MulDiv(p_tag->value_int - x_wo_,
+							x_viewport_extent_, 
+							x_we_) + x_viewport_origin_;
 	xor_vt_tag(pixel, p_tag->swap_pixel(pixel));
+}
+
+void ChartSpikeHist::set_vt_tag_to_value_mv(const int tag_index, const double value_mv)
+{
+	Tag* p_tag = vt_tags.get_tag(tag_index);
+	p_tag->value_int = convert_mv_to_abscissa(value_mv);
+	//p_tag->pixel = -1;
 }
 
 void ChartSpikeHist::get_class_array(const int i_class, CDWordArray*& p_dw)

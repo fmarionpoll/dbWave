@@ -250,25 +250,22 @@ void ChartSpikeXY::highlight_spike(const Spike* spike)
 
 void ChartSpikeXY::move_hz_tag(const int tag_index, const int value)
 {
-	//m_pt_last_.y = MulDiv(hz_tags.get_value_int(tag_index) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
-	//const auto y_pixel = MulDiv(value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
-	//xor_hz_tag(y_pixel);
-	//hz_tags.set_value_int(tag_index, value);
-
 	Tag* p_tag = hz_tags.get_tag(tag_index);
 	p_tag->value_int = value;
-	p_tag->pixel = MulDiv(value - y_wo_, y_viewport_extent_, y_we_) + y_viewport_origin_;
+	p_tag->pixel = MulDiv(value - y_wo_, 
+							y_viewport_extent_, 
+							y_we_) + y_viewport_origin_;
 	xor_hz_tag(p_tag->pixel, p_tag->swap_pixel(p_tag->pixel));
 }
 
 void ChartSpikeXY::move_vt_tag(const int tag_index, const int new_value)
 {
 	Tag* p_tag = vt_tags.get_tag(tag_index);
-	const auto pixels = MulDiv(new_value - x_wo_, x_viewport_extent_, x_we_) + x_viewport_origin_;
 	p_tag->value_int = new_value;
+	const auto pixels = MulDiv(new_value - x_wo_, 
+							x_viewport_extent_, 
+							x_we_) + x_viewport_origin_;
 	xor_vt_tag(pixels, p_tag->swap_pixel(pixels));
-
-	vt_tags.set_value_int(tag_index, new_value);
 }
 
 void ChartSpikeXY::select_spike(const db_spike& new_spike_selected)
