@@ -166,7 +166,7 @@ void ChartSpikeHist::set_vt_tag_value_mv(const int tag_index, const double value
 {
 	Tag* p_tag = vt_tags.get_tag(tag_index);
 	p_tag->value_int = convert_mv_to_abscissa(value_mv);
-	//p_tag->pixel = -1;
+	p_tag->pixel = -1;
 }
 
 double ChartSpikeHist::get_vt_tag_value_mv(const int tag_index)

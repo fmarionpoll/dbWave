@@ -70,6 +70,8 @@ protected:
 	float histogram_bin_mv_{ 0.1f };
 	void build_histogram();
 	void change_chart_histogram_vt_tag(short tag_index);
+	void update_cursor_lower_threshold();
+	void update_cursor_upper_threshold();
 
 	ChartSpikeXY chart_measures_;
 	CEditCtrl mm_measure_min_mv_;
