@@ -55,12 +55,15 @@ public:
 
 	void clear_data();
 	LPTSTR export_ascii(LPTSTR lp);
-	void move_vt_tag_to_value_mv(int tag_index, double value_mv);
-	void set_vt_tag_to_value_mv(int tag_index, double value_mv);
 	void move_hz_tag_to_val(int tag_index, int value);
 
 	void zoom_data(CRect* r_from, CRect* r_dest) override;
 	void plot_data_to_dc(CDC* p_dc) override;;
+
+	void move_vt_tag_to_value_mv(int tag_index, double value_mv);
+
+	void set_vt_tag_value_mv(int tag_index, double value_mv);
+	double get_vt_tag_value_mv(int tag_index);
 
 	int convert_mv_to_abscissa(const double value_mv) const
 	{

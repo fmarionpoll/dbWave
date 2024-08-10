@@ -28,8 +28,8 @@ void SpikeList::Serialize(CArchive& ar)
 	if (ar.IsStoring())
 	{
 		ar << id_string_;
-		m_version_ = 7;
-		ar << m_version_;
+		w_version_ = 7;
+		ar << w_version_;
 		serialize_version7(ar);
 	}
 	else

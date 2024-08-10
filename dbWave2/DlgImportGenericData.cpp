@@ -507,7 +507,9 @@ void DlgImportGenericData::UpdatePreview()
 	// convert data
 	if (m_filesource != m_fileold)
 	{
-		m_AcqDataFile.open_acq_file(m_filesource);
+		CFileStatus status;
+		const auto b_open = CFile::GetStatus(m_filesource, status);
+		m_AcqDataFile.open_acq_file(m_filesource, status);
 		m_fileold = m_filesource;
 	}
 	m_AcqDataFile.set_reading_buffer_dirty(); // invalidate data buffer
@@ -640,10 +642,10 @@ void DlgImportGenericData::OnSapid3_5()
 void DlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
 {
 	CFileStatus status;
-	pDataF->m_pXFile->GetStatus(status);
+	pDataF->x_file->GetStatus(status);
 	pDataF->set_offset_to_data(m_skipNbytes);
 
-	pDataF->m_pWBuf->create_buffer_with_n_channels(piivO->nb_channels);
+	pDataF->p_w_buf->create_buffer_with_n_channels(piivO->nb_channels);
 	CWaveFormat* pwF = pDataF->get_wave_format();
 
 	// define parameters within CWaveFormat
@@ -682,8 +684,8 @@ void DlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
 	{
 		lCompteur -= 2; // last word = sampling rate
 		WORD wrate; // get rate from source file
-		pDataF->m_pXFile->Seek(-2, CFile::end); // position and read
-		pDataF->m_pXFile->Read(&wrate, sizeof(WORD));
+		pDataF->x_file->Seek(-2, CFile::end); // position and read
+		pDataF->x_file->Read(&wrate, sizeof(WORD));
 		piivO->sampling_rate = wrate; // transfer rate
 	}
 	pwF->sampling_rate_per_channel = piivO->sampling_rate;

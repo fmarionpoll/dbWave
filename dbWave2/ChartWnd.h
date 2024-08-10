@@ -195,6 +195,7 @@ protected:
 	void capture_cursor();
 	void release_cursor();
 	void left_button_up_horizontal_tag(UINT n_flags, CPoint point);
+	void left_button_up_vertical_tag(UINT n_flags, CPoint point);
 
 	void send_my_message(int code, int code_parameter) const;
 

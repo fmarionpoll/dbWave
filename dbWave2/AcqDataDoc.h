@@ -21,13 +21,13 @@ class AcqDataDoc : public CDocument
 	AcqDataDoc();
 	~AcqDataDoc() override;
 
-	CString get_data_file_infos(const OPTIONS_VIEWDATA* pVD) const;
-	void export_data_file_to_txt_file(CStdioFile* pdataDest);
+	CString get_data_file_infos(const OPTIONS_VIEWDATA* p_vd) const;
+	void export_data_file_to_txt_file(CStdioFile* pdata_dest);
 	BOOL save_document(CString& sz_path_name);
 	BOOL open_document(CString& sz_path_name);
+	BOOL open_acq_file(CString& cs_filename, const CFileStatus& status);
 	BOOL OnNewDocument() override;
 
-	BOOL open_acq_file(CString& cs_filename);
 protected:
 	static bool dlg_import_data_file(CString& sz_path_name);
 	int import_file(CString& sz_path_name);
@@ -42,32 +42,33 @@ protected:
 public:
 	// Data members and functions dealing with CDataFileX and data reading buffer
 
-	CDataFileX* m_pXFile = nullptr;
-	int m_pXFileType = DOCTYPE_UNKNOWN;
-	int m_lastDocumentType = DOCTYPE_UNKNOWN;
-	int m_DOCnbchans = 0; // nb channels / doc
-	int m_iOffsetInt = sizeof(short); // offset in bytes
-	long m_lDOCchanLength = 0;
+	CDataFileX* x_file = nullptr;
+	int x_file_type = DOCTYPE_UNKNOWN;
+	int last_document_type = DOCTYPE_UNKNOWN;
+	int doc_n_channels = 0; // nb channels / doc
+	int doc_offset_int = sizeof(short); // offset in bytes
+	long doc_channel_length = 0;
 
-	CWaveBuf* m_pWBuf = nullptr;
-	long m_lBUFmaxSize = MAX_BUFFER_LENGTH_AS_BYTES; // constant (?) size of the buffer
-	long m_lBUFSize = 0; // buffer size (n channels * sizeof(word) * lRWSize
-	long m_lBUFchanSize = 0; // n words in buffer / channel
-	long m_lBUFchanFirst = 0; // file index of first word in RW buffer
-	long m_lBUFchanLast = 0; // file index of last word in RW buffer
-	BOOL m_bValidReadBuffer = false; // flag / valid data ; FALSE to force reading data from file
-	BOOL m_bValidTransfBuffer = false; // flag to tell that transform buffer is valid (check if really used?)
-	BOOL m_bdefined = false;
-	BOOL m_bRemoveOffset = true; // transform data read in short values if binary offset encoding
+	CWaveBuf* p_w_buf = nullptr;
+	long buf_max_size = MAX_BUFFER_LENGTH_AS_BYTES; // constant (?) size of the buffer
+	long buf_size = 0; // buffer size (n channels * sizeof(word) * lRWSize
+	long buf_channel_size = 0; // n words in buffer / channel
+	long buf_channel_first = 0; // file index of first word in RW buffer
+	long buf_channel_last = 0; // file index of last word in RW buffer
+	BOOL buf_valid_data = false; // flag / valid data ; FALSE to force reading data from file
+	BOOL buf_valid_transform = false; // flag to tell that transform buffer is valid (check if really used?)
+	BOOL b_defined = false;
+	BOOL b_remove_offset = true; // transform data read in short values if binary offset encoding
 
 	// use with caution - parameters set by last call to LoadTransformedData
-	long m_tBUFfirst = 0;
-	long m_tBUFlast = 1;
-	int m_tBUFtransform = 0;
-	int m_tBUFsourcechan = 0;
+protected:
+	long buf_first_ = 0;
+	long buf_last_ = 1;
+	int buf_transform_ = 0;
+	int buf_source_channel_ = 0;
 
 public:
-	long get_t_buffer_first() const { return m_tBUFfirst; }
+	long get_t_buffer_first() const { return buf_first_; }
 	short get_value_from_buffer(int channel, long l_index);
 	short* load_transformed_data(long l_first, long l_last, int transform_type, int source_channel);
 	BOOL build_transformed_data(int transform_type, int source_channel) const;
@@ -85,47 +86,47 @@ public:
 	BOOL save_as(CString& new_name, BOOL b_check_over_write = TRUE, int i_type = 0);
 
 	// helpers
-	long get_doc_channel_length() const { return m_lDOCchanLength; }
-	long get_doc_channel_index(int kd) const { return (m_lBUFchanFirst + kd - 1); }
-	long get_doc_channel_index_first() const { return m_lBUFchanFirst; }
-	long get_buffer_channel_index(long lPos) const { return (lPos - m_lBUFchanFirst); }
-	long get_buffer_channel_length() const { return m_lBUFchanSize; }
+	long get_doc_channel_length() const { return doc_channel_length; }
+	long get_doc_channel_index(const int kd) const { return (buf_channel_first + kd - 1); }
+	long get_doc_channel_index_first() const { return buf_channel_first; }
+	long get_buffer_channel_index(const long l_pos) const { return (l_pos - buf_channel_first); }
+	long get_buffer_channel_length() const { return buf_channel_size; }
 
-	CWaveChanArray* get_wave_channels_array() const { return &m_pWBuf->m_chanArray; }
-	CWaveFormat* get_wave_format() const { return &m_pWBuf->m_waveFormat; }
-	TagList* get_hz_tags_list() const { return m_pWBuf->GetpHZtags(); }
-	TagList* get_vt_tags_list() const { return m_pWBuf->GetpVTtags(); }
+	CWaveChanArray* get_wave_channels_array() const { return &p_w_buf->channels_array_; }
+	CWaveFormat* get_wave_format() const { return &p_w_buf->wave_format_; }
+	TagList* get_hz_tags_list() const { return p_w_buf->get_p_hz_tags(); }
+	TagList* get_vt_tags_list() const { return p_w_buf->get_p_vt_tags(); }
 
-	int get_scan_count() const { return m_pWBuf->m_waveFormat.scan_count; }
-	short* get_raw_data_buffer() const { return m_pWBuf->get_pointer_to_raw_data_buffer(); }
+	int get_scan_count() const { return p_w_buf->wave_format_.scan_count; }
+	short* get_raw_data_buffer() const { return p_w_buf->get_pointer_to_raw_data_buffer(); }
 	short* get_raw_data_element(const int chan, const int index) const
 	{
-		return m_pWBuf->get_pointer_to_raw_data_element(chan, index - m_lBUFchanFirst);
+		return p_w_buf->get_pointer_to_raw_data_element(chan, index - buf_channel_first);
 	}
 
-	short* get_transformed_data_buffer() const { return m_pWBuf->get_pointer_to_transformed_data_buffer(); }
-	short* get_transformed_data_element(const int index) const { return (m_pWBuf->get_pointer_to_transformed_data_buffer() + index); }
+	short* get_transformed_data_buffer() const { return p_w_buf->get_pointer_to_transformed_data_buffer(); }
+	short* get_transformed_data_element(const int index) const { return (p_w_buf->get_pointer_to_transformed_data_buffer() + index); }
 
-	static int get_transformed_data_span(const int i) { return CWaveBuf::GetWBTransformSpan(i); }
-	static int get_transforms_count() { return CWaveBuf::GetWBNTypesofTransforms(); }
-	static CString get_transform_name(const int i) { return CWaveBuf::GetWBTransformsAllowed(i); }
-	static BOOL set_wb_transform_span(const int i, const int i_span) { return CWaveBuf::SetWBTransformSpan(i, i_span); }
-	static int is_wb_span_change_allowed(const int i) { return CWaveBuf::IsWBSpanChangeAllowed(i); }
-	static BOOL is_wb_transform_allowed(const int i_mode) { return CWaveBuf::IsWBTransformAllowed(i_mode); }
+	static int get_transformed_data_span(const int i) { return CWaveBuf::wb_get_transform_span(i); }
+	static int get_transforms_count() { return CWaveBuf::wb_get_n_transforms(); }
+	static CString get_transform_name(const int i) { return CWaveBuf::wb_get_transforms_allowed(i); }
+	static BOOL set_wb_transform_span(const int i, const int i_span) { return CWaveBuf::wb_set_transform_span(i, i_span); }
+	static int is_wb_span_change_allowed(const int i) { return CWaveBuf::wb_is_span_change_allowed(i); }
+	static BOOL is_wb_transform_allowed(const int i_mode) { return CWaveBuf::wb_is_transform_allowed(i_mode); }
 
 	BOOL get_volts_per_bin(const int channel, float* volts_per_bin, const int mode = 0) const
 	{
-		return m_pWBuf->GetWBVoltsperBin(channel, volts_per_bin, mode);
+		return p_w_buf->get_wb_volts_per_bin(channel, volts_per_bin, mode);
 	}
 
-	BOOL init_wb_transform_buffer() const { return m_pWBuf->InitWBTransformBuffer(); }
+	BOOL init_wb_transform_buffer() const { return p_w_buf->wb_init_transform_buffer(); }
 
-	void set_offset_to_data(ULONGLONG ulOffset) const { m_pXFile->m_ulOffsetData = ulOffset; }
-	void set_offset_to_header(ULONGLONG ulOffset) const { m_pXFile->m_ulOffsetHeader = static_cast<LONGLONG>(ulOffset); }
-	ULONGLONG get_offset_to_data() const { return m_pXFile->m_ulOffsetData; }
-	ULONGLONG get_offset_to_header() const { return m_pXFile->m_ulOffsetHeader; }
-	int get_header_size() const { return m_pXFile->m_bHeaderSize; }
-	void set_reading_buffer_dirty() { m_bValidReadBuffer = FALSE; }
+	void set_offset_to_data(const ULONGLONG ul_offset) const { x_file->m_ulOffsetData = ul_offset; }
+	void set_offset_to_header(const ULONGLONG ul_offset) const { x_file->m_ulOffsetHeader = static_cast<LONGLONG>(ul_offset); }
+	ULONGLONG get_offset_to_data() const { return x_file->m_ulOffsetData; }
+	ULONGLONG get_offset_to_header() const { return x_file->m_ulOffsetHeader; }
+	int get_header_size() const { return x_file->m_bHeaderSize; }
+	void set_reading_buffer_dirty() { buf_valid_data = FALSE; }
 	BOOL allocate_buffer();
 	BOOL adjust_buffer(const int elements_count);
 	void read_data_infos();

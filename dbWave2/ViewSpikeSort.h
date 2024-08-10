@@ -78,11 +78,11 @@ protected:
 	float measure_max_mv_{ 0.f };
 	int tag_index_measures_low_{};
 	int tag_index_measures_up_{};
+	void change_chart_measure_hz_tag(short short_value);
 	void activate_mode4();
 	void show_controls_for_mode4(int n_cmd_show) const;
-	void change_vertical_tag_xy_chart(short short_value);
-	void change_chart_measure_hz_tag(short short_value);
-
+	void change_chart_measure_vt_tag(short short_value);
+	
 	CEditCtrl mm_t_xy_right_;
 	float t_xy_right_{ 1.f };
 	CEditCtrl mm_t_xy_left_;

@@ -49,8 +49,8 @@ void CDataFileASD::Dump(CDumpContext& dc) const
 
 BOOL CDataFileASD::ReadDataInfos(CWaveBuf* pBuf)
 {
-	CWaveFormat* wave_format = pBuf->GetpWaveFormat();
-	CWaveChanArray* wavechan_array = pBuf->GetpWavechanArray();
+	CWaveFormat* wave_format = pBuf->get_p_wave_format();
+	CWaveChanArray* wavechan_array = pBuf->get_p_wave_chan_array();
 
 	Seek(29, begin); // position pointer
 	CString cs_name;

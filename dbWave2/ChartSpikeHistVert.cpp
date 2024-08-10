@@ -228,22 +228,7 @@ void ChartSpikeHistVert::OnLButtonUp(const UINT n_flags, const CPoint point)
 		break;
 
 	case TRACK_VT_TAG:
-		// vertical tag was tracked
-		{
-			// convert pix into data value and back again
-			/*const auto val = MulDiv(point.x - m_x_viewport_origin_, m_x_we_, m_x_viewport_extent_) + m_x_wo_;
-			vertical_tags.set_value_int(hc_trapped_, val);
-			point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-			xor_vertical(point.x);*/
-
-			Tag* p_tag = vt_tags.get_tag(hc_trapped_);
-			const auto val = MulDiv(point.x - x_viewport_origin_, x_we_, x_viewport_extent_) + x_wo_;
-			p_tag->value_int = val;
-			xor_vt_tag(point.x, p_tag->swap_pixel(point.x));
-
-			ChartSpike::OnLButtonUp(n_flags, point);
-			send_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_); // post?
-		}
+		left_button_up_vertical_tag(n_flags, point);
 		break;
 
 	case TRACK_RECT:

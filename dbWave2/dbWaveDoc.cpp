@@ -54,12 +54,12 @@ CdbWaveDoc::~CdbWaveDoc()
 		}
 }
 
-void CdbWaveDoc::update_all_views_db_wave(CView* pSender, LPARAM lHint, CObject* pHint)
+void CdbWaveDoc::update_all_views_db_wave(CView* p_sender, LPARAM l_hint, CObject* p_hint)
 {
-	CDocument::UpdateAllViews(pSender, lHint, pHint);
+	CDocument::UpdateAllViews(p_sender, l_hint, p_hint);
 	// passes message OnUpdate() to the mainframe and add a reference to the document that sends it
 	const auto main_frame = static_cast<CMainFrame*>(AfxGetMainWnd());
-	main_frame->OnUpdate(reinterpret_cast<CView*>(this), lHint, pHint);
+	main_frame->OnUpdate(reinterpret_cast<CView*>(this), l_hint, p_hint);
 }
 
 // TODO here: ask where data are to be saved (call make directory/explore directory)
@@ -201,12 +201,12 @@ CdbWaveDoc* CdbWaveDoc::get_active_mdi_document()
 	return static_cast<CdbWaveDoc*>(p_doc);
 }
 
-BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpszPathName)
+BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpsz_path_name)
 {
 	// open database document
-	CString cs_new = lpszPathName;
+	CString cs_new = lpsz_path_name;
 	CFileStatus status;
-	if (!CFile::GetStatus(lpszPathName, status))
+	if (!CFile::GetStatus(lpsz_path_name, status))
 		return FALSE;
 
 	cs_new.MakeLower();
@@ -218,9 +218,9 @@ BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	if ((cs_ext.Compare(_T("mdb")) == 0) || (cs_ext.Compare(_T("accdb")) == 0))
 	{
-		if (!COleDocument::OnOpenDocument(lpszPathName))
+		if (!COleDocument::OnOpenDocument(lpsz_path_name))
 			return FALSE;
-		return open_database(lpszPathName);
+		return open_database(lpsz_path_name);
 	}
 
 	// open spike or dat documents
@@ -234,7 +234,7 @@ BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		if (flag)
 		{
 			CStringArray file_names;
-			file_names.Add(lpszPathName);
+			file_names.Add(lpsz_path_name);
 			import_file_list(file_names);
 		}
 		return flag;
@@ -242,7 +242,7 @@ BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	return FALSE;
 }
 
-BOOL CdbWaveDoc::open_database(const LPCTSTR lpszPathName)
+BOOL CdbWaveDoc::open_database(const LPCTSTR lpsz_path_name)
 {
 	const auto tmp_db = new CdbTable;
 	tmp_db->attach(&current_datafile_name_, &current_spike_file_name_);
@@ -250,7 +250,7 @@ BOOL CdbWaveDoc::open_database(const LPCTSTR lpszPathName)
 	// Attempt to open the new database before replacing our ptr
 	try
 	{
-		tmp_db->Open(lpszPathName);
+		tmp_db->Open(lpsz_path_name);
 	}
 	catch (CDaoException* e)
 	{
@@ -260,7 +260,7 @@ BOOL CdbWaveDoc::open_database(const LPCTSTR lpszPathName)
 		delete tmp_db;
 		return FALSE;
 	}
-	db_filename = lpszPathName;
+	db_filename = lpsz_path_name;
 	proposed_data_path_name = db_filename.Left(db_filename.ReverseFind('.'));
 
 	// pass file pointer to document pointer
@@ -274,18 +274,18 @@ BOOL CdbWaveDoc::open_database(const LPCTSTR lpszPathName)
 
 	// save file name
 	valid_tables = db_table->open_tables();
-	SetPathName(lpszPathName, TRUE);
+	SetPathName(lpsz_path_name, TRUE);
 
 	return valid_tables;
 }
 
-BOOL CdbWaveDoc::OnSaveDocument(const LPCTSTR lpszPathName)
+BOOL CdbWaveDoc::OnSaveDocument(const LPCTSTR lpsz_path_name)
 {
 	// now duplicate file
 	const auto cs_old_name = GetPathName();
 	constexpr auto b_fail_if_exists = TRUE;
 
-	const auto b_done = ::CopyFile(cs_old_name, lpszPathName, b_fail_if_exists);
+	const auto b_done = ::CopyFile(cs_old_name, lpsz_path_name, b_fail_if_exists);
 	if (b_done == 0)
 	{
 		LPVOID lp_msg_buf;
@@ -300,7 +300,7 @@ BOOL CdbWaveDoc::OnSaveDocument(const LPCTSTR lpszPathName)
 
 		// Process any inserts in lpMsgBuf.
 		CString cs_error = static_cast<LPTSTR>(lp_msg_buf);
-		cs_error = _T("Error when copying:\n") + cs_old_name + _T("\ninto:\n") + lpszPathName + _T("\n\n") + cs_error;
+		cs_error = _T("Error when copying:\n") + cs_old_name + _T("\ninto:\n") + lpsz_path_name + _T("\n\n") + cs_error;
 
 		// Display the string.
 		MessageBox(nullptr, cs_error, _T("Error"), MB_OK | MB_ICONINFORMATION);
@@ -1843,8 +1843,8 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 
 	const auto i_old_list = m_p_spk->get_spike_list_current_index();
 	m_p_spk->export_table_title(p_sf, options_view_spikes, n_files);
-	CSpikeDoc::export_table_col_headers_db(p_sf, options_view_spikes);
-	m_p_spk->export_table_col_headers_data(p_sf, options_view_spikes); // this is for the measure
+	CSpikeDoc::export_headers_descriptors(p_sf, options_view_spikes);
+	m_p_spk->export_headers_data(p_sf, options_view_spikes); // this is for the measure
 
 	// single file export operation: EXTREMA, amplitude, SPIKE_POINTS
 	transpose_ = FALSE;

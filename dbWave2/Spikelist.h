@@ -39,7 +39,7 @@ public:
 	// Description
 protected:
 	// (0) ---------------infos about file version and ID
-	WORD m_version_ {6};		// aug 2013 change spike element
+	WORD w_version_ {6};		// aug 2013 change spike element
 	CString id_string_ {_T("Awave Spike file v")};
 
 	// (1) ---------------infos about data acquisition and spike detection ------------------
@@ -71,7 +71,6 @@ protected:
 
 	// Operations
 public:
-	WORD get_version() const { return m_version_; }
 	BOOL is_class_list_valid() const { return keep_only_valid_classes_; }
 
 	int get_classes_count() const {return  class_descriptors_.GetCount();}

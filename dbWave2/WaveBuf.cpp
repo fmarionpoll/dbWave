@@ -14,112 +14,112 @@ CWaveBuf::CWaveBuf()
 
 CWaveBuf::~CWaveBuf()
 {
-	deleteBuffers();
-	SAFE_DELETE_ARRAY(m_parraySorted)
-	SAFE_DELETE_ARRAY(m_parrayCircular)
+	delete_buffers();
+	SAFE_DELETE_ARRAY(p_array_sorted_)
+	SAFE_DELETE_ARRAY(p_array_circular_)
 }
 
 int CWaveBuf::create_buffer_with_n_channels(const int i)
 {
 	// no action if the number of data channels is right
-	if (m_waveFormat.scan_count == i
-		&& m_chanArray.chan_array_get_size() == i)
+	if (wave_format_.scan_count == i
+		&& channels_array_.chan_array_get_size() == i)
 		return i;
-	const auto i_num_elements = m_waveFormat.buffer_size / m_waveFormat.scan_count;
-	m_waveFormat.scan_count = static_cast<short>(i);
-	m_chanArray.chan_array_set_size(i);
-	ASSERT(m_chanArray.chan_array_get_size() == m_waveFormat.scan_count);
-	createWBuffer(i_num_elements, i);
-	return m_waveFormat.scan_count;
+	const auto i_num_elements = wave_format_.buffer_size / wave_format_.scan_count;
+	wave_format_.scan_count = static_cast<short>(i);
+	channels_array_.chan_array_set_size(i);
+	ASSERT(channels_array_.chan_array_get_size() == wave_format_.scan_count);
+	create_w_buffer(i_num_elements, i);
+	return wave_format_.scan_count;
 }
 
 short* CWaveBuf::get_pointer_to_raw_data_buffer() const
 {
-	ASSERT(m_pWData != NULL);
-	return m_pWData;
+	ASSERT(p_w_data_ != NULL);
+	return p_w_data_;
 }
 
 short* CWaveBuf::get_pointer_to_raw_data_element(const int chan, const int index) const
 {
-	ASSERT(chan < m_waveFormat.scan_count);
-	ASSERT(m_pWData != NULL);
-	return m_pWData + index * m_waveFormat.scan_count + chan;
+	ASSERT(chan < wave_format_.scan_count);
+	ASSERT(p_w_data_ != NULL);
+	return p_w_data_ + index * wave_format_.scan_count + chan;
 }
 
 short* CWaveBuf::get_pointer_to_transformed_data_buffer() const
 {
-	return m_pWTransf;
+	return p_w_data_transformed_;
 }
 
 short* CWaveBuf::get_pointer_to_transformed_data_element(const int index) const
 {
-	return m_pWTransf + index;
+	return p_w_data_transformed_ + index;
 }
 
-int CWaveBuf::GetWBNumElements() const
+int CWaveBuf::get_wb_n_elements() const
 {
-	return m_iNumElements;
+	return num_elements_;
 }
 
-int CWaveBuf::GetWBNumChannels() const
+int CWaveBuf::get_wb_n_channels() const
 {
-	return m_waveFormat.scan_count;
+	return wave_format_.scan_count;
 }
 
-void CWaveBuf::SetWBSampleRate(const float sampling_rate)
+void CWaveBuf::set_wb_sample_rate(const float sampling_rate)
 {
-	m_waveFormat.sampling_rate_per_channel = sampling_rate;
+	wave_format_.sampling_rate_per_channel = sampling_rate;
 }
 
-float CWaveBuf::GetWBSampleRate() const
+float CWaveBuf::get_wb_sample_rate() const
 {
-	return m_waveFormat.sampling_rate_per_channel;
+	return wave_format_.sampling_rate_per_channel;
 }
 
-void CWaveBuf::deleteBuffers()
+void CWaveBuf::delete_buffers()
 {
-	if (m_pWData != nullptr)
+	if (p_w_data_ != nullptr)
 	{
-		free(m_pWData);
-		m_pWData = nullptr;
+		free(p_w_data_);
+		p_w_data_ = nullptr;
 	}
-	if (m_pWTransf != nullptr)
+	if (p_w_data_transformed_ != nullptr)
 	{
-		free(m_pWTransf);
-		m_pWTransf = nullptr;
+		free(p_w_data_transformed_);
+		p_w_data_transformed_ = nullptr;
 	}
-	m_iNumElements = 0;
+	num_elements_ = 0;
 }
 
 // -----------------------------------------------------------
-BOOL CWaveBuf::createWBuffer(const int i_num_elements, const int n_channels)
+BOOL CWaveBuf::create_w_buffer(const int i_num_elements, const int n_channels)
 {
 	ASSERT(this);
 	ASSERT(i_num_elements >= 1); // must have at least one
-	m_waveFormat.scan_count = static_cast<short>(n_channels);
+	wave_format_.scan_count = static_cast<short>(n_channels);
 
 	constexpr DWORD dwSafeFactor = 256; // safety factor to fit data in buffer
 	const size_t dwBufferSize = i_num_elements * n_channels * sizeof(short) + dwSafeFactor;
-	if (m_dwBufferSize != dwBufferSize)
+	if (dw_buffer_size_ != dwBufferSize)
 	{
-		deleteBuffers();
-		m_pWData = static_cast<short*>(malloc(dwBufferSize));
-		ASSERT(m_pWData != NULL);
-		if (m_pWData == nullptr)
+		delete_buffers();
+		p_w_data_ = static_cast<short*>(malloc(dwBufferSize));
+		ASSERT(p_w_data_ != NULL);
+		if (p_w_data_ == nullptr)
 			return FALSE;
 
 		// allocate transform heap if selected
-		if (m_bTransf)
+		if (is_transformed_)
 		{
 			const size_t dwBufferSize2 = i_num_elements * sizeof(short) + dwSafeFactor * 2 * 60;
-			m_pWTransf = static_cast<short*>(malloc(dwBufferSize2));
-			ASSERT(m_pWTransf != NULL);
-			if (m_pWTransf == nullptr)
+			p_w_data_transformed_ = static_cast<short*>(malloc(dwBufferSize2));
+			ASSERT(p_w_data_transformed_ != NULL);
+			if (p_w_data_transformed_ == nullptr)
 				return FALSE;
 		}
-		m_iNumElements = i_num_elements;
+		num_elements_ = i_num_elements;
 	}
-	m_waveFormat.buffer_size = static_cast<WORD>(i_num_elements * n_channels);
+	wave_format_.buffer_size = static_cast<WORD>(i_num_elements * n_channels);
 	return TRUE;
 }
 
@@ -128,12 +128,12 @@ BOOL CWaveBuf::createWBuffer(const int i_num_elements, const int n_channels)
 void CWaveBuf::Serialize(CArchive& ar)
 {
 	CObject::Serialize(ar);
-	m_waveFormat.Serialize(ar); // serialize data description
-	m_chanArray.Serialize(ar); // serialize channels description
+	wave_format_.Serialize(ar); // serialize data description
+	channels_array_.Serialize(ar); // serialize channels description
 
 	if (ar.IsStoring())
 	{
-		ar << m_wversion;
+		ar << w_version_;
 	}
 	else
 	{
@@ -147,7 +147,7 @@ void CWaveBuf::Serialize(CArchive& ar)
 /////////////////////////////////////////////////////////////////////////////
 // add description of new method here
 
-std::string CWaveBuf::m_pTransformsAllowed[] = {
+std::string CWaveBuf::m_p_transforms_allowed_[] = {
 	"BMAXMIN  - Raw data", // 0
 	"BDERIVAT - First derivative", // 1
 	"BLANCZO2 - Lanczos filter 2l (1/5T)  Ci=1,2", // 2
@@ -167,11 +167,11 @@ std::string CWaveBuf::m_pTransformsAllowed[] = {
 	""
 };
 
-int CWaveBuf::m_maxtransform = 16;
+int CWaveBuf::transforms_count_ = 16;
 
 // -----------------------------------------------------------
 
-int CWaveBuf::m_TransformBufferSpan[] = {
+int CWaveBuf::m_transform_buffer_span_[] = {
 	0, // maxmin
 	4, // bderiv
 	2, // lanczos2
@@ -193,7 +193,7 @@ int CWaveBuf::m_TransformBufferSpan[] = {
 
 // -----------------------------------------------------------
 
-int CWaveBuf::m_bvariableSpan[] = {
+int CWaveBuf::b_variable_span_[] = {
 	0, // maxmin
 	0, // bderiv
 	0, // lanczos2
@@ -215,7 +215,7 @@ int CWaveBuf::m_bvariableSpan[] = {
 
 // -----------------------------------------------------------
 
-float CWaveBuf::m_correctionFact[] = {
+float CWaveBuf::m_correction_factor_[] = {
 	1.f, // maxmin
 	6.f, // bderiv
 	5.f, // lanczos2
@@ -237,57 +237,57 @@ float CWaveBuf::m_correctionFact[] = {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-int CWaveBuf::GetWBNTypesofTransforms()
+int CWaveBuf::wb_get_n_transforms()
 {
-	if (m_maxtransform < 0)
+	if (transforms_count_ < 0)
 	{
-		m_maxtransform = 0;
-		while (m_TransformBufferSpan[m_maxtransform] >= 0)
-			m_maxtransform++;
+		transforms_count_ = 0;
+		while (m_transform_buffer_span_[transforms_count_] >= 0)
+			transforms_count_++;
 	}
-	return m_maxtransform;
+	return transforms_count_;
 }
 
-CString CWaveBuf::GetWBTransformsAllowed(int i)
+CString CWaveBuf::wb_get_transforms_allowed(int i)
 {
 	if (i < 0)
 		i = 0;
-	else if (i > m_maxtransform)
-		i = m_maxtransform;
-	return CString(m_pTransformsAllowed[i].c_str());
+	else if (i > transforms_count_)
+		i = transforms_count_;
+	return CString(m_p_transforms_allowed_[i].c_str());
 }
 
-BOOL CWaveBuf::IsWBTransformAllowed(int i)
+BOOL CWaveBuf::wb_is_transform_allowed(int i)
 {
 	auto flag = TRUE;
-	if (i < 0 || i > m_maxtransform) 
+	if (i < 0 || i > transforms_count_) 
 		flag = FALSE;
 	return flag;
 }
 
-BOOL CWaveBuf::InitWBTransformBuffer()
+BOOL CWaveBuf::wb_init_transform_buffer()
 {
-	const size_t dw_buffer_size = m_waveFormat.sample_count * sizeof(short) + 100;
+	const size_t dw_buffer_size = wave_format_.sample_count * sizeof(short) + 100;
 	// allocate / reallocate transform heap
-	if (m_pWTransf != nullptr)
+	if (p_w_data_transformed_ != nullptr)
 	{
-		free(m_pWTransf);
-		m_pWTransf = nullptr;
+		free(p_w_data_transformed_);
+		p_w_data_transformed_ = nullptr;
 	}
 
-	m_pWTransf = static_cast<short*>(malloc(dw_buffer_size));
-	if (m_pWTransf == nullptr)
+	p_w_data_transformed_ = static_cast<short*>(malloc(dw_buffer_size));
+	if (p_w_data_transformed_ == nullptr)
 		return FALSE;
-	const auto flag = (m_pWTransf != nullptr);
-	m_bTransf = TRUE;
+	const auto flag = (p_w_data_transformed_ != nullptr);
+	is_transformed_ = TRUE;
 	return flag;
 }
 
-int CWaveBuf::GetWBTransformSpan(int i)
+int CWaveBuf::wb_get_transform_span(int i)
 {
-	if (i < 0 || i > m_maxtransform)
+	if (i < 0 || i > transforms_count_)
 		return 0;
-	return m_TransformBufferSpan[i];
+	return m_transform_buffer_span_[i];
 }
 
 // -----------------------------------------------------------
@@ -295,24 +295,24 @@ int CWaveBuf::GetWBTransformSpan(int i)
 // those routines have a flag in bvariableSpan = 1
 // the modification can be done within the dialog box "format series"
 
-int CWaveBuf::IsWBSpanChangeAllowed(const int i)
+int CWaveBuf::wb_is_span_change_allowed(const int i)
 {
-	return m_bvariableSpan[i];
+	return b_variable_span_[i];
 }
 
-int CWaveBuf::SetWBTransformSpan(const int i, const int span)
+int CWaveBuf::wb_set_transform_span(const int i, const int span)
 {
-	if (m_bvariableSpan[i] > 0)
-		m_TransformBufferSpan[i] = span;
-	return m_TransformBufferSpan[i];
+	if (b_variable_span_[i] > 0)
+		m_transform_buffer_span_[i] = span;
+	return m_transform_buffer_span_[i];
 }
 
-int CWaveBuf::GetWBcorrectionFactor(int i, float* correct)
+int CWaveBuf::wb_get_correction_factor(int i, float* correct)
 {
-	if (i < 0 || i > m_maxtransform)
+	if (i < 0 || i > transforms_count_)
 		i = -1;
 	else
-		*correct = m_correctionFact[i];
+		*correct = m_correction_factor_[i];
 	return i;
 }
 
@@ -351,11 +351,11 @@ int CWaveBuf::GetWBcorrectionFactor(int i, float* correct)
 	   at the beginning and at the end of the array
  **************************************************************************/
 
-void CWaveBuf::BDeriv(const short* lp_source, short* lp_dest, int cx) const
+void CWaveBuf::low_pass_differentiation(const short* lp_source, short* lp_dest, int cx) const
 {
 	constexpr auto i_span = 4; // nb of dummy pts on each side of dest buffer
 	auto lp_dest0 = lp_dest; // store initial address (clear at the end)
-	const int n_channels = m_waveFormat.scan_count;
+	const int n_channels = wave_format_.scan_count;
 	lp_source -= i_span * n_channels; // init source address: k-3
 	cx += i_span; // modify nb of pts
 	int bx = *lp_source; // xk+1 load first data pts
@@ -393,9 +393,9 @@ void CWaveBuf::BDeriv(const short* lp_source, short* lp_dest, int cx) const
  comments:	none
  **************************************************************************/
 
-void CWaveBuf::BCopy(const short* lp_source, short* lp_dest, const int cx) const
+void CWaveBuf::copy(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int n_channels = m_waveFormat.scan_count;
+	const int n_channels = wave_format_.scan_count;
 	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
 		*lp_dest = *lp_source;
 }
@@ -415,9 +415,9 @@ comment:	the difference is computed as
 			 k  = element number
 *******************************************************************************/
 
-void CWaveBuf::BDiffer3(const short* lp_source, short* lp_dest, const int cx) const
+void CWaveBuf::low_pass_diff_3(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int n_channels = m_waveFormat.scan_count;
+	const int n_channels = wave_format_.scan_count;
 	// compute the difference
 	const auto offset3 = 3 * n_channels;
 	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
@@ -427,9 +427,9 @@ void CWaveBuf::BDiffer3(const short* lp_source, short* lp_dest, const int cx) co
 //**************************************************************************
 // 	"BDIFFER2 - Difference X(n+2)-X(n-2)",
 //**************************************************************************
-void CWaveBuf::BDiffer2(const short* lp_source, short* lp_dest, const int cx) const
+void CWaveBuf::low_pass_diff_2(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int n_channels = m_waveFormat.scan_count;
+	const int n_channels = wave_format_.scan_count;
 	const auto offset2 = 2 * n_channels;
 	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
 		*lp_dest = static_cast<short>(*(lp_source + offset2) - *(lp_source - offset2));
@@ -438,9 +438,9 @@ void CWaveBuf::BDiffer2(const short* lp_source, short* lp_dest, const int cx) co
 //**************************************************************************
 // 	"BDIFFER1 - Difference X(n+1)-X(n-1)",
 //**************************************************************************
-void CWaveBuf::BDiffer1(const short* lp_source, short* lp_dest, const int cx) const
+void CWaveBuf::low_pass_diff_1(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int n_channels = m_waveFormat.scan_count;
+	const int n_channels = wave_format_.scan_count;
 	const auto offset = n_channels;
 	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
 		*lp_dest = static_cast<short>(*(lp_source + offset) - *(lp_source - offset));
@@ -449,9 +449,9 @@ void CWaveBuf::BDiffer1(const short* lp_source, short* lp_dest, const int cx) co
 //**************************************************************************
 // 	"BDIFFER10 - Difference X(n+10)-X(n-10)",
 //**************************************************************************
-void CWaveBuf::BDiffer10(const short* lp_source, short* lp_dest, const int cx) const
+void CWaveBuf::low_pass_diff_10(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int n_channels = m_waveFormat.scan_count;
+	const int n_channels = wave_format_.scan_count;
 	const auto offset2 = 10 * n_channels;
 	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
 		*lp_dest = static_cast<short>(*(lp_source + offset2) - *(lp_source - offset2));
@@ -460,9 +460,9 @@ void CWaveBuf::BDiffer10(const short* lp_source, short* lp_dest, const int cx) c
 //**************************************************************************
 //	"BLANCZO2 - Lanczos filter 2l (1/5T)  Ci=1,2",
 //**************************************************************************
-void CWaveBuf::BLanczo2(const short* lp_source, short* lp_dest, const int cx) const
+void CWaveBuf::low_pass_lanczo_2(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int n_channels = m_waveFormat.scan_count;
+	const int n_channels = wave_format_.scan_count;
 	const auto offset1 = n_channels;
 	const auto offset2 = 2 * offset1;
 	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
@@ -475,9 +475,9 @@ void CWaveBuf::BLanczo2(const short* lp_source, short* lp_dest, const int cx) co
 //**************************************************************************
 //	"BLANCZO3 - Lanczos filter 3l (1/14T) Ci=1,2,3",
 //**************************************************************************
-void CWaveBuf::BLanczo3(const short* lp_source, short* lp_dest, const int cx) const
+void CWaveBuf::low_pass_lanczo_3(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int n_channels = m_waveFormat.scan_count;
+	const int n_channels = wave_format_.scan_count;
 	const auto offset1 = n_channels;
 	const auto offset2 = offset1 * 2;
 	const auto offset3 = offset2 + offset1;
@@ -492,9 +492,9 @@ void CWaveBuf::BLanczo3(const short* lp_source, short* lp_dest, const int cx) co
 //**************************************************************************
 //	"BDERI1F3 - Derivative (1/3T)  1f3 Ci=1,1",
 //**************************************************************************
-void CWaveBuf::BDeri1f3(const short* lp_source, short* lp_dest, const int cx) const
+void CWaveBuf::low_pass_derivative_1f3(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int n_channels = m_waveFormat.scan_count;
+	const int n_channels = wave_format_.scan_count;
 	const auto offset1 = n_channels;
 	const auto offset2 = 2 * n_channels;
 	for (auto icx = cx; icx > 0; icx--, lp_source += n_channels, lp_dest++)
@@ -507,9 +507,9 @@ void CWaveBuf::BDeri1f3(const short* lp_source, short* lp_dest, const int cx) co
 //**************************************************************************
 //	"BDERI2F3 - Derivative (1/6T)  2f3 Ci=1,1,1",
 //**************************************************************************
-void CWaveBuf::BDeri2f3(const short* lp_source, short* lp_dest, const int cx) const
+void CWaveBuf::low_pass_derivative_2f3(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int n_channels = m_waveFormat.scan_count;
+	const int n_channels = wave_format_.scan_count;
 	const auto offset1 = n_channels;
 	const auto offset2 = n_channels * 2;
 	const auto offset3 = n_channels * 3;
@@ -524,9 +524,9 @@ void CWaveBuf::BDeri2f3(const short* lp_source, short* lp_dest, const int cx) co
 //**************************************************************************
 //	"BDERI2F5 - Derivative (1/10T) 2f5 Ci=1,1,1,1",
 //**************************************************************************
-void CWaveBuf::BDeri2f5(const short* lp_source, short* lp_dest, const int cx) const
+void CWaveBuf::low_pass_derivative_2f5(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int n_channels = m_waveFormat.scan_count;
+	const int n_channels = wave_format_.scan_count;
 	const auto offset1 = n_channels;
 	const auto offset2 = n_channels * 2;
 	const auto offset3 = n_channels * 3;
@@ -543,9 +543,9 @@ void CWaveBuf::BDeri2f5(const short* lp_source, short* lp_dest, const int cx) co
 //**************************************************************************
 //	"BDERI3F3 - Derivative (1/9T)  3f3 Ci=0,1,1,1",
 //**************************************************************************
-void CWaveBuf::BDeri3f3(const short* lp_source, short* lp_dest, const int cx) const
+void CWaveBuf::low_pass_derivative_3f3(const short* lp_source, short* lp_dest, const int cx) const
 {
-	const int n_channels = m_waveFormat.scan_count;
+	const int n_channels = wave_format_.scan_count;
 	const auto offset2 = n_channels * 2;
 	const auto offset3 = n_channels * 3;
 	const auto offset4 = 2 * offset2;
@@ -566,30 +566,30 @@ void CWaveBuf::BDeri3f3(const short* lp_source, short* lp_dest, const int cx) co
  comments:
  **************************************************************************/
 
-BOOL CWaveBuf::GetWBVoltsperBin(const int ch_index, float* volts_per_bin, const int mode) const
+BOOL CWaveBuf::get_wb_volts_per_bin(const int ch_index, float* volts_per_bin, const int mode) const
 {
-	if ((ch_index >= m_waveFormat.scan_count) || (ch_index < 0))
+	if ((ch_index >= wave_format_.scan_count) || (ch_index < 0))
 		return false;
 
 	auto correction = 1.0f;
-	GetWBcorrectionFactor(mode, &correction);
+	wb_get_correction_factor(mode, &correction);
 
-	if (m_chanArray.get_p_channel(ch_index)->am_resolutionV == 0)
+	if (channels_array_.get_p_channel(ch_index)->am_resolutionV == 0)
 	{
-		if (m_chanArray.get_p_channel(ch_index)->am_gaintotal == 0.)
+		if (channels_array_.get_p_channel(ch_index)->am_gaintotal == 0.)
 		{
-			m_chanArray.get_p_channel(ch_index)->am_gaintotal = m_chanArray.get_p_channel(ch_index)->am_amplifiergain
-				* static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_gainpre)
-				* static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_gainpost)
-				* static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_gainheadstage)
-				* static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_gainAD);
+			channels_array_.get_p_channel(ch_index)->am_gaintotal = channels_array_.get_p_channel(ch_index)->am_amplifiergain
+				* static_cast<float>(channels_array_.get_p_channel(ch_index)->am_gainpre)
+				* static_cast<float>(channels_array_.get_p_channel(ch_index)->am_gainpost)
+				* static_cast<float>(channels_array_.get_p_channel(ch_index)->am_gainheadstage)
+				* static_cast<float>(channels_array_.get_p_channel(ch_index)->am_gainAD);
 		}
 
-		m_chanArray.get_p_channel(ch_index)->am_resolutionV = m_waveFormat.full_scale_volts
-			/ static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_gaintotal)
-			/ static_cast<float>(m_waveFormat.bin_span);
+		channels_array_.get_p_channel(ch_index)->am_resolutionV = wave_format_.full_scale_volts
+			/ static_cast<float>(channels_array_.get_p_channel(ch_index)->am_gaintotal)
+			/ static_cast<float>(wave_format_.bin_span);
 	}
-	*volts_per_bin = static_cast<float>(m_chanArray.get_p_channel(ch_index)->am_resolutionV / correction);
+	*volts_per_bin = static_cast<float>(channels_array_.get_p_channel(ch_index)->am_resolutionV / correction);
 	return true;
 }
 
@@ -601,11 +601,11 @@ BOOL CWaveBuf::GetWBVoltsperBin(const int ch_index, float* volts_per_bin, const 
  comments:
  **************************************************************************/
 
-void CWaveBuf::BMovAvg30(short* lp_source, short* lp_dest, const int cx) const
+void CWaveBuf::moving_average_30(short* lp_source, short* lp_dest, const int cx) const
 {
-	const int n_channels = m_waveFormat.scan_count;
+	const int n_channels = wave_format_.scan_count;
 	const auto offset_next_point = n_channels;
-	auto n_span = m_TransformBufferSpan[MOVAVG30];
+	auto n_span = m_transform_buffer_span_[MOVAVG30];
 	const auto offset_span = offset_next_point * n_span;
 
 	// init sum
@@ -639,14 +639,14 @@ void CWaveBuf::BMovAvg30(short* lp_source, short* lp_dest, const int cx) const
 			filters based on the median filter to experimental and simulated
 			multiunit neural recordings. J Neurosci Meth 70: 177-184.
  **************************************************************************/
-void CWaveBuf::BMedian35(short* lp_source, short* lp_dest, const int cx)
+void CWaveBuf::moving_median_35(short* lp_source, short* lp_dest, const int cx)
 {
-	BMedian(lp_source, lp_dest, cx, 35);
+	moving_median(lp_source, lp_dest, cx, 35);
 }
 
-void CWaveBuf::BMedian30(short* lp_source, short* lp_dest, const int cx)
+void CWaveBuf::moving_median_30(short* lp_source, short* lp_dest, const int cx)
 {
-	BMedian(lp_source, lp_dest, cx, 30);
+	moving_median(lp_source, lp_dest, cx, 30);
 }
 
 // Compute median of a curve
@@ -657,26 +657,26 @@ void CWaveBuf::BMedian30(short* lp_source, short* lp_dest, const int cx)
 // use a temporary array to store data (dimension = nbspan *2 +1)
 // assume: temporary array in common of wavebuf (to avoid creation each time this routine is called)
 
-void CWaveBuf::BMedian(short* lp_source, short* lp_dest, int cx, const int nbspan)
+void CWaveBuf::moving_median(short* lp_source, short* lp_dest, int cx, const int n_span)
 {
 	// assume source buffer is with interleaved channels; if not: scan_count=1
-	const int n_channels = m_waveFormat.scan_count;
-	const auto lp_source_offset_nextpoint = n_channels; // number of chans within source buffer
-	const auto lp_source_offset_span = lp_source_offset_nextpoint * nbspan; // offset between center of window & end
+	const int n_channels = wave_format_.scan_count;
+	const auto lp_source_offset_next_point = n_channels; // number of chans within source buffer
+	const auto lp_source_offset_span = lp_source_offset_next_point * n_span; // offset between center of window & end
 
-	if (m_parray_size != nbspan * 2 + 1) // adjust size of temporary array or create if not previously set
+	if (p_array_size_ != n_span * 2 + 1) // adjust size of temporary array or create if not previously set
 	{
-		SAFE_DELETE_ARRAY(m_parraySorted);
-		SAFE_DELETE_ARRAY(m_parrayCircular);
-		m_parray_size = nbspan * 2 + 1;
-		m_parraySorted = new short[m_parray_size];
-		m_parrayCircular = new short[m_parray_size];
+		SAFE_DELETE_ARRAY(p_array_sorted_);
+		SAFE_DELETE_ARRAY(p_array_circular_);
+		p_array_size_ = n_span * 2 + 1;
+		p_array_sorted_ = new short[p_array_size_];
+		p_array_circular_ = new short[p_array_size_];
 	}
 
 	// DEBUG: bounds check
-	ASSERT(cx <= GetWBNumElements());
-	const auto min_lp_source = m_pWData;
-	const auto max_lp_source = m_pWData + GetWBNumChannels() * GetWBNumElements();
+	ASSERT(cx <= get_wb_n_elements());
+	const auto min_lp_source = p_w_data_;
+	const auto max_lp_source = p_w_data_ + get_wb_n_channels() * get_wb_n_elements();
 	//auto min_lp_dest = m_pWTransf;
 	//auto max_lp_dest = m_pWTransf + GetWBNumElements();
 	//auto max_parray = &m_parraySorted[m_parray_size-1];
@@ -686,10 +686,10 @@ void CWaveBuf::BMedian(short* lp_source, short* lp_dest, int cx, const int nbspa
 	auto lp = lp_source; // pointer to origin of source buffer
 	lp -= lp_source_offset_span; // first point of the moving window
 	int i;
-	for (i = 0; i < m_parray_size; lp += lp_source_offset_nextpoint, i++)
+	for (i = 0; i < p_array_size_; lp += lp_source_offset_next_point, i++)
 	{
-		*(m_parraySorted + i) = *lp; // load m_parraySorted with source data values
-		*(m_parrayCircular + i) = *lp;
+		*(p_array_sorted_ + i) = *lp; // load m_parraySorted with source data values
+		*(p_array_circular_ + i) = *lp;
 	}
 
 	// sort m_parraySorted into ascending order using heapsort algorithm
@@ -699,8 +699,8 @@ void CWaveBuf::BMedian(short* lp_source, short* lp_dest, int cx, const int nbspa
 	// decremented from its initial value down to 0 during the 'retirement-and-
 	// promotion' (heap selection) phase.
 
-	auto l = nbspan + 1; // temp index
-	auto ir = m_parray_size - 1; // temp index
+	auto l = n_span + 1; // temp index
+	auto ir = p_array_size_ - 1; // temp index
 	short val; // temp storage
 
 	for (;;) // pseudo-loop over m_parraySorted
@@ -709,16 +709,16 @@ void CWaveBuf::BMedian(short* lp_source, short* lp_dest, int cx, const int nbspa
 		if (l > 0) // still in hiring phase
 		{
 			l--;
-			val = *(m_parraySorted + l);
+			val = *(p_array_sorted_ + l);
 		}
 		else // in retirement-and-promotion phase
 		{
-			val = *(m_parraySorted + ir); // clear a space at the end of the array
-			*(m_parraySorted + ir) = *(m_parraySorted); // retire the top of the heap into it
+			val = *(p_array_sorted_ + ir); // clear a space at the end of the array
+			*(p_array_sorted_ + ir) = *(p_array_sorted_); // retire the top of the heap into it
 			ir--; // decrease the size of the corporation
 			if (ir == 0) // done with the last promotion
 			{
-				*(m_parraySorted) = val; // the least competent worker of all
+				*(p_array_sorted_) = val; // the least competent worker of all
 				break; // exit the sorting algorithm
 			}
 		}
@@ -730,36 +730,36 @@ void CWaveBuf::BMedian(short* lp_source, short* lp_dest, int cx, const int nbspa
 		{
 			if (jj1 - 1 < ir)
 			{
-				if (*(m_parraySorted + jj1 - 1) < *(m_parraySorted + jj1))
+				if (*(p_array_sorted_ + jj1 - 1) < *(p_array_sorted_ + jj1))
 					jj1++; // compare to the better underlining
 			}
-			if (val < *(m_parraySorted + jj1 - 1)) // demote value
+			if (val < *(p_array_sorted_ + jj1 - 1)) // demote value
 			{
-				*(m_parraySorted + i - 1) = *(m_parraySorted + jj1 - 1);
+				*(p_array_sorted_ + i - 1) = *(p_array_sorted_ + jj1 - 1);
 				i = jj1;
 				jj1 = jj1 + jj1;
 			} // this is value's level. Set j to terminate the
 			else // sift-down
 				jj1 = ir + 2;
 		}
-		*(m_parraySorted + i - 1) = val; // put value into its slot
+		*(p_array_sorted_ + i - 1) = val; // put value into its slot
 	}
 	// end of initial sort
 
 	lp = lp_source; // first data point
 	auto lp_next = lp_source + lp_source_offset_span; // last point
-	auto i_parray_circular = m_parray_size - 1; // point on the last item so that first operation is blank
+	auto i_parray_circular = p_array_size_ - 1; // point on the last item so that first operation is blank
 
-	for (auto icx = cx; icx > 0; icx--, lp += lp_source_offset_nextpoint, lp_next += lp_source_offset_nextpoint, lp_dest
+	for (auto icx = cx; icx > 0; icx--, lp += lp_source_offset_next_point, lp_next += lp_source_offset_next_point, lp_dest
 	     ++)
 	{
-		const auto oldvalue = *(m_parrayCircular + i_parray_circular); // old value
+		const auto oldvalue = *(p_array_circular_ + i_parray_circular); // old value
 		const auto newvalue = *lp_next; // new value to insert into array
-		*(m_parrayCircular + i_parray_circular) = newvalue; // save new value into circular array
+		*(p_array_circular_ + i_parray_circular) = newvalue; // save new value into circular array
 
 		// update circular array pointer
 		i_parray_circular++;
-		if (i_parray_circular >= m_parray_size)
+		if (i_parray_circular >= p_array_size_)
 			i_parray_circular = 0;
 
 		// locate position of old value to discard
@@ -768,15 +768,15 @@ void CWaveBuf::BMedian(short* lp_source, short* lp_dest, int cx, const int nbspa
 
 		// binary search
 		// Herbert Schildt: C the complete reference McGraw Hill, 1987, pp 488
-		auto jhigh = m_parray_size - 1; // upper index
+		auto jhigh = p_array_size_ - 1; // upper index
 		auto jlow = 0; // mid point index
 		auto jj2 = (jlow + jhigh) / 2;
 		while (jlow <= jhigh)
 		{
 			jj2 = (jlow + jhigh) / 2;
-			if (oldvalue > *(m_parraySorted + jj2))
+			if (oldvalue > *(p_array_sorted_ + jj2))
 				jlow = jj2 + 1;
-			else if (oldvalue < *(m_parraySorted + jj2))
+			else if (oldvalue < *(p_array_sorted_ + jj2))
 				jhigh = jj2 - 1;
 			else
 				break;
@@ -785,41 +785,41 @@ void CWaveBuf::BMedian(short* lp_source, short* lp_dest, int cx, const int nbspa
 		// insert new value in the correct position
 
 		// case 1: search (and replace) towards higher values
-		if (newvalue > *(m_parraySorted + jj2))
+		if (newvalue > *(p_array_sorted_ + jj2))
 		{
 			auto j = jj2;
-			for (auto k = jj2; newvalue > *(m_parraySorted + k); k++, j++)
+			for (auto k = jj2; newvalue > *(p_array_sorted_ + k); k++, j++)
 			{
-				if (k == m_parray_size)
+				if (k == p_array_size_)
 					break;
-				*(m_parraySorted + j) = *(m_parraySorted + j + 1);
+				*(p_array_sorted_ + j) = *(p_array_sorted_ + j + 1);
 			}
-			*(m_parraySorted + j - 1) = newvalue;
+			*(p_array_sorted_ + j - 1) = newvalue;
 		}
 
 		// case 2: search (and replace) towards lower values
-		else if (newvalue < *(m_parraySorted + jj2))
+		else if (newvalue < *(p_array_sorted_ + jj2))
 		{
 			auto j = jj2;
-			for (auto k = jj2; newvalue < *(m_parraySorted + k); k--, j--)
+			for (auto k = jj2; newvalue < *(p_array_sorted_ + k); k--, j--)
 			{
 				if (j == 0)
 				{
-					if (newvalue < *m_parraySorted)
+					if (newvalue < *p_array_sorted_)
 						j--;
 					break;
 				}
-				*(m_parraySorted + j) = *(m_parraySorted + j - 1);
+				*(p_array_sorted_ + j) = *(p_array_sorted_ + j - 1);
 			}
-			*(m_parraySorted + j + 1) = newvalue;
+			*(p_array_sorted_ + j + 1) = newvalue;
 		}
 
 		// case 3: already found!
 		else
-			*(m_parraySorted + jj2) = newvalue;
+			*(p_array_sorted_ + jj2) = newvalue;
 
 		// save median value in the output array
-		*lp_dest = *lp - *(m_parraySorted + nbspan);
+		*lp_dest = *lp - *(p_array_sorted_ + n_span);
 		ASSERT(lp >= min_lp_source);
 		ASSERT(lp <= max_lp_source);
 	}
@@ -829,11 +829,11 @@ void CWaveBuf::BMedian(short* lp_source, short* lp_dest, int cx, const int nbspa
 
 */
 
-void CWaveBuf::BRMS(short* lp_source, short* lp_dest, const int cx) const
+void CWaveBuf::root_to_mean_square(short* lp_source, short* lp_dest, const int cx) const
 {
-	const int n_channels = m_waveFormat.scan_count;
+	const int n_channels = wave_format_.scan_count;
 	const auto offsetnextpoint = n_channels;
-	auto nbspan = m_TransformBufferSpan[14] / 2;
+	auto nbspan = m_transform_buffer_span_[14] / 2;
 	const auto offsetspan = offsetnextpoint * nbspan;
 
 	// init sum

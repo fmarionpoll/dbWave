@@ -89,7 +89,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 				color_index = spike_class % NB_COLORS;
 			else if (plot_mode_ == PLOT_ONE_CLASS && spike_class == selected_class_)
 			{
-				color_index = BLACK_COLOR;
+				//color_index = BLACK_COLOR;
 				continue;
 			}
 		}
@@ -162,11 +162,17 @@ void ChartSpikeHist::move_vt_tag_to_value_mv(const int tag_index, const double v
 	xor_vt_tag(pixel, p_tag->swap_pixel(pixel));
 }
 
-void ChartSpikeHist::set_vt_tag_to_value_mv(const int tag_index, const double value_mv)
+void ChartSpikeHist::set_vt_tag_value_mv(const int tag_index, const double value_mv)
 {
 	Tag* p_tag = vt_tags.get_tag(tag_index);
 	p_tag->value_int = convert_mv_to_abscissa(value_mv);
 	//p_tag->pixel = -1;
+}
+
+double ChartSpikeHist::get_vt_tag_value_mv(const int tag_index)
+{
+	const Tag* p_tag = vt_tags.get_tag(tag_index);
+	return convert_abscissa_to_mv(p_tag->value_int); 
 }
 
 void ChartSpikeHist::get_class_array(const int i_class, CDWordArray*& p_dw)
@@ -222,18 +228,7 @@ void ChartSpikeHist::OnLButtonUp(const UINT n_flags, CPoint point)
 		break;
 
 	case TRACK_VT_TAG:
-		// vertical tag was tracked
-		{
-			// convert pix into data value and back again
-			const auto val = MulDiv(point.x - x_viewport_origin_, x_we_, x_viewport_extent_) + x_wo_;
-			Tag* p_tag = vt_tags.get_tag(hc_trapped_);
-			p_tag->value_int = val;
-			//point.x = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-			xor_vt_tag(point.x, p_tag->swap_pixel(point.x));
-
-			ChartSpike::OnLButtonUp(n_flags, point);
-			send_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_); // post?
-		}
+		left_button_up_vertical_tag(n_flags, point);
 		break;
 
 	case TRACK_RECT:

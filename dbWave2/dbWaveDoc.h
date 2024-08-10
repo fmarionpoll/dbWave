@@ -131,10 +131,10 @@ public:
 
 	void	Serialize(CArchive& ar) override;
 	BOOL	OnNewDocument() override;
-	BOOL	OnOpenDocument(LPCTSTR lpszPathName) override;
-	BOOL	OnSaveDocument(LPCTSTR lpszPathName) override;
+	BOOL	OnOpenDocument(LPCTSTR lpsz_path_name) override;
+	BOOL	OnSaveDocument(LPCTSTR lpsz_path_name) override;
 	HMENU	GetDefaultMenu() override; // get menu depending on state
-	void	update_all_views_db_wave(CView* pSender, LPARAM lHint, CObject* pHint);
+	void	update_all_views_db_wave(CView* p_sender, LPARAM l_hint, CObject* p_hint);
 
 	~CdbWaveDoc() override;
 #ifdef _DEBUG
@@ -174,7 +174,7 @@ public:
 	}
 
 protected:
-	BOOL	open_database(LPCTSTR lpszPathName);
+	BOOL	open_database(LPCTSTR lpsz_path_name);
 
 	DECLARE_MESSAGE_MAP()
 };

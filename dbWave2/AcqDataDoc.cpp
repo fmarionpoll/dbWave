@@ -27,8 +27,8 @@ AcqDataDoc::AcqDataDoc()
 
 AcqDataDoc::~AcqDataDoc()
 {
-	SAFE_DELETE(m_pWBuf)
-	SAFE_DELETE(m_pXFile)
+	SAFE_DELETE(p_w_buf)
+	SAFE_DELETE(x_file)
 }
 
 BOOL AcqDataDoc::save_document(CString& sz_path_name)
@@ -42,23 +42,23 @@ BOOL AcqDataDoc::save_document(CString& sz_path_name)
 BOOL AcqDataDoc::open_document(CString& sz_path_name)
 {
 	// close data file unless it is already opened
-	if (m_pXFile != nullptr)
-		m_pXFile->CloseDataFile();
+	if (x_file != nullptr)
+		x_file->CloseDataFile();
 
 	// set file reading buffer as dirty
-	m_bValidReadBuffer = FALSE;
+	buf_valid_data = FALSE;
 
 	// check if file can be opened - exit if it can't and return an empty object
 	CFileStatus status;
 	const auto b_open = CFile::GetStatus(sz_path_name, status);
 	if (!b_open || status.m_size <= 4096) // patch to avoid to open 1kb files ...
 	{
-		SAFE_DELETE(m_pXFile)
+		SAFE_DELETE(x_file)
 		return FALSE;
 	}
 	ASSERT(sz_path_name.Right(3) != _T("del"));
 
-	auto b_found_match = open_acq_file(sz_path_name);
+	auto b_found_match = open_acq_file(sz_path_name, status);
 	if (b_found_match < 0)
 		b_found_match = import_file(sz_path_name);
 
@@ -67,24 +67,26 @@ BOOL AcqDataDoc::open_document(CString& sz_path_name)
 
 int AcqDataDoc::import_file(CString& sz_path_name)
 {
-	m_pXFile->CloseDataFile();
-	SAFE_DELETE(m_pXFile)
+	x_file->CloseDataFile();
+	SAFE_DELETE(x_file)
 	CString filename_new = sz_path_name;
 	if (!dlg_import_data_file(filename_new))
 		return FALSE;
 
 	// add "old_" to filename
-	CString filename_old = sz_path_name;
-	const auto count = filename_old.ReverseFind('\\') + 1;
-	filename_old.Insert(count, _T("OLD_"));
+	CString filename_renamed = sz_path_name;
+	const auto count = filename_renamed.ReverseFind('\\') + 1;
+	filename_renamed.Insert(count, _T("OLD_"));
 
 	// TODO check if this is right
-	remove_file(filename_old);
-	rename_file(sz_path_name, filename_old);
+	remove_file(filename_renamed);
+	rename_file(sz_path_name, filename_renamed);
 
-	m_pXFile = new CDataFileAWAVE;
-	ASSERT(m_pXFile != NULL);
-	const int b_found_match = open_acq_file(sz_path_name);
+	x_file = new CDataFileAWAVE;
+	ASSERT(x_file != NULL);
+	CFileStatus status;
+	CFile::GetStatus(sz_path_name, status);
+	const int b_found_match = open_acq_file(sz_path_name, status);
 	return b_found_match;
 }
 
@@ -128,10 +130,9 @@ bool AcqDataDoc::dlg_import_data_file(CString& sz_path_name)
 	return true;
 }
 
-BOOL AcqDataDoc::open_acq_file(CString& cs_filename)
+BOOL AcqDataDoc::open_acq_file(CString& cs_filename, const CFileStatus& status)
 {
 	CFileException fe;
-	CFileStatus status;
 
 	// open file
 	UINT u_open_flag = (status.m_attribute & 0x01) ? CFile::modeRead : CFile::modeReadWrite;
@@ -144,31 +145,31 @@ BOOL AcqDataDoc::open_acq_file(CString& cs_filename)
 	auto id_type = DOCTYPE_UNKNOWN;
 	for (int id = 0; id < array_size; id++)
 	{
-		delete m_pXFile;
+		delete x_file;
 		instantiate_data_file_object(id);
-		if (0 != m_pXFile->OpenDataFile(cs_filename, u_open_flag))
-			id_type = m_pXFile->CheckFileType(cs_filename);
+		if (0 != x_file->OpenDataFile(cs_filename, u_open_flag))
+			id_type = x_file->CheckFileType(cs_filename);
 		if (id_type != DOCTYPE_UNKNOWN)
 			break;
 	}
 
-	if (m_pXFile == nullptr || m_pXFile->m_idType == DOCTYPE_UNKNOWN)
+	if (x_file == nullptr || x_file->m_idType == DOCTYPE_UNKNOWN)
 	{
 		allocate_buffer();
 		return false;
 	}
 
 	// save file pointer, read data header and Tags
-	m_pXFileType = id_type;
-	if (m_pWBuf == nullptr)
-		m_pWBuf = new CWaveBuf;
-	ASSERT(m_pWBuf != NULL);
-	const auto b_flag = m_pXFile->ReadDataInfos(m_pWBuf);
+	x_file_type = id_type;
+	if (p_w_buf == nullptr)
+		p_w_buf = new CWaveBuf;
+	ASSERT(p_w_buf != NULL);
+	const auto b_flag = x_file->ReadDataInfos(p_w_buf);
 
 	// create buffer
 	allocate_buffer();
-	m_pXFile->ReadVTtags(m_pWBuf->GetpVTtags());
-	m_pXFile->ReadHZtags(m_pWBuf->GetpHZtags());
+	x_file->ReadVTtags(p_w_buf->get_p_vt_tags());
+	x_file->ReadHZtags(p_w_buf->get_p_hz_tags());
 
 	return b_flag;
 }
@@ -179,18 +180,18 @@ BOOL AcqDataDoc::OnNewDocument()
 	m_strPathName.Empty(); // no path name yet
 	SetModifiedFlag(FALSE); // make clean
 
-	if (m_pWBuf == nullptr)
+	if (p_w_buf == nullptr)
 	{
 		CString cs_dummy;
 		cs_dummy.Empty();
 		acq_create_file(cs_dummy);
-		ASSERT(m_pWBuf != NULL);
+		ASSERT(p_w_buf != NULL);
 	}
-	m_pWBuf->create_buffer_with_n_channels(1); // create at least one channel
+	p_w_buf->create_buffer_with_n_channels(1); // create at least one channel
 	return TRUE;
 }
 
-CString AcqDataDoc::get_data_file_infos(const OPTIONS_VIEWDATA* pVD) const
+CString AcqDataDoc::get_data_file_infos(const OPTIONS_VIEWDATA* p_vd) const
 {
 	const CString sep('\t');
 	CString cs_dummy;
@@ -199,13 +200,13 @@ CString AcqDataDoc::get_data_file_infos(const OPTIONS_VIEWDATA* pVD) const
 	const auto waveformat = get_wave_format();
 
 	// date and time
-	if (pVD->bacqdate)
+	if (p_vd->bacqdate)
 		cs_out += (waveformat->acquisition_time).Format("\t%#d %B %Y");
-	if (pVD->bacqtime)
+	if (p_vd->bacqtime)
 		cs_out += (waveformat->acquisition_time).Format("\t%X");
 
 	// file size
-	if (pVD->bfilesize) // file size
+	if (p_vd->bfilesize) // file size
 	{
 		cs_dummy.Format(_T("\t%-10li"), get_doc_channel_length());
 		cs_out += cs_dummy;
@@ -213,21 +214,21 @@ CString AcqDataDoc::get_data_file_infos(const OPTIONS_VIEWDATA* pVD) const
 		cs_out += cs_dummy;
 	}
 
-	if (pVD->bacqcomments)
+	if (p_vd->bacqcomments)
 	{
 		cs_dummy = waveformat->get_comments(sep);
 		cs_out += cs_dummy;
 	}
 
-	if (pVD->bacqchcomment || pVD->bacqchsetting)
+	if (p_vd->bacqchcomment || p_vd->bacqchsetting)
 	{
 		CString cs;
 		for (auto i_chan = 0; i_chan < waveformat->scan_count; i_chan++)
 		{
 			const auto p_chan = (get_wave_channels_array())->get_p_channel(i_chan);
-			if (pVD->bacqchcomment)
+			if (p_vd->bacqchcomment)
 				cs_out += sep + p_chan->am_csComment;
-			if (pVD->bacqchsetting)
+			if (p_vd->bacqchsetting)
 			{
 				cs.Format(_T("\theadstage=%s\tgain=%.0f\tfilter= %s\t%i Hz"),
 						(LPCTSTR)p_chan->am_csheadstage,
@@ -241,7 +242,7 @@ CString AcqDataDoc::get_data_file_infos(const OPTIONS_VIEWDATA* pVD) const
 	return cs_out;
 }
 
-void AcqDataDoc::export_data_file_to_txt_file(CStdioFile* pdataDest)
+void AcqDataDoc::export_data_file_to_txt_file(CStdioFile* pdata_dest)
 {
 	constexpr _TCHAR sep = '\n'; 
 	constexpr _TCHAR sep2 = ',';
@@ -249,31 +250,31 @@ void AcqDataDoc::export_data_file_to_txt_file(CStdioFile* pdataDest)
 	auto cs_out = _T("filename=") + GetPathName();
 	cs_out.MakeLower();
 	cs_out += sep;
-	pdataDest->WriteString(cs_out);
+	pdata_dest->WriteString(cs_out);
 
 	const auto p_wave_format = get_wave_format();
 	// date and time
 	cs_out = (p_wave_format->acquisition_time).Format(_T("acqdate= %#d %B %Y"));
 	cs_out += sep;
-	pdataDest->WriteString(cs_out);
+	pdata_dest->WriteString(cs_out);
 
 	cs_out = (p_wave_format->acquisition_time).Format(_T("acqtime= %X"));
 	cs_out += sep;
-	pdataDest->WriteString(cs_out);
+	pdata_dest->WriteString(cs_out);
 
 	cs_out.Format(_T("sampling rate(Hz)= %f"), p_wave_format->sampling_rate_per_channel);
 	cs_out += sep;
-	pdataDest->WriteString(cs_out);
+	pdata_dest->WriteString(cs_out);
 
 	cs_out.Format(_T("nsamples=%-10li"), get_doc_channel_length());
 	cs_out += sep;
-	pdataDest->WriteString(cs_out);
+	pdata_dest->WriteString(cs_out);
 
 	cs_out.Format(_T("nchans=%i"), p_wave_format->scan_count);
-	pdataDest->WriteString(cs_out);
+	pdata_dest->WriteString(cs_out);
 
 	cs_out = p_wave_format->get_comments(&sep, TRUE);
-	pdataDest->WriteString(cs_out);
+	pdata_dest->WriteString(cs_out);
 
 	cs_out = sep;
 	for (auto i_chan = 0; i_chan < p_wave_format->scan_count; i_chan++)
@@ -283,11 +284,11 @@ void AcqDataDoc::export_data_file_to_txt_file(CStdioFile* pdataDest)
 		if (i_chan < p_wave_format->scan_count - 1)
 			cs_out += sep2;
 	}
-	pdataDest->WriteString(cs_out);
+	pdata_dest->WriteString(cs_out);
 
 	// loop to read actual data
 	read_data_block(0);
-	const auto mv_factor = p_wave_format->full_scale_volts / p_wave_format->bin_span * 1000.;
+	const auto mv_factor = p_wave_format->full_scale_volts / static_cast<float>(p_wave_format->bin_span) * 1000.;
 	for (long j = 0; j < get_doc_channel_length(); j++)
 	{
 		CString cs;
@@ -306,9 +307,9 @@ void AcqDataDoc::export_data_file_to_txt_file(CStdioFile* pdataDest)
 			if (channel < p_wave_format->scan_count - 1)
 				cs_out += sep2;
 		}
-		pdataDest->WriteString(cs_out);
+		pdata_dest->WriteString(cs_out);
 	}
-	pdataDest->WriteString(&sep);
+	pdata_dest->WriteString(&sep);
 }
 
 #ifdef _DEBUG
@@ -328,25 +329,25 @@ void AcqDataDoc::instantiate_data_file_object(const int doc_type)
 	switch (doc_type)
 	{
 	case DOCTYPE_AWAVE:
-		m_pXFile = new CDataFileAWAVE;
+		x_file = new CDataFileAWAVE;
 		break;
 	case DOCTYPE_ATLAB:
-		m_pXFile = new CDataFileATLAB;
+		x_file = new CDataFileATLAB;
 		break;
 	case DOCTYPE_ASDSYNTECH:
-		m_pXFile = new CDataFileASD;
+		x_file = new CDataFileASD;
 		break;
 	case DOCTYPE_MCID:
-		m_pXFile = new CDataFileMCID;
+		x_file = new CDataFileMCID;
 		break;
 	case DOCTYPE_SMR:
-		m_pXFile = new CDataFileFromCEDSpike2;
+		x_file = new CDataFileFromCEDSpike2;
 		break;
 	//case DOCTYPE_PCCLAMP		5	// PCCLAMP document (not implemented yet)
 	//case DOCTYPE_SAPID 		6	// SAPID document (not implemented yet)
 	//case DOCTYPE_UNKNOWN		-1	// type of the document not accepted
 	default:
-		m_pXFile = new CDataFileX;
+		x_file = new CDataFileX;
 		break;
 	}
 }
@@ -355,72 +356,72 @@ void AcqDataDoc::instantiate_data_file_object(const int doc_type)
 // update buffer parameters
 BOOL AcqDataDoc::adjust_buffer(const int elements_count)
 {
-	if (m_pWBuf == nullptr)
-		m_pWBuf = new CWaveBuf;
+	if (p_w_buf == nullptr)
+		p_w_buf = new CWaveBuf;
 
-	ASSERT(m_pWBuf != NULL);
+	ASSERT(p_w_buf != NULL);
 	const auto p_wf = get_wave_format();
-	m_lDOCchanLength = p_wf->get_nb_points_sampled_per_channel();
-	m_DOCnbchans = p_wf->scan_count;
-	p_wf->duration = static_cast<float>(m_lDOCchanLength) / p_wf->sampling_rate_per_channel;
-	m_lBUFSize = elements_count * p_wf->scan_count;
+	doc_channel_length = p_wf->get_nb_points_sampled_per_channel();
+	doc_n_channels = p_wf->scan_count;
+	p_wf->duration = static_cast<float>(doc_channel_length) / p_wf->sampling_rate_per_channel;
+	buf_size = elements_count * p_wf->scan_count;
 
-	m_lBUFchanSize = m_lBUFSize / static_cast<long>(p_wf->scan_count);
-	m_lBUFchanFirst = 0;
-	m_lBUFchanLast = m_lBUFchanSize - 1;
-	m_lBUFSize = m_lBUFchanSize * p_wf->scan_count;
-	m_lBUFmaxSize = m_lBUFSize * sizeof(short);
+	buf_channel_size = buf_size / static_cast<long>(p_wf->scan_count);
+	buf_channel_first = 0;
+	buf_channel_last = buf_channel_size - 1;
+	buf_size = buf_channel_size * p_wf->scan_count;
+	buf_max_size = buf_size * static_cast<long>(sizeof(short));
 
 	// alloc RW buffer
-	return m_pWBuf->createWBuffer(m_lBUFchanSize, p_wf->scan_count);
+	return p_w_buf->create_w_buffer(buf_channel_size, p_wf->scan_count);
 }
 
 // allocate buffers to read data
 // adjust size of the buffer according to MAX_BUFFER_LENGTH_AS_BYTES
 BOOL AcqDataDoc::allocate_buffer()
 {
-	if (m_pWBuf == nullptr)
-		m_pWBuf = new CWaveBuf;
+	if (p_w_buf == nullptr)
+		p_w_buf = new CWaveBuf;
 
-	ASSERT(m_pWBuf != NULL); // check object created properly
+	ASSERT(p_w_buf != NULL); // check object created properly
 	CWaveFormat* pwF = get_wave_format();
 
-	m_lDOCchanLength = pwF->get_nb_points_sampled_per_channel();
-	m_DOCnbchans = pwF->scan_count;
-	pwF->duration = static_cast<float>(m_lDOCchanLength) / pwF->sampling_rate_per_channel;
+	doc_channel_length = pwF->get_nb_points_sampled_per_channel();
+	doc_n_channels = pwF->scan_count;
+	pwF->duration = static_cast<float>(doc_channel_length) / pwF->sampling_rate_per_channel;
 
-	const int i_num_elements = m_lDOCchanLength;
-	if (i_num_elements * pwF->scan_count > m_lBUFSize)
-		m_lBUFSize = i_num_elements * pwF->scan_count;
+	const int i_num_elements = doc_channel_length;
+	if (i_num_elements * pwF->scan_count > buf_size)
+		buf_size = i_num_elements * pwF->scan_count;
 
-	if (m_lBUFSize > static_cast<long>(MAX_BUFFER_LENGTH_AS_BYTES / sizeof(short)))
-		m_lBUFSize = MAX_BUFFER_LENGTH_AS_BYTES / sizeof(short);
+	if (buf_size > static_cast<long>(MAX_BUFFER_LENGTH_AS_BYTES / sizeof(short)))
+		buf_size = MAX_BUFFER_LENGTH_AS_BYTES / sizeof(short);
 
-	m_lBUFchanSize = m_lBUFSize / static_cast<long>(pwF->scan_count);
-	m_lBUFchanFirst = 0;
-	m_lBUFchanLast = m_lBUFchanSize - 1;
-	m_lBUFSize = m_lBUFchanSize * pwF->scan_count;
-	m_lBUFmaxSize = m_lBUFSize * sizeof(short);
+	buf_channel_size = buf_size / static_cast<long>(pwF->scan_count);
+	buf_channel_first = 0;
+	buf_channel_last = buf_channel_size - 1;
+	buf_size = buf_channel_size * pwF->scan_count;
+	buf_max_size = buf_size * static_cast<long>(sizeof(short));
 
 	// alloc RW buffer
-	return m_pWBuf->createWBuffer(m_lBUFchanSize, pwF->scan_count);
+	return p_w_buf->create_w_buffer(buf_channel_size, pwF->scan_count);
 }
 
 BOOL AcqDataDoc::load_raw_data(long* l_first, long* l_last, const int n_span)
 {
 	auto flag = TRUE;
 
-	if ((*l_first - n_span < m_lBUFchanFirst)
-		|| (*l_last + n_span > m_lBUFchanLast) || !m_bValidReadBuffer)
+	if ((*l_first - n_span < buf_channel_first)
+		|| (*l_last + n_span > buf_channel_last) || !buf_valid_data)
 	{
 		flag = read_data_block(*l_first - n_span);
-		m_bValidReadBuffer = TRUE;
-		m_bValidTransfBuffer = FALSE;
+		buf_valid_data = TRUE;
+		buf_valid_transform = FALSE;
 	}
 
-	*l_first = m_lBUFchanFirst + n_span;
-	*l_last = m_lBUFchanLast;
-	if (m_lBUFchanLast < m_lDOCchanLength - 1)
+	*l_first = buf_channel_first + n_span;
+	*l_last = buf_channel_last;
+	if (buf_channel_last < doc_channel_length - 1)
 		*l_last -= n_span;
 
 	return flag;
@@ -432,39 +433,39 @@ BOOL AcqDataDoc::read_data_block(long l_first)
 	if (l_first < 0)
 		l_first = 0;
 	// compute limits
-	m_lBUFchanFirst = l_first;
-	m_lBUFchanLast = m_lBUFchanFirst + m_lBUFchanSize - 1;
-	if (m_lBUFchanLast > m_lDOCchanLength)
+	buf_channel_first = l_first;
+	buf_channel_last = buf_channel_first + buf_channel_size - 1;
+	if (buf_channel_last > doc_channel_length)
 	{
-		if (m_lDOCchanLength < m_lBUFchanSize)
+		if (doc_channel_length < buf_channel_size)
 		{
-			m_lBUFchanSize = m_lDOCchanLength;
-			m_lBUFchanLast = m_lBUFchanSize - 1;
+			buf_channel_size = doc_channel_length;
+			buf_channel_last = buf_channel_size - 1;
 		}
-		m_lBUFchanFirst = m_lDOCchanLength - m_lBUFchanSize;
+		buf_channel_first = doc_channel_length - buf_channel_size;
 	}
-	l_first = m_lBUFchanFirst * m_DOCnbchans;
+	l_first = buf_channel_first * doc_n_channels;
 
 	// reallocate buffer if needed
-	if (m_pWBuf->GetWBNumElements() != m_lBUFchanSize)
+	if (p_w_buf->get_wb_n_elements() != buf_channel_size)
 		allocate_buffer();
 
 	// read data from file
-	if (m_pXFile != nullptr)
+	if (x_file != nullptr)
 	{
-		short* p_buffer = m_pWBuf->get_pointer_to_raw_data_buffer();
+		short* p_buffer = p_w_buf->get_pointer_to_raw_data_buffer();
 		ASSERT(p_buffer != NULL);
-		auto l_size = m_pXFile->ReadAdcData(l_first, m_lBUFSize * sizeof(short), p_buffer, get_wave_channels_array());
+		x_file->ReadAdcData(l_first, buf_size * static_cast<long>(sizeof(short)), p_buffer, get_wave_channels_array());
 
 		// ugly patch: should fail if l_size < m_lBUFSize
-		m_lBUFchanLast = m_lBUFchanFirst + m_lBUFSize / m_DOCnbchans - 1;
+		buf_channel_last = buf_channel_first + buf_size / doc_n_channels - 1;
 
 		// remove offset so that data are signed short (for offset binary data of 12 or 16 bits resolution)
-		const auto w_bin_zero = static_cast<WORD>(m_pWBuf->m_waveFormat.bin_zero);
-		if (m_bRemoveOffset && w_bin_zero != NULL)
+		const auto w_bin_zero = static_cast<WORD>(p_w_buf->wave_format_.bin_zero);
+		if (b_remove_offset && w_bin_zero != NULL)
 		{
-			auto* pw_buf = reinterpret_cast<WORD*>(m_pWBuf->get_pointer_to_raw_data_buffer());
-			for (long i = 0; i < m_lBUFSize; i++, pw_buf++)
+			auto* pw_buf = reinterpret_cast<WORD*>(p_w_buf->get_pointer_to_raw_data_buffer());
+			for (long i = 0; i < buf_size; i++, pw_buf++)
 				*pw_buf -= w_bin_zero;
 		}
 		return TRUE;
@@ -474,51 +475,51 @@ BOOL AcqDataDoc::read_data_block(long l_first)
 
 void AcqDataDoc::read_data_infos()
 {
-	ASSERT(m_pXFile != NULL);
-	m_pXFile->ReadDataInfos(m_pWBuf);
+	ASSERT(x_file != NULL);
+	x_file->ReadDataInfos(p_w_buf);
 	allocate_buffer();
 }
 
 short AcqDataDoc::get_value_from_buffer(const int channel, const long l_index)
 {
-	if ((l_index < m_lBUFchanFirst) || (l_index > m_lBUFchanLast))
+	if ((l_index < buf_channel_first) || (l_index > buf_channel_last))
 		read_data_block(l_index);
-	const int index = l_index - m_lBUFchanFirst;
-	return *(m_pWBuf->get_pointer_to_raw_data_element(channel, index));
+	const int index = l_index - buf_channel_first;
+	return *(p_w_buf->get_pointer_to_raw_data_element(channel, index));
 }
 
 short* AcqDataDoc::load_transformed_data(const long l_first, const long l_last, const int transform_type,
                                   const int source_channel)
 {
-	const BOOL b_already_done = (m_bValidTransfBuffer
-		&& (l_first == m_tBUFfirst)
-		&& (l_last == m_tBUFlast)
-		&& (m_tBUFtransform == transform_type)
-		&& (m_tBUFsourcechan == source_channel));
-	m_tBUFtransform = transform_type;
-	m_tBUFsourcechan = source_channel;
-	m_tBUFfirst = l_first;
-	m_tBUFlast = l_last;
+	const BOOL b_already_done = (buf_valid_transform
+		&& (l_first == buf_first_)
+		&& (l_last == buf_last_)
+		&& (buf_transform_ == transform_type)
+		&& (buf_source_channel_ == source_channel));
+	buf_transform_ = transform_type;
+	buf_source_channel_ = source_channel;
+	buf_first_ = l_first;
+	buf_last_ = l_last;
 
-	if (m_pWBuf->get_pointer_to_transformed_data_buffer() == nullptr)
-		m_pWBuf->InitWBTransformBuffer();
+	if (p_w_buf->get_pointer_to_transformed_data_buffer() == nullptr)
+		p_w_buf->wb_init_transform_buffer();
 
-	const auto i_span = CWaveBuf::GetWBTransformSpan(transform_type);
+	const auto i_span = CWaveBuf::wb_get_transform_span(transform_type);
 	const auto l_span = static_cast<long>(i_span);
 
 	// ASSERT make sure that all data requested are within the buffer ...
-	ASSERT(!(l_first < m_lBUFchanFirst) && !(l_last > m_lBUFchanLast));
-	if (((l_first - l_span) < m_lBUFchanFirst) || ((l_last + l_span) > m_lBUFchanLast)) // we should never get there
+	ASSERT(l_first >= buf_channel_first && (l_last <= buf_channel_last));
+	if (((l_first - l_span) < buf_channel_first) || ((l_last + l_span) > buf_channel_last)) // we should never get there
 		read_data_block(l_first - l_span); // but, just in case
 
 	auto n_points = static_cast<int>(l_last - l_first + 1);
 	const int n_channels = get_wave_format()->scan_count;
 	ASSERT(source_channel < n_channels); // make sure this is a valid channel
-	const int i_offset = (l_first - m_lBUFchanFirst) * n_channels + source_channel;
-	auto lp_source = m_pWBuf->get_pointer_to_raw_data_buffer() + i_offset;
+	const int i_offset = (l_first - buf_channel_first) * n_channels + source_channel;
+	auto lp_source = p_w_buf->get_pointer_to_raw_data_buffer() + i_offset;
 
 	// call corresponding one-pass routine
-	auto lp_destination = m_pWBuf->get_pointer_to_transformed_data_buffer();
+	auto lp_destination = p_w_buf->get_pointer_to_transformed_data_buffer();
 
 	// check if source l_first can be used
 	const auto b_isLFirstLower = (l_first < l_span);
@@ -530,7 +531,7 @@ short* AcqDataDoc::load_transformed_data(const long l_first, const long l_last, 
 	}
 
 	// check if source l_last can be used
-	const auto b_isLLastGreater = (l_last > m_lDOCchanLength - l_span);
+	const auto b_isLLastGreater = (l_last > doc_channel_length - l_span);
 	if (b_isLLastGreater) // no: skip these data and erase later 
 	{
 		n_points -= i_span;
@@ -540,7 +541,7 @@ short* AcqDataDoc::load_transformed_data(const long l_first, const long l_last, 
 	{
 		// erase data at the end of the buffer
 		const int i_cx = i_span + l_last - l_first + 1;
-		auto lp_dest0 = m_pWBuf->get_pointer_to_transformed_data_buffer();
+		auto lp_dest0 = p_w_buf->get_pointer_to_transformed_data_buffer();
 		for (auto cx = 0; cx < i_cx; cx++, lp_dest0++)
 			*lp_dest0 = 0;
 	}
@@ -548,44 +549,44 @@ short* AcqDataDoc::load_transformed_data(const long l_first, const long l_last, 
 	{
 		switch (transform_type)
 		{
-		case 0: m_pWBuf->BCopy(lp_source, lp_destination, n_points);
+		case 0: p_w_buf->copy(lp_source, lp_destination, n_points);
 			break;
-		case 1: m_pWBuf->BDeriv(lp_source, lp_destination, n_points);
+		case 1: p_w_buf->low_pass_differentiation(lp_source, lp_destination, n_points);
 			break;
-		case 2: m_pWBuf->BLanczo2(lp_source, lp_destination, n_points);
+		case 2: p_w_buf->low_pass_lanczo_2(lp_source, lp_destination, n_points);
 			break;
-		case 3: m_pWBuf->BLanczo3(lp_source, lp_destination, n_points);
+		case 3: p_w_buf->low_pass_lanczo_3(lp_source, lp_destination, n_points);
 			break;
-		case 4: m_pWBuf->BDeri1f3(lp_source, lp_destination, n_points);
+		case 4: p_w_buf->low_pass_derivative_1f3(lp_source, lp_destination, n_points);
 			break;
-		case 5: m_pWBuf->BDeri2f3(lp_source, lp_destination, n_points);
+		case 5: p_w_buf->low_pass_derivative_2f3(lp_source, lp_destination, n_points);
 			break;
-		case 6: m_pWBuf->BDeri2f5(lp_source, lp_destination, n_points);
+		case 6: p_w_buf->low_pass_derivative_2f5(lp_source, lp_destination, n_points);
 			break;
-		case 7: m_pWBuf->BDeri3f3(lp_source, lp_destination, n_points);
+		case 7: p_w_buf->low_pass_derivative_3f3(lp_source, lp_destination, n_points);
 			break;
-		case 8: m_pWBuf->BDiffer1(lp_source, lp_destination, n_points);
+		case 8: p_w_buf->low_pass_diff_1(lp_source, lp_destination, n_points);
 			break;
-		case 9: m_pWBuf->BDiffer2(lp_source, lp_destination, n_points);
+		case 9: p_w_buf->low_pass_diff_2(lp_source, lp_destination, n_points);
 			break;
-		case 10: m_pWBuf->BDiffer3(lp_source, lp_destination, n_points);
+		case 10: p_w_buf->low_pass_diff_3(lp_source, lp_destination, n_points);
 			break;
-		case 11: m_pWBuf->BDiffer10(lp_source, lp_destination, n_points);
+		case 11: p_w_buf->low_pass_diff_10(lp_source, lp_destination, n_points);
 			break;
-		case 12: m_pWBuf->BMovAvg30(lp_source, lp_destination, n_points);
+		case 12: p_w_buf->moving_average_30(lp_source, lp_destination, n_points);
 			break;
-		case 13: m_pWBuf->BMedian30(lp_source, lp_destination, n_points);
+		case 13: p_w_buf->moving_median_30(lp_source, lp_destination, n_points);
 			break;
-		case 14: m_pWBuf->BMedian35(lp_source, lp_destination, n_points);
+		case 14: p_w_buf->moving_median_35(lp_source, lp_destination, n_points);
 			break;
-		case 15: m_pWBuf->BRMS(lp_source, lp_destination, n_points);
+		case 15: p_w_buf->root_to_mean_square(lp_source, lp_destination, n_points);
 		default: break;
 		}
 
 		// set undefined pts equal to first valid point
 		if (b_isLFirstLower)
 		{
-			auto lp_dest0 = m_pWBuf->get_pointer_to_transformed_data_buffer();
+			auto lp_dest0 = p_w_buf->get_pointer_to_transformed_data_buffer();
 			for (auto cx = i_span; cx > 0; cx--, lp_dest0++)
 				*lp_dest0 = 0;
 			n_points += i_span;
@@ -600,28 +601,28 @@ short* AcqDataDoc::load_transformed_data(const long l_first, const long l_last, 
 				*lp_dest0 = 0;
 		}
 	}
-	m_bValidTransfBuffer = TRUE;
+	buf_valid_transform = TRUE;
 	return lp_destination;
 }
 
 BOOL AcqDataDoc::build_transformed_data(const int transform_type, const int source_channel) const
 {
 	// make sure that transform buffer is ready
-	if (m_pWBuf->get_pointer_to_transformed_data_buffer() == nullptr)
-		m_pWBuf->InitWBTransformBuffer();
+	if (p_w_buf->get_pointer_to_transformed_data_buffer() == nullptr)
+		p_w_buf->wb_init_transform_buffer();
 	auto flag = TRUE;
 
 	// init parameters
-	auto lp_source = m_pWBuf->get_pointer_to_raw_data_buffer() + source_channel;
+	auto lp_source = p_w_buf->get_pointer_to_raw_data_buffer() + source_channel;
 	const int nb_channels = get_wave_format()->scan_count;
 	ASSERT(source_channel < nb_channels);
 
 	// adjust pointers according to n_span - (fringe data) and set flags erase these data at the end
-	auto lp_dest = m_pWBuf->get_pointer_to_transformed_data_buffer();
-	const auto i_span_between_points = CWaveBuf::GetWBTransformSpan(transform_type);
+	auto lp_dest = p_w_buf->get_pointer_to_transformed_data_buffer();
+	const auto i_span_between_points = CWaveBuf::wb_get_transform_span(transform_type);
 	const auto l_span_between_points = static_cast<long>(i_span_between_points);
-	const auto l_first = m_lBUFchanFirst + l_span_between_points;
-	const auto l_last = m_lBUFchanLast - l_span_between_points;
+	const auto l_first = buf_channel_first + l_span_between_points;
+	const auto l_last = buf_channel_last - l_span_between_points;
 	lp_source += nb_channels * i_span_between_points;
 	lp_dest += i_span_between_points;
 	int n_points = l_last - l_first + 1;
@@ -629,37 +630,37 @@ BOOL AcqDataDoc::build_transformed_data(const int transform_type, const int sour
 
 	switch (transform_type)
 	{
-	case 0: m_pWBuf->BCopy(lp_source, lp_dest, n_points);
+	case 0: p_w_buf->copy(lp_source, lp_dest, n_points);
 		break;
-	case 1: m_pWBuf->BDeriv(lp_source, lp_dest, n_points);
+	case 1: p_w_buf->low_pass_differentiation(lp_source, lp_dest, n_points);
 		break;
-	case 2: m_pWBuf->BLanczo2(lp_source, lp_dest, n_points);
+	case 2: p_w_buf->low_pass_lanczo_2(lp_source, lp_dest, n_points);
 		break;
-	case 3: m_pWBuf->BLanczo3(lp_source, lp_dest, n_points);
+	case 3: p_w_buf->low_pass_lanczo_3(lp_source, lp_dest, n_points);
 		break;
-	case 4: m_pWBuf->BDeri1f3(lp_source, lp_dest, n_points);
+	case 4: p_w_buf->low_pass_derivative_1f3(lp_source, lp_dest, n_points);
 		break;
-	case 5: m_pWBuf->BDeri2f3(lp_source, lp_dest, n_points);
+	case 5: p_w_buf->low_pass_derivative_2f3(lp_source, lp_dest, n_points);
 		break;
-	case 6: m_pWBuf->BDeri2f5(lp_source, lp_dest, n_points);
+	case 6: p_w_buf->low_pass_derivative_2f5(lp_source, lp_dest, n_points);
 		break;
-	case 7: m_pWBuf->BDeri3f3(lp_source, lp_dest, n_points);
+	case 7: p_w_buf->low_pass_derivative_3f3(lp_source, lp_dest, n_points);
 		break;
-	case 8: m_pWBuf->BDiffer1(lp_source, lp_dest, n_points);
+	case 8: p_w_buf->low_pass_diff_1(lp_source, lp_dest, n_points);
 		break;
-	case 9: m_pWBuf->BDiffer2(lp_source, lp_dest, n_points);
+	case 9: p_w_buf->low_pass_diff_2(lp_source, lp_dest, n_points);
 		break;
-	case 10: m_pWBuf->BDiffer3(lp_source, lp_dest, n_points);
+	case 10: p_w_buf->low_pass_diff_3(lp_source, lp_dest, n_points);
 		break;
-	case 11: m_pWBuf->BDiffer10(lp_source, lp_dest, n_points);
+	case 11: p_w_buf->low_pass_diff_10(lp_source, lp_dest, n_points);
 		break;
-	case 12: m_pWBuf->BMovAvg30(lp_source, lp_dest, n_points);
+	case 12: p_w_buf->moving_average_30(lp_source, lp_dest, n_points);
 		break;
-	case 13: m_pWBuf->BMedian30(lp_source, lp_dest, n_points);
+	case 13: p_w_buf->moving_median_30(lp_source, lp_dest, n_points);
 		break;
-	case 14: m_pWBuf->BMedian35(lp_source, lp_dest, n_points);
+	case 14: p_w_buf->moving_median_35(lp_source, lp_dest, n_points);
 		break;
-	case 15: m_pWBuf->BRMS(lp_source, lp_dest, n_points);
+	case 15: p_w_buf->root_to_mean_square(lp_source, lp_dest, n_points);
 	default: flag = FALSE;
 		break;
 	}
@@ -667,12 +668,12 @@ BOOL AcqDataDoc::build_transformed_data(const int transform_type, const int sour
 	// set undefined pts equal to first valid point
 	if (i_span_between_points > 0)
 	{
-		auto lp_dest0 = m_pWBuf->get_pointer_to_transformed_data_buffer();
+		auto lp_dest0 = p_w_buf->get_pointer_to_transformed_data_buffer();
 		for (auto cx = i_span_between_points; cx > 0; cx--, lp_dest0++)
 			*lp_dest0 = 0;
 		n_points += i_span_between_points;
 
-		lp_dest0 = m_pWBuf->get_pointer_to_transformed_data_buffer() + n_points;
+		lp_dest0 = p_w_buf->get_pointer_to_transformed_data_buffer() + n_points;
 		for (auto cx = i_span_between_points; cx > 0; cx--, lp_dest0++)
 			*lp_dest0 = 0;
 	}
@@ -684,24 +685,24 @@ BOOL AcqDataDoc::acq_create_file(CString& cs_file_name)
 	if (!cs_file_name.IsEmpty())
 	{
 		// Create file - send message if creation failed
-		if (m_pXFile == nullptr)
+		if (x_file == nullptr)
 		{
-			m_pXFile = new CDataFileAWAVE;
-			ASSERT(m_pXFile != NULL);
+			x_file = new CDataFileAWAVE;
+			ASSERT(x_file != NULL);
 		}
-		if (m_pXFile->m_idType != DOCTYPE_AWAVE)
+		if (x_file->m_idType != DOCTYPE_AWAVE)
 		{
-			delete m_pXFile;
-			m_pXFile = new CDataFileAWAVE;
-			ASSERT(m_pXFile != NULL);
+			delete x_file;
+			x_file = new CDataFileAWAVE;
+			ASSERT(x_file != NULL);
 		}
 
-		if (!m_pXFile->OpenDataFile(cs_file_name, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone))
+		if (!x_file->OpenDataFile(cs_file_name, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone))
 		{
 			AfxMessageBox(AFX_IDP_FAILED_TO_CREATE_DOC);
 			return FALSE;
 		}
-		m_pXFile->InitFile();
+		x_file->InitFile();
 	}
 
 	// create object as file
@@ -713,39 +714,39 @@ BOOL AcqDataDoc::acq_create_file(CString& cs_file_name)
 BOOL AcqDataDoc::write_hz_tags(TagList* p_tags) const
 {
 	if (p_tags == nullptr)
-		p_tags = m_pWBuf->GetpHZtags();
+		p_tags = p_w_buf->get_p_hz_tags();
 	if (p_tags == nullptr || p_tags->get_tag_list_size() == 0)
 		return TRUE;
-	return m_pXFile->WriteHZtags(p_tags);
+	return x_file->WriteHZtags(p_tags);
 }
 
 BOOL AcqDataDoc::write_vt_tags(TagList* p_tags) const
 {
 	if (p_tags == nullptr)
-		p_tags = m_pWBuf->GetpVTtags();
+		p_tags = p_w_buf->get_p_vt_tags();
 	if (p_tags == nullptr || p_tags->get_tag_list_size() == 0)
 		return TRUE;
-	return m_pXFile->WriteVTtags(p_tags);
+	return x_file->WriteVTtags(p_tags);
 }
 
 BOOL AcqDataDoc::acq_save_data_descriptors() const
 {
-	const auto flag = m_pXFile->WriteDataInfos(get_wave_format(), get_wave_channels_array());
-	m_pXFile->Flush();
+	const auto flag = x_file->WriteDataInfos(get_wave_format(), get_wave_channels_array());
+	x_file->Flush();
 	return flag;
 }
 
 void AcqDataDoc::acq_delete_file() const
 {
-	const auto cs_file_path = m_pXFile->GetFilePath();
-	m_pXFile->CloseDataFile();
+	const auto cs_file_path = x_file->GetFilePath();
+	x_file->CloseDataFile();
 	CFile::Remove(cs_file_path);
 }
 
 void AcqDataDoc::acq_close_file() const
 {
-	if (m_pXFile != nullptr)
-		m_pXFile->CloseDataFile();
+	if (x_file != nullptr)
+		x_file->CloseDataFile();
 }
 
 BOOL AcqDataDoc::save_as(CString& new_name, BOOL b_check_over_write, const int i_type)
@@ -763,7 +764,7 @@ BOOL AcqDataDoc::save_as(CString& new_name, BOOL b_check_over_write, const int i
 	}
 
 	auto dummy_name = new_name;
-	const auto cs_former_name = m_pXFile->GetFilePath();
+	const auto cs_former_name = x_file->GetFilePath();
 
 	// check if same file already exist
 	CFileStatus status;
@@ -808,30 +809,30 @@ BOOL AcqDataDoc::save_as(CString& new_name, BOOL b_check_over_write, const int i
 	auto n_samples = get_wave_format()->sample_count;
 
 	// position source file index to start of data
-	m_pXFile->Seek(m_pXFile->m_ulOffsetData, CFile::begin);
-	auto p_buf = m_pWBuf->get_pointer_to_raw_data_buffer(); // buffer to store data
-	auto l_buf_size = m_lBUFSize; // length of the buffer
+	x_file->Seek(static_cast<LONGLONG>(x_file->m_ulOffsetData), CFile::begin);
+	auto p_buf = p_w_buf->get_pointer_to_raw_data_buffer(); // buffer to store data
+	auto l_buf_size = buf_size; // length of the buffer
 
 	while (n_samples > 0) // loop until the end of the file
 	{
 		// read data from source file into buffer
-		if (n_samples < m_lBUFSize) // adjust buf_temp_size
+		if (n_samples < buf_size) // adjust buf_temp_size
 			l_buf_size = n_samples; // then, store data in temporary buffer
-		const long n_bytes = l_buf_size * sizeof(short);
-		m_pXFile->Read(p_buf, n_bytes);
+		const long n_bytes = l_buf_size * static_cast<long>(sizeof(short));
+		x_file->Read(p_buf, n_bytes);
 		if (i_type == 3) // ASD file
 		{
 			auto p_buf2 = p_buf;
 			for (long i = 0; i < n_bytes; i++)
 			{
-				*p_buf2 = *p_buf2 / 2;
+				*p_buf2 = static_cast<short>(*p_buf2 / 2);
 				p_buf2 += 2;
 			}
 		}
 		// save buffer
 		if (!p_new_doc->AcqDoc_DataAppend(p_buf, n_bytes))
 			break;
-		n_samples -= l_buf_size; // update counter and loop
+		n_samples -= l_buf_size; 
 	}
 
 	// stop appending data, update dependent struct
@@ -840,43 +841,43 @@ BOOL AcqDataDoc::save_as(CString& new_name, BOOL b_check_over_write, const int i
 
 	// save other objects if exist (tags, others)
 
-	if (m_pWBuf->GetpHZtags()->get_tag_list_size() > 0)
-		p_new_doc->write_hz_tags(m_pWBuf->GetpHZtags());
-	if (m_pWBuf->GetpVTtags()->get_tag_list_size() > 0)
-		p_new_doc->write_vt_tags(m_pWBuf->GetpVTtags());
+	if (p_w_buf->get_p_hz_tags()->get_tag_list_size() > 0)
+		p_new_doc->write_hz_tags(p_w_buf->get_p_hz_tags());
+	if (p_w_buf->get_p_vt_tags()->get_tag_list_size() > 0)
+		p_new_doc->write_vt_tags(p_w_buf->get_p_vt_tags());
 
 	// if destination name == source: remove source and rename destination
 	if (b_is_duplicate_name)
 	{
 		// copy dummy name into csFormerName
-		const auto dw_new_length = p_new_doc->m_pXFile->GetLength();
-		m_pXFile->SetLength(dw_new_length);
-		m_pXFile->SeekToBegin();
-		p_new_doc->m_pXFile->SeekToBegin();
+		const auto dw_new_length = p_new_doc->x_file->GetLength();
+		x_file->SetLength(dw_new_length);
+		x_file->SeekToBegin();
+		p_new_doc->x_file->SeekToBegin();
 
-		p_buf = m_pWBuf->get_pointer_to_raw_data_buffer(); 
-		const auto n_bytes = m_lBUFSize * sizeof(short);
+		p_buf = p_w_buf->get_pointer_to_raw_data_buffer(); 
+		const auto n_bytes = buf_size * sizeof(short);
 		DWORD dw_read;
 		do
 		{
-			dw_read = p_new_doc->m_pXFile->Read(p_buf, n_bytes);
-			m_pXFile->Write(p_buf, dw_read);
+			dw_read = p_new_doc->x_file->Read(p_buf, n_bytes);
+			x_file->Write(p_buf, dw_read);
 		}
 		while (dw_read > 0);
 
 		// file is transferred, destroy temporary file
-		p_new_doc->m_pXFile->CloseDataFile();
+		p_new_doc->x_file->CloseDataFile();
 
 		// delete current file object and open saved-as file ??
-		m_pXFile->CloseDataFile();
-		SAFE_DELETE(m_pXFile)
+		x_file->CloseDataFile();
+		SAFE_DELETE(x_file)
 
 		// create / update CDataFileX associated object
-		m_pXFile = new CDataFileAWAVE; //((CFile*) this);
-		ASSERT(m_pXFile != NULL);
+		x_file = new CDataFileAWAVE; //((CFile*) this);
+		ASSERT(x_file != NULL);
 
 		// open saved file
-		if (!m_pXFile->OpenDataFile(new_name, CFile::modeReadWrite | CFile::shareDenyNone | CFile::typeBinary))
+		if (!x_file->OpenDataFile(new_name, CFile::modeReadWrite | CFile::shareDenyNone | CFile::typeBinary))
 			return FALSE;
 	}
 

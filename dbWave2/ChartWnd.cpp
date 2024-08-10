@@ -152,10 +152,8 @@ void ChartWnd::OnSize(const UINT n_type, const int cx, const int cy)
 {
 	CWnd::OnSize(n_type, cx, cy);
 	set_display_area_size(cx, cy);
-	// force DC to redraw
 	if (plot_dc_.GetSafeHdc())
 		plot_dc_.DeleteDC();
-	// refresh control
 	Invalidate();
 }
 
@@ -750,14 +748,28 @@ void ChartWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 	b_left_mouse_button_down_ = FALSE;
 }
 
-void ChartWnd::left_button_up_horizontal_tag(const UINT n_flags, CPoint point)
+void ChartWnd::left_button_up_horizontal_tag(const UINT n_flags, const CPoint point)
 {
 	Tag* p_tag = hz_tags.get_tag(hc_trapped_);
-	p_tag->value_int = MulDiv(point.y - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
+	p_tag->value_int = MulDiv(point.y - y_viewport_origin_, 
+						y_we_, 
+						y_viewport_extent_) + y_wo_;
 	xor_hz_tag(point.y, p_tag->swap_pixel(point.y));
 
 	ChartWnd::OnLButtonUp(n_flags, point);
 	send_my_message(HINT_CHANGE_HZ_TAG, hc_trapped_);
+}
+
+void ChartWnd::left_button_up_vertical_tag(const UINT n_flags, const CPoint point)
+{
+	Tag* p_tag = vt_tags.get_tag(hc_trapped_);
+	p_tag->value_int = MulDiv(point.x - x_viewport_origin_,
+		x_we_,
+		x_viewport_extent_) + x_wo_;
+	xor_vt_tag(point.x, p_tag->swap_pixel(point.x));
+
+	ChartWnd::OnLButtonUp(n_flags, point);
+	send_my_message(HINT_CHANGE_VERT_TAG, hc_trapped_);
 }
 
 void ChartWnd::OnRButtonDown(const UINT n_flags, const CPoint point)
@@ -961,7 +973,7 @@ void ChartWnd::xor_hz_tag(const int y_new, const int y_old)
 	CClientDC dc(this);
 	const auto old_pen = dc.SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = dc.SetROP2(R2_NOTXORPEN);
-	dc.IntersectClipRect(&client_rect_);
+	dc.IntersectClipRect(&display_rect_);
 
 	// erase old
 	if (y_old >= 0)
@@ -971,7 +983,7 @@ void ChartWnd::xor_hz_tag(const int y_new, const int y_old)
 	}
 
 	// display new
-	if (y_new)
+	if (y_new >= 0)
 	{
 		dc.MoveTo(display_rect_.left, y_new);
 		dc.LineTo(display_rect_.right, y_new);
@@ -986,7 +998,7 @@ void ChartWnd::xor_vt_tag(const int x_new, const int x_old)
 	CClientDC dc(this);
 	const auto old_pen = dc.SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = dc.SetROP2(R2_NOTXORPEN);
-	dc.IntersectClipRect(&client_rect_);
+	dc.IntersectClipRect(&display_rect_);
 
 	if (x_old >= 0)
 	{

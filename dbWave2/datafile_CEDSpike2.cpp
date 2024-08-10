@@ -100,8 +100,8 @@ int CDataFileFromCEDSpike2::CheckFileType(CString& cs_fileName)
 
 BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 {
-	CWaveFormat* pWFormat = pBuf->GetpWaveFormat();
-	CWaveChanArray* p_array = pBuf->GetpWavechanArray();
+	CWaveFormat* pWFormat = pBuf->get_p_wave_format();
+	CWaveChanArray* p_array = pBuf->get_p_wave_chan_array();
 
 	//	tentative
 	pWFormat->full_scale_volts = 5.0f; // 10 V full scale
@@ -194,7 +194,7 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 	if (adcChan >= 0)
 		convert_VTtags_Ticks_to_ADintervals(pBuf, adcChan);
 
-	TagList* pTags = pBuf->GetpVTtags();
+	TagList* pTags = pBuf->get_p_vt_tags();
 	if (pTags != nullptr && pTags->get_tag_list_size() > 0 && pWFormat->scan_count > 0)
 	{
 		for (int i = 0; i < p_array->chan_array_get_size(); i++)
@@ -368,7 +368,7 @@ CString CDataFileFromCEDSpike2::getErrorMessage(int flag)
 
 void CDataFileFromCEDSpike2::read_EventFall(int cedChan, CWaveBuf* pBuf)
 {
-	TagList* pTags = pBuf->GetpVTtags();
+	TagList* pTags = pBuf->get_p_vt_tags();
 	pTags->remove_all_tags();
 	int n_read = 0;
 	long long data = -1;
@@ -383,7 +383,7 @@ void CDataFileFromCEDSpike2::read_EventFall(int cedChan, CWaveBuf* pBuf)
 
 void CDataFileFromCEDSpike2::convert_VTtags_Ticks_to_ADintervals(CWaveBuf* pBuf, int cedChan)
 {
-	TagList* p_tags = pBuf->GetpVTtags();
+	TagList* p_tags = pBuf->get_p_vt_tags();
 	const int n_tags = p_tags->get_tag_list_size();
 	if (n_tags > 0)
 	{
