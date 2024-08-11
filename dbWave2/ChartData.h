@@ -18,7 +18,7 @@ public:
 	BOOL	get_data_from_doc(long l_first);
 	BOOL	get_data_from_doc(long l_first, long l_last);
 	BOOL	get_smooth_data_from_doc(int i_option);
-	BOOL	scroll_data_from_doc(WORD n_sb_code);
+	BOOL	scroll_data_from_doc(const UINT n_sb_code);
 
 	int		resize_channels(int n_pixels, long l_size); 
 	BOOL	attach_data_file(AcqDataDoc* p_data_file);

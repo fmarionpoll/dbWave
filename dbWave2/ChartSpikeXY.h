@@ -17,7 +17,7 @@ protected:
 	int y_max_ = 0;
 	int y_min_ = 0;
 
-	void display_spike_measure(const Spike* spike, CDC* p_dc, const CRect& rect, const CRect& rect1, const long window_duration) const;
+	void display_spike_measure(const Spike* spike, CDC* p_dc, const CRect& rect, const CRect& rect1, long window_duration) const;
 	void draw_spike_measure(const Spike* spike, int color_index);
 
 	int hit_curve(CPoint point) override;

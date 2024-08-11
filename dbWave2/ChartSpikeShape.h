@@ -34,7 +34,7 @@ protected:
 
 	void draw_spike_on_dc(const Spike* spike, CDC* p_dc);
 	void draw_flagged_spikes(CDC* p_dc);
-	void plot_array_to_dc(CDC* p_dc, short* p_array);
+	void print_array_to_dc(CDC* p_dc, short* p_array);
 
 public:
 	void draw_spike(const Spike* spike);

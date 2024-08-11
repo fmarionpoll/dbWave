@@ -689,7 +689,7 @@ BOOL ChartData::get_data_from_doc(long l_first, long l_last)
 	return get_data_from_doc();
 }
 
-BOOL ChartData::scroll_data_from_doc(const WORD n_sb_code)
+BOOL ChartData::scroll_data_from_doc(const UINT n_sb_code)
 {
 	auto l_first = m_lx_first_;
 	switch (n_sb_code)
@@ -1556,7 +1556,7 @@ void ChartData::set_highlight_data(const CDWordArray* p_intervals)
 
 	m_highlighted_.channel = static_cast<int>(p_intervals->GetAt(0));
 	m_highlighted_.color = p_intervals->GetAt(1);
-	m_highlighted_.pensize = static_cast<int>(p_intervals->GetAt(2));
+	m_highlighted_.pen_size = static_cast<int>(p_intervals->GetAt(2));
 	const auto size = (p_intervals->GetSize() - 3) / 2;
 	m_highlighted_.l_first.SetSize(size);
 	m_highlighted_.l_last.SetSize(size);
@@ -1576,7 +1576,7 @@ void ChartData::highlight_data(CDC* p_dc, int chan)
 
 	// get color and pen size from array p_intervals
 	CPen new_pen;
-	new_pen.CreatePen(PS_SOLID, m_highlighted_.pensize, m_highlighted_.color);
+	new_pen.CreatePen(PS_SOLID, m_highlighted_.pen_size, m_highlighted_.color);
 	const auto old_pen = p_dc->SelectObject(&new_pen);
 	const BOOL b_poly_line = (p_dc->m_hAttribDC == nullptr)
 		|| (p_dc->GetDeviceCaps(LINECAPS) & LC_POLYLINE);

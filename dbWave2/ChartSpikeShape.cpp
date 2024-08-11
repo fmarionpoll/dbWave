@@ -129,6 +129,8 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			}
 			display_spike_data(p_dc, spike, spike_length);
 		}
+		// restore pen
+		p_dc->SelectObject(old_pen);
 
 		if (plot_mode_ == PLOT_ONE_CLASS || plot_mode_ == PLOT_ONE_COLOR)
 		{
@@ -161,8 +163,8 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			display_hz_tags(p_dc);
 
 		if (vt_tags.get_tag_list_size() > 0) {
-			const int wo = MulDiv(0 - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
-			const int we = MulDiv(display_rect_.bottom - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
+			//const int wo = MulDiv(0 - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
+			//const int we = MulDiv(display_rect_.bottom - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
 			display_vt_tags(p_dc);
 		}
 
@@ -621,16 +623,13 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 
 	for (auto spike_index = spike_index_last; spike_index >= spike_index_first; spike_index--)
 	{
-		Spike* spike = p_spike_list_->get_spike(spike_index);
-		if (range_mode_ == RANGE_INDEX && (spike_index > index_last_spike_ || spike_index < index_first_spike_))
+		const Spike* spike = p_spike_list_->get_spike(spike_index);
+		if (range_mode_ == RANGE_INDEX 
+			&& (spike_index > index_last_spike_ || spike_index < index_first_spike_))
 			continue;
-		if (range_mode_ == RANGE_TIME_INTERVALS)
-		{
-			if (spike->get_time() < l_first_)
+		if (range_mode_ == RANGE_TIME_INTERVALS
+			&& (spike->get_time() < l_first_ || spike->get_time() > l_last_))
 				continue;
-			if (spike->get_time() > l_last_)
-				continue;
-		}
 
 		const auto spike_class = p_spike_list_->get_spike(spike_index)->get_class_id();
 		if (plot_mode_ == PLOT_ONE_CLASS_ONLY && spike_class != selected_class_)
@@ -638,7 +637,7 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 		if (plot_mode_ == PLOT_ONE_CLASS && spike_class == selected_class_)
 			continue;
 
-		plot_array_to_dc(p_dc, spike->get_p_data());
+		print_array_to_dc(p_dc, spike->get_p_data());
 	}
 
 	// display selected class if requested by option
@@ -656,7 +655,7 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 			}
 			if (spike->get_class_id() != selected_class_)
 				continue;
-			plot_array_to_dc(p_dc, spike->get_p_data());
+			print_array_to_dc(p_dc, spike->get_p_data());
 		}
 	}
 
@@ -665,8 +664,8 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 	{
 		CPen new_pen(PS_SOLID, 0, color_table_[color_selected_spike_]);
 		p_dc->SelectObject(&new_pen);
-		Spike* spike = dbwave_doc_->get_spike(spike_selected_);
-		plot_array_to_dc(p_dc, spike->get_p_data());
+		const Spike* spike = dbwave_doc_->get_spike(spike_selected_);
+		print_array_to_dc(p_dc, spike->get_p_data());
 	}
 
 	// restore resources
@@ -679,7 +678,7 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 	y_viewport_extent_ = old_y_ve;
 }
 
-void ChartSpikeShape::plot_array_to_dc(CDC * p_dc, short* p_array)
+void ChartSpikeShape::print_array_to_dc(CDC * p_dc, short* p_array)
 {
 	const auto n_elements = polyline_points_.GetSize();
 	for (auto i = 0; i < n_elements; i++, p_array++)
@@ -703,11 +702,11 @@ void ChartSpikeShape::plot_array_to_dc(CDC * p_dc, short* p_array)
 void ChartSpikeShape::Serialize(CArchive & ar)
 {
 	int dummy_int = 1;
+	WORD w_version = 1;
 	if (ar.IsStoring())
 	{
 		ChartSpike::Serialize(ar);
-		polyline_points_.Serialize(ar);
-
+		ar << w_version;
 		ar << range_mode_; 
 		ar << l_first_; 
 		ar << l_last_; 
@@ -724,8 +723,7 @@ void ChartSpikeShape::Serialize(CArchive & ar)
 	else
 	{
 		ChartSpike::Serialize(ar);
-		polyline_points_.Serialize(ar);
-
+		ar >> w_version;
 		ar >> range_mode_; 
 		ar >> l_first_;
 		ar >> l_last_; 

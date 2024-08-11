@@ -1046,9 +1046,9 @@ void ChartWnd::Serialize(CArchive& ar)
 		ar << plot_mode_;
 		ar << index_color_background_;
 		ar << index_color_selected_;
-		ar << x_wo_; // x origin, extent / window & view
+		ar << x_wo_; 
 		ar << x_we_;
-		ar << y_wo_; // y origin, extent / window & view
+		ar << y_wo_; 
 		ar << y_we_;
 
 		ar << x_viewport_origin_;
@@ -1061,9 +1061,9 @@ void ChartWnd::Serialize(CArchive& ar)
 		ar >> plot_mode_;
 		ar >> index_color_background_;
 		ar >> index_color_selected_;
-		ar >> x_wo_; // x origin, extent / window & view
+		ar >> x_wo_; 
 		ar >> x_we_;
-		ar >> y_wo_; // y origin, extent / window & view
+		ar >> y_wo_; 
 		ar >> y_we_;
 
 		ar >> x_viewport_origin_;
