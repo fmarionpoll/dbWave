@@ -1088,3 +1088,5 @@ void ChartWnd::set_y_scale_unit_value(float y)
 {
 	scope_structure_.yScaleUnitValue = y;
 }
+
+

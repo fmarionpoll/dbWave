@@ -15,16 +15,22 @@ public:
 	void Serialize(CArchive& ar) override;
 
 protected:
-	int color_selected_spike_ = RED_COLOR; // color selected spike (index / color table)
-	BOOL b_text_ = FALSE; // allow text default false
-	int n_displayed_spikes_{}; // number of spikes displayed
-	CArray<CPoint, CPoint> polyline_points_; // points displayed with polyline
+	int color_selected_spike_ = RED_COLOR; 
+	BOOL b_text_ = FALSE;
+	int n_displayed_spikes_{};
 
-	int hit_curve(CPoint point) override;
-
+	CArray<CPoint, CPoint> polyline_points_;
 	void init_polypoint_x_axis();
 	void fill_polypoint_y_axis(short* lp_source);
-	void get_extents();
+
+	int saved_dc_;
+	COLORREF saved_background_color_;
+
+	void plot_data_to_dc_prepare_dc(CDC* p_dc);
+	void message_no_spike(CDC* p_dc) const;
+	boolean get_spike_file(int i_file);
+
+	int hit_curve(CPoint point) override;
 
 	void draw_spike_on_dc(const Spike* spike, CDC* p_dc);
 	void draw_flagged_spikes(CDC* p_dc);
@@ -41,6 +47,7 @@ public:
 	float get_extent_mv();
 	float get_extent_ms();
 	void get_extents_current_spk_list();
+	void get_extents();
 
 	void display_all_files(const BOOL b_on, CdbWaveDoc* p_document)
 	{
@@ -55,6 +62,7 @@ public:
 	void display_flagged_spikes(BOOL b_highlight);
 
 	void plot_data_to_dc(CDC* p_dc) override;
+	void display_spike_data(CDC* p_dc, const Spike* spike, const int spike_length);
 	void zoom_data(CRect* r_from, CRect* r_dest) override;
 
 protected:

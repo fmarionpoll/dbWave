@@ -17,8 +17,8 @@ protected:
 	int y_max_ = 0;
 	int y_min_ = 0;
 
-	void display_spike(const Spike* spike, CDC* p_dc, const CRect& rect, const CRect& rect1, const long window_duration) const;
-	void draw_spike(const Spike* spike, int color_index);
+	void display_spike_measure(const Spike* spike, CDC* p_dc, const CRect& rect, const CRect& rect1, const long window_duration) const;
+	void draw_spike_measure(const Spike* spike, int color_index);
 
 	int hit_curve(CPoint point) override;
 	boolean is_spike_within_limits(const Spike* spike) const;
@@ -27,16 +27,16 @@ protected:
 
 	// Helpers and public procedures
 public:
-	void select_spike(const db_spike& spike_selected);
-	void display_spike(const Spike* spike);
-	void highlight_spike(const Spike* spike);
+	void select_spike_measure(const db_spike& spike_selected);
+	void display_spike_measure(const Spike* spike);
+	void highlight_spike_measure(const Spike* spike);
 
 	void move_hz_tag(int tag_index, int value);
 	void move_vt_tag(int tag_index, int new_value);
 
 	void display_all_files(const BOOL b_on, CdbWaveDoc* p_document)
 	{
-		display_all_files_ = b_on;
+		display_all_files_ = static_cast<boolean>(b_on);
 		dbwave_doc_ = p_document;
 	}
 

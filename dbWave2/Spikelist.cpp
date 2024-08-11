@@ -913,7 +913,7 @@ void SpikeList::measure_amplitude_min_to_max(const int t1, const int t2)
 		const auto spike_element = get_spike(spike_index);
 		auto lp_buffer = get_spike(spike_index)->get_p_data(get_spike_length());
 		lp_buffer += t1;
-		int val = *lp_buffer;
+		auto val = *lp_buffer;
 		auto max = val;
 		auto min = val;
 		auto min_index = t1;
@@ -948,7 +948,7 @@ void SpikeList::measure_amplitude_at_t(const int t)
 		const auto spike_element = get_spike(spike_index);
 		auto lp_buffer = get_spike(spike_index)->get_p_data(get_spike_length());
 		lp_buffer += t;
-		const int val = *lp_buffer;
+		const auto val = *lp_buffer;
 		spike_element->set_y1(val);
 	}
 }
@@ -961,8 +961,8 @@ void SpikeList::measure_amplitude_at_t2_minus_at_t1(const int t1, const int t2)
 	{
 		const auto spike_element = get_spike(spike_index);
 		const auto lp_buffer = get_spike(spike_index)->get_p_data(get_spike_length());
-		const int val1 = *(lp_buffer + t1);
-		const int val2 = *(lp_buffer + t2);
+		const auto val1 = *(lp_buffer + t1);
+		const auto val2 = *(lp_buffer + t2);
 		spike_element->set_y1(val2 - val1);
 	}
 }

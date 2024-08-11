@@ -91,14 +91,14 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 		// loop over all spikes
 		for (auto spike_index = last_spike_index; spike_index >= first_spike_index; spike_index--)
 		{
-			display_spike(p_spike_list_->get_spike(spike_index), p_dc, rect0, rect1, window_duration);
+			display_spike_measure(p_spike_list_->get_spike(spike_index), p_dc, rect0, rect1, window_duration);
 		}
 
 		// display spike selected
 		if (spike_selected_.database_position == index_file && spike_selected_.spike_index >= 0)
 		{
 			const Spike* spike = dbwave_doc_->get_spike(spike_selected_);
-			highlight_spike(spike);
+			highlight_spike_measure(spike);
 		}
 
 		if (p_spike_list_->get_spike_flag_array_count() > 0)
@@ -109,7 +109,7 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 			{
 				spike_sel.spike_index = p_spike_list_->get_spike_flag_array_at(i);
 				const Spike* spike = dbwave_doc_->get_spike(spike_sel);
-				highlight_spike(spike);
+				highlight_spike_measure(spike);
 			}
 		}
 	}
@@ -138,7 +138,7 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 	}
 }
 
-void ChartSpikeXY::display_spike(const Spike* spike, CDC* p_dc, const CRect& rect, const CRect& rect1, const long window_duration) const
+void ChartSpikeXY::display_spike_measure(const Spike* spike, CDC* p_dc, const CRect& rect, const CRect& rect1, const long window_duration) const
 {
 	const auto l_spike_time = spike->get_time();
 	if (range_mode_ == RANGE_TIME_INTERVALS
@@ -180,7 +180,7 @@ void ChartSpikeXY::display_spike(const Spike* spike, CDC* p_dc, const CRect& rec
 	p_dc->FillSolidRect(&rect_i, color_table_[selected_brush]);
 }
 
-void ChartSpikeXY::display_spike(const Spike* spike) 
+void ChartSpikeXY::display_spike_measure(const Spike* spike) 
 {
 	const auto spike_class = spike->get_class_id();
 	int color_index = BLACK_COLOR;
@@ -199,10 +199,10 @@ void ChartSpikeXY::display_spike(const Spike* spike)
 	default:
 		break;
 	}
-	draw_spike(spike, color_index);
+	draw_spike_measure(spike, color_index);
 }
 
-void ChartSpikeXY::draw_spike(const Spike* spike, const int color_index)
+void ChartSpikeXY::draw_spike_measure(const Spike* spike, const int color_index)
 {
 	CClientDC dc(this);
 	dc.IntersectClipRect(&client_rect_);
@@ -220,7 +220,7 @@ void ChartSpikeXY::draw_spike(const Spike* spike, const int color_index)
 	dc.SetBkColor(background_color);
 }
 
-void ChartSpikeXY::highlight_spike(const Spike* spike)
+void ChartSpikeXY::highlight_spike_measure(const Spike* spike)
 {
 	CClientDC dc(this);
 	dc.IntersectClipRect(&client_rect_);
@@ -268,20 +268,20 @@ void ChartSpikeXY::move_vt_tag(const int tag_index, const int new_value)
 	xor_vt_tag(pixels, p_tag->swap_pixel(pixels));
 }
 
-void ChartSpikeXY::select_spike(const db_spike& new_spike_selected)
+void ChartSpikeXY::select_spike_measure(const db_spike& new_spike_selected)
 {
 	if (spike_selected_.spike_index >= 0) {
 		const Spike* spike = dbwave_doc_->get_spike(spike_selected_);
-		highlight_spike(spike);
-		display_spike(spike);
+		highlight_spike_measure(spike);
+		display_spike_measure(spike);
 
 	}
 
 	spike_selected_ = new_spike_selected;
 	if (spike_selected_.spike_index >= 0) {
 		const Spike* spike = dbwave_doc_->get_spike(spike_selected_);
-		display_spike(spike);
-		highlight_spike(spike);
+		display_spike_measure(spike);
+		highlight_spike_measure(spike);
 	}
 }
 
