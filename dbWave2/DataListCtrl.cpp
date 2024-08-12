@@ -368,7 +368,7 @@ void DataListCtrl::update_cache(int index_first, int index_last)
 		database->get_record_item_value(CH_IDINSECT, &desc);
 		row->insectID = desc.lVal;
 
-		// column: stim, conc, type = load indirect data from database
+		// column: stimulus, concentration, type = load indirect data from database
 		database->get_record_item_value(CH_STIM_ID, &desc);
 		row->csStim1 = desc.csVal;
 		database->get_record_item_value(CH_CONC_ID, &desc);
@@ -407,7 +407,7 @@ void DataListCtrl::update_cache(int index_first, int index_last)
 			display_spike_wnd(row, index);
 			break;
 		default:
-			display_empty_wnd(row, index);
+			display_empty_wnd(index);
 			break;
 		}
 		index++;
@@ -471,7 +471,7 @@ void DataListCtrl::refresh_display()
 			display_spike_wnd(ptr, index);
 			break;
 		default:
-			display_empty_wnd(ptr, index);
+			display_empty_wnd(index);
 			break;
 		}
 	}
@@ -480,9 +480,9 @@ void DataListCtrl::refresh_display()
 	UpdateWindow();
 }
 
-void DataListCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void DataListCtrl::OnVScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar* p_scroll_bar)
 {
-	switch (nSBCode)
+	switch (n_sb_code)
 	{
 	case SB_LINEUP:
 		static_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_PREV);
@@ -491,7 +491,7 @@ void DataListCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		static_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_NEXT);
 		break;
 	default:
-		CListCtrl::OnVScroll(nSBCode, nPos, pScrollBar);
+		CListCtrl::OnVScroll(n_sb_code, n_pos, p_scroll_bar);
 		break;
 	}
 }
@@ -500,10 +500,10 @@ void DataListCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	switch (nChar)
 	{
-	case VK_PRIOR: // page up
+	case VK_PRIOR: 
 		SendMessage(WM_VSCROLL, SB_PAGEUP, NULL);
 		break;
-	case VK_NEXT: // page down
+	case VK_NEXT: 
 		SendMessage(WM_VSCROLL, SB_PAGEDOWN, NULL);
 		break;
 	case VK_UP:
@@ -566,9 +566,9 @@ void DataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int iImage)
 	else
 	{
 		if (ptr->csNspk.IsEmpty())
-			p_wnd->get_scope_parameters()->crScopeFill = p_wnd->get_color(2);
+			p_wnd->get_scope_parameters()->crScopeFill = ChartData::get_color(2);
 		else
-			p_wnd->get_scope_parameters()->crScopeFill = p_wnd->get_color(15);
+			p_wnd->get_scope_parameters()->crScopeFill = ChartData::get_color(15);
 
 		ptr->pdataDoc->read_data_infos();
 		ptr->cs_comment = ptr->pdataDoc->get_wave_format()->get_comments(_T(" "));
@@ -631,12 +631,12 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 	}
 	else
 	{
-		const auto pParent = static_cast<ViewdbWave*>(GetParent());
-		int iTab = pParent->m_tabCtrl.GetCurSel();
-		if (iTab < 0)
-			iTab = 0;
-		const auto pspk_list = ptr->pspikeDoc->set_spike_list_current_index(iTab);
-		p_wnd->set_source_data(pspk_list, pParent->GetDocument());
+		const auto p_parent = static_cast<ViewdbWave*>(GetParent());
+		int i_tab = p_parent->m_tabCtrl.GetCurSel();
+		if (i_tab < 0)
+			i_tab = 0;
+		const auto p_spk_list = ptr->pspikeDoc->set_spike_list_current_index(i_tab);
+		p_wnd->set_source_data(p_spk_list, p_parent->GetDocument());
 		p_wnd->set_plot_mode(m_spike_plot_mode, m_selected_class);
 		long l_first = 0;
 		auto l_last = ptr->pspikeDoc->get_acq_size();
@@ -650,9 +650,9 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 		p_wnd->set_time_intervals(l_first, l_last);
 		if (m_b_set_mV_span)
 		{
-			const auto volts_per_bin = pspk_list->get_acq_volts_per_bin();
+			const auto volts_per_bin = p_spk_list->get_acq_volts_per_bin();
 			const auto y_we = static_cast<int>(m_mV_span / 1000.f / volts_per_bin);
-			const auto y_wo = pspk_list->get_acq_bin_zero();
+			const auto y_wo = p_spk_list->get_acq_bin_zero();
 			p_wnd->set_yw_ext_org(y_we, y_wo);
 		}
 		p_wnd->set_bottom_comment(m_b_display_file_name, ptr->csSpikefileName);
@@ -670,7 +670,8 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 		mem_dc.SetMapMode(p_dc->GetMapMode());
 
 		//if (pdb_doc != nullptr)
-		p_wnd->plot_single_spk_data_to_dc(&mem_dc);
+		p_wnd->set_display_all_files(false);
+		p_wnd->plot_data_to_dc(&mem_dc);
 
 		CPen pen;
 		pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0)); // black//RGB(0, 0, 0)); // black
@@ -680,9 +681,9 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 	}
 }
 
-void DataListCtrl::display_empty_wnd(CDataListCtrl_Row* ptr, int iImage)
+void DataListCtrl::display_empty_wnd(const int i_image)
 {
-	m_image_list.Replace(iImage, m_p_empty_bitmap, nullptr);
+	m_image_list.Replace(i_image, m_p_empty_bitmap, nullptr);
 }
 
 void DataListCtrl::resize_signal_column(const int n_pixels)
@@ -703,7 +704,7 @@ void DataListCtrl::resize_signal_column(const int n_pixels)
 	refresh_display();
 }
 
-void DataListCtrl::fit_columns_to_size(int n_pixels)
+void DataListCtrl::fit_columns_to_size(const int n_pixels)
 {
 	// compute width of fixed columns
 	auto fixed_width = 0;

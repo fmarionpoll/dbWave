@@ -37,7 +37,6 @@ public:
 
 	void print(CDC* p_dc, const CRect* rect);
 	void plot_data_to_dc(CDC* p_dc) override;
-	void plot_single_spk_data_to_dc(CDC* p_dc);
 	void zoom_data(CRect* prev_rect, CRect* new_rect) override;
 
 protected:

@@ -1661,14 +1661,13 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 		iy_we = m_chart_spike_shape_.get_yw_extent();
 	}
 
-	if (ix_we != NULL && iy_we != NULL)
+	if (ix_we != 0 && iy_we != 0)
 	{
 		const float x = m_chart_spike_shape_.get_extent_ms() / static_cast<float>(m_chart_spike_shape_.get_nx_scale_cells());
 		m_chart_spike_shape_.set_x_scale_unit_value(x);
 
 		const float y = m_chart_spike_shape_.get_extent_mv() / static_cast<float>(m_chart_spike_shape_.get_ny_scale_cells());
 		m_chart_spike_shape_.set_y_scale_unit_value(y);
-		
 	}
 	
 	CString dummy1;
@@ -1680,7 +1679,7 @@ void ViewSpikeDetection::update_spike_shape_window_scale(const BOOL b_set_from_c
 	SetDlgItemText(IDC_SPIKEWINDOWLENGTH, dummy2);
 }
 
-void ViewSpikeDetection::select_spike_no(db_spike& spike_sel, BOOL b_multiple_selection)
+void ViewSpikeDetection::select_spike_no(db_spike& spike_sel, const BOOL b_multiple_selection)
 {
 	if (spike_sel.spike_index >= 0)
 	{

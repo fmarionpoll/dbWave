@@ -143,98 +143,6 @@ void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 	}
 }
 
-void ChartSpikeBar::plot_single_spk_data_to_dc(CDC* p_dc)
-{
-	if (b_erase_background_)
-		erase_background(p_dc);
-
-	p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
-	auto rect = display_rect_;
-	rect.DeflateRect(1, 1);
-
-	// save context
-	const auto n_saved_dc = p_dc->SaveDC();
-	p_dc->IntersectClipRect(&client_rect_);
-
-	// test presence of data
-	if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() == 0)
-	{
-		p_dc->DrawText(cs_empty_, cs_empty_.GetLength(), rect, DT_LEFT);
-		p_dc->RestoreDC(n_saved_dc);
-		return;
-	}
-
-	// plot comment at the bottom
-	if (b_bottom_comment)
-	{
-		p_dc->DrawText(cs_bottom_comment, cs_bottom_comment.GetLength(), rect, DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
-	}
-
-	// display data: trap error conditions
-	if (y_we_ == 1)
-	{
-		int value_max, value_min;
-		p_spike_list_->get_total_max_min(TRUE, &value_max, &value_min);
-		y_we_ = value_max - value_min;
-		y_wo_ = (value_max + value_min) / 2;
-	}
-
-	if (x_we_ == 1) // this is generally the case: && m_xWO == 0)
-	{
-		x_we_ = display_rect_.right;
-		x_wo_ = display_rect_.left;
-	}
-
-	display_bars(p_dc, &display_rect_);
-
-	if (p_spike_doc_ == nullptr) 
-	{
-		p_spike_doc_ = dbwave_doc_->m_p_spk;
-		if (p_spike_doc_ == nullptr)
-			return;
-	}
-	const CIntervals* p_intervals = &(p_spike_doc_->m_stimulus_intervals);
-
-	if (p_intervals->n_items > 0)
-		display_stimulus(p_dc, &display_rect_);
-
-	// display vertical cursors
-	if (vt_tags.get_tag_list_size() > 0)
-	{
-		// select pen and display mode
-		const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
-		const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
-
-		// iterate through VT cursor list
-		const int y1 = display_rect_.bottom;
-		for (auto j = vt_tags.get_tag_list_size() - 1; j >= 0; j--)
-		{
-			constexpr auto y0 = 0;
-			const auto lk = vt_tags.get_tag_value_long(j);
-			if (lk < l_first_ || lk > l_last_)
-				continue;
-			const auto k = MulDiv(lk - l_first_, display_rect_.Width(), l_last_ -l_first_ + 1);
-			p_dc->MoveTo(k, y0);
-			p_dc->LineTo(k, y1);
-		}
-		p_dc->SetROP2(old_rop2);
-		p_dc->SelectObject(old_pen);
-	}
-
-	// temp tag
-	if (h_wnd_reflect_ != nullptr && temp_vertical_tag_ != nullptr)
-	{
-		const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
-		const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
-		p_dc->MoveTo(temp_vertical_tag_->pixel, display_rect_.top + 2);
-		p_dc->LineTo(temp_vertical_tag_->pixel, display_rect_.bottom - 2);
-		p_dc->SetROP2(old_rop2);
-		p_dc->SelectObject(old_pen);
-	}
-
-	p_dc->RestoreDC(n_saved_dc);
-}
-
 void ChartSpikeBar::display_stimulus(CDC* p_dc, const CRect* rect) const
 {
 	CPen blue_pen;
@@ -296,13 +204,13 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 	// prepare loop to display spikes
 	auto* old_pen = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 	const long rect_width = rect->Width();
-	if (y_we_ == 1)
-	{
-		int value_max, value_min;
-		p_spike_list_->get_total_max_min(TRUE, &value_max, &value_min);
-		y_we_ = value_max - value_min;
-		y_wo_ = (value_max + value_min) / 2;
-	}
+	//if (y_we_ == 1)
+	//{
+	//	int value_max, value_min;
+	//	p_spike_list_->get_total_max_min(TRUE, &value_max, &value_min);
+	//	y_we_ = value_max - value_min;
+	//	y_wo_ = (value_max + value_min) / 2;
+	//}
 	const auto y_we = y_we_;
 	const auto y_wo = y_wo_;
 	const auto y_vo = rect->Height() / 2 + rect->top;
@@ -784,8 +692,7 @@ void ChartSpikeBar::max_center()
 		return;
 	int max, min;
 	p_spike_list_->get_total_max_min(TRUE, &max, &min);
-	
-	y_we_ = MulDiv(max - min + 1, 10, 8);
+	y_we_ = MulDiv(max - min + 1, 10, 9);
 	y_wo_ = (max  + min) / 2;
 }
 
@@ -805,41 +712,41 @@ void ChartSpikeBar::print(CDC* p_dc, const CRect* rect)
 	p_dc->RestoreDC(n_saved_dc);
 }
 
-void ChartSpikeBar::Serialize(CArchive& ar)
+void ChartSpikeBar::Serialize(CArchive& archive)
 {
-	ChartSpike::Serialize(ar);
+	ChartSpike::Serialize(archive);
 
 	auto dummy = TRUE;
 	int dummy_int = 1;
-	if (ar.IsStoring())
+	if (archive.IsStoring())
 	{
-		ar << range_mode_; 
-		ar << l_first_;
-		ar << l_last_; 
-		ar << index_first_spike_; 
-		ar << index_last_spike_; 
-		ar << current_class_; 
-		ar << dummy_int;
-		ar << dummy_int; 
-		ar << selected_class_;
-		ar << track_curve_; 
-		ar << dummy;
-		ar << selected_pen_;
+		archive << range_mode_; 
+		archive << l_first_;
+		archive << l_last_; 
+		archive << index_first_spike_; 
+		archive << index_last_spike_; 
+		archive << current_class_; 
+		archive << dummy_int;
+		archive << dummy_int; 
+		archive << selected_class_;
+		archive << track_curve_; 
+		archive << dummy;
+		archive << selected_pen_;
 	}
 	else
 	{
-		ar >> range_mode_; 
-		ar >> l_first_;
-		ar >> l_last_; 
-		ar >> index_first_spike_;
-		ar >> index_last_spike_; 
-		ar >> current_class_;
-		ar >> dummy_int; 
-		ar >> dummy_int;
-		ar >> selected_class_; 
-		ar >> track_curve_;
-		ar >> dummy;
-		ar >> selected_pen_;
+		archive >> range_mode_; 
+		archive >> l_first_;
+		archive >> l_last_; 
+		archive >> index_first_spike_;
+		archive >> index_last_spike_; 
+		archive >> current_class_;
+		archive >> dummy_int; 
+		archive >> dummy_int;
+		archive >> selected_class_; 
+		archive >> track_curve_;
+		archive >> dummy;
+		archive >> selected_pen_;
 	}
 }
 

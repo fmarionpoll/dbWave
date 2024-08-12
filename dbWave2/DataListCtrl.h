@@ -88,12 +88,12 @@ protected:
 	void set_empty_bitmap(boolean b_forced_update = false);
 	void display_spike_wnd(CDataListCtrl_Row* ptr, int iImage);
 	void display_data_wnd(CDataListCtrl_Row* ptr, int iImage);
-	void display_empty_wnd(CDataListCtrl_Row* ptr, int iImage);
+	void display_empty_wnd(const int i_image);
 	void plot_data(const CDataListCtrl_Row* ptr, ChartData* p_wnd, int iImage);
 
 	// Generated message map functions
 	afx_msg void OnGetDisplayInfo(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnVScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
 	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnDestroy();
 

@@ -47,6 +47,9 @@ public:
 	boolean is_spike_within_range(const db_spike& spike_selected) const;
 	db_spike hit_curve_in_doc(CPoint point);
 
+	void set_display_all_files(const boolean display_all) { display_all_files_ = display_all; }
+	boolean get_display_all_files(const boolean display_all) const { return display_all_files_ ; }
+
 	void set_range_mode(const int mode) { range_mode_ = mode; }
 	int get_range_mode() const { return range_mode_; }
 
