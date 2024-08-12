@@ -21,7 +21,7 @@ protected:
 
 	CArray<CPoint, CPoint> polyline_points_;
 	void init_polypoint_x_axis();
-	void fill_polypoint_y_axis(short* lp_source);
+	void fill_polypoint_y_axis(int* lp_source);
 
 	int saved_dc_;
 	COLORREF saved_background_color_;
@@ -34,7 +34,7 @@ protected:
 
 	void draw_spike_on_dc(const Spike* spike, CDC* p_dc);
 	void draw_flagged_spikes(CDC* p_dc);
-	void print_array_to_dc(CDC* p_dc, short* p_array);
+	void print_array_to_dc(CDC* p_dc, int* p_array);
 
 public:
 	void draw_spike(const Spike* spike);
@@ -58,7 +58,7 @@ public:
 	void print(CDC* p_dc, const CRect* rect);
 	void move_vt_track(int i_track, int new_value);
 	void select_spike(const db_spike& spike_sel);
-	int display_ex_data(short* p_data, int color = 9);
+	int display_ex_data(int* p_data, const int color = 9);
 	void display_flagged_spikes(BOOL b_highlight);
 
 	void plot_data_to_dc(CDC* p_dc) override;

@@ -79,8 +79,8 @@ public:
 	long	get_db_n_spike_classes() const;
 	void	set_db_n_spike_classes(long n_classes) const;
 
-	boolean	get_max_min_amplitude_of_all_spikes(BOOL b_all_files, BOOL b_recalculate, short& max, short& min);
-	boolean	get_max_min_y1_of_all_spikes(const boolean b_all_files, int& max, int& min);
+	boolean	get_max_min_amplitude_of_all_spikes(BOOL b_all_files, BOOL b_recalculate, int& max, int& min);
+	boolean	get_max_min_y1_of_all_spikes(boolean b_all_files, int& max, int& min);
 	void	center_spike_amplitude_all_spikes_between_t1_and_t2(boolean b_all_files, int spike_class, int t1, int t2);
 
 	void	set_clean_db_on_exit(const BOOL b_clear) {clean_database_on_exit_ = b_clear; }
@@ -91,7 +91,7 @@ public:
 	void	export_spk_descriptors(CSharedFile* p_sf, SpikeList* p_spike_list, int k_class) const;
 	void	export_datafiles_as_text_files();
 
-	void	synchronize_source_infos(const BOOL b_all);
+	void	synchronize_source_infos(BOOL b_all);
 	BOOL	update_waveformat_from_database(CWaveFormat* p_wave_format) const;
 	BOOL	import_data_files_from_another_data_base(const CString& other_data_base_file_name, boolean copy_data_to_new_sub_directory) const;
 	BOOL	copy_files_to_directory(const CString& path);
@@ -114,14 +114,14 @@ protected:
 				{ return cs_array.GetSize() / n_columns - (b_header ? 1 : 0); }
 	static void	remove_row_at(CStringArray& file_name_array, int i_row, int n_columns, boolean b_header);
 	static CSharedFile* file_discarded_message(CSharedFile* p_sf, const CString& cs_filename, int i_record);
-	static void	get_infos_from_string_array(const source_data* p_record, const CStringArray& file_names_array, int const i_record, int n_columns, boolean b_header);
+	static void	get_infos_from_string_array(const source_data* p_record, const CStringArray& file_names_array, int i_record, int n_columns, boolean b_header);
 	static int	find_column_associated_to_header(const CString& text);
 	static void	remove_file_from_disk(const CString& file_name);
 	static CString get_path_directory(const CString& full_name);
 	static boolean create_directory_if_does_not_exists(const CString& path);
 	static bool	binary_file_copy(LPCTSTR psz_source, LPCTSTR psz_dest);
 	static void	copy_files_to_directory(CStringArray& files_to_copy_array, const CString& mdb_directory);
-	static CString copy_file_to_directory(const LPCTSTR psz_source, const CString& directory);
+	static CString copy_file_to_directory(LPCTSTR psz_source, const CString& directory);
 	static bool is_file_present(const CString& cs_new_name);
 	static boolean file_exists(const CString& file_name);
 

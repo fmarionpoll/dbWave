@@ -543,12 +543,12 @@ void ViewSpikeSort::on_sort()
 	all_charts_invalidate();
 }
 
-void ViewSpikeSort::set_mouse_cursor(short short_value)
+void ViewSpikeSort::set_mouse_cursor(int value)
 {
-	if (CURSOR_ZOOM < short_value)
-		short_value = 0;
-	set_view_mouse_cursor(short_value);
-	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(short_value, 0));
+	if (CURSOR_ZOOM < value)
+		value = 0;
+	set_view_mouse_cursor(value);
+	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(value, 0));
 }
 
 void ViewSpikeSort::change_file_time_first_and_last()
@@ -574,7 +574,7 @@ void ViewSpikeSort::hit_spike()
 	select_spike(spike_hit);
 }
 
-void ViewSpikeSort::change_chart_shape_vt_tag(const short tag_index)
+void ViewSpikeSort::change_chart_shape_vt_tag(const int tag_index)
 {
 	if (tag_index == shape_t1_)
 	{
@@ -592,16 +592,16 @@ void ViewSpikeSort::change_chart_shape_vt_tag(const short tag_index)
 	}
 }
 
-void ViewSpikeSort::change_chart_measure_vt_tag(const short short_value)
+void ViewSpikeSort::change_chart_measure_vt_tag(const int value)
 {
-	if (short_value == m_i_xy_right_)
+	if (value == m_i_xy_right_)
 	{
 		spike_classification_->i_xy_right = chart_measures_.vt_tags.get_value_int(m_i_xy_right_);
 		t_xy_right_ = static_cast<float>(spike_classification_->i_xy_right) / delta_ms_;
 		mm_t_xy_right_.m_bEntryDone = TRUE;
 		on_en_change_edit_right2();
 	}
-	else if (short_value == m_i_xy_left_)
+	else if (value == m_i_xy_left_)
 	{
 		spike_classification_->i_xy_left = chart_measures_.vt_tags.get_value_int(m_i_xy_left_);
 		t_xy_left_ = static_cast<float>(spike_classification_->i_xy_left) / delta_ms_;
@@ -610,7 +610,7 @@ void ViewSpikeSort::change_chart_measure_vt_tag(const short short_value)
 	}
 }
 
-void ViewSpikeSort::change_chart_histogram_vt_tag(const short tag_index)
+void ViewSpikeSort::change_chart_histogram_vt_tag(const int tag_index)
 {
 	if (tag_index == tag_index_hist_low_) 
 	{
@@ -642,14 +642,14 @@ void ViewSpikeSort::update_cursors_from_upper_threshold_mv()
 	chart_histogram_.move_vt_tag_to_value_mv(tag_index_hist_up_, upper_threshold_mv_);
 }
 
-void ViewSpikeSort::change_chart_measure_hz_tag(const short short_value)
+void ViewSpikeSort::change_chart_measure_hz_tag(const int value)
 {
-	if (short_value == tag_index_measures_low_)
+	if (value == tag_index_measures_low_)
 	{
 		lower_threshold_mv_ = static_cast<float>(chart_measures_.hz_tags.get_value_int(tag_index_measures_low_)) * delta_mv_;
 		update_cursors_from_lower_threshold_mv();
 	}
-	else if (short_value == tag_index_measures_up_)
+	else if (value == tag_index_measures_up_)
 	{
 		upper_threshold_mv_ = static_cast<float>(chart_measures_.hz_tags.get_value_int(tag_index_measures_up_)) * delta_mv_;
 		update_cursors_from_upper_threshold_mv();
@@ -667,11 +667,11 @@ void ViewSpikeSort::save_windows_properties_to_options()
 
 LRESULT ViewSpikeSort::on_my_message(const WPARAM code, const LPARAM l_param)
 {
-	const short short_value = LOWORD(l_param);
+	const int value = LOWORD(l_param);
 	switch (code)
 	{
 	case HINT_SET_MOUSE_CURSOR:
-		set_mouse_cursor(short_value);
+		set_mouse_cursor(value);
 		break;
 
 	case HINT_CHANGE_HZ_LIMITS:
@@ -692,16 +692,16 @@ LRESULT ViewSpikeSort::on_my_message(const WPARAM code, const LPARAM l_param)
 
 	case HINT_CHANGE_VERT_TAG:
 		if (HIWORD(l_param) == IDC_CHART_SHAPE)
-			change_chart_shape_vt_tag(short_value);
+			change_chart_shape_vt_tag(value);
 		else if (HIWORD(l_param) == IDC_CHART_HISTOGRAM)
-			change_chart_histogram_vt_tag(short_value);
+			change_chart_histogram_vt_tag(value);
 		else if (HIWORD(l_param) == IDC_CHART_MEASURE)
-			change_chart_measure_vt_tag(short_value);
+			change_chart_measure_vt_tag(value);
 		break;
 
 	case HINT_CHANGE_HZ_TAG:
 		if (HIWORD(l_param) == IDC_CHART_MEASURE)
-			change_chart_measure_hz_tag(short_value);
+			change_chart_measure_hz_tag(value);
 		break;
 
 	case HINT_VIEW_SIZE_CHANGED: 
@@ -713,7 +713,7 @@ LRESULT ViewSpikeSort::on_my_message(const WPARAM code, const LPARAM l_param)
 		break;
 
 	case HINT_VIEW_TAB_HAS_CHANGED:
-		select_spike_list(short_value);
+		select_spike_list(value);
 		break;
 
 	default:
@@ -829,7 +829,7 @@ void ViewSpikeSort::update_gain()
 	chart_histogram_.set_xw_ext_org(y_we, y_wo);
 
 	// get max min and center accordingly
-	short max, min;
+	int max, min;
 	m_pSpkList->get_total_max_min(FALSE, &max, &min);
 	const auto middle = (max + min) / 2;
 	chart_shape_.set_yw_ext_org(y_we, middle);
@@ -886,7 +886,7 @@ void ViewSpikeSort::on_format_center_curve()
 void ViewSpikeSort::center_curve()
 {
 	GetDocument()->center_spike_amplitude_all_spikes_between_t1_and_t2(static_cast<boolean>(b_all_files_), -1, spike_classification_->shape_t1, spike_classification_->shape_t2);
-	short value_max, value_min;
+	int value_max, value_min;
 	if (!GetDocument()->get_max_min_amplitude_of_all_spikes(b_all_files_, TRUE, value_max, value_min))
 		return;
 
@@ -916,7 +916,7 @@ void ViewSpikeSort::gain_adjust()
 
 void ViewSpikeSort::gain_adjust_shape_and_bars()
 {
-	short value_max, value_min;
+	int value_max, value_min;
 	if (!GetDocument()->get_max_min_amplitude_of_all_spikes(b_all_files_, TRUE, value_max, value_min))
 		return;
 
@@ -932,8 +932,8 @@ void ViewSpikeSort::gain_adjust_xy_and_histogram()
 	if (!GetDocument()->get_max_min_y1_of_all_spikes(static_cast<boolean>(b_all_files_), value_max, value_min))
 		return;
 
-	const auto upper2 = static_cast<short>(upper_threshold_mv_ / delta_mv_);
-	const auto lower2 = static_cast<short>(lower_threshold_mv_ / delta_mv_);
+	const auto upper2 = static_cast<int>(upper_threshold_mv_ / delta_mv_);
+	const auto lower2 = static_cast<int>(lower_threshold_mv_ / delta_mv_);
 	if (upper2 > value_max)
 		value_max = upper2;
 	if (lower2 < value_min)
@@ -1077,8 +1077,8 @@ void ViewSpikeSort::on_tools_align_spikes()
 	const auto total_spikes = m_pSpkList->get_spikes_count();
 	const auto p_sum0 = new double[spike_length]; // array with results / SUMy
 	const auto p_cxy0 = new double[spike_length]; // temp array to store correlation
-	auto* const p_mean0 = new short[spike_length]; // mean (template) / at scale
-	const auto p_dummy0 = new short[spike_length]; // results of correlation / at scale
+	auto* const p_mean0 = new int[spike_length]; // mean (template) / at scale
+	const auto p_dummy0 = new int[spike_length]; // results of correlation / at scale
 
 	// init pSUM with zeros
 	auto p_sum = p_sum0;
@@ -1092,7 +1092,7 @@ void ViewSpikeSort::on_tools_align_spikes()
 		if (m_pSpkList->get_spike(i_spike)->get_class_id() != sort_source_class_)
 			continue;
 		nb_spk_selected_class++;
-		short* p_spk = m_pSpkList->get_spike(i_spike)->get_p_data();
+		int* p_spk = m_pSpkList->get_spike(i_spike)->get_p_data();
 		p_sum = p_sum0;
 		for (auto i = 0; i < spike_length; i++, p_spk++, p_sum++)
 			*p_sum += *p_spk;
@@ -1103,7 +1103,7 @@ void ViewSpikeSort::on_tools_align_spikes()
 	p_sum = p_sum0;
 
 	for (auto i = 0; i < spike_length; i++, p_mean++, p_sum++)
-		*p_mean = static_cast<short>(*p_sum / nb_spk_selected_class);
+		*p_mean = static_cast<int>(*p_sum / nb_spk_selected_class);
 
 	chart_shape_.display_ex_data(p_mean0);
 

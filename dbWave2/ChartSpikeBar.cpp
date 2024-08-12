@@ -78,7 +78,7 @@ void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 		// display data: trap error conditions
 		if (y_we_ == 1)
 		{
-			short value_max, value_min;
+			int value_max, value_min;
 			p_spike_list_->get_total_max_min(TRUE, &value_max, &value_min);
 			y_we_ = value_max - value_min;
 			y_wo_ = (value_max + value_min) / 2;
@@ -109,14 +109,14 @@ void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 			for (auto j = vt_tags.get_tag_list_size() - 1; j >= 0; j--)
 			{
 				constexpr auto y0 = 0;
-				const auto lk = vt_tags.get_tag_value_long(j); // get value
+				const auto lk = vt_tags.get_tag_value_long(j);
 				if (lk < l_first_ || lk > l_last_)
 					continue;
 				const auto k = MulDiv(lk - l_first_, display_rect_.Width() , l_last_ - l_first_ + 1);
-				p_dc->MoveTo(k, y0); // set initial pt
-				p_dc->LineTo(k, y1); // VT line
+				p_dc->MoveTo(k, y0);
+				p_dc->LineTo(k, y1);
 			}
-			p_dc->SetROP2(old_rop2); // restore old display mode
+			p_dc->SetROP2(old_rop2);
 			p_dc->SelectObject(old_pen);
 		}
 
@@ -124,10 +124,10 @@ void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 		if (h_wnd_reflect_ != nullptr && temp_vertical_tag_ != nullptr)
 		{
 			const auto old_object = p_dc->SelectObject(&black_dotted_pen_);
-			const auto old_ROP2 = p_dc->SetROP2(R2_NOTXORPEN);
+			const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
 			p_dc->MoveTo(temp_vertical_tag_->pixel, display_rect_.top + 2);
 			p_dc->LineTo(temp_vertical_tag_->pixel, display_rect_.bottom - 2);
-			p_dc->SetROP2(old_ROP2);
+			p_dc->SetROP2(old_rop2);
 			p_dc->SelectObject(old_object);
 		}
 	}
@@ -173,7 +173,7 @@ void ChartSpikeBar::plot_single_spk_data_to_dc(CDC* p_dc)
 	// display data: trap error conditions
 	if (y_we_ == 1)
 	{
-		short value_max, value_min;
+		int value_max, value_min;
 		p_spike_list_->get_total_max_min(TRUE, &value_max, &value_min);
 		y_we_ = value_max - value_min;
 		y_wo_ = (value_max + value_min) / 2;
@@ -187,7 +187,8 @@ void ChartSpikeBar::plot_single_spk_data_to_dc(CDC* p_dc)
 
 	display_bars(p_dc, &display_rect_);
 
-	if (p_spike_doc_ == nullptr) {
+	if (p_spike_doc_ == nullptr) 
+	{
 		p_spike_doc_ = dbwave_doc_->m_p_spk;
 		if (p_spike_doc_ == nullptr)
 			return;
@@ -202,7 +203,7 @@ void ChartSpikeBar::plot_single_spk_data_to_dc(CDC* p_dc)
 	{
 		// select pen and display mode
 		const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
-		const auto old_ROP2 = p_dc->SetROP2(R2_NOTXORPEN);
+		const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
 
 		// iterate through VT cursor list
 		const int y1 = display_rect_.bottom;
@@ -216,7 +217,7 @@ void ChartSpikeBar::plot_single_spk_data_to_dc(CDC* p_dc)
 			p_dc->MoveTo(k, y0);
 			p_dc->LineTo(k, y1);
 		}
-		p_dc->SetROP2(old_ROP2);
+		p_dc->SetROP2(old_rop2);
 		p_dc->SelectObject(old_pen);
 	}
 
@@ -224,10 +225,10 @@ void ChartSpikeBar::plot_single_spk_data_to_dc(CDC* p_dc)
 	if (h_wnd_reflect_ != nullptr && temp_vertical_tag_ != nullptr)
 	{
 		const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
-		const auto old_ROP2 = p_dc->SetROP2(R2_NOTXORPEN);
+		const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
 		p_dc->MoveTo(temp_vertical_tag_->pixel, display_rect_.top + 2);
 		p_dc->LineTo(temp_vertical_tag_->pixel, display_rect_.bottom - 2);
-		p_dc->SetROP2(old_ROP2);
+		p_dc->SetROP2(old_rop2);
 		p_dc->SelectObject(old_pen);
 	}
 
@@ -254,8 +255,8 @@ void ChartSpikeBar::display_stimulus(CDC* p_dc, const CRect* rect) const
 		&& p_intervals->GetAt(i0) < ii_first)
 		i0++; 
 
-	auto state = bottom;				// use this variable to keep track of pulse broken by display limits
-	const auto jj = (i0 / 2) * 2;	// keep index of the ON transition
+	auto state = bottom;	 // use this variable to keep track of pulse broken by display limits
+	const auto jj = (i0 / 2) * 2; // keep index of the ON transition
 	if (jj != i0)
 		state = top;
 	p_dc->MoveTo(rect->left, state);
@@ -280,7 +281,7 @@ void ChartSpikeBar::display_stimulus(CDC* p_dc, const CRect* rect) const
 		if (iix1 > ii_length) // last transition off graph?
 		{
 			iix1 = ii_length; // yes = clip
-			state = top; // do not descend..
+			state = top; // do not descend
 		}
 		iix1 = MulDiv(display_width, iix1, ii_length) + rect->left + 1;
 		p_dc->LineTo(iix1, top); // draw top of pulse
@@ -297,7 +298,7 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 	const long rect_width = rect->Width();
 	if (y_we_ == 1)
 	{
-		short value_max, value_min;
+		int value_max, value_min;
 		p_spike_list_->get_total_max_min(TRUE, &value_max, &value_min);
 		y_we_ = value_max - value_min;
 		y_wo_ = (value_max + value_min) / 2;
@@ -321,8 +322,8 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 			index_last_spike_ = i_last;
 		if (index_first_spike_ < 0)
 			index_first_spike_ = 0;
-		i_last = index_last_spike_; // reduces the nb of spikes examined
-		i_first = index_first_spike_; // assuming an ordered list...
+		i_last = index_last_spike_; 
+		i_first = index_first_spike_;
 	}
 	const auto len = (l_last_ - l_first_ + 1);
 	
@@ -361,10 +362,10 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 		// and draw spike: compute abscissa & draw from max to min
 		const auto llk = MulDiv((l_spike_time - l_first_), rect_width, len);
 		const int abscissa = static_cast<int>(llk) + rect->left;
-		short max, min;
+		int max, min;
 		p_spike_list_->get_spike(i_spike)->get_max_min(&max, &min);
-		max = static_cast<short>(MulDiv(max - y_wo, y_ve, y_we) + y_vo);
-		min = static_cast<short>(MulDiv(min - y_wo, y_ve, y_we) + y_vo);
+		max = MulDiv(max - y_wo, y_ve, y_we) + y_vo;
+		min = MulDiv(min - y_wo, y_ve, y_we) + y_vo;
 		p_dc->MoveTo(abscissa, max);
 		p_dc->LineTo(abscissa, min);
 
@@ -453,7 +454,7 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 		const auto len = l_last_ - l_first_ + 1;
 		const auto llk = MulDiv(l_spike_time - l_first_, x_we_, len);
 		const auto abscissa = static_cast<int>(llk) + x_wo_;
-		short max, min;
+		int max, min;
 		spike->get_max_min(&max, &min);
 
 		dc.MoveTo(abscissa, max);
@@ -489,15 +490,7 @@ void ChartSpikeBar::draw_spike(const Spike* spike, const int color_index)
 {
 	CClientDC dc(this);
 	dc.IntersectClipRect(&client_rect_);
-	/*
-	CClientDC dc(this);
-	if (m_xWE == 1 || m_yWE == 1)
-		return;
-	m_xWE = m_displayRect.Width();
-	m_xWO = m_displayRect.left;
-	dc.IntersectClipRect(&m_clientRect);
-	prepare_dc(&dc);
-	*/
+
 	CPen new_pen;
 	constexpr auto pen_size = 0;
 	new_pen.CreatePen(PS_SOLID, pen_size, color_table_[color_index]);
@@ -508,7 +501,7 @@ void ChartSpikeBar::draw_spike(const Spike* spike, const int color_index)
 	const auto len = l_last_ - l_first_ + 1;
 	const auto llk = MulDiv(l_spike_time - l_first_, x_we_, len);
 	const auto abscissa = static_cast<int>(llk) + x_wo_;
-	short max, min;
+	int max, min;
 	spike->get_max_min(&max, &min);
 
 	dc.MoveTo(abscissa, max);
@@ -634,7 +627,7 @@ void ChartSpikeBar::OnLButtonUp(const UINT n_flags, const CPoint point)
 	}
 }
 
-void ChartSpikeBar::OnLButtonDown(const UINT nFlags, CPoint point)
+void ChartSpikeBar::OnLButtonDown(const UINT n_flags, CPoint point)
 {
 	b_left_mouse_button_down_ = TRUE;
 
@@ -645,16 +638,16 @@ void ChartSpikeBar::OnLButtonDown(const UINT nFlags, CPoint point)
 		dbwave_doc_->set_spike_hit(spike_hit_ = hit_curve_in_doc(point));
 		if (spike_hit_.spike_index >= 0)
 		{
-			if (nFlags & MK_SHIFT)
+			if (n_flags & MK_SHIFT)
 				send_my_message(HINT_HIT_SPIKE_SHIFT, NULL); // post?
-			else if (nFlags & MK_CONTROL)
+			else if (n_flags & MK_CONTROL)
 				send_my_message(HINT_HIT_SPIKE_CTRL, NULL); // post?
 			else
 				send_my_message(HINT_HIT_SPIKE, NULL); // post?
 			return;
 		}
 	}
-	ChartSpike::OnLButtonDown(nFlags, point);
+	ChartSpike::OnLButtonDown(n_flags, point);
 }
 
 //---------------------------------------------------------------------------
@@ -718,7 +711,7 @@ int ChartSpikeBar::hit_curve(const CPoint point)
 	/*
 	// for x coordinates, the formula is in 2 steps:
 	// 1) time -> relative time: ii_time = (spike_time-m_lFirst) [-offset]
-	// 2) rel time -> logical coordinate(LC): LC = ii_time* m_xWE / len + m_xWO
+	// 2) relative time -> logical coordinate(LC): LC = ii_time* m_xWE / len + m_xWO
 	// formula used to display: time (long) --> abscissa (int)
 	// 		long len =  (m_lLast - m_lFirst + 1);
 	// 		int abscissa = (int) (((lSpikeTime - m_lFirst) * (long) m_xWE) / len) + m_xWO;
@@ -755,7 +748,7 @@ int ChartSpikeBar::hit_curve(const CPoint point)
 			&& spike->get_class_id() != selected_class_)
 			continue;
 
-		short max, min;
+		int max, min;
 		spike->get_max_min(&max, &min);
 		if (mouse_y + delta_y < max && mouse_y - delta_y > min)
 		{
@@ -771,16 +764,16 @@ void ChartSpikeBar::center_curve()
 {
 	if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() <= 0)
 		return;
-	short max, min;
+	int max, min;
 	p_spike_list_->get_total_max_min(TRUE, &max, &min);
-	y_wo_ = max / 2 + min / 2;
+	y_wo_ = (max + min) / 2;
 }
 
 void ChartSpikeBar::max_gain()
 {
 	if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() <= 0)
 		return;
-	short max, min;
+	int max, min;
 	p_spike_list_->get_total_max_min(TRUE, &max, &min);
 	y_we_ = MulDiv(max - min + 1, 10, 8);
 }
@@ -789,11 +782,11 @@ void ChartSpikeBar::max_center()
 {
 	if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() <= 0)
 		return;
-	short max, min;
+	int max, min;
 	p_spike_list_->get_total_max_min(TRUE, &max, &min);
 	
 	y_we_ = MulDiv(max - min + 1, 10, 8);
-	y_wo_ = max / 2 + min / 2;
+	y_wo_ = (max  + min) / 2;
 }
 
 void ChartSpikeBar::print(CDC* p_dc, const CRect* rect)
@@ -820,31 +813,31 @@ void ChartSpikeBar::Serialize(CArchive& ar)
 	int dummy_int = 1;
 	if (ar.IsStoring())
 	{
-		ar << range_mode_; // display range (time OR storage index)
-		ar << l_first_; // time index of first pt displayed
-		ar << l_last_; // time index of last pt displayed
-		ar << index_first_spike_; // index first spike
-		ar << index_last_spike_; // index last spike
-		ar << current_class_; // current class in case of displaying classes
+		ar << range_mode_; 
+		ar << l_first_;
+		ar << l_last_; 
+		ar << index_first_spike_; 
+		ar << index_last_spike_; 
+		ar << current_class_; 
 		ar << dummy_int;
-		ar << dummy_int; // no of spike selected
-		ar << selected_class_; // index class selected
-		ar << track_curve_; // track curve ?
+		ar << dummy_int; 
+		ar << selected_class_;
+		ar << track_curve_; 
 		ar << dummy;
 		ar << selected_pen_;
 	}
 	else
 	{
-		ar >> range_mode_; // display range (time OR storage index)
-		ar >> l_first_; // time index of first pt displayed
-		ar >> l_last_; // time index of last pt displayed
-		ar >> index_first_spike_; // index first spike
-		ar >> index_last_spike_; // index last spike
-		ar >> current_class_; // current class in case of displaying classes
+		ar >> range_mode_; 
+		ar >> l_first_;
+		ar >> l_last_; 
+		ar >> index_first_spike_;
+		ar >> index_last_spike_; 
+		ar >> current_class_;
 		ar >> dummy_int; 
-		ar >> dummy_int; // no of spike selected
-		ar >> selected_class_; // index class selected
-		ar >> track_curve_; // track curve ?
+		ar >> dummy_int;
+		ar >> selected_class_; 
+		ar >> track_curve_;
 		ar >> dummy;
 		ar >> selected_pen_;
 	}

@@ -98,12 +98,12 @@ BOOL CWaveBuf::create_w_buffer(const int i_num_elements, const int n_channels)
 	ASSERT(i_num_elements >= 1); // must have at least one
 	wave_format_.scan_count = static_cast<short>(n_channels);
 
-	constexpr DWORD dwSafeFactor = 256; // safety factor to fit data in buffer
-	const size_t dwBufferSize = i_num_elements * n_channels * sizeof(short) + dwSafeFactor;
-	if (dw_buffer_size_ != dwBufferSize)
+	constexpr DWORD dw_safe_factor = 256; // safety factor to fit data in buffer
+	const size_t dw_buffer_size = i_num_elements * n_channels * sizeof(short) + dw_safe_factor;
+	if (dw_buffer_size_ != dw_buffer_size)
 	{
 		delete_buffers();
-		p_w_data_ = static_cast<short*>(malloc(dwBufferSize));
+		p_w_data_ = static_cast<short*>(malloc(dw_buffer_size));
 		ASSERT(p_w_data_ != NULL);
 		if (p_w_data_ == nullptr)
 			return FALSE;
@@ -111,7 +111,7 @@ BOOL CWaveBuf::create_w_buffer(const int i_num_elements, const int n_channels)
 		// allocate transform heap if selected
 		if (is_transformed_)
 		{
-			const size_t dwBufferSize2 = i_num_elements * sizeof(short) + dwSafeFactor * 2 * 60;
+			const size_t dwBufferSize2 = i_num_elements * sizeof(short) + dw_safe_factor * 2 * 60;
 			p_w_data_transformed_ = static_cast<short*>(malloc(dwBufferSize2));
 			ASSERT(p_w_data_transformed_ != NULL);
 			if (p_w_data_transformed_ == nullptr)
@@ -194,11 +194,11 @@ int CWaveBuf::m_transform_buffer_span_[] = {
 // -----------------------------------------------------------
 
 int CWaveBuf::b_variable_span_[] = {
-	0, // maxmin
-	0, // bderiv
-	0, // lanczos2
-	0, // lanczos3
-	0, // deriv2
+	0, // max_min
+	0, // b_deriv
+	0, // lanczos_2
+	0, // lanczos_3
+	0, // deriv_2
 	0, // deriv3
 	0, // deriv4
 	0, // deriv4 bis
@@ -292,7 +292,7 @@ int CWaveBuf::wb_get_transform_span(int i)
 
 // -----------------------------------------------------------
 // note: span width can be modified for several routines (like running average, running median, ...)
-// those routines have a flag in bvariableSpan = 1
+// those routines have a flag in b_variable_Span = 1
 // the modification can be done within the dialog box "format series"
 
 int CWaveBuf::wb_is_span_change_allowed(const int i)
@@ -317,7 +317,7 @@ int CWaveBuf::wb_get_correction_factor(int i, float* correct)
 }
 
 /**************************************************************************
- function:	BDeriv
+ function:	B_Deriv
  purpose:	compute first derivative of one channel from lp_source
 			and store the result in transform buffer lp_dest
  parameters:	lp_source pointer to 1rst point to transform from RW buffer x(k=0)
@@ -652,17 +652,17 @@ void CWaveBuf::moving_median_30(short* lp_source, short* lp_dest, const int cx)
 // Compute median of a curve
 // lp_source = pointer to source data buffer (interleaved channels) [ii_time = l_first]
 // lp_dest = pointer to destination data buffer (only one channel)
-// nbspan = number of points to take into account on each side of each data point
+// nb_span = number of points to take into account on each side of each data point
 // assume: m_waveFormat set
-// use a temporary array to store data (dimension = nbspan *2 +1)
-// assume: temporary array in common of wavebuf (to avoid creation each time this routine is called)
+// use a temporary array to store data (dimension = nb_span *2 +1)
+// assume: temporary array in common of wave_buf (to avoid creation each time this routine is called)
 
 void CWaveBuf::moving_median(short* lp_source, short* lp_dest, int cx, const int n_span)
 {
 	// assume source buffer is with interleaved channels; if not: scan_count=1
 	const int n_channels = wave_format_.scan_count;
-	const auto lp_source_offset_next_point = n_channels; // number of chans within source buffer
-	const auto lp_source_offset_span = lp_source_offset_next_point * n_span; // offset between center of window & end
+	const auto lp_source_offset_next_point = n_channels; 
+	const auto lp_source_offset_span = lp_source_offset_next_point * n_span; 
 
 	if (p_array_size_ != n_span * 2 + 1) // adjust size of temporary array or create if not previously set
 	{
@@ -677,12 +677,7 @@ void CWaveBuf::moving_median(short* lp_source, short* lp_dest, int cx, const int
 	ASSERT(cx <= get_wb_n_elements());
 	const auto min_lp_source = p_w_data_;
 	const auto max_lp_source = p_w_data_ + get_wb_n_channels() * get_wb_n_elements();
-	//auto min_lp_dest = m_pWTransf;
-	//auto max_lp_dest = m_pWTransf + GetWBNumElements();
-	//auto max_parray = &m_parraySorted[m_parray_size-1];
-	//auto min_parray = m_parraySorted;
 
-	// load parray = consecutive points (image of the data points)
 	auto lp = lp_source; // pointer to origin of source buffer
 	lp -= lp_source_offset_span; // first point of the moving window
 	int i;
@@ -748,19 +743,19 @@ void CWaveBuf::moving_median(short* lp_source, short* lp_dest, int cx, const int
 
 	lp = lp_source; // first data point
 	auto lp_next = lp_source + lp_source_offset_span; // last point
-	auto i_parray_circular = p_array_size_ - 1; // point on the last item so that first operation is blank
+	auto i_p_array_circular = p_array_size_ - 1; // point on the last item so that first operation is blank
 
 	for (auto icx = cx; icx > 0; icx--, lp += lp_source_offset_next_point, lp_next += lp_source_offset_next_point, lp_dest
 	     ++)
 	{
-		const auto oldvalue = *(p_array_circular_ + i_parray_circular); // old value
-		const auto newvalue = *lp_next; // new value to insert into array
-		*(p_array_circular_ + i_parray_circular) = newvalue; // save new value into circular array
+		const auto old_value = *(p_array_circular_ + i_p_array_circular); // old value
+		const auto new_value = *lp_next; // new value to insert into array
+		*(p_array_circular_ + i_p_array_circular) = new_value; // save new value into circular array
 
 		// update circular array pointer
-		i_parray_circular++;
-		if (i_parray_circular >= p_array_size_)
-			i_parray_circular = 0;
+		i_p_array_circular++;
+		if (i_p_array_circular >= p_array_size_)
+			i_p_array_circular = 0;
 
 		// locate position of old value to discard
 		// use bisection - cf Numerical Recipes pp 90
@@ -768,16 +763,16 @@ void CWaveBuf::moving_median(short* lp_source, short* lp_dest, int cx, const int
 
 		// binary search
 		// Herbert Schildt: C the complete reference McGraw Hill, 1987, pp 488
-		auto jhigh = p_array_size_ - 1; // upper index
-		auto jlow = 0; // mid point index
-		auto jj2 = (jlow + jhigh) / 2;
-		while (jlow <= jhigh)
+		auto j_high = p_array_size_ - 1; // upper index
+		auto j_low = 0; // mid point index
+		auto jj2 = (j_low + j_high) / 2;
+		while (j_low <= j_high)
 		{
-			jj2 = (jlow + jhigh) / 2;
-			if (oldvalue > *(p_array_sorted_ + jj2))
-				jlow = jj2 + 1;
-			else if (oldvalue < *(p_array_sorted_ + jj2))
-				jhigh = jj2 - 1;
+			jj2 = (j_low + j_high) / 2;
+			if (old_value > *(p_array_sorted_ + jj2))
+				j_low = jj2 + 1;
+			else if (old_value < *(p_array_sorted_ + jj2))
+				j_high = jj2 - 1;
 			else
 				break;
 		}
@@ -785,38 +780,38 @@ void CWaveBuf::moving_median(short* lp_source, short* lp_dest, int cx, const int
 		// insert new value in the correct position
 
 		// case 1: search (and replace) towards higher values
-		if (newvalue > *(p_array_sorted_ + jj2))
+		if (new_value > *(p_array_sorted_ + jj2))
 		{
 			auto j = jj2;
-			for (auto k = jj2; newvalue > *(p_array_sorted_ + k); k++, j++)
+			for (auto k = jj2; new_value > *(p_array_sorted_ + k); k++, j++)
 			{
 				if (k == p_array_size_)
 					break;
 				*(p_array_sorted_ + j) = *(p_array_sorted_ + j + 1);
 			}
-			*(p_array_sorted_ + j - 1) = newvalue;
+			*(p_array_sorted_ + j - 1) = new_value;
 		}
 
 		// case 2: search (and replace) towards lower values
-		else if (newvalue < *(p_array_sorted_ + jj2))
+		else if (new_value < *(p_array_sorted_ + jj2))
 		{
 			auto j = jj2;
-			for (auto k = jj2; newvalue < *(p_array_sorted_ + k); k--, j--)
+			for (auto k = jj2; new_value < *(p_array_sorted_ + k); k--, j--)
 			{
 				if (j == 0)
 				{
-					if (newvalue < *p_array_sorted_)
+					if (new_value < *p_array_sorted_)
 						j--;
 					break;
 				}
 				*(p_array_sorted_ + j) = *(p_array_sorted_ + j - 1);
 			}
-			*(p_array_sorted_ + j + 1) = newvalue;
+			*(p_array_sorted_ + j + 1) = new_value;
 		}
 
 		// case 3: already found!
 		else
-			*(p_array_sorted_ + jj2) = newvalue;
+			*(p_array_sorted_ + jj2) = new_value;
 
 		// save median value in the output array
 		*lp_dest = *lp - *(p_array_sorted_ + n_span);
@@ -832,31 +827,31 @@ void CWaveBuf::moving_median(short* lp_source, short* lp_dest, int cx, const int
 void CWaveBuf::root_to_mean_square(short* lp_source, short* lp_dest, const int cx) const
 {
 	const int n_channels = wave_format_.scan_count;
-	const auto offsetnextpoint = n_channels;
-	auto nbspan = m_transform_buffer_span_[14] / 2;
-	const auto offsetspan = offsetnextpoint * nbspan;
+	const auto offset_next_point = n_channels;
+	auto nb_span = m_transform_buffer_span_[14] / 2;
+	const auto offset_span = offset_next_point * nb_span;
 
 	// init sum
 	double sum2 = 0;
 	auto n = 0;
 	auto lp = lp_source;
-	lp -= offsetspan;
-	nbspan += nbspan;
-	for (auto i = 0; i < nbspan; i++)
+	lp -= offset_span;
+	nb_span += nb_span;
+	for (auto i = 0; i < nb_span; i++)
 	{
 		const long x = *lp;
 		sum2 += static_cast<double>(x) * x;
-		lp += offsetnextpoint;
+		lp += offset_next_point;
 		n++;
 	}
 
 	// moving average
-	for (auto icx = cx; icx > 0; icx--, lp_source += offsetnextpoint, lp_dest++)
+	for (auto icx = cx; icx > 0; icx--, lp_source += offset_next_point, lp_dest++)
 	{
 		*lp_dest = *lp_source - static_cast<short>(sqrt(sum2 / n));
-		long x = *(lp_source - offsetspan);
+		long x = *(lp_source - offset_span);
 		sum2 -= static_cast<double>(x) * x;
-		x = *(lp_source + offsetspan);
+		x = *(lp_source + offset_span);
 		sum2 += static_cast<double>(x) * x;
 	}
 }

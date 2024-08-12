@@ -28,23 +28,23 @@ ViewSpikes::~ViewSpikes()
 	spk_classification_parameters_->f_jitter_ms = m_jitter_ms;
 }
 
-void ViewSpikes::DoDataExchange(CDataExchange* pDX)
+void ViewSpikes::DoDataExchange(CDataExchange* p_dx)
 {
-	dbTableView::DoDataExchange(pDX);
+	dbTableView::DoDataExchange(p_dx);
 
-	DDX_Text(pDX, IDC_TIMEFIRST, m_time_first);
-	DDX_Text(pDX, IDC_TIMELAST, m_time_last);
-	DDX_Text(pDX, IDC_NSPIKES, m_spike_index);
-	DDX_Text(pDX, IDC_SPIKE_CLASS, m_spike_class);
-	DDX_Text(pDX, IDC_EDIT3, m_zoom);
-	DDX_Text(pDX, IDC_EDIT4, m_class_source);
-	DDX_Text(pDX, IDC_EDIT5, m_class_destination);
-	DDX_Check(pDX, IDC_CHECK1, m_b_reset_zoom);
-	DDX_Check(pDX, IDC_ARTEFACT, m_b_artefact);
-	DDX_Text(pDX, IDC_JITTER, m_jitter_ms);
-	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
-	DDX_Check(pDX, IDC_SAMECLASS, m_b_keep_same_class);
-	DDX_Control(pDX, IDC_ZOOM_ON_OFF, set_zoom);
+	DDX_Text(p_dx, IDC_TIMEFIRST, m_time_first);
+	DDX_Text(p_dx, IDC_TIMELAST, m_time_last);
+	DDX_Text(p_dx, IDC_NSPIKES, m_spike_index);
+	DDX_Text(p_dx, IDC_SPIKE_CLASS, m_spike_class);
+	DDX_Text(p_dx, IDC_EDIT3, m_zoom);
+	DDX_Text(p_dx, IDC_EDIT4, m_class_source);
+	DDX_Text(p_dx, IDC_EDIT5, m_class_destination);
+	DDX_Check(p_dx, IDC_CHECK1, m_b_reset_zoom);
+	DDX_Check(p_dx, IDC_ARTEFACT, m_b_artefact);
+	DDX_Text(p_dx, IDC_JITTER, m_jitter_ms);
+	DDX_Control(p_dx, IDC_TAB1, m_tabCtrl);
+	DDX_Check(p_dx, IDC_SAMECLASS, m_b_keep_same_class);
+	DDX_Control(p_dx, IDC_ZOOM_ON_OFF, set_zoom);
 }
 
 BEGIN_MESSAGE_MAP(ViewSpikes, dbTableView)
@@ -58,48 +58,48 @@ BEGIN_MESSAGE_MAP(ViewSpikes, dbTableView)
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDOWN()
 
-	ON_MESSAGE(WM_MYMESSAGE, &ViewSpikes::OnMyMessage)
+	ON_MESSAGE(WM_MYMESSAGE, &ViewSpikes::on_my_message)
 
-	ON_COMMAND(ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA, &ViewSpikes::OnFormatAlldata)
-	ON_COMMAND(ID_FORMAT_CENTER_CURVE, &ViewSpikes::OnFormatCentercurve)
-	ON_COMMAND(ID_FORMAT_GAIN_ADJUST, &ViewSpikes::OnFormatGainadjust)
-	ON_COMMAND(ID_TOOLS_EDIT_SPIKES, &ViewSpikes::OnToolsEdittransformspikes)
+	ON_COMMAND(ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA, &ViewSpikes::on_format_all_data)
+	ON_COMMAND(ID_FORMAT_CENTER_CURVE, &ViewSpikes::on_format_center_curve)
+	ON_COMMAND(ID_FORMAT_GAIN_ADJUST, &ViewSpikes::on_format_gain_adjust)
+	ON_COMMAND(ID_TOOLS_EDIT_SPIKES, &ViewSpikes::on_tools_edit_transform_spikes)
 	ON_COMMAND(ID_EDIT_COPY, &ViewSpikes::OnEditCopy)
-	ON_COMMAND(ID_FORMAT_PREVIOUS_FRAME, &ViewSpikes::OnFormatPreviousframe)
-	ON_COMMAND(ID_FORMAT_NEXT_FRAME, &ViewSpikes::OnFormatNextframe)
+	ON_COMMAND(ID_FORMAT_PREVIOUS_FRAME, &ViewSpikes::on_format_previous_frame)
+	ON_COMMAND(ID_FORMAT_NEXT_FRAME, &ViewSpikes::on_format_next_frame)
 	ON_COMMAND(ID_RECORD_SHIFT_LEFT, &ViewSpikes::OnHScrollLeft)
 	ON_COMMAND(ID_RECORD_SHIFT_RIGHT, &ViewSpikes::OnHScrollRight)
 	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
 
-	ON_EN_CHANGE(IDC_NSPIKES, &ViewSpikes::OnEnChangeNOspike)
-	ON_EN_CHANGE(IDC_SPIKE_CLASS, &ViewSpikes::OnEnChangeSpikenoclass)
-	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewSpikes::OnEnChangeTimefirst)
-	ON_EN_CHANGE(IDC_TIMELAST, &ViewSpikes::OnEnChangeTimelast)
-	ON_EN_CHANGE(IDC_EDIT3, &ViewSpikes::OnEnChangeZoom)
-	ON_EN_CHANGE(IDC_EDIT4, &ViewSpikes::OnEnChangeSourceclass)
-	ON_EN_CHANGE(IDC_EDIT5, &ViewSpikes::OnEnChangeDestclass)
-	ON_EN_CHANGE(IDC_JITTER, &ViewSpikes::OnEnChangeJitter)
+	ON_EN_CHANGE(IDC_NSPIKES, &ViewSpikes::on_en_change_no_spike)
+	ON_EN_CHANGE(IDC_SPIKE_CLASS, &ViewSpikes::on_en_change_spike_class)
+	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewSpikes::on_en_change_time_first)
+	ON_EN_CHANGE(IDC_TIMELAST, &ViewSpikes::on_en_change_time_last)
+	ON_EN_CHANGE(IDC_EDIT3, &ViewSpikes::on_en_change_zoom)
+	ON_EN_CHANGE(IDC_EDIT4, &ViewSpikes::on_en_change_source_class)
+	ON_EN_CHANGE(IDC_EDIT5, &ViewSpikes::on_en_change_dest_class)
+	ON_EN_CHANGE(IDC_JITTER, &ViewSpikes::on_en_change_jitter)
 
-	ON_BN_CLICKED(IDC_GAIN_button, &ViewSpikes::OnGAINbutton)
-	ON_BN_CLICKED(IDC_BIAS_button, &ViewSpikes::OnBIASbutton)
-	ON_BN_CLICKED(IDC_ARTEFACT, &ViewSpikes::OnArtefact)
+	ON_BN_CLICKED(IDC_GAIN_button, &ViewSpikes::on_gain_button)
+	ON_BN_CLICKED(IDC_BIAS_button, &ViewSpikes::on_bias_button)
+	ON_BN_CLICKED(IDC_ARTEFACT, &ViewSpikes::on_artefact)
 
-	ON_BN_CLICKED(IDC_SAMECLASS, &ViewSpikes::OnBnClickedSameclass)
+	ON_BN_CLICKED(IDC_SAMECLASS, &ViewSpikes::on_bn_clicked_same_class)
 	ON_BN_CLICKED(IDC_ZOOM_ON_OFF, &ViewSpikes::on_zoom)
 END_MESSAGE_MAP()
 
-void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_deactivate_view)
+void ViewSpikes::OnActivateView(BOOL b_activate, CView* p_activate_view, CView* p_deactivate_view)
 {
-	if (bActivate)
+	if (b_activate)
 	{
 		const auto p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
-		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_ACTIVATE_VIEW, reinterpret_cast<LPARAM>(pActivateView->GetDocument()));
+		p_mainframe->PostMessage(WM_MYMESSAGE, HINT_ACTIVATE_VIEW, reinterpret_cast<LPARAM>(p_activate_view->GetDocument()));
 	}
 	else
 	{
 		const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-		if (this != pActivateView && this == p_deactivate_view)
+		if (this != p_activate_view && this == p_deactivate_view)
 		{
 			save_current_spk_file();
 			// save column parameters
@@ -122,20 +122,20 @@ void ViewSpikes::OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_d
 
 		p_app->options_view_data.viewdata = *(chart_data_wnd_.get_scope_parameters());
 	}
-	dbTableView::OnActivateView(bActivate, pActivateView, p_deactivate_view);
+	dbTableView::OnActivateView(b_activate, p_activate_view, p_deactivate_view);
 }
 
-BOOL ViewSpikes::OnMove(UINT nIDMoveCommand)
+BOOL ViewSpikes::OnMove(UINT n_id_move_command)
 {
 	save_current_spk_file();
-	return dbTableView::OnMove(nIDMoveCommand);
+	return dbTableView::OnMove(n_id_move_command);
 }
 
-void ViewSpikes::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void ViewSpikes::OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint)
 {
 	if (m_b_init_)
 	{
-		switch (LOWORD(lHint))
+		switch (LOWORD(l_hint))
 		{
 		case HINT_DOC_HAS_CHANGED:
 		case HINT_DOC_MOVE_RECORD:
@@ -192,7 +192,7 @@ void ViewSpikes::set_track_rectangle()
 	rect_vt_track_.right = rect1.right - rect0.left;
 }
 
-void ViewSpikes::OnMouseMove(UINT nFlags, CPoint point)
+void ViewSpikes::OnMouseMove(UINT n_flags, CPoint point)
 {
 	if (b_add_spike_mode_)
 	{
@@ -204,10 +204,10 @@ void ViewSpikes::OnMouseMove(UINT nFlags, CPoint point)
 		chart_data_wnd_.xor_temp_vt_tag(pt_vt_);
 		spike_class_listbox_.xor_temp_vt_tag(pt_vt_);
 	}
-	dbTableView::OnMouseMove(nFlags, point);
+	dbTableView::OnMouseMove(n_flags, point);
 }
 
-void ViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
+void ViewSpikes::OnLButtonUp(UINT n_flags, CPoint point)
 {
 	if (rect_vt_track_.PtInRect(point))
 	{
@@ -215,19 +215,19 @@ void ViewSpikes::OnLButtonUp(UINT nFlags, CPoint point)
 		const int ii_time = chart_data_wnd_.get_data_offset_from_pixel(point.x - rect_vt_track_.left);
 		jitter_ = m_jitter_ms;
 		auto b_check = TRUE;
-		if (nFlags & MK_CONTROL)
+		if (n_flags & MK_CONTROL)
 			b_check = FALSE;
 		add_spike_to_list(ii_time, b_check);
 		b_dummy_ = FALSE;
 	}
-	dbTableView::OnLButtonUp(nFlags, point);
+	dbTableView::OnLButtonUp(n_flags, point);
 }
 
-void ViewSpikes::OnLButtonDown(UINT nFlags, CPoint point)
+void ViewSpikes::OnLButtonDown(UINT n_flags, CPoint point)
 {
 	if (rect_vt_track_.PtInRect(point))
 		SetCapture();
-	dbTableView::OnLButtonDown(nFlags, point);
+	dbTableView::OnLButtonDown(n_flags, point);
 }
 
 void ViewSpikes::set_mouse_cursor(const short param_value)
@@ -240,14 +240,14 @@ void ViewSpikes::set_mouse_cursor(const short param_value)
 	GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(param_value, 0));
 }
 
-void ViewSpikes::change_zoom(LPARAM lParam)
+void ViewSpikes::change_zoom(LPARAM l_param)
 {
-	if (HIWORD(lParam) == IDC_DISPLAY_DAT)
+	if (HIWORD(l_param) == IDC_DISPLAY_DAT)
 	{
 		l_first_ = chart_data_wnd_.get_data_first_index();
 		l_last_ = chart_data_wnd_.get_data_last_index();
 	}
-	else if (HIWORD(lParam) == IDC_LISTCLASSES) //TODO [does not work! HIWORD(lParam)==1]
+	else if (HIWORD(l_param) == IDC_LISTCLASSES) //TODO [does not work! HIWORD(lParam)==1]
 	{
 		l_first_ = spike_class_listbox_.get_time_first();
 		l_last_ = spike_class_listbox_.get_time_last();
@@ -255,10 +255,10 @@ void ViewSpikes::change_zoom(LPARAM lParam)
 	update_legends(TRUE);
 }
 
-LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT ViewSpikes::on_my_message(WPARAM w_param, LPARAM l_param)
 {
-	short param_value = LOWORD(lParam);
-	switch (wParam)
+	short param_value = LOWORD(l_param);
+	switch (w_param)
 	{
 	case HINT_SET_MOUSE_CURSOR:
 		set_mouse_cursor(param_value);
@@ -272,7 +272,7 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	case HINT_CHANGE_HZ_LIMITS:
 	case HINT_CHANGE_ZOOM:
 	case HINT_VIEW_SIZE_CHANGED:
-		change_zoom(lParam);
+		change_zoom(l_param);
 		break;
 
 	case HINT_HIT_SPIKE:
@@ -286,7 +286,7 @@ LRESULT ViewSpikes::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		if (param_value < 0)
 			param_value = 0;
 		m_spike_index = param_value;
-		OnToolsEdittransformspikes();
+		on_tools_edit_transform_spikes();
 		break;
 
 	case HINT_DROPPED:
@@ -700,7 +700,7 @@ void ViewSpikes::adjust_y_zoom_to_max_min(const BOOL b_force_search_max_min)
 {
 	if (y_we_ == 1 || b_force_search_max_min)
 	{
-		short max, min;
+		int max, min;
 		m_pSpkList->get_total_max_min(TRUE, &max, &min);
 		y_we_ = MulDiv(max - min + 1, 10, 8);
 		y_wo_ = (max + min) / 2;
@@ -745,7 +745,7 @@ void ViewSpikes::select_spike_list(int current_selection)
 	chart_data_wnd_.Invalidate();
 }
 
-void ViewSpikes::OnToolsEdittransformspikes()
+void ViewSpikes::on_tools_edit_transform_spikes()
 {
 	// return if no spike shape
 	if (spike_class_listbox_.get_xw_extent() == 0) 
@@ -1169,7 +1169,7 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 	return flag;
 }
 
-void ViewSpikes::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
+void ViewSpikes::OnBeginPrinting(CDC* p_dc, CPrintInfo* p_info)
 {
 	m_b_is_printing_ = TRUE;
 	m_l_first_0_ = spike_class_listbox_.get_time_first();
@@ -1184,12 +1184,12 @@ void ViewSpikes::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 	p_dc->SetBkMode(TRANSPARENT);
 }
 
-void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
+void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 {
 	m_p_old_font_ = p_dc->SelectObject(&m_font_print_);
 	p_dc->SetMapMode(MM_TEXT); 
-	print_file_bottom_page(p_dc, pInfo); 
-	const int current_page = static_cast<int>(pInfo->m_nCurPage); 
+	print_file_bottom_page(p_dc, p_info); 
+	const int current_page = static_cast<int>(p_info->m_nCurPage); 
 
 	// --------------------- load data corresponding to the first row of current page
 
@@ -1297,7 +1297,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 
 		//m_pSpkList = m_pSpkDoc->GetSpkList_Current();
 		//AdjustYZoomToMaxMin(true); 
-		short max, min;
+		int max, min;
 		m_pSpkDoc->get_spike_list_current()->get_total_max_min(TRUE, &max, &min);
 		const int middle = (static_cast<int>(max) + static_cast<int>(min)) / 2;
 		spike_class_listbox_.set_y_zoom(extent, middle);
@@ -1417,7 +1417,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		p_dc->SelectObject(m_p_old_font_);
 }
 
-void ViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
+void ViewSpikes::OnEndPrinting(CDC* p_dc, CPrintInfo* p_info)
 {
 	m_font_print_.DeleteObject();
 	m_b_is_printing_ = FALSE;
@@ -1505,17 +1505,17 @@ void ViewSpikes::center_data_display_on_spike(const int spike_no)
 	chart_data_wnd_.Invalidate();
 }
 
-void ViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void ViewSpikes::OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar)
 {
-	if (pScrollBar == nullptr)
+	if (p_scroll_bar == nullptr)
 	{
-		dbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
+		dbTableView::OnHScroll(n_sb_code, n_pos, p_scroll_bar);
 		return;
 	}
 
 	// trap messages from ScrollBarEx
 	CString cs;
-	switch (nSBCode)
+	switch (n_sb_code)
 	{
 	case SB_THUMBTRACK:
 	case SB_THUMBPOSITION:
@@ -1528,7 +1528,7 @@ void ViewSpikes::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		break;
 
 	default:
-		scroll_file(nSBCode, nPos);
+		scroll_file(n_sb_code, n_pos);
 		break;
 	}
 
@@ -1722,7 +1722,7 @@ void ViewSpikes::on_zoom()
 		zoom_on_preset_interval(ii_start);
 	}
 	else
-		OnFormatAlldata();
+		on_format_all_data();
 }
 
 
@@ -1739,14 +1739,14 @@ void ViewSpikes::zoom_on_preset_interval(int ii_start)
 	chart_data_wnd_.Invalidate();
 }
 
-void ViewSpikes::OnGAINbutton()
+void ViewSpikes::on_gain_button()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_BIAS_button))->SetState(0);
 	static_cast<CButton*>(GetDlgItem(IDC_GAIN_button))->SetState(1);
 	set_v_bar_mode(BAR_GAIN);
 }
 
-void ViewSpikes::OnBIASbutton()
+void ViewSpikes::on_bias_button()
 {
 	static_cast<CButton*>(GetDlgItem(IDC_BIAS_button))->SetState(1);
 	static_cast<CButton*>(GetDlgItem(IDC_GAIN_button))->SetState(0);
@@ -1825,13 +1825,13 @@ void ViewSpikes::update_bias_scroll()
 	scrollbar_y_.SetScrollPos(i_pos, TRUE);
 }
 
-void ViewSpikes::scroll_bias(UINT nSBCode, UINT nPos)
+void ViewSpikes::scroll_bias(const UINT n_sb_code, const UINT n_pos)
 {
 	CChanlistItem* chan = chart_data_wnd_.get_channel_list_item(0);
 	auto l_size = chan->GetYzero() - chan->GetDataBinZero();
 	const auto y_extent = chan->GetYextent();
 	// get corresponding data
-	switch (nSBCode)
+	switch (n_sb_code)
 	{
 	case SB_LEFT: // scroll to the start
 		l_size = Y_ZERO_MIN;
@@ -1853,7 +1853,7 @@ void ViewSpikes::scroll_bias(UINT nSBCode, UINT nPos)
 		break;
 	case SB_THUMBPOSITION: // scroll to pos = nPos
 	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
-		l_size = MulDiv(static_cast<int>(nPos) - 50, Y_ZERO_SPAN, 100);
+		l_size = MulDiv(static_cast<int>(n_pos) - 50, Y_ZERO_SPAN, 100);
 		break;
 	default: // NOP: set position only
 		break;
@@ -1889,7 +1889,7 @@ void ViewSpikes::OnVScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar* p
 	dbTableView::OnVScroll(n_sb_code, n_pos, p_scroll_bar);
 }
 
-void ViewSpikes::OnArtefact()
+void ViewSpikes::on_artefact()
 {
 	UpdateData(TRUE);
 	if (m_spike_index < 0)
@@ -1924,13 +1924,13 @@ void ViewSpikes::OnHScrollRight()
 	OnHScroll(SB_PAGERIGHT, NULL, static_cast<CScrollBar*>(GetDlgItem(IDC_FILESCROLL)));
 }
 
-void ViewSpikes::OnBnClickedSameclass()
+void ViewSpikes::on_bn_clicked_same_class()
 {
 	m_b_keep_same_class = static_cast<CButton*>(GetDlgItem(IDC_SAMECLASS))->GetCheck();
 }
 
 
-void ViewSpikes::OnFormatAlldata()
+void ViewSpikes::on_format_all_data()
 {
 	l_first_ = 0;
 	l_last_ = m_pSpkDoc->get_acq_size() - 1;
@@ -1945,7 +1945,7 @@ void ViewSpikes::OnFormatAlldata()
 	chart_data_wnd_.Invalidate();
 }
 
-void ViewSpikes::OnFormatCentercurve()
+void ViewSpikes::on_format_center_curve()
 {
 	// TODO 
 
@@ -1959,9 +1959,9 @@ void ViewSpikes::OnFormatCentercurve()
 		spike->center_spike_amplitude(i_t1, i_t2, 1);
 	}
 
-	short max, min;
+	int max, min;
 	m_pSpkList->get_total_max_min(TRUE, &max, &min);
-	const WORD middle = max / 2 + min / 2;
+	const int middle = max / 2 + min / 2;
 	spike_class_listbox_.set_y_zoom(spike_class_listbox_.get_yw_extent(), middle);
 
 	if (p_data_doc_ != nullptr)
@@ -1972,7 +1972,7 @@ void ViewSpikes::OnFormatCentercurve()
 	chart_data_wnd_.Invalidate();
 }
 
-void ViewSpikes::OnFormatGainadjust()
+void ViewSpikes::on_format_gain_adjust()
 {
 	if (m_pSpkDoc != nullptr)
 	{
@@ -1986,12 +1986,12 @@ void ViewSpikes::OnFormatGainadjust()
 	chart_data_wnd_.Invalidate();
 }
 
-void ViewSpikes::OnFormatPreviousframe()
+void ViewSpikes::on_format_previous_frame()
 {
 	zoom_on_preset_interval(l_first_ * 2 - l_last_);
 }
 
-void ViewSpikes::OnFormatNextframe()
+void ViewSpikes::on_format_next_frame()
 {
 	const long len = l_last_ - l_first_;
 	auto last = l_last_ + len;
@@ -2001,7 +2001,7 @@ void ViewSpikes::OnFormatNextframe()
 }
 
 
-void ViewSpikes::OnEnChangeSpikenoclass()
+void ViewSpikes::on_en_change_spike_class()
 {
 	if (!mm_spike_class_.m_bEntryDone)
 		return;
@@ -2018,7 +2018,7 @@ void ViewSpikes::OnEnChangeSpikenoclass()
 	}
 }
 
-void ViewSpikes::OnEnChangeTimefirst()
+void ViewSpikes::on_en_change_time_first()
 {
 	if (mm_time_first_.m_bEntryDone)
 	{
@@ -2034,7 +2034,7 @@ void ViewSpikes::OnEnChangeTimefirst()
 	}
 }
 
-void ViewSpikes::OnEnChangeTimelast()
+void ViewSpikes::on_en_change_time_last()
 {
 	if (mm_time_last_.m_bEntryDone)
 	{
@@ -2050,7 +2050,7 @@ void ViewSpikes::OnEnChangeTimelast()
 	}
 }
 
-void ViewSpikes::OnEnChangeZoom()
+void ViewSpikes::on_en_change_zoom()
 {
 	if (mm_zoom_.m_bEntryDone)
 	{
@@ -2068,7 +2068,7 @@ void ViewSpikes::OnEnChangeZoom()
 	}
 }
 
-void ViewSpikes::OnEnChangeSourceclass()
+void ViewSpikes::on_en_change_source_class()
 {
 	if (mm_class_source_.m_bEntryDone)
 	{
@@ -2077,7 +2077,7 @@ void ViewSpikes::OnEnChangeSourceclass()
 	}
 }
 
-void ViewSpikes::OnEnChangeDestclass()
+void ViewSpikes::on_en_change_dest_class()
 {
 	if (mm_class_destination_.m_bEntryDone)
 	{
@@ -2086,7 +2086,7 @@ void ViewSpikes::OnEnChangeDestclass()
 	}
 }
 
-void ViewSpikes::OnEnChangeJitter()
+void ViewSpikes::on_en_change_jitter()
 {
 	if (mm_jitter_ms_.m_bEntryDone)
 	{
@@ -2095,7 +2095,7 @@ void ViewSpikes::OnEnChangeJitter()
 	}
 }
 
-void ViewSpikes::OnEnChangeNOspike()
+void ViewSpikes::on_en_change_no_spike()
 {
 	if (mm_spike_index_.m_bEntryDone)
 	{

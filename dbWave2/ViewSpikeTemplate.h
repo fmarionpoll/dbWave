@@ -62,10 +62,9 @@ protected:
 public:
 	void set_view_mouse_cursor(const int cursor_mode) { m_chart_spk_wnd_shape_.set_mouse_cursor_type(cursor_mode); }
 
-public:
-	BOOL OnMove(UINT nIDMoveCommand) override;
+	BOOL OnMove(UINT n_id_move_command) override;
 protected:
-	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+	void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint) override;
 	void DoDataExchange(CDataExchange* pDX) override;
 	void OnInitialUpdate() override;
 
@@ -96,20 +95,20 @@ protected:
 
 public:
 	// Generated message map functions
-	afx_msg void OnEnChangeclassno();
-	afx_msg void OnEnChangeTimefirst();
-	afx_msg void OnEnChangeTimelast();
+	afx_msg void on_en_change_class();
+	afx_msg void on_en_change_time_first();
+	afx_msg void on_en_change_time_last();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
-	afx_msg void OnFormatAlldata();
-	afx_msg void OnFormatGainadjust();
-	afx_msg void OnFormatCentercurve();
-	afx_msg void OnBuildTemplates();
-	afx_msg void OnEnChangeHitrate();
-	afx_msg void OnEnChangeTolerance();
-	afx_msg void OnEnChangeHitrateSort();
-	afx_msg void OnKeydownTemplateList(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnCheck1();
+	afx_msg LRESULT on_my_message(WPARAM wParam, LPARAM lParam);
+	afx_msg void on_format_all_data();
+	afx_msg void on_format_gain_adjust();
+	afx_msg void on_format_center_curve();
+	afx_msg void on_build_templates();
+	afx_msg void on_en_change_hit_rate();
+	afx_msg void on_en_change_tolerance();
+	afx_msg void on_en_change_hit_rate_sort();
+	afx_msg void on_keydown_template_list(NMHDR* pNMHDR, LRESULT* p_result);
+	afx_msg void on_check1();
 	afx_msg void OnDestroy();
 
 	//afx_msg void OnAllClasses();
@@ -117,15 +116,15 @@ public:
 	//afx_msg void OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult);
 	//afx_msg void OnLButtonClickedTab(NMHDR* pNMHDR, LRESULT* pResult);
 
-	afx_msg void OnBnClickedSort();
-	afx_msg void OnBnClickedDisplay();
-	afx_msg void OnEnChangeIfirstsortedclass();
+	afx_msg void on_bn_clicked_sort();
+	afx_msg void on_bn_clicked_display();
+	afx_msg void on_en_change_i_first_sorted_class();
 
-	afx_msg void OnTcnSelchangeTab2(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnNMClickTab2(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnBnClickedDisplaysingleclass();
-	afx_msg void OnEnChangeT1();
-	afx_msg void OnEnChangeT2();
+	afx_msg void on_tcn_sel_change_tab2(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void on_nm_click_tab2(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void on_bn_clicked_display_single_class();
+	afx_msg void on_en_change_t1();
+	afx_msg void on_en_change_t2();
 
 	DECLARE_MESSAGE_MAP()
 };

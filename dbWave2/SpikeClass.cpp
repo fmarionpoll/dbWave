@@ -9,27 +9,27 @@
 SpikeClass::SpikeClass()
 = default;
 
-SpikeClass::SpikeClass(int SpikeSize)
+SpikeClass::SpikeClass(const int spike_size)
 {
-	m_spike_size = SpikeSize;
+	m_spike_size_ = spike_size;
 }
 
 SpikeClass::~SpikeClass()
 {
-	EraseData();
+	erase_data();
 }
 
-void SpikeClass::EraseData()
+void SpikeClass::erase_data()
 {
 	// delete buffer and array
-	if (m_class_buffer != nullptr)
-		free(m_class_buffer);
-	m_class_buffer = nullptr;
-	m_buffer_size = 0;
+	if (m_class_buffer_ != nullptr)
+		free(m_class_buffer_);
+	m_class_buffer_ = nullptr;
+	m_buffer_size_ = 0;
 
-	if (m_elements_array != nullptr)
-		free(m_elements_array);
-	m_EArraySize = NULL;
+	if (m_elements_array_ != nullptr)
+		free(m_elements_array_);
+	m_e_array_size_ = NULL;
 }
 
 IMPLEMENT_SERIAL(SpikeClass, CObject, 0 /* schema number*/)
@@ -41,54 +41,54 @@ void SpikeClass::Serialize(CArchive& ar)
 	if (ar.IsStoring())
 	{
 		// store attributes
-		w1 = static_cast<WORD>(m_n_classes);  ar << w1;
-		w2 = static_cast<WORD>(m_spike_size); ar << w2;
-		ar << m_buffer_size;
+		w1 = static_cast<WORD>(m_n_classes_);  ar << w1;
+		w2 = static_cast<WORD>(m_spike_size_); ar << w2;
+		ar << m_buffer_size_;
 
 		// store array
-		if (m_elements_array != nullptr) {
-			for (auto i = 0; i < m_n_classes; i++)
-				ar << static_cast<WORD>(*(m_elements_array + i));
+		if (m_elements_array_ != nullptr) {
+			for (auto i = 0; i < m_n_classes_; i++)
+				ar << static_cast<WORD>(*(m_elements_array_ + i));
 		}
 
 		// store buffer
-		const int buffer_total_size = m_n_classes * m_spike_size;
-		if (m_class_buffer != nullptr) {
+		const int buffer_total_size = m_n_classes_ * m_spike_size_;
+		if (m_class_buffer_ != nullptr) {
 			for (auto i = 0; i < buffer_total_size; i++)
 			{
-				ar << static_cast<WORD>(*(m_class_buffer + i));
+				ar << static_cast<WORD>(*(m_class_buffer_ + i));
 			}
 		}
 	}
 	else
 	{
 		// load attributes
-		ar >> w1; m_n_classes = w1;
-		ar >> w2; m_spike_size = w2;
-		ar >> m_buffer_size;
-		SizeNclasses(w1, w2);
+		ar >> w1; m_n_classes_ = w1;
+		ar >> w2; m_spike_size_ = w2;
+		ar >> m_buffer_size_;
+		size_n_classes(w1, w2);
 
 		// load array
-		if (m_elements_array != nullptr) {
-			for (auto i = 0; i < m_n_classes; i++)
+		if (m_elements_array_ != nullptr) {
+			for (auto i = 0; i < m_n_classes_; i++)
 			{
 				ar >> w1;
-				*(m_elements_array + i) = w1;
+				*(m_elements_array_ + i) = w1;
 			}
 		}
 
-		const int buffer_total_size = m_n_classes * m_spike_size;
-		if (m_class_buffer != nullptr) {
+		const int buffer_total_size = m_n_classes_ * m_spike_size_;
+		if (m_class_buffer_ != nullptr) {
 			for (auto i = 0; i < buffer_total_size; i++)
 			{
 				ar >> w1;
-				*(m_class_buffer + i) = static_cast<short>(w1);
+				*(m_class_buffer_ + i) = static_cast<short>(w1);
 			}
 		}
 	}
 }
 
-BOOL SpikeClass::SizeNclasses(const int n_classes, const int spike_size)
+BOOL SpikeClass::size_n_classes(const int n_classes, const int spike_size)
 {
 	if (n_classes * spike_size == 0)
 		return FALSE;
@@ -99,23 +99,23 @@ BOOL SpikeClass::SizeNclasses(const int n_classes, const int spike_size)
 	short* p_rw_buffer;
 	int* p_e_array;
 
-	if (m_class_buffer == nullptr)
+	if (m_class_buffer_ == nullptr)
 	{
 		p_rw_buffer = static_cast<short*>(malloc(w_size));
 		p_e_array = static_cast<int*>(malloc(i_size));
 	}
 	else
 	{
-		p_rw_buffer = static_cast<short*>(realloc(m_class_buffer, w_size));
-		p_e_array = static_cast<int*>(realloc(m_elements_array, i_size));
+		p_rw_buffer = static_cast<short*>(realloc(m_class_buffer_, w_size));
+		p_e_array = static_cast<int*>(realloc(m_elements_array_, i_size));
 	}
 
 	if (p_rw_buffer != nullptr && p_e_array != nullptr)
 	{
-		m_class_buffer = p_rw_buffer;
-		m_elements_array = p_e_array;
-		m_n_classes = n_classes;
-		m_spike_size = spike_size;
+		m_class_buffer_ = p_rw_buffer;
+		m_elements_array_ = p_e_array;
+		m_n_classes_ = n_classes;
+		m_spike_size_ = spike_size;
 		b_ret = TRUE;
 	}
 

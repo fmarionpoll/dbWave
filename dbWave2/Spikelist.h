@@ -53,8 +53,8 @@ protected:
 
 	// (2) -------------ordered spike list with class, time, etc-----------------------------
 	BOOL extrema_valid_  {false};
-	short minimum_over_all_spikes_ {0}; 
-	short maximum_over_all_spikes_ {0};
+	int minimum_over_all_spikes_ {0}; 
+	int maximum_over_all_spikes_ {0};
 	int min_y1_over_all_spikes_{ 0 };
 	int max_y1_over_all_spikes_{ 0 };
 	int spike_length_ {60};
@@ -109,7 +109,7 @@ public:
 	int remove_spike(int spike_index);
 	BOOL is_any_spike_around(long ii_time, int jitter, int& spike_index, int channel_index);
 
-	void get_total_max_min(BOOL b_recalculate, short* max, short* min);
+	void get_total_max_min(BOOL b_recalculate, int* max, int* min);
 	int get_total_max_min_of_y1(int* max, int* min);
 
 	BOOL init_spike_list(const AcqDataDoc* acq_data_doc, const SPKDETECTPARM* spk_detect_parameters);

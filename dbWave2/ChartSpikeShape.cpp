@@ -85,7 +85,8 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 
 		const auto spike_length = p_spike_list_->get_spike_length();
 		ASSERT(spike_length > 0);
-		polyline_points_.SetSize(spike_length, 2);
+		if (polyline_points_.GetSize() < p_spike_list_->get_spike_length())
+			polyline_points_.SetSize(spike_length, 2);
 		init_polypoint_x_axis();
 
 		// loop through all spikes of the list
@@ -187,7 +188,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 
 void ChartSpikeShape::display_spike_data(CDC* p_dc, const Spike* spike, const int spike_length)
 {
-	short* p_spike_data = spike->get_p_data();
+	int* p_spike_data = spike->get_p_data();
 	fill_polypoint_y_axis(p_spike_data);
 	p_dc->Polyline(&polyline_points_[0], spike_length);
 }
@@ -226,10 +227,10 @@ void ChartSpikeShape::display_flagged_spikes(const BOOL b_highlight)
 	Invalidate();
 }
 
-int ChartSpikeShape::display_ex_data(short* p_data, const int color)
+int ChartSpikeShape::display_ex_data(int* p_data, const int color)
 {
 	const auto spike_length = p_spike_list_->get_spike_length();
-	if (polyline_points_.GetSize() != spike_length)
+	if (polyline_points_.GetSize() < spike_length)
 	{
 		polyline_points_.SetSize(spike_length, 2);
 		init_polypoint_x_axis();
@@ -525,7 +526,7 @@ void ChartSpikeShape::get_extents_current_spk_list()
 {
 	if (y_we_ == 1 || y_we_ == 0)
 	{
-		short value_max, value_min;
+		int value_max, value_min;
 		p_spike_list_->get_total_max_min(TRUE, &value_max, &value_min);
 		y_we_ = MulDiv((value_max - value_min), 10, 9) + 1;
 		y_wo_ = value_max / 2 + value_min / 2;
@@ -543,15 +544,14 @@ void ChartSpikeShape::init_polypoint_x_axis()
 	const auto n_elements = polyline_points_.GetSize();
 	x_we_ = n_elements + 1;
 	ASSERT(n_elements > 0);
-
 	for (auto i = 0; i < n_elements; i++)
 		polyline_points_[i].x = i + 1;
 }
 
-void ChartSpikeShape::fill_polypoint_y_axis(short* lp_source)
+void ChartSpikeShape::fill_polypoint_y_axis(int* lp_source)
 {
 	auto n_elements = polyline_points_.GetSize();
-	if (n_elements == 0)
+	if (n_elements == 0 || n_elements < p_spike_list_->get_spike_length())
 	{
 		n_elements = p_spike_list_->get_spike_length();
 		ASSERT(n_elements > 0);
@@ -581,7 +581,7 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 	// check initial conditions
 	if (y_we_ == 1)
 	{
-		short value_max, value_min;
+		int value_max, value_min;
 		p_spike_list_->get_total_max_min(TRUE, &value_max, &value_min);
 		y_we_ = value_max - value_min + 1;
 		y_wo_ = (value_max + value_min) / 2;
@@ -591,7 +591,7 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 	x_we_ = rect->Width() - 2;
 
 	const auto spike_length = p_spike_list_->get_spike_length();
-	if (polyline_points_.GetSize() != spike_length)
+	if (polyline_points_.GetSize() < spike_length)
 		polyline_points_.SetSize(spike_length, 2);
 
 	// set mapping mode and viewport
@@ -678,13 +678,13 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 	y_viewport_extent_ = old_y_ve;
 }
 
-void ChartSpikeShape::print_array_to_dc(CDC * p_dc, short* p_array)
+void ChartSpikeShape::print_array_to_dc(CDC * p_dc, int* p_array)
 {
 	const auto n_elements = polyline_points_.GetSize();
 	for (auto i = 0; i < n_elements; i++, p_array++)
 	{
 		auto y = *p_array;
-		y = static_cast<short>(MulDiv(y - y_wo_, y_viewport_extent_, y_we_) + y_viewport_origin_);
+		y = MulDiv(y - y_wo_, y_viewport_extent_, y_we_) + y_viewport_origin_;
 		polyline_points_[i].y = y;
 	}
 

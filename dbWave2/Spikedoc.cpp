@@ -14,7 +14,7 @@ CSpikeDoc::CSpikeDoc()
 
 void CSpikeDoc::clear_data()
 {
-	m_spike_class.EraseData();
+	m_spike_class.erase_data();
 	if (m_stimulus_intervals.n_items > 0)
 	{
 		m_stimulus_intervals.RemoveAll();
@@ -700,7 +700,7 @@ void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* shared_file, const O
 				continue;
 
 			// get value, compute statistics
-			short max, min;
+			int max, min;
 			spike->get_max_min(&max, &min);
 			auto val = max - min;
 			y_sum += val;
@@ -852,20 +852,22 @@ void CSpikeDoc::export_spk_attributes_one_file(CSharedFile* shared_file, const O
 		const auto t_val = static_cast<float>(ii_time) / rate;
 		cs_dummy.Format(_T("\r\n%lf\t%i"), t_val, cla);
 		shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
+		int value_max, value_min;
 
 		switch (options_view_spikes->exportdatatype)
 		{
 		// 2) export time interval (absolute time)
 		case EXPORT_INTERV:
 			break;
+
 		// 3) export extrema
 		case EXPORT_EXTREMA:
-			short value_max, value_min;
 			pSpike->get_max_min(&value_max, &value_min);
 			cs_dummy.Format(_T("\t%.3lf\t%.3lf"), (static_cast<double>(value_max) - bin_zero) * volts_per_bin,
 			                (static_cast<double>(value_min) - bin_zero) * volts_per_bin);
 			shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 			break;
+
 		// 4) export max - min
 		case EXPORT_AMPLIT:
 			pSpike->measure_max_then_min_ex(&value_max, &i_max, &value_min, &i_min, i_first, i_last);
@@ -873,6 +875,7 @@ void CSpikeDoc::export_spk_attributes_one_file(CSharedFile* shared_file, const O
 			                (static_cast<double>(i_min) - i_max) / rate_ms);
 			shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 			break;
+
 		case EXPORT_SPIKEPOINTS:
 			for (auto index = 0; index < spike_list->get_spike_length(); index++)
 			{
@@ -1628,7 +1631,7 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, const OPTIONS_
 		i0++;
 
 	// ------- count total spk/interval (given b_spk_class & b_artefacts)
-	const short bin_zero = spike_list->get_acq_bin_zero();
+	const auto bin_zero = spike_list->get_acq_bin_zero();
 	for (auto j = i0; j < spike_count; j++)
 	{
 		const Spike* spike = spike_list->get_spike(j);

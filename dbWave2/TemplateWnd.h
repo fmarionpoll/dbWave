@@ -16,81 +16,79 @@ public:
 	CTemplateWnd& operator =(const CTemplateWnd& arg);
 	void Serialize(CArchive& ar) override;
 
-	// Attributes
-public:
 	// user defined parameters
-	CString m_csID;
-	int m_classID;
-	float m_ktolerance; // user defined value
-	double m_globalstd; // parameter to be set by parent
+	CString m_cs_id;
+	int m_class_id;
+	float m_k_tolerance; // user defined value
+	double m_global_std; // parameter to be set by parent
 	double m_power; // power of the signal
 
-	int GetNitems() const { return m_nitems; }
+	int get_n_items() const { return m_n_items_; }
 
-	void SetGlobalstd(double* globalstd)
+	void set_global_std(const double* global_std)
 	{
-		m_globalstd = *globalstd;
-		m_bValid = FALSE;
+		m_global_std = *global_std;
+		m_b_valid_ = FALSE;
 	}
 
-	void SetkTolerance(float* ktolerance)
+	void set_k_tolerance(const float* k_tolerance)
 	{
-		m_ktolerance = *ktolerance;
-		m_bValid = FALSE;
+		m_k_tolerance = *k_tolerance;
+		m_b_valid_ = FALSE;
 	}
 
 protected:
-	BOOL m_bValid; // tell if pMean data are valid
-	int m_tpllen; // length of templates array
+	BOOL m_b_valid_; // tell if pMean data are valid
+	int m_tpl_len_; // length of templates array
 	// template array - intermediary results : sum, sum2
 	// length = total spike length (defined by m_tpllen)
-	mytype* m_pSumArray; // array declared for longs
-	mytype* m_pSUM0; // array with sum (X)
-	mytype* m_pSUM20; // array with sum (X * X)
-	long m_nitems; // n elements
+	mytype* m_p_sum_array_; // array declared for longs
+	mytype* m_p_sum0_; // array with sum (X)
+	mytype* m_p_sum20_; // array with sum (X * X)
+	long m_n_items_; // n elements
 
 	// template array - results and envelope
 	// length = total spike length
 	// mean, sup value, low value (as computed by tSetdisplayData())
 	// combined arrays
-	int* m_pAvg; // first point of the array
-	int* m_pMax0; // upper limit
-	int* m_pMin0; // lower limit
+	int* m_p_avg_; // first point of the array
+	int* m_p_max0_; // upper limit
+	int* m_p_min0_; // lower limit
 
 	// Operations
 public:
-	void SetTemplateLength(int len, int extent = -1, int org = -1);
-	void tSetdisplayData(); // fill pMean data
-	void tInit(); // init parameters, erase data pSum & pMean
-	void tAddSpikeTopSum(short* p_source);
-	double tPowerOfpSum();
-	BOOL tGetNumberOfPointsWithin(short* p_source, int* hitrate);
-	double tMinDist(short* p_source, int* ioffsetmin, BOOL bJitter = FALSE);
-	void tGlobalstats(double* gstd, double* gdist);
+	void set_template_length(int len, int extent = -1, int org = -1);
+	void t_set_display_data(); // fill pMean data
+	void t_init(); // init parameters, erase data pSum & pMean
+	void t_add_spike_top_sum(int* p_source);
+	double t_power_of_p_sum();
+	BOOL t_get_number_of_points_within(int* p_source, const int* hit_rate);
+	double t_min_dist(int* p_source, int* i_offset_min, BOOL b_jitter = FALSE);
+	void t_global_stats(double* g_std, double* g_dist);
 
 protected:
-	double tDist(short* p_source);
-	void DeleteArrays();
+	double t_dist(int* p_source) const;
+	void delete_arrays();
 
 	// Implementation : display
 protected:
-	CArray<CPoint, CPoint> m_ptsAvg;
-	CArray<CPoint, CPoint> m_ptsArea; // points displayed with polyline
+	CArray<CPoint, CPoint> m_pts_avg_;
+	CArray<CPoint, CPoint> m_pts_area_; // points displayed with polyline
 
-	void InitPolypointAbscissa();
-	void FillOrdinatesAtscale(BOOL bScale);
-	void GetExtents();
+	void init_polypoint_abscissa();
+	void fill_ordinates_at_scale(BOOL bScale);
+	void get_extents();
 public:
 	void plot_data_to_dc(CDC* p_dc) override;
 
 	// Generated message map functions
 protected:
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-	afx_msg BOOL OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message);
+	afx_msg void OnLButtonDblClk(UINT n_flags, CPoint point);
+	afx_msg void OnLButtonDown(UINT n_flags, CPoint point);
+	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
+	afx_msg void OnMouseMove(UINT n_flags, CPoint point);
+	afx_msg void OnRButtonDown(UINT n_flags, CPoint point);
+	afx_msg void OnRButtonUp(UINT n_flags, CPoint point);
+	afx_msg BOOL OnSetCursor(CWnd* p_wnd, UINT n_hit_test, UINT message);
 	DECLARE_MESSAGE_MAP()
 };

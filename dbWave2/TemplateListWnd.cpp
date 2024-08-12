@@ -16,30 +16,30 @@ IMPLEMENT_SERIAL(CTemplateListWnd, CListCtrl, 0 /* schema number*/)
 
 CTemplateListWnd::CTemplateListWnd()
 {
-	m_tpl0.tInit();
+	m_tpl0_.t_init();
 }
 
 CTemplateListWnd::~CTemplateListWnd()
 {
-	for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
+	for (auto i = 0; i < template_wnd_ptr_array_.GetSize(); i++)
 	{
-		const auto template_wnd_ptr = templatewnd_ptr_array.GetAt(i);
+		const auto template_wnd_ptr = template_wnd_ptr_array_.GetAt(i);
 		delete template_wnd_ptr;
 	}
-	templatewnd_ptr_array.RemoveAll();
+	template_wnd_ptr_array_.RemoveAll();
 }
 
 CTemplateListWnd& CTemplateListWnd::operator =(const CTemplateListWnd& arg)
 {
 	if (this != &arg)
 	{
-		DeleteAllTemplates();
-		m_tpl0 = arg.m_tpl0;
-		for (auto i = 0; i < arg.templatewnd_ptr_array.GetSize(); i++)
+		delete_all_templates();
+		m_tpl0_ = arg.m_tpl0_;
+		for (auto i = 0; i < arg.template_wnd_ptr_array_.GetSize(); i++)
 		{
-			const auto p_source = arg.GetTemplateWnd(i);
-			InsertTemplate(i, 0);
-			const auto p_destination = GetTemplateWnd(i);
+			const auto p_source = arg.get_template_wnd(i);
+			insert_template(i, 0);
+			const auto p_destination = get_template_wnd(i);
 			*p_destination = *p_source;
 		}
 	}
@@ -50,38 +50,38 @@ void CTemplateListWnd::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		const WORD wversion = 1;
-		ar << wversion;
+		constexpr WORD w_version = 1;
+		ar << w_version;
 
-		const auto nstrings = 0;
-		ar << nstrings;
+		constexpr auto n_string = 0;
+		ar << n_string;
 
-		const auto nints = 6;
-		ar << nints;
-		ar << m_tpllen;
-		ar << m_tpleft;
-		ar << m_tpright;
-		ar << m_hitrate;
-		ar << m_yextent;
-		ar << m_yzero;
+		constexpr auto n_int = 6;
+		ar << n_int;
+		ar << m_tpl_len_;
+		ar << m_tpl_left_;
+		ar << m_tpl_right_;
+		ar << m_hit_rate_;
+		ar << m_y_extent_;
+		ar << m_y_zero_;
 
-		const auto nfloats = 1;
-		ar << nfloats;
-		ar << m_ktolerance;
+		constexpr auto n_float = 1;
+		ar << n_float;
+		ar << m_k_tolerance_;
 
-		const auto ndoubles = 2;
-		ar << ndoubles;
-		ar << m_globalstd; // 1
-		ar << m_globaldist; // 2
+		constexpr auto n_double = 2;
+		ar << n_double;
+		ar << m_global_std; // 1
+		ar << m_global_dist; // 2
 
 		// serialize templates
-		m_tpl0.Serialize(ar);
-		ar << templatewnd_ptr_array.GetSize();
-		if (templatewnd_ptr_array.GetSize() > 0)
+		m_tpl0_.Serialize(ar);
+		ar << template_wnd_ptr_array_.GetSize();
+		if (template_wnd_ptr_array_.GetSize() > 0)
 		{
-			for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
+			for (auto i = 0; i < template_wnd_ptr_array_.GetSize(); i++)
 			{
-				auto p_spike_element = GetTemplateWnd(i);
+				const auto p_spike_element = get_template_wnd(i);
 				p_spike_element->Serialize(ar);
 			}
 		}
@@ -91,65 +91,65 @@ void CTemplateListWnd::Serialize(CArchive& ar)
 		WORD version;
 		ar >> version;
 
-		int nstrings;
-		ar >> nstrings;
+		int n_string;
+		ar >> n_string;
 
-		int nints;
-		ar >> nints;
-		ar >> m_tpllen;
-		ar >> m_tpleft;
-		ar >> m_tpright;
-		ar >> m_hitrate;
-		ar >> m_yextent;
-		ar >> m_yzero;
+		int n_int;
+		ar >> n_int;
+		ar >> m_tpl_len_;
+		ar >> m_tpl_left_;
+		ar >> m_tpl_right_;
+		ar >> m_hit_rate_;
+		ar >> m_y_extent_;
+		ar >> m_y_zero_;
 
-		int nfloats;
-		ar >> nfloats;
-		ar >> m_ktolerance;
+		int n_float;
+		ar >> n_float;
+		ar >> m_k_tolerance_;
 
-		int ndoubles;
-		ar >> ndoubles;
-		ar >> m_globalstd; // 1
-		ar >> m_globaldist; // 2
+		int n_double;
+		ar >> n_double;
+		ar >> m_global_std; // 1
+		ar >> m_global_dist; // 2
 
 		// serialize templates
-		m_tpl0.Serialize(ar);
-		int nitems;
-		ar >> nitems;
-		if (nitems > 0)
+		m_tpl0_.Serialize(ar);
+		int n_items;
+		ar >> n_items;
+		if (n_items > 0)
 		{
-			for (auto i = 0; i < nitems; i++)
+			for (auto i = 0; i < n_items; i++)
 			{
-				InsertTemplate(i, 0);
-				auto p_destination = GetTemplateWnd(i);
+				insert_template(i, 0);
+				const auto p_destination = get_template_wnd(i);
 				p_destination->Serialize(ar);
 			}
 		}
 	}
 }
 
-int CTemplateListWnd::InsertTemplate(int i, int classID)
+int CTemplateListWnd::insert_template(const int i, const int class_id)
 {
 	// create window control
-	const CRect rect_spikes(0, 0, m_tpllen, 64); // dummy position
+	const CRect rect_spikes(0, 0, m_tpl_len_, 64); // dummy position
 	auto p_wnd = new (CTemplateWnd);
 	ASSERT(p_wnd != NULL);
 	p_wnd->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_spikes, this, i);
-	p_wnd->m_csID = _T("#");
-	p_wnd->m_classID = classID;
+	p_wnd->m_cs_id = _T("#");
+	p_wnd->m_class_id = class_id;
 
 	// init parameters
-	p_wnd->SetTemplateLength(m_tpllen);
-	p_wnd->set_yw_ext_org(m_yextent, m_yzero);
-	p_wnd->set_xw_ext_org(m_tpright - m_tpleft + 1, m_tpleft);
+	p_wnd->set_template_length(m_tpl_len_);
+	p_wnd->set_yw_ext_org(m_y_extent_, m_y_zero_);
+	p_wnd->set_xw_ext_org(m_tpl_right_ - m_tpl_left_ + 1, m_tpl_left_);
 	p_wnd->set_b_draw_frame(TRUE);
 	p_wnd->set_b_use_dib(FALSE);
-	p_wnd->m_ktolerance = m_ktolerance;
-	p_wnd->m_globalstd = m_globalstd;
+	p_wnd->m_k_tolerance = m_k_tolerance_;
+	p_wnd->m_global_std = m_global_std;
 
 	// store data
 	const auto index = i;
-	templatewnd_ptr_array.InsertAt(index, p_wnd, 1);
+	template_wnd_ptr_array_.InsertAt(index, p_wnd, 1);
 
 	// insert item if window was created
 	if (IsWindow(m_hWnd))
@@ -169,9 +169,9 @@ int CTemplateListWnd::InsertTemplate(int i, int classID)
 	return index;
 }
 
-void CTemplateListWnd::TransferTemplateData()
+void CTemplateListWnd::transfer_template_data()
 {
-	for (int i = 0; i < templatewnd_ptr_array.GetSize(); i++)
+	for (int i = 0; i < template_wnd_ptr_array_.GetSize(); i++)
 	{
 		LV_ITEM item;
 		item.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
@@ -179,39 +179,39 @@ void CTemplateListWnd::TransferTemplateData()
 		item.iSubItem = 0;
 		item.iImage = I_IMAGECALLBACK;
 		item.pszText = nullptr;
-		item.lParam = reinterpret_cast<LPARAM>(templatewnd_ptr_array.GetAt(i));
+		item.lParam = reinterpret_cast<LPARAM>(template_wnd_ptr_array_.GetAt(i));
 		const auto index = InsertItem(&item);
 		ASSERT(index >= 0);
 	}
 }
 
-int CTemplateListWnd::InsertTemplateData(int i, int classID)
+int CTemplateListWnd::insert_template_data(const int i, const int class_id)
 {
 	// create window control
-	const CRect rect_spikes(1000, 0, m_tpllen, 64 + 1000); // dummy position
+	const CRect rect_spikes(1000, 0, m_tpl_len_, 64 + 1000); // dummy position
 	auto p_wnd = new (CTemplateWnd);
 	ASSERT(p_wnd != NULL);
 	p_wnd->Create(_T(""), WS_CHILD | WS_VISIBLE, rect_spikes, this, i);
-	p_wnd->m_csID = _T("#");
-	p_wnd->m_classID = classID;
+	p_wnd->m_cs_id = _T("#");
+	p_wnd->m_class_id = class_id;
 
 	// init parameters
-	p_wnd->SetTemplateLength(m_tpllen);
-	p_wnd->set_yw_ext_org(m_yextent, m_yzero);
-	p_wnd->set_xw_ext_org(m_tpright - m_tpleft + 1, m_tpleft);
+	p_wnd->set_template_length(m_tpl_len_);
+	p_wnd->set_yw_ext_org(m_y_extent_, m_y_zero_);
+	p_wnd->set_xw_ext_org(m_tpl_right_ - m_tpl_left_ + 1, m_tpl_left_);
 	p_wnd->set_b_draw_frame(TRUE);
 	p_wnd->set_b_use_dib(FALSE);
-	p_wnd->m_ktolerance = m_ktolerance;
-	p_wnd->m_globalstd = m_globalstd;
+	p_wnd->m_k_tolerance = m_k_tolerance_;
+	p_wnd->m_global_std = m_global_std;
 
 	// store data
-	templatewnd_ptr_array.InsertAt(i, p_wnd, 1);
+	template_wnd_ptr_array_.InsertAt(i, p_wnd, 1);
 
 	// get item index
 	auto index = -1;
-	for (auto j = 0; j < templatewnd_ptr_array.GetSize(); j++)
+	for (auto j = 0; j < template_wnd_ptr_array_.GetSize(); j++)
 	{
-		if (GetTemplateclassID(j) == classID)
+		if (get_template_class_id(j) == class_id)
 		{
 			index = j;
 			break;
@@ -220,63 +220,63 @@ int CTemplateListWnd::InsertTemplateData(int i, int classID)
 	return index;
 }
 
-void CTemplateListWnd::DeleteAllTemplates()
+void CTemplateListWnd::delete_all_templates()
 {
-	m_tpl0.tInit();
-	if (templatewnd_ptr_array.GetSize() > 0)
+	m_tpl0_.t_init();
+	if (template_wnd_ptr_array_.GetSize() > 0)
 	{
 		if (IsWindow(m_hWnd))
 			DeleteAllItems();
-		for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
+		for (auto i = 0; i < template_wnd_ptr_array_.GetSize(); i++)
 		{
-			const auto p_spike_element = templatewnd_ptr_array.GetAt(i);
+			const auto p_spike_element = template_wnd_ptr_array_.GetAt(i);
 			delete p_spike_element;
 		}
-		templatewnd_ptr_array.RemoveAll();
+		template_wnd_ptr_array_.RemoveAll();
 	}
 }
 
-void CTemplateListWnd::SortTemplatesByClass(BOOL bUp)
+void CTemplateListWnd::sort_templates_by_class(const BOOL b_up)
 {
-	// sort m_ptpl
-	for (auto i = 0; i < templatewnd_ptr_array.GetSize() - 1; i++)
+	// sort m_p_tpl
+	for (auto i = 0; i < template_wnd_ptr_array_.GetSize() - 1; i++)
 	{
-		const auto id_i = GetTemplateclassID(i);
-		auto id_jmin = id_i;
-		auto jmin = i;
-		auto bfound = FALSE;
-		for (auto j = i + 1; j < templatewnd_ptr_array.GetSize(); j++)
+		const auto id_i = get_template_class_id(i);
+		auto id_j_min = id_i;
+		auto j_min = i;
+		auto b_found = FALSE;
+		for (auto j = i + 1; j < template_wnd_ptr_array_.GetSize(); j++)
 		{
-			const auto id_j = GetTemplateclassID(j);
-			if (bUp)
+			const auto id_j = get_template_class_id(j);
+			if (b_up)
 			{
-				if (id_j > id_jmin)
+				if (id_j > id_j_min)
 				{
-					jmin = j;
-					id_jmin = id_j;
-					bfound = TRUE;
+					j_min = j;
+					id_j_min = id_j;
+					b_found = TRUE;
 				}
 			}
 			else
 			{
-				if (id_j < id_jmin)
+				if (id_j < id_j_min)
 				{
-					jmin = j;
-					id_jmin = id_j;
-					bfound = TRUE;
+					j_min = j;
+					id_j_min = id_j;
+					b_found = TRUE;
 				}
 			}
 		}
-		// exchange items in m_ptpl
-		if (bfound)
+		// exchange items in m_p_tpl
+		if (b_found)
 		{
-			const auto p_wnd = templatewnd_ptr_array.GetAt(i);
-			templatewnd_ptr_array.SetAt(i, templatewnd_ptr_array.GetAt(jmin));
-			templatewnd_ptr_array.SetAt(jmin, p_wnd);
+			const auto p_wnd = template_wnd_ptr_array_.GetAt(i);
+			template_wnd_ptr_array_.SetAt(i, template_wnd_ptr_array_.GetAt(j_min));
+			template_wnd_ptr_array_.SetAt(j_min, p_wnd);
 		}
 	}
-	// affect corresp p_wnd to CListCtrl
-	for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
+	// affect corresponding p_wnd to CListCtrl
+	for (auto i = 0; i < template_wnd_ptr_array_.GetSize(); i++)
 	{
 		LVITEM item;
 		item.iItem = i;
@@ -289,72 +289,72 @@ void CTemplateListWnd::SortTemplatesByClass(BOOL bUp)
 		item.iSubItem = 0;
 		item.iImage = I_IMAGECALLBACK;
 		item.pszText = nullptr;
-		item.lParam = reinterpret_cast<LPARAM>(templatewnd_ptr_array.GetAt(i));
+		item.lParam = reinterpret_cast<LPARAM>(template_wnd_ptr_array_.GetAt(i));
 		SetItem(&item);
 	}
 }
 
-CTemplateWnd* CTemplateListWnd::GetTemplateWndForClass(int iclass)
+CTemplateWnd* CTemplateListWnd::get_template_wnd_for_class(int i_class)
 {
-	CTemplateWnd* pTemplate = nullptr;
-	return pTemplate;
+	CTemplateWnd* p_template = nullptr;
+	return p_template;
 }
 
-void CTemplateListWnd::SortTemplatesByNumberofSpikes(BOOL bUp, BOOL bUpdateClasses, int minclassnb)
+void CTemplateListWnd::sort_templates_by_number_of_spikes(const BOOL b_up, const BOOL b_update_classes, const int min_class_nb)
 {
-	// sort m_ptpl
-	for (auto i = 0; i < templatewnd_ptr_array.GetSize() - 1; i++)
+	// sort m_p_tpl
+	for (auto i = 0; i < template_wnd_ptr_array_.GetSize() - 1; i++)
 	{
-		const auto p_wndi = templatewnd_ptr_array.GetAt(i);
-		auto p_wndjfound = p_wndi;
-		const auto id_i = p_wndi->GetNitems();
-		auto id_jfound = id_i;
-		auto jfound = i;
-		auto bfound = FALSE;
-		for (auto j = i + 1; j < templatewnd_ptr_array.GetSize(); j++)
+		const auto p_wnd_i = template_wnd_ptr_array_.GetAt(i);
+		auto p_wnd_j_found = p_wnd_i;
+		const auto id_i = p_wnd_i->get_n_items();
+		auto id_j_found = id_i;
+		auto j_found = i;
+		auto b_found = FALSE;
+		for (auto j = i + 1; j < template_wnd_ptr_array_.GetSize(); j++)
 		{
-			const auto p_wndj = templatewnd_ptr_array.GetAt(j);
-			const auto id_j = p_wndj->GetNitems();
-			if (bUp)
+			const auto p_wnd_j = template_wnd_ptr_array_.GetAt(j);
+			const auto id_j = p_wnd_j->get_n_items();
+			if (b_up)
 			{
-				if (id_j > id_jfound)
+				if (id_j > id_j_found)
 				{
-					jfound = j;
-					id_jfound = id_j;
-					p_wndjfound = p_wndj;
-					bfound = TRUE;
+					j_found = j;
+					id_j_found = id_j;
+					p_wnd_j_found = p_wnd_j;
+					b_found = TRUE;
 				}
 			}
 			else
 			{
-				if (id_j < id_jfound)
+				if (id_j < id_j_found)
 				{
-					jfound = j;
-					id_jfound = id_j;
-					p_wndjfound = p_wndj;
-					bfound = TRUE;
+					j_found = j;
+					id_j_found = id_j;
+					p_wnd_j_found = p_wnd_j;
+					b_found = TRUE;
 				}
 			}
 		}
-		// exchange items in m_ptpl
-		if (bfound)
+		// exchange items in m_p_tpl
+		if (b_found)
 		{
-			templatewnd_ptr_array.SetAt(i, p_wndjfound);
-			templatewnd_ptr_array.SetAt(jfound, p_wndi);
+			template_wnd_ptr_array_.SetAt(i, p_wnd_j_found);
+			template_wnd_ptr_array_.SetAt(j_found, p_wnd_i);
 		}
 	}
 
-	if (bUpdateClasses)
+	if (b_update_classes)
 	{
-		for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
+		for (auto i = 0; i < template_wnd_ptr_array_.GetSize(); i++)
 		{
-			const auto p_wndi = templatewnd_ptr_array.GetAt(i);
-			p_wndi->m_classID = minclassnb + i;
+			const auto p_wnd_i = template_wnd_ptr_array_.GetAt(i);
+			p_wnd_i->m_class_id = min_class_nb + i;
 		}
 	}
 
-	// affect corresp p_wnd to CListCtrl
-	for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
+	// affect corresponding p_wnd to CListCtrl
+	for (auto i = 0; i < template_wnd_ptr_array_.GetSize(); i++)
 	{
 		LVITEM item;
 		item.iItem = i;
@@ -366,42 +366,42 @@ void CTemplateListWnd::SortTemplatesByNumberofSpikes(BOOL bUp, BOOL bUpdateClass
 		item.iSubItem = 0;
 		item.iImage = I_IMAGECALLBACK;
 		item.pszText = nullptr;
-		item.lParam = reinterpret_cast<LPARAM>(templatewnd_ptr_array.GetAt(i));
+		item.lParam = reinterpret_cast<LPARAM>(template_wnd_ptr_array_.GetAt(i));
 		SetItem(&item);
 	}
 }
 
-BOOL CTemplateListWnd::DeleteItem(int idelete)
+BOOL CTemplateListWnd::delete_item(const int item_index)
 {
 	// search corresponding window
 	if (IsWindow(m_hWnd))
 	{
-		CListCtrl::DeleteItem(idelete);
+		CListCtrl::DeleteItem(item_index);
 	}
 	else
 	{
-		const auto p_wnd = reinterpret_cast<CTemplateWnd*>(GetItemData(idelete));
+		const auto p_wnd = reinterpret_cast<CTemplateWnd*>(GetItemData(item_index));
 		delete p_wnd;
-		templatewnd_ptr_array.RemoveAt(idelete);
+		template_wnd_ptr_array_.RemoveAt(item_index);
 	}
 	return TRUE;
 }
 
 BEGIN_MESSAGE_MAP(CTemplateListWnd, CListCtrl)
-	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnGetdispinfo)
+	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, on_get_disp_info)
 	ON_NOTIFY_REFLECT(LVN_DELETEITEM, OnDeleteitem)
 	ON_WM_VSCROLL()
-	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, OnBegindrag)
+	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, on_begin_drag)
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONUP()
 	ON_WM_RBUTTONDOWN()
 END_MESSAGE_MAP()
 
-void CTemplateListWnd::OnGetdispinfo(NMHDR* pNMHDR, LRESULT* pResult)
+void CTemplateListWnd::on_get_disp_info(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	// message received (reflected) : LVN_GETDISPINFO
-	auto* p_disp_info = reinterpret_cast<LV_DISPINFO*>(pNMHDR);
-	const auto item = p_disp_info->item;
+	const auto* p_display_info = reinterpret_cast<LV_DISPINFO*>(pNMHDR);
+	const auto item = p_display_info->item;
 
 	// get position of display window and move it
 	CRect rect;
@@ -435,16 +435,16 @@ void CTemplateListWnd::OnDeleteitem(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 		// search corresponding window
 		auto item = -1;
-		for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
+		for (auto i = 0; i < template_wnd_ptr_array_.GetSize(); i++)
 		{
-			if (templatewnd_ptr_array.GetAt(i) == p_spike_element)
+			if (template_wnd_ptr_array_.GetAt(i) == p_spike_element)
 			{
 				item = i;
 				break;
 			}
 		}
 		delete p_spike_element;
-		templatewnd_ptr_array.RemoveAt(item);
+		template_wnd_ptr_array_.RemoveAt(item);
 		p_nm_list_view->lParam = NULL;
 	}
 	*pResult = 0;
@@ -453,182 +453,182 @@ void CTemplateListWnd::OnDeleteitem(NMHDR* pNMHDR, LRESULT* pResult)
 void CTemplateListWnd::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	CListCtrl::OnVScroll(nSBCode, nPos, pScrollBar);
-	RedrawItems(0, templatewnd_ptr_array.GetSize() - 1);
+	RedrawItems(0, template_wnd_ptr_array_.GetSize() - 1);
 }
 
-void CTemplateListWnd::UpdateTemplateLegends(LPCSTR pszType)
+void CTemplateListWnd::update_template_legends(LPCSTR psz_type)
 {
 	TCHAR sz_item[20];
-	for (auto i = templatewnd_ptr_array.GetSize() - 1; i >= 0; i--)
+	for (auto i = template_wnd_ptr_array_.GetSize() - 1; i >= 0; i--)
 	{
-		auto ptplWnd = GetTemplateWnd(i);
-		ptplWnd->m_csID = pszType;
+		auto ptplWnd = get_template_wnd(i);
+		ptplWnd->m_cs_id = psz_type;
 
-		wsprintf(sz_item, _T("%s%i n_spk=%i"), static_cast<LPCTSTR>(ptplWnd->m_csID), ptplWnd->m_classID,
-		         ptplWnd->GetNitems());
+		wsprintf(sz_item, _T("%s%i n_spk=%i"), static_cast<LPCTSTR>(ptplWnd->m_cs_id), ptplWnd->m_class_id,
+		         ptplWnd->get_n_items());
 		SetItemText(i, 0, sz_item);
 	}
 }
 
-void CTemplateListWnd::UpdateTemplateBaseClassID(int inewlowestclassID)
+void CTemplateListWnd::update_template_base_class_id(const int i_new_lowest_class)
 {
 	// first, get lowest template class ID
-	if (templatewnd_ptr_array.GetSize() < 1)
+	if (template_wnd_ptr_array_.GetSize() < 1)
 		return;
-	const auto ptpl_wnd = GetTemplateWnd(0);
-	auto lowest_id = ptpl_wnd->m_classID;
-	for (auto i = templatewnd_ptr_array.GetSize() - 1; i >= 0; i--)
+	const auto p_tpl_wnd = get_template_wnd(0);
+	auto lowest_id = p_tpl_wnd->m_class_id;
+	for (auto i = template_wnd_ptr_array_.GetSize() - 1; i >= 0; i--)
 	{
-		const auto ptpl1_wnd = GetTemplateWnd(i);
-		if (lowest_id > ptpl1_wnd->m_classID)
-			lowest_id = ptpl1_wnd->m_classID;
+		const auto p_tpl1_wnd = get_template_wnd(i);
+		if (lowest_id > p_tpl1_wnd->m_class_id)
+			lowest_id = p_tpl1_wnd->m_class_id;
 	}
 	// now change the id of each template and update it's text
-	TCHAR sz_item[20];
-	const auto delta = lowest_id - inewlowestclassID;
-	for (auto i = templatewnd_ptr_array.GetSize() - 1; i >= 0; i--)
+	const auto delta = lowest_id - i_new_lowest_class;
+	for (auto i = template_wnd_ptr_array_.GetSize() - 1; i >= 0; i--)
 	{
-		const auto ptpl2_wnd = GetTemplateWnd(i);
-		ptpl2_wnd->m_classID = ptpl2_wnd->m_classID - delta;
-		wsprintf(sz_item, _T("%s%i n_spk=%i"), static_cast<LPCTSTR>(ptpl2_wnd->m_csID), ptpl2_wnd->m_classID,
-		         ptpl2_wnd->GetNitems());
+		TCHAR sz_item[20];
+		const auto p_tpl2_wnd = get_template_wnd(i);
+		p_tpl2_wnd->m_class_id = p_tpl2_wnd->m_class_id - delta;
+		wsprintf(sz_item, _T("%s%i n_spk=%i"), static_cast<LPCTSTR>(p_tpl2_wnd->m_cs_id), p_tpl2_wnd->m_class_id,
+		         p_tpl2_wnd->get_n_items());
 		SetItemText(i, 0, sz_item);
 	}
 }
 
-void CTemplateListWnd::SetTemplateclassID(int item, LPCTSTR pszType, int classID)
+void CTemplateListWnd::set_template_class_id(int item, LPCTSTR psz_type, int class_id)
 {
 	CString cs_item;
-	auto ptplWnd = GetTemplateWnd(item);
-	ptplWnd->m_classID = classID;
-	CString cs = pszType;
+	auto ptplWnd = get_template_wnd(item);
+	ptplWnd->m_class_id = class_id;
+	CString cs = psz_type;
 	if (!cs.IsEmpty())
-		ptplWnd->m_csID = cs;
-	cs_item.Format(_T("%s%i n_spk=%i"), pszType, classID, ptplWnd->GetNitems());
+		ptplWnd->m_cs_id = cs;
+	cs_item.Format(_T("%s%i n_spk=%i"), psz_type, class_id, ptplWnd->get_n_items());
 	SetItemText(item, 0, cs_item);
 }
 
-BOOL CTemplateListWnd::tInit(int i)
+BOOL CTemplateListWnd::t_init(int i)
 {
-	const BOOL flag = (i >= 0) && (i < templatewnd_ptr_array.GetSize());
+	const BOOL flag = (i >= 0) && (i < template_wnd_ptr_array_.GetSize());
 	if (flag)
-		GetTemplateWnd(i)->tInit();
+		get_template_wnd(i)->t_init();
 	return flag;
 }
 
-BOOL CTemplateListWnd::tAdd(short* p_source)
+BOOL CTemplateListWnd::t_add(int* p_source)
 {
-	m_tpl0.tAddSpikeTopSum(p_source);
+	m_tpl0_.t_add_spike_top_sum(p_source);
 	return TRUE;
 }
 
-BOOL CTemplateListWnd::tAdd(int i, short* p_source)
+BOOL CTemplateListWnd::t_add(int i, int* p_source)
 {
-	const BOOL flag = (i >= 0) && (i < templatewnd_ptr_array.GetSize());
+	const BOOL flag = (i >= 0) && (i < template_wnd_ptr_array_.GetSize());
 	if (flag)
 	{
-		GetTemplateWnd(i)->tAddSpikeTopSum(p_source);
+		get_template_wnd(i)->t_add_spike_top_sum(p_source);
 	}
 	return flag;
 }
 
-BOOL CTemplateListWnd::tPower(int i, double* xpower)
+BOOL CTemplateListWnd::t_power(int i, double* xpower)
 {
-	const BOOL flag = (i >= 0) && (i < templatewnd_ptr_array.GetSize());
+	const BOOL flag = (i >= 0) && (i < template_wnd_ptr_array_.GetSize());
 	if (flag)
-		*xpower = GetTemplateWnd(i)->tPowerOfpSum();
+		*xpower = get_template_wnd(i)->t_power_of_p_sum();
 	return flag;
 }
 
-BOOL CTemplateListWnd::tWithin(int i, short* p_source)
+BOOL CTemplateListWnd::t_within(int i, int* p_source)
 {
-	BOOL flag = i >= 0 && (i < templatewnd_ptr_array.GetSize());
+	BOOL flag = i >= 0 && (i < template_wnd_ptr_array_.GetSize());
 	if (flag)
-		flag = GetTemplateWnd(i)->tGetNumberOfPointsWithin(p_source, &m_hitrate);
+		flag = get_template_wnd(i)->t_get_number_of_points_within(p_source, &m_hit_rate_);
 	return flag;
 }
 
-BOOL CTemplateListWnd::tMinDist(int i, short* p_source, int* poffsetmin, double* pdistmin)
+BOOL CTemplateListWnd::t_min_dist(const int i, int* p_source, int* offset_min, double* dist_min)
 {
-	const BOOL flag = i >= 0 && (i < templatewnd_ptr_array.GetSize());
+	const BOOL flag = i >= 0 && (i < template_wnd_ptr_array_.GetSize());
 	if (flag)
 	{
-		*pdistmin = GetTemplateWnd(i)->tMinDist(p_source, poffsetmin);
+		*dist_min = get_template_wnd(i)->t_min_dist(p_source, offset_min);
 	}
 	return flag;
 }
 
-void CTemplateListWnd::tGlobalstats()
+void CTemplateListWnd::t_global_stats()
 {
-	m_tpl0.tGlobalstats(&m_globalstd, &m_globaldist);
-	for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
+	m_tpl0_.t_global_stats(&m_global_std, &m_global_dist);
+	for (auto i = 0; i < template_wnd_ptr_array_.GetSize(); i++)
 	{
-		GetTemplateWnd(i)->SetGlobalstd(&m_globalstd);
+		get_template_wnd(i)->set_global_std(&m_global_std);
 	}
 }
 
-void CTemplateListWnd::SetTemplateLength(int spklen, int tpleft, int tpright)
+void CTemplateListWnd::set_template_length(int spk_len, int tp_left, int tp_right)
 {
-	if (tpleft != m_tpleft || tpright != m_tpright)
+	if (tp_left != m_tpl_left_ || tp_right != m_tpl_right_)
 	{
-		m_tpleft = tpleft;
-		m_tpright = tpright;
+		m_tpl_left_ = tp_left;
+		m_tpl_right_ = tp_right;
 	}
 
-	const auto len = tpright - tpleft + 1;
-	m_tpllen = spklen;
-	for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
-		GetTemplateWnd(i)->SetTemplateLength(spklen, len, m_tpleft);
-	m_tpl0.SetTemplateLength(spklen, len, m_tpleft);
-	m_tpl0.tInit();
+	const auto len = tp_right - tp_left + 1;
+	m_tpl_len_ = spk_len;
+	for (auto i = 0; i < template_wnd_ptr_array_.GetSize(); i++)
+		get_template_wnd(i)->set_template_length(spk_len, len, m_tpl_left_);
+	m_tpl0_.set_template_length(spk_len, len, m_tpl_left_);
+	m_tpl0_.t_init();
 }
 
-void CTemplateListWnd::SetHitRate_Tolerance(int* phitrate, float* ptolerance)
+void CTemplateListWnd::set_hit_rate_tolerance(const int* p_hit_rate, const float* p_tolerance)
 {
-	m_hitrate = *phitrate;
-	if (m_ktolerance != *ptolerance)
+	m_hit_rate_ = *p_hit_rate;
+	if (m_k_tolerance_ != *p_tolerance)
 	{
-		m_ktolerance = *ptolerance;
-		for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
+		m_k_tolerance_ = *p_tolerance;
+		for (auto i = 0; i < template_wnd_ptr_array_.GetSize(); i++)
 		{
-			CTemplateWnd* ptemplate = GetTemplateWnd(i);
-			ptemplate->SetkTolerance(&m_ktolerance);
+			CTemplateWnd* p_template = get_template_wnd(i);
+			p_template->set_k_tolerance(&m_k_tolerance_);
 		}
-		m_tpl0.m_ktolerance = m_ktolerance;
+		m_tpl0_.m_k_tolerance = m_k_tolerance_;
 	}
 }
 
-void CTemplateListWnd::SetYWExtOrg(int extent, int zero)
+void CTemplateListWnd::set_y_w_ext_org(int extent, int zero)
 {
-	m_yextent = extent;
-	m_yzero = zero;
-	for (auto i = 0; i < templatewnd_ptr_array.GetSize(); i++)
+	m_y_extent_ = extent;
+	m_y_zero_ = zero;
+	for (auto i = 0; i < template_wnd_ptr_array_.GetSize(); i++)
 	{
-		CTemplateWnd* ptemplate = GetTemplateWnd(i);
+		CTemplateWnd* ptemplate = get_template_wnd(i);
 		ptemplate->set_yw_ext_org(extent, zero);
 	}
 }
 
-void CTemplateListWnd::OnBegindrag(NMHDR* pNMHDR, LRESULT* pResult)
+void CTemplateListWnd::on_begin_drag(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	CPoint pt_item, pt_image;
-	auto* pnm_list_view = reinterpret_cast<NM_LISTVIEW*>(pNMHDR);
+	const auto* pnm_list_view = reinterpret_cast<NM_LISTVIEW*>(pNMHDR);
 
-	ASSERT(!m_bDragging);
-	m_bDragging = TRUE;
-	m_iItemDrag = pnm_list_view->iItem;
+	ASSERT(!m_b_dragging_);
+	m_b_dragging_ = TRUE;
+	m_i_item_drag_ = pnm_list_view->iItem;
 
 	CPoint ptAction = pnm_list_view->ptAction;
-	GetItemPosition(m_iItemDrag, &pt_item); // ptItem is relative to (0,0) and not the view origin
-	GetOrigin(&m_ptOrigin);
+	GetItemPosition(m_i_item_drag_, &pt_item); // ptItem is relative to (0,0) and not the view origin
+	GetOrigin(&m_pt_origin_);
 
 	// Update image list to make sure all images are loaded
 	const auto p_i = GetImageList(LVSIL_NORMAL); // Image list with large icons.
 	const auto nimage = p_i->GetImageCount();
 	auto ifirst = 0;
-	if (nimage == 0 || m_iItemDrag > nimage + 1)
+	if (nimage == 0 || m_i_item_drag_ > nimage + 1)
 	{
-		if (m_iItemDrag > nimage + 1)
+		if (m_i_item_drag_ > nimage + 1)
 			ifirst = nimage;
 		// CImageList
 		auto h_i = p_i->m_hImageList;
@@ -640,15 +640,15 @@ void CTemplateListWnd::OnBegindrag(NMHDR* pNMHDR, LRESULT* pResult)
 		//}
 	}
 
-	ASSERT(m_pimageListDrag == NULL);
-	m_pimageListDrag = CreateDragImage(m_iItemDrag, &pt_image);
+	ASSERT(m_p_image_list_drag_ == NULL);
+	m_p_image_list_drag_ = CreateDragImage(m_i_item_drag_, &pt_image);
 
-	m_sizeDelta = ptAction - pt_image; // difference between cursor pos and image pos
-	m_ptHotSpot = ptAction - pt_item + m_ptOrigin; // calculate hotspot for the cursor
+	m_size_delta_ = ptAction - pt_image; // difference between cursor pos and image pos
+	m_pt_hot_spot_ = ptAction - pt_item + m_pt_origin_; // calculate hotspot for the cursor
 	CImageList::DragShowNolock(TRUE); // lock updates and show drag image
-	m_pimageListDrag->SetDragCursorImage(0, m_ptHotSpot); // define the hot spot for the new cursor image
-	m_pimageListDrag->BeginDrag(0, CPoint(0, 0));
-	ptAction -= m_sizeDelta;
+	m_p_image_list_drag_->SetDragCursorImage(0, m_pt_hot_spot_); // define the hot spot for the new cursor image
+	m_p_image_list_drag_->BeginDrag(0, CPoint(0, 0));
+	ptAction -= m_size_delta_;
 	CImageList::DragEnter(this, ptAction);
 	CImageList::DragMove(ptAction); // move image to overlap original icon
 
@@ -669,15 +669,15 @@ void CTemplateListWnd::OnMouseMove(UINT nFlags, CPoint point)
 
 	auto l_style = GetWindowLong(m_hWnd, GWL_STYLE);
 	l_style &= LVS_TYPEMASK; // drag will do different things in list and report mode
-	if (m_bDragging)
+	if (m_b_dragging_)
 	{
-		ASSERT(m_pimageListDrag != NULL);
-		CImageList::DragMove(point - m_sizeDelta); // move the image
+		ASSERT(m_p_image_list_drag_ != NULL);
+		CImageList::DragMove(point - m_size_delta_); // move the image
 		//m_pimageListDrag->DragMove(point - m_sizeDelta);  // move the image
 
 		if ((i_item = HitTest(point)) != -1)
 		{
-			m_iItemDrop = i_item;
+			m_i_item_drop_ = i_item;
 			CImageList::DragLeave(this); // unlock the window and hide drag image
 			//m_pimageListDrag->DragLeave(this); // unlock the window and hide drag image
 			if (l_style == LVS_REPORT || l_style == LVS_LIST)
@@ -688,7 +688,7 @@ void CTemplateListWnd::OnMouseMove(UINT nFlags, CPoint point)
 				lvitem.stateMask = LVIS_DROPHILITED; // highlight the drop target
 				SetItem(&lvitem);
 			}
-			point -= m_sizeDelta;
+			point -= m_size_delta_;
 			CImageList::DragEnter(this, point); // lock updates and show drag image
 			//m_pimageListDrag->DragEnter(this, point);  // lock updates and show drag image
 		}
@@ -698,35 +698,35 @@ void CTemplateListWnd::OnMouseMove(UINT nFlags, CPoint point)
 
 void CTemplateListWnd::OnButtonUp(CPoint point)
 {
-	if (m_bDragging) // end of the drag operation
+	if (m_b_dragging_) // end of the drag operation
 	{
 		CString cstr;
 
 		const auto l_style = GetWindowLong(m_hWnd, GWL_STYLE) & LVS_TYPEMASK;
-		m_bDragging = FALSE;
+		m_b_dragging_ = FALSE;
 
-		ASSERT(m_pimageListDrag != NULL);
+		ASSERT(m_p_image_list_drag_ != NULL);
 		CImageList::DragLeave(this);
 		CImageList::EndDrag();
-		delete m_pimageListDrag;
-		m_pimageListDrag = nullptr;
+		delete m_p_image_list_drag_;
+		m_p_image_list_drag_ = nullptr;
 
-		if (l_style == LVS_REPORT && m_iItemDrop != m_iItemDrag)
+		if (l_style == LVS_REPORT && m_i_item_drop_ != m_i_item_drag_)
 		{
-			cstr = GetItemText(m_iItemDrag, 0);
-			SetItemText(m_iItemDrop, 1, cstr);
+			cstr = GetItemText(m_i_item_drag_, 0);
+			SetItemText(m_i_item_drop_, 1, cstr);
 		}
-		else if (l_style == LVS_LIST && m_iItemDrop != m_iItemDrag)
+		else if (l_style == LVS_LIST && m_i_item_drop_ != m_i_item_drag_)
 		{
-			cstr = GetItemText(m_iItemDrop, 0);
+			cstr = GetItemText(m_i_item_drop_, 0);
 			cstr += _T("**");
-			SetItemText(m_iItemDrop, 0, cstr);
+			SetItemText(m_i_item_drop_, 0, cstr);
 		}
 		else if (l_style == LVS_ICON || l_style == LVS_SMALLICON)
 		{
-			point -= m_ptHotSpot;
-			point += m_ptOrigin;
-			SetItemPosition(m_iItemDrag, point);
+			point -= m_pt_hot_spot_;
+			point += m_pt_origin_;
+			SetItemPosition(m_i_item_drag_, point);
 		}
 		ReleaseCapture();
 	}

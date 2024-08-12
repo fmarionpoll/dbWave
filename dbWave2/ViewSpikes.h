@@ -86,7 +86,7 @@ protected:
 	void define_sub_classed_items();
 	void define_stretch_parameters();
 	void scroll_gain(UINT n_sb_code, UINT n_pos);
-	void scroll_bias(UINT nSBCode, UINT nPos);
+	void scroll_bias(UINT n_sb_code, UINT n_pos);
 	void set_v_bar_mode(short b_mode);
 	BOOL add_spike_to_list(long ii_time, BOOL check_if_spike_nearby);
 	void set_add_spikes_mode(int mouse_cursor_type);
@@ -97,22 +97,22 @@ protected:
 	void center_data_display_on_spike(int spike_no);
 	void set_mouse_cursor(short param_value);
 
-	void change_zoom(LPARAM lParam);
+	void change_zoom(LPARAM l_param);
 	void adjust_y_zoom_to_max_min(BOOL b_force_search_max_min);
 	void zoom_on_preset_interval(int ii_start);
 
 	// public interface to view
 public:
-	BOOL OnMove(UINT nIDMoveCommand) override;
+	BOOL OnMove(UINT n_id_move_command) override;
 protected:
-	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
-	void DoDataExchange(CDataExchange* pDX) override;
+	void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint) override;
+	void DoDataExchange(CDataExchange* p_dx) override;
 	void OnInitialUpdate() override;
 	BOOL OnPreparePrinting(CPrintInfo* p_info) override;
-	void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	void OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
-	void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* p_deactivate_view) override;
+	void OnBeginPrinting(CDC* p_dc, CPrintInfo* p_info) override;
+	void OnPrint(CDC* p_dc, CPrintInfo* p_info) override;
+	void OnEndPrinting(CDC* p_dc, CPrintInfo* p_info) override;
+	void OnActivateView(BOOL b_activate, CView* p_activate_view, CView* p_deactivate_view) override;
 
 	// page format printing parameters (pixel unit)
 	OPTIONS_VIEWDATA* options_view_data_ = nullptr; 
@@ -129,37 +129,37 @@ protected:
 	static float print_change_unit(float x_val, CString* x_unit, float* x_scale_factor);
 
 	// Generated message map functions
-	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT on_my_message(WPARAM w_param, LPARAM l_param);
 
-	afx_msg void OnFormatAlldata();
-	afx_msg void OnFormatCentercurve();
-	afx_msg void OnFormatGainadjust();
-	afx_msg void OnFormatPreviousframe();
-	afx_msg void OnFormatNextframe();
+	afx_msg void on_format_all_data();
+	afx_msg void on_format_center_curve();
+	afx_msg void on_format_gain_adjust();
+	afx_msg void on_format_previous_frame();
+	afx_msg void on_format_next_frame();
 
-	afx_msg void OnToolsEdittransformspikes();
+	afx_msg void on_tools_edit_transform_spikes();
 
-	afx_msg void OnEnChangeNOspike();
-	afx_msg void OnEnChangeSpikenoclass();
-	afx_msg void OnEnChangeTimefirst();
-	afx_msg void OnEnChangeTimelast();
-	afx_msg void OnEnChangeSourceclass();
-	afx_msg void OnEnChangeDestclass();
-	afx_msg void OnEnChangeJitter();
-	afx_msg void OnEnChangeZoom();
+	afx_msg void on_en_change_no_spike();
+	afx_msg void on_en_change_spike_class();
+	afx_msg void on_en_change_time_first();
+	afx_msg void on_en_change_time_last();
+	afx_msg void on_en_change_source_class();
+	afx_msg void on_en_change_dest_class();
+	afx_msg void on_en_change_jitter();
+	afx_msg void on_en_change_zoom();
 
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
 	afx_msg void OnEditCopy();
-	afx_msg void OnGAINbutton();
-	afx_msg void OnBIASbutton();
+	afx_msg void on_gain_button();
+	afx_msg void on_bias_button();
 	afx_msg void OnVScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
-	afx_msg void OnArtefact();
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void on_artefact();
+	afx_msg void OnMouseMove(UINT n_flags, CPoint point);
+	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
+	afx_msg void OnLButtonDown(UINT n_flags, CPoint point);
 	afx_msg void OnHScrollLeft();
 	afx_msg void OnHScrollRight();
-	afx_msg void OnBnClickedSameclass();
+	afx_msg void on_bn_clicked_same_class();
 
 	DECLARE_MESSAGE_MAP()
 public:

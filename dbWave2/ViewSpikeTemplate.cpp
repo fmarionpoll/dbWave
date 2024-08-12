@@ -42,36 +42,36 @@ void ViewSpikeTemplates::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(ViewSpikeTemplates, dbTableView)
 
-	ON_MESSAGE(WM_MYMESSAGE, &ViewSpikeTemplates::OnMyMessage)
+	ON_MESSAGE(WM_MYMESSAGE, &ViewSpikeTemplates::on_my_message)
 	ON_WM_SIZE()
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_WM_HSCROLL()
-	ON_EN_CHANGE(IDC_EDIT2, &ViewSpikeTemplates::OnEnChangeclassno)
-	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewSpikeTemplates::OnEnChangeTimefirst)
-	ON_EN_CHANGE(IDC_TIMELAST, &ViewSpikeTemplates::OnEnChangeTimelast)
-	ON_COMMAND(ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA, &ViewSpikeTemplates::OnFormatAlldata)
-	ON_COMMAND(ID_FORMAT_GAIN_ADJUST, &ViewSpikeTemplates::OnFormatGainadjust)
-	ON_COMMAND(ID_FORMAT_CENTER_CURVE, &ViewSpikeTemplates::OnFormatCentercurve)
-	ON_BN_CLICKED(IDC_BUILD, &ViewSpikeTemplates::OnBuildTemplates)
-	ON_EN_CHANGE(IDC_HITRATE, &ViewSpikeTemplates::OnEnChangeHitrate)
-	ON_EN_CHANGE(IDC_TOLERANCE, &ViewSpikeTemplates::OnEnChangeTolerance)
-	ON_EN_CHANGE(IDC_HITRATE2, &ViewSpikeTemplates::OnEnChangeHitrateSort)
-	ON_NOTIFY(LVN_KEYDOWN, IDC_LIST2, &ViewSpikeTemplates::OnKeydownTemplateList)
-	ON_BN_CLICKED(IDC_CHECK1, &ViewSpikeTemplates::OnCheck1)
-	ON_BN_CLICKED(IDC_SORT, &ViewSpikeTemplates::OnBnClickedSort)
-	ON_BN_CLICKED(IDC_DISPLAY, &ViewSpikeTemplates::OnBnClickedDisplay)
-	ON_EN_CHANGE(IDC_IFIRSTSORTEDCLASS, &ViewSpikeTemplates::OnEnChangeIfirstsortedclass)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB2, &ViewSpikeTemplates::OnTcnSelchangeTab2)
-	ON_NOTIFY(NM_CLICK, IDC_TAB2, &ViewSpikeTemplates::OnNMClickTab2)
-	ON_BN_CLICKED(IDC_DISPLAY_SINGLE_CLASS, &ViewSpikeTemplates::OnBnClickedDisplaysingleclass)
-	ON_EN_CHANGE(IDC_SHAPE_T1, &ViewSpikeTemplates::OnEnChangeT1)
-	ON_EN_CHANGE(IDC_SHAPE_T2, &ViewSpikeTemplates::OnEnChangeT2)
+	ON_EN_CHANGE(IDC_EDIT2, &ViewSpikeTemplates::on_en_change_class)
+	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewSpikeTemplates::on_en_change_time_first)
+	ON_EN_CHANGE(IDC_TIMELAST, &ViewSpikeTemplates::on_en_change_time_last)
+	ON_COMMAND(ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA, &ViewSpikeTemplates::on_format_all_data)
+	ON_COMMAND(ID_FORMAT_GAIN_ADJUST, &ViewSpikeTemplates::on_format_gain_adjust)
+	ON_COMMAND(ID_FORMAT_CENTER_CURVE, &ViewSpikeTemplates::on_format_center_curve)
+	ON_BN_CLICKED(IDC_BUILD, &ViewSpikeTemplates::on_build_templates)
+	ON_EN_CHANGE(IDC_HITRATE, &ViewSpikeTemplates::on_en_change_hit_rate)
+	ON_EN_CHANGE(IDC_TOLERANCE, &ViewSpikeTemplates::on_en_change_tolerance)
+	ON_EN_CHANGE(IDC_HITRATE2, &ViewSpikeTemplates::on_en_change_hit_rate_sort)
+	ON_NOTIFY(LVN_KEYDOWN, IDC_LIST2, &ViewSpikeTemplates::on_keydown_template_list)
+	ON_BN_CLICKED(IDC_CHECK1, &ViewSpikeTemplates::on_check1)
+	ON_BN_CLICKED(IDC_SORT, &ViewSpikeTemplates::on_bn_clicked_sort)
+	ON_BN_CLICKED(IDC_DISPLAY, &ViewSpikeTemplates::on_bn_clicked_display)
+	ON_EN_CHANGE(IDC_IFIRSTSORTEDCLASS, &ViewSpikeTemplates::on_en_change_i_first_sorted_class)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB2, &ViewSpikeTemplates::on_tcn_sel_change_tab2)
+	ON_NOTIFY(NM_CLICK, IDC_TAB2, &ViewSpikeTemplates::on_nm_click_tab2)
+	ON_BN_CLICKED(IDC_DISPLAY_SINGLE_CLASS, &ViewSpikeTemplates::on_bn_clicked_display_single_class)
+	ON_EN_CHANGE(IDC_SHAPE_T1, &ViewSpikeTemplates::on_en_change_t1)
+	ON_EN_CHANGE(IDC_SHAPE_T2, &ViewSpikeTemplates::on_en_change_t2)
 END_MESSAGE_MAP()
 
 void ViewSpikeTemplates::OnDestroy()
 {
-	if (m_template_list_.GetNtemplates() != 0)
+	if (m_template_list_.get_n_templates() != 0)
 	{
 		if (spike_classification_parameters_->p_template == nullptr)
 			spike_classification_parameters_->create_tpl();
@@ -80,17 +80,17 @@ void ViewSpikeTemplates::OnDestroy()
 	dbTableView::OnDestroy();
 }
 
-BOOL ViewSpikeTemplates::OnMove(UINT nIDMoveCommand)
+BOOL ViewSpikeTemplates::OnMove(UINT n_id_move_command)
 {
 	save_current_spk_file();
-	return dbTableView::OnMove(nIDMoveCommand);
+	return dbTableView::OnMove(n_id_move_command);
 }
 
-void ViewSpikeTemplates::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void ViewSpikeTemplates::OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint)
 {
 	if (m_b_init_)
 	{
-		switch (LOWORD(lHint))
+		switch (LOWORD(l_hint))
 		{
 		case HINT_DOC_HAS_CHANGED: 
 		case HINT_DOC_MOVE_RECORD:
@@ -265,20 +265,20 @@ void ViewSpikeTemplates::select_spike_list(const int index_current)
 void ViewSpikeTemplates::update_templates()
 {
 	auto n_cmd_show = SW_HIDE;
-	if (m_template_list_.GetNtemplates() > 0)
+	if (m_template_list_.get_n_templates() > 0)
 	{
-		if (m_template_list_.GetImageList(LVSIL_NORMAL) != &m_template_list_.m_imageList)
+		if (m_template_list_.GetImageList(LVSIL_NORMAL) != &m_template_list_.m_image_list)
 		{
 			CRect rect;
 			m_chart_spk_wnd_shape_.GetClientRect(&rect);
-			m_template_list_.m_imageList.Create(rect.right, rect.bottom, ILC_COLOR8, 4, 1);
-			m_template_list_.SetImageList(&m_template_list_.m_imageList, LVSIL_NORMAL);
+			m_template_list_.m_image_list.Create(rect.right, rect.bottom, ILC_COLOR8, 4, 1);
+			m_template_list_.SetImageList(&m_template_list_.m_image_list, LVSIL_NORMAL);
 		}
-		SetDlgItemInt(IDC_NTEMPLATES, m_template_list_.GetNtemplates());
+		SetDlgItemInt(IDC_NTEMPLATES, m_template_list_.get_n_templates());
 		const int extent = m_chart_spk_wnd_shape_.get_yw_extent();
 		const int zero = m_chart_spk_wnd_shape_.get_yw_org();
-		m_template_list_.SetYWExtOrg(extent, zero);
-		m_template_list_.UpdateTemplateLegends("t");
+		m_template_list_.set_y_w_ext_org(extent, zero);
+		m_template_list_.update_template_legends("t");
 		m_template_list_.Invalidate();
 		n_cmd_show = SW_SHOW;
 	}
@@ -318,7 +318,7 @@ void ViewSpikeTemplates::select_spike(db_spike& spike_sel)
 	m_pSpkList->m_selected_spike = spike_no_;
 }
 
-LRESULT ViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT ViewSpikeTemplates::on_my_message(WPARAM wParam, LPARAM lParam)
 {
 	short shortValue = LOWORD(lParam);
 	switch (wParam)
@@ -343,16 +343,16 @@ LRESULT ViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			spike_classification_parameters_->k_left = m_chart_spk_wnd_shape_.vt_tags.get_value_int(spk_form_tag_left_);
 			m_t1 = convert_spike_index_to_time(spike_classification_parameters_->k_left);
 			mm_t1_.m_bEntryDone = TRUE;
-			OnEnChangeT1();
+			on_en_change_t1();
 		}
 		else if (shortValue == spk_form_tag_right_)
 		{
 			spike_classification_parameters_->k_right = m_chart_spk_wnd_shape_.vt_tags.get_value_int(spk_form_tag_right_);
 			m_t2 = convert_spike_index_to_time(spike_classification_parameters_->k_right);
 			mm_t2_.m_bEntryDone = TRUE;
-			OnEnChangeT2();
+			on_en_change_t2();
 		}
-		m_template_list_.SetTemplateLength(0, spike_classification_parameters_->k_left, spike_classification_parameters_->k_right);
+		m_template_list_.set_template_length(0, spike_classification_parameters_->k_left, spike_classification_parameters_->k_right);
 		m_template_list_.Invalidate();
 		break;
 
@@ -375,7 +375,7 @@ LRESULT ViewSpikeTemplates::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-void ViewSpikeTemplates::OnEnChangeclassno()
+void ViewSpikeTemplates::on_en_change_class()
 {
 	if (mm_spike_no_class_.m_bEntryDone)
 	{
@@ -391,7 +391,7 @@ void ViewSpikeTemplates::OnEnChangeclassno()
 	}
 }
 
-void ViewSpikeTemplates::OnEnChangeTimefirst()
+void ViewSpikeTemplates::on_en_change_time_first()
 {
 	if (mm_time_first_.m_bEntryDone)
 	{
@@ -406,7 +406,7 @@ void ViewSpikeTemplates::OnEnChangeTimefirst()
 	}
 }
 
-void ViewSpikeTemplates::OnEnChangeTimelast()
+void ViewSpikeTemplates::on_en_change_time_last()
 {
 	if (mm_time_last_.m_bEntryDone)
 	{
@@ -487,7 +487,7 @@ void ViewSpikeTemplates::update_scrollbar()
 	}
 }
 
-void ViewSpikeTemplates::OnFormatAlldata()
+void ViewSpikeTemplates::on_format_all_data()
 {
 	// dots: spk file length
 	l_first_ = 0;
@@ -499,9 +499,9 @@ void ViewSpikeTemplates::OnFormatAlldata()
 	update_legends();
 }
 
-void ViewSpikeTemplates::OnFormatGainadjust()
+void ViewSpikeTemplates::on_format_gain_adjust()
 {
-	short maxvalue, minvalue;
+	int maxvalue, minvalue;
 	GetDocument()->get_max_min_amplitude_of_all_spikes(m_b_all_files, TRUE, maxvalue, minvalue);
 	const auto extent = MulDiv(maxvalue - minvalue + 1, 10, 9);
 	const auto zero = (maxvalue + minvalue) / 2;
@@ -509,9 +509,9 @@ void ViewSpikeTemplates::OnFormatGainadjust()
 	set_extent_zero_all_display(extent, zero);
 }
 
-void ViewSpikeTemplates::OnFormatCentercurve()
+void ViewSpikeTemplates::on_format_center_curve()
 {
-	short maxvalue, minvalue;
+	int maxvalue, minvalue;
 	GetDocument()->get_max_min_amplitude_of_all_spikes(m_b_all_files, TRUE, maxvalue, minvalue);
 	const auto extent = m_chart_spk_wnd_shape_.get_yw_extent();
 	const auto zero = (maxvalue + minvalue) / 2;
@@ -521,9 +521,9 @@ void ViewSpikeTemplates::OnFormatCentercurve()
 void ViewSpikeTemplates::set_extent_zero_all_display(const int extent, const int zero)
 {
 	m_chart_spk_wnd_shape_.set_yw_ext_org(extent, zero);
-	m_template_list_.SetYWExtOrg(extent, zero);
-	m_avg_list_.SetYWExtOrg(extent, zero);
-	m_avg_all_list_.SetYWExtOrg(extent, zero);
+	m_template_list_.set_y_w_ext_org(extent, zero);
+	m_avg_list_.set_y_w_ext_org(extent, zero);
+	m_avg_all_list_.set_y_w_ext_org(extent, zero);
 
 	m_chart_spk_wnd_shape_.Invalidate();
 	m_template_list_.Invalidate();
@@ -531,7 +531,7 @@ void ViewSpikeTemplates::set_extent_zero_all_display(const int extent, const int
 	m_avg_all_list_.Invalidate();
 }
 
-void ViewSpikeTemplates::OnEnChangeHitrate()
+void ViewSpikeTemplates::on_en_change_hit_rate()
 {
 	if (mm_hit_rate_.m_bEntryDone)
 	{
@@ -543,7 +543,7 @@ void ViewSpikeTemplates::OnEnChangeHitrate()
 	}
 }
 
-void ViewSpikeTemplates::OnEnChangeHitrateSort()
+void ViewSpikeTemplates::on_en_change_hit_rate_sort()
 {
 	if (mm_hit_rate_sort_.m_bEntryDone)
 	{
@@ -555,7 +555,7 @@ void ViewSpikeTemplates::OnEnChangeHitrateSort()
 	}
 }
 
-void ViewSpikeTemplates::OnEnChangeTolerance()
+void ViewSpikeTemplates::on_en_change_tolerance()
 {
 	if (mm_k_tolerance_.m_bEntryDone)
 	{
@@ -573,35 +573,35 @@ void ViewSpikeTemplates::display_avg(const boolean b_all_files, CTemplateListWnd
 	m_pSpkList = m_pSpkDoc->get_spike_list_current();
 
 	// get list of classes
-	template_list->SetHitRate_Tolerance(&hit_rate, &k_tolerance);
+	template_list->set_hit_rate_tolerance(&hit_rate, &k_tolerance);
 	int tpllen = spike_classification_parameters_->k_right - spike_classification_parameters_->k_left + 1;
 
 	// define and attach to ImageList to CListCtrl; create 1 item by default
-	if (template_list->GetImageList(LVSIL_NORMAL) != &template_list->m_imageList)
+	if (template_list->GetImageList(LVSIL_NORMAL) != &template_list->m_image_list)
 	{
 		CRect rect;
 		m_chart_spk_wnd_shape_.GetClientRect(&rect);
-		template_list->m_imageList.Create(rect.right, rect.bottom, ILC_COLOR8, 1, 1);
-		template_list->SetImageList(&template_list->m_imageList, LVSIL_NORMAL);
+		template_list->m_image_list.Create(rect.right, rect.bottom, ILC_COLOR8, 1, 1);
+		template_list->SetImageList(&template_list->m_image_list, LVSIL_NORMAL);
 	}
 
 	// reinit all templates to zero
 	template_list->DeleteAllItems();
-	int spikelen = m_pSpkList->get_spike_length();
-	template_list->SetTemplateLength(spikelen, 0, spikelen - 1);
-	template_list->SetHitRate_Tolerance(&hit_rate, &k_tolerance);
+	const int spike_len = m_pSpkList->get_spike_length();
+	template_list->set_template_length(spike_len, 0, spike_len - 1);
+	template_list->set_hit_rate_tolerance(&hit_rate, &k_tolerance);
 
 	int zero = m_chart_spk_wnd_shape_.get_yw_org();
 	int extent = m_chart_spk_wnd_shape_.get_yw_extent();
 	if (zero == 0 && extent == 0)
 	{
-		short valuemax, valuemin;
+		int valuemax, valuemin;
 		m_pSpkList->get_total_max_min(TRUE, &valuemax, &valuemin);
 		extent = valuemax - valuemin;
 		zero = (valuemax + valuemin) / 2;
 		m_chart_spk_wnd_shape_.set_yw_ext_org(extent, zero);
 	}
-	template_list->SetYWExtOrg(extent, zero);
+	template_list->set_y_w_ext_org(extent, zero);
 
 	// set file indexes - assume only one file selected
 	auto p_dbwave_doc = GetDocument();
@@ -624,69 +624,69 @@ void ViewSpikeTemplates::display_avg(const boolean b_all_files, CTemplateListWnd
 	{
 		// load file
 		p_dbwave_doc->db_set_current_record_position(i_file);
-		auto pSpkDoc = p_dbwave_doc->open_current_spike_file();
-		if (pSpkDoc == nullptr)
+		const auto p_spk_doc = p_dbwave_doc->open_current_spike_file();
+		if (p_spk_doc == nullptr)
 			continue;
 		CString cs;
 		cs.Format(_T("%i/%i - "), i_file, last_file);
 		cs += p_dbwave_doc->db_get_current_spk_file_name(FALSE);
 		p_dbwave_doc->SetTitle(cs);
-		pSpkDoc->SetModifiedFlag(FALSE);
+		p_spk_doc->SetModifiedFlag(FALSE);
 
-		auto pSpkList = pSpkDoc->set_spike_list_current_index(current_list); // load pointer to spike list
+		auto pSpkList = p_spk_doc->set_spike_list_current_index(current_list); // load pointer to spike list
 		if (!pSpkList->is_class_list_valid()) // if class list not valid:
 		{
 			pSpkList->update_class_list(); // rebuild list of classes
-			pSpkDoc->SetModifiedFlag(); // and set modified flag
+			p_spk_doc->SetModifiedFlag(); // and set modified flag
 		}
-		const auto nspikes = pSpkList->get_spikes_count();
+		const auto n_spikes = pSpkList->get_spikes_count();
 
 		// add spikes to templates - create templates on the fly
-		int j_templ;
-		for (auto i = 0; i < nspikes; i++)
+		int j_template;
+		for (auto i = 0; i < n_spikes; i++)
 		{
 			const auto cla = pSpkList->get_spike(i)->get_class_id();
 			auto b_found = FALSE;
-			for (j_templ = 0; j_templ < template_list->GetTemplateDataSize(); j_templ++)
+			for (j_template = 0; j_template < template_list->get_template_data_size(); j_template++)
 			{
-				if (cla == template_list->GetTemplateclassID(j_templ))
+				if (cla == template_list->get_template_class_id(j_template))
 				{
 					b_found = TRUE;
 					break;
 				}
-				if (cla < template_list->GetTemplateclassID(j_templ))
+				if (cla < template_list->get_template_class_id(j_template))
 					break;
 			}
 			// add template if not found - insert it at the proper place
 			if (!b_found) // add item if not found
 			{
-				if (j_templ < 0)
-					j_templ = 0;
-				j_templ = template_list->InsertTemplateData(j_templ, cla);
+				if (j_template < 0)
+					j_template = 0;
+				j_template = template_list->insert_template_data(j_template, cla);
 			}
 
 			// get data and add spike
 			const auto p_spik = pSpkList->get_spike(i)->get_p_data();
-			template_list->tAdd(j_templ, p_spik); // add spike to template j
-			template_list->tAdd(p_spik); // add spike to template zero
+			template_list->t_add(j_template, p_spik); // add spike to template j
+			template_list->t_add(p_spik); // add spike to template zero
 		}
 	}
 
 	// end of loop, select current file again if necessary
 	if (b_all_files)
 	{
-		p_dbwave_doc->db_set_current_record_position(current_file);
-		m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
+		if(p_dbwave_doc->db_set_current_record_position(current_file))
+			m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
 		p_dbwave_doc->SetTitle(p_dbwave_doc->GetPathName());
 	}
 
 	// update average
-	template_list->TransferTemplateData();
-	template_list->tGlobalstats();
-	template_list->UpdateTemplateLegends("cx");
+	template_list->transfer_template_data();
+	template_list->t_global_stats();
+	template_list->update_template_legends("cx");
 }
 
-void ViewSpikeTemplates::OnBuildTemplates()
+void ViewSpikeTemplates::on_build_templates()
 {
 	m_pSpkList = m_pSpkDoc->get_spike_list_current();
 
@@ -704,57 +704,61 @@ void ViewSpikeTemplates::OnBuildTemplates()
 
 	// add as many forms as we have classes
 	m_template_list_.DeleteAllItems(); // reinit all templates to zero
-	m_template_list_.SetTemplateLength(m_pSpkList->get_spike_length(), spike_classification_parameters_->k_left, spike_classification_parameters_->k_right);
-	m_template_list_.SetHitRate_Tolerance(&hit_rate, &k_tolerance);
+	m_template_list_.set_template_length(m_pSpkList->get_spike_length(), spike_classification_parameters_->k_left, spike_classification_parameters_->k_right);
+	m_template_list_.set_hit_rate_tolerance(&hit_rate, &k_tolerance);
 
 	// compute global std
 	// loop over all selected files (or only one file currently selected)
-	int nspikes;
-	int ifile;
-	CString cscomment;
+	int n_spikes;
+	int i_file;
+	CString cs_comment;
 
-	for (ifile = firstfile; ifile <= lastfile; ifile++)
+	for (i_file = firstfile; i_file <= lastfile; i_file++)
 	{
 		// store nb of spikes within array
 		if (m_b_all_files)
 		{
-			p_dbwave_doc->db_set_current_record_position(ifile);
-			m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
+			if (p_dbwave_doc->db_set_current_record_position(i_file))
+				m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
+			else
+				continue;
 		}
 
 		const auto spike_list = m_pSpkDoc->set_spike_list_current_index(currentlist);
-		nspikes = spike_list->get_spikes_count();
-		for (auto i = 0; i < nspikes; i++)
-			m_template_list_.tAdd(m_pSpkList->get_spike(i)->get_p_data());
+		n_spikes = spike_list->get_spikes_count();
+		for (auto i = 0; i < n_spikes; i++)
+			m_template_list_.t_add(m_pSpkList->get_spike(i)->get_p_data());
 	}
-	m_template_list_.tGlobalstats();
+	m_template_list_.t_global_stats();
 
 	// now scan all spikes to build templates
-	auto ntempl = 0;
-	double distmin;
-	int offsetmin;
-	int tplmin;
-	CString csfilecomment = _T("Second pass - analyze file: ");
+	auto n_templates = 0;
+	double dist_min;
+	int offset_min;
+	int tpl_min;
+	CString cs_file_comment = _T("Second pass - analyze file: ");
 
-	for (ifile = firstfile; ifile <= lastfile; ifile++)
+	for (i_file = firstfile; i_file <= lastfile; i_file++)
 	{
 		// store nb of spikes within array
 		if (m_b_all_files)
 		{
-			p_dbwave_doc->db_set_current_record_position(ifile);
-			p_dbwave_doc->open_current_spike_file();
+			if (p_dbwave_doc->db_set_current_record_position(i_file))
+				p_dbwave_doc->open_current_spike_file();
+			else
+				continue;
 			m_pSpkDoc = p_dbwave_doc->m_p_spk;
 			CString cs;
-			cs.Format(_T("%i/%i - "), ifile, lastfile);
+			cs.Format(_T("%i/%i - "), i_file, lastfile);
 			cs += p_dbwave_doc->db_get_current_spk_file_name(FALSE);
 			p_dbwave_doc->SetTitle(cs);
 		}
 
 		auto spike_list = m_pSpkDoc->set_spike_list_current_index(currentlist);
-		nspikes = spike_list->get_spikes_count();
+		n_spikes = spike_list->get_spikes_count();
 
 		// create template CListCtrl
-		for (auto i = 0; i < nspikes; i++)
+		for (auto i = 0; i < n_spikes; i++)
 		{
 			// filter out undesirable spikes
 			if (b_display_single_class)
@@ -770,15 +774,15 @@ void ViewSpikeTemplates::OnBuildTemplates()
 			auto* p_spik = m_pSpkList->get_spike(i)->get_p_data();
 			auto b_within = FALSE;
 			int itpl;
-			for (itpl = 0; itpl < ntempl; itpl++)
+			for (itpl = 0; itpl < n_templates; itpl++)
 			{
 				// exit loop if spike is within template
-				b_within = m_template_list_.tWithin(itpl, p_spik);
+				b_within = m_template_list_.t_within(itpl, p_spik);
 				if (b_within)
 					break;
 				// OR exit loop if spike dist is less distant
-				m_template_list_.tMinDist(itpl, p_spik, &offsetmin, &distmin);
-				b_within = (distmin <= m_template_list_.m_globaldist);
+				m_template_list_.t_min_dist(itpl, p_spik, &offset_min, &dist_min);
+				b_within = (dist_min <= m_template_list_.m_global_dist);
 				if (b_within)
 					break;
 			}
@@ -786,31 +790,31 @@ void ViewSpikeTemplates::OnBuildTemplates()
 			// if a template is suitable, find the most likely
 			if (b_within)
 			{
-				tplmin = itpl;
-				distmin = m_template_list_.m_globaldist;
+				tpl_min = itpl;
+				dist_min = m_template_list_.m_global_dist;
 				double x;
 				int offset;
-				for (auto itpl2 = 0; itpl2 < ntempl; itpl2++)
+				for (auto i_tpl2 = 0; i_tpl2 < n_templates; i_tpl2++)
 				{
-					m_template_list_.tMinDist(itpl2, p_spik, &offset, &x);
-					if (x < distmin)
+					m_template_list_.t_min_dist(i_tpl2, p_spik, &offset, &x);
+					if (x < dist_min)
 					{
-						offsetmin = offset;
-						distmin = x;
-						tplmin = itpl2;
+						offset_min = offset;
+						dist_min = x;
+						tpl_min = i_tpl2;
 					}
 				}
 			}
 			// else (no suitable template), create a new one
 			else
 			{
-				m_template_list_.InsertTemplate(ntempl, ntempl + i_first_sorted_class);
-				tplmin = ntempl;
-				ntempl++;
+				m_template_list_.insert_template(n_templates, n_templates + i_first_sorted_class);
+				tpl_min = n_templates;
+				n_templates++;
 			}
 
-			// add spike to the corresp template
-			m_template_list_.tAdd(tplmin, p_spik); // add spike to template j
+			// add spike to the corresponding template
+			m_template_list_.t_add(tpl_min, p_spik); // add spike to template j
 		}
 	}
 
@@ -822,47 +826,49 @@ void ViewSpikeTemplates::OnBuildTemplates()
 		p_dbwave_doc->SetTitle(p_dbwave_doc->GetPathName());
 	}
 
-	m_template_list_.SortTemplatesByNumberofSpikes(TRUE, TRUE, i_first_sorted_class);
+	m_template_list_.sort_templates_by_number_of_spikes(TRUE, TRUE, i_first_sorted_class);
 	update_templates();
 }
 
 void ViewSpikeTemplates::sort_spikes()
 {
 	// set tolerance to sort tolerance
-	m_template_list_.SetHitRate_Tolerance(&hit_rate_sort, &k_tolerance);
+	m_template_list_.set_hit_rate_tolerance(&hit_rate_sort, &k_tolerance);
 
 	// set file indexes - assume only one file selected
-	auto p_dbwave_doc = GetDocument();
-	const int currentfile = p_dbwave_doc->db_get_current_record_position(); // index current file
-	auto firstfile = currentfile; // index first file in the series
-	auto lastfile = firstfile; // index last file in the series
-	const auto currentlist = m_tabCtrl.GetCurSel();
+	const auto p_dbwave_doc = GetDocument();
+	const int current_file = p_dbwave_doc->db_get_current_record_position(); // index current file
+	auto first_file = current_file; // index first file in the series
+	auto last_file = first_file; // index last file in the series
+	const auto current_list = m_tabCtrl.GetCurSel();
 
 	// change indexes if ALL files selected
-	CString cscomment;
-	CString csfilecomment = _T("Analyze file: ");
+	CString cs_comment;
+	CString cs_file_comment = _T("Analyze file: ");
 	if (m_b_all_files)
 	{
-		firstfile = 0; // index first file
-		lastfile = p_dbwave_doc->db_get_n_records() - 1; // index last file
+		first_file = 0; // index first file
+		last_file = p_dbwave_doc->db_get_n_records() - 1; // index last file
 	}
 
 	// loop CFrameWnd
-	const auto ntempl = m_template_list_.GetNtemplates();
-	for (auto ifile = firstfile; ifile <= lastfile; ifile++)
+	const auto n_templates = m_template_list_.get_n_templates();
+	for (auto i_file = first_file; i_file <= last_file; i_file++)
 	{
 		// store nb of spikes within array
 		if (m_b_all_files)
 		{
-			p_dbwave_doc->db_set_current_record_position(ifile);
-			m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
+			if (p_dbwave_doc->db_set_current_record_position(i_file))
+				m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
+			else
+				continue;
 			CString cs;
-			cs.Format(_T("%i/%i - "), ifile, lastfile);
+			cs.Format(_T("%i/%i - "), i_file, last_file);
 			cs += p_dbwave_doc->db_get_current_spk_file_name(FALSE);
 			p_dbwave_doc->SetTitle(cs);
 			m_pSpkDoc->SetModifiedFlag(FALSE);
 
-			m_pSpkList = m_pSpkDoc->set_spike_list_current_index(currentlist); // load pointer to spike list
+			m_pSpkList = m_pSpkDoc->set_spike_list_current_index(current_list); // load pointer to spike list
 			if (!m_pSpkList->is_class_list_valid()) // if class list not valid:
 			{
 				m_pSpkList->update_class_list(); // rebuild list of classes
@@ -871,40 +877,40 @@ void ViewSpikeTemplates::sort_spikes()
 		}
 
 		// spike loop
-		const auto nspikes = m_pSpkList->get_spikes_count(); // loop over all spikes
-		for (auto ispike = 0; ispike < nspikes; ispike++)
+		const auto n_spikes = m_pSpkList->get_spikes_count(); // loop over all spikes
+		for (auto i_spike = 0; i_spike < n_spikes; i_spike++)
 		{
 			// filter out undesirable spikes - i.e. not relevant to the sort
 			if (b_display_single_class)
 			{
 				// skip spikes that do not belong to selected class
-				if (m_pSpkList->get_spike(ispike)->get_class_id() != spike_no_class)
+				if (m_pSpkList->get_spike(i_spike)->get_class_id() != spike_no_class)
 					continue;
 			}
 
 			// skip spikes that do not fit into time interval selected
-			const auto ii_time = m_pSpkList->get_spike(ispike)->get_time();
+			const auto ii_time = m_pSpkList->get_spike(i_spike)->get_time();
 			if (ii_time < l_first_ || ii_time > l_last_)
 				continue;
 
 			// get pointer to spike data and search if any template is suitable
-			const auto p_spik = m_pSpkList->get_spike(ispike)->get_p_data();
+			const auto p_spike = m_pSpkList->get_spike(i_spike)->get_p_data();
 			auto b_within = FALSE;
-			double distmin;
-			int offsetmin;
+			double dist_min;
+			int offset_min;
 
 			// search first template that meet criteria
-			int tplmin;
-			for (tplmin = 0; tplmin < ntempl; tplmin++)
+			int tpl_min;
+			for (tpl_min = 0; tpl_min < n_templates; tpl_min++)
 			{
 				// exit loop if spike is within template
-				b_within = m_template_list_.tWithin(tplmin, p_spik);
-				m_template_list_.tMinDist(tplmin, p_spik, &offsetmin, &distmin);
+				b_within = m_template_list_.t_within(tpl_min, p_spike);
+				m_template_list_.t_min_dist(tpl_min, p_spike, &offset_min, &dist_min);
 				if (b_within)
 					break;
 
 				// OR exit loop if spike dist is less distant
-				b_within = (distmin <= m_template_list_.m_globaldist);
+				b_within = (dist_min <= m_template_list_.m_global_dist);
 				if (b_within)
 					break;
 			}
@@ -912,24 +918,24 @@ void ViewSpikeTemplates::sort_spikes()
 			// if a template is suitable, find the most likely
 			if (b_within)
 			{
-				for (auto itpl = tplmin + 1; itpl < ntempl; itpl++)
+				for (auto i_tpl = tpl_min + 1; i_tpl < n_templates; i_tpl++)
 				{
 					double x;
 					int offset;
-					m_template_list_.tMinDist(itpl, p_spik, &offset, &x);
-					if (x < distmin)
+					m_template_list_.t_min_dist(i_tpl, p_spike, &offset, &x);
+					if (x < dist_min)
 					{
-						offsetmin = offset;
-						distmin = x;
-						tplmin = itpl;
+						offset_min = offset;
+						dist_min = x;
+						tpl_min = i_tpl;
 					}
 				}
 
 				// change spike class ID
-				const auto class_id = (m_template_list_.GetTemplateWnd(tplmin))->m_classID;
-				if (m_pSpkList->get_spike(ispike)->get_class_id() != class_id)
+				const auto class_id = (m_template_list_.get_template_wnd(tpl_min))->m_class_id;
+				if (m_pSpkList->get_spike(i_spike)->get_class_id() != class_id)
 				{
-					m_pSpkList->get_spike(ispike)->set_class_id(class_id);
+					m_pSpkList->get_spike(i_spike)->set_class_id(class_id);
 					m_pSpkDoc->SetModifiedFlag(TRUE);
 				}
 			}
@@ -947,8 +953,8 @@ void ViewSpikeTemplates::sort_spikes()
 	// end of loop, select current file again if necessary
 	if (m_b_all_files)
 	{
-		p_dbwave_doc->db_set_current_record_position(currentfile);
-		m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
+		if(p_dbwave_doc->db_set_current_record_position(current_file))
+			m_pSpkDoc = p_dbwave_doc->open_current_spike_file();
 		p_dbwave_doc->SetTitle(p_dbwave_doc->GetPathName());
 	}
 
@@ -959,79 +965,79 @@ void ViewSpikeTemplates::sort_spikes()
 	m_chart_spk_wnd_shape_.Invalidate();
 }
 
-void ViewSpikeTemplates::OnKeydownTemplateList(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewSpikeTemplates::on_keydown_template_list(NMHDR* pNMHDR, LRESULT* p_result)
 {
-	auto* p_lv_key_dow = reinterpret_cast<LV_KEYDOWN*>(pNMHDR);
+	const auto* p_lv_key_dow = reinterpret_cast<LV_KEYDOWN*>(pNMHDR);
 
 	// delete selected template
 	if (p_lv_key_dow->wVKey == VK_DELETE && m_template_list_.GetSelectedCount() > 0)
 	{
 		auto flag = FALSE;
-		const auto isup = m_template_list_.GetItemCount();
+		const auto i_sup = m_template_list_.GetItemCount();
 		auto cla = i_first_sorted_class;
-		for (auto i = 0; i < isup; i++)
+		for (auto i = 0; i < i_sup; i++)
 		{
 			const auto state = m_template_list_.GetItemState(i, LVIS_SELECTED);
 			if (state > 0)
 			{
-				cla = m_template_list_.GetTemplateclassID(i);
-				m_template_list_.DeleteItem(i);
+				cla = m_template_list_.get_template_class_id(i);
+				m_template_list_.delete_item(i);
 				flag = TRUE;
 				continue;
 			}
 			if (flag)
 			{
-				m_template_list_.SetTemplateclassID(i - 1, _T("t"), cla);
+				m_template_list_.set_template_class_id(i - 1, _T("t"), cla);
 				cla++;
 			}
 		}
 	}
 	SetDlgItemInt(IDC_NTEMPLATES, m_template_list_.GetItemCount());
 	m_template_list_.Invalidate();
-	*pResult = 0;
+	*p_result = 0;
 }
 
-void ViewSpikeTemplates::OnCheck1()
+void ViewSpikeTemplates::on_check1()
 {
 	UpdateData(TRUE);
 }
 
-void ViewSpikeTemplates::edit_spike_class(int control_id, int control_item)
+void ViewSpikeTemplates::edit_spike_class(const int control_id, const int control_item)
 {
 	// find which item has been selected
-	CTemplateListWnd* pList = nullptr;
+	CTemplateListWnd* p_list = nullptr;
 	auto b_spikes = TRUE;
 	auto b_all_files = m_b_all_files;
 	if (m_avg_list_.GetDlgCtrlID() == control_id)
-		pList = &m_avg_list_;
+		p_list = &m_avg_list_;
 	else if (m_template_list_.GetDlgCtrlID() == control_id)
 	{
-		pList = &m_template_list_;
+		p_list = &m_template_list_;
 		b_spikes = FALSE;
 	}
 	else if (m_avg_all_list_.GetDlgCtrlID() == control_id)
 	{
-		pList = &m_avg_all_list_;
+		p_list = &m_avg_all_list_;
 		b_all_files = TRUE;
 	}
-	if (pList == nullptr)
+	if (p_list == nullptr)
 		return;
 
 	// find which icon has been selected and get the key
-	const auto oldclass = pList->GetTemplateclassID(control_item);
+	const auto old_class = p_list->get_template_class_id(control_item);
 
 	// launch edit dlg
 	DlgEditSpikeClass dlg;
-	dlg.m_iClass = oldclass;
-	if (IDOK == dlg.DoModal() && oldclass != dlg.m_iClass)
+	dlg.m_iClass = old_class;
+	if (IDOK == dlg.DoModal() && old_class != dlg.m_iClass)
 	{
 		// templates
 		if (!b_spikes)
-			pList->SetTemplateclassID(control_item, _T("t"), dlg.m_iClass);
+			p_list->set_template_class_id(control_item, _T("t"), dlg.m_iClass);
 		// spikes
 		else
 		{
-			pList->SetTemplateclassID(control_item, _T("c"), dlg.m_iClass);
+			p_list->set_template_class_id(control_item, _T("c"), dlg.m_iClass);
 
 			// set file indexes - assume only one file selected
 			const auto dbwave_doc = GetDocument();
@@ -1055,8 +1061,10 @@ void ViewSpikeTemplates::edit_spike_class(int control_id, int control_item)
 				// store nb of spikes within array
 				if (b_all_files)
 				{
-					dbwave_doc->db_set_current_record_position(index_file);
-					m_pSpkDoc = dbwave_doc->open_current_spike_file();
+					if (dbwave_doc->db_set_current_record_position(index_file))
+						m_pSpkDoc = dbwave_doc->open_current_spike_file();
+					else
+						continue;
 					CString cs;
 					cs.Format(_T("%i/%i - "), index_file, index_last_file);
 					cs += dbwave_doc->db_get_current_spk_file_name(FALSE);
@@ -1067,7 +1075,7 @@ void ViewSpikeTemplates::edit_spike_class(int control_id, int control_item)
 
 				// TODO: this should not work - changing SpikeClassID does not change the spike class because UpdateClassList reset classes array to zero
 				m_pSpkList->update_class_list(); // rebuild list of classes
-				m_pSpkList->change_all_spike_from_class_id_to_new_class_id(oldclass, dlg.m_iClass);
+				m_pSpkList->change_all_spike_from_class_id_to_new_class_id(old_class, dlg.m_iClass);
 				m_pSpkList->update_class_list(); // rebuild list of classes
 				m_pSpkDoc->SetModifiedFlag(TRUE);
 
@@ -1084,17 +1092,17 @@ void ViewSpikeTemplates::edit_spike_class(int control_id, int control_item)
 			// end of loop, select current file again if necessary
 			if (b_all_files)
 			{
-				dbwave_doc->db_set_current_record_position(current_file_index);
-				m_pSpkDoc = dbwave_doc->open_current_spike_file();
+				if (dbwave_doc->db_set_current_record_position(current_file_index))
+					m_pSpkDoc = dbwave_doc->open_current_spike_file();
 				dbwave_doc->SetTitle(dbwave_doc->GetPathName());
 			}
 		}
 	}
 }
 
-void ViewSpikeTemplates::update_ctrl_tab1(int i_select)
+void ViewSpikeTemplates::update_ctrl_tab1(const int i_select)
 {
-	WORD i_templ = SW_SHOW;
+	WORD i_template = SW_SHOW;
 	WORD i_avg = SW_HIDE;
 	WORD i_sort = SW_HIDE;
 	switch (i_select)
@@ -1104,14 +1112,14 @@ void ViewSpikeTemplates::update_ctrl_tab1(int i_select)
 		m_template_list_.ShowWindow(SW_SHOW);
 		break;
 	case 1:
-		i_templ = SW_HIDE;
+		i_template = SW_HIDE;
 		i_sort = SW_SHOW;
 		i_avg = SW_HIDE;
 		m_avg_all_list_.ShowWindow(SW_HIDE);
 		m_template_list_.ShowWindow(SW_SHOW);
 		break;
 	case 2:
-		i_templ = SW_HIDE;
+		i_template = SW_HIDE;
 		i_sort = SW_HIDE;
 		i_avg = SW_SHOW;
 		m_avg_all_list_.ShowWindow(SW_SHOW);
@@ -1122,17 +1130,17 @@ void ViewSpikeTemplates::update_ctrl_tab1(int i_select)
 	}
 
 	// build templates
-	GetDlgItem(IDC_STATIC3)->ShowWindow(i_templ);
-	GetDlgItem(IDC_HITRATE)->ShowWindow(i_templ);
-	GetDlgItem(IDC_STATIC4)->ShowWindow(i_templ);
-	GetDlgItem(IDC_TOLERANCE)->ShowWindow(i_templ);
-	GetDlgItem(IDC_BUILD)->ShowWindow(i_templ);
-	GetDlgItem(IDC_LOAD_SAVE)->ShowWindow(i_templ);
-	GetDlgItem(IDC_CHECK1)->ShowWindow(i_templ);
-	GetDlgItem(IDC_NTEMPLS)->ShowWindow(i_templ);
-	GetDlgItem(IDC_NTEMPLATES)->ShowWindow(i_templ);
-	GetDlgItem(IDC_TFIRSTSORTEDCLASS)->ShowWindow(i_templ);
-	GetDlgItem(IDC_IFIRSTSORTEDCLASS)->ShowWindow(i_templ);
+	GetDlgItem(IDC_STATIC3)->ShowWindow(i_template);
+	GetDlgItem(IDC_HITRATE)->ShowWindow(i_template);
+	GetDlgItem(IDC_STATIC4)->ShowWindow(i_template);
+	GetDlgItem(IDC_TOLERANCE)->ShowWindow(i_template);
+	GetDlgItem(IDC_BUILD)->ShowWindow(i_template);
+	GetDlgItem(IDC_LOAD_SAVE)->ShowWindow(i_template);
+	GetDlgItem(IDC_CHECK1)->ShowWindow(i_template);
+	GetDlgItem(IDC_NTEMPLS)->ShowWindow(i_template);
+	GetDlgItem(IDC_NTEMPLATES)->ShowWindow(i_template);
+	GetDlgItem(IDC_TFIRSTSORTEDCLASS)->ShowWindow(i_template);
+	GetDlgItem(IDC_IFIRSTSORTEDCLASS)->ShowWindow(i_template);
 
 	// sort spikes using templates
 	GetDlgItem(IDC_STATIC6)->ShowWindow(i_sort);
@@ -1144,17 +1152,17 @@ void ViewSpikeTemplates::update_ctrl_tab1(int i_select)
 	GetDlgItem(IDC_DISPLAY)->ShowWindow(i_avg);
 }
 
-void ViewSpikeTemplates::OnBnClickedSort()
+void ViewSpikeTemplates::on_bn_clicked_sort()
 {
 	sort_spikes();
 }
 
-void ViewSpikeTemplates::OnBnClickedDisplay()
+void ViewSpikeTemplates::on_bn_clicked_display()
 {
 	display_avg(TRUE, &m_avg_all_list_); //, &m_ImListAll);
 }
 
-void ViewSpikeTemplates::OnEnChangeIfirstsortedclass()
+void ViewSpikeTemplates::on_en_change_i_first_sorted_class()
 {
 	if (mm_i_first_sorted_class_.m_bEntryDone)
 	{
@@ -1162,26 +1170,26 @@ void ViewSpikeTemplates::OnEnChangeIfirstsortedclass()
 
 		// change class of all templates
 		//SetTemplateclassID(int item, LPCSTR pszType, int classID)
-		m_template_list_.UpdateTemplateBaseClassID(i_first_sorted_class);
+		m_template_list_.update_template_base_class_id(i_first_sorted_class);
 		UpdateData(FALSE);
 	}
 }
 
-void ViewSpikeTemplates::OnTcnSelchangeTab2(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewSpikeTemplates::on_tcn_sel_change_tab2(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto icursel = m_tabCtrl.GetCurSel();
 	select_spike_list(icursel);
 	*pResult = 0;
 }
 
-void ViewSpikeTemplates::OnNMClickTab2(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewSpikeTemplates::on_nm_click_tab2(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	const auto icursel = m_tabCtrl.GetCurSel();
 	select_spike_list(icursel);
 	*pResult = 0;
 }
 
-void ViewSpikeTemplates::OnBnClickedDisplaysingleclass()
+void ViewSpikeTemplates::on_bn_clicked_display_single_class()
 {
 	UpdateData(TRUE);
 	if (b_display_single_class)
@@ -1197,7 +1205,7 @@ void ViewSpikeTemplates::OnBnClickedDisplaysingleclass()
 	m_chart_spk_wnd_shape_.Invalidate();
 }
 
-void ViewSpikeTemplates::OnEnChangeT1()
+void ViewSpikeTemplates::on_en_change_t1()
 {
 	m_pSpkList = m_pSpkDoc->get_spike_list_current();
 
@@ -1223,7 +1231,7 @@ void ViewSpikeTemplates::OnEnChangeT1()
 	}
 }
 
-void ViewSpikeTemplates::OnEnChangeT2()
+void ViewSpikeTemplates::on_en_change_t2()
 {
 	m_pSpkList = m_pSpkDoc->get_spike_list_current();
 

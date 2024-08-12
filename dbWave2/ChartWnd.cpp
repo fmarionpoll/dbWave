@@ -48,7 +48,7 @@ ChartWnd::ChartWnd()
 {
 	if (cursors_count_ == 0)
 	{
-		short j = 0;
+		int j = 0;
 		cursors_[j] = ::LoadCursor(nullptr, IDC_ARROW);
 		cursors_drag_mode_[j] = 0;
 		j++;
@@ -800,7 +800,7 @@ void ChartWnd::OnRButtonUp(const UINT n_flags, const CPoint point)
 			release_cursor();
 			// skip too small a rectangle (5 pixels?)
 			CRect rect_out(pt_first_.x, pt_first_.y, pt_last_.x, pt_last_.y);
-			constexpr short jitter = 3;
+			constexpr int jitter = 3;
 			if (rect_out.Height() < jitter && rect_out.Width() < jitter)
 			{
 				zoom_out();

@@ -19,74 +19,74 @@ protected:
 public:
 	enum { IDD = IDD_VIEWSPKDETECTION };
 
-	RulerBar m_xspkdscale;
-	CComboBox m_CBdetectWhat;
-	CComboBox m_CBdetectChan;
-	CComboBox m_CBtransform;
-	CComboBox m_CBtransform2;
-	float m_timefirst = 0.f;
-	float m_timelast = 0.f;
-	CString m_datacomments{};
+	RulerBar m_x_spike_ruler;
+	CComboBox m_detect_what_combo;
+	CComboBox m_detect_channel_combo;
+	CComboBox m_transform_combo;
+	CComboBox m_transform2_combo;
+	float m_time_first = 0.f;
+	float m_time_last = 0.f;
+	CString m_data_comments{};
 	int m_spike_index = -1;
-	BOOL m_bartefact = false;
-	float m_thresholdval = 0.f;
-	int m_ichanselected = 0;
-	int m_ichanselected2 = 0;
+	BOOL m_b_artefact = false;
+	float m_threshold_val = 0.f;
+	int m_selected_channel = 0;
+	int m_selected_channel2 = 0;
 	cdxCRotBevelLine m_bevel1;
 	cdxCRotBevelLine m_bevel2;
 	cdxCRotBevelLine m_bevel3;
 
 	// form variables
 protected:
-	int m_scan_count_doc = -1;
-	CDWordArray m_DWintervals;
+	int m_scan_count_doc_ = -1;
+	CDWordArray m_dw_intervals_;
 
-	ChartData m_chart_data_filtered;
-	ChartData m_chart_data_source;
-	ChartSpikeBar m_chart_spike_bar;
-	ChartSpikeShape m_chart_spike_shape;
+	ChartData m_chart_data_filtered_;
+	ChartData m_chart_data_source_;
+	ChartSpikeBar m_chart_spike_bar_;
+	ChartSpikeShape m_chart_spike_shape_;
 
-	ScrollBarEx m_filescroll;
-	SCROLLINFO m_filescroll_infos{};
+	ScrollBarEx m_file_scroll_;
+	SCROLLINFO m_file_scroll_infos_{};
 
-	CEditCtrl mm_spikeno;
-	CEditCtrl mm_thresholdval;
-	CEditCtrl mm_timefirst;
-	CEditCtrl mm_timelast;
-	CEditCtrl mm_spkWndDuration;
-	CEditCtrl mm_spkWndAmplitude;
-	CEditCtrl mm_ichanselected;
-	CEditCtrl mm_ichanselected2;
+	CEditCtrl mm_spike_no_;
+	CEditCtrl mm_threshold_val_;
+	CEditCtrl mm_time_first_;
+	CEditCtrl mm_time_last_;
+	CEditCtrl mm_spk_wnd_duration_;
+	CEditCtrl mm_spk_wnd_amplitude_;
+	CEditCtrl mm_selected_channel_;
+	CEditCtrl mm_selected_channel2_;
 
-	int m_zoom_integer = 0;
-	SPKDETECTARRAY* m_pArrayFromApp = nullptr;
-	SpikeDetectArray m_spk_detect_array_current;
-	SPKDETECTPARM* m_p_detect_parameters = nullptr;
-	int m_i_detect_parameters = 0;
+	int m_zoom_integer_ = 0;
+	SPKDETECTARRAY* m_p_array_from_app_ = nullptr;
+	SpikeDetectArray m_spk_detect_array_current_;
+	SPKDETECTPARM* m_p_detect_parameters_ = nullptr;
+	int m_i_detect_parameters_ = 0;
 
-	OPTIONS_VIEWDATA* options_view_data = nullptr;
-	OPTIONS_MEASURE* options_view_data_measure = nullptr;
+	OPTIONS_VIEWDATA* options_view_data_ = nullptr;
+	OPTIONS_MEASURE* options_measure_ = nullptr;
 
-	float m_samplingRate = 0.f;
-	float m_spkWndAmplitude = 1.f;
-	float m_spkWndDuration = 6.f;
-	BOOL m_bValidThreshold = false;
-	BOOL m_bDetected = false;
+	float m_sampling_rate_ = 0.f;
+	float m_spk_wnd_amplitude_ = 1.f;
+	float m_spk_wnd_duration_ = 6.f;
+	BOOL m_b_valid_threshold_ = false;
+	BOOL m_b_detected_ = false;
 
-	int m_cursor_state = 0;
+	int m_cursor_state_ = 0;
 
 public:
 	void set_view_mouse_cursor(const int cursor_mode)
 	{
-		m_chart_spike_bar.set_mouse_cursor_type(cursor_mode);
-		m_chart_spike_shape.set_mouse_cursor_type(cursor_mode);
-		m_chart_data_filtered.set_mouse_cursor_type(cursor_mode);
-		m_chart_data_source.set_mouse_cursor_type(cursor_mode);
+		m_chart_spike_bar_.set_mouse_cursor_type(cursor_mode);
+		m_chart_spike_shape_.set_mouse_cursor_type(cursor_mode);
+		m_chart_data_filtered_.set_mouse_cursor_type(cursor_mode);
+		m_chart_data_source_.set_mouse_cursor_type(cursor_mode);
 	}
 
 	// Implementation
 protected:
-	void detect_all(BOOL b_all); // detect from current set of parms or from all
+	void detect_all(BOOL b_all); // detect from current set of parameters or from all
 	int	 detect_method_1(WORD channel_index); // spike detection, method 1 / m_spkD chan channel
 	int  detect_stimulus_1(int channel_index); // stimulus detection
 	void serialize_windows_state(BOOL save, int tab_index = -1);
@@ -140,7 +140,7 @@ protected:
 
 	CString print_get_file_infos();
 	CString print_data_bars(CDC* p_dc, const ChartData* p_data_chart_wnd, const CRect* p_rect);
-	CString print_spk_shape_bars(CDC* p_dc, const CRect* prect, BOOL bAll);
+	CString print_spk_shape_bars(CDC* p_dc, const CRect* p_rect, BOOL b_all);
 	void print_create_font();
 	BOOL print_get_file_series_index_from_page(int page, int& file_number, long& l_first);
 	BOOL print_get_next_row(int& file_index, long& l_first, long& very_last);
@@ -148,23 +148,23 @@ protected:
 	void print_data_cartridge(CDC* p_dc, ChartData* p_data_chart_wnd, const CRect* p_rect);
 
 	// gain and bias setting: data and functions
-	HICON m_hBias = nullptr;
-	HICON m_hZoom = nullptr;
-	CScrollBar m_scrolly;
-	float m_yscaleFactor = 0.f;
-	int m_VBarMode = 0;
+	HICON m_h_bias_ = nullptr;
+	HICON m_h_zoom_ = nullptr;
+	CScrollBar m_scroll_y_;
+	float m_y_scale_factor_ = 0.f;
+	int m_v_bar_mode_ = 0;
 
-	HICON m_hBias2 = nullptr;
-	HICON m_hZoom2 = nullptr;
-	CScrollBar m_scrolly2;
-	float m_yscaleFactor2 = 0.f;
-	int m_VBarMode2 = 0;
+	HICON m_h_bias2_ = nullptr;
+	HICON m_h_zoom2_ = nullptr;
+	CScrollBar m_scroll_y2_;
+	float m_y_scale_factor2_ = 0.f;
+	int m_v_bar_mode2_ = 0;
 
 	void on_gain_scroll(UINT n_sb_code, UINT n_pos, int i_id);
 	void on_bias_scroll(UINT n_sb_code, UINT n_pos, int i_id);
 	void update_gain_scroll(int i_id);
 	void update_bias_scroll(int i_id);
-	void set_v_bar_mode(short b_mode, int i_id);
+	void set_v_bar_mode(const int b_mode, const int i_id);
 	void update_tabs();
 
 	// Generated message map functions

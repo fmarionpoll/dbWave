@@ -132,7 +132,7 @@ BOOL DlgSpikeEdit::OnInitDialog()
 	view_data_len_ = MulDiv(spk_length_, 100, display_ratio); 
 	if (y_extent == 0)
 	{
-		short max, min;
+		int max, min;
 		p_spk_list_->get_total_max_min(TRUE, &max, &min);
 		y_extent = (max - min);
 		y_zero = (max + min) / 2;
@@ -299,7 +299,7 @@ void DlgSpikeEdit::load_spike_from_data(const int shift)
 		lp_source += delta;
 		p_spike->transfer_data_to_spike_buffer(lp_source, 1, spk_length_);
 
-		short max, min;
+		int max, min;
 		int i_max, i_min;
 		p_spike->measure_max_min_ex(&max, &i_max, &min, &i_min, 0, p_spk_list_->get_spike_length() - 1);
 		p_spike->set_max_min_ex(max, min, i_min - i_max);
