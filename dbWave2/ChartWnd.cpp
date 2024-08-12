@@ -122,8 +122,8 @@ void ChartWnd::PreSubclassWindow()
 	adjust_display_rect(&client_rect_);
 	x_viewport_origin_ = display_rect_.left;
 	x_viewport_extent_ = display_rect_.Width();
-	y_viewport_origin_ = display_rect_.Height() / 2;
-	y_viewport_extent_ = -display_rect_.Height();
+	y_vo_ = display_rect_.Height() / 2;
+	y_ve_ = -display_rect_.Height();
 }
 
 BEGIN_MESSAGE_MAP(ChartWnd, CWnd)
@@ -165,8 +165,8 @@ void ChartWnd::set_display_area_size(const int cx, const int cy)
 	adjust_display_rect(&client_rect_);
 	x_viewport_origin_ = display_rect_.left;
 	x_viewport_extent_ = display_rect_.Width();
-	y_viewport_origin_ = display_rect_.Height() / 2;
-	y_viewport_extent_ = -display_rect_.Height();
+	y_vo_ = display_rect_.Height() / 2;
+	y_ve_ = -display_rect_.Height();
 }
 
 BOOL ChartWnd::OnEraseBkgnd(CDC* p_dc)
@@ -508,11 +508,10 @@ void ChartWnd::send_my_message(const int code, const int code_parameter) const
 
 void ChartWnd::prepare_dc(CDC* p_dc, const CPrintInfo* p_info)
 {
-	p_dc->SetMapMode(MM_ANISOTROPIC);
 	if (p_info == nullptr)
 	{
-		p_dc->SetViewportOrg(x_viewport_origin_, y_viewport_origin_);
-		p_dc->SetViewportExt(x_viewport_extent_, y_viewport_extent_);
+		p_dc->SetViewportOrg(x_viewport_origin_, y_vo_);
+		p_dc->SetViewportExt(x_viewport_extent_, y_ve_);
 		if (y_we_ == 0)
 			y_we_ = 1024;
 		if (x_we_ == 0)
@@ -678,7 +677,7 @@ void ChartWnd::OnMouseMove(const UINT n_flags, const CPoint point)
 			xor_hz_tag(point.y, p_tag->swap_pixel(point.y));
 
 			pt_curr_ = point;
-			const auto val = MulDiv(point.y - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
+			const auto val = MulDiv(point.y - y_vo_, y_we_, y_ve_) + y_wo_;
 			p_tag->value_int = val;
 			send_my_message(HINT_MOVE_HZ_TAG, hc_trapped_);
 		}
@@ -751,9 +750,9 @@ void ChartWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 void ChartWnd::left_button_up_horizontal_tag(const UINT n_flags, const CPoint point)
 {
 	Tag* p_tag = hz_tags.get_tag(hc_trapped_);
-	p_tag->value_int = MulDiv(point.y - y_viewport_origin_, 
+	p_tag->value_int = MulDiv(point.y - y_vo_, 
 						y_we_, 
-						y_viewport_extent_) + y_wo_;
+						y_ve_) + y_wo_;
 	xor_hz_tag(point.y, p_tag->swap_pixel(point.y));
 
 	ChartWnd::OnLButtonUp(n_flags, point);
@@ -927,7 +926,7 @@ void ChartWnd::invert_tracker(const CPoint point)
 	pt_last_ = point;
 }
 
-void ChartWnd::display_vt_tags(CDC* p_dc)
+void ChartWnd::display_vt_tags_int_values(CDC* p_dc)
 {
 	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
 	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
@@ -958,8 +957,7 @@ void ChartWnd::display_hz_tags(CDC* p_dc)
 	for (auto tag_index = hz_tags.get_tag_list_size() - 1; tag_index >= 0; tag_index--)
 	{
 		Tag* p_tag = hz_tags.get_tag(tag_index);
-		p_tag->pixel = MulDiv(p_tag->value_int - y_wo_, y_viewport_extent_, y_we_)
-			+ y_viewport_origin_;
+		p_tag->pixel = MulDiv(p_tag->value_int - y_wo_, y_ve_, y_we_) + y_vo_;
 		p_dc->MoveTo(x0, p_tag->pixel);
 		p_dc->LineTo(x1, p_tag->pixel);
 	}
@@ -1053,8 +1051,8 @@ void ChartWnd::Serialize(CArchive& ar)
 
 		ar << x_viewport_origin_;
 		ar << x_viewport_extent_;
-		ar << y_viewport_origin_;
-		ar << y_viewport_extent_;
+		ar << y_vo_;
+		ar << y_ve_;
 	}
 	else
 	{
@@ -1068,8 +1066,8 @@ void ChartWnd::Serialize(CArchive& ar)
 
 		ar >> x_viewport_origin_;
 		ar >> x_viewport_extent_;
-		ar >> y_viewport_origin_;
-		ar >> y_viewport_extent_;
+		ar >> y_vo_;
+		ar >> y_ve_;
 	}
 	scope_structure_.Serialize(ar);
 }

@@ -34,37 +34,10 @@ void ChartSpikeShape::plot_data_to_dc_prepare_dc(CDC* p_dc)
 	saved_background_color_ = p_dc->GetBkColor();
 
 	get_extents();
+	p_dc->SetMapMode(MM_ANISOTROPIC);
 	prepare_dc(p_dc);
 }
 
-void ChartSpikeShape::message_no_spike(CDC* p_dc) const
-{
-	auto rect = display_rect_;
-	rect.DeflateRect(1, 1);
-	p_dc->DrawText(cs_empty_, cs_empty_.GetLength(), rect, DT_LEFT);
-}
-
-boolean ChartSpikeShape::get_spike_file(const int i_file) 
-{
-	boolean success = true;
-	if (display_all_files_)
-	{
-		if (dbwave_doc_->db_set_current_record_position(i_file))
-			dbwave_doc_->open_current_spike_file();
-		else
-			success = false;
-	}
-	if (success && dbwave_doc_->m_p_spk == nullptr)
-		success = false;
-
-	if (success)
-	{
-		p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
-		if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() == 0)
-			success = false;
-	}
-	return success;
-}
 
 void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 {
@@ -166,7 +139,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 		if (vt_tags.get_tag_list_size() > 0) {
 			//const int wo = MulDiv(0 - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
 			//const int we = MulDiv(display_rect_.bottom - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
-			display_vt_tags(p_dc);
+			display_vt_tags_int_values(p_dc);
 		}
 
 		// display text
@@ -201,6 +174,7 @@ void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
 	const auto old_pen = p_dc->SelectObject(&new_pen);
 
 	get_extents();
+	p_dc->SetMapMode(MM_ANISOTROPIC);
 	prepare_dc(p_dc);
 	p_dc->SetViewportOrg(display_rect_.left, display_rect_.Height() / 2);
 	p_dc->SetViewportExt(display_rect_.right, -display_rect_.Height());
@@ -238,6 +212,7 @@ int ChartSpikeShape::display_ex_data(int* p_data, const int color)
 
 	CClientDC dc(this);
 	dc.IntersectClipRect(&client_rect_);
+	dc.SetMapMode(MM_ANISOTROPIC);
 	prepare_dc(&dc);
 	CPen new_pen(PS_SOLID, 0, color_table_[color]);
 	const auto old_pen = dc.SelectObject(&new_pen);
@@ -278,6 +253,7 @@ void ChartSpikeShape::draw_spike_on_dc(const Spike* spike, CDC * p_dc)
 	p_dc->IntersectClipRect(&rect);
 
 	get_extents();
+	p_dc->SetMapMode(MM_ANISOTROPIC);
 	prepare_dc(p_dc);
 
 	p_dc->SetViewportOrg(display_rect_.left, display_rect_.Height() / 2 + display_rect_.top);
@@ -419,8 +395,8 @@ void ChartSpikeShape::zoom_data(CRect * r_from, CRect * r_dest)
 	const auto y_we = y_we_; // save previous window extent
 	y_we_ = MulDiv(y_we_, r_dest->Height(), r_from->Height());
 	y_wo_ = y_wo_
-		- MulDiv(r_from->top - y_viewport_origin_, y_we_, y_viewport_extent_)
-		+ MulDiv(r_dest->top - y_viewport_origin_, y_we, y_viewport_extent_);
+		- MulDiv(r_from->top - y_vo_, y_we_, y_ve_)
+		+ MulDiv(r_dest->top - y_vo_, y_we, y_ve_);
 
 	// change index of first and last pt displayed
 	const auto x_we = x_we_; // save previous window extent
@@ -460,8 +436,8 @@ int ChartSpikeShape::hit_curve(const CPoint point)
 	const auto mouse_x = MulDiv(point.x - x_viewport_origin_, x_we_, x_viewport_extent_) + x_wo_;
 	if (mouse_x < 0 || mouse_x > p_spike_list_->get_spike_length())
 		return index_spike_hit;
-	const auto mouse_y = MulDiv(point.y - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
-	const auto delta_y = MulDiv(3, y_we_, y_viewport_extent_);
+	const auto mouse_y = MulDiv(point.y - y_vo_, y_we_, y_ve_) + y_wo_;
+	const auto delta_y = MulDiv(3, y_we_, y_ve_);
 
 	// loop through all spikes
 	auto index_last_spike = p_spike_list_->get_spikes_count() - 1;
@@ -569,14 +545,14 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 	if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() == 0)
 		return;
 
-	const auto old_y_vo = y_viewport_origin_;
-	const auto old_y_ve = y_viewport_extent_;
+	const auto old_y_vo = y_vo_;
+	const auto old_y_ve = y_ve_;
 	const auto old_x_extent = x_we_;
 	const auto old_x_origin = x_wo_;
 
 	// size of the window
-	y_viewport_origin_ = rect->Height() / 2 + rect->top;
-	y_viewport_extent_ = -rect->Height();
+	y_vo_ = rect->Height() / 2 + rect->top;
+	y_ve_ = -rect->Height();
 
 	// check initial conditions
 	if (y_we_ == 1)
@@ -674,8 +650,8 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 
 	x_we_ = old_x_extent;
 	x_wo_ = old_x_origin;
-	y_viewport_origin_ = old_y_vo;
-	y_viewport_extent_ = old_y_ve;
+	y_vo_ = old_y_vo;
+	y_ve_ = old_y_ve;
 }
 
 void ChartSpikeShape::print_array_to_dc(CDC * p_dc, int* p_array)
@@ -684,7 +660,7 @@ void ChartSpikeShape::print_array_to_dc(CDC * p_dc, int* p_array)
 	for (auto i = 0; i < n_elements; i++, p_array++)
 	{
 		auto y = *p_array;
-		y = MulDiv(y - y_wo_, y_viewport_extent_, y_we_) + y_viewport_origin_;
+		y = MulDiv(y - y_wo_, y_ve_, y_we_) + y_vo_;
 		polyline_points_[i].y = y;
 	}
 

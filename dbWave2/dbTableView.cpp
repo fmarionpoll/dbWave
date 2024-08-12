@@ -82,9 +82,9 @@ void dbTableView::OnSize(UINT nType, int cx, int cy)
 	CDaoRecordView::OnSize(nType, cx, cy);
 }
 
-BOOL dbTableView::OnMove(UINT nIDMoveCommand)
+BOOL dbTableView::OnMove(const UINT n_id_move_command)
 {
-	const auto flag = CDaoRecordView::OnMove(nIDMoveCommand);
+	const auto flag = CDaoRecordView::OnMove(n_id_move_command);
 	auto p_document = GetDocument();
 	if (m_auto_detect && p_document->db_get_current_spk_file_name(TRUE).IsEmpty())
 	{

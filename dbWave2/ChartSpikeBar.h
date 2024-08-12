@@ -8,11 +8,12 @@ class ChartSpikeBar : public ChartSpike
 public:
 	ChartSpikeBar();
 	~ChartSpikeBar() override;
+	void plot_data_to_dc_prepare_dc(CDC* p_dc);
 	DECLARE_SERIAL(ChartSpikeBar)
 	void Serialize(CArchive& archive) override;
 
 protected:
-	BOOL display_acquisition_data_ = FALSE;			// FALSE=bars; TRUE=spikes
+	BOOL b_plot_spikes_ = FALSE; // FALSE=bars; TRUE=spikes
 	int bar_height_ = 10;
 	CDWordArray* p_envelope_ = nullptr; 
 
@@ -24,7 +25,7 @@ public:
 
 	void display_all_files(const BOOL b_on, CdbWaveDoc* p_document)
 	{
-		display_all_files_ = b_on;
+		display_all_files_ = static_cast<boolean>(b_on);
 		dbwave_doc_ = p_document;
 	}
 
@@ -37,12 +38,14 @@ public:
 
 	void print(CDC* p_dc, const CRect* rect);
 	void plot_data_to_dc(CDC* p_dc) override;
+	void display_temporary_tag(CDC* p_dc);
+	void display_vt_tags_long_values(CDC* p_dc);
+	
 	void zoom_data(CRect* prev_rect, CRect* new_rect) override;
 
 protected:
 	int hit_curve(CPoint point) override;
 	void display_bars(CDC* p_dc, const CRect* rect);
-
 	void draw_spike(const Spike* spike, int color_index);
 	void display_stimulus(CDC* p_dc, const CRect* rect) const;
 

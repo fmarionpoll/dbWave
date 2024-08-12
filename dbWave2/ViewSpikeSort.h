@@ -11,18 +11,12 @@
 
 class ViewSpikeSort : public dbTableView
 {
-	DECLARE_DYNCREATE(ViewSpikeSort)
 protected:
+	DECLARE_DYNCREATE(ViewSpikeSort)
 	ViewSpikeSort();
 	~ViewSpikeSort() override;
-	void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint) override;
-	void DoDataExchange(CDataExchange* p_dx) override;
-	void OnInitialUpdate() override;
-	void OnActivateView(BOOL b_activate, CView* p_activate_view, CView* p_deactive_view) override;
 
 public:
-	BOOL OnMove(UINT n_id_move_command) override;
-
 	// Form Data
 	enum { IDD = IDD_VIEWSPKSORT1 };
 
@@ -147,12 +141,24 @@ protected:
 	void gain_adjust_xy_and_histogram();
 	void center_curve();
 
+	// public interface to view
+public:
+	// Overrides
+	BOOL OnMove(UINT n_id_move_command) override;
+
+	void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint) override;
+	void DoDataExchange(CDataExchange* p_dx) override;
+	void OnInitialUpdate() override;
+	void OnActivateView(BOOL b_activate, CView* p_activate_view, CView* p_deactive_view) override;
+
 	// Generated message map functions
 public:
+	afx_msg LRESULT on_my_message(WPARAM code, LPARAM l_param);
+	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
+
 	afx_msg void on_select_change_measure_type();
 	afx_msg void on_sort();
 
-	afx_msg LRESULT on_my_message(WPARAM code, LPARAM l_param);
 	afx_msg void on_measure_parameters_from_spikes();
 	afx_msg void on_view_all_data_on_abscissa();
 	afx_msg void on_format_center_curve();
@@ -161,7 +167,6 @@ public:
 	afx_msg void on_tools_edit_spikes();
 	afx_msg void on_select_all_files();
 	afx_msg void on_tools_align_spikes();
-	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
 
 	afx_msg void on_en_change_lower_threshold();
 	afx_msg void on_en_change_upper_threshold();

@@ -142,6 +142,7 @@ public:
 protected:
 	void read_file_version1(CArchive& ar);
 	void remove_artefacts();
+	void serialize_version8(CArchive& ar);
 	void read_file_version_before5(CArchive& ar, int version);
 	void read_file_version5(CArchive& ar);
 
@@ -150,6 +151,7 @@ protected:
 	void serialize_data_parameters(CArchive& ar);
 	void serialize_spike_elements(CArchive& ar);
 	void serialize_spike_data(CArchive& ar);
+	void serialize_spike_data_as_int(CArchive& ar);
 	void serialize_spike_class_descriptors(CArchive& ar);
 	void serialize_additional_data(CArchive& ar);
 

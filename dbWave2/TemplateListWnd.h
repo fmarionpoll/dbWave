@@ -10,7 +10,7 @@ class CTemplateListWnd : public CListCtrl
 public:
 	CTemplateListWnd();
 	~CTemplateListWnd() override;
-	CTemplateListWnd& operator =(const CTemplateListWnd& arg); // operator redefinition
+	CTemplateListWnd& operator =(const CTemplateListWnd& arg);
 	void Serialize(CArchive& ar) override;
 
 	// Attributes
@@ -45,12 +45,12 @@ public:
 	void sort_templates_by_number_of_spikes(BOOL b_up, BOOL b_update_classes, int min_class_nb);
 	int get_template_data_size() const { return template_wnd_ptr_array_.GetSize(); }
 
-	BOOL t_init(int i);
+	BOOL t_init(int i) const;
 	BOOL t_add(int* p_source);
-	BOOL t_add(int i, int* p_source);
-	BOOL t_power(int i, double* power);
-	BOOL t_within(int i, int* p_source);
-	BOOL t_min_dist(const int i, int* p_source, int* offset_min, double* dist_min);
+	BOOL t_add(int i, int* p_source) const;
+	BOOL t_power(int i, double* power_of_sum) const;
+	BOOL t_within(int i, int* p_source) const;
+	BOOL t_min_dist(const int i, int* p_source, int* offset_min, double* dist_min) const;
 	void t_global_stats();
 
 	void set_template_length(int spk_len, int tp_left, int tp_right);
@@ -70,14 +70,13 @@ public:
 
 	// Generated message map functions
 protected:
-	afx_msg void on_get_disp_info(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeleteitem(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void on_begin_drag(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-public:
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	afx_msg void on_get_display_info(NMHDR* p_nmhdr, LRESULT* p_result);
+	afx_msg void on_delete_item(NMHDR* p_nmhdr, LRESULT* p_result);
+	afx_msg void OnVScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
+	afx_msg void on_begin_drag(NMHDR* p_nmhdr, LRESULT* p_result);
+	afx_msg void OnMouseMove(UINT n_flags, CPoint point);
+	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
+	afx_msg void OnRButtonDown(UINT n_flags, CPoint point);
 
 	DECLARE_MESSAGE_MAP()
 };

@@ -85,6 +85,7 @@ public:
 	// Implementation
 	void	read_version0(CArchive& ar);
 	void	Serialize(CArchive& ar) override;
+	void read_version3(CArchive& ar);
 
 protected:
 	void	read_version2(CArchive& ar, WORD w_version);

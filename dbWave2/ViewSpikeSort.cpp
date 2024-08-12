@@ -25,7 +25,7 @@ ViewSpikeSort::ViewSpikeSort()
 ViewSpikeSort::~ViewSpikeSort()
 {
 	if (m_pSpkDoc != nullptr)
-		save_current_spk_file(); // save file if modified
+		save_current_spk_file(); 
 
 	spike_classification_->b_changed = TRUE;
 	spike_classification_->source_class = sort_source_class_;
@@ -61,21 +61,13 @@ void ViewSpikeSort::DoDataExchange(CDataExchange* p_dx)
 
 BEGIN_MESSAGE_MAP(ViewSpikeSort, dbTableView)
 
-	ON_MESSAGE(WM_MYMESSAGE, &ViewSpikeSort::on_my_message)
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_WM_DESTROY()
 	ON_WM_HSCROLL()
-	ON_EN_CHANGE(IDC_SOURCE_CLASS, &ViewSpikeSort::on_en_change_source_class)
-	ON_EN_CHANGE(IDC_DESTINATION_CLASS, &ViewSpikeSort::on_en_change_destination_class)
-	ON_CBN_SELCHANGE(IDC_MEASURE_TYPE, &ViewSpikeSort::on_select_change_measure_type)
-	ON_EN_CHANGE(IDC_LOWER_THRESHOLD_MV, &ViewSpikeSort::on_en_change_lower_threshold)
-	ON_EN_CHANGE(IDC_UPPER_THRESHOLD_MV, &ViewSpikeSort::on_en_change_upper_threshold)
-	ON_EN_CHANGE(IDC_SHAPE_T1_MS, &ViewSpikeSort::on_en_change_shape_t1)
-	ON_EN_CHANGE(IDC_SHAPE_T2_MS, &ViewSpikeSort::on_en_change_shape_t2)
-	ON_BN_CLICKED(IDC_EXECUTE, &ViewSpikeSort::on_sort)
-	ON_BN_CLICKED(IDC_MEASURE, &ViewSpikeSort::on_measure_parameters_from_spikes)
-	ON_BN_CLICKED(IDC_ALL_FILES, &ViewSpikeSort::on_select_all_files)
+
+	ON_MESSAGE(WM_MYMESSAGE, &ViewSpikeSort::on_my_message)
+
 	ON_COMMAND(ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA, &ViewSpikeSort::on_view_all_data_on_abscissa)
 	ON_COMMAND(ID_FORMAT_CENTER_CURVE, &ViewSpikeSort::on_format_center_curve)
 	ON_COMMAND(ID_FORMAT_GAIN_ADJUST, &ViewSpikeSort::on_format_gain_adjust)
@@ -83,6 +75,18 @@ BEGIN_MESSAGE_MAP(ViewSpikeSort, dbTableView)
 	ON_COMMAND(ID_TOOLS_EDIT_SPIKES, &ViewSpikeSort::on_tools_edit_spikes)
 	ON_COMMAND(ID_TOOLS_ALIGN_SPIKES, &ViewSpikeSort::on_tools_align_spikes)
 
+	ON_BN_CLICKED(IDC_EXECUTE, &ViewSpikeSort::on_sort)
+	ON_BN_CLICKED(IDC_MEASURE, &ViewSpikeSort::on_measure_parameters_from_spikes)
+	ON_BN_CLICKED(IDC_ALL_FILES, &ViewSpikeSort::on_select_all_files)
+
+	ON_CBN_SELCHANGE(IDC_MEASURE_TYPE, &ViewSpikeSort::on_select_change_measure_type)
+
+	ON_EN_CHANGE(IDC_LOWER_THRESHOLD_MV, &ViewSpikeSort::on_en_change_lower_threshold)
+	ON_EN_CHANGE(IDC_UPPER_THRESHOLD_MV, &ViewSpikeSort::on_en_change_upper_threshold)
+	ON_EN_CHANGE(IDC_SOURCE_CLASS, &ViewSpikeSort::on_en_change_source_class)
+	ON_EN_CHANGE(IDC_DESTINATION_CLASS, &ViewSpikeSort::on_en_change_destination_class)
+	ON_EN_CHANGE(IDC_SHAPE_T1_MS, &ViewSpikeSort::on_en_change_shape_t1)
+	ON_EN_CHANGE(IDC_SHAPE_T2_MS, &ViewSpikeSort::on_en_change_shape_t2)
 	ON_EN_CHANGE(IDC_TIME_FIRST, &ViewSpikeSort::on_en_change_time_first)
 	ON_EN_CHANGE(IDC_TIME_LAST, &ViewSpikeSort::on_en_change_time_last)
 	ON_EN_CHANGE(IDC_MEASURE_MIN_MV, &ViewSpikeSort::on_en_change_min_mv)
@@ -90,9 +94,11 @@ BEGIN_MESSAGE_MAP(ViewSpikeSort, dbTableView)
 	ON_EN_CHANGE(IDC_EDIT_LEFT, &ViewSpikeSort::on_en_change_edit_left2)
 	ON_EN_CHANGE(IDC_EDIT_RIGHT, &ViewSpikeSort::on_en_change_edit_right2)
 	ON_EN_CHANGE(IDC_SPIKE_INDEX, &ViewSpikeSort::on_en_change_spike_index)
-	ON_BN_DOUBLECLICKED(IDC_CHART_MEASURE, &ViewSpikeSort::on_tools_edit_spikes)
 	ON_EN_CHANGE(IDC_SPIKE_CLASS, &ViewSpikeSort::on_en_change_spike_class)
 	ON_EN_CHANGE(IDC_HISTOGRAM_BIN_MS, &ViewSpikeSort::on_en_change_hist_bin_ms)
+
+	ON_BN_DOUBLECLICKED(IDC_CHART_MEASURE, &ViewSpikeSort::on_tools_edit_spikes)
+
 END_MESSAGE_MAP()
 
 void ViewSpikeSort::define_sub_classed_items()
@@ -188,10 +194,10 @@ void ViewSpikeSort::init_charts_from_saved_parameters()
 
 void ViewSpikeSort::OnInitialUpdate()
 {
-	dbTableView::OnInitialUpdate();
-
 	define_sub_classed_items();
 	define_stretch_parameters();
+	dbTableView::OnInitialUpdate();
+
 	init_charts_from_saved_parameters();
 	update_file_parameters();
 	b_measure_done_ = FALSE;
@@ -280,7 +286,13 @@ void ViewSpikeSort::OnActivateView(const BOOL b_activate, CView* p_activate_view
 	dbTableView::OnActivateView(b_activate, p_activate_view, p_deactive_view);
 }
 
-void ViewSpikeSort::OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint)
+BOOL ViewSpikeSort::OnMove(const UINT n_id_move_command)
+{
+	save_current_spk_file();
+	return dbTableView::OnMove(n_id_move_command);
+}
+
+void ViewSpikeSort::OnUpdate(CView* p_sender, const LPARAM l_hint, CObject* p_hint)
 {
 	if (m_b_init_)
 	{
@@ -302,12 +314,6 @@ void ViewSpikeSort::OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint)
 			break;
 		}
 	}
-}
-
-BOOL ViewSpikeSort::OnMove(const UINT n_id_move_command)
-{
-	save_current_spk_file();
-	return dbTableView::OnMove(n_id_move_command);
 }
 
 void ViewSpikeSort::load_current_spike_file()
@@ -753,8 +759,8 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 	db_spike spike_sel(-1, -1, -1);
 	select_spike(spike_sel);
 
-	const int index_first_file = b_all_files_?  index_current_file : 0;
-	const int index_last_file = b_all_files_ ? index_current_file : n_files ;
+	const int index_first_file = b_all_files_?  0: index_current_file;
+	const int index_last_file = b_all_files_ ? n_files: index_current_file;
 
 	// loop over all selected files (or only one file currently selected)
 	for (auto i_file = index_first_file; i_file < index_last_file; i_file++)
@@ -1272,7 +1278,7 @@ void ViewSpikeSort::OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_b
 	update_legends();
 }
 
-void ViewSpikeSort::scroll_file(UINT n_sb_code, UINT n_pos)
+void ViewSpikeSort::scroll_file(const UINT n_sb_code, const UINT n_pos)
 {
 	// get corresponding data
 	const auto total_scroll = m_pSpkDoc->get_acq_size();

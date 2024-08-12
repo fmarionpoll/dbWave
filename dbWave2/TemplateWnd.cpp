@@ -156,6 +156,7 @@ void CTemplateWnd::plot_data_to_dc(CDC* p_dc)
 	p_dc->SetViewportExt(display_rect_.Width(), -display_rect_.Height());
 
 	get_extents();
+	p_dc->SetMapMode(MM_ANISOTROPIC);
 	prepare_dc(p_dc);
 
 	if (m_pts_area_.GetSize() != m_tpl_len_ * 2)
@@ -247,9 +248,9 @@ void CTemplateWnd::fill_ordinates_at_scale(BOOL bScale)
 	{
 		for (int i = 0; i < m_tpl_len_; i++, i1++, i2--)
 		{
-			m_pts_avg_[i].y = MulDiv(*p_avg - y_wo_, y_viewport_extent_, y_we_) + y_viewport_origin_;
-			m_pts_area_[i1].y = MulDiv(*p_max - y_wo_, y_viewport_extent_, y_we_) + y_viewport_origin_;
-			m_pts_area_[i2].y = MulDiv(*p_min - y_wo_, y_viewport_extent_, y_we_) + y_viewport_origin_;
+			m_pts_avg_[i].y = MulDiv(*p_avg - y_wo_, y_ve_, y_we_) + y_vo_;
+			m_pts_area_[i1].y = MulDiv(*p_max - y_wo_, y_ve_, y_we_) + y_vo_;
+			m_pts_area_[i2].y = MulDiv(*p_min - y_wo_, y_ve_, y_we_) + y_vo_;
 			p_avg++;
 			p_max++;
 			p_min++;

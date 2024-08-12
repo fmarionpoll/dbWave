@@ -30,7 +30,36 @@ int ChartSpike::get_color_according_to_plot_mode(const Spike* spike, int plot_mo
 	return color;
 }
 
-void ChartSpike::set_plot_mode(int mode, int selected_class)
+boolean ChartSpike::get_spike_file(const int i_file)
+{
+	boolean success = true;
+	if (display_all_files_)
+	{
+		if (dbwave_doc_->db_set_current_record_position(i_file))
+			dbwave_doc_->open_current_spike_file();
+		else
+			success = false;
+	}
+	if (success && dbwave_doc_->m_p_spk == nullptr)
+		success = false;
+
+	if (success)
+	{
+		p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
+		if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() == 0)
+			success = false;
+	}
+	return success;
+}
+
+void ChartSpike::message_no_spike(CDC* p_dc) const
+{
+	auto rect = display_rect_;
+	rect.DeflateRect(1, 1);
+	p_dc->DrawText(cs_empty_, cs_empty_.GetLength(), rect, DT_LEFT);
+}
+
+void ChartSpike::set_plot_mode(const int mode, const int selected_class)
 {
 	plot_mode_ = mode;
 	selected_class_ = selected_class;

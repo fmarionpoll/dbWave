@@ -388,8 +388,8 @@ BOOL CTemplateListWnd::delete_item(const int item_index)
 }
 
 BEGIN_MESSAGE_MAP(CTemplateListWnd, CListCtrl)
-	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, on_get_disp_info)
-	ON_NOTIFY_REFLECT(LVN_DELETEITEM, OnDeleteitem)
+	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, on_get_display_info)
+	ON_NOTIFY_REFLECT(LVN_DELETEITEM, on_delete_item)
 	ON_WM_VSCROLL()
 	ON_NOTIFY_REFLECT(LVN_BEGINDRAG, on_begin_drag)
 	ON_WM_MOUSEMOVE()
@@ -397,10 +397,10 @@ BEGIN_MESSAGE_MAP(CTemplateListWnd, CListCtrl)
 	ON_WM_RBUTTONDOWN()
 END_MESSAGE_MAP()
 
-void CTemplateListWnd::on_get_disp_info(NMHDR* pNMHDR, LRESULT* pResult)
+void CTemplateListWnd::on_get_display_info(NMHDR* p_nmhdr, LRESULT* p_result)
 {
 	// message received (reflected) : LVN_GETDISPINFO
-	const auto* p_display_info = reinterpret_cast<LV_DISPINFO*>(pNMHDR);
+	const auto* p_display_info = reinterpret_cast<LV_DISPINFO*>(p_nmhdr);
 	const auto item = p_display_info->item;
 
 	// get position of display window and move it
@@ -421,16 +421,16 @@ void CTemplateListWnd::on_get_disp_info(NMHDR* pNMHDR, LRESULT* pResult)
 	if (rect2 != rect)
 		p_spike_element->MoveWindow(&rect);
 
-	*pResult = 0;
+	*p_result = 0;
 }
 
-void CTemplateListWnd::OnDeleteitem(NMHDR* pNMHDR, LRESULT* pResult)
+void CTemplateListWnd::on_delete_item(NMHDR* p_nmhdr, LRESULT* p_result)
 {
 	// message received (reflected) : LVN_DELETEITEM
-	auto* p_nm_list_view = reinterpret_cast<NM_LISTVIEW*>(pNMHDR);
+	auto* p_nm_list_view = reinterpret_cast<NM_LISTVIEW*>(p_nmhdr);
 
 	// delete corresponding window object
-	auto* p_spike_element = reinterpret_cast<CTemplateWnd*>(p_nm_list_view->lParam);
+	const CTemplateWnd* p_spike_element = reinterpret_cast<CTemplateWnd*>(p_nm_list_view->lParam);
 	if (p_spike_element != nullptr)
 	{
 		// search corresponding window
@@ -447,32 +447,32 @@ void CTemplateListWnd::OnDeleteitem(NMHDR* pNMHDR, LRESULT* pResult)
 		template_wnd_ptr_array_.RemoveAt(item);
 		p_nm_list_view->lParam = NULL;
 	}
-	*pResult = 0;
+	*p_result = 0;
 }
 
-void CTemplateListWnd::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void CTemplateListWnd::OnVScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar* p_scroll_bar)
 {
-	CListCtrl::OnVScroll(nSBCode, nPos, pScrollBar);
+	CListCtrl::OnVScroll(n_sb_code, n_pos, p_scroll_bar);
 	RedrawItems(0, template_wnd_ptr_array_.GetSize() - 1);
 }
 
 void CTemplateListWnd::update_template_legends(LPCSTR psz_type)
 {
-	TCHAR sz_item[20];
 	for (auto i = template_wnd_ptr_array_.GetSize() - 1; i >= 0; i--)
 	{
-		auto ptplWnd = get_template_wnd(i);
-		ptplWnd->m_cs_id = psz_type;
+		TCHAR sz_item[20];
+		const auto p_tpl_wnd = get_template_wnd(i);
+		p_tpl_wnd->m_cs_id = psz_type;
 
-		wsprintf(sz_item, _T("%s%i n_spk=%i"), static_cast<LPCTSTR>(ptplWnd->m_cs_id), ptplWnd->m_class_id,
-		         ptplWnd->get_n_items());
+		wsprintf(sz_item, _T("%s%i n_spk=%i"), static_cast<LPCTSTR>(p_tpl_wnd->m_cs_id), p_tpl_wnd->m_class_id,
+		         p_tpl_wnd->get_n_items());
 		SetItemText(i, 0, sz_item);
 	}
 }
 
 void CTemplateListWnd::update_template_base_class_id(const int i_new_lowest_class)
 {
-	// first, get lowest template class ID
+	// first, get the lowest template class ID
 	if (template_wnd_ptr_array_.GetSize() < 1)
 		return;
 	const auto p_tpl_wnd = get_template_wnd(0);
@@ -483,7 +483,7 @@ void CTemplateListWnd::update_template_base_class_id(const int i_new_lowest_clas
 		if (lowest_id > p_tpl1_wnd->m_class_id)
 			lowest_id = p_tpl1_wnd->m_class_id;
 	}
-	// now change the id of each template and update it's text
+	// now change the id of each template and update its text
 	const auto delta = lowest_id - i_new_lowest_class;
 	for (auto i = template_wnd_ptr_array_.GetSize() - 1; i >= 0; i--)
 	{
@@ -496,19 +496,19 @@ void CTemplateListWnd::update_template_base_class_id(const int i_new_lowest_clas
 	}
 }
 
-void CTemplateListWnd::set_template_class_id(int item, LPCTSTR psz_type, int class_id)
+void CTemplateListWnd::set_template_class_id(const int item, const LPCTSTR psz_type, const int class_id)
 {
 	CString cs_item;
-	auto ptplWnd = get_template_wnd(item);
-	ptplWnd->m_class_id = class_id;
-	CString cs = psz_type;
+	const auto p_tpl_wnd = get_template_wnd(item);
+	p_tpl_wnd->m_class_id = class_id;
+	const CString cs = psz_type;
 	if (!cs.IsEmpty())
-		ptplWnd->m_cs_id = cs;
-	cs_item.Format(_T("%s%i n_spk=%i"), psz_type, class_id, ptplWnd->get_n_items());
+		p_tpl_wnd->m_cs_id = cs;
+	cs_item.Format(_T("%s%i n_spk=%i"), psz_type, class_id, p_tpl_wnd->get_n_items());
 	SetItemText(item, 0, cs_item);
 }
 
-BOOL CTemplateListWnd::t_init(int i)
+BOOL CTemplateListWnd::t_init(const int i) const
 {
 	const BOOL flag = (i >= 0) && (i < template_wnd_ptr_array_.GetSize());
 	if (flag)
@@ -522,7 +522,7 @@ BOOL CTemplateListWnd::t_add(int* p_source)
 	return TRUE;
 }
 
-BOOL CTemplateListWnd::t_add(int i, int* p_source)
+BOOL CTemplateListWnd::t_add(const int i, int* p_source) const
 {
 	const BOOL flag = (i >= 0) && (i < template_wnd_ptr_array_.GetSize());
 	if (flag)
@@ -532,15 +532,15 @@ BOOL CTemplateListWnd::t_add(int i, int* p_source)
 	return flag;
 }
 
-BOOL CTemplateListWnd::t_power(int i, double* xpower)
+BOOL CTemplateListWnd::t_power(const int i, double* power_of_sum) const
 {
 	const BOOL flag = (i >= 0) && (i < template_wnd_ptr_array_.GetSize());
 	if (flag)
-		*xpower = get_template_wnd(i)->t_power_of_p_sum();
+		*power_of_sum = get_template_wnd(i)->t_power_of_p_sum();
 	return flag;
 }
 
-BOOL CTemplateListWnd::t_within(int i, int* p_source)
+BOOL CTemplateListWnd::t_within(const int i, int* p_source) const
 {
 	BOOL flag = i >= 0 && (i < template_wnd_ptr_array_.GetSize());
 	if (flag)
@@ -548,7 +548,7 @@ BOOL CTemplateListWnd::t_within(int i, int* p_source)
 	return flag;
 }
 
-BOOL CTemplateListWnd::t_min_dist(const int i, int* p_source, int* offset_min, double* dist_min)
+BOOL CTemplateListWnd::t_min_dist(const int i, int* p_source, int* offset_min, double* dist_min) const
 {
 	const BOOL flag = i >= 0 && (i < template_wnd_ptr_array_.GetSize());
 	if (flag)
@@ -567,7 +567,7 @@ void CTemplateListWnd::t_global_stats()
 	}
 }
 
-void CTemplateListWnd::set_template_length(int spk_len, int tp_left, int tp_right)
+void CTemplateListWnd::set_template_length(const int spk_len, const int tp_left, const int tp_right)
 {
 	if (tp_left != m_tpl_left_ || tp_right != m_tpl_right_)
 	{
@@ -604,15 +604,15 @@ void CTemplateListWnd::set_y_w_ext_org(int extent, int zero)
 	m_y_zero_ = zero;
 	for (auto i = 0; i < template_wnd_ptr_array_.GetSize(); i++)
 	{
-		CTemplateWnd* ptemplate = get_template_wnd(i);
-		ptemplate->set_yw_ext_org(extent, zero);
+		CTemplateWnd* p_template = get_template_wnd(i);
+		p_template->set_yw_ext_org(extent, zero);
 	}
 }
 
-void CTemplateListWnd::on_begin_drag(NMHDR* pNMHDR, LRESULT* pResult)
+void CTemplateListWnd::on_begin_drag(NMHDR* p_nmhdr, LRESULT* p_result)
 {
 	CPoint pt_item, pt_image;
-	const auto* pnm_list_view = reinterpret_cast<NM_LISTVIEW*>(pNMHDR);
+	const auto* pnm_list_view = reinterpret_cast<NM_LISTVIEW*>(p_nmhdr);
 
 	ASSERT(!m_b_dragging_);
 	m_b_dragging_ = TRUE;
@@ -623,13 +623,13 @@ void CTemplateListWnd::on_begin_drag(NMHDR* pNMHDR, LRESULT* pResult)
 	GetOrigin(&m_pt_origin_);
 
 	// Update image list to make sure all images are loaded
-	const auto p_i = GetImageList(LVSIL_NORMAL); // Image list with large icons.
-	const auto nimage = p_i->GetImageCount();
-	auto ifirst = 0;
-	if (nimage == 0 || m_i_item_drag_ > nimage + 1)
+	const auto p_i = GetImageList(LVSIL_NORMAL);
+	const auto image_count = p_i->GetImageCount();
+	if (image_count == 0 || m_i_item_drag_ > image_count + 1)
 	{
-		if (m_i_item_drag_ > nimage + 1)
-			ifirst = nimage;
+		auto i_first = 0;
+		if (m_i_item_drag_ > image_count + 1)
+			i_first = image_count;
 		// CImageList
 		auto h_i = p_i->m_hImageList;
 		//for (int i=ifirst; i<m_ptpl.GetRectSize(); i++)
@@ -652,55 +652,55 @@ void CTemplateListWnd::on_begin_drag(NMHDR* pNMHDR, LRESULT* pResult)
 	CImageList::DragEnter(this, ptAction);
 	CImageList::DragMove(ptAction); // move image to overlap original icon
 
-	//m_pimageListDrag->DragShowNolock(TRUE);  // lock updates and show drag image
-	//m_pimageListDrag->SetDragCursorImage(0, m_ptHotSpot);  // define the hot spot for the new cursor image
-	//m_pimageListDrag->BeginDrag(0, CPoint(0, 0));
-	//ptAction -= m_sizeDelta;
-	//m_pimageListDrag->DragEnter(this, ptAction);
-	//m_pimageListDrag->DragMove(ptAction);  // move image to overlap original icon
+	//m_p_image_List_Drag->Drag_Show_No_lock(TRUE);  // lock updates and show drag image
+	//m_p_image_List_Drag->Set_Drag_Cursor_Image(0, m_ptHotSpot);  // define the hot spot for the new cursor image
+	//m_p_image_List_Drag->Begin_Drag(0, CPoint(0, 0));
+	//pt_Action -= m_sizeDelta;
+	//m_p_image_List_Drag->Drag_Enter(this, ptAction);
+	//m_p_image_List_Drag->Drag_Move(ptAction);  // move image to overlap original icon
 
 	SetCapture();
 }
 
-void CTemplateListWnd::OnMouseMove(UINT nFlags, CPoint point)
+void CTemplateListWnd::OnMouseMove(const UINT n_flags, CPoint point)
 {
-	int i_item;
-	LV_ITEM lvitem;
+	LV_ITEM lv_item;
 
 	auto l_style = GetWindowLong(m_hWnd, GWL_STYLE);
 	l_style &= LVS_TYPEMASK; // drag will do different things in list and report mode
 	if (m_b_dragging_)
 	{
+		int i_item;
 		ASSERT(m_p_image_list_drag_ != NULL);
 		CImageList::DragMove(point - m_size_delta_); // move the image
-		//m_pimageListDrag->DragMove(point - m_sizeDelta);  // move the image
+		//m_p_image_Lis_tDrag->DragMove(point - m_sizeDelta);  // move the image
 
 		if ((i_item = HitTest(point)) != -1)
 		{
 			m_i_item_drop_ = i_item;
 			CImageList::DragLeave(this); // unlock the window and hide drag image
-			//m_pimageListDrag->DragLeave(this); // unlock the window and hide drag image
+			//m_p_image_List_Drag->DragLeave(this); // unlock the window and hide drag image
 			if (l_style == LVS_REPORT || l_style == LVS_LIST)
 			{
-				lvitem.iItem = i_item;
-				lvitem.iSubItem = 0;
-				lvitem.mask = LVIF_STATE;
-				lvitem.stateMask = LVIS_DROPHILITED; // highlight the drop target
-				SetItem(&lvitem);
+				lv_item.iItem = i_item;
+				lv_item.iSubItem = 0;
+				lv_item.mask = LVIF_STATE;
+				lv_item.stateMask = LVIS_DROPHILITED; // highlight the drop target
+				SetItem(&lv_item);
 			}
 			point -= m_size_delta_;
 			CImageList::DragEnter(this, point); // lock updates and show drag image
-			//m_pimageListDrag->DragEnter(this, point);  // lock updates and show drag image
+			//m_p_image_List_Drag->DragEnter(this, point);  // lock updates and show drag image
 		}
 	}
-	CListCtrl::OnMouseMove(nFlags, point);
+	CListCtrl::OnMouseMove(n_flags, point);
 }
 
 void CTemplateListWnd::OnButtonUp(CPoint point)
 {
 	if (m_b_dragging_) // end of the drag operation
 	{
-		CString cstr;
+		CString cs_str;
 
 		const auto l_style = GetWindowLong(m_hWnd, GWL_STYLE) & LVS_TYPEMASK;
 		m_b_dragging_ = FALSE;
@@ -713,14 +713,14 @@ void CTemplateListWnd::OnButtonUp(CPoint point)
 
 		if (l_style == LVS_REPORT && m_i_item_drop_ != m_i_item_drag_)
 		{
-			cstr = GetItemText(m_i_item_drag_, 0);
-			SetItemText(m_i_item_drop_, 1, cstr);
+			cs_str = GetItemText(m_i_item_drag_, 0);
+			SetItemText(m_i_item_drop_, 1, cs_str);
 		}
 		else if (l_style == LVS_LIST && m_i_item_drop_ != m_i_item_drag_)
 		{
-			cstr = GetItemText(m_i_item_drop_, 0);
-			cstr += _T("**");
-			SetItemText(m_i_item_drop_, 0, cstr);
+			cs_str = GetItemText(m_i_item_drop_, 0);
+			cs_str += _T("**");
+			SetItemText(m_i_item_drop_, 0, cs_str);
 		}
 		else if (l_style == LVS_ICON || l_style == LVS_SMALLICON)
 		{
@@ -732,19 +732,19 @@ void CTemplateListWnd::OnButtonUp(CPoint point)
 	}
 }
 
-void CTemplateListWnd::OnLButtonUp(UINT nFlags, CPoint point)
+void CTemplateListWnd::OnLButtonUp(const UINT n_flags, const CPoint point)
 {
 	OnButtonUp(point);
-	CListCtrl::OnLButtonUp(nFlags, point);
+	CListCtrl::OnLButtonUp(n_flags, point);
 }
 
-void CTemplateListWnd::OnRButtonDown(UINT nFlags, CPoint point)
+void CTemplateListWnd::OnRButtonDown(const UINT n_flags, const CPoint point)
 {
-	LVFINDINFO lvInfo;
-	lvInfo.flags = LVFI_NEARESTXY;
-	lvInfo.pt = point;
-	const auto item = FindItem(&lvInfo, -1);
+	LVFINDINFO lv_info;
+	lv_info.flags = LVFI_NEARESTXY;
+	lv_info.pt = point;
+	const auto item = FindItem(&lv_info, -1);
 
-	CListCtrl::OnRButtonDown(nFlags, point);
+	CListCtrl::OnRButtonDown(n_flags, point);
 	GetParent()->PostMessage(WM_MYMESSAGE, HINT_R_MOUSE_BUTTON_DOWN, MAKELONG(item, GetDlgCtrlID()));
 }

@@ -1274,8 +1274,8 @@ void ChartData::curve_xor()
 	p_dc->IntersectClipRect(&display_rect_);
 
 	p_dc->SetMapMode(MM_ANISOTROPIC);
-	p_dc->SetViewportOrg(display_rect_.left, y_viewport_origin_);
-	p_dc->SetViewportExt(get_rect_width(), y_viewport_extent_);
+	p_dc->SetViewportOrg(display_rect_.left, y_vo_);
+	p_dc->SetViewportExt(get_rect_width(), y_ve_);
 	p_dc->SetWindowExt(m_xor_x_ext_, m_xor_y_ext_);
 	p_dc->SetWindowOrg(0, 0);
 
@@ -1360,7 +1360,7 @@ void ChartData::OnMouseMove(const UINT n_flags, const CPoint point)
 	{
 	case TRACK_CURVE:
 		curve_xor(); 
-		m_zero_ = MulDiv(point.y - pt_first_.y, m_xor_y_ext_, -y_viewport_extent_) + cur_track_;
+		m_zero_ = MulDiv(point.y - pt_first_.y, m_xor_y_ext_, -y_ve_) + cur_track_;
 		curve_xor(); 
 		break;
 
@@ -1483,7 +1483,7 @@ int ChartData::does_cursor_hit_curve(const CPoint point)
 	{
 		// convert device coordinates into value
 		const auto i_val = get_channel_list_y_pixels_to_bin(chan, point.y);
-		const auto i_jitter = MulDiv(cy_mouse_jitter_, get_channel_list_item(chan)->GetYextent(), -y_viewport_extent_);
+		const auto i_jitter = MulDiv(cy_mouse_jitter_, get_channel_list_item(chan)->GetYextent(), -y_ve_);
 		const auto val_max = i_val + i_jitter; // mouse max
 		const auto val_min = i_val - i_jitter; // mouse min
 		chan_list_item = chan_list_item_ptr_array_[chan]->pEnvelopeOrdinates;
@@ -1537,7 +1537,7 @@ void ChartData::move_hz_tag_to_val(const int tag_index, const int val_int)
 	//hz_tags.set_value_int(tag_index, val_int);
 	Tag* p_tag = hz_tags.get_tag(tag_index);
 	p_tag->value_int = val_int;
-	p_tag->pixel = MulDiv(val_int - m_zero_, y_viewport_extent_, m_xor_y_ext_) + y_viewport_origin_;
+	p_tag->pixel = MulDiv(val_int - m_zero_, y_ve_, m_xor_y_ext_) + y_vo_;
 	xor_hz_tag(p_tag->pixel, p_tag->swap_pixel(p_tag->pixel));
 	
 }

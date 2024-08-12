@@ -23,7 +23,7 @@ public:
 
 	CdbWaveDoc* GetDocument();
 	CDaoRecordset* OnGetRecordset() override;
-	BOOL OnMove(UINT nIDMoveCommand) override;
+	BOOL OnMove(UINT n_id_move_command) override;
 	void OnDraw(CDC* pDC) override;
 	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 

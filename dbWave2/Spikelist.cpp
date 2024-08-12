@@ -28,9 +28,9 @@ void SpikeList::Serialize(CArchive& ar)
 	if (ar.IsStoring())
 	{
 		ar << id_string_;
-		w_version_ = 7;
+		w_version_ = 8;
 		ar << w_version_;
-		serialize_version7(ar);
+		serialize_version8(ar);
 	}
 	else
 	{
@@ -39,7 +39,9 @@ void SpikeList::Serialize(CArchive& ar)
 		if (cs_id == id_string_)
 		{
 			WORD version; ar >> version;
-			if (version == 7 || version == 6)
+			if (version == 8)
+				serialize_version8(ar);
+			else if (version == 7 || version == 6)
 				serialize_version7(ar);
 			else if (version == 5)
 				read_file_version5(ar);
@@ -87,6 +89,18 @@ void SpikeList::remove_artefacts()
 	update_class_list();
 }
 
+void SpikeList::serialize_version8(CArchive& ar)
+{
+	serialize_data_parameters(ar);
+	serialize_spike_elements(ar);
+	serialize_spike_data_as_int(ar);
+
+	serialize_spike_class_descriptors(ar);
+	serialize_additional_data(ar);
+	if (ar.IsStoring())
+		ar.Flush();
+}
+
 void SpikeList::serialize_version7(CArchive& ar)
 {
 	serialize_data_parameters(ar);
@@ -130,7 +144,10 @@ void SpikeList::serialize_spike_elements(CArchive& ar)
 		const auto n_spikes = spikes_.GetSize();
 		ar << static_cast<WORD>(n_spikes);
 		for (auto i = 0; i < n_spikes; i++)
-			spikes_.GetAt(i)->Serialize(ar);
+		{
+			auto* spike = spikes_.GetAt(i);
+			spike->Serialize(ar);
+		}
 	}
 	else
 	{
@@ -138,10 +155,10 @@ void SpikeList::serialize_spike_elements(CArchive& ar)
 		spikes_.SetSize(n_spikes);
 		for (auto i = 0; i < n_spikes; i++)
 		{
-			auto* se = new(Spike);
-			ASSERT(se != NULL);
-			se->Serialize(ar);
-			spikes_.SetAt(i, se);
+			auto* spike = new Spike();
+			ASSERT(spike != NULL);
+			spike->Serialize(ar);
+			spikes_.SetAt(i, spike);
 		}
 	}
 }
@@ -195,8 +212,8 @@ void SpikeList::serialize_spike_data(CArchive& ar)
 				short* p_buffer = buffer;
 				for (int j = 0; j < spike_length; j++, p_buffer++, p_data++ )
 				{
-					const short val = *(p_buffer);
-					*p_data = static_cast<int>(val);
+					const int val = *p_buffer;
+					*p_data = val;
 				}
 			}
 			free(buffer);
@@ -204,13 +221,46 @@ void SpikeList::serialize_spike_data(CArchive& ar)
 	}
 }
 
+void SpikeList::serialize_spike_data_as_int(CArchive& ar)
+{
+	const auto n_spikes = spikes_.GetSize();
+	if (ar.IsStoring())
+	{
+		const int spike_length = get_spike_length();
+		ar << spike_length;
+
+		const auto n_bytes_int = spike_length * sizeof(int);
+		if (n_bytes_int > 0)
+		{
+			for (auto i = 0; i < n_spikes; i++)
+			{
+				const Spike* spike = get_spike(i);
+				const int* p_data = spike->get_p_data();
+				ar.Write(p_data, n_bytes_int);
+			}
+		}
+	}
+	else
+	{
+		WORD spike_length = 1;
+		ar >> spike_length;
+
+		const auto n_bytes_int = spike_length * sizeof(int);
+		for (auto i = 0; i < n_spikes; i++)
+		{
+			Spike* spike = get_spike(i);
+			int* p_data = spike->get_p_data(spike_length);
+			ar.Read(p_data, n_bytes_int);
+		}
+	}
+}
 void SpikeList::serialize_spike_class_descriptors(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
 		keep_only_valid_classes_ = FALSE;
 		ar << static_cast<long>(keep_only_valid_classes_);
-		auto n_descriptors = class_descriptors_.GetSize();
+		const auto n_descriptors = class_descriptors_.GetSize();
 		ar << static_cast<long>(n_descriptors);
 		for (auto i = 0; i < n_descriptors; i++)
 		{
@@ -422,7 +472,7 @@ void SpikeList::delete_arrays()
 	class_descriptors_.RemoveAll();
 }
 
-int SpikeList::remove_spike(int spike_index)
+int SpikeList::remove_spike(const int spike_index)
 {
 	if (spike_index <= spikes_.GetUpperBound())
 	{
@@ -488,7 +538,7 @@ BOOL SpikeList::is_any_spike_around(const long ii_time, const int jitter, int& s
 //	return n_classes;
 //}
 
-int SpikeList::get_class_id_descriptor_index(int class_id)
+int SpikeList::get_class_id_descriptor_index(const int class_id)
 {
 	int item_index = -1;
 	for (int i = 0; i < n_classes_; i++)
@@ -523,7 +573,7 @@ int SpikeList::decrement_class_id_n_items(const int class_id)
 	return class_descriptors_.GetAt(index).decrement_n_items();
 }
 
-void SpikeList::change_spike_class_id(int spike_no, int class_id)
+void SpikeList::change_spike_class_id(const int spike_no, const int class_id)
 {
 	Spike* spike = get_spike(spike_no);
 	decrement_class_id_n_items(spike->get_class_id());
@@ -554,7 +604,7 @@ int SpikeList::add_spike(short* source_data, const int n_channels, const long ii
 			int max, min;
 			int i_max, i_min;
 			se->measure_max_min_ex(&max, &i_max, &min, &i_min, 0, spike_length_-1);
-			se->set_max_min_ex(max, min, static_cast<short>(i_min - i_max));
+			se->set_max_min_ex(max, min, i_min - i_max);
 		}
 	}
 	return index_added_spike;
@@ -959,7 +1009,7 @@ void SpikeList::measure_amplitude_min_to_max(const int t1, const int t2)
 			}
 		}
 
-		spike_element->set_max_min_ex(static_cast<short>(max), static_cast<short>(min), static_cast<short>(min_index - max_index));
+		spike_element->set_max_min_ex(max, min, min_index - max_index);
 		spike_element->set_y1(max - min);
 	}
 }
@@ -1084,12 +1134,12 @@ int SpikeList::get_valid_spike_number(int spike_index) const
 	return spike_index;
 }
 
-int SpikeList::get_next_spike(int spike_index, int delta, BOOL b_keep_same_class) 
+int SpikeList::get_next_spike(int spike_index, int delta, const BOOL b_keep_same_class) 
 {
 	const int spike_index_old = spike_index;
-	int class_ID_old = 0;
+	int class_id_old = 0;
 	if (spike_index_old >= 0 && spike_index_old < get_spikes_count() - 1)
-		class_ID_old = get_spike(spike_index)->get_class_id();
+		class_id_old = get_spike(spike_index)->get_class_id();
 	if (delta >= 0)
 		delta = 1;
 	else
@@ -1105,7 +1155,7 @@ int SpikeList::get_next_spike(int spike_index, int delta, BOOL b_keep_same_class
 				break;
 			}
 		}
-		while (spike_index < get_spikes_count() && get_spike(spike_index)->get_class_id() != class_ID_old);
+		while (spike_index < get_spikes_count() && get_spike(spike_index)->get_class_id() != class_id_old);
 	}
 	else
 		spike_index += delta;

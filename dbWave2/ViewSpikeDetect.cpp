@@ -47,7 +47,7 @@ void ViewSpikeDetection::DoDataExchange(CDataExchange* p_dx)
 {
 	dbTableView::DoDataExchange(p_dx);
 
-	DDX_Control(p_dx, IDC_COMBO1, m_detect_what_combo);
+	DDX_Control(p_dx, IDC_DETECT_WHAT, m_detect_what_combo);
 	DDX_Control(p_dx, IDC_SOURCECHAN, m_detect_channel_combo);
 	DDX_Control(p_dx, IDC_TRANSFORM, m_transform_combo);
 	DDX_Control(p_dx, IDC_TRANSFORM2, m_transform2_combo);
@@ -69,10 +69,10 @@ void ViewSpikeDetection::DoDataExchange(CDataExchange* p_dx)
 
 BEGIN_MESSAGE_MAP(ViewSpikeDetection, dbTableView)
 	ON_WM_SIZE()
+	ON_WM_SETFOCUS()
+	ON_WM_DESTROY()
 	ON_WM_HSCROLL()
 	ON_WM_VSCROLL()
-	ON_WM_DESTROY()
-	ON_WM_SETFOCUS()
 
 	ON_MESSAGE(WM_MYMESSAGE, &ViewSpikeDetection::on_my_message)
 
@@ -96,7 +96,7 @@ BEGIN_MESSAGE_MAP(ViewSpikeDetection, dbTableView)
 
 	ON_CBN_SELCHANGE(IDC_SOURCECHAN, &ViewSpikeDetection::on_sel_change_detect_chan)
 	ON_CBN_SELCHANGE(IDC_TRANSFORM, &ViewSpikeDetection::on_sel_change_transform)
-	ON_CBN_SELCHANGE(IDC_COMBO1, &ViewSpikeDetection::on_sel_change_detect_mode)
+	ON_CBN_SELCHANGE(IDC_DETECT_WHAT, &ViewSpikeDetection::on_sel_change_detect_mode)
 	ON_CBN_SELCHANGE(IDC_TRANSFORM2, &ViewSpikeDetection::on_cbn_sel_change_transform_2)
 
 	ON_EN_CHANGE(IDC_THRESHOLDVAL, &ViewSpikeDetection::on_en_change_threshold)
@@ -140,13 +140,13 @@ void ViewSpikeDetection::on_file_save()
 	}
 }
 
-BOOL ViewSpikeDetection::OnMove(UINT n_id_move_command)
+BOOL ViewSpikeDetection::OnMove(const UINT n_id_move_command)
 {
 	save_current_spk_file();
 	return dbTableView::OnMove(n_id_move_command);
 }
 
-void ViewSpikeDetection::OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint)
+void ViewSpikeDetection::OnUpdate(CView* p_sender, const LPARAM l_hint, CObject* p_hint)
 {
 	if (m_b_init_)
 	{
@@ -560,7 +560,7 @@ void ViewSpikeDetection::define_sub_classed_items()
 	VERIFY(m_transform_combo.SubclassDlgItem(IDC_TRANSFORM, this));
 	VERIFY(m_transform2_combo.SubclassDlgItem(IDC_TRANSFORM2, this));
 	VERIFY(m_detect_channel_combo.SubclassDlgItem(IDC_SOURCECHAN, this));
-	VERIFY(m_detect_what_combo.SubclassDlgItem(IDC_COMBO1, this));
+	VERIFY(m_detect_what_combo.SubclassDlgItem(IDC_DETECT_WHAT, this));
 
 	VERIFY(mm_spike_no_.SubclassDlgItem(IDC_SPIKENO, this));
 	mm_spike_no_.ShowScrollBar(SB_VERT);
@@ -988,7 +988,7 @@ void ViewSpikeDetection::update_detection_parameters()
 	GetDlgItem(IDC_LOCATEBTTN)->Invalidate();
 
 	// update CEditControls
-	GetDlgItem(IDC_COMBO1)->Invalidate();
+	GetDlgItem(IDC_DETECT_WHAT)->Invalidate();
 	GetDlgItem(IDC_SOURCECHAN)->Invalidate();
 	GetDlgItem(IDC_TRANSFORM)->Invalidate();
 	mm_threshold_val_.Invalidate();

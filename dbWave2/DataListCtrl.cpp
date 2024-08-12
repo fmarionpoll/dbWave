@@ -18,14 +18,14 @@ int DataListCtrl::m_column_width[] = {
 	30, 50, 40, 40,
 	40, 40
 };
-CString DataListCtrl::m_column_headers[] = {
+CString DataListCtrl::m_column_headers_[] = {
 	__T(""),
 	__T("#"), __T("data"), __T("insect ID"), __T("sensillum"),
 	__T("stim1"), __T("conc1"), __T("stim2"), __T("conc2"),
 	__T("spikes"), __T("flag")
 };
 
-int DataListCtrl::m_column_format[] = {
+int DataListCtrl::m_column_format_[] = {
 	LVCFMT_LEFT,
 	LVCFMT_CENTER, LVCFMT_CENTER, LVCFMT_CENTER, LVCFMT_CENTER,
 	LVCFMT_CENTER, LVCFMT_CENTER, LVCFMT_CENTER, LVCFMT_CENTER,
@@ -89,7 +89,7 @@ void DataListCtrl::delete_ptr_array()
 	ptr_rows.RemoveAll();
 }
 
-void DataListCtrl::resize_ptr_array(int n_items)
+void DataListCtrl::resize_ptr_array(const int n_items)
 {
 	if (n_items == ptr_rows.GetSize())
 		return;
@@ -137,7 +137,7 @@ void DataListCtrl::init_columns(CUIntArray* width_columns)
 
 	for (auto i = 0; i < NCOLS; i++)
 	{
-		InsertColumn(i, m_column_headers[i], m_column_format[i], m_column_width[i], -1);
+		InsertColumn(i, m_column_headers_[i], m_column_format_[i], m_column_width[i], -1);
 	}
 
 	m_image_width = m_column_width[CTRL_COL_CURVE];
@@ -145,7 +145,7 @@ void DataListCtrl::init_columns(CUIntArray* width_columns)
 	SetImageList(&m_image_list, LVSIL_SMALL);
 }
 
-void DataListCtrl::OnGetDisplayInfo(NMHDR* pNMHDR, LRESULT* pResult)
+void DataListCtrl::OnGetDisplayInfo(NMHDR* p_nmhdr, LRESULT* p_result)
 {
 	// check if first if the requested line is stored into the buffer
 	auto first_array = 0;
@@ -157,9 +157,9 @@ void DataListCtrl::OnGetDisplayInfo(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 
 	// is item within the cache?
-	auto* display_info = reinterpret_cast<LV_DISPINFO*>(pNMHDR);
+	auto* display_info = reinterpret_cast<LV_DISPINFO*>(p_nmhdr);
 	LV_ITEM* item = &(display_info)->item;
-	*pResult = 0;
+	*p_result = 0;
 	const auto item_index = item->iItem;
 
 	// item before first visible item? selected item becomes first (scroll up)
@@ -231,7 +231,7 @@ void DataListCtrl::OnGetDisplayInfo(NMHDR* pNMHDR, LRESULT* pResult)
 		item->iImage = i_cache_index;
 }
 
-void DataListCtrl::set_cur_sel(int record_position)
+void DataListCtrl::set_cur_sel(const int record_position)
 {
 	// get current item which has the focus
 	constexpr auto flag = LVNI_FOCUSED | LVNI_ALL;
@@ -407,7 +407,7 @@ void DataListCtrl::update_cache(int index_first, int index_last)
 			display_spike_wnd(row, index);
 			break;
 		default:
-			display_empty_wnd(index);
+			display_empty_wnd(row, index);
 			break;
 		}
 		index++;
@@ -471,7 +471,7 @@ void DataListCtrl::refresh_display()
 			display_spike_wnd(ptr, index);
 			break;
 		default:
-			display_empty_wnd(index);
+			display_empty_wnd(ptr, index);
 			break;
 		}
 	}
@@ -669,19 +669,18 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int iImage)
 		mem_dc.SelectObject(&bitmap_plot);
 		mem_dc.SetMapMode(p_dc->GetMapMode());
 
-		//if (pdb_doc != nullptr)
 		p_wnd->set_display_all_files(false);
 		p_wnd->plot_data_to_dc(&mem_dc);
 
 		CPen pen;
-		pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0)); // black//RGB(0, 0, 0)); // black
+		pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
 		mem_dc.MoveTo(1, 0);
 		mem_dc.LineTo(1, client_rect.bottom);
 		m_image_list.Replace(iImage, &bitmap_plot, nullptr);
 	}
 }
 
-void DataListCtrl::display_empty_wnd(const int i_image)
+void DataListCtrl::display_empty_wnd(CDataListCtrl_Row* ptr, const int i_image)
 {
 	m_image_list.Replace(i_image, m_p_empty_bitmap, nullptr);
 }

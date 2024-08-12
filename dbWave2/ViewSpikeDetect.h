@@ -14,6 +14,7 @@ class ViewSpikeDetection : public dbTableView
 protected:
 	DECLARE_DYNCREATE(ViewSpikeDetection)
 	ViewSpikeDetection();
+	~ViewSpikeDetection() override;
 
 	// Form Data
 public:
@@ -119,6 +120,7 @@ protected:
 public:
 	// Overrides
 	BOOL OnMove(UINT n_id_move_command) override;
+
 protected:
 	void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint) override;
 	void DoDataExchange(CDataExchange* p_dx) override;
@@ -129,11 +131,7 @@ protected:
 	void OnEndPrinting(CDC* p_dc, CPrintInfo* p_info) override;
 	void OnActivateView(BOOL activate, CView* activated_view, CView* de_activated_view) override;
 
-	// Implementation
-public:
-	~ViewSpikeDetection() override;
 	// print view
-protected:
 	void print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_info);
 	CString print_convert_file_index(long l_first, long l_last) const;
 	void print_compute_page_size();
@@ -169,11 +167,12 @@ protected:
 
 	// Generated message map functions
 public:
-	afx_msg void on_measure_all();
 	afx_msg LRESULT on_my_message(WPARAM w_param, LPARAM l_param);
 	afx_msg void on_first_frame();
 	afx_msg void on_last_frame();
 	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
+
+	afx_msg void on_measure_all();
 	afx_msg void on_sel_change_detect_chan();
 	afx_msg void on_sel_change_transform();
 	afx_msg void on_sel_change_detect_mode();

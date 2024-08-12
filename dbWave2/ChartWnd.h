@@ -55,6 +55,9 @@ protected:
 	BOOL b_left_mouse_button_down_ = false;
 	BOOL b_use_dib_{ false };
 	CDC plot_dc_{};
+	int saved_dc_;
+	COLORREF saved_background_color_;
+
 	CWordArray array_mark_{};
 	CPen black_dotted_pen_{};
 	CString cs_empty_;
@@ -87,8 +90,8 @@ protected:
 
 	int y_wo_ = 0;
 	int y_we_ = 1;
-	int y_viewport_origin_ = 0;
-	int y_viewport_extent_ = 1;
+	int y_vo_ = 0;
+	int y_ve_ = 1;
 
 	int cur_track_{}; // threshold  tracked
 	CPoint pt_first_{};
@@ -178,7 +181,7 @@ public:
 	BOOL b_bottom_comment {false};
 
 	TagList vt_tags{};
-	virtual void display_vt_tags(CDC* p_dc);
+	virtual void display_vt_tags_int_values(CDC* p_dc);
 	void xor_vt_tag(int x_new, int x_old);
 	void xor_temp_vt_tag(int x_point);
 

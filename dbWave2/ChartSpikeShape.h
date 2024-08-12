@@ -23,12 +23,7 @@ protected:
 	void init_polypoint_x_axis();
 	void fill_polypoint_y_axis(int* lp_source);
 
-	int saved_dc_;
-	COLORREF saved_background_color_;
-
 	void plot_data_to_dc_prepare_dc(CDC* p_dc);
-	void message_no_spike(CDC* p_dc) const;
-	boolean get_spike_file(int i_file);
 
 	int hit_curve(CPoint point) override;
 

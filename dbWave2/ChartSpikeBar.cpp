@@ -30,117 +30,85 @@ ChartSpikeBar::~ChartSpikeBar()
 	}
 }
 
-void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
+void ChartSpikeBar::plot_data_to_dc_prepare_dc(CDC* p_dc)
 {
 	if (b_erase_background_)
 		erase_background(p_dc);
 
 	p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
-	auto rect = display_rect_;
-	rect.DeflateRect(1, 1);
-
-	// save context
-	const auto n_saved_dc = p_dc->SaveDC();
+	saved_dc_ = p_dc->SaveDC();
+	saved_background_color_ = p_dc->GetBkColor();
+	display_rect_ = client_rect_;
+	saved_dc_ = p_dc->SaveDC();
 	p_dc->IntersectClipRect(&client_rect_);
+}
 
-	long n_files = 1;
-	long current_file = 0;
+void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
+{
+	plot_data_to_dc_prepare_dc(p_dc);
+
+	auto n_files = 1;
 	if (display_all_files_)
-	{
 		n_files = dbwave_doc_->db_get_n_records();
-		current_file = dbwave_doc_->db_get_current_record_position();
-	}
 
 	for (long i_file = 0; i_file < n_files; i_file++)
 	{
-		if (display_all_files_)
-		{
-			if (dbwave_doc_->db_set_current_record_position(i_file))
-				p_spike_doc_ = dbwave_doc_->open_current_spike_file();
-		}
-		if (dbwave_doc_->m_p_spk == nullptr)
-			continue;
-
-		p_spike_list_ = p_spike_doc_->get_spike_list_current();
-
-		// test presence of data
-		if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() <= 0)
+		if (!get_spike_file(i_file))
 		{
 			if (!display_all_files_)
-				p_dc->DrawText(cs_empty_, cs_empty_.GetLength(), rect, DT_LEFT);
+				message_no_spike(p_dc);
 			continue;
 		}
 
-		// plot comment at the bottom
 		if (b_bottom_comment)
-			p_dc->DrawText(cs_bottom_comment, cs_bottom_comment.GetLength(), rect,DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
-
-		// display data: trap error conditions
-		if (y_we_ == 1)
-		{
-			int value_max, value_min;
-			p_spike_list_->get_total_max_min(TRUE, &value_max, &value_min);
-			y_we_ = value_max - value_min;
-			y_wo_ = (value_max + value_min) / 2;
-		}
-
-		if (x_we_ == 1) // this is generally the case: && m_xWO == 0)
-		{
-			x_we_ = display_rect_.right;
-			x_wo_ = display_rect_.left;
-		}
+			p_dc->DrawText(cs_bottom_comment, cs_bottom_comment.GetLength(), display_rect_,DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
 
 		display_bars(p_dc, &display_rect_);
 
-		const CIntervals* p_intervals = &(p_spike_doc_->m_stimulus_intervals);
-
-		if (p_intervals->n_items > 0)
+		if (p_spike_doc_->m_stimulus_intervals.n_items > 0)
 			display_stimulus(p_dc, &display_rect_);
 
-		// display vertical cursors
 		if (vt_tags.get_tag_list_size() > 0)
-		{
-			// select pen and display mode
-			const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
-			const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
+			display_vt_tags_long_values(p_dc);
 
-			// iterate through VT cursor list
-			const int y1 = display_rect_.bottom;
-			for (auto j = vt_tags.get_tag_list_size() - 1; j >= 0; j--)
-			{
-				constexpr auto y0 = 0;
-				const auto lk = vt_tags.get_tag_value_long(j);
-				if (lk < l_first_ || lk > l_last_)
-					continue;
-				const auto k = MulDiv(lk - l_first_, display_rect_.Width() , l_last_ - l_first_ + 1);
-				p_dc->MoveTo(k, y0);
-				p_dc->LineTo(k, y1);
-			}
-			p_dc->SetROP2(old_rop2);
-			p_dc->SelectObject(old_pen);
-		}
-
-		// temporary tag
 		if (h_wnd_reflect_ != nullptr && temp_vertical_tag_ != nullptr)
-		{
-			const auto old_object = p_dc->SelectObject(&black_dotted_pen_);
-			const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
-			p_dc->MoveTo(temp_vertical_tag_->pixel, display_rect_.top + 2);
-			p_dc->LineTo(temp_vertical_tag_->pixel, display_rect_.bottom - 2);
-			p_dc->SetROP2(old_rop2);
-			p_dc->SelectObject(old_object);
-		}
+			display_temporary_tag(p_dc);
 	}
 
-	p_dc->RestoreDC(n_saved_dc);
+	// restore resources
+	p_dc->SetBkColor(saved_background_color_);
+	p_dc->RestoreDC(saved_dc_);
+}
 
-	if (display_all_files_)
+void ChartSpikeBar::display_temporary_tag(CDC* p_dc)
+{
+	const auto old_object = p_dc->SelectObject(&black_dotted_pen_);
+	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
+	p_dc->MoveTo(temp_vertical_tag_->pixel, display_rect_.top + 2);
+	p_dc->LineTo(temp_vertical_tag_->pixel, display_rect_.bottom - 2);
+	p_dc->SetROP2(old_rop2);
+	p_dc->SelectObject(old_object);
+}
+
+void ChartSpikeBar::display_vt_tags_long_values(CDC* p_dc)
+{
+	const auto old_pen = p_dc->SelectObject(&black_dotted_pen_);
+	const auto old_rop2 = p_dc->SetROP2(R2_NOTXORPEN);
+
+	const int y0 = display_rect_.top;
+	const int y1 = display_rect_.bottom;
+	for (auto tag_index = vt_tags.get_tag_list_size() - 1; tag_index >= 0; tag_index--)
 	{
-		if (dbwave_doc_->db_set_current_record_position(current_file))
-			dbwave_doc_->open_current_spike_file();
-		if (dbwave_doc_->m_p_spk != nullptr)
-			p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
+		Tag* p_tag = vt_tags.get_tag(tag_index);
+		const auto lk = p_tag->value_long;
+		if (lk < l_first_ || lk > l_last_)
+			continue;
+		p_tag->pixel = MulDiv(lk - l_first_, display_rect_.Width(), l_last_ - l_first_ + 1);
+		p_dc->MoveTo(p_tag->pixel, y0);
+		p_dc->LineTo(p_tag->pixel, y1);
 	}
+	p_dc->SetROP2(old_rop2);
+	p_dc->SelectObject(old_pen);
 }
 
 void ChartSpikeBar::display_stimulus(CDC* p_dc, const CRect* rect) const
@@ -148,6 +116,7 @@ void ChartSpikeBar::display_stimulus(CDC* p_dc, const CRect* rect) const
 	CPen blue_pen;
 	blue_pen.CreatePen(PS_SOLID, 0, RGB(0, 0, 255));
 	const auto old_pen = p_dc->SelectObject(&blue_pen);
+
 	const int top = rect->bottom - bar_height_ + 2;
 	const int bottom = rect->bottom - 3;
 	const auto display_width = rect->Width();
@@ -204,20 +173,16 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 	// prepare loop to display spikes
 	auto* old_pen = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 	const long rect_width = rect->Width();
-	//if (y_we_ == 1)
-	//{
-	//	int value_max, value_min;
-	//	p_spike_list_->get_total_max_min(TRUE, &value_max, &value_min);
-	//	y_we_ = value_max - value_min;
-	//	y_wo_ = (value_max + value_min) / 2;
-	//}
-	const auto y_we = y_we_;
-	const auto y_wo = y_wo_;
-	const auto y_vo = rect->Height() / 2 + rect->top;
-	const auto y_ve = -rect->Height();
+	if (y_we_ == 1)
+	{
+		int value_max, value_min;
+		p_spike_list_->get_total_max_min(TRUE, &value_max, &value_min);
+		y_we_ = value_max - value_min;
+		y_wo_ = (value_max + value_min) / 2;
+	}
 
 	// draw horizontal line
-	const int baseline = MulDiv(p_spike_list_->get_acq_bin_zero() - y_wo, y_ve, y_we) + y_vo;
+	const int baseline = MulDiv(p_spike_list_->get_acq_bin_zero() - y_wo_, y_ve_, y_we_) + y_vo_;
 	p_dc->MoveTo(rect->left, baseline);
 	p_dc->LineTo(rect->right, baseline);
 
@@ -234,13 +199,10 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 		i_first = index_first_spike_;
 	}
 	const auto len = (l_last_ - l_first_ + 1);
-	
 	auto pen_color = BLACK_COLOR;
 	for (auto i_spike = i_last; i_spike >= i_first; i_spike--)
 	{
 		const Spike* spike = p_spike_list_->get_spike(i_spike);
-
-		// skip spike if outside time range && option
 		const auto l_spike_time = spike->get_time();
 		if (range_mode_ == RANGE_TIME_INTERVALS
 			&& (l_spike_time < l_first_ || l_spike_time > l_last_))
@@ -270,12 +232,13 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 		// and draw spike: compute abscissa & draw from max to min
 		const auto llk = MulDiv((l_spike_time - l_first_), rect_width, len);
 		const int abscissa = static_cast<int>(llk) + rect->left;
+
 		int max, min;
 		p_spike_list_->get_spike(i_spike)->get_max_min(&max, &min);
-		max = MulDiv(max - y_wo, y_ve, y_we) + y_vo;
-		min = MulDiv(min - y_wo, y_ve, y_we) + y_vo;
-		p_dc->MoveTo(abscissa, max);
-		p_dc->LineTo(abscissa, min);
+		max = MulDiv(max - y_wo_, y_ve_, y_we_) + y_vo_;
+		min = MulDiv(min - y_wo_, y_ve_, y_we_) + y_vo_;
+		p_dc->MoveTo(abscissa, min);
+		p_dc->LineTo(abscissa, max);
 
 		if (spike_class >= 1)
 		{
@@ -314,6 +277,7 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 	x_wo_ = display_rect_.left;
 
 	dc.IntersectClipRect(&client_rect_);
+	dc.SetMapMode(MM_ANISOTROPIC);
 	prepare_dc(&dc);
 
 	// loop over the array of flagged spikes
@@ -430,8 +394,8 @@ void ChartSpikeBar::highlight_spike(const Spike* spike)
 	const auto llk = MulDiv(l_spike_time - l_first_, x_we_, len);
 	const auto abscissa = static_cast<int>(llk) + x_wo_;
 
-	const auto max = MulDiv(1 - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
-	const auto min = MulDiv(display_rect_.Height() - 2 - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
+	const auto max = MulDiv(1 - y_vo_, y_we_, y_ve_) + y_wo_;
+	const auto min = MulDiv(display_rect_.Height() - 2 - y_vo_, y_we_, y_ve_) + y_wo_;
 
 	CPen new_pen;
 	new_pen.CreatePen(PS_SOLID, 1, RGB(196, 2, 51));
@@ -483,8 +447,8 @@ void ChartSpikeBar::select_spikes_within_rect(CRect* p_rect, const UINT n_flags)
 	const auto len = (l_last_ - l_first_ + 1);
 	const auto l_first = MulDiv(p_rect->left, len, display_rect_.Width()) + l_first_;
 	const auto l_last = MulDiv(p_rect->right, len, display_rect_.Width()) + l_first_;
-	const auto v_min = MulDiv(p_rect->bottom - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
-	const auto v_max = MulDiv(p_rect->top - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
+	const auto v_min = MulDiv(p_rect->bottom - y_vo_, y_we_, y_ve_) + y_wo_;
+	const auto v_max = MulDiv(p_rect->top - y_vo_, y_we_, y_ve_) + y_wo_;
 	const auto b_flag = (n_flags & MK_SHIFT) || (n_flags & MK_CONTROL);
 	p_spike_list_->select_spikes_within_bounds(v_min, v_max, l_first, l_last, b_flag);
 }
@@ -577,8 +541,8 @@ void ChartSpikeBar::zoom_data(CRect* prev_rect, CRect* new_rect)
 	const auto y_we = y_we_;
 	y_we_ = MulDiv(y_we_, new_rect->Height(), prev_rect->Height());
 	y_wo_ = y_wo_
-		- MulDiv(prev_rect->top - y_viewport_origin_, y_we_, y_viewport_extent_)
-		+ MulDiv(new_rect->top - y_viewport_origin_, y_we, y_viewport_extent_);
+		- MulDiv(prev_rect->top - y_vo_, y_we_, y_ve_)
+		+ MulDiv(new_rect->top - y_vo_, y_we, y_ve_);
 
 	// change index of first and last pt displayed
 	auto l_size = l_last_ - l_first_ + 1;
@@ -614,8 +578,8 @@ int ChartSpikeBar::hit_curve(const CPoint point)
 {
 	auto hit_spike = -1;
 	// for y coordinates, conversion is straightforward:
-	const auto mouse_y = MulDiv(point.y - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
-	const auto delta_y = MulDiv(3, y_we_, y_viewport_extent_);
+	const auto mouse_y = MulDiv(point.y - y_vo_, y_we_, y_ve_) + y_wo_;
+	const auto delta_y = MulDiv(3, y_we_, y_ve_);
 	/*
 	// for x coordinates, the formula is in 2 steps:
 	// 1) time -> relative time: ii_time = (spike_time-m_lFirst) [-offset]

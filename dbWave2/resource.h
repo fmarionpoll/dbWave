@@ -122,7 +122,7 @@
 #define IDD_VIEWSPKTEMPLATES            170
 #define ID_SHORTCUTS_PANE_1             171
 #define IDR_SORT                        171
-#define IDC_UPDATE_INFOS                 172
+#define IDC_UPDATE_INFOS                172
 #define IDC_VERTMIN                     172
 #define ID_VIEW_FILTERWND               173
 #define IDR_POPUP_SORT                  173
@@ -688,7 +688,7 @@
 #define IDC_LEFTSHIFT                   1332
 #define IDC_AMPLITUDESPAN               1335
 #define IDC_CHECKFILENAME               1336
-#define IDC_EDIT_INFOS                   1337
+#define IDC_EDIT_INFOS                  1337
 #define IDC_SPIKEPOINTS                 1342
 #define IDC_SETFLAG                     1344
 #define IDC_EDIT_NAMESPK                1346
@@ -845,6 +845,7 @@
 #define IDC_ALL_FILES                   1529
 #define IDC_SHAPE_T1_MS                 1530
 #define IDC_SHAPE_T2_MS                 1531
+#define IDC_DETECT_WHAT                 1532
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768
@@ -867,7 +868,6 @@
 #define ID_OPTIONS_PRINTMARGINS         32805
 #define ID_TOOLS_DETECTION_OPTIONS      32810
 #define ID_TOOLS_EDIT_TRANSFORM_SPIKES  32811
-
 #define ID_FORMAT_CENTER_CURVE          32820
 #define ID_FORMAT_GAIN_ADJUST           32821
 #define ID_FORMAT_SPLIT_CURVES          32822
@@ -892,7 +892,6 @@
 #define ID_TOOLS_IMPORT_SYNTECH_ASCII_FILES 32932
 #define ID_VIEW_LEFT_PANE               32933
 #define ID_VIEW_UPPER_PANE              32935
-
 #define ID_VIEW_DATABASE                32936
 #define ID_VIEW_DATA_FILE               32937
 #define ID_VIEW_SPIKE_DETECTION         32938
@@ -901,7 +900,6 @@
 #define ID_VIEW_SPIKE_SORTING_TEMPLATES 32941
 #define ID_VIEW_SPIKE_TIME_SERIES       32942
 #define ID_VIEW_ACQUIRE_DATA            32943
-
 #define ID_TOOLS_EDIT_STIMULUS          32946
 #define ID_TOOLS_REMOVE_DUPLICATE_FILES 32948
 #define ID_TOOLS_RESTORE_DELETED_FILES  32951
@@ -951,7 +949,6 @@
 #define ID_TOOLS_IMPORT_DATA_FILES      33040
 #define ID_TOOLS_IMPORT_SPIKE_FILES     33041
 #define ID_TOOLS_REMOVE_ARTEFACT_FILES  33046
-
 #define ID_TOOLS_VERTICAL_CURSORS       33057
 #define ID_FORMAT_DATA_SERIES_ATTRIBUTES 33058
 #define ID_HARDWARE_AD_CHANNELS         33059
@@ -959,8 +956,6 @@
 #define ID_OPTIONS_PRINT_MARGINS        33063
 #define ID_CHECK_FILTER_PANE            33064
 #define ID_CHECK_PROPERTIES_PANE        33065
-
-
 #define ID_TOOLS_SPIKE_DETECTION_PARAMETERS 33068
 #define ID_TOOLS_IMPORT                 33097
 #define ID_TOOLS_PATHS_RELATIVE         33099
@@ -981,7 +976,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        580
 #define _APS_NEXT_COMMAND_VALUE         33069
-#define _APS_NEXT_CONTROL_VALUE         1532
+#define _APS_NEXT_CONTROL_VALUE         1533
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
 #endif

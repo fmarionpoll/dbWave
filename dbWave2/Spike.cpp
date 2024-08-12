@@ -45,18 +45,18 @@ IMPLEMENT_SERIAL(Spike, CObject, 0 /* schema number*/)
 
 void Spike::Serialize(CArchive& ar)
 {
-	WORD w_version = 2;
+	WORD w_version = 3;
 
 	if (ar.IsStoring())
 	{
 		ar << w_version;
 		ar << m_ii_time_;
-		ar << static_cast<WORD>(m_class_id_);
-		ar << static_cast<WORD>(m_detection_parameters_index_);
-		ar << static_cast<WORD>(m_value_max_);
-		ar << static_cast<WORD>(m_value_min_);
-		ar << static_cast<WORD>(m_offset_);
-		ar << static_cast<WORD>(m_d_max_min_);
+		ar << m_class_id_;
+		ar << m_detection_parameters_index_;
+		ar << m_value_max_;
+		ar << m_value_min_;
+		ar << m_offset_;
+		ar << m_d_max_min_;
 		ar << static_cast<WORD>(2);
 		ar << y1_;
 		ar << dt_;
@@ -64,28 +64,54 @@ void Spike::Serialize(CArchive& ar)
 	else
 	{
 		ar >> w_version;
-		if (w_version <= 2)
+		if (w_version == 3)
+			read_version3(ar);
+		else if (w_version <= 2)
 			read_version2(ar, w_version);
 	}
 }
 
-void Spike::read_version2(CArchive& ar, WORD w_version)
+void Spike::read_version3(CArchive& ar)
+{
+	ar >> m_ii_time_;
+	ar >> m_class_id_ ;
+	ar >> m_detection_parameters_index_ ;
+	ar >> m_value_max_ ;
+	ar >> m_value_min_ ;
+	ar >> m_offset_;
+	ar >> m_d_max_min_;
+	WORD n_items = 0;
+	ar >> n_items;
+	ar >> y1_; n_items--;
+	ar >> dt_; n_items--;
+	ASSERT(n_items == 0);
+}
+
+void Spike::read_version2(CArchive& ar, const WORD w_version)
 {
 	WORD w1;
 
 	ar >> m_ii_time_;
-	ar >> w1; m_class_id_ = static_cast<int>(w1);
-	ar >> w1; m_detection_parameters_index_ = static_cast<int>(w1);
-	ar >> w1; m_value_max_	= static_cast<int>(w1);
-	ar >> w1; m_value_min_	= static_cast<int>(w1);
-	ar >> w1; m_offset_		= static_cast<int>(w1);
-	ar >> w1; m_d_max_min_	= static_cast<int>(w1);
+	ar >> w1;
+	m_class_id_ = static_cast<short>(w1);
+	ar >> w1;
+	m_detection_parameters_index_ = static_cast<short>(w1);
+	ar >> w1;
+	m_value_max_ = static_cast<short>(w1);
+	ar >> w1;
+	m_value_min_ = static_cast<short>(w1);
+	ar >> w1;
+	m_offset_ = static_cast<short>(w1);
+	ar >> w1;
+	m_d_max_min_ = static_cast<short>(w1);
 	if (w_version > 1)
 	{
 		WORD n_items = 0;
 		ar >> n_items;
-		ar >> y1_; n_items--;
-		ar >> dt_; n_items--;
+		ar >> y1_;
+		n_items--;
+		ar >> dt_;
+		n_items--;
 		ASSERT(n_items == 0);
 	}
 }
@@ -99,16 +125,16 @@ void Spike::read_version0(CArchive& ar)
 	ar >> m_ii_time_;
 	ar >> w1; m_class_id_ = static_cast<int>(w1);
 	ar >> w1; m_detection_parameters_index_ = static_cast<int>(w1);
-	ar >> w1; m_value_max_ = static_cast<int>(w1);
-	ar >> w1; m_value_min_ = static_cast<int>(w1);
-	ar >> w1; m_offset_ = static_cast<int>(w1);
+	ar >> w1; m_value_max_ = static_cast<short>(w1);
+	ar >> w1; m_value_min_ = static_cast<short>(w1);
+	ar >> w1; m_offset_ = static_cast<short>(w1);
 	m_d_max_min_ = 0;
 }
 
 int* Spike::get_p_data(const int spike_length)
 {
 	constexpr int delta = 0;
-	const auto spike_data_length = sizeof(int) * (spike_length + delta);
+	const size_t spike_data_length = sizeof(int) * (spike_length + delta);
 	if (m_buffer_spike_data_ == nullptr || spike_length != m_buffer_spike_length_)
 	{
 		delete m_buffer_spike_data_;
@@ -223,13 +249,11 @@ void Spike::offset_spike_data(const int offset)
 {
 	auto lp_dest = get_p_data(get_spike_length());
 	for (auto i = get_spike_length(); i > 0; i--, lp_dest++)
-	{
 		*lp_dest += offset; 
-	}
 	
 	m_offset_ = offset;
-	m_value_max_ = m_value_max_ - m_offset_;
-	m_value_min_ = m_value_min_ - m_offset_;
+	m_value_max_ -= offset;
+	m_value_min_ -= offset;
 }
 
 void Spike::offset_spike_data_to_average_ex(const int i_first, const int i_last)
