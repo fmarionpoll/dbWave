@@ -27,10 +27,10 @@ private:
 	int m_buffer_spike_length_ = 0;			// n points in the buffer
 	int m_spike_length_ = 0;				// length of buffer
 	boolean m_selected_state_ = false;
-	int m_bin_zero_ = 2048;				// zero (2048 if 12 bits scale = 0-4095)
+	int m_bin_zero_ = 2048;					// zero (2048 if 12 bits scale = 0-4095)
 
 public:
-	int	get_bin_zero() const { return m_bin_zero_; }
+	int		get_bin_zero() const { return m_bin_zero_; }
 	void	set_bin_zero(const short bin_zero) { m_bin_zero_ = bin_zero; }
 
 	boolean get_selected() const { return m_selected_state_; }
@@ -39,15 +39,15 @@ public:
 	long	get_time() const { return m_ii_time_; }
 	int		get_class_id() const { return m_class_id_; }
 	int		get_source_channel() const { return m_detection_parameters_index_; }
-	int	get_maximum() const { return m_value_max_; }
-	int	get_minimum() const { return m_value_min_; }
-	int	get_amplitude_offset() const { return m_offset_; }
+	int		get_maximum() const { return m_value_max_; }
+	int		get_minimum() const { return m_value_min_; }
+	int		get_amplitude_offset() const { return m_offset_; }
 
 	int		get_spike_length() const { return m_spike_length_; }
 	void	set_spike_length(const int spike_length) { m_spike_length_ = spike_length; }
 	int*	get_p_data(int spike_length);
 	int*	get_p_data() const;
-	int	get_value_at_offset(const int index) const {return *(m_buffer_spike_data_+index);}
+	int		get_value_at_offset(const int index) const {return *(m_buffer_spike_data_+index);}
 
 	int		get_y1() const { return y1_; }
 	void	set_y1(const int y) { y1_ = y; }
@@ -72,7 +72,7 @@ public:
 	void	set_amplitude_offset(const int offset) { m_offset_ = offset; }
 
 	void	transfer_data_to_spike_buffer(short* source_data, const int source_n_channels, const int spike_length);
-
+	void	measure_amplitude_min_to_max(int t1, int t2);
 	void	measure_max_min_ex(int* value_max, int* index_max, int* value_min, int* index_min, int i_first, int i_last) const;
 	void	measure_max_then_min_ex(int* value_max, int* index_max, int* value_min, int* index_min, int i_first, int i_last) const;
 	long	measure_sum_ex(int i_first, int i_last) const;
@@ -83,9 +83,8 @@ public:
 	void	center_spike_amplitude(int i_first, int i_last, WORD method = 0);
 
 	// Implementation
-	void	read_version0(CArchive& ar);
 	void	Serialize(CArchive& ar) override;
-	void read_version3(CArchive& ar);
+	void	read_version0(CArchive& ar);
 
 protected:
 	void	read_version2(CArchive& ar, WORD w_version);

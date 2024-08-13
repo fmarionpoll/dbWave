@@ -92,8 +92,7 @@ void SpikeList::remove_artefacts()
 void SpikeList::serialize_version8(CArchive& ar)
 {
 	serialize_data_parameters(ar);
-	serialize_spike_elements(ar);
-	serialize_spike_data_as_int(ar);
+	serialize_spikes(ar);
 
 	serialize_spike_class_descriptors(ar);
 	serialize_additional_data(ar);
@@ -104,8 +103,8 @@ void SpikeList::serialize_version8(CArchive& ar)
 void SpikeList::serialize_version7(CArchive& ar)
 {
 	serialize_data_parameters(ar);
-	serialize_spike_elements(ar);
-	serialize_spike_data(ar);
+	serialize_spikes(ar);
+	serialize_spike_data_short(ar);
 
 	serialize_spike_class_descriptors(ar);
 	serialize_additional_data(ar);
@@ -135,7 +134,7 @@ void SpikeList::serialize_data_parameters(CArchive& ar)
 	wave_channel_.Serialize(ar);
 }
 
-void SpikeList::serialize_spike_elements(CArchive& ar)
+void SpikeList::serialize_spikes(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
@@ -163,7 +162,7 @@ void SpikeList::serialize_spike_elements(CArchive& ar)
 	}
 }
 
-void SpikeList::serialize_spike_data(CArchive& ar) 
+void SpikeList::serialize_spike_data_short(CArchive& ar) 
 {
 	const auto n_spikes = spikes_.GetSize();
 	if (ar.IsStoring())
@@ -172,23 +171,22 @@ void SpikeList::serialize_spike_data(CArchive& ar)
 		ar << spike_length;
 
 		const auto n_bytes_int = spike_length * sizeof(int);
-		const auto n_bytes_short = spike_length * sizeof(short);
 		if (n_bytes_int > 0)
 		{
-			const auto buffer = static_cast<short*>(malloc(n_bytes_int));
+			const auto buffer = static_cast<int*>(malloc(n_bytes_int));
 			if (buffer)
 			{
 				for (auto i = 0; i < n_spikes; i++)
 				{
 					Spike* spike = get_spike(i);
 					int* p_data = spike->get_p_data(spike_length);
-					short* p_buffer = buffer;
+					int* p_buffer = buffer;
 					for (int j = 0; j < spike_length; j++, p_buffer++, p_data++)
 					{
-						const int val = *p_data;
-						*p_buffer = static_cast<short>(val);
+						const int val = static_cast<short>(*p_data);
+						*p_buffer = static_cast<int>(val);
 					}
-					ar.Write(buffer, n_bytes_short);
+					ar.Write(buffer, n_bytes_int);
 				}
 				free(buffer);
 			}
@@ -199,21 +197,21 @@ void SpikeList::serialize_spike_data(CArchive& ar)
 		WORD spike_length = 1;
 		ar >> spike_length;
 
-		const auto n_bytes = spike_length * sizeof(short) ;
-		const auto buffer = static_cast<short*>(malloc(n_bytes));
+		const auto n_bytes_short = spike_length * sizeof(short) ;
+		const auto buffer = static_cast<short*>(malloc(n_bytes_short));
 		if (buffer)
 		{
 			for (auto i = 0; i < n_spikes; i++)
 			{
 				Spike* spike = get_spike(i);
-				ar.Read(buffer, n_bytes);
+				ar.Read(buffer, n_bytes_short);
 
 				int* p_data = spike->get_p_data(spike_length);
 				short* p_buffer = buffer;
 				for (int j = 0; j < spike_length; j++, p_buffer++, p_data++ )
 				{
 					const int val = *p_buffer;
-					*p_data = val;
+					*p_data = static_cast<int>(val);
 				}
 			}
 			free(buffer);
@@ -221,39 +219,6 @@ void SpikeList::serialize_spike_data(CArchive& ar)
 	}
 }
 
-void SpikeList::serialize_spike_data_as_int(CArchive& ar)
-{
-	const auto n_spikes = spikes_.GetSize();
-	if (ar.IsStoring())
-	{
-		const int spike_length = get_spike_length();
-		ar << spike_length;
-
-		const auto n_bytes_int = spike_length * sizeof(int);
-		if (n_bytes_int > 0)
-		{
-			for (auto i = 0; i < n_spikes; i++)
-			{
-				const Spike* spike = get_spike(i);
-				const int* p_data = spike->get_p_data();
-				ar.Write(p_data, n_bytes_int);
-			}
-		}
-	}
-	else
-	{
-		WORD spike_length = 1;
-		ar >> spike_length;
-
-		const auto n_bytes_int = spike_length * sizeof(int);
-		for (auto i = 0; i < n_spikes; i++)
-		{
-			Spike* spike = get_spike(i);
-			int* p_data = spike->get_p_data(spike_length);
-			ar.Read(p_data, n_bytes_int);
-		}
-	}
-}
 void SpikeList::serialize_spike_class_descriptors(CArchive& ar)
 {
 	if (ar.IsStoring())
@@ -326,7 +291,7 @@ void SpikeList::read_file_version5(CArchive& ar)
 		spikes_[i] = se;
 	}
 
-	serialize_spike_data(ar);
+	serialize_spike_data_short(ar);
 
 	extrema_valid_ = FALSE;
 	keep_only_valid_classes_ = FALSE; 
@@ -600,11 +565,7 @@ int SpikeList::add_spike(short* source_data, const int n_channels, const long ii
 		if (source_data != nullptr)
 		{
 			se->transfer_data_to_spike_buffer(source_data, n_channels, spike_length_);
-			// compute max min between brackets for new spike
-			int max, min;
-			int i_max, i_min;
-			se->measure_max_min_ex(&max, &i_max, &min, &i_min, 0, spike_length_-1);
-			se->set_max_min_ex(max, min, i_min - i_max);
+			se->measure_amplitude_min_to_max(1, spike_length_-1);
 		}
 	}
 	return index_added_spike;
@@ -678,18 +639,19 @@ void SpikeList::get_total_max_min_measure()
 		return;
 
 	const int n_spikes = spikes_.GetCount();
+	if (n_spikes < 1)
+		return;
 	int value_max, value_min;
 	int index_max, index_min;
 	const int i_last = get_spike_length() - 1;
 	boolean initialized = false;
 
-	for (auto index = index0; index < n_spikes; index++)
+	for (auto spike_index = index0; spike_index < n_spikes; spike_index++)
 	{
-		const Spike* spike = get_spike(index);
+		const Spike* spike = get_spike(spike_index);
 		if (spike->get_class_id() >= 0)
 		{
-			constexpr int i_first = 1;
-			spike->measure_max_min_ex(&value_max, &index_max, &value_min, &index_min, i_first, i_last);
+			spike->measure_max_min_ex(&value_max, &index_max, &value_min, &index_min, 1, i_last);
 			if (!initialized || value_max > maximum_over_all_spikes_)
 				maximum_over_all_spikes_ = value_max;
 			if (!initialized || value_min < minimum_over_all_spikes_)
@@ -985,32 +947,8 @@ void SpikeList::measure_amplitude_min_to_max(const int t1, const int t2)
 	const auto n_spikes = get_spikes_count();
 	for (auto spike_index = 0; spike_index < n_spikes; spike_index++)
 	{
-		const auto spike_element = get_spike(spike_index);
-		auto lp_buffer = get_spike(spike_index)->get_p_data(get_spike_length());
-		lp_buffer += t1;
-		auto val = *lp_buffer;
-		auto max = val;
-		auto min = val;
-		auto min_index = t1;
-		auto max_index = t1;
-		for (auto i = t1 + 1; i <= t2; i++)
-		{
-			lp_buffer++;
-			val = *lp_buffer;
-			if (val > max)
-			{
-				max = val;
-				max_index = i;
-			}
-			else if (val < min)
-			{
-				min = val;
-				min_index = i;
-			}
-		}
-
-		spike_element->set_max_min_ex(max, min, min_index - max_index);
-		spike_element->set_y1(max - min);
+		const auto spike = get_spike(spike_index);
+		spike->measure_amplitude_min_to_max(t1, t2);
 	}
 }
 

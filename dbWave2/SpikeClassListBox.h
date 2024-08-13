@@ -17,8 +17,8 @@ protected:
 	SpikeClassListBoxContext context_;
 	int m_cursor_index_max_ = 3;
 
-	long m_lFirst = 0;
-	long m_lLast = 0;
+	long m_l_first_ = 0;
+	long m_l_last_ = 0;
 	SpikeList* m_spike_list_ = nullptr;
 	CSpikeDoc* m_spike_doc_ = nullptr;
 	CdbWaveDoc* m_dbwave_doc_ = nullptr;
@@ -30,8 +30,8 @@ public:
 
 	void set_time_intervals(long l_first, long l_last);
 	int count_classes_in_current_spike_list() const;
-	long get_time_first() const { return m_lFirst; }
-	long get_time_last() const { return m_lLast; }
+	long get_time_first() const { return m_l_first_; }
+	long get_time_last() const { return m_l_last_; }
 
 	void set_row_height(int row_height);
 	void set_left_column_width(int row_width);
@@ -69,7 +69,7 @@ protected:
 	int get_row_index_of_spike_class(int spike_class) const;
 	RowItem* add_row_item(int class_id, int i_id);
 	void update_rows_from_spike_list();
-	RowItem* get_row_item(int i) const { if (i >= GetCount() || i < 0) i = 0;  return (RowItem*)GetItemData(i); }
+	RowItem* get_row_item(int i) const { if (i >= GetCount() || i < 0) i = 0;  return reinterpret_cast<RowItem*>(GetItemData(i)); }
 	void set_horizontal_limits(int row_selected);
 	void set_y_zoom(int row_selected) const;
 	void set_class_of_dropped_spike(int row_selected) const;
@@ -80,6 +80,7 @@ public:
 	void DrawItem(LPDRAWITEMSTRUCT lp_dis) override;
 	int CompareItem(LPCOMPAREITEMSTRUCT lpCIS) override;
 	void DeleteItem(LPDELETEITEMSTRUCT lp_di) override;
+
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
 	afx_msg HBRUSH CtlColor(CDC* p_dc, UINT nCtlColor);

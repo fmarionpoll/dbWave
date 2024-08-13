@@ -42,7 +42,7 @@ protected:
 	WORD w_version_ {6};		// aug 2013 change spike element
 	CString id_string_ {_T("Awave Spike file v")};
 
-	// (1) ---------------infos about data acquisition and spike detection ------------------
+	// (1) ---------------infos about data acquisition and spike detection
 	CWaveChan wave_channel_{};	
 	WORD data_encoding_mode_  {0};
 	long bin_zero_  {4096}; 
@@ -51,7 +51,7 @@ protected:
 	SPKDETECTPARM spk_detect_parameters_ {};
 	CString channel_description_ {};
 
-	// (2) -------------ordered spike list with class, time, etc-----------------------------
+	// (2) -------------ordered spike list with class, time, etc
 	BOOL extrema_valid_  {false};
 	int minimum_over_all_spikes_ {0}; 
 	int maximum_over_all_spikes_ {0};
@@ -149,9 +149,9 @@ protected:
 	void delete_arrays();
 	void serialize_version7(CArchive& ar);
 	void serialize_data_parameters(CArchive& ar);
-	void serialize_spike_elements(CArchive& ar);
-	void serialize_spike_data(CArchive& ar);
-	void serialize_spike_data_as_int(CArchive& ar);
+	void serialize_spikes(CArchive& ar);
+	void serialize_spike_data_short(CArchive& ar);
+	
 	void serialize_spike_class_descriptors(CArchive& ar);
 	void serialize_additional_data(CArchive& ar);
 

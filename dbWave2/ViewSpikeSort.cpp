@@ -760,10 +760,10 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 	select_spike(spike_sel);
 
 	const int index_first_file = b_all_files_?  0: index_current_file;
-	const int index_last_file = b_all_files_ ? n_files: index_current_file;
+	const int index_last_file = b_all_files_ ? (n_files-1): index_current_file;
 
 	// loop over all selected files (or only one file currently selected)
-	for (auto i_file = index_first_file; i_file < index_last_file; i_file++)
+	for (auto i_file = index_first_file; i_file <= index_last_file; i_file++)
 	{
 		if (!pdb_doc->db_set_current_record_position(i_file))
 			continue;

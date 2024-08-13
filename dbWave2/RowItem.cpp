@@ -15,7 +15,7 @@ void RowItem::create_item(CWnd* parent_wnd, CdbWaveDoc* pdb_doc, SpikeList* p_sp
 {
 	const auto rect_spikes = CRect(0, 0, 0, 0); 
 	const auto rect_bars = CRect(0, 0, 0, 0);
-	parent_context = context;
+	parent_context_ = context;
 	class_id_ = i_class;
 	row_id_ = i_id;
 	spike_list_ = p_spike_list;
@@ -40,7 +40,7 @@ void RowItem::create_item(CWnd* parent_wnd, CdbWaveDoc* pdb_doc, SpikeList* p_sp
 	row_comment_->Format(_T("class %i\nn=%i"), i_class, spike_list_->get_class_id_n_items(i_class));
 }
 
-void RowItem::set_class_id(int new_class_id)
+void RowItem::set_class_id(const int new_class_id)
 {
 	class_id_ = new_class_id;
 	chart_spike_bar_->set_plot_mode(PLOT_ONE_CLASS_ONLY, class_id_);
@@ -57,7 +57,7 @@ void RowItem::draw_item(const LPDRAWITEMSTRUCT lp_dis) const
 	{
 		// get data
 		CRect rc_text = lp_dis->rcItem;
-		rc_text.right = rc_text.left + parent_context->m_widthText;
+		rc_text.right = rc_text.left + parent_context_->m_widthText;
 	
 
 		// display text
@@ -65,13 +65,13 @@ void RowItem::draw_item(const LPDRAWITEMSTRUCT lp_dis) const
 		dc.DrawText(*row_comment_, text_length, rc_text, DT_LEFT | DT_WORDBREAK);
 
 		// display spikes
-		const auto col1 = parent_context->m_widthText + parent_context->m_widthSeparator;
-		const auto col2 = col1 + parent_context->m_widthSpikes + parent_context->m_widthSeparator;
-		auto rect_spikes = CRect(col1 + 1, lp_dis->rcItem.top + 1, col1 + parent_context->m_widthSpikes, lp_dis->rcItem.bottom - 1);
+		const auto col1 = parent_context_->m_widthText + parent_context_->m_widthSeparator;
+		const auto col2 = col1 + parent_context_->m_widthSpikes + parent_context_->m_widthSeparator;
+		auto rect_spikes = CRect(col1 + 1, lp_dis->rcItem.top + 1, col1 + parent_context_->m_widthSpikes, lp_dis->rcItem.bottom - 1);
 		chart_spike_shape_->sub_item_draw(dc, rect_spikes);
 
 		// display bars
-		auto rect_bars = CRect(col2 + 1, lp_dis->rcItem.top + 1, col2 + parent_context->m_widthBars, lp_dis->rcItem.bottom - 1);
+		auto rect_bars = CRect(col2 + 1, lp_dis->rcItem.top + 1, col2 + parent_context_->m_widthBars, lp_dis->rcItem.bottom - 1);
 		chart_spike_bar_->sub_item_draw(dc, rect_bars);
 	}
 
@@ -88,7 +88,7 @@ void RowItem::draw_item(const LPDRAWITEMSTRUCT lp_dis) const
 	if (!(lp_dis->itemState & ODS_SELECTED) && // item not selected
 		(lp_dis->itemAction & ODA_SELECT))
 	{
-		dc.FrameRect(&(lp_dis->rcItem), &parent_context->m_brush_background);
+		dc.FrameRect(&(lp_dis->rcItem), &parent_context_->m_brush_background);
 	}
 	dc.Detach();
 }
@@ -166,8 +166,8 @@ float RowItem::get_zoom_y_shapes_mv() const
 
 void RowItem::select_individual_spike(const int no_spike) const
 {
-	CdbWaveDoc* pDoc = chart_spike_shape_->get_db_wave_doc();
-	db_spike spike_sel(pDoc->db_get_current_record_position(), pDoc->m_p_spk->get_spike_list_current_index(), no_spike);
+	const CdbWaveDoc* p_doc = chart_spike_shape_->get_db_wave_doc();
+	const db_spike spike_sel(p_doc->db_get_current_record_position(), p_doc->m_p_spk->get_spike_list_current_index(), no_spike);
 	if (chart_spike_shape_ != nullptr)
 		chart_spike_shape_->select_spike(spike_sel);
 	return chart_spike_bar_->select_spike(spike_sel);

@@ -11,53 +11,53 @@ IMPLEMENT_SERIAL(CDataListCtrl_Row, CObject, 0)
 CDataListCtrl_Row::CDataListCtrl_Row()
 = default;
 
-CDataListCtrl_Row::CDataListCtrl_Row(int i)
+CDataListCtrl_Row::CDataListCtrl_Row(const int i)
 {
 	index = i;
 }
 
 CDataListCtrl_Row::~CDataListCtrl_Row()
 {
-	delete pDataChartWnd;
-	delete pSpikeChartWnd;
+	delete p_data_chart_wnd;
+	delete p_spike_chart_wnd;
 	
-	SAFE_DELETE(pdataDoc)
-	SAFE_DELETE(pspikeDoc)
+	SAFE_DELETE(p_data_doc)
+	SAFE_DELETE(p_spike_doc)
 	cs_comment.Empty();
-	csDatafileName.Empty();
-	csSpikefileName.Empty();
-	csSensillumname.Empty();
-	csStim1.Empty();
-	csConc1.Empty();
-	csStim2.Empty();
-	csConc2.Empty();
-	csNspk.Empty();
-	csFlag.Empty();
-	csDate.Empty();
+	cs_datafile_name.Empty();
+	cs_spike_file_name.Empty();
+	cs_sensillum_name.Empty();
+	cs_stimulus1.Empty();
+	cs_concentration1.Empty();
+	cs_stimulus2.Empty();
+	cs_concentration2.Empty();
+	cs_n_spikes.Empty();
+	cs_flag.Empty();
+	cs_date.Empty();
 }
 
 CDataListCtrl_Row& CDataListCtrl_Row::operator =(const CDataListCtrl_Row& arg)
 {
 	if (this != &arg)
 	{
-		bInit = arg.bInit;
+		b_init = arg.b_init;
 		index = arg.index;
-		insectID = arg.insectID;
+		insect_id = arg.insect_id;
 		cs_comment = arg.cs_comment;
-		csDatafileName = arg.csDatafileName;
-		csSpikefileName = arg.csSpikefileName;
-		csSensillumname = arg.csSensillumname;
-		csStim1 = arg.csStim1;
-		csConc1 = arg.csConc1;
-		csStim2 = arg.csStim2;
-		csConc2 = arg.csConc2;
-		csNspk = arg.csNspk;
-		csFlag = arg.csFlag;
-		csDate = arg.csDate;
-		pDataChartWnd = arg.pDataChartWnd;
-		pSpikeChartWnd = arg.pSpikeChartWnd;
-		pdataDoc = arg.pdataDoc;
-		pspikeDoc = arg.pspikeDoc;
+		cs_datafile_name = arg.cs_datafile_name;
+		cs_spike_file_name = arg.cs_spike_file_name;
+		cs_sensillum_name = arg.cs_sensillum_name;
+		cs_stimulus1 = arg.cs_stimulus1;
+		cs_concentration1 = arg.cs_concentration1;
+		cs_stimulus2 = arg.cs_stimulus2;
+		cs_concentration2 = arg.cs_concentration2;
+		cs_n_spikes = arg.cs_n_spikes;
+		cs_flag = arg.cs_flag;
+		cs_date = arg.cs_date;
+		p_data_chart_wnd = arg.p_data_chart_wnd;
+		p_spike_chart_wnd = arg.p_spike_chart_wnd;
+		p_data_doc = arg.p_data_doc;
+		p_spike_doc = arg.p_spike_doc;
 	}
 	return *this;
 }
@@ -65,72 +65,73 @@ CDataListCtrl_Row& CDataListCtrl_Row::operator =(const CDataListCtrl_Row& arg)
 void CDataListCtrl_Row::Serialize(CArchive& ar)
 {
 	// not serialized:
-	// AcqDataDoc*	pdataDoc;
-	// CSpikeDoc*	pspikeDoc;
+	// AcqDataDoc*	p_data_Doc;
+	// CSpikeDoc*	p_spike_Doc;
 
 	if (ar.IsStoring())
 	{
-		wversion = 2;
-		ar << wversion;
+		w_version = 2;
+		ar << w_version;
 		ar << index;
 
-		const auto nstr = 8;
-		ar << nstr;
+		constexpr auto string_count = 8;
+		ar << string_count;
 		ar << cs_comment;
-		ar << csDatafileName;
-		ar << csSensillumname;
-		ar << csStim1;
-		ar << csConc1;
-		ar << csStim2;
-		ar << csConc2;
-		ar << csNspk;
-		ar << csFlag;
-		ar << csDate;
+		ar << cs_datafile_name;
+		ar << cs_sensillum_name;
+		ar << cs_stimulus1;
+		ar << cs_concentration1;
+		ar << cs_stimulus2;
+		ar << cs_concentration2;
+		ar << cs_n_spikes;
+		ar << cs_flag;
+		ar << cs_date;
 
-		const auto nobj = 3;
-		ar << nobj;
-		pDataChartWnd->Serialize(ar);
-		pSpikeChartWnd->Serialize(ar);
-		ar << insectID;
+		constexpr auto object_count = 3;
+		ar << object_count;
+		p_data_chart_wnd->Serialize(ar);
+		p_spike_chart_wnd->Serialize(ar);
+		ar << insect_id;
 	}
 	else
 	{
-		ar >> wversion;
+		ar >> w_version;
 		ar >> index;
 
-		int nstr;
-		ar >> nstr;
+		int string_count;
+		ar >> string_count;
 		ar >> cs_comment;
-		nstr--;
-		ar >> csDatafileName;
-		nstr--;
-		ar >> csSensillumname;
-		nstr--;
-		ar >> csStim1;
-		nstr--;
-		ar >> csConc1;
-		nstr--;
-		if (wversion > 1)
+		string_count--;
+		ar >> cs_datafile_name;
+		string_count--;
+		ar >> cs_sensillum_name;
+		string_count--;
+		ar >> cs_stimulus1;
+		string_count--;
+		ar >> cs_concentration1;
+		string_count--;
+		if (w_version > 1)
 		{
-			ar >> csStim2;
-			nstr--;
-			ar >> csConc2;
-			nstr--;
+			ar >> cs_stimulus2;
+			string_count--;
+			ar >> cs_concentration2;
+			string_count--;
 		}
-		ar >> csNspk;
-		nstr--;
-		ar >> csFlag;
-		nstr--;
-		ar >> csDate;
-		nstr--;
+		ar >> cs_n_spikes;
+		string_count--;
+		ar >> cs_flag;
+		string_count--;
+		ar >> cs_date;
+		string_count--;
 
-		int nobj;
-		ar >> nobj;
-		ASSERT(nobj >= 2);
-		pDataChartWnd->Serialize(ar);
-		pSpikeChartWnd->Serialize(ar);
-		nobj -= 2;
-		nobj--;
-		if (nobj > 0) ar >> insectID;
+		int object_count;
+		ar >> object_count;
+		ASSERT(object_count >= 2);
+		p_data_chart_wnd->Serialize(ar);
+		object_count--;
+		p_spike_chart_wnd->Serialize(ar);;
+		object_count--;
+		if (object_count > 0) 
+			ar >> insect_id;
 	}
 }

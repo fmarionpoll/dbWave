@@ -118,8 +118,8 @@ RowItem* SpikeClassListBox::add_row_item(const int class_id, const int i_id)
 
 void SpikeClassListBox::set_time_intervals(const long l_first, const long l_last)
 {
-	m_lFirst = l_first;
-	m_lLast = l_last;
+	m_l_first_ = l_first;
+	m_l_last_ = l_last;
 	for (auto i = 0; i < GetCount(); i++)
 	{
 		const auto row_item = get_row_item(i);
@@ -348,8 +348,8 @@ void SpikeClassListBox::add_spike_to_row(const int spike_no)
 	{
 		m_spike_list_->add_class_id(class_id);
 		
-		const auto l_first = m_lFirst;
-		const auto l_last = m_lLast;
+		const auto l_first = m_l_first_;
+		const auto l_last = m_l_last_;
 		set_source_data(m_spike_list_, m_dbwave_doc_);
 		set_time_intervals(l_first, l_last);
 		row_index = get_row_index_of_spike_class(class_id);
@@ -382,7 +382,7 @@ void SpikeClassListBox::update_rows_from_spike_list()
 		else
 		{
 			const RowItem* row_item = add_row_item(spike_list_class_id, i_class * 2);
-			row_item->set_time_intervals(m_lFirst, m_lLast);
+			row_item->set_time_intervals(m_l_first_, m_l_last_);
 		}
 	}
 
@@ -464,8 +464,8 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 void SpikeClassListBox::set_horizontal_limits(const int row_selected)
 {
 	const auto row_item = get_row_item(row_selected);
-	row_item->get_time_intervals(m_lFirst, m_lLast);
-	set_time_intervals(m_lFirst, m_lLast);
+	row_item->get_time_intervals(m_l_first_, m_l_last_);
+	set_time_intervals(m_l_first_, m_l_last_);
 }
 
 void SpikeClassListBox::set_y_zoom(const int row_selected) const

@@ -136,11 +136,8 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 		if (hz_tags.get_tag_list_size() > 0)
 			display_hz_tags(p_dc);
 
-		if (vt_tags.get_tag_list_size() > 0) {
-			//const int wo = MulDiv(0 - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
-			//const int we = MulDiv(display_rect_.bottom - y_viewport_origin_, y_we_, y_viewport_extent_) + y_wo_;
+		if (vt_tags.get_tag_list_size() > 0) 
 			display_vt_tags_int_values(p_dc);
-		}
 
 		// display text
 		if (b_text_ && plot_mode_ == PLOT_ONE_CLASS_ONLY)
@@ -162,8 +159,11 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 void ChartSpikeShape::display_spike_data(CDC* p_dc, const Spike* spike, const int spike_length)
 {
 	int* p_spike_data = spike->get_p_data();
-	fill_polypoint_y_axis(p_spike_data);
-	p_dc->Polyline(&polyline_points_[0], spike_length);
+	if (p_spike_data != nullptr)
+	{
+		fill_polypoint_y_axis(p_spike_data);
+		p_dc->Polyline(&polyline_points_[0], spike_length);
+	}
 }
 
 void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)

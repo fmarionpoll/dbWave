@@ -22,7 +22,7 @@ public:
 	void	set_class_id(int new_class_id);
 
 	int		get_row_id() const { return row_id_; }
-	void	set_row_id(int new_row_id) { row_id_ = new_row_id; }
+	void	set_row_id(const int new_row_id) { row_id_ = new_row_id; }
 
 	void	move_row_out_of_the_way() const;
 	void	set_y_zoom(int y_we, int y_wo) const;
@@ -47,6 +47,6 @@ protected:
 	// TODO replace with spike class descriptor?
 	int class_id_ = 0;
 	int row_id_ = 0;
-	SpikeClassListBoxContext* parent_context = nullptr;
+	SpikeClassListBoxContext* parent_context_ = nullptr;
 };
 

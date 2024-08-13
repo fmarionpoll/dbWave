@@ -40,6 +40,13 @@ void ChartSpikeBar::plot_data_to_dc_prepare_dc(CDC* p_dc)
 	saved_background_color_ = p_dc->GetBkColor();
 	display_rect_ = client_rect_;
 	saved_dc_ = p_dc->SaveDC();
+
+	if (x_we_ == 1)
+	{
+		x_we_ = display_rect_.Width();
+		x_wo_ = display_rect_.left;
+	}
+
 	p_dc->IntersectClipRect(&client_rect_);
 }
 
