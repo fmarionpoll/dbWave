@@ -1,16 +1,16 @@
 ﻿#include "StdAfx.h"
-#include "OUTPUTPARMS.h"
+#include "output_parameters.h"
 
 
-IMPLEMENT_SERIAL(OUTPUTPARMS, CObject, 0 /* schema number*/)
+IMPLEMENT_SERIAL(output_parameters, CObject, 0 /* schema number*/)
 
-OUTPUTPARMS::OUTPUTPARMS()
+output_parameters::output_parameters()
 = default;
 
-OUTPUTPARMS::~OUTPUTPARMS()
+output_parameters::~output_parameters()
 = default;
 
-OUTPUTPARMS& OUTPUTPARMS::operator =(const OUTPUTPARMS& arg)
+output_parameters& output_parameters::operator =(const output_parameters& arg)
 {
 	if (this != &arg)
 	{
@@ -40,7 +40,7 @@ OUTPUTPARMS& OUTPUTPARMS::operator =(const OUTPUTPARMS& arg)
 	return *this;
 }
 
-void OUTPUTPARMS::Serialize(CArchive& ar)
+void output_parameters::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{

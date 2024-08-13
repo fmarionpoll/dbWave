@@ -20,7 +20,7 @@ protected:
 	CEditCtrl mm_time_first_; 
 	CEditCtrl mm_time_last_; 
 	CEditCtrl mm_amplitude_span_;
-	OPTIONS_VIEW_DATA* m_options_view_data_ = nullptr;
+	options_view_data* m_options_view_data_ = nullptr;
 
 	BOOL b_valid_data_ = false;
 	BOOL b_valid_spike_ = false;
@@ -52,6 +52,7 @@ public:
 protected:
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnSize(UINT n_type, int cx, int cy);
+	afx_msg void OnDestroy();
 
 	afx_msg void on_record_page_up();
 	afx_msg void on_record_page_down();

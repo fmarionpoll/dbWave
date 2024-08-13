@@ -2,15 +2,14 @@
 #include "Intervals.h"
 #include "IntervalPoints.h"
 
-class OUTPUTPARMS : public CObject
+class output_parameters final : public CObject
 {
-	DECLARE_SERIAL(OUTPUTPARMS)
-	OUTPUTPARMS();
-	~OUTPUTPARMS() override;
-	OUTPUTPARMS& operator =(const OUTPUTPARMS& arg);
+	DECLARE_SERIAL(output_parameters)
+	output_parameters();
+	~output_parameters() override;
+	output_parameters& operator =(const output_parameters& arg);
 	void Serialize(CArchive& ar) override;
 
-public:
 	BOOL b_changed{false}; // flag set TRUE if contents has changed
 	WORD wversion{1}; // version number
 

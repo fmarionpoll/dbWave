@@ -3,7 +3,7 @@
 #include "Intervals.h"
 #include "Spikelist.h"
 #include "SpikeClass.h"
-#include "OPTIONS_VIEWSPIKES.h"
+#include "options_view_spikes.h"
 
 class CSpikeDoc : public CDocument
 {
@@ -60,30 +60,30 @@ public:
 	void set_comment(const CString& comment) { comment_ = comment; }
 
 	void sort_stimulus_array();
-	void export_spk_psth(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, const CString& cs_file_comment); 
-	void export_spk_amplitude_histogram(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, long* p_hist,
+	void export_spk_psth(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, long* pl_sum0, const CString& cs_file_comment); 
+	void export_spk_amplitude_histogram(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, long* p_hist,
 	                              const CString& cs_file_comment); // 4
-	void export_spk_attributes_one_file(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes); // 1,2,3
-	void export_spk_file_comment(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, int class_index, const CString& cs_file_comment);
-	void export_spk_latencies(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, int n_intervals, const CString& cs_file_comment);
-	void export_spk_average_wave(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, double* value, const CString& cs_file_comment);
-	void export_table_title(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, int n_files);
-	static void export_headers_descriptors(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes);
-	void export_headers_data(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes);
-	void export_spk_amplitude_histogram(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, long* p_hist0, int spike_list_index, int class_index);
-	void export_spk_average_wave(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, double* value, int spike_list_index, int class_index);
-	void export_spk_psth(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, long* sum0, int spike_list_index, int class_index);
-	void export_spk_latencies(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, int intervals_count, int spike_list_index, int class_index);
+	void export_spk_attributes_one_file(CSharedFile* shared_file, const options_view_spikes* options_view_spikes); // 1,2,3
+	void export_spk_file_comment(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, int class_index, const CString& cs_file_comment);
+	void export_spk_latencies(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, int n_intervals, const CString& cs_file_comment);
+	void export_spk_average_wave(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, double* value, const CString& cs_file_comment);
+	void export_table_title(CSharedFile* shared_file, options_view_spikes* options_view_spikes, int n_files);
+	static void export_headers_descriptors(CSharedFile* shared_file, options_view_spikes* options_view_spikes);
+	void export_headers_data(CSharedFile* shared_file, const options_view_spikes* options_view_spikes);
+	void export_spk_amplitude_histogram(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, long* p_hist0, int spike_list_index, int class_index);
+	void export_spk_average_wave(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, double* value, int spike_list_index, int class_index);
+	void export_spk_psth(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, long* sum0, int spike_list_index, int class_index);
+	void export_spk_latencies(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, int intervals_count, int spike_list_index, int class_index);
 
 	BOOL OnSaveDocument(LPCTSTR psz_path_name) override;
 	BOOL OnNewDocument() override;
 	BOOL OnOpenDocument(LPCTSTR psz_path_name) override;
 	void clear_data();
 
-	long build_psth(const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, int class_index);
-	long build_isi(const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, int class_index);
-	long build_autocorrelation(const OPTIONS_VIEWSPIKES* options_view_spikes, long* sum0, int class_index);
-	long build_psth_autocorrelation(const OPTIONS_VIEWSPIKES* options_view_spikes, long* sum0, int class_index);
+	long build_psth(const options_view_spikes* options_view_spikes, long* pl_sum0, int class_index);
+	long build_isi(const options_view_spikes* options_view_spikes, long* pl_sum0, int class_index);
+	long build_autocorrelation(const options_view_spikes* options_view_spikes, long* sum0, int class_index);
+	long build_psth_autocorrelation(const options_view_spikes* options_view_spikes, long* sum0, int class_index);
 
 protected:
 	void Serialize(CArchive& ar) override;

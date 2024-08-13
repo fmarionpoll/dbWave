@@ -6,7 +6,7 @@
 #include "dbTableView.h"
 #include "Editctrl.h"
 #include "ScrollBarEx.h"
-#include "SPK_CLASSIF.h"
+#include "options_spk_classification.h"
 
 
 class ViewSpikeSort : public dbTableView
@@ -86,8 +86,8 @@ protected:
 	float t_xy_right_{ 1.f };
 	float t_xy_left_{ 0.f };
 
-	SPK_CLASSIF* spike_classification_{};
-	OPTIONS_VIEW_DATA* options_view_data_{};
+	options_spk_classification* spike_classification_{};
+	options_view_data* options_view_data_{};
 
 	const float time_unit_{ 1000.f }; // 1=s, 1000f=ms, 1e6=us
 	const float mv_unit_ {1000.f};		// 1=V, 1000f=mV, 1e6=uV

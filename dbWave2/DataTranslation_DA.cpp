@@ -4,7 +4,7 @@
 #include <Olmem.h>
 #include <Olxdadefs.h>
 #include "DlgDAChannels.h"
-#include "OPTIONS_INPUTDATA.h"
+#include "options_input.h"
 #include "IntervalPoints.h"
 
 
@@ -66,10 +66,10 @@ BOOL DataTranslation_DA::ClearAllOutputs()
 	return TRUE;
 }
 
-BOOL DataTranslation_DA::InitSubSystem(const OPTIONS_INPUTDATA* pADC_options)
+BOOL DataTranslation_DA::InitSubSystem(const options_input* pADC_options)
 {
-	const auto ADC_channel_samplingrate = double(pADC_options->waveFormat.sampling_rate_per_channel);
-	const int ADC_trigger_mode = int( pADC_options->waveFormat.trig_mode);
+	const auto ADC_channel_samplingrate = double(pADC_options->wave_format.sampling_rate_per_channel);
+	const int ADC_trigger_mode = int( pADC_options->wave_format.trig_mode);
 	try
 	{
 		if (GetHDass() == NULL)
@@ -98,7 +98,7 @@ BOOL DataTranslation_DA::InitSubSystem(const OPTIONS_INPUTDATA* pADC_options)
 
 		for (int i = 0; i < _options_OutputData.output_parms_array.GetSize(); i++)
 		{
-			OUTPUTPARMS* output_parameters = &_options_OutputData.output_parms_array.GetAt(i);
+			output_parameters* output_parameters = &_options_OutputData.output_parms_array.GetAt(i);
 			//MSequence(TRUE, pParms);
 			if (output_parameters->bDigital)
 				continue;
@@ -126,7 +126,7 @@ void DataTranslation_DA::SetChannelList()
 
 	for (int i = 0; i < _options_OutputData.output_parms_array.GetSize(); i++)
 	{
-		const OUTPUTPARMS* output_parameters = &_options_OutputData.output_parms_array.GetAt(i);
+		const output_parameters* output_parameters = &_options_OutputData.output_parms_array.GetAt(i);
 		if (!output_parameters->bON)
 			continue;
 		if (!output_parameters->bDigital)
@@ -199,11 +199,11 @@ void DataTranslation_DA::DeleteBuffers()
 	}
 }
 
-void DataTranslation_DA::DeclareAndFillBuffers(const OPTIONS_INPUTDATA* pADC_options)
+void DataTranslation_DA::DeclareAndFillBuffers(const options_input* pADC_options)
 {
-	const float sweepduration = pADC_options->sweepduration;
-	const float chrate = pADC_options->waveFormat.sampling_rate_per_channel;
-	const int nbuffers = pADC_options->waveFormat.buffer_n_items;
+	const float sweepduration = pADC_options->sweep_duration;
+	const float chrate = pADC_options->wave_format.sampling_rate_per_channel;
+	const int nbuffers = pADC_options->wave_format.buffer_n_items;
 	
 	DeleteBuffers();
 	m_frequency = chrate;
@@ -215,7 +215,7 @@ void DataTranslation_DA::DeclareAndFillBuffers(const OPTIONS_INPUTDATA* pADC_opt
 
 	for (int i = 0; i < _options_OutputData.output_parms_array.GetSize(); i++)
 	{
-		OUTPUTPARMS* outputparms_array = &(_options_OutputData.output_parms_array.GetAt(i));
+		output_parameters* outputparms_array = &(_options_OutputData.output_parms_array.GetAt(i));
 		outputparms_array->lastphase = 0;
 		outputparms_array->lastamp = 0;
 	}
@@ -241,7 +241,7 @@ void DataTranslation_DA::ConvertbufferFrom2ComplementsToOffsetBinary(short* pDTb
 		*(pDTbuf + i) = static_cast<WORD>((*(pDTbuf + i) ^ m_msbit) & m_lRes);
 }
 
-void DataTranslation_DA::FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::FillBufferWith_SINUSOID(short* pDTbuf, int chan, output_parameters* outputparms_array)
 {
 	double phase = outputparms_array->lastphase;
 	double freq = outputparms_array->dFrequency / m_frequency;
@@ -268,7 +268,7 @@ void DataTranslation_DA::FillBufferWith_SINUSOID(short* pDTbuf, int chan, OUTPUT
 	outputparms_array->lastamp = amplitude;
 }
 
-void DataTranslation_DA::FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::FillBufferWith_SQUARE(short* pDTbuf, int chan, output_parameters* outputparms_array)
 {
 	double phase = outputparms_array->lastphase;
 	const double freq = outputparms_array->dFrequency / m_frequency;
@@ -295,7 +295,7 @@ void DataTranslation_DA::FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPA
 	outputparms_array->lastphase = phase;
 }
 
-void DataTranslation_DA::FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::FillBufferWith_TRIANGLE(short* pDTbuf, int chan, output_parameters* outputparms_array)
 {
 	double phase = outputparms_array->lastphase;
 	const double freq = outputparms_array->dFrequency / m_frequency;
@@ -323,7 +323,7 @@ void DataTranslation_DA::FillBufferWith_TRIANGLE(short* pDTbuf, int chan, OUTPUT
 	outputparms_array->lastamp = amp;
 }
 
-void DataTranslation_DA::FillBufferWith_RAMP(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::FillBufferWith_RAMP(short* pDTbuf, int chan, output_parameters* outputparms_array)
 {
 	double amp = outputparms_array->ampUp;
 	int nchans = m_listsize;
@@ -337,7 +337,7 @@ void DataTranslation_DA::FillBufferWith_RAMP(short* pDTbuf, int chan, OUTPUTPARM
 	outputparms_array->lastamp = amp;
 }
 
-void DataTranslation_DA::FillBufferWith_CONSTANT(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::FillBufferWith_CONSTANT(short* pDTbuf, int chan, output_parameters* outputparms_array)
 {
 	double delta = static_cast<double>(GetMaxRange()) - static_cast<double>(GetMinRange());
 	double amp = outputparms_array->value * pow(2.0, GetResolution()) / delta;
@@ -352,7 +352,7 @@ void DataTranslation_DA::FillBufferWith_CONSTANT(short* pDTbuf, int chan, OUTPUT
 	outputparms_array->lastamp = amp;
 }
 
-void DataTranslation_DA::FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, output_parameters* outputparms_array)
 {
 	double ampUp = outputparms_array->ampUp;
 	double ampLow = outputparms_array->ampLow;
@@ -402,7 +402,7 @@ void DataTranslation_DA::FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUT
 	outputparms_array->lastamp = amp;
 }
 
-void DataTranslation_DA::MSequence(BOOL bStart, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::MSequence(BOOL bStart, output_parameters* outputparms_array)
 {
 	outputparms_array->count--;
 	if (outputparms_array->count == 0)
@@ -422,7 +422,7 @@ void DataTranslation_DA::MSequence(BOOL bStart, OUTPUTPARMS* outputparms_array)
 	}
 }
 
-void DataTranslation_DA::FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::FillBufferWith_MSEQ(short* pDTbuf, int chan, output_parameters* outputparms_array)
 {
 	int DAClistsize = m_listsize;
 	double x = 0;
@@ -452,7 +452,7 @@ void DataTranslation_DA::FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARM
 	outputparms_array->lastamp = x;
 }
 
-void DataTranslation_DA::Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, output_parameters* outputparms_array)
 {
 	WORD ampLow = 0;
 	WORD ampUp = 1;
@@ -503,7 +503,7 @@ void DataTranslation_DA::Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, OU
 	}
 }
 
-void DataTranslation_DA::Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, output_parameters* outputparms_array)
 {
 	double phase = outputparms_array->lastphase;
 	WORD amp = 0;
@@ -532,7 +532,7 @@ void DataTranslation_DA::Dig_FillBufferWith_SQUARE(short* pDTbuf, int chan, OUTP
 	outputparms_array->lastphase = phase;
 }
 
-void DataTranslation_DA::Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, OUTPUTPARMS* outputparms_array)
+void DataTranslation_DA::Dig_FillBufferWith_MSEQ(short* pDTbuf, int chan, output_parameters* outputparms_array)
 {
 	WORD ampLow = 0;
 	WORD ampUp = 1;
@@ -570,7 +570,7 @@ void DataTranslation_DA::FillBuffer(short* pDTbuf)
 	m_digitalfirst = 0;
 	for (int i = 0; i < _options_OutputData.output_parms_array.GetSize(); i++)
 	{
-		OUTPUTPARMS* pParms = &_options_OutputData.output_parms_array.GetAt(i);
+		output_parameters* pParms = &_options_OutputData.output_parms_array.GetAt(i);
 		if (!pParms->bON)
 			continue;
 

@@ -303,21 +303,21 @@ int ChartData::set_channel_list_transform_mode(const int i_chan, const int i_mod
 	return i_mode;
 }
 
-SCOPESTRUCT* ChartData::get_scope_parameters()
+options_scope_struct* ChartData::get_scope_parameters()
 {
 	const auto n_channels = chan_list_item_ptr_array_.GetSize();
 	scope_structure_.channels.SetSize(n_channels);
 	for (auto i = 0; i < n_channels; i++)
 	{
 		const auto chan_list_item = chan_list_item_ptr_array_[i];
-		scope_structure_.channels[i].izero = chan_list_item->GetYzero();
-		scope_structure_.channels[i].iextent = chan_list_item->GetYextent();
+		scope_structure_.channels[i].i_zero = chan_list_item->GetYzero();
+		scope_structure_.channels[i].i_extent = chan_list_item->GetYextent();
 	}
 
 	return &scope_structure_;
 }
 
-void ChartData::set_scope_parameters(SCOPESTRUCT* p_struct)
+void ChartData::set_scope_parameters(options_scope_struct* p_struct)
 {
 	const auto n_channels_struct = p_struct->channels.GetSize();
 	const auto n_channels_chan_list = chan_list_item_ptr_array_.GetSize();
@@ -326,8 +326,8 @@ void ChartData::set_scope_parameters(SCOPESTRUCT* p_struct)
 		if (i >= n_channels_chan_list)
 			break;
 		const auto chan_list_item = chan_list_item_ptr_array_[i];
-		chan_list_item->SetYzero(p_struct->channels[i].izero);
-		chan_list_item->SetYextent(p_struct->channels[i].iextent);
+		chan_list_item->SetYzero(p_struct->channels[i].i_zero);
+		chan_list_item->SetYextent(p_struct->channels[i].i_extent);
 	}
 }
 
@@ -967,7 +967,7 @@ void ChartData::print(CDC* p_dc, const CRect* p_rect, const BOOL b_center_line)
 	adjust_display_rect(p_rect);
 	erase_background(p_dc);
 	// clip curves
-	if (scope_structure_.bClipRect)
+	if (scope_structure_.b_clip_rect)
 		p_dc->IntersectClipRect(display_rect_);
 	else
 		p_dc->SelectClipRgn(nullptr);

@@ -1,21 +1,21 @@
 ﻿#include "stdafx.h"
-#include "SPKDETECTARRAY.h"
+#include "spike_detection_array.h"
 
-IMPLEMENT_SERIAL(SPKDETECTARRAY, CObject, 0)
+IMPLEMENT_SERIAL(spike_detection_array, CObject, 0)
 
-SPKDETECTARRAY::SPKDETECTARRAY()
+spike_detection_array::spike_detection_array()
 {
 	bChanged = FALSE;
 	wversion = 4;
 }
 
-SPKDETECTARRAY::~SPKDETECTARRAY()
+spike_detection_array::~spike_detection_array()
 {
 	DeleteAll();
 }
 
 // erase all arrays of parmItems (and all parmItems within them)
-void SPKDETECTARRAY::DeleteAll()
+void spike_detection_array::DeleteAll()
 {
 	auto pos = chanArrayMap.GetStartPosition();
 	void* ptr = nullptr;
@@ -33,7 +33,7 @@ void SPKDETECTARRAY::DeleteAll()
 
 // check if array is ok, if not, increase size of array
 // create empty CPtrArray if necessary
-SpikeDetectArray* SPKDETECTARRAY::GetChanArray(int acqchan)
+SpikeDetectArray* spike_detection_array::GetChanArray(int acqchan)
 {
 	void* ptr = nullptr;
 	if (!chanArrayMap.Lookup(acqchan, ptr))
@@ -45,13 +45,13 @@ SpikeDetectArray* SPKDETECTARRAY::GetChanArray(int acqchan)
 	return static_cast<SpikeDetectArray*>(ptr);
 }
 
-void SPKDETECTARRAY::SetChanArray(int acqchan, SpikeDetectArray* pspk)
+void spike_detection_array::SetChanArray(int acqchan, SpikeDetectArray* pspk)
 {
 	void* ptr = pspk;
 	chanArrayMap.SetAt(acqchan, ptr);
 }
 
-void SPKDETECTARRAY::Serialize(CArchive& ar)
+void spike_detection_array::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{

@@ -5,13 +5,13 @@ auto constexpr BY_TIME = 1;
 auto constexpr BY_NAME = 2;
 auto constexpr MAX_BUFFER_LENGTH_AS_BYTES = 614400;
 
-//  1 s at 10 kHz =  1(s) * 10 000 (data points) * 2 (bytes) * 3 (chans) = 60 000
-// 10 s at 10 kHz = 10(s) * 10 000 (data points) * 2 (bytes) * 3 (chans) = 600 000
+//  1 s at 10 kHz =  1(s) * 10 000 (data points) * 2 (bytes) * 3 (channels) = 60 000
+// 10 s at 10 kHz = 10(s) * 10 000 (data points) * 2 (bytes) * 3 (channels) = 600 000
 // with a multiple of 1024 =  614400
 
 #include "WaveBuf.h"
 #include "datafile_X.h"
-#include "OPTIONS_VIEW_DATA.h"
+#include "options_view_data.h"
 
 class AcqDataDoc : public CDocument
 {
@@ -21,7 +21,7 @@ class AcqDataDoc : public CDocument
 	AcqDataDoc();
 	~AcqDataDoc() override;
 
-	CString get_data_file_infos(const OPTIONS_VIEW_DATA* p_vd) const;
+	CString get_data_file_infos(const options_view_data* p_vd) const;
 	void export_data_file_to_txt_file(CStdioFile* pdata_dest);
 	BOOL save_document(CString& sz_path_name);
 	BOOL open_document(CString& sz_path_name);

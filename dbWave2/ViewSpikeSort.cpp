@@ -235,7 +235,7 @@ void ViewSpikeSort::activate_mode4()
 			t_xy_left_ = static_cast<float>(spike_classification_->i_xy_left) / delta;
 		}
 		chart_measures_.set_n_x_scale_cells(2, 0, 0);
-		chart_measures_.get_scope_parameters()->crScopeGrid = RGB(128, 128, 128);
+		chart_measures_.get_scope_parameters()->cr_scope_grid = RGB(128, 128, 128);
 
 		if (nullptr != m_pSpkList)
 		{

@@ -565,9 +565,9 @@ void DataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int i_image)
 	else
 	{
 		if (ptr->cs_n_spikes.IsEmpty())
-			p_wnd->get_scope_parameters()->crScopeFill = ChartData::get_color(2);
+			p_wnd->get_scope_parameters()->cr_scope_fill = ChartData::get_color(2);
 		else
-			p_wnd->get_scope_parameters()->crScopeFill = ChartData::get_color(15);
+			p_wnd->get_scope_parameters()->cr_scope_fill = ChartData::get_color(15);
 
 		ptr->p_data_doc->read_data_infos();
 		ptr->cs_comment = ptr->p_data_doc->get_wave_format()->get_comments(_T(" "));

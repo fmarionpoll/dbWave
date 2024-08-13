@@ -115,14 +115,14 @@ void DlgADExperiment::OnOK()
 		m_exptnumber = i_experiment_number;
 
 		// update file descriptors
-		options_inputdata_->csPathname = m_csPathname;
-		options_inputdata_->csBasename = m_csBasename;
-		options_inputdata_->exptnumber = int(m_exptnumber) + 1;
-		options_inputdata_->insectnumber = int(m_insectnumber);
+		options_inputdata_->cs_pathname = m_csPathname;
+		options_inputdata_->cs_basename = m_csBasename;
+		options_inputdata_->experiment_number = int(m_exptnumber) + 1;
+		options_inputdata_->insect_number = int(m_insectnumber);
 
 		m_pwaveFormat->insect_id = long(m_insectnumber);
-		m_pwaveFormat->repeat = options_inputdata_->icsA_repeat;
-		m_pwaveFormat->repeat2 = options_inputdata_->icsA_repeat2;
+		m_pwaveFormat->repeat = options_inputdata_->ics_a_repeat;
+		m_pwaveFormat->repeat2 = options_inputdata_->ics_a_repeat2;
 		m_pwaveFormat->cs_more_comment = m_csMoreComment;
 
 		// save descriptors into waveFormat (data acq file descriptor) and update database
@@ -139,19 +139,19 @@ void DlgADExperiment::OnOK()
 		m_coExpt.GetWindowText(m_pwaveFormat->cs_comment);
 
 		// save data into commons
-		options_inputdata_->icsA_concentration = SaveList(&m_coConcentration, &(options_inputdata_->csA_concentration));
-		options_inputdata_->icsA_stimulus = SaveList(&m_coStimulus, &(options_inputdata_->csA_stimulus));
-		options_inputdata_->icsA_insect = SaveList(&m_coInsect, &(options_inputdata_->csA_insect));
-		options_inputdata_->icsA_location = SaveList(&m_coLocation, &(options_inputdata_->csA_location));
-		options_inputdata_->icsA_sensillum = SaveList(&m_coSensillum, &(options_inputdata_->csA_sensillum));
-		options_inputdata_->icsA_strain = SaveList(&m_coStrain, &(options_inputdata_->csA_strain));
-		options_inputdata_->icsA_sex = SaveList(&m_coSex, &(options_inputdata_->csA_sex));
-		options_inputdata_->icsA_operatorname = SaveList(&m_coOperator, &(options_inputdata_->csA_operatorname));
-		options_inputdata_->icsA_concentration2 = SaveList(&m_coConcentration2, &(options_inputdata_->csA_concentration2));
-		options_inputdata_->icsA_stimulus2 = SaveList(&m_coStimulus2, &(options_inputdata_->csA_stimulus2));
-		options_inputdata_->icsA_repeat = SaveList(&m_coRepeat, nullptr);
-		options_inputdata_->icsA_repeat2 = SaveList(&m_coRepeat2, nullptr);
-		options_inputdata_->icsA_expt = SaveList(&m_coExpt, &(options_inputdata_->csA_expt));
+		options_inputdata_->ics_a_concentration = SaveList(&m_coConcentration, &(options_inputdata_->cs_a_concentration));
+		options_inputdata_->ics_a_stimulus = SaveList(&m_coStimulus, &(options_inputdata_->cs_a_stimulus));
+		options_inputdata_->ics_a_insect = SaveList(&m_coInsect, &(options_inputdata_->cs_a_insect));
+		options_inputdata_->ics_a_location = SaveList(&m_coLocation, &(options_inputdata_->cs_a_location));
+		options_inputdata_->ics_a_sensillum = SaveList(&m_coSensillum, &(options_inputdata_->cs_a_sensillum));
+		options_inputdata_->ics_a_strain = SaveList(&m_coStrain, &(options_inputdata_->cs_a_strain));
+		options_inputdata_->ics_a_sex = SaveList(&m_coSex, &(options_inputdata_->cs_a_sex));
+		options_inputdata_->ics_a_operator_name = SaveList(&m_coOperator, &(options_inputdata_->cs_a_operator_name));
+		options_inputdata_->ics_a_concentration2 = SaveList(&m_coConcentration2, &(options_inputdata_->cs_a_concentration2));
+		options_inputdata_->ics_a_stimulus2 = SaveList(&m_coStimulus2, &(options_inputdata_->cs_a_stimulus2));
+		options_inputdata_->ics_a_repeat = SaveList(&m_coRepeat, nullptr);
+		options_inputdata_->ics_a_repeat2 = SaveList(&m_coRepeat2, nullptr);
+		options_inputdata_->ics_a_experiment = SaveList(&m_coExpt, &(options_inputdata_->cs_a_experiment));
 
 		CDialog::OnOK();
 	}
@@ -181,37 +181,37 @@ BOOL DlgADExperiment::OnInitDialog()
 
 	// load address of items defined for this dialog and load corresp data
 	if (m_bADexpt)
-		m_pwaveFormat = &(options_inputdata_->waveFormat);
+		m_pwaveFormat = &(options_inputdata_->wave_format);
 
-	m_exptnumber = options_inputdata_->exptnumber;
-	m_insectnumber = options_inputdata_->insectnumber;
-	m_csBasename = options_inputdata_->csBasename;
+	m_exptnumber = options_inputdata_->experiment_number;
+	m_insectnumber = options_inputdata_->insect_number;
+	m_csBasename = options_inputdata_->cs_basename;
 	if (m_csBasename.IsEmpty())
 		m_csBasename = _T("data");
 	m_csPathname = m_pdbDoc->proposed_data_path_name;
 	m_mfcBrowsePath.SetWindowTextW(m_csPathname);
 
 	m_csMoreComment = m_pwaveFormat->cs_more_comment;
-	LoadList(&m_coConcentration, &(options_inputdata_->csA_concentration), options_inputdata_->icsA_concentration,
+	LoadList(&m_coConcentration, &(options_inputdata_->cs_a_concentration), options_inputdata_->ics_a_concentration,
 		&(m_pdbDoc->db_table->m_concentration_set));
-	LoadList(&m_coStimulus, &(options_inputdata_->csA_stimulus), options_inputdata_->icsA_stimulus,
+	LoadList(&m_coStimulus, &(options_inputdata_->cs_a_stimulus), options_inputdata_->ics_a_stimulus,
 		&(m_pdbDoc->db_table->m_stimulus_set));
-	LoadList(&m_coConcentration2, &(options_inputdata_->csA_concentration2), options_inputdata_->icsA_concentration2,
+	LoadList(&m_coConcentration2, &(options_inputdata_->cs_a_concentration2), options_inputdata_->ics_a_concentration2,
 		&(m_pdbDoc->db_table->m_concentration_set));
-	LoadList(&m_coStimulus2, &(options_inputdata_->csA_stimulus2), options_inputdata_->icsA_stimulus2,
+	LoadList(&m_coStimulus2, &(options_inputdata_->cs_a_stimulus2), options_inputdata_->ics_a_stimulus2,
 		&(m_pdbDoc->db_table->m_stimulus_set));
-	LoadList(&m_coInsect, &(options_inputdata_->csA_insect), options_inputdata_->icsA_insect, &(m_pdbDoc->db_table->m_insect_set));
-	LoadList(&m_coLocation, &(options_inputdata_->csA_location), options_inputdata_->icsA_location,
+	LoadList(&m_coInsect, &(options_inputdata_->cs_a_insect), options_inputdata_->ics_a_insect, &(m_pdbDoc->db_table->m_insect_set));
+	LoadList(&m_coLocation, &(options_inputdata_->cs_a_location), options_inputdata_->ics_a_location,
 		&(m_pdbDoc->db_table->m_location_set));
-	LoadList(&m_coSensillum, &(options_inputdata_->csA_sensillum), options_inputdata_->icsA_sensillum,
+	LoadList(&m_coSensillum, &(options_inputdata_->cs_a_sensillum), options_inputdata_->ics_a_sensillum,
 		&(m_pdbDoc->db_table->m_sensillum_set));
-	LoadList(&m_coStrain, &(options_inputdata_->csA_strain), options_inputdata_->icsA_strain, &(m_pdbDoc->db_table->m_strain_set));
-	LoadList(&m_coSex, &(options_inputdata_->csA_sex), options_inputdata_->icsA_sex, &(m_pdbDoc->db_table->m_sex_set));
-	LoadList(&m_coOperator, &(options_inputdata_->csA_operatorname), options_inputdata_->icsA_operatorname,
+	LoadList(&m_coStrain, &(options_inputdata_->cs_a_strain), options_inputdata_->ics_a_strain, &(m_pdbDoc->db_table->m_strain_set));
+	LoadList(&m_coSex, &(options_inputdata_->cs_a_sex), options_inputdata_->ics_a_sex, &(m_pdbDoc->db_table->m_sex_set));
+	LoadList(&m_coOperator, &(options_inputdata_->cs_a_operator_name), options_inputdata_->ics_a_operator_name,
 		&(m_pdbDoc->db_table->m_operator_set));
-	LoadList(&m_coExpt, &(options_inputdata_->csA_expt), options_inputdata_->icsA_expt, &(m_pdbDoc->db_table->m_experiment_set));
-	LoadList(&m_coRepeat, nullptr, options_inputdata_->icsA_repeat, nullptr);
-	LoadList(&m_coRepeat2, nullptr, options_inputdata_->icsA_repeat2, nullptr);
+	LoadList(&m_coExpt, &(options_inputdata_->cs_a_experiment), options_inputdata_->ics_a_experiment, &(m_pdbDoc->db_table->m_experiment_set));
+	LoadList(&m_coRepeat, nullptr, options_inputdata_->ics_a_repeat, nullptr);
+	LoadList(&m_coRepeat2, nullptr, options_inputdata_->ics_a_repeat2, nullptr);
 
 	static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN1))->SetRange32(0, 99999);
 	static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN2))->SetRange32(0, 99999);

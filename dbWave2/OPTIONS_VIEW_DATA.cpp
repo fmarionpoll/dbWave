@@ -1,16 +1,16 @@
 ﻿#include "StdAfx.h"
-#include "OPTIONS_VIEW_DATA.h"
+#include "options_view_data.h"
 
 
-IMPLEMENT_SERIAL(OPTIONS_VIEW_DATA, CObject, 0 /* schema number*/)
+IMPLEMENT_SERIAL(options_view_data, CObject, 0 /* schema number*/)
 
-OPTIONS_VIEW_DATA::OPTIONS_VIEW_DATA()
+options_view_data::options_view_data()
 = default;
 
-OPTIONS_VIEW_DATA::~OPTIONS_VIEW_DATA()
+options_view_data::~options_view_data()
 = default;
 
-OPTIONS_VIEW_DATA& OPTIONS_VIEW_DATA::operator =(const OPTIONS_VIEW_DATA& arg)
+options_view_data& options_view_data::operator =(const options_view_data& arg)
 {
 	if (this != &arg)
 	{
@@ -99,39 +99,39 @@ OPTIONS_VIEW_DATA& OPTIONS_VIEW_DATA::operator =(const OPTIONS_VIEW_DATA& arg)
 	return *this;
 }
 
-void OPTIONS_VIEW_DATA::Serialize(CArchive& ar)
+void options_view_data::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
 		ar << m_w_version;
 
 		// print options
-		WORD wPrintFlags, wMult;
-		wMult = 1;
-		wPrintFlags = b_acq_comment * wMult; //0
-		wMult += wMult;
-		wPrintFlags += b_acq_date_time * wMult; //2
-		wMult += wMult;
-		wPrintFlags += b_channel_comment * wMult; //4
-		wMult += wMult;
-		wPrintFlags += b_channel_settings * wMult; //8
-		wMult += wMult;
-		wPrintFlags += b_doc_name * wMult; //16
-		wMult += wMult;
-		wPrintFlags += b_frame_rect * wMult; //32
-		wMult += wMult;
-		wPrintFlags += b_clip_rect * wMult; //64
-		wMult += wMult;
-		wPrintFlags += b_time_scale_bar * wMult; //128
-		wMult += wMult;
-		wPrintFlags += b_voltage_scale_bar * wMult; //256
-		wMult += wMult;
-		wPrintFlags += b_print_selection * wMult; //512
-		wMult += wMult;
-		wPrintFlags += b_print_spk_bars * wMult; //1024
-		wMult += wMult;
-		wPrintFlags += b_filter_data_source * wMult; //2048
-		ar << wPrintFlags;
+		WORD w_print_flags, w_2_power;
+		w_2_power = 1;
+		w_print_flags = b_acq_comment * w_2_power; //0
+		w_2_power += w_2_power;
+		w_print_flags += b_acq_date_time * w_2_power; //2
+		w_2_power += w_2_power;
+		w_print_flags += b_channel_comment * w_2_power; //4
+		w_2_power += w_2_power;
+		w_print_flags += b_channel_settings * w_2_power; //8
+		w_2_power += w_2_power;
+		w_print_flags += b_doc_name * w_2_power; //16
+		w_2_power += w_2_power;
+		w_print_flags += b_frame_rect * w_2_power; //32
+		w_2_power += w_2_power;
+		w_print_flags += b_clip_rect * w_2_power; //64
+		w_2_power += w_2_power;
+		w_print_flags += b_time_scale_bar * w_2_power; //128
+		w_2_power += w_2_power;
+		w_print_flags += b_voltage_scale_bar * w_2_power; //256
+		w_2_power += w_2_power;
+		w_print_flags += b_print_selection * w_2_power; //512
+		w_2_power += w_2_power;
+		w_print_flags += b_print_spk_bars * w_2_power; //1024
+		w_2_power += w_2_power;
+		w_print_flags += b_filter_data_source * w_2_power; //2048
+		ar << w_print_flags;
 
 		// print parameters
 		ar << static_cast<WORD>(horizontal_resolution);
@@ -148,62 +148,62 @@ void OPTIONS_VIEW_DATA::Serialize(CArchive& ar)
 
 		// how data are displayed from file to file
 		WORD wBrowseFlags;
-		wMult = 1;
-		wBrowseFlags = b_all_channels * wMult; //0
-		wMult += wMult;
-		wBrowseFlags += b_complete_record * wMult; //2
-		wMult += wMult;
-		wBrowseFlags += b_multiple_rows * wMult; //4
-		wMult += wMult;
-		wBrowseFlags += b_split_curves * wMult; //8
-		wMult += wMult;
-		wBrowseFlags += b_maximize_gain * wMult; //16
-		wMult += wMult;
-		wBrowseFlags += b_center_curves * wMult; //32
-		wMult += wMult;
-		wBrowseFlags += b_keep_for_each_file * wMult; //64
-		wMult += wMult;
-		wBrowseFlags += b_display_old_detect_p * wMult; //128
-		wMult += wMult;
-		wBrowseFlags += b_filter_dat * wMult; //256
-		wMult += wMult;
-		wBrowseFlags += b_detect_while_browse * wMult; //512
-		wMult += wMult;
-		wBrowseFlags += b_goto_record_id * wMult; //1024
-		wMult += wMult;
-		wBrowseFlags += b_display_file_name * wMult; //2048
-		wMult += wMult;
-		wBrowseFlags += b_set_time_span * wMult; //4096
-		wMult += wMult;
-		wBrowseFlags += b_set_mv_span * wMult; //8192
-		wMult += wMult;
-		wBrowseFlags += b_display_all_classes * wMult; //16384
+		w_2_power = 1;
+		wBrowseFlags = b_all_channels * w_2_power; //0
+		w_2_power += w_2_power;
+		wBrowseFlags += b_complete_record * w_2_power; //2
+		w_2_power += w_2_power;
+		wBrowseFlags += b_multiple_rows * w_2_power; //4
+		w_2_power += w_2_power;
+		wBrowseFlags += b_split_curves * w_2_power; //8
+		w_2_power += w_2_power;
+		wBrowseFlags += b_maximize_gain * w_2_power; //16
+		w_2_power += w_2_power;
+		wBrowseFlags += b_center_curves * w_2_power; //32
+		w_2_power += w_2_power;
+		wBrowseFlags += b_keep_for_each_file * w_2_power; //64
+		w_2_power += w_2_power;
+		wBrowseFlags += b_display_old_detect_p * w_2_power; //128
+		w_2_power += w_2_power;
+		wBrowseFlags += b_filter_dat * w_2_power; //256
+		w_2_power += w_2_power;
+		wBrowseFlags += b_detect_while_browse * w_2_power; //512
+		w_2_power += w_2_power;
+		wBrowseFlags += b_goto_record_id * w_2_power; //1024
+		w_2_power += w_2_power;
+		wBrowseFlags += b_display_file_name * w_2_power; //2048
+		w_2_power += w_2_power;
+		wBrowseFlags += b_set_time_span * w_2_power; //4096
+		w_2_power += w_2_power;
+		wBrowseFlags += b_set_mv_span * w_2_power; //8192
+		w_2_power += w_2_power;
+		wBrowseFlags += b_display_all_classes * w_2_power; //16384
 		ar << wBrowseFlags;
 
 		// export infos from data files
 		WORD wInfoFlags;
-		wMult = 1;
-		wInfoFlags = b_acq_comments * wMult; // 0
-		wMult += wMult;
-		wInfoFlags += b_acq_date * wMult; // 2
-		wMult += wMult;
-		wInfoFlags += b_acq_time * wMult; // 4
-		wMult += wMult;
-		wInfoFlags += b_file_size * wMult; // 8
-		wMult += wMult;
-		wInfoFlags += b_acq_channel_comment * wMult; // 16
-		wMult += wMult;
-		wInfoFlags += b_acq_channel_setting * wMult; // 32
-		wMult += wMult;
-		wInfoFlags += b_units * wMult; // 64
-		wMult += wMult;
-		wInfoFlags += b_contours * wMult; // 128
-		wMult += wMult;
-		wInfoFlags += b_graphics * wMult; // 256
-		wMult += wMult;
-		wInfoFlags += b_to_excel * wMult; // 512
-		wMult += wMult;
-		wInfoFlags += b_data_base_columns * wMult; // 1024
+		w_2_power = 1;
+		wInfoFlags = b_acq_comments * w_2_power; // 0
+		w_2_power += w_2_power;
+		wInfoFlags += b_acq_date * w_2_power; // 2
+		w_2_power += w_2_power;
+		wInfoFlags += b_acq_time * w_2_power; // 4
+		w_2_power += w_2_power;
+		wInfoFlags += b_file_size * w_2_power; // 8
+		w_2_power += w_2_power;
+		wInfoFlags += b_acq_channel_comment * w_2_power; // 16
+		w_2_power += w_2_power;
+		wInfoFlags += b_acq_channel_setting * w_2_power; // 32
+		w_2_power += w_2_power;
+		wInfoFlags += b_units * w_2_power; // 64
+		w_2_power += w_2_power;
+		wInfoFlags += b_contours * w_2_power; // 128
+		w_2_power += w_2_power;
+		wInfoFlags += b_graphics * w_2_power; // 256
+		w_2_power += w_2_power;
+		wInfoFlags += b_to_excel * w_2_power; // 512
+		w_2_power += w_2_power;
+		wInfoFlags += b_data_base_columns * w_2_power; // 1024
 		ar << wInfoFlags;
 
 		// export int(s) WORD = nb of items

@@ -216,7 +216,7 @@ void ChartWnd::erase_background(CDC* p_dc)
 	}
 	// erase display area
 	CBrush brush;
-	brush.CreateSolidBrush(scope_structure_.crScopeFill);
+	brush.CreateSolidBrush(scope_structure_.cr_scope_fill);
 	const auto p_old_brush = p_dc->SelectObject(&brush);
 	const auto p_old_pen = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 	p_dc->Rectangle(&display_rect_);
@@ -233,28 +233,28 @@ void ChartWnd::draw_grid_evenly_spaced(CDC* p_dc) const
 	rect.DeflateRect(1, 1);
 
 	// Standard grid is 8 high by 10 wide
-	CPen pen_scale(PS_SOLID, 1, scope_structure_.crScopeGrid);
+	CPen pen_scale(PS_SOLID, 1, scope_structure_.cr_scope_grid);
 	const auto pen_old = p_dc->SelectObject(&pen_scale);
-	const auto i_x_ticks = scope_structure_.iXCells * scope_structure_.iXTicks;
-	const auto i_y_ticks = scope_structure_.iYCells * scope_structure_.iYTicks;
+	const auto i_x_ticks = scope_structure_.i_x_cells * scope_structure_.i_x_ticks;
+	const auto i_y_ticks = scope_structure_.i_y_cells * scope_structure_.i_y_ticks;
 
 	// do the grid lines
-	for (auto i = 1; i < scope_structure_.iXCells; i++)
+	for (auto i = 1; i < scope_structure_.i_x_cells; i++)
 	{
-		p_dc->MoveTo(i * rect.right / scope_structure_.iXCells, 0);
-		p_dc->LineTo(i * rect.right / scope_structure_.iXCells, rect.bottom);
+		p_dc->MoveTo(i * rect.right / scope_structure_.i_x_cells, 0);
+		p_dc->LineTo(i * rect.right / scope_structure_.i_x_cells, rect.bottom);
 	}
-	for (auto i = 1; i < scope_structure_.iYCells; i++)
+	for (auto i = 1; i < scope_structure_.i_y_cells; i++)
 	{
-		p_dc->MoveTo(0, i * rect.bottom / scope_structure_.iYCells);
-		p_dc->LineTo(rect.right, i * rect.bottom / scope_structure_.iYCells);
+		p_dc->MoveTo(0, i * rect.bottom / scope_structure_.i_y_cells);
+		p_dc->LineTo(rect.right, i * rect.bottom / scope_structure_.i_y_cells);
 	}
 
 	// Put tick marks on the axis lines
 	for (auto i = 1; i < i_x_ticks; i++)
 	{
 		constexpr auto i_tick_width = 2;
-		const int y = rect.bottom - rect.bottom * scope_structure_.iXTickLine / scope_structure_.iYCells;
+		const int y = rect.bottom - rect.bottom * scope_structure_.i_x_tick_line / scope_structure_.i_y_cells;
 		p_dc->MoveTo(i * rect.right / i_x_ticks, y - i_tick_width);
 		p_dc->LineTo(i * rect.right / i_x_ticks, y + i_tick_width);
 	}
@@ -262,23 +262,23 @@ void ChartWnd::draw_grid_evenly_spaced(CDC* p_dc) const
 	for (auto i = 1; i < i_y_ticks; i++)
 	{
 		constexpr auto i_tick_height = 2;
-		const int x = rect.right * scope_structure_.iYTickLine / scope_structure_.iXCells;
+		const int x = rect.right * scope_structure_.i_y_tick_line / scope_structure_.i_x_cells;
 		p_dc->MoveTo(x - i_tick_height, i * rect.bottom / i_y_ticks);
 		p_dc->LineTo(x + i_tick_height, i * rect.bottom / i_y_ticks);
 	}
 	p_dc->SelectObject(pen_old);
 
 	// if grids, draw scale text (dummy)
-	if (scope_structure_.iXCells > 1 && scope_structure_.iYCells > 1)
+	if (scope_structure_.i_x_cells > 1 && scope_structure_.i_y_cells > 1)
 	{
 		// convert value into text
 		CString cs;
-		cs.Format(_T("%.3f mV; %.3f ms"), static_cast<double>(scope_structure_.yScaleUnitValue), static_cast<double>(scope_structure_.xScaleUnitValue));
+		cs.Format(_T("%.3f mV; %.3f ms"), static_cast<double>(scope_structure_.y_scale_unit_value), static_cast<double>(scope_structure_.x_scale_unit_value));
 		const auto text_length = cs.GetLength();
 		// plot text
 		p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 		rect.DeflateRect(1, 1);
-		p_dc->SetTextColor(scope_structure_.crScopeGrid);
+		p_dc->SetTextColor(scope_structure_.cr_scope_grid);
 		p_dc->DrawText(cs, text_length, rect, DT_LEFT | DT_BOTTOM | DT_SINGLELINE);
 	}
 }
@@ -293,7 +293,7 @@ void ChartWnd::draw_grid_from_ruler(CDC* p_dc, const Ruler* p_ruler) const
 		return;
 
 	CPen a_pen2;
-	a_pen2.CreatePen(PS_SOLID, 1, scope_structure_.crScopeGrid);
+	a_pen2.CreatePen(PS_SOLID, 1, scope_structure_.cr_scope_grid);
 	const auto p_old_pen = p_dc->SelectObject(&a_pen2);
 
 	// draw ticks and legends
@@ -350,9 +350,9 @@ void ChartWnd::draw_scale_from_ruler(CDC* p_dc, const Ruler* p_ruler)
 
 	CPen a_pen1;
 	CPen a_pen2;
-	a_pen1.CreatePen(PS_SOLID, 1, scope_structure_.crScopeGrid);
+	a_pen1.CreatePen(PS_SOLID, 1, scope_structure_.cr_scope_grid);
 	const auto p_old_pen = p_dc->SelectObject(&a_pen1);
-	a_pen2.CreatePen(PS_SOLID, 1, scope_structure_.crScopeGrid);
+	a_pen2.CreatePen(PS_SOLID, 1, scope_structure_.cr_scope_grid);
 	/*auto p_old_font = */
 	p_dc->SelectObject(&h_font);
 	CString str;
@@ -484,16 +484,16 @@ void ChartWnd::draw_grid(CDC* p_dc)
 
 void ChartWnd::set_n_x_scale_cells(const int i_cells, const int i_ticks, const int i_tick_line)
 {
-	scope_structure_.iXCells = i_cells;
-	scope_structure_.iXTicks = i_ticks;
-	scope_structure_.iXTickLine = i_tick_line;
+	scope_structure_.i_x_cells = i_cells;
+	scope_structure_.i_x_ticks = i_ticks;
+	scope_structure_.i_x_tick_line = i_tick_line;
 }
 
 void ChartWnd::set_ny_scale_cells(const int i_cells, const int i_ticks, const int i_tick_line)
 {
-	scope_structure_.iYCells = i_cells;
-	scope_structure_.iYTicks = i_ticks;
-	scope_structure_.iYTickLine = i_tick_line;
+	scope_structure_.i_y_cells = i_cells;
+	scope_structure_.i_y_ticks = i_ticks;
+	scope_structure_.i_y_tick_line = i_tick_line;
 }
 
 void ChartWnd::send_my_message(const int code, const int code_parameter) const
@@ -823,7 +823,7 @@ void ChartWnd::OnRButtonUp(const UINT n_flags, const CPoint point)
 		CWnd::OnRButtonUp(n_flags, point);
 		if (b_allow_props_)
 		{
-			const auto params_old = new SCOPESTRUCT();
+			const auto params_old = new options_scope_struct();
 			*params_old = scope_structure_;
 			DlgChartProps dlg;
 			dlg.m_pscope = this;
@@ -1022,12 +1022,12 @@ void ChartWnd::xor_temp_vt_tag(const int x_point)
 	xor_vt_tag(x_point, temp_vertical_tag_->swap_pixel(x_point));
 }
 
-SCOPESTRUCT* ChartWnd::get_scope_parameters()
+options_scope_struct* ChartWnd::get_scope_parameters()
 {
 	return &scope_structure_;
 }
 
-void ChartWnd::set_scope_parameters(SCOPESTRUCT* p_struct)
+void ChartWnd::set_scope_parameters(options_scope_struct* p_struct)
 {
 	scope_structure_ = *p_struct;
 }
@@ -1079,12 +1079,12 @@ int ChartWnd::hit_curve(CPoint point)
 
 void ChartWnd::set_x_scale_unit_value(float x)
 {
-	scope_structure_.xScaleUnitValue = x;
+	scope_structure_.x_scale_unit_value = x;
 }
 
 void ChartWnd::set_y_scale_unit_value(float y)
 {
-	scope_structure_.yScaleUnitValue = y;
+	scope_structure_.y_scale_unit_value = y;
 }
 
 

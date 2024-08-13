@@ -1,19 +1,19 @@
 ﻿#include "StdAfx.h"
-#include "OPTIONS_IMPORT.h"
+#include "options_import.h"
 #include "include/DataTranslation/Olxdadefs.h"
 
 
-IMPLEMENT_SERIAL(OPTIONS_IMPORT, CObject, 0)
+IMPLEMENT_SERIAL(options_import, CObject, 0)
 
-OPTIONS_IMPORT::OPTIONS_IMPORT()
+options_import::options_import()
 = default;
 
-OPTIONS_IMPORT::~OPTIONS_IMPORT()
+options_import::~options_import()
 {
 	SAFE_DELETE(p_wave_chan_array)
 }
 
-OPTIONS_IMPORT& OPTIONS_IMPORT::operator =(const OPTIONS_IMPORT& arg)
+options_import& options_import::operator =(const options_import& arg)
 {
 	if (this != &arg)
 	{
@@ -56,7 +56,7 @@ OPTIONS_IMPORT& OPTIONS_IMPORT::operator =(const OPTIONS_IMPORT& arg)
 	return *this;
 }
 
-void OPTIONS_IMPORT::Serialize(CArchive& ar)
+void options_import::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{

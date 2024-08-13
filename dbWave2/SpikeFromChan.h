@@ -1,5 +1,5 @@
 #pragma once
-#include "SPKDETECTPARM.h"
+#include "options_detect_spikes.h"
 
 
 // parameters used for detection of spikes from data acquisition
@@ -8,13 +8,13 @@ class SpikeFromChan : public CObject
 {
 	DECLARE_SERIAL(SpikeFromChan)
 
-	WORD wversion = 5;
+	WORD w_version = 5;
 	WORD encoding = 0;
-	long binzero = 0; 
-	float samprate = 0.f;
-	float voltsperbin = 0.f; 
+	long bin_zero = 0; 
+	float sampling_rate = 0.f;
+	float volts_per_bin = 0.f; 
 	CString comment; 
-	SPKDETECTPARM parm;
+	options_detect_spikes detect_spikes_parameters;
 
 	SpikeFromChan();
 	~SpikeFromChan() override;

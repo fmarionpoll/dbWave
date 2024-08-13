@@ -6,8 +6,8 @@
 #include "ChartData.h"
 #include "Editctrl.h"
 #include "OPTIONS_MEASURE.h"
-#include "SPK_CLASSIF.h"
-#include "SPKDETECTPARM.h"
+#include "options_spk_classification.h"
+#include "options_detect_spikes.h"
 
 class ViewSpikes : public dbTableView
 {
@@ -115,10 +115,10 @@ protected:
 	void OnActivateView(BOOL b_activate, CView* p_activate_view, CView* p_deactivate_view) override;
 
 	// page format printing parameters (pixel unit)
-	OPTIONS_VIEW_DATA* options_view_data_ = nullptr; 
-	OPTIONS_MEASURE* options_view_data_measure_ = nullptr; 
-	SPK_CLASSIF* spk_classification_parameters_ = nullptr;
-	SPKDETECTPARM* spk_detection_parameters_ = nullptr; 
+	options_view_data* options_view_data_ = nullptr; 
+	options_measure* options_view_data_measure_ = nullptr; 
+	options_spk_classification* spk_classification_parameters_ = nullptr;
+	options_detect_spikes* spk_detection_parameters_ = nullptr; 
 
 	void print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_info);
 	CString print_convert_file_index(long l_first, long l_last) const;

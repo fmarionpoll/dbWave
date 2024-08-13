@@ -2,9 +2,9 @@
 
 // spike detection parameters
 
-class SPKDETECTPARM : public CObject
+class options_detect_spikes final : public CObject
 {
-	DECLARE_SERIAL(SPKDETECTPARM)
+	DECLARE_SERIAL(options_detect_spikes)
 public:
 	BOOL b_changed; // flag set TRUE if contents has changed
 	WORD w_version; // version number
@@ -24,7 +24,7 @@ public:
 	int detect_transform; // detect from data transformed - i = transform method cf AcqDataDoc
 	int detect_threshold_bin; // value of threshold
 	float detect_threshold_mv; // mV value of threshold
-	BOOL compensate_Baseline; // compensate for baseline shift?
+	BOOL compensate_baseline; // compensate for baseline shift?
 
 	int extract_channel; // channel number of data to extract
 	int extract_transform; // transformed data extracted
@@ -38,8 +38,8 @@ protected:
 	void Serialize_v7(CArchive& ar);
 
 public:
-	SPKDETECTPARM();
-	~SPKDETECTPARM() override;
-	SPKDETECTPARM& operator =(const SPKDETECTPARM& arg);
+	options_detect_spikes();
+	~options_detect_spikes() override;
+	options_detect_spikes& operator =(const options_detect_spikes& arg);
 	void Serialize(CArchive& ar) override;
 };

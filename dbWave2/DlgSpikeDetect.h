@@ -17,12 +17,12 @@ public:
 	SpikeDetectArray* m_pDetectSettingsArray{ nullptr }; // parameter set by caller
 	AcqDataDoc* m_dbDoc{ nullptr }; 
 	int m_iDetectParmsDlg{ 0 };
-	OPTIONS_VIEW_DATA* mdPM{ nullptr };
+	options_view_data* mdPM{ nullptr };
 	ChartData* m_pChartDataDetectWnd{ nullptr };
 	ChartData* m_pChartDataSourceWnd{ nullptr };
 
 protected:
-	SPKDETECTPARM* m_pspkD{ nullptr };
+	options_detect_spikes* m_pspkD{ nullptr };
 	int m_scancount{ 0 };
 
 	// Implementation

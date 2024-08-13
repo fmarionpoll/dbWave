@@ -115,8 +115,8 @@ public:
 					y_ve_);
 	}
 
-	SCOPESTRUCT* get_scope_parameters() override;
-	void	set_scope_parameters(SCOPESTRUCT* p_struct) override;
+	options_scope_struct* get_scope_parameters() override;
+	void	set_scope_parameters(options_scope_struct* p_struct) override;
 	void	auto_zoom_chan(int channel_index) const;
 	void	center_chan(int channel_index) const;
 	void	max_gain_chan(int channel_index) const;

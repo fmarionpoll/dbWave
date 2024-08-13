@@ -12,12 +12,12 @@
 #define EXPORT_HISTAMPL		8
 #define EXPORT_SPIKEPOINTS	9
 
-class OPTIONS_VIEWSPIKES : public CObject
+class options_view_spikes final : public CObject
 {
-	DECLARE_SERIAL(OPTIONS_VIEWSPIKES)
-	OPTIONS_VIEWSPIKES();
-	~OPTIONS_VIEWSPIKES() override;
-	OPTIONS_VIEWSPIKES& operator =(const OPTIONS_VIEWSPIKES& arg);
+	DECLARE_SERIAL(options_view_spikes)
+	options_view_spikes();
+	~options_view_spikes() override;
+	options_view_spikes& operator =(const options_view_spikes& arg);
 	void Serialize(CArchive& ar) override;
 
 public:

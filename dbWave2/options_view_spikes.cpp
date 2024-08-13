@@ -1,10 +1,10 @@
 ﻿#include "StdAfx.h"
-#include "OPTIONS_VIEWSPIKES.h"
+#include "options_view_spikes.h"
 
 
-IMPLEMENT_SERIAL(OPTIONS_VIEWSPIKES, CObject, 0 /* schema number*/)
+IMPLEMENT_SERIAL(options_view_spikes, CObject, 0 /* schema number*/)
 
-OPTIONS_VIEWSPIKES::OPTIONS_VIEWSPIKES()
+options_view_spikes::options_view_spikes()
 {
 	int i = 18;
 	i--;
@@ -46,10 +46,10 @@ OPTIONS_VIEWSPIKES::OPTIONS_VIEWSPIKES()
 	ASSERT(i >= 0);
 }
 
-OPTIONS_VIEWSPIKES::~OPTIONS_VIEWSPIKES()
+options_view_spikes::~options_view_spikes()
 = default;
 
-OPTIONS_VIEWSPIKES& OPTIONS_VIEWSPIKES::operator =(const OPTIONS_VIEWSPIKES& arg)
+options_view_spikes& options_view_spikes::operator =(const options_view_spikes& arg)
 {
 	if (this != &arg)
 	{
@@ -106,7 +106,7 @@ OPTIONS_VIEWSPIKES& OPTIONS_VIEWSPIKES::operator =(const OPTIONS_VIEWSPIKES& arg
 	return *this;
 }
 
-void OPTIONS_VIEWSPIKES::Serialize(CArchive& ar)
+void options_view_spikes::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
@@ -115,45 +115,45 @@ void OPTIONS_VIEWSPIKES::Serialize(CArchive& ar)
 		ar << timestart << timeend << timebin;
 		ar << static_cast<WORD>(nbins);
 		ar << static_cast<WORD>(classnb); // classnb2 is added to the series of int parameters
-		WORD wE, wM;
+		WORD w_e, w_m;
 
-		wM = 1;
-		wE = bacqcomments * wM; //1
-		wM += wM;
-		wE += bacqdate * wM; //2
-		wM += wM;
-		wE += bacqcomments * wM; //4
-		wM += wM;
-		wE += bacqdate * wM; //8
-		wM += wM;
-		wE += bacqchsettings * wM; //16
-		wM += wM;
-		wE += bspkcomments * wM; //32
-		wM += wM;
-		wE += bincrflagonsave * wM; //64
-		wM += wM;
-		wE += bexportzero * wM; //128
-		wM += wM;
-		wE += bexportPivot * wM; //256
-		wM += wM;
-		wE += bexporttoExcel * wM; //512	empty slot
-		wM += wM;
-		wE += bartefacts * wM; //1024
-		wM += wM;
-		wE += bcolumnheader * wM; //2048
-		wM += wM;
-		wE += btotalspikes * wM; //4096
-		wM += wM;
-		wE += babsolutetime * wM; //8192
-		wM += wM;
-		wE += ballfiles * wM; //16384
-		wM += wM;
-		wE += bdotunderline * wM; //32768
-		ar << wE;
+		w_m = 1;
+		w_e = bacqcomments * w_m; //1
+		w_m += w_m;
+		w_e += bacqdate * w_m; //2
+		w_m += w_m;
+		w_e += bacqcomments * w_m; //4
+		w_m += w_m;
+		w_e += bacqdate * w_m; //8
+		w_m += w_m;
+		w_e += bacqchsettings * w_m; //16
+		w_m += w_m;
+		w_e += bspkcomments * w_m; //32
+		w_m += w_m;
+		w_e += bincrflagonsave * w_m; //64
+		w_m += w_m;
+		w_e += bexportzero * w_m; //128
+		w_m += w_m;
+		w_e += bexportPivot * w_m; //256
+		w_m += w_m;
+		w_e += bexporttoExcel * w_m; //512	empty slot
+		w_m += w_m;
+		w_e += bartefacts * w_m; //1024
+		w_m += w_m;
+		w_e += bcolumnheader * w_m; //2048
+		w_m += w_m;
+		w_e += btotalspikes * w_m; //4096
+		w_m += w_m;
+		w_e += babsolutetime * w_m; //8192
+		w_m += w_m;
+		w_e += ballfiles * w_m; //16384
+		w_m += w_m;
+		w_e += bdotunderline * w_m; //32768
+		ar << w_e;
 
 		// int parameters
-		WORD wIntParms = 11;
-		ar << wIntParms; // set to nb of following lines
+		WORD w_int = 11;
+		ar << w_int; // set to nb of following lines
 		ar << static_cast<WORD>(heightLine); // 1
 		ar << static_cast<WORD>(heightSeparator); // 2
 		ar << static_cast<WORD>(dotheight); // 3
@@ -167,30 +167,30 @@ void OPTIONS_VIEWSPIKES::Serialize(CArchive& ar)
 		ar << classnb2; // 11
 
 		WORD wnb = 0;
-		wM = 1;
-		wE = bdisplayBars * wM;
+		w_m = 1;
+		w_e = bdisplayBars * w_m;
 		wnb++; // 1
-		wM += wM;
-		wE += bdisplayShapes * wM;
+		w_m += w_m;
+		w_e += bdisplayShapes * w_m;
 		wnb++; // 2: 2
-		wM += wM;
-		wE += bsplitClasses * wM;
+		w_m += w_m;
+		w_e += bsplitClasses * w_m;
 		wnb++; // 3: 4
-		wM += wM;
-		wE += bYmaxAuto * wM;
+		w_m += w_m;
+		w_e += bYmaxAuto * w_m;
 		wnb++; // 4: 8
-		wM += wM;
-		wE += bCycleHist * wM;
+		w_m += w_m;
+		w_e += bCycleHist * w_m;
 		wnb++; // 5: 16
-		wM += wM;
-		wE += ballChannels * wM;
+		w_m += w_m;
+		w_e += ballChannels * w_m;
 		wnb++; // 6: 32
-		ar << wnb; // set to nb of bool parms
-		ar << wE; // set compressed BOOL data
+		ar << wnb; // set to nb of bool parameters
+		ar << w_e; // set compressed BOOL data
 
 		//float parameters or 32 bits values
-		WORD wnparms = 29;
-		ar << wnparms;
+		WORD w_n_float = 29;
+		ar << w_n_float;
 		ar << histampl_vmax; // 1
 		ar << histampl_vmin; // 2
 		ar << histampl_nbins; // 3
@@ -217,43 +217,43 @@ void OPTIONS_VIEWSPIKES::Serialize(CArchive& ar)
 		classnb = w1;
 
 		// print options
-		WORD wE;
-		WORD wM = 1;
-		ar >> wE;
-		wM = 1;
-		bacqcomments = ((wE & wM) != 0); //1
-		wM += wM;
-		bacqdate = ((wE & wM) != 0); //2
-		wM += wM;
-		bacqcomments = ((wE & wM) != 0); //4
-		wM += wM;
-		bacqdate = ((wE & wM) != 0); //8
-		wM += wM;
-		bacqchsettings = ((wE & wM) != 0); //16
-		wM += wM;
-		bspkcomments = ((wE & wM) != 0); //32
-		wM += wM;
-		bincrflagonsave = ((wE & wM) != 0); //64
-		// this parm does not belong to print options but to export options
-		wM += wM;
-		bexportzero = ((wE & wM) > 0); //128
-		wM += wM;
-		bexportPivot = ((wE & wM) > 0); //256
-		wM += wM;
-		bexporttoExcel = ((wE & wM) != 0); //512
+		WORD w_e;
+		WORD w_m = 1;
+		ar >> w_e;
+		w_m = 1;
+		bacqcomments = ((w_e & w_m) != 0); //1
+		w_m += w_m;
+		bacqdate = ((w_e & w_m) != 0); //2
+		w_m += w_m;
+		bacqcomments = ((w_e & w_m) != 0); //4
+		w_m += w_m;
+		bacqdate = ((w_e & w_m) != 0); //8
+		w_m += w_m;
+		bacqchsettings = ((w_e & w_m) != 0); //16
+		w_m += w_m;
+		bspkcomments = ((w_e & w_m) != 0); //32
+		w_m += w_m;
+		bincrflagonsave = ((w_e & w_m) != 0); //64
+		// this parameter does not belong to print options but to export options
+		w_m += w_m;
+		bexportzero = ((w_e & w_m) > 0); //128
+		w_m += w_m;
+		bexportPivot = ((w_e & w_m) > 0); //256
+		w_m += w_m;
+		bexporttoExcel = ((w_e & w_m) != 0); //512
 
-		wM += wM;
-		bartefacts = ((wE & wM) != 0); //1024
-		wM += wM;
-		bcolumnheader = ((wE & wM) != 0); //2048
-		wM += wM;
-		btotalspikes = ((wE & wM) != 0); //4096
-		wM += wM;
-		babsolutetime = ((wE & wM) != 0); //8192
-		wM += wM;
-		ballfiles = ((wE & wM) != 0); //16384
-		wM += wM;
-		bdotunderline = ((wE & wM) != 0); //32768
+		w_m += w_m;
+		bartefacts = ((w_e & w_m) != 0); //1024
+		w_m += w_m;
+		bcolumnheader = ((w_e & w_m) != 0); //2048
+		w_m += w_m;
+		btotalspikes = ((w_e & w_m) != 0); //4096
+		w_m += w_m;
+		babsolutetime = ((w_e & w_m) != 0); //8192
+		w_m += w_m;
+		ballfiles = ((w_e & w_m) != 0); //16384
+		w_m += w_m;
+		bdotunderline = ((w_e & w_m) != 0); //32768
 
 		// int parameters
 		int nb;
@@ -324,38 +324,38 @@ void OPTIONS_VIEWSPIKES::Serialize(CArchive& ar)
 
 		ar >> w1;
 		nb = w1; // number of bool parameters
-		ar >> wE; // data -> decompress
+		ar >> w_e; // data -> decompress
 		// version 1 (20-4-96): 3 parameters
-		wM = 1;
-		bdisplayBars = ((wE & wM) > 0);
+		w_m = 1;
+		bdisplayBars = ((w_e & w_m) > 0);
 		nb--; // 1
-		wM += wM;
-		bdisplayShapes = ((wE & wM) > 0);
+		w_m += w_m;
+		bdisplayShapes = ((w_e & w_m) > 0);
 		nb--; // 2:2
-		wM += wM;
-		bsplitClasses = ((wE & wM) > 0);
+		w_m += w_m;
+		bsplitClasses = ((w_e & w_m) > 0);
 		nb--; // 3:4
 		if (nb > 0)
 		{
-			wM += wM;
-			bYmaxAuto = ((wE & wM) > 0);
+			w_m += w_m;
+			bYmaxAuto = ((w_e & w_m) > 0);
 			nb--;
 		} // 4:8
 		if (nb > 0)
 		{
-			wM += wM;
-			bCycleHist = ((wE & wM) > 0);
+			w_m += w_m;
+			bCycleHist = ((w_e & w_m) > 0);
 			nb--;
 		} // 5:16
 		if (nb > 0)
 		{
-			wM += wM;
-			ballChannels = ((wE & wM) > 0);
+			w_m += w_m;
+			ballChannels = ((w_e & w_m) > 0);
 			nb--;
 		} // 6:32
 		while (nb > 0)
 		{
-			ar >> wE;
+			ar >> w_e;
 			nb--;
 		}
 
@@ -404,12 +404,12 @@ void OPTIONS_VIEWSPIKES::Serialize(CArchive& ar)
 				ar >> crChartArea;
 				nb--;
 			}
-			COLORREF crdummy;
+			COLORREF cr_dummy;
 			for (int i = 0; i < 18; i++)
 				//if (nb > 0) {ar >> crScale[i]; nb--;}
 				if (nb > 0)
 				{
-					ar >> crdummy;
+					ar >> cr_dummy;
 					nb--;
 				}
 			if (nb > 0)

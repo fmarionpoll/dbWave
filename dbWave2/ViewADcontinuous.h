@@ -12,8 +12,8 @@
 #include "DataTranslation_AD.h"
 #include "DataTranslation_DA.h"
 #include "USBPxxS1Ctl.h"
-#include "OPTIONS_INPUTDATA.h"
-#include "OPTIONS_OUTPUTDATA.h"
+#include "options_input.h"
+#include "options_output.h"
 #include "dbTableView.h"
 
 
@@ -91,8 +91,8 @@ protected:
 	BOOL m_bSimultaneousStart{ false };
 
 	// DT buffer
-	OPTIONS_INPUTDATA* options_input_data_{ nullptr };
-	OPTIONS_OUTPUTDATA* options_output_data_{ nullptr };
+	options_input* options_input_data_{ nullptr };
+	options_output* options_output_data_{ nullptr };
 	BOOL m_start_da_simultaneously_{ false };
 
 	// sweep

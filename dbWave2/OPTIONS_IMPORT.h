@@ -2,12 +2,12 @@
 #include "AcqWaveChanArray.h"
 #include <Olxdadefs.h>
 
-class OPTIONS_IMPORT : public CObject
+class options_import final : public CObject
 {
-	DECLARE_SERIAL(OPTIONS_IMPORT)
-	OPTIONS_IMPORT();
-	~OPTIONS_IMPORT() override;
-	OPTIONS_IMPORT& operator =(const OPTIONS_IMPORT& arg);
+	DECLARE_SERIAL(options_import)
+	options_import();
+	~options_import() override;
+	options_import& operator =(const options_import& arg);
 	void Serialize(CArchive& ar) override;
 
 public:

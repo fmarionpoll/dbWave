@@ -11,7 +11,7 @@ IMPLEMENT_DYNCREATE(ViewNoteDoc, CRichEditView)
 
 BEGIN_MESSAGE_MAP(ViewNoteDoc, CRichEditView)
 	ON_WM_DESTROY()
-	ON_COMMAND(ID_TOOLS_OPEN_DATA_FILES, OnToolsOpendatafiles)
+	ON_COMMAND(ID_TOOLS_OPEN_DATA_FILES, on_tools_open_data_files)
 	ON_COMMAND(ID_FILE_PRINT, CRichEditView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, CRichEditView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CRichEditView::OnFilePrintPreview)
@@ -65,7 +65,7 @@ CNoteDoc* ViewNoteDoc::GetDocument() // non-debug version is inline
 }
 #endif //_DEBUG
 
-void ViewNoteDoc::OnToolsOpendatafiles()
+void ViewNoteDoc::on_tools_open_data_files()
 {
 	auto p_document = GetDocument();
 	CString cs_name = p_document->GetPathName();

@@ -336,11 +336,11 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 		if (i > 0)
 			continue;
 		data_encoding_mode_ = pf_c->encoding; 
-		bin_zero_ = pf_c->binzero; 
-		sampling_rate_ = pf_c->samprate; 
-		volts_per_bin_ = pf_c->voltsperbin;
+		bin_zero_ = pf_c->bin_zero; 
+		sampling_rate_ = pf_c->sampling_rate; 
+		volts_per_bin_ = pf_c->volts_per_bin;
 		channel_description_ = pf_c->comment; 
-		spk_detect_parameters_ = pf_c->parm; 
+		spk_detect_parameters_ = pf_c->detect_spikes_parameters; 
 	}
 	delete pf_c;
 	wave_channel_.Serialize(ar);
@@ -704,7 +704,7 @@ int SpikeList::get_total_max_min_of_y1_measure()
 	return n_spikes_found;
 }
 
-BOOL SpikeList::init_spike_list(const AcqDataDoc* acq_data_doc, const SPKDETECTPARM* spk_detect_parameters)
+BOOL SpikeList::init_spike_list(const AcqDataDoc* acq_data_doc, const options_detect_spikes* spk_detect_parameters)
 {
 	// remove data from spike list
 	erase_data();

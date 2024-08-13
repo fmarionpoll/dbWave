@@ -339,7 +339,7 @@ void DlgSpikeDetect::OnBnClickedShiftleft()
 void DlgSpikeDetect::ExchangeParms(int isource, int idest)
 {
 	SaveChanParameters(isource); // save current data
-	const auto p_sp = new SPKDETECTPARM; // create temporary data to exchange
+	const auto p_sp = new options_detect_spikes(); // create temporary data to exchange
 	const auto p_source = m_pDetectSettingsArray->GetItem(isource);
 	const auto p_destination = m_pDetectSettingsArray->GetItem(idest);
 	*p_sp = *p_source;

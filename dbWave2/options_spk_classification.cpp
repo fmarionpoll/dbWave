@@ -1,22 +1,22 @@
 ﻿#include "stdafx.h"
-#include "SPK_CLASSIF.h"
+#include "options_spk_classification.h"
 
 #include "TemplateListWnd.h"
 
 
-IMPLEMENT_SERIAL(SPK_CLASSIF, CObject, 0 /* schema number*/)
+IMPLEMENT_SERIAL(options_spk_classification, CObject, 0 /* schema number*/)
 
-SPK_CLASSIF::SPK_CLASSIF() : b_changed(0), n_int_parameters(0), n_float_parameters(0)
+options_spk_classification::options_spk_classification() : b_changed(0), n_int_parameters(0), n_float_parameters(0)
 {
 }
 
-SPK_CLASSIF::~SPK_CLASSIF()
+options_spk_classification::~options_spk_classification()
 {
 	if (p_template)
 		delete static_cast<CTemplateListWnd*>(p_template);
 }
 
-SPK_CLASSIF& SPK_CLASSIF::operator =(const SPK_CLASSIF& arg)
+options_spk_classification& options_spk_classification::operator =(const options_spk_classification& arg)
 {
 	if (this != &arg)
 	{
@@ -57,7 +57,7 @@ SPK_CLASSIF& SPK_CLASSIF::operator =(const SPK_CLASSIF& arg)
 	return *this;
 }
 
-void SPK_CLASSIF::Serialize(CArchive& ar)
+void options_spk_classification::Serialize(CArchive& ar)
 {
 	BOOL b_tpl_is_present = FALSE;
 	if (ar.IsStoring())
@@ -271,7 +271,7 @@ void SPK_CLASSIF::Serialize(CArchive& ar)
 }
 
 
-void SPK_CLASSIF::create_tpl()
+void options_spk_classification::create_tpl()
 {
 	p_template = new (CTemplateListWnd);
 }

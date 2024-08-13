@@ -1,5 +1,5 @@
 #pragma once
-#include "OPTIONS_OUTPUTDATA.h"
+#include "options_output.h"
 
 class DlgDAOutputParameters : public CDialogEx
 {
@@ -12,7 +12,7 @@ public:
 	// Dialog Data
 	enum { IDD = IDD_DA_OUTPUTPARMS };
 
-	OPTIONS_OUTPUTDATA m_outD;
+	options_output m_outD;
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support

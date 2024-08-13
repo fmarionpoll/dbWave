@@ -1,7 +1,7 @@
 #pragma once
 #include <Olmem.h>
 #include "dtacq32.h"
-#include "OPTIONS_INPUTDATA.h"
+#include "options_input.h"
 
 
 class DataTranslation_AD final :
@@ -9,9 +9,9 @@ class DataTranslation_AD final :
 {
 public:
 	BOOL OpenSubSystem(CString card_name);
-	BOOL InitSubSystem(OPTIONS_INPUTDATA* pADC_options);
+	BOOL InitSubSystem(options_input* pADC_options);
 	void DeleteBuffers();
-	void DeclareBuffers(OPTIONS_INPUTDATA* pADC_options);
+	void DeclareBuffers(options_input* pADC_options);
 	void StopAndLiberateBuffers();
 	void ConfigAndStart();
 	short* OnBufferDone();
@@ -21,7 +21,7 @@ public:
 protected:
 	void DTLayerError(COleDispatchException* e);
 
-	OPTIONS_INPUTDATA* m_pOptions = nullptr;
+	options_input* m_pOptions = nullptr;
 	BOOL m_inprogress = false;
 	HBUF m_bufhandle = nullptr;
 	long m_buflen = 0;

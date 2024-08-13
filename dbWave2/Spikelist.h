@@ -4,7 +4,7 @@
 #include "AcqWaveChan.h"
 #include "SpikeClassDescriptor.h"
 #include "Spike.h"
-#include "SPKDETECTPARM.h"
+#include "options_detect_spikes.h"
 
 
 
@@ -48,7 +48,7 @@ protected:
 	long bin_zero_  {4096}; 
 	float sampling_rate_ {10000.f};
 	float volts_per_bin_  {0.001f}; 
-	SPKDETECTPARM spk_detect_parameters_ {};
+	options_detect_spikes spk_detect_parameters_ {};
 	CString channel_description_ {};
 
 	// (2) -------------ordered spike list with class, time, etc
@@ -98,8 +98,8 @@ public:
 	float convert_acquisition_point_to_mv (const int value) const { return volts_per_bin_ * 1000.f * static_cast<float>(value - bin_zero_); }
 	float convert_difference_to_mv(const int value) const { return volts_per_bin_ * 1000.f * static_cast<float>(value); }
 
-	void set_detection_parameters(const SPKDETECTPARM* p_sd) { spk_detect_parameters_ = *p_sd; }
-	SPKDETECTPARM* get_detection_parameters() { return &spk_detect_parameters_; }
+	void set_detection_parameters(const options_detect_spikes* p_sd) { spk_detect_parameters_ = *p_sd; }
+	options_detect_spikes* get_detection_parameters() { return &spk_detect_parameters_; }
 
 	int add_spike(short* source_data, int n_channels, long ii_time, int source_channel, int i_class, BOOL b_check);
 
@@ -112,7 +112,7 @@ public:
 	void get_total_max_min(BOOL b_recalculate, int* max, int* min);
 	int get_total_max_min_of_y1(int* max, int* min);
 
-	BOOL init_spike_list(const AcqDataDoc* acq_data_doc, const SPKDETECTPARM* spk_detect_parameters);
+	BOOL init_spike_list(const AcqDataDoc* acq_data_doc, const options_detect_spikes* spk_detect_parameters);
 	long update_class_list();
 	void erase_data();
 	void change_all_spike_from_class_id_to_new_class_id(int old_class_ID, int new_class_ID);

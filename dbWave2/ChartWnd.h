@@ -26,7 +26,7 @@ constexpr auto RED_COLOR = 4;
 constexpr auto NB_CURSORS = 6;
 
 #include "RulerBar.h"
-#include "SCOPESTRUCT.h"
+#include "options_scope_struct.h"
 
 // CChartWnd window
 
@@ -61,7 +61,7 @@ protected:
 	CWordArray array_mark_{};
 	CPen black_dotted_pen_{};
 	CString cs_empty_;
-	SCOPESTRUCT scope_structure_{};
+	options_scope_struct scope_structure_{};
 
 	int plot_mode_ = 0;
 	int index_color_background_ = SILVER_COLOR;
@@ -112,8 +112,8 @@ protected:
 
 public:
 	virtual void plot_data_to_dc(CDC* p_dc);
-	virtual SCOPESTRUCT* get_scope_parameters();
-	virtual void set_scope_parameters(SCOPESTRUCT* p_struct);
+	virtual options_scope_struct* get_scope_parameters();
+	virtual void set_scope_parameters(options_scope_struct* p_struct);
 	virtual int set_mouse_cursor_type(int cursor_type);
 	virtual void zoom_data(CRect* prev_rect, CRect* new_rect);
 
@@ -144,8 +144,8 @@ public:
 	int get_yw_org() const { return y_wo_; }
 	int get_xw_extent() const { return x_we_; }
 	int get_xw_org() const { return x_wo_; }
-	int get_nx_scale_cells() const { return scope_structure_.iXCells; }
-	int	get_ny_scale_cells() const { return scope_structure_.iYCells; }
+	int get_nx_scale_cells() const { return scope_structure_.i_x_cells; }
+	int	get_ny_scale_cells() const { return scope_structure_.i_y_cells; }
 
 	auto set_n_x_scale_cells(int i_cells, int i_ticks = 0, int i_tick_line = 0) -> void;
 	void set_ny_scale_cells(int i_cells, int i_ticks = 0, int i_tick_line = 0);
@@ -159,8 +159,8 @@ public:
 	void set_cursor_max_on_dbl_click(const int imax) { cursor_index_max_ = imax; }
 	void draw_grid(CDC* p_dc);
 	void adjust_display_rect(const CRect* p_rect);
-	BOOL get_b_draw_frame() const { return scope_structure_.bDrawframe; }
-	void set_b_draw_frame(const BOOL flag) { scope_structure_.bDrawframe = flag; }
+	BOOL get_b_draw_frame() const { return scope_structure_.b_draw_frame; }
+	void set_b_draw_frame(const BOOL flag) { scope_structure_.b_draw_frame = flag; }
 	CRect get_defined_rect() const { return {pt_first_.x, pt_first_.y, pt_last_.x, pt_last_.y}; }
 	void set_bottom_comment(const BOOL flag, const CString& cs)
 	{

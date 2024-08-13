@@ -21,12 +21,12 @@ void SpikeFromChan::Serialize(CArchive& ar)
 	// store elements
 	if (ar.IsStoring())
 	{
-		ar << wversion;
-		ar << binzero;
+		ar << w_version;
+		ar << bin_zero;
 		ar << encoding;
-		ar << voltsperbin;
-		ar << samprate;
-		parm.Serialize(ar);
+		ar << volts_per_bin;
+		ar << sampling_rate;
+		detect_spikes_parameters.Serialize(ar);
 		constexpr int n_items = 1;
 		ar << n_items;
 		ar << comment;
@@ -40,37 +40,37 @@ void SpikeFromChan::Serialize(CArchive& ar)
 		if (version < 5)
 		{
 			ar >> w;
-			binzero = w;
+			bin_zero = w;
 		}
 		else
-			ar >> binzero; // long (instead of word)
+			ar >> bin_zero; // long (instead of word)
 		if (version < 3)
 		{
 			ar >> w;
-			parm.extract_channel = w;
+			detect_spikes_parameters.extract_channel = w;
 		}
 		ar >> encoding;
-		ar >> voltsperbin;
-		ar >> samprate;
+		ar >> volts_per_bin;
+		ar >> sampling_rate;
 		if (version < 3)
 		{
 			ar >> w;
-			parm.detect_transform = w;
+			detect_spikes_parameters.detect_transform = w;
 			ar >> w;
-			parm.detect_from = w;
+			detect_spikes_parameters.detect_from = w;
 			ar >> w;
-			parm.detect_threshold_bin = w;
+			detect_spikes_parameters.detect_threshold_bin = w;
 			ar >> w; // unused parameter, removed at version 3
 			ar >> w;
-			parm.extract_n_points = w;
+			detect_spikes_parameters.extract_n_points = w;
 			ar >> w;
-			parm.detect_pre_threshold = w;
+			detect_spikes_parameters.detect_pre_threshold = w;
 			ar >> w;
-			parm.detect_refractory_period = w;
+			detect_spikes_parameters.detect_refractory_period = w;
 		}
 		else
 		{
-			parm.Serialize(ar);
+			detect_spikes_parameters.Serialize(ar);
 		}
 		if (version > 3)
 		{
@@ -86,12 +86,12 @@ SpikeFromChan& SpikeFromChan::operator =(const SpikeFromChan& arg)
 {
 	if (&arg != this)
 	{
-		wversion = arg.wversion;
-		binzero = arg.binzero;
+		w_version = arg.w_version;
+		bin_zero = arg.bin_zero;
 		encoding = arg.encoding;
-		samprate = arg.samprate;
-		voltsperbin = arg.voltsperbin;
-		parm = arg.parm;
+		sampling_rate = arg.sampling_rate;
+		volts_per_bin = arg.volts_per_bin;
+		detect_spikes_parameters = arg.detect_spikes_parameters;
 		comment = arg.comment;
 	}
 	return *this;

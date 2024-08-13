@@ -1,14 +1,14 @@
 ﻿#include "StdAfx.h"
-#include "SPKDETECTPARM.h"
+#include "options_detect_spikes.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 
-IMPLEMENT_SERIAL(SPKDETECTPARM, CObject, 0 /* schema number*/)
+IMPLEMENT_SERIAL(options_detect_spikes, CObject, 0 /* schema number*/)
 
-SPKDETECTPARM::SPKDETECTPARM() : b_changed(0)
+options_detect_spikes::options_detect_spikes() : b_changed(0)
 {
 	w_version = 7; // version 6 (Aug 19 2005 FMP)
 	detect_channel = 0; // source channel
@@ -16,7 +16,7 @@ SPKDETECTPARM::SPKDETECTPARM() : b_changed(0)
 	detect_from = 0; // detection method 0=data, 1=tags
 	extract_channel = 0;
 	extract_transform = 13;
-	compensate_Baseline = FALSE;
+	compensate_baseline = FALSE;
 	detect_threshold_bin = 0; // value of threshold 1
 	extract_n_points = 60; // spike length (n data pts)
 	detect_pre_threshold = 20; // offset spike npts before threshold
@@ -26,11 +26,11 @@ SPKDETECTPARM::SPKDETECTPARM() : b_changed(0)
 	detect_mode = MODE_ON_OFF; // if sti, = ON/OFF
 }
 
-SPKDETECTPARM::~SPKDETECTPARM()
+options_detect_spikes::~options_detect_spikes()
 {
 }
 
-SPKDETECTPARM& SPKDETECTPARM::operator =(const SPKDETECTPARM& arg)
+options_detect_spikes& options_detect_spikes::operator =(const options_detect_spikes& arg)
 {
 	if (this != &arg)
 	{
@@ -39,7 +39,7 @@ SPKDETECTPARM& SPKDETECTPARM::operator =(const SPKDETECTPARM& arg)
 		detect_channel = arg.detect_channel;
 		detect_transform = arg.detect_transform;
 		detect_threshold_bin = arg.detect_threshold_bin;
-		compensate_Baseline = arg.compensate_Baseline;
+		compensate_baseline = arg.compensate_baseline;
 		extract_channel = arg.extract_channel;
 		extract_transform = arg.extract_transform;
 		extract_n_points = arg.extract_n_points;
@@ -52,7 +52,7 @@ SPKDETECTPARM& SPKDETECTPARM::operator =(const SPKDETECTPARM& arg)
 	return *this;
 }
 
-void SPKDETECTPARM::Read_v5(CArchive& ar, int version)
+void options_detect_spikes::Read_v5(CArchive& ar, int version)
 {
 	long lw;
 	WORD wi;
@@ -64,7 +64,7 @@ void SPKDETECTPARM::Read_v5(CArchive& ar, int version)
 	ar >> wi;
 	detect_from = wi; // WORD
 	ar >> wi;
-	compensate_Baseline = wi; // WORD
+	compensate_baseline = wi; // WORD
 	ar >> lw;
 	detect_threshold_bin = lw; // long
 	if (version < 3) // dummy reading (threshold2: removed version 3)
@@ -93,7 +93,7 @@ void SPKDETECTPARM::Read_v5(CArchive& ar, int version)
 	}
 }
 
-void SPKDETECTPARM::Read_v6(CArchive& ar)
+void options_detect_spikes::Read_v6(CArchive& ar)
 {
 	int nitems;
 	ar >> nitems;
@@ -102,7 +102,7 @@ void SPKDETECTPARM::Read_v6(CArchive& ar)
 
 	ar >> nitems;
 	ar >> detect_from; nitems--;
-	ar >> compensate_Baseline; nitems--;
+	ar >> compensate_baseline; nitems--;
 	ASSERT(nitems == 0);
 
 	ar >> nitems;
@@ -122,7 +122,7 @@ void SPKDETECTPARM::Read_v6(CArchive& ar)
 	ASSERT(nitems == 0);
 }
 
-void SPKDETECTPARM::Serialize_v7(CArchive& ar)
+void options_detect_spikes::Serialize_v7(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
@@ -135,7 +135,7 @@ void SPKDETECTPARM::Serialize_v7(CArchive& ar)
 		n_items = 12;
 		ar << n_items;
 		ar << detect_from;
-		ar << compensate_Baseline;
+		ar << compensate_baseline;
 		ar << detect_channel;
 		ar << detect_transform;
 		ar << detect_threshold_bin;
@@ -160,7 +160,7 @@ void SPKDETECTPARM::Serialize_v7(CArchive& ar)
 		
 		ar >> nitems; // int parameters
 		ar >> detect_from; nitems--;
-		ar >> compensate_Baseline; nitems--;
+		ar >> compensate_baseline; nitems--;
 		ar >> detect_channel; nitems--;
 		ar >> detect_transform; nitems--;
 		ar >> detect_threshold_bin; nitems--;
@@ -179,7 +179,7 @@ void SPKDETECTPARM::Serialize_v7(CArchive& ar)
 	}
 }
 
-void SPKDETECTPARM::Serialize(CArchive& ar)
+void options_detect_spikes::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{

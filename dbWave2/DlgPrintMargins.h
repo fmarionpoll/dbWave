@@ -1,5 +1,5 @@
 #pragma once
-#include "OPTIONS_VIEW_DATA.h"
+#include "options_view_data.h"
 
 
 class DlgPrintMargins : public CDialog
@@ -11,7 +11,7 @@ public:
 	// Dialog Data
 	enum { IDD = IDD_PRINTMARGINS };
 
-	OPTIONS_VIEW_DATA* mdPM{ nullptr };
+	options_view_data* mdPM{ nullptr };
 	int m_viewtype{ 0 };
 
 	// Implementation

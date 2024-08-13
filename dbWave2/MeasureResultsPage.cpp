@@ -514,7 +514,7 @@ BOOL CMeasureResultsPage::MeasureParameters()
 		OutputTitle();
 		m_pdbDoc->db_set_current_record_position(i_first);
 		const CString filename = m_pdbDoc->db_get_current_dat_file_name();
-		auto* p_vd = new OPTIONS_VIEW_DATA;
+		auto* p_vd = new options_view_data;
 		ASSERT(p_vd != NULL);
 		const CString cs_out = _T("**filename\tdate\ttime\tcomment\tchannel\r\n");
 

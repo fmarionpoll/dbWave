@@ -4,9 +4,9 @@
 // array of spike detection parameters
 // 2 dimensions
 
-class SPKDETECTARRAY : public CObject
+class spike_detection_array : public CObject
 {
-	DECLARE_SERIAL(SPKDETECTARRAY)
+	DECLARE_SERIAL(spike_detection_array)
 public:
 	BOOL bChanged; // flag set TRUE if contents has changed
 	void SetChanArray(int acqchan, SpikeDetectArray* pspk);
@@ -18,8 +18,8 @@ protected:
 	void DeleteAll(); // erase all arrays of parmItems (and all parmItems within them)
 
 public:
-	SPKDETECTARRAY();
-	~SPKDETECTARRAY() override;
+	spike_detection_array();
+	~spike_detection_array() override;
 	void Serialize(CArchive& ar) override;
 };
 

@@ -12,7 +12,7 @@ IMPLEMENT_SERIAL(SpikeDetectArray, CObject, 0)
 
 SpikeDetectArray::SpikeDetectArray()
 {
-	const auto spk_detect_parameters = new SPKDETECTPARM;
+	const auto spk_detect_parameters = new options_detect_spikes();
 	ASSERT(spk_detect_parameters != NULL);
 	spkdetectparm_ptr_array.SetSize(0);
 	spkdetectparm_ptr_array.Add(spk_detect_parameters);
@@ -58,7 +58,7 @@ void SpikeDetectArray::SetSize(int nitems)
 // insert one parameter array item
 int SpikeDetectArray::AddItem()
 {
-	const auto pparm = new SPKDETECTPARM;
+	const auto pparm = new options_detect_spikes();
 	ASSERT(pparm != NULL);
 	spkdetectparm_ptr_array.Add(pparm);
 	return spkdetectparm_ptr_array.GetSize();

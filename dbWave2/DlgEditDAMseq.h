@@ -1,6 +1,6 @@
 #pragma once
 #include "afxwin.h"
-#include "OUTPUTPARMS.h"
+#include "output_parameters.h"
 
 class DlgEditDAMseq : public CDialogEx
 {
@@ -13,7 +13,7 @@ public:
 	// Dialog Data
 	enum { IDD = IDD_DA_MSEQ };
 
-	OUTPUTPARMS m_outDParms;
+	output_parameters m_outDParms;
 	long m_mSeqRatio;
 	long m_mSeqDelay;
 	long m_mSeqSeed;

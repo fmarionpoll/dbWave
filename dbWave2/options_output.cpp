@@ -1,16 +1,16 @@
 ﻿#include "StdAfx.h"
-#include "OPTIONS_OUTPUTDATA.h"
+#include "options_output.h"
 
 
-IMPLEMENT_SERIAL(OPTIONS_OUTPUTDATA, CObject, 0 /* schema number*/)
+IMPLEMENT_SERIAL(options_output, CObject, 0 /* schema number*/)
 
-OPTIONS_OUTPUTDATA::OPTIONS_OUTPUTDATA()
+options_output::options_output()
 = default;
 
-OPTIONS_OUTPUTDATA::~OPTIONS_OUTPUTDATA()
+options_output::~options_output()
 = default;
 
-OPTIONS_OUTPUTDATA& OPTIONS_OUTPUTDATA::operator =(const OPTIONS_OUTPUTDATA& arg)
+options_output& options_output::operator =(const options_output& arg)
 {
 	if (this != &arg)
 	{
@@ -31,7 +31,7 @@ OPTIONS_OUTPUTDATA& OPTIONS_OUTPUTDATA::operator =(const OPTIONS_OUTPUTDATA& arg
 	return *this;
 }
 
-void OPTIONS_OUTPUTDATA::Serialize(CArchive& ar)
+void options_output::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{

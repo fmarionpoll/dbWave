@@ -3,7 +3,7 @@
 #include "dbTableView.h"
 #include "Editctrl.h"
 #include "OPTIONS_MEASURE.h"
-#include "SPK_CLASSIF.h"
+#include "options_spk_classification.h"
 #include "TemplateListWnd.h"
 
 
@@ -39,8 +39,8 @@ protected:
 	CEditCtrl mm_hit_rate_sort_;
 	CEditCtrl mm_k_tolerance_;
 	CEditCtrl mm_spike_no_class_;
-	CEditCtrl mm_time_first_; // first abscissa value
-	CEditCtrl mm_time_last_; // last abscissa value
+	CEditCtrl mm_time_first_;
+	CEditCtrl mm_time_last_;
 	CEditCtrl mm_i_first_sorted_class_;
 
 	CTemplateListWnd m_avg_list_{};
@@ -49,9 +49,9 @@ protected:
 
 	ChartSpikeShape m_chart_spk_wnd_shape_;
 
-	OPTIONS_VIEW_DATA* options_view_data_ = nullptr; 
-	OPTIONS_MEASURE* options_view_data_measure_ = nullptr; 
-	SPK_CLASSIF* spike_classification_parameters_ = nullptr; 
+	options_view_data* options_view_data_ = nullptr; 
+	options_measure* options_view_data_measure_ = nullptr; 
+	options_spk_classification* spike_classification_parameters_ = nullptr; 
 	SCROLLINFO scroll_file_pos_infos_{};
 	long l_first_ = 0;
 	long l_last_ = 0;

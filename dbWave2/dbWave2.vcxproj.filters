@@ -417,31 +417,31 @@
     <ClCompile Include="USBPxxPARAMETERS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OPTIONS_INPUTDATA.cpp">
+    <ClCompile Include="options_input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SCOPECHANNEL.cpp">
+    <ClCompile Include="options_scope_channel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SCOPESTRUCT.cpp">
+    <ClCompile Include="options_scope_struct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OUTPUTPARMS.cpp">
+    <ClCompile Include="output_parameters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OPTIONS_VIEWSPIKES.cpp">
+    <ClCompile Include="options_view_spikes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OPTIONS_IMPORT.cpp">
+    <ClCompile Include="options_import.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OPTIONS_OUTPUTDATA.cpp">
+    <ClCompile Include="options_output.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OPTIONS_VIEW_DATA.cpp">
+    <ClCompile Include="options_view_data.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OPTIONS_MEASURE.cpp">
+    <ClCompile Include="options_measure.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ChartDataAD.cpp">
@@ -477,16 +477,16 @@
     <ClCompile Include="SpikeClassDescriptor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SPKDETECTARRAY.cpp">
+    <ClCompile Include="spike_detection_array.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="STIMDETECT.cpp">
+    <ClCompile Include="options_detect_stimulus.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SPKDETECTPARM.cpp">
+    <ClCompile Include="options_detect_spikes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SPK_CLASSIF.cpp">
+    <ClCompile Include="options_spk_classification.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpikeDetectArray.cpp">
@@ -1013,31 +1013,31 @@
     <ClInclude Include="CDTBoardParameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OPTIONS_INPUTDATA.h">
+    <ClInclude Include="options_input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OPTIONS_OUTPUTDATA.h">
+    <ClInclude Include="options_output.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OUTPUTPARMS.h">
+    <ClInclude Include="output_parameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OPTIONS_IMPORT.h">
+    <ClInclude Include="options_import.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OPTIONS_MEASURE.h">
+    <ClInclude Include="options_measure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OPTIONS_VIEWSPIKES.h">
+    <ClInclude Include="options_view_spikes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OPTIONS_VIEW_DATA.h">
+    <ClInclude Include="options_view_data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SCOPESTRUCT.h">
+    <ClInclude Include="options_scope_struct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SCOPECHANNEL.h">
+    <ClInclude Include="options_scope_channel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ChartDataAD.h">
@@ -1082,16 +1082,16 @@
     <ClInclude Include="SpikeClassDescriptor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="STIMDETECT.h">
+    <ClInclude Include="options_detect_stimulus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SPKDETECTPARM.h">
+    <ClInclude Include="options_detect_spikes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SPKDETECTARRAY.h">
+    <ClInclude Include="spike_detection_array.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SPK_CLASSIF.h">
+    <ClInclude Include="options_spk_classification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpikeDetectArray.h">

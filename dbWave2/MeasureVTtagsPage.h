@@ -26,7 +26,7 @@ public:
 	float m_duration;
 
 	// input parameters
-	OPTIONS_MEASURE* m_pMO; // init on call
+	options_measure* m_pMO; // init on call
 	CdbWaveDoc* m_pdbDoc;
 	AcqDataDoc* m_pdatDoc;
 	ChartData* m_pChartDataWnd;

@@ -24,7 +24,7 @@ IMPLEMENT_DYNCREATE(ViewdbWave, dbTableView)
 BEGIN_MESSAGE_MAP(ViewdbWave, dbTableView)
 	ON_WM_DESTROY()
 	ON_WM_SIZE()
-	ON_WM_SETFOCUS()
+
 	ON_COMMAND(ID_RECORD_PAGE_UP, &ViewdbWave::on_record_page_up)
 	ON_COMMAND(ID_RECORD_PAGE_DOWN, &ViewdbWave::on_record_page_down)
 	ON_COMMAND(ID_FILE_PRINT, dbTableView::OnFilePrint)
@@ -57,6 +57,11 @@ ViewdbWave::ViewdbWave() : dbTableView(IDD)
 
 ViewdbWave::~ViewdbWave()
 = default;
+
+void ViewdbWave::OnDestroy()
+{
+	dbTableView::OnDestroy();
+}
 
 void ViewdbWave::DoDataExchange(CDataExchange * p_dx)
 {
@@ -254,30 +259,30 @@ void ViewdbWave::update_controls()
 		CSpikeDoc* p_spk_doc = GetDocument()->open_current_spike_file();
 		if (p_spk_doc != nullptr)
 		{
-			const auto spklist_size = p_spk_doc->get_spike_list_size();
-			if (m_tabCtrl.GetItemCount() < spklist_size)
+			const auto spk_list_size = p_spk_doc->get_spike_list_size();
+			if (m_tabCtrl.GetItemCount() < spk_list_size)
 				m_tabCtrl.InitctrlTabFromSpikeDoc(p_spk_doc);
 		}
 	}
 	//pdb_doc->SetModifiedFlag(true);
-	//pdb_doc->UpdateAllViews(this, HINT_DOCMOVERECORD, nullptr);
+	//pdb_doc->UpdateAllViews(this, HINT_DOC_MOVE_RECORD, nullptr);
 	db_wave_doc->update_all_views_db_wave(this, HINT_DOC_MOVE_RECORD, nullptr);
 
 	//POSITION pos = pdb_doc->GetFirstViewPosition();
-	//int nviews = 0;
+	//int n_views = 0;
 	//while (pos != NULL)
 	//{
 	//	CView* pView = pdb_doc->GetNextView(pos);
 	//	CMainFrame* frame = (CMainFrame*)pView->GetParentFrame();
-	//	frame->OnUpdate(this, HINT_DOCMOVERECORD, nullptr);
+	//	frame->OnUpdate(this, HINT_DOC_MOVE_RECORD, nullptr);
 
 	//	//pView->UpdateWindow();
-	//	nviews++;
+	//	n_views++;
 	//}
-	//TRACE("nviews", nviews);
+
 }
 
-void ViewdbWave::on_record_page_up()
+void ViewdbWave::on_record_page_up() 
 {
 	m_data_list_ctrl.SendMessage(WM_VSCROLL, SB_PAGEUP, NULL);
 }
@@ -301,7 +306,7 @@ void ViewdbWave::on_click_median_filter()
 	m_data_list_ctrl.refresh_display();
 }
 
-void ViewdbWave::OnActivateView(BOOL b_activate, CView * p_activate_view, CView * p_deactive_view)
+void ViewdbWave::OnActivateView(const BOOL b_activate, CView * p_activate_view, CView * p_deactive_view)
 {
 	auto* p_mainframe = static_cast<CMainFrame*>(AfxGetMainWnd());
 	if (b_activate)
@@ -315,10 +320,10 @@ void ViewdbWave::OnActivateView(BOOL b_activate, CView * p_activate_view, CView 
 	}
 	else
 	{
-		ChartData* pDataChartWnd = m_data_list_ctrl.get_chart_data_of_current_record();
-		if (pDataChartWnd != nullptr)
+		ChartData* p_data_chart_wnd = m_data_list_ctrl.get_chart_data_of_current_record();
+		if (p_data_chart_wnd != nullptr)
 		{
-			static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.view_data = *(pDataChartWnd->get_scope_parameters());
+			static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.view_data = *(p_data_chart_wnd->get_scope_parameters());
 		}
 		if (p_activate_view != nullptr)
 			static_cast<CChildFrame*>(p_mainframe->MDIGetActive())->m_n_status = m_nStatus;
@@ -353,25 +358,20 @@ void ViewdbWave::on_dbl_clk_list_ctrl(NMHDR * p_nmhdr, LRESULT * p_result)
 	GetParent()->PostMessage(WM_COMMAND, static_cast<WPARAM>(ID_VIEW_SPIKE_DETECTION), static_cast<LPARAM>(NULL));
 }
 
-LRESULT ViewdbWave::on_my_message(WPARAM w_param, LPARAM l_param)
+LRESULT ViewdbWave::on_my_message(const WPARAM w_param, const LPARAM l_param)
 {
 	const int threshold = LOWORD(l_param); // value associated
 	//const int i_id = HIWORD(lParam);
 
-	switch (w_param)
+	if (w_param == HINT_VIEW_TAB_HAS_CHANGED)
 	{
-	case HINT_VIEW_TAB_HAS_CHANGED:
 		GetDocument()->get_current_spike_file()->set_spike_list_current_index(threshold);
 		m_data_list_ctrl.refresh_display();
-		break;
-
-	default:
-		break;
 	}
 	return 0L;
 }
 
-void ViewdbWave::OnUpdate(CView * p_sender, LPARAM l_hint, CObject * p_hint)
+void ViewdbWave::OnUpdate(CView * p_sender, const LPARAM l_hint, CObject * p_hint)
 {
 	if (!m_b_init_ )
 		return;
@@ -384,7 +384,7 @@ void ViewdbWave::OnUpdate(CView * p_sender, LPARAM l_hint, CObject * p_hint)
 		p_document->selected_records.RemoveAll();
 		const int selected_count = static_cast<int>(m_data_list_ctrl.GetSelectedCount());
 
-		// Update all of the selected items.
+		// Update all selected items.
 		if (selected_count > 0)
 		{
 			p_document->selected_records.SetSize(selected_count);
@@ -473,30 +473,30 @@ void ViewdbWave::delete_records()
 
 void ViewdbWave::on_lvn_column_click_list_ctrl(NMHDR * p_nmhdr, LRESULT * p_result)
 {
-	const auto pNMLV = reinterpret_cast<LPNMLISTVIEW>(p_nmhdr);
+	const auto p_nmlv = reinterpret_cast<LPNMLISTVIEW>(p_nmhdr);
 	auto filter0 = m_pSet->GetSQL();
 	CString cs;
 	const auto pdb_doc = GetDocument();
-	switch (pNMLV->iSubItem)
+	switch (p_nmlv->iSubItem)
 	{
 	case CTRL_COL_CURVE: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_DATALEN].header_name;
-		break; // datalen
+		break; 
 	case CTRL_COL_INDEX: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_ID].header_name;
-		break; // ID
+		break; 
 	case CTRL_COL_SENSI: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_SENSILLUM_ID].header_name;
-		break; // sensillum_ID
+		break; 
 	case CTRL_COL_STIM1: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_STIM_ID].header_name;
-		break; // stim_ID
+		break; 
 	case CTRL_COL_CONC1: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_CONC_ID].header_name;
-		break; // conc_ID
+		break;
 	case CTRL_COL_STIM2: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_STIM2_ID].header_name;
-		break; // stim2_ID
+		break;
 	case CTRL_COL_CONC2: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_CONC2_ID].header_name;
-		break; // conc2_ID
+		break;
 	case CTRL_COL_NBSPK: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_NSPIKES].header_name;
-		break; // nspikes
+		break;
 	case CTRL_COL_FLAG: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_FLAG].header_name;
-		break; // flag
+		break;
 	default:
 		break;
 	}
@@ -577,22 +577,22 @@ void ViewdbWave::on_en_change_amplitude_span()
 
 void ViewdbWave::on_bn_clicked_check_filename()
 {
-	m_options_view_data_->b_display_file_name = IsDlgButtonChecked(IDC_CHECKFILENAME);
+	m_options_view_data_->b_display_file_name = (IsDlgButtonChecked(IDC_CHECKFILENAME) == BST_CHECKED);
 	m_data_list_ctrl.set_display_file_name(m_options_view_data_->b_display_file_name);
 	m_data_list_ctrl.refresh_display();
 }
 
 void ViewdbWave::on_hdn_end_track_list_ctrl(NMHDR * p_nmhdr, LRESULT * p_result)
 {
-	const auto phdr = reinterpret_cast<LPNMHEADER>(p_nmhdr);
-	if (phdr->iItem == CTRL_COL_CURVE)
-		m_data_list_ctrl.resize_signal_column(phdr->pitem->cxy);
+	const auto p_hdr = reinterpret_cast<LPNMHEADER>(p_nmhdr);
+	if (p_hdr->iItem == CTRL_COL_CURVE)
+		m_data_list_ctrl.resize_signal_column(p_hdr->pitem->cxy);
 	*p_result = 0;
 }
 
 void ViewdbWave::on_bn_clicked_check2()
 {
-	m_options_view_data_->b_set_mv_span = IsDlgButtonChecked(IDC_CHECK2);
+	m_options_view_data_->b_set_mv_span = (IsDlgButtonChecked(IDC_CHECK2) == BST_CHECKED);
 	m_data_list_ctrl.set_amplitude_adjust_mode(m_options_view_data_->b_set_mv_span);
 	m_data_list_ctrl.refresh_display();
 	GetDlgItem(IDC_AMPLITUDESPAN)->EnableWindow(m_options_view_data_->b_set_mv_span);
@@ -600,7 +600,7 @@ void ViewdbWave::on_bn_clicked_check2()
 
 void ViewdbWave::on_bn_clicked_check1()
 {
-	m_options_view_data_->b_set_time_span = IsDlgButtonChecked(IDC_CHECK1);
+	m_options_view_data_->b_set_time_span = (IsDlgButtonChecked(IDC_CHECK1) == BST_CHECKED);
 	// check intervals to avoid crash
 	if (m_options_view_data_->b_set_time_span)
 	{

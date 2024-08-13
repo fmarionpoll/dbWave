@@ -415,14 +415,14 @@ BOOL DlgImportFiles::GetExperimentParameters(const AcqDataDoc* pTo) const
 	DlgADExperiment dlg; 
 	dlg.m_bFilename = FALSE; 
 	auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	OPTIONS_INPUTDATA* pacqD = &(p_app->options_acq_data);
+	options_input* pacqD = &(p_app->options_acq_data);
 	dlg.options_inputdata_ = pacqD;
 	dlg.m_pdbDoc = m_pdbDoc;
 	const BOOL flag = dlg.DoModal();
 	if (IDOK == flag)
 	{
 		CWaveFormat* pwFTo = pTo->get_wave_format();
-		const CWaveFormat* pwFDlg = &pacqD->waveFormat;
+		const CWaveFormat* pwFDlg = &pacqD->wave_format;
 
 		pwFTo->cs_ad_card_name = pwFDlg->cs_ad_card_name;
 		pwFTo->cs_comment = pwFDlg->cs_comment;

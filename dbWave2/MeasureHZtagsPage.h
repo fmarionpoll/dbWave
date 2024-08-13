@@ -23,7 +23,7 @@ public:
 	int m_nbcursors;
 
 	// input parameters
-	OPTIONS_MEASURE* m_pMO;
+	options_measure* m_pMO;
 	CdbWaveDoc* m_pdbDoc;
 	AcqDataDoc* m_pdatDoc;
 	ChartData* m_pChartDataWnd;

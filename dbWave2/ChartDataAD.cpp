@@ -69,7 +69,7 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 		rect.left = 1;
 	rect.DeflateRect(0, 1);
 	p_dc->IntersectClipRect(rect);
-	p_dc->FillSolidRect(&rect, scope_structure_.crScopeFill);
+	p_dc->FillSolidRect(&rect, scope_structure_.cr_scope_fill);
 
 	auto* ppen_old = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 

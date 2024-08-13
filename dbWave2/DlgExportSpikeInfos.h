@@ -1,5 +1,5 @@
 #pragma once
-#include "OPTIONS_VIEWSPIKES.h"
+#include "options_view_spikes.h"
 
 
 class DlgExportSpikeInfos : public CDialog
@@ -33,7 +33,7 @@ public:
 	BOOL m_bexporttoExcel;
 	int m_istimulusindex;
 	BOOL m_brelation;
-	OPTIONS_VIEWSPIKES* m_pvdS;
+	options_view_spikes* m_pvdS;
 	BOOL m_bhist;
 	BOOL m_bhistampl;
 

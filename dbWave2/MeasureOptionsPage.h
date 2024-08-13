@@ -33,7 +33,7 @@ public:
 	UINT m_uiStimulusThreshold;
 	UINT m_uiStimuluschan;
 	// input parameters
-	OPTIONS_MEASURE* m_pMO{};
+	options_measure* m_pMO{};
 	CdbWaveDoc* m_pdbDoc{};
 	AcqDataDoc* m_pdatDoc{};
 	ChartData* m_pChartDataWnd{};

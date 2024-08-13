@@ -60,13 +60,13 @@ protected:
 	CEditCtrl mm_selected_channel2_;
 
 	int m_zoom_integer_ = 0;
-	SPKDETECTARRAY* m_p_array_from_app_ = nullptr;
+	spike_detection_array* m_p_array_from_app_ = nullptr;
 	SpikeDetectArray m_spk_detect_array_current_;
-	SPKDETECTPARM* m_p_detect_parameters_ = nullptr;
+	options_detect_spikes* m_p_detect_parameters_ = nullptr;
 	int m_i_detect_parameters_ = 0;
 
-	OPTIONS_VIEW_DATA* options_view_data_ = nullptr;
-	OPTIONS_MEASURE* options_measure_ = nullptr;
+	options_view_data* options_view_data_ = nullptr;
+	options_measure* options_measure_ = nullptr;
 
 	float m_sampling_rate_ = 0.f;
 	float m_spk_wnd_amplitude_ = 1.f;

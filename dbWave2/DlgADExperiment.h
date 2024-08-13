@@ -1,7 +1,7 @@
 #pragma once
 #include "afxeditbrowsectrl.h"
 #include "dbWaveDoc.h"
-#include "OPTIONS_INPUTDATA.h"
+#include "options_input.h"
 
 class DlgADExperiment : public CDialog
 {
@@ -43,7 +43,7 @@ protected:
 	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
 
 public:
-	OPTIONS_INPUTDATA* options_inputdata_{nullptr};
+	options_input* options_inputdata_{nullptr};
 	BOOL			m_bADexpt{true};
 	CWaveFormat*	m_pwaveFormat{nullptr};
 	CdbWaveDoc*		m_pdbDoc{nullptr};

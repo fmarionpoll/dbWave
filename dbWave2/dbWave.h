@@ -7,15 +7,15 @@
 #include <afxdao.h>
 
 #include "dbMultiDocTemplate.h"
-#include "OPTIONS_INPUTDATA.h"
+#include "options_input.h"
 #include "OPTIONS_MEASURE.h"
-#include "OPTIONS_IMPORT.h"
-#include "OPTIONS_OUTPUTDATA.h"
-#include "OPTIONS_VIEW_DATA.h"
-#include "OPTIONS_VIEWSPIKES.h"
-#include "SPK_CLASSIF.h"
-#include "SPKDETECTARRAY.h"
-#include "STIMDETECT.h"
+#include "options_import.h"
+#include "options_output.h"
+#include "options_view_data.h"
+#include "options_view_spikes.h"
+#include "options_spk_classification.h"
+#include "spike_detection_array.h"
+#include "options_detect_stimulus.h"
 
 
 class CdbWaveApp final : public CWinAppEx
@@ -49,16 +49,16 @@ public:
 	// Implementation
 	CStringArray m_cs_parameter_files;
 	CString m_comment;
-	STIMDETECT stimulus_detect;
-	SPKDETECTARRAY spk_detect_array;
-	SPK_CLASSIF spk_classification;
+	options_detect_stimulus stimulus_detect;
+	spike_detection_array spk_detect_array;
+	options_spk_classification spk_classification;
 
-	OPTIONS_VIEW_DATA options_view_data;
-	OPTIONS_VIEWSPIKES options_view_spikes;
-	OPTIONS_MEASURE options_view_data_measure;
-	OPTIONS_IMPORT options_import;
-	OPTIONS_INPUTDATA options_acq_data;
-	OPTIONS_OUTPUTDATA options_output_data;
+	options_view_data options_view_data;
+	options_view_spikes options_view_spikes;
+	options_measure options_view_data_measure;
+	options_import options_import;
+	options_input options_acq_data;
+	options_output options_output_data;
 
 	CMemFile* m_p_view_data_memory_file = nullptr;
 	CArray<CMemFile*, CMemFile*> view_spikes_memory_file_ptr_array;

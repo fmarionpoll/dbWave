@@ -1,9 +1,9 @@
 ﻿#pragma once
-#include "SPKDETECTPARM.h"
+#include "options_detect_spikes.h"
 
-class STIMDETECT : public CObject
+class options_detect_stimulus : public CObject
 {
-	DECLARE_SERIAL(STIMDETECT)
+	DECLARE_SERIAL(options_detect_stimulus)
 public:
 	BOOL bChanged = FALSE; // flag set TRUE if contents has changed
 	WORD wversion = 2; // version number
@@ -16,8 +16,8 @@ public:
 	int bMode = MODE_ON_OFF; // 0: ON/OFF (up/down); 1: OFF/ON (down/up); 2: ON/ON (up/up); 3: OFF/OFF (down, down);
 
 public:
-	STIMDETECT();
-	~STIMDETECT() override;
-	STIMDETECT& operator =(const STIMDETECT& arg);
+	options_detect_stimulus();
+	~options_detect_stimulus() override;
+	options_detect_stimulus& operator =(const options_detect_stimulus& arg);
 	void Serialize(CArchive& ar) override;
 };

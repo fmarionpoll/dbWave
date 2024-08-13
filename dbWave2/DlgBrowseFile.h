@@ -1,5 +1,5 @@
 #pragma once
-#include "OPTIONS_VIEW_DATA.h"
+#include "options_view_data.h"
 
 class DlgBrowseFile : public CDialog
 {
@@ -17,7 +17,7 @@ public:
 	BOOL m_splitcurves{ false };
 	BOOL m_multirowdisplay{ false };
 	BOOL m_keepforeachfile{ false };
-	OPTIONS_VIEW_DATA* mfBR{ nullptr };
+	options_view_data* mfBR{ nullptr };
 
 	// Implementation
 protected:

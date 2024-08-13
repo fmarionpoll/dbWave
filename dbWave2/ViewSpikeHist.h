@@ -39,8 +39,8 @@ protected:
 	CEditCtrl mm_rowheight; // row height
 	int m_bhistType{0};
 	SCROLLINFO m_scrollFilePos_infos{};
-	OPTIONS_VIEWSPIKES* m_pvdS{nullptr};
-	OPTIONS_VIEW_DATA* mdPM{nullptr};
+	options_view_spikes* m_pvdS{nullptr};
+	options_view_data* mdPM{nullptr};
 
 	long* m_pPSTH{nullptr}; // histogram data (pointer to array)
 	int m_sizepPSTH{0}; // nbins within histogram

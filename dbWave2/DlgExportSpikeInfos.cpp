@@ -4,7 +4,7 @@
 #include "StdAfx.h"
 #include "DlgExportSpikeInfos.h"
 
-#include "OPTIONS_VIEWSPIKES.h"
+#include "options_view_spikes.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

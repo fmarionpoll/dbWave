@@ -18,7 +18,7 @@ public:
 	void Dump(CDumpContext& dc) const override;
 	CNoteDoc* GetDocument();
 #endif
-#ifndef _DEBUG  // debug version in NotedocView.cpp
+#ifndef _DEBUG  // debug version in Note_docView.cpp
 	CNoteDoc* ViewNoteDoc::GetDocument() { return (CNoteDoc*)m_pDocument; }
 #endif
 	~ViewNoteDoc() override;
@@ -26,7 +26,7 @@ public:
 	// Generated message map functions
 protected:
 	afx_msg void OnDestroy();
-	afx_msg void OnToolsOpendatafiles();
+	afx_msg void on_tools_open_data_files();
 
 	DECLARE_MESSAGE_MAP()
 };

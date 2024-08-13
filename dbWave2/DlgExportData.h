@@ -8,7 +8,7 @@ public:
 	DlgExportData(CWnd* pParent = nullptr);
 	BOOL DestroyWindow() override;
 
-	OPTIONS_IMPORT iivO;
+	options_import iivO;
 	CdbWaveDoc* m_dbDoc {nullptr};
 	CString m_filesource;
 	CString m_filedest;

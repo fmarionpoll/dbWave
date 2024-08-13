@@ -1,5 +1,5 @@
 ﻿#include "stdafx.h"
-#include "STIMDETECT.h"
+#include "options_detect_stimulus.h"
 
 
 
@@ -8,15 +8,15 @@
 #endif
 
 
-IMPLEMENT_SERIAL(STIMDETECT, CObject, 0)
+IMPLEMENT_SERIAL(options_detect_stimulus, CObject, 0)
 
-STIMDETECT::STIMDETECT()
+options_detect_stimulus::options_detect_stimulus()
 = default;
 
-STIMDETECT::~STIMDETECT()
+options_detect_stimulus::~options_detect_stimulus()
 = default;
 
-STIMDETECT& STIMDETECT::operator =(const STIMDETECT& arg)
+options_detect_stimulus& options_detect_stimulus::operator =(const options_detect_stimulus & arg)
 {
 	if (this != &arg)
 	{
@@ -31,7 +31,7 @@ STIMDETECT& STIMDETECT::operator =(const STIMDETECT& arg)
 	return *this;
 }
 
-void STIMDETECT::Serialize(CArchive& ar)
+void options_detect_stimulus::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{

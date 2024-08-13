@@ -3,7 +3,7 @@
 #include "Editctrl.h"
 #include "ChartData.h"
 #include "AcqDataDoc.h"
-#include "OPTIONS_IMPORT.h"
+#include "options_import.h"
 
 class DlgImportGenericData : public CDialog
 {
@@ -13,7 +13,7 @@ class DlgImportGenericData : public CDialog
 public:
 	DlgImportGenericData(CWnd* pParent = nullptr);
 
-	OPTIONS_IMPORT* piivO{ nullptr };
+	options_import* piivO{ nullptr };
 	BOOL bConvert{ false };
 	CStringArray* m_pfilenameArray{ nullptr };
 	CEditCtrl mm_nb_AD_channels;

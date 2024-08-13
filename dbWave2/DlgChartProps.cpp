@@ -43,11 +43,11 @@ END_MESSAGE_MAP()
 BOOL DlgChartProps::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	SCOPESTRUCT* pStruct = m_pscope->get_scope_parameters();
-	m_xcells = pStruct->iXCells;
-	m_ycells = pStruct->iYCells;
-	m_xyticks = pStruct->iXTicks;
-	m_xytickline = pStruct->iXTickLine;
+	options_scope_struct* pStruct = m_pscope->get_scope_parameters();
+	m_xcells = pStruct->i_x_cells;
+	m_ycells = pStruct->i_y_cells;
+	m_xyticks = pStruct->i_x_ticks;
+	m_xytickline = pStruct->i_x_tick_line;
 
 	VERIFY(mm_xcells.SubclassDlgItem(IDC_EDIT3, this));
 	VERIFY(mm_ycells.SubclassDlgItem(IDC_EDIT6, this));
@@ -77,8 +77,8 @@ void DlgChartProps::OnEnChangeXCells()
 
 		if (m_xcells != x_cells)
 		{
-			SCOPESTRUCT* pStruct = m_pscope->get_scope_parameters();
-			pStruct->xScaleUnitValue = pStruct->xScaleUnitValue * x_cells / m_xcells;
+			options_scope_struct* pStruct = m_pscope->get_scope_parameters();
+			pStruct->x_scale_unit_value = pStruct->x_scale_unit_value * x_cells / m_xcells;
 			m_pscope->set_n_x_scale_cells(m_xcells, m_xyticks, m_xytickline);
 			m_pscope->Invalidate();
 		}
@@ -96,8 +96,8 @@ void DlgChartProps::OnEnChangeYCells()
 		if (m_ycells < 1) m_ycells = 1;
 		if (m_ycells != y_cells)
 		{
-			SCOPESTRUCT* pStruct = m_pscope->get_scope_parameters();
-			pStruct->yScaleUnitValue = pStruct->yScaleUnitValue * y_cells / m_ycells;
+			options_scope_struct* pStruct = m_pscope->get_scope_parameters();
+			pStruct->y_scale_unit_value = pStruct->y_scale_unit_value * y_cells / m_ycells;
 			m_pscope->set_ny_scale_cells(m_ycells, m_xyticks, m_xytickline);
 			m_pscope->Invalidate();
 		}
@@ -151,7 +151,7 @@ void DlgChartProps::OnBackgroundColor()
 	CColorDialog dlg(m_crScopeFill, CC_RGBINIT, nullptr);
 	if (IDOK != dlg.DoModal())
 		return;
-	(m_pscope->get_scope_parameters())->crScopeFill = dlg.GetColor();
+	(m_pscope->get_scope_parameters())->cr_scope_fill = dlg.GetColor();
 	m_pscope->Invalidate();
 }
 
@@ -160,6 +160,6 @@ void DlgChartProps::OnGridColor()
 	CColorDialog dlg(m_crScopeGrid, CC_RGBINIT, nullptr);
 	if (IDOK != dlg.DoModal())
 		return;
-	(m_pscope->get_scope_parameters())->crScopeGrid = dlg.GetColor();
+	(m_pscope->get_scope_parameters())->cr_scope_grid = dlg.GetColor();
 	m_pscope->Invalidate();
 }

@@ -308,11 +308,11 @@ void ViewData::on_edit_copy()
 			const CClientDC attrib_dc(this); // Create and attach attribute DC
 			m_dc.SetAttribDC(attrib_dc.GetSafeHdc()); // from current screen
 
-			const auto old_scope_struct= new SCOPESTRUCT();
-			SCOPESTRUCT* new_scope_struct = chart_data.get_scope_parameters();
+			const auto old_scope_struct= new options_scope_struct();
+			options_scope_struct* new_scope_struct = chart_data.get_scope_parameters();
 			*old_scope_struct = *new_scope_struct;
-			new_scope_struct->bDrawframe = options_view_data_->b_frame_rect;
-			new_scope_struct->bClipRect = options_view_data_->b_clip_rect;
+			new_scope_struct->b_draw_frame = options_view_data_->b_frame_rect;
+			new_scope_struct->b_clip_rect = options_view_data_->b_clip_rect;
 			chart_data.print(&m_dc, &rect);
 			*new_scope_struct = *old_scope_struct;
 
@@ -1540,11 +1540,11 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 	if (options_view_data_->b_complete_record)
 		very_last = GetDocument()->db_get_data_len() - 1;
 
-	SCOPESTRUCT old_scope_structure;
-	SCOPESTRUCT* scope_structure = chart_data.get_scope_parameters();
+	options_scope_struct old_scope_structure;
+	options_scope_struct* scope_structure = chart_data.get_scope_parameters();
 	old_scope_structure = *scope_structure;
-	scope_structure->bDrawframe = options_view_data_->b_frame_rect;
-	scope_structure->bClipRect = options_view_data_->b_clip_rect;
+	scope_structure->b_draw_frame = options_view_data_->b_frame_rect;
+	scope_structure->b_clip_rect = options_view_data_->b_clip_rect;
 
 	// loop through all files	--------------------------------------------------------
 	const int old_dc = p_dc->SaveDC(); // save DC

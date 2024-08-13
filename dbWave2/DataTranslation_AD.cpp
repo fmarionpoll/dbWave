@@ -26,22 +26,22 @@ BOOL DataTranslation_AD::OpenSubSystem(const CString card_name)
 	return TRUE;
 }
 
-BOOL DataTranslation_AD::InitSubSystem(OPTIONS_INPUTDATA* pADC_options)
+BOOL DataTranslation_AD::InitSubSystem(options_input* pADC_options)
 {
 	try
 	{
 		ASSERT(GetHDass() != NULL);
 
 		m_pOptions = pADC_options;
-		CWaveFormat* pWFormat = &(m_pOptions->waveFormat);
+		CWaveFormat* pWFormat = &(m_pOptions->wave_format);
 
 		pWFormat->full_scale_volts = GetMaxRange() - GetMinRange();
 		int iresolution = GetResolution();
 		pWFormat->bin_span = ((1L << iresolution) - 1);
 
 		// set max channel number according to input configuration m_numchansMAX
-		m_pOptions->bChannelType = GetChannelType();
-		if (m_pOptions->bChannelType == OLx_CHNT_SINGLEENDED)
+		m_pOptions->b_channel_type = GetChannelType();
+		if (m_pOptions->b_channel_type == OLx_CHNT_SINGLEENDED)
 			m_numchansMAX = GetSSCaps(OLSSC_MAXSECHANS);
 		else
 			m_numchansMAX = GetSSCaps(OLSSC_MAXDICHANS);
@@ -70,12 +70,12 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_INPUTDATA* pADC_options)
 		SetTrigger(trig);
 
 		// number of channels
-		if (m_pOptions->bChannelType == OLx_CHNT_SINGLEENDED && GetSSCaps(OLSSC_SUP_SINGLEENDED) == NULL)
-			m_pOptions->bChannelType = OLx_CHNT_DIFFERENTIAL;
-		if (m_pOptions->bChannelType == OLx_CHNT_DIFFERENTIAL && GetSSCaps(OLSSC_SUP_DIFFERENTIAL) == NULL)
-			m_pOptions->bChannelType = OLx_CHNT_SINGLEENDED;
-		SetChannelType(m_pOptions->bChannelType);
-		if (m_pOptions->bChannelType == OLx_CHNT_SINGLEENDED)
+		if (m_pOptions->b_channel_type == OLx_CHNT_SINGLEENDED && GetSSCaps(OLSSC_SUP_SINGLEENDED) == NULL)
+			m_pOptions->b_channel_type = OLx_CHNT_DIFFERENTIAL;
+		if (m_pOptions->b_channel_type == OLx_CHNT_DIFFERENTIAL && GetSSCaps(OLSSC_SUP_DIFFERENTIAL) == NULL)
+			m_pOptions->b_channel_type = OLx_CHNT_SINGLEENDED;
+		SetChannelType(m_pOptions->b_channel_type);
+		if (m_pOptions->b_channel_type == OLx_CHNT_SINGLEENDED)
 			m_numchansMAX = GetSSCaps(OLSSC_MAXSECHANS);
 		else
 			m_numchansMAX = GetSSCaps(OLSSC_MAXDICHANS);
@@ -97,7 +97,7 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_INPUTDATA* pADC_options)
 		for (int i = 0; i < pWFormat->scan_count; i++)
 		{
 			// transfer data from CWaveChan to chanlist of the A/D subsystem
-			CWaveChan* pChannel = (m_pOptions->chanArray).get_p_channel(i);
+			CWaveChan* pChannel = (m_pOptions->chan_array).get_p_channel(i);
 			if (pChannel->am_adchannel > m_numchansMAX - 1 && pChannel->am_adchannel != 16)
 				pChannel->am_adchannel = m_numchansMAX - 1;
 			SetChannelList(i, pChannel->am_adchannel);
@@ -124,20 +124,20 @@ BOOL DataTranslation_AD::InitSubSystem(OPTIONS_INPUTDATA* pADC_options)
 	return TRUE;
 }
 
-void DataTranslation_AD::DeclareBuffers(OPTIONS_INPUTDATA* pADC_options)
+void DataTranslation_AD::DeclareBuffers(options_input* pADC_options)
 {
 	DeleteBuffers();
 
-	CWaveFormat* pWFormat = &(pADC_options->waveFormat);
+	CWaveFormat* pWFormat = &(pADC_options->wave_format);
 	// make sure that buffer length contains at least nacq chans
-	if (pWFormat->buffer_size < pWFormat->scan_count * m_pOptions->iundersample)
-		pWFormat->buffer_size = pWFormat->scan_count * m_pOptions->iundersample;
+	if (pWFormat->buffer_size < pWFormat->scan_count * m_pOptions->i_under_sample)
+		pWFormat->buffer_size = pWFormat->scan_count * m_pOptions->i_under_sample;
 
 	// define buffer length
-	const float sweepduration = m_pOptions->sweepduration;
+	const float sweepduration = m_pOptions->sweep_duration;
 	const long chsweeplength = static_cast<long>(float(sweepduration) * pWFormat->sampling_rate_per_channel / float(
-		m_pOptions->iundersample));
-	m_chbuflen = chsweeplength * m_pOptions->iundersample / pWFormat->buffer_n_items;
+		m_pOptions->i_under_sample));
+	m_chbuflen = chsweeplength * m_pOptions->i_under_sample / pWFormat->buffer_n_items;
 	m_buflen = m_chbuflen * pWFormat->scan_count;
 
 	// declare buffers to DT

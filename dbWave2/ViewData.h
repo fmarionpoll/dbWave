@@ -51,8 +51,8 @@ protected:
 	int scan_count_ = 0;
 	float channel_rate_ = 0.;
 
-	OPTIONS_VIEW_DATA* options_view_data_ = nullptr;
-	OPTIONS_MEASURE* options_data_measures_ = nullptr;
+	options_view_data* options_view_data_ = nullptr;
+	options_measure* options_data_measures_ = nullptr;
 
 	void print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_info);
 	CString convert_file_index(long l_first, long l_last) const;

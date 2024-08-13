@@ -1102,7 +1102,7 @@ void ViewSpikeDetection::detect_all(const BOOL b_all)
 		m_pSpkList = spike_list;
 		if (m_pSpkList->get_spikes_count() == 0)
 		{
-			SPKDETECTPARM* pFC = m_spk_detect_array_current_.GetItem(i);
+			options_detect_spikes* pFC = m_spk_detect_array_current_.GetItem(i);
 			ASSERT_VALID(pFC);
 			ASSERT(pFC != NULL);
 			m_pSpkList->init_spike_list(db_document->m_p_dat, pFC);
@@ -1278,7 +1278,7 @@ int ViewSpikeDetection::detect_stimulus_1(int channel_index)
 
 int ViewSpikeDetection::detect_method_1(const WORD channel_index)
 {
-	const SPKDETECTPARM* spike_detection_parameters = m_spk_detect_array_current_.GetItem(channel_index);
+	const options_detect_spikes* spike_detection_parameters = m_spk_detect_array_current_.GetItem(channel_index);
 	if (spike_detection_parameters->extract_transform != spike_detection_parameters->detect_transform &&
 		spike_detection_parameters->extract_transform != 0)
 	{
@@ -1788,11 +1788,11 @@ void ViewSpikeDetection::on_tools_data_series()
 
 void ViewSpikeDetection::print_data_cartridge(CDC* p_dc, ChartData* p_data_chart_wnd, const CRect* p_rect)
 {
-	SCOPESTRUCT* p_struct = p_data_chart_wnd->get_scope_parameters();
-	const auto b_draw_f = p_struct->bDrawframe;
-	p_struct->bDrawframe = TRUE;
+	options_scope_struct* p_struct = p_data_chart_wnd->get_scope_parameters();
+	const auto b_draw_f = p_struct->b_draw_frame;
+	p_struct->b_draw_frame = TRUE;
 	p_data_chart_wnd->print(p_dc, p_rect, (options_view_data_->b_contours == 1));
-	p_struct->bDrawframe = b_draw_f;
+	p_struct->b_draw_frame = b_draw_f;
 
 	// data vertical and horizontal bars
 	const auto comments = print_data_bars(p_dc, p_data_chart_wnd, p_rect);
@@ -2986,7 +2986,7 @@ void ViewSpikeDetection::update_detection_settings(const int i_sel_parameters)
 
 void ViewSpikeDetection::update_detection_controls()
 {
-	const SPKDETECTPARM* detect_parameters = m_pSpkList->get_detection_parameters();
+	const options_detect_spikes* detect_parameters = m_pSpkList->get_detection_parameters();
 	m_detect_what_combo.SetCurSel(detect_parameters->detect_what);
 	m_detect_channel_combo.SetCurSel(detect_parameters->detect_channel);
 	m_transform_combo.SetCurSel(detect_parameters->detect_transform);

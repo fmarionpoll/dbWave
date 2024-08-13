@@ -1,15 +1,15 @@
 ﻿#include "StdAfx.h"
 #include "OPTIONS_MEASURE.h"
 
-IMPLEMENT_SERIAL(OPTIONS_MEASURE, CObject, 0 /* schema number*/)
+IMPLEMENT_SERIAL(options_measure, CObject, 0 /* schema number*/)
 
-OPTIONS_MEASURE::OPTIONS_MEASURE()
+options_measure::options_measure()
 = default;
 
-OPTIONS_MEASURE::~OPTIONS_MEASURE()
+options_measure::~options_measure()
 = default;
 
-OPTIONS_MEASURE& OPTIONS_MEASURE::operator =(const OPTIONS_MEASURE& arg)
+options_measure& options_measure::operator =(const options_measure& arg)
 {
 	if (this != &arg)
 	{
@@ -51,7 +51,7 @@ OPTIONS_MEASURE& OPTIONS_MEASURE::operator =(const OPTIONS_MEASURE& arg)
 	return *this;
 }
 
-void OPTIONS_MEASURE::Serialize(CArchive& ar)
+void options_measure::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring()) // save data .....................
 	{

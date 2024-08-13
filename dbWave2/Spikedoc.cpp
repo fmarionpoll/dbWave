@@ -412,7 +412,7 @@ CString CSpikeDoc::get_file_infos()
 // each line represents 1 recording
 // we start with a header, then each file is scanned and exported
 // if n_intervals < 0: export all spikes // feb 23, 2009
-void CSpikeDoc::export_spk_latencies(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, const int intervals_count, const int spike_list_index, const int class_index)
+void CSpikeDoc::export_spk_latencies(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, const int intervals_count, const int spike_list_index, const int class_index)
 {
 	CString cs_dummy;
 	const auto spike_list = &spike_list_array_[spike_list_index];
@@ -442,7 +442,7 @@ void CSpikeDoc::export_spk_latencies(CSharedFile* shared_file, const OPTIONS_VIE
 	}
 }
 
-void CSpikeDoc::export_spk_latencies(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, const int n_intervals, const CString& cs_file_comment)
+void CSpikeDoc::export_spk_latencies(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, const int n_intervals, const CString& cs_file_comment)
 {
 	CString cs_dummy;
 	// spike class: -1(one:selected); 0(all); 1(all:split)
@@ -481,7 +481,7 @@ void CSpikeDoc::export_spk_latencies(CSharedFile* shared_file, const OPTIONS_VIE
 	}
 }
 
-void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, long* sum0, const int spike_list_index, const int class_index)
+void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, long* sum0, const int spike_list_index, const int class_index)
 {
 	CString cs_dummy;
 	const auto spike_list = &spike_list_array_[spike_list_index];
@@ -576,7 +576,7 @@ void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, const OPTIONS_VIEWSPIK
 	}
 }
 
-void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, const CString&
+void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, long* pl_sum0, const CString&
                               cs_file_comment)
 {
 	CString cs_dummy;
@@ -640,7 +640,7 @@ void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, const OPTIONS_VIEWSPIK
 // export histograms of the amplitude of the spikes found in each file of the file series
 // export type = 4
 // same tb as PSTH: each line represents one record, 1 class
-void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, long* p_hist0, const int spike_list_index,
+void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, long* p_hist0, const int spike_list_index,
                                                const int class_index)
 {
 	// ................................DATA
@@ -739,7 +739,7 @@ void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* shared_file, const O
 	}
 }
 
-void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, long* p_hist, const CString&
+void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, long* p_hist, const CString&
                                          cs_file_comment)
 {
 	const auto spike_list = &spike_list_array_[current_spike_list_index_];
@@ -784,7 +784,7 @@ void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* shared_file, const O
 // option 3: export spike amplitudes (max - min)
 // one file at a time, organized in columns
 
-void CSpikeDoc::export_spk_attributes_one_file(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes)
+void CSpikeDoc::export_spk_attributes_one_file(CSharedFile* shared_file, const options_view_spikes* options_view_spikes)
 {
 	int ii_offset0 = 0;
 	if (!options_view_spikes->babsolutetime && m_stimulus_intervals.n_items > 0)
@@ -890,7 +890,7 @@ void CSpikeDoc::export_spk_attributes_one_file(CSharedFile* shared_file, const O
 }
 
 // Describe the type of data exported
-void CSpikeDoc::export_table_title(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes, int n_files)
+void CSpikeDoc::export_table_title(CSharedFile* shared_file, options_view_spikes* options_view_spikes, int n_files)
 {
 	CString cs_dummy;
 
@@ -959,7 +959,7 @@ void CSpikeDoc::export_table_title(CSharedFile* shared_file, OPTIONS_VIEWSPIKES*
 
 // Row of column headers for the database parameters
 // returns number of columns used
-void CSpikeDoc::export_headers_descriptors(CSharedFile* shared_file, OPTIONS_VIEWSPIKES* options_view_spikes)
+void CSpikeDoc::export_headers_descriptors(CSharedFile* shared_file, options_view_spikes* options_view_spikes)
 {
 	CString cs_dummy;
 
@@ -1010,7 +1010,7 @@ void CSpikeDoc::export_headers_descriptors(CSharedFile* shared_file, OPTIONS_VIE
 }
 
 // Row (continuation) of column headers for the measures
-void CSpikeDoc::export_headers_data(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes)
+void CSpikeDoc::export_headers_data(CSharedFile* shared_file, const options_view_spikes* options_view_spikes)
 {
 	CString cs_dummy;
 	// header of the data
@@ -1100,7 +1100,7 @@ void CSpikeDoc::export_headers_data(CSharedFile* shared_file, const OPTIONS_VIEW
 
 // output descriptors of each record
 // TODO: output descriptors from the database and not from the spike files ??
-void CSpikeDoc::export_spk_file_comment(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, const int class_index,
+void CSpikeDoc::export_spk_file_comment(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, const int class_index,
                                      const CString& cs_file_comment)
 {
 	CString cs_dummy;
@@ -1197,7 +1197,7 @@ void CSpikeDoc::export_spk_file_comment(CSharedFile* shared_file, const OPTIONS_
 //	*plSum0
 // ATTENTION! no bounds checking performed on plSum0
 
-long CSpikeDoc::build_psth(const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, const int class_index)
+long CSpikeDoc::build_psth(const options_view_spikes* options_view_spikes, long* pl_sum0, const int class_index)
 {
 	// adjust parameters
 	long n = 0;
@@ -1290,7 +1290,7 @@ long CSpikeDoc::build_psth(const OPTIONS_VIEWSPIKES* options_view_spikes, long* 
 //	*plSum0
 // ATTENTION! no bounds checking performed on plSum0
 
-long CSpikeDoc::build_isi(const OPTIONS_VIEWSPIKES* options_view_spikes, long* pl_sum0, const int class_index)
+long CSpikeDoc::build_isi(const options_view_spikes* options_view_spikes, long* pl_sum0, const int class_index)
 {
 	const auto spike_list = &spike_list_array_[current_spike_list_index_];
 
@@ -1383,7 +1383,7 @@ long CSpikeDoc::build_isi(const OPTIONS_VIEWSPIKES* options_view_spikes, long* p
 //		number of spikes used as time ref for autocorrelation
 // ATTENTION! no bounds checking performed on plSum0
 
-long CSpikeDoc::build_autocorrelation(const OPTIONS_VIEWSPIKES* options_view_spikes, long* sum0, const int class_index)
+long CSpikeDoc::build_autocorrelation(const options_view_spikes* options_view_spikes, long* sum0, const int class_index)
 {
 	long n = 0; // number of pivot spikes used to build autocorrelation
 	const auto spike_list = &spike_list_array_[current_spike_list_index_];
@@ -1491,7 +1491,7 @@ long CSpikeDoc::build_autocorrelation(const OPTIONS_VIEWSPIKES* options_view_spi
 //	number of spikes used as time ref for autocorrelation
 // ATTENTION! no bounds checking performed on plSum0
 
-long CSpikeDoc::build_psth_autocorrelation(const OPTIONS_VIEWSPIKES* options_view_spikes, long* sum0, const int class_index)
+long CSpikeDoc::build_psth_autocorrelation(const options_view_spikes* options_view_spikes, long* sum0, const int class_index)
 {
 	long n = 0; // number of 'pivot spikes'
 	auto spike_list = &spike_list_array_[current_spike_list_index_];
@@ -1602,7 +1602,7 @@ long CSpikeDoc::build_psth_autocorrelation(const OPTIONS_VIEWSPIKES* options_vie
 	return n;
 }
 
-void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, double* value, const int spike_list_index,
+void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, double* value, const int spike_list_index,
                                         const int class_index)
 {
 	CString cs_dummy;
@@ -1690,7 +1690,7 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, const OPTIONS_
 	}
 }
 
-void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, const OPTIONS_VIEWSPIKES* options_view_spikes, double* value,
+void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, double* value,
                                      const CString& cs_file_comment)
 {
 	const auto spike_list = &spike_list_array_[current_spike_list_index_];

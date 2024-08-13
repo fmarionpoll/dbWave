@@ -191,7 +191,7 @@ BOOL AcqDataDoc::OnNewDocument()
 	return TRUE;
 }
 
-CString AcqDataDoc::get_data_file_infos(const OPTIONS_VIEW_DATA* p_vd) const
+CString AcqDataDoc::get_data_file_infos(const options_view_data* p_vd) const
 {
 	const CString sep('\t');
 	CString cs_dummy;

@@ -2,9 +2,9 @@
 
 // spike classification parameters
 
-class SPK_CLASSIF : public CObject
+class options_spk_classification final : public CObject
 {
-	DECLARE_SERIAL(SPK_CLASSIF)
+	DECLARE_SERIAL(options_spk_classification)
 
 	BOOL b_changed; // flag set TRUE if contents has changed
 	WORD w_version {2}; // version number
@@ -45,9 +45,9 @@ class SPK_CLASSIF : public CObject
 
 	void* p_template{nullptr};
 
-	SPK_CLASSIF();
-	~SPK_CLASSIF() override;
-	SPK_CLASSIF& operator =(const SPK_CLASSIF& arg); // operator redefinition
+	options_spk_classification();
+	~options_spk_classification() override;
+	options_spk_classification& operator =(const options_spk_classification& arg); // operator redefinition
 	void Serialize(CArchive& ar) override;
 	void create_tpl();
 };
