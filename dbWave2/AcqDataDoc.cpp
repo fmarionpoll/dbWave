@@ -191,7 +191,7 @@ BOOL AcqDataDoc::OnNewDocument()
 	return TRUE;
 }
 
-CString AcqDataDoc::get_data_file_infos(const OPTIONS_VIEWDATA* p_vd) const
+CString AcqDataDoc::get_data_file_infos(const OPTIONS_VIEW_DATA* p_vd) const
 {
 	const CString sep('\t');
 	CString cs_dummy;
@@ -200,13 +200,13 @@ CString AcqDataDoc::get_data_file_infos(const OPTIONS_VIEWDATA* p_vd) const
 	const auto waveformat = get_wave_format();
 
 	// date and time
-	if (p_vd->bacqdate)
+	if (p_vd->b_acq_date)
 		cs_out += (waveformat->acquisition_time).Format("\t%#d %B %Y");
-	if (p_vd->bacqtime)
+	if (p_vd->b_acq_time)
 		cs_out += (waveformat->acquisition_time).Format("\t%X");
 
 	// file size
-	if (p_vd->bfilesize) // file size
+	if (p_vd->b_file_size) // file size
 	{
 		cs_dummy.Format(_T("\t%-10li"), get_doc_channel_length());
 		cs_out += cs_dummy;
@@ -214,21 +214,21 @@ CString AcqDataDoc::get_data_file_infos(const OPTIONS_VIEWDATA* p_vd) const
 		cs_out += cs_dummy;
 	}
 
-	if (p_vd->bacqcomments)
+	if (p_vd->b_acq_comments)
 	{
 		cs_dummy = waveformat->get_comments(sep);
 		cs_out += cs_dummy;
 	}
 
-	if (p_vd->bacqchcomment || p_vd->bacqchsetting)
+	if (p_vd->b_acq_channel_comment || p_vd->b_acq_channel_setting)
 	{
 		CString cs;
 		for (auto i_chan = 0; i_chan < waveformat->scan_count; i_chan++)
 		{
 			const auto p_chan = (get_wave_channels_array())->get_p_channel(i_chan);
-			if (p_vd->bacqchcomment)
+			if (p_vd->b_acq_channel_comment)
 				cs_out += sep + p_chan->am_csComment;
-			if (p_vd->bacqchsetting)
+			if (p_vd->b_acq_channel_setting)
 			{
 				cs.Format(_T("\theadstage=%s\tgain=%.0f\tfilter= %s\t%i Hz"),
 						(LPCTSTR)p_chan->am_csheadstage,

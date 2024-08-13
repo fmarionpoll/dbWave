@@ -32,13 +32,13 @@ BOOL DlgBrowseFile::OnInitDialog()
 	CDialog::OnInitDialog();
 	if (mfBR != nullptr)
 	{
-		m_allchannels = mfBR->bAllChannels;
-		m_centercurves = mfBR->bCenterCurves;
+		m_allchannels = mfBR->b_all_channels;
+		m_centercurves = mfBR->b_center_curves;
 		m_completefile = mfBR->b_complete_record;
-		m_splitcurves = mfBR->bSplitCurves;
-		m_maximizegain = mfBR->bMaximizeGain;
+		m_splitcurves = mfBR->b_split_curves;
+		m_maximizegain = mfBR->b_maximize_gain;
 		m_multirowdisplay = mfBR->b_multiple_rows;
-		m_keepforeachfile = mfBR->bKeepForEachFile;
+		m_keepforeachfile = mfBR->b_keep_for_each_file;
 	}
 	UpdateData(FALSE);
 	return TRUE; 
@@ -47,13 +47,13 @@ BOOL DlgBrowseFile::OnInitDialog()
 void DlgBrowseFile::OnOK()
 {
 	UpdateData(TRUE);
-	mfBR->bAllChannels = m_allchannels;
-	mfBR->bCenterCurves = m_centercurves;
+	mfBR->b_all_channels = m_allchannels;
+	mfBR->b_center_curves = m_centercurves;
 	mfBR->b_complete_record = m_completefile;
-	mfBR->bSplitCurves = m_splitcurves;
-	mfBR->bMaximizeGain = m_maximizegain;
+	mfBR->b_split_curves = m_splitcurves;
+	mfBR->b_maximize_gain = m_maximizegain;
 	mfBR->b_multiple_rows = m_multirowdisplay;
-	mfBR->bKeepForEachFile = m_keepforeachfile;
+	mfBR->b_keep_for_each_file = m_keepforeachfile;
 	mfBR->b_changed = TRUE;
 	CDialog::OnOK();
 }

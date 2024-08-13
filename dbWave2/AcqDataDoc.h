@@ -11,7 +11,7 @@ auto constexpr MAX_BUFFER_LENGTH_AS_BYTES = 614400;
 
 #include "WaveBuf.h"
 #include "datafile_X.h"
-#include "OPTIONS_VIEWDATA.h"
+#include "OPTIONS_VIEW_DATA.h"
 
 class AcqDataDoc : public CDocument
 {
@@ -21,7 +21,7 @@ class AcqDataDoc : public CDocument
 	AcqDataDoc();
 	~AcqDataDoc() override;
 
-	CString get_data_file_infos(const OPTIONS_VIEWDATA* p_vd) const;
+	CString get_data_file_infos(const OPTIONS_VIEW_DATA* p_vd) const;
 	void export_data_file_to_txt_file(CStdioFile* pdata_dest);
 	BOOL save_document(CString& sz_path_name);
 	BOOL open_document(CString& sz_path_name);

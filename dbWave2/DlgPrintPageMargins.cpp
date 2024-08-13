@@ -33,10 +33,10 @@ BOOL DlgPrintPageMargins::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_leftPageMargin = mdPM->leftPageMargin;
-	m_bottomPageMargin = mdPM->bottomPageMargin;
-	m_rightPageMargin = mdPM->rightPageMargin;
-	m_topPageMargin = mdPM->topPageMargin;
+	m_leftPageMargin = mdPM->left_page_margin;
+	m_bottomPageMargin = mdPM->bottom_page_margin;
+	m_rightPageMargin = mdPM->right_page_margin;
+	m_topPageMargin = mdPM->top_page_margin;
 	UpdateData(FALSE);
 
 	return TRUE; // return TRUE  unless you set the focus to a control
@@ -46,10 +46,10 @@ void DlgPrintPageMargins::OnOK()
 {
 	UpdateData(TRUE);
 
-	mdPM->leftPageMargin = m_leftPageMargin;
-	mdPM->bottomPageMargin = m_bottomPageMargin;
-	mdPM->rightPageMargin = m_rightPageMargin;
-	mdPM->topPageMargin = m_topPageMargin;
+	mdPM->left_page_margin = m_leftPageMargin;
+	mdPM->bottom_page_margin = m_bottomPageMargin;
+	mdPM->right_page_margin = m_rightPageMargin;
+	mdPM->top_page_margin = m_topPageMargin;
 
 	CDialog::OnOK();
 }

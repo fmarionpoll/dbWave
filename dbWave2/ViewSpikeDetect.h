@@ -65,7 +65,7 @@ protected:
 	SPKDETECTPARM* m_p_detect_parameters_ = nullptr;
 	int m_i_detect_parameters_ = 0;
 
-	OPTIONS_VIEWDATA* options_view_data_ = nullptr;
+	OPTIONS_VIEW_DATA* options_view_data_ = nullptr;
 	OPTIONS_MEASURE* options_measure_ = nullptr;
 
 	float m_sampling_rate_ = 0.f;

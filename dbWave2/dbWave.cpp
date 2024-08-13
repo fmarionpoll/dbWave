@@ -397,7 +397,7 @@ void CdbWaveApp::serialize_parameters(int n, CArchive& ar)
 
 void CdbWaveApp::SetPrinterOrientation()
 {
-	if (options_view_data.horzRes <= 0 || options_view_data.vertRes <= 0)
+	if (options_view_data.horizontal_resolution <= 0 || options_view_data.vertical_resolution <= 0)
 		return;
 
 	// Get default printer settings.
@@ -412,7 +412,7 @@ void CdbWaveApp::SetPrinterOrientation()
 		if (p_dev_mode)
 		{
 			// Change printer settings in here.
-			if (options_view_data.horzRes > options_view_data.vertRes)
+			if (options_view_data.horizontal_resolution > options_view_data.vertical_resolution)
 				p_dev_mode->dmOrientation = DMORIENT_LANDSCAPE;
 			else
 				p_dev_mode->dmOrientation = DMORIENT_PORTRAIT;
@@ -525,11 +525,11 @@ void CdbWaveApp::OnFileOpen()
 	//Spikes (*.spk)|*.spk|
 	//Text (*.txt)|*.txt|
 	//Project (*.prj)|*.prj|
-	get_file_names_dlg(IDS_FILEDESCRIP, nullptr, &options_view_data.nfilterindex, &filenames);
+	get_file_names_dlg(IDS_FILEDESCRIP, nullptr, &options_view_data.n_filter_index, &filenames);
 	if (filenames.GetSize() == 0)
 		return;
 
-	switch (options_view_data.nfilterindex)
+	switch (options_view_data.n_filter_index)
 	{
 	case 1: // mdb
 		OpenDocumentFile(filenames[0]);

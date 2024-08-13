@@ -87,7 +87,7 @@ protected:
 	float t_xy_left_{ 0.f };
 
 	SPK_CLASSIF* spike_classification_{};
-	OPTIONS_VIEWDATA* options_view_data_{};
+	OPTIONS_VIEW_DATA* options_view_data_{};
 
 	const float time_unit_{ 1000.f }; // 1=s, 1000f=ms, 1e6=us
 	const float mv_unit_ {1000.f};		// 1=V, 1000f=mV, 1e6=uV

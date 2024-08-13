@@ -60,13 +60,13 @@ void CPrintDataCommentsDlg::OnOK()
 {
 	UpdateData(TRUE);
 
-	mdPM->bAcqComment = m_bacqcomment;
-	mdPM->bAcqDateTime = m_bacqdatetime;
-	mdPM->bChansComment = m_bchanscomment;
-	mdPM->bChanSettings = m_bchansettings;
-	mdPM->bDocName = m_bdocname;
-	mdPM->textseparator = m_textseparator;
-	mdPM->fontsize = m_fontsize;
+	mdPM->b_acq_comment = m_bacqcomment;
+	mdPM->b_acq_date_time = m_bacqdatetime;
+	mdPM->b_channel_comment = m_bchanscomment;
+	mdPM->b_channel_settings = m_bchansettings;
+	mdPM->b_doc_name = m_bdocname;
+	mdPM->text_separator = m_textseparator;
+	mdPM->font_size = m_fontsize;
 
 	CDialog::OnOK();
 }
@@ -75,13 +75,13 @@ BOOL CPrintDataCommentsDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_bacqcomment = mdPM->bAcqComment;
-	m_bacqdatetime = mdPM->bAcqDateTime;
-	m_bchanscomment = mdPM->bChansComment;
-	m_bchansettings = mdPM->bChanSettings;
-	m_bdocname = mdPM->bDocName;
-	m_fontsize = mdPM->fontsize;
-	m_textseparator = mdPM->textseparator;
+	m_bacqcomment = mdPM->b_acq_comment;
+	m_bacqdatetime = mdPM->b_acq_date_time;
+	m_bchanscomment = mdPM->b_channel_comment;
+	m_bchansettings = mdPM->b_channel_settings;
+	m_bdocname = mdPM->b_doc_name;
+	m_fontsize = mdPM->font_size;
+	m_textseparator = mdPM->text_separator;
 
 	UpdateData(FALSE);
 	return TRUE; // return TRUE  unless you set the focus to a control
@@ -91,12 +91,12 @@ BOOL DlgPrintDataOptions::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_bFrameRect = mdPM->bFrameRect;
-	m_bClipRect = mdPM->bClipRect;
-	m_bTimeScaleBar = mdPM->bTimeScaleBar;
-	m_bVoltageScaleBar = mdPM->bVoltageScaleBar;
-	m_bPrintSelection = mdPM->bPrintSelection;
-	m_bPrintSpkBars = mdPM->bPrintSpkBars;
+	m_bFrameRect = mdPM->b_frame_rect;
+	m_bClipRect = mdPM->b_clip_rect;
+	m_bTimeScaleBar = mdPM->b_time_scale_bar;
+	m_bVoltageScaleBar = mdPM->b_voltage_scale_bar;
+	m_bPrintSelection = mdPM->b_print_selection;
+	m_bPrintSpkBars = mdPM->b_print_spk_bars;
 
 	UpdateData(FALSE);
 	return TRUE; // return TRUE  unless you set the focus to a control
@@ -106,12 +106,12 @@ void DlgPrintDataOptions::OnOK()
 {
 	UpdateData(TRUE);
 
-	mdPM->bFrameRect = m_bFrameRect;
-	mdPM->bClipRect = m_bClipRect;
-	mdPM->bTimeScaleBar = m_bTimeScaleBar;
-	mdPM->bVoltageScaleBar = m_bVoltageScaleBar;
-	mdPM->bPrintSelection = m_bPrintSelection;
-	mdPM->bPrintSpkBars = m_bPrintSpkBars;
+	mdPM->b_frame_rect = m_bFrameRect;
+	mdPM->b_clip_rect = m_bClipRect;
+	mdPM->b_time_scale_bar = m_bTimeScaleBar;
+	mdPM->b_voltage_scale_bar = m_bVoltageScaleBar;
+	mdPM->b_print_selection = m_bPrintSelection;
+	mdPM->b_print_spk_bars = m_bPrintSpkBars;
 
 	CDialog::OnOK();
 }

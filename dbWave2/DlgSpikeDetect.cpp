@@ -95,7 +95,7 @@ void DlgSpikeDetect::SaveChanParameters(int chan)
 {
 	m_pspkD = m_pDetectSettingsArray->GetItem(chan);
 	GetDlgItem(IDC_COMMENT)->GetWindowText(m_pspkD->comment);
-	mdPM->bDetectWhileBrowse = static_cast<CButton*>(GetDlgItem(IDC_DETECTBROWSE))->GetCheck();
+	mdPM->b_detect_while_browse = static_cast<CButton*>(GetDlgItem(IDC_DETECTBROWSE))->GetCheck();
 
 	// spikes detection parameters
 	const auto flag2 = static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMCHAN))->GetCheck();
@@ -155,7 +155,7 @@ void DlgSpikeDetect::LoadChanParameters(int chan)
 	SetDlgItemInt(IDC_SPIKENPOINTS, m_pspkD->extract_n_points);
 	SetDlgItemInt(IDC_PRETHRESHOLD, m_pspkD->detect_pre_threshold);
 	SetDlgItemInt(IDC_REFRACTORY, m_pspkD->detect_refractory_period);
-	static_cast<CButton*>(GetDlgItem(IDC_DETECTBROWSE))->SetCheck(mdPM->bDetectWhileBrowse);
+	static_cast<CButton*>(GetDlgItem(IDC_DETECTBROWSE))->SetCheck(mdPM->b_detect_while_browse);
 
 	// stimulus detection parameters
 	static_cast<CComboBox*>(GetDlgItem(IDC_STIMDETECTMODE))->SetCurSel(m_pspkD->detect_mode);

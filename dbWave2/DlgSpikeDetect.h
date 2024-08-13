@@ -17,7 +17,7 @@ public:
 	SpikeDetectArray* m_pDetectSettingsArray{ nullptr }; // parameter set by caller
 	AcqDataDoc* m_dbDoc{ nullptr }; 
 	int m_iDetectParmsDlg{ 0 };
-	OPTIONS_VIEWDATA* mdPM{ nullptr };
+	OPTIONS_VIEW_DATA* mdPM{ nullptr };
 	ChartData* m_pChartDataDetectWnd{ nullptr };
 	ChartData* m_pChartDataSourceWnd{ nullptr };
 

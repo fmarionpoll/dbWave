@@ -689,7 +689,7 @@ void CdbWaveDoc::export_data_ascii_comments(CSharedFile * p_shared_file)
 		if (open_current_data_file() != nullptr)
 		{
 			cs_dummy += m_p_dat->get_data_file_infos(p_view_data_options); 
-			if (p_view_data_options->bdatabasecols)
+			if (p_view_data_options->b_data_base_columns)
 				cs_dummy += export_database_data();
 		}
 		else

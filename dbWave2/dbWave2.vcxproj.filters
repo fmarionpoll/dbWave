@@ -438,7 +438,7 @@
     <ClCompile Include="OPTIONS_OUTPUTDATA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OPTIONS_VIEWDATA.cpp">
+    <ClCompile Include="OPTIONS_VIEW_DATA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OPTIONS_MEASURE.cpp">
@@ -1031,7 +1031,7 @@
     <ClInclude Include="OPTIONS_VIEWSPIKES.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OPTIONS_VIEWDATA.h">
+    <ClInclude Include="OPTIONS_VIEW_DATA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SCOPESTRUCT.h">

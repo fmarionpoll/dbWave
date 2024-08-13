@@ -36,14 +36,14 @@ BOOL DlgDataComments::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_bacqchans = m_pvO->bacqchcomment; // copy parms into
-	m_bacqchsetting = m_pvO->bacqchsetting; // dlg parms
-	m_bacqcomments = m_pvO->bacqcomments;
-	m_bacqdate = m_pvO->bacqdate;
-	m_bacqtime = m_pvO->bacqtime;
-	m_bfilesize = m_pvO->bfilesize;
-	m_btoExcel = m_pvO->btoExcel;
-	m_bdatabasecols = m_pvO->bdatabasecols;
+	m_bacqchans = m_pvO->b_acq_channel_comment; // copy parms into
+	m_bacqchsetting = m_pvO->b_acq_channel_setting; // dlg parms
+	m_bacqcomments = m_pvO->b_acq_comments;
+	m_bacqdate = m_pvO->b_acq_date;
+	m_bacqtime = m_pvO->b_acq_time;
+	m_bfilesize = m_pvO->b_file_size;
+	m_btoExcel = m_pvO->b_to_excel;
+	m_bdatabasecols = m_pvO->b_data_base_columns;
 
 	UpdateData(FALSE);
 
@@ -53,23 +53,23 @@ BOOL DlgDataComments::OnInitDialog()
 void DlgDataComments::OnOK()
 {
 	UpdateData(TRUE);
-	if (m_pvO->bacqchcomment != m_bacqchans
-		|| m_pvO->bacqchsetting != m_bacqchsetting
-		|| m_pvO->bacqcomments != m_bacqcomments
-		|| m_pvO->bacqdate != m_bacqdate
-		|| m_pvO->bacqtime != m_bacqtime
-		|| m_pvO->bfilesize != m_bfilesize
-		|| m_pvO->btoExcel != m_btoExcel
-		|| m_pvO->bdatabasecols != m_bdatabasecols)
+	if (m_pvO->b_acq_channel_comment != m_bacqchans
+		|| m_pvO->b_acq_channel_setting != m_bacqchsetting
+		|| m_pvO->b_acq_comments != m_bacqcomments
+		|| m_pvO->b_acq_date != m_bacqdate
+		|| m_pvO->b_acq_time != m_bacqtime
+		|| m_pvO->b_file_size != m_bfilesize
+		|| m_pvO->b_to_excel != m_btoExcel
+		|| m_pvO->b_data_base_columns != m_bdatabasecols)
 	{
-		m_pvO->bacqchcomment = m_bacqchans;
-		m_pvO->bacqchsetting = m_bacqchsetting;
-		m_pvO->bacqcomments = m_bacqcomments;
-		m_pvO->bacqdate = m_bacqdate;
-		m_pvO->bacqtime = m_bacqtime;
-		m_pvO->bfilesize = m_bfilesize;
-		m_pvO->btoExcel = m_btoExcel;
-		m_pvO->bdatabasecols = m_bdatabasecols;
+		m_pvO->b_acq_channel_comment = m_bacqchans;
+		m_pvO->b_acq_channel_setting = m_bacqchsetting;
+		m_pvO->b_acq_comments = m_bacqcomments;
+		m_pvO->b_acq_date = m_bacqdate;
+		m_pvO->b_acq_time = m_bacqtime;
+		m_pvO->b_file_size = m_bfilesize;
+		m_pvO->b_to_excel = m_btoExcel;
+		m_pvO->b_data_base_columns = m_bdatabasecols;
 		m_pvO->b_changed = TRUE; // save new params in app array
 	}
 	CDialog::OnOK();

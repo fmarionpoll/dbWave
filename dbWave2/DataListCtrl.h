@@ -61,10 +61,10 @@ public:
 protected:
 	CArray<CDataListCtrl_Row*, CDataListCtrl_Row*> ptr_rows;
 	CImageList m_image_list_;
-	static int m_column_width_[NCOLS];
-	static CString m_column_headers_[NCOLS];
-	static int m_column_format_[NCOLS];
-	static int m_column_index_[NCOLS];
+	static int m_column_width_[N_COLUMNS];
+	static CString m_column_headers_[N_COLUMNS];
+	static int m_column_format_[N_COLUMNS];
+	static int m_column_index_[N_COLUMNS];
 
 	CUIntArray* m_width_columns_ = nullptr;
 	CBitmap* m_p_empty_bitmap_ = nullptr;

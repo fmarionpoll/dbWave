@@ -148,7 +148,7 @@ void ViewData::OnInitialUpdate()
 	dbTableView::OnInitialUpdate();
 	update_file_parameters(TRUE); 
 
-	chart_data.set_scope_parameters(&(options_view_data_->viewdata));
+	chart_data.set_scope_parameters(&(options_view_data_->view_data));
 	constexpr int legends_options = UPD_ABSCISSA | CHG_X_SCALE | UPD_ORDINATES | CHG_Y_SCALE;
 	m_bCommonScale = TRUE;
 	m_combo_select_chan.SetCurSel(chart_data.get_channel_list_size());
@@ -270,20 +270,20 @@ void ViewData::on_tools_data_series()
 void ViewData::on_edit_copy()
 {
 	DlgCopyAs dlg;
-	dlg.m_nabscissa = options_view_data_->hzResolution;
-	dlg.m_nordinates = options_view_data_->vtResolution;
-	dlg.m_bgraphics = options_view_data_->bgraphics;
-	dlg.m_ioption = options_view_data_->bcontours;
-	dlg.m_iunit = options_view_data_->bunits;
+	dlg.m_nabscissa = options_view_data_->hz_resolution;
+	dlg.m_nordinates = options_view_data_->vt_resolution;
+	dlg.m_bgraphics = options_view_data_->b_graphics;
+	dlg.m_ioption = options_view_data_->b_contours;
+	dlg.m_iunit = options_view_data_->b_units;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
-		options_view_data_->bgraphics = dlg.m_bgraphics;
-		options_view_data_->bcontours = dlg.m_ioption;
-		options_view_data_->bunits = dlg.m_iunit;
-		options_view_data_->hzResolution = dlg.m_nabscissa;
-		options_view_data_->vtResolution = dlg.m_nordinates;
+		options_view_data_->b_graphics = dlg.m_bgraphics;
+		options_view_data_->b_contours = dlg.m_ioption;
+		options_view_data_->b_units = dlg.m_iunit;
+		options_view_data_->hz_resolution = dlg.m_nabscissa;
+		options_view_data_->vt_resolution = dlg.m_nordinates;
 
 		if (!dlg.m_bgraphics)
 			chart_data.copy_as_text(dlg.m_ioption, dlg.m_iunit, dlg.m_nabscissa);
@@ -292,7 +292,7 @@ void ViewData::on_edit_copy()
 			CRect old_rect;
 			chart_data.GetWindowRect(&old_rect);
 
-			CRect rect(0, 0, options_view_data_->hzResolution, options_view_data_->vtResolution);
+			CRect rect(0, 0, options_view_data_->hz_resolution, options_view_data_->vt_resolution);
 			m_pixels_count_0_ = chart_data.get_rect_width();
 
 			// create metafile
@@ -311,8 +311,8 @@ void ViewData::on_edit_copy()
 			const auto old_scope_struct= new SCOPESTRUCT();
 			SCOPESTRUCT* new_scope_struct = chart_data.get_scope_parameters();
 			*old_scope_struct = *new_scope_struct;
-			new_scope_struct->bDrawframe = options_view_data_->bFrameRect;
-			new_scope_struct->bClipRect = options_view_data_->bClipRect;
+			new_scope_struct->bDrawframe = options_view_data_->b_frame_rect;
+			new_scope_struct->bClipRect = options_view_data_->b_clip_rect;
 			chart_data.print(&m_dc, &rect);
 			*new_scope_struct = *old_scope_struct;
 
@@ -484,7 +484,7 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 	auto chan_list_size = chart_data.get_channel_list_size();
 	
 	// display all channels (TRUE) / no : loop through all doc channels & add if necessary
-	if (options_view_data_->bAllChannels || chan_list_size == 0)
+	if (options_view_data_->b_all_channels || chan_list_size == 0)
 	{
 		for (auto doc_channel = 0; doc_channel < wave_format->scan_count; doc_channel++)
 		{
@@ -554,10 +554,10 @@ void ViewData::update_channels_display_parameters()
 			auto y_extent = chan_list_item->GetYextent();
 			auto y_zero = chan_list_item->GetYzero();
 
-			if (options_view_data_->bMaximizeGain)
+			if (options_view_data_->b_maximize_gain)
 				y_extent = MulDiv(max - min + 1, 11, 10);
 			// center curve
-			if (options_view_data_->bCenterCurves)
+			if (options_view_data_->b_center_curves)
 				y_zero = (max + min) / 2;
 
 			update_y_extent(i, y_extent);
@@ -570,7 +570,7 @@ void ViewData::update_channels_display_parameters()
 		const CChanlistItem* p_chan0 = chart_data.get_channel_list_item(chan_0);
 		auto y_extent = p_chan0->GetYextent();
 		auto y_zero = p_chan0->GetYzero();
-		if (options_view_data_->bMaximizeGain)
+		if (options_view_data_->b_maximize_gain)
 		{
 			float v_max = 0.;
 			float v_min = 0.;
@@ -781,7 +781,7 @@ LRESULT ViewData::on_my_message(const WPARAM w_param, const LPARAM l_param)
 		break;
 
 	case HINT_WINDOW_PROPS_CHANGED:
-		options_view_data_->viewdata = *(chart_data.get_scope_parameters());
+		options_view_data_->view_data = *(chart_data.get_scope_parameters());
 		break;
 	default:
 		break;
@@ -1191,14 +1191,14 @@ void ViewData::compute_printer_page_size()
 	dc.Attach(h_dc);
 
 	// Get the size of the page in pixels
-	options_view_data_->horzRes = dc.GetDeviceCaps(HORZRES);
-	options_view_data_->vertRes = dc.GetDeviceCaps(VERTRES);
+	options_view_data_->horizontal_resolution = dc.GetDeviceCaps(HORZRES);
+	options_view_data_->vertical_resolution = dc.GetDeviceCaps(VERTRES);
 
 	// margins (pixels)
-	m_print_rect_.right = options_view_data_->horzRes - options_view_data_->rightPageMargin;
-	m_print_rect_.bottom = options_view_data_->vertRes - options_view_data_->bottomPageMargin;
-	m_print_rect_.left = options_view_data_->leftPageMargin;
-	m_print_rect_.top = options_view_data_->topPageMargin;
+	m_print_rect_.right = options_view_data_->horizontal_resolution - options_view_data_->right_page_margin;
+	m_print_rect_.bottom = options_view_data_->vertical_resolution - options_view_data_->bottom_page_margin;
+	m_print_rect_.left = options_view_data_->left_page_margin;
+	m_print_rect_.top = options_view_data_->top_page_margin;
 }
 
 void ViewData::print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_info)
@@ -1214,7 +1214,7 @@ void ViewData::print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_info)
 	auto ch_date = cs_dat_file.Left(i_count);
 	ch_date = ch_date.Left(ch_date.GetLength() - 1) + ch;
 	p_dc->SetTextAlign(TA_CENTER);
-	p_dc->TextOut(options_view_data_->horzRes / 2, options_view_data_->vertRes - 57, ch_date);
+	p_dc->TextOut(options_view_data_->horizontal_resolution / 2, options_view_data_->vertical_resolution - 57, ch_date);
 }
 
 CString ViewData::convert_file_index(const long l_first, const long l_last) const
@@ -1242,7 +1242,7 @@ BOOL ViewData::get_file_series_index_from_page(int page, int& file_number, long&
 	const auto total_rows = m_nb_rows_per_page_ * (page - 1);
 	l_first = m_l_print_first_;
 	file_number = 0; // file list index
-	if (options_view_data_->bPrintSelection) // current file if selection only
+	if (options_view_data_->b_print_selection) // current file if selection only
 		file_number = m_file_0_;
 	else
 		BOOL success = GetDocument()->db_move_first();
@@ -1268,13 +1268,13 @@ CString ViewData::get_file_infos()
 
 	// document's name, date and time
 	const auto wave_format = m_p_dat_->get_wave_format();
-	if (options_view_data_->bDocName || options_view_data_->bAcqDateTime) // print doc infos?
+	if (options_view_data_->b_doc_name || options_view_data_->b_acq_date_time) // print doc infos?
 	{
-		if (options_view_data_->bDocName) // print file name
+		if (options_view_data_->b_doc_name) // print file name
 		{
 			str_comment += GetDocument()->db_get_current_dat_file_name() + tab;
 		}
-		if (options_view_data_->bAcqDateTime) // print data acquisition date & time
+		if (options_view_data_->b_acq_date_time) // print data acquisition date & time
 		{
 			const auto date = wave_format->acquisition_time.Format(_T("%#d %B %Y %X")); //("%c");
 			str_comment += date;
@@ -1283,7 +1283,7 @@ CString ViewData::get_file_infos()
 	}
 
 	// document's main comment (print on multiple lines if necessary)
-	if (options_view_data_->bAcqComment)
+	if (options_view_data_->b_acq_comment)
 		str_comment += wave_format->get_comments(_T(" ")) + rc;
 
 	return str_comment;
@@ -1313,7 +1313,7 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect) const
 	ASSERT(vert_bar > 0);
 
 	auto cs_comment = convert_file_index(chart_data.get_data_first_index(), chart_data.get_data_last_index());
-	if (options_view_data_->bTimeScaleBar)
+	if (options_view_data_->b_time_scale_bar)
 	{
 		// print horizontal bar
 		x_bar_end.x += horizontal_bar;
@@ -1327,7 +1327,7 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect) const
 		str_comment += cs_comment + rc;
 	}
 
-	if (options_view_data_->bVoltageScaleBar)
+	if (options_view_data_->b_voltage_scale_bar)
 	{
 		y_bar_end.y -= vert_bar;
 		p_dc->MoveTo(bar_origin);
@@ -1335,14 +1335,14 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect) const
 	}
 
 	// comments, bar value and chan settings for each channel
-	if (options_view_data_->bChansComment || options_view_data_->bVoltageScaleBar || options_view_data_->bChanSettings)
+	if (options_view_data_->b_channel_comment || options_view_data_->b_voltage_scale_bar || options_view_data_->b_channel_settings)
 	{
 		const auto channels_list_size = chart_data.get_channel_list_size(); 
 		for (auto i_chan = 0; i_chan < channels_list_size; i_chan++) // loop
 		{
 			wsprintf(lpsz_val, _T("chan#%i "), i_chan); 
 			cs_comment = lpsz_val;
-			if (options_view_data_->bVoltageScaleBar) 
+			if (options_view_data_->b_voltage_scale_bar) 
 			{
 				cs_unit = _T(" V"); 
 				auto z = static_cast<float>(chart_data.get_rect_height()) / 5
@@ -1369,7 +1369,7 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect) const
 			str_comment += cs_comment;
 
 			// print chan comment
-			if (options_view_data_->bChansComment)
+			if (options_view_data_->b_channel_comment)
 			{
 				str_comment += tab;
 				str_comment += chart_data.get_channel_list_item(i_chan)->GetComment();
@@ -1377,7 +1377,7 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect) const
 			str_comment += rc;
 
 			// print amplifiers settings (gain & filter), next line
-			if (options_view_data_->bChanSettings)
+			if (options_view_data_->b_channel_settings)
 			{
 				CString cs;
 				const WORD chan_count = static_cast<WORD>(chart_data.get_channel_list_item(i_chan)->GetSourceChan());
@@ -1397,10 +1397,10 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect) const
 BOOL ViewData::OnPreparePrinting(CPrintInfo* p_info)
 {
 	// printing margins
-	if (options_view_data_->vertRes <= 0 // vertical resolution defined ?
-		|| options_view_data_->horzRes <= 0 // horizontal resolution defined?
-		|| options_view_data_->horzRes != p_info->m_rectDraw.Width() // same as infos provided
-		|| options_view_data_->vertRes != p_info->m_rectDraw.Height()) // by caller?
+	if (options_view_data_->vertical_resolution <= 0 // vertical resolution defined ?
+		|| options_view_data_->horizontal_resolution <= 0 // horizontal resolution defined?
+		|| options_view_data_->horizontal_resolution != p_info->m_rectDraw.Width() // same as infos provided
+		|| options_view_data_->vertical_resolution != p_info->m_rectDraw.Height()) // by caller?
 		compute_printer_page_size();
 
 	auto pages_count = print_get_n_pages();
@@ -1408,7 +1408,7 @@ BOOL ViewData::OnPreparePrinting(CPrintInfo* p_info)
 	p_info->m_nNumPreviewPages = 1; // preview 1 pages at a time
 	p_info->m_pPD->m_pd.Flags &= ~PD_NOSELECTION; // allow print only selection
 
-	if (options_view_data_->bPrintSelection)
+	if (options_view_data_->b_print_selection)
 		p_info->m_pPD->m_pd.Flags |= PD_SELECTION; // set button to selection
 
 	if (!DoPreparePrinting(p_info))
@@ -1417,9 +1417,9 @@ BOOL ViewData::OnPreparePrinting(CPrintInfo* p_info)
 	if (!COleDocObjectItem::OnPreparePrinting(this, p_info))
 		return FALSE;
 
-	if (options_view_data_->bPrintSelection != p_info->m_pPD->PrintSelection())
+	if (options_view_data_->b_print_selection != p_info->m_pPD->PrintSelection())
 	{
-		options_view_data_->bPrintSelection = p_info->m_pPD->PrintSelection();
+		options_view_data_->b_print_selection = p_info->m_pPD->PrintSelection();
 		pages_count = print_get_n_pages();
 		p_info->SetMaxPage(pages_count);
 	}
@@ -1430,7 +1430,7 @@ BOOL ViewData::OnPreparePrinting(CPrintInfo* p_info)
 int ViewData::print_get_n_pages()
 {
 	// how many rows per page?
-	const auto size_row = options_view_data_->HeightDoc + options_view_data_->heightSeparator;
+	const auto size_row = options_view_data_->height_doc + options_view_data_->height_separator;
 	m_nb_rows_per_page_ = m_print_rect_.Height() / size_row;
 	if (m_nb_rows_per_page_ == 0) // prevent zero pages
 		m_nb_rows_per_page_ = 1;
@@ -1446,7 +1446,7 @@ int ViewData::print_get_n_pages()
 	m_files_count_ = 1;
 	auto file0 = m_file_0_;
 	auto file1 = m_file_0_;
-	if (!options_view_data_->bPrintSelection)
+	if (!options_view_data_->b_print_selection)
 	{
 		file0 = 0;
 		m_files_count_ = p_dbwave_doc->db_get_n_records();
@@ -1505,7 +1505,7 @@ void ViewData::OnBeginPrinting(CDC* p_dc, CPrintInfo* p_info)
 	//---------------------init objects-------------------------------------
 	memset(&m_log_font_, 0, sizeof(LOGFONT)); // prepare font
 	lstrcpy(m_log_font_.lfFaceName, _T("Arial")); // Arial font
-	m_log_font_.lfHeight = options_view_data_->fontsize; // font height
+	m_log_font_.lfHeight = options_view_data_->font_size; // font height
 	m_p_old_font_ = nullptr;
 	/*BOOL flag = */
 	m_font_print_.CreateFontIndirect(&m_log_font_);
@@ -1517,8 +1517,8 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 	m_p_old_font_ = p_dc->SelectObject(&m_font_print_);
 
 	// --------------------- RWhere = rectangle/row in which we plot the data, rWidth = row width
-	const auto r_width = options_view_data_->WidthDoc; // margins
-	const auto r_height = options_view_data_->HeightDoc; // margins
+	const auto r_width = options_view_data_->width_doc; // margins
+	const auto r_height = options_view_data_->height_doc; // margins
 	CRect r_where(m_print_rect_.left, // printing rectangle for data
 	              m_print_rect_.top,
 	              m_print_rect_.left + r_width,
@@ -1543,8 +1543,8 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 	SCOPESTRUCT old_scope_structure;
 	SCOPESTRUCT* scope_structure = chart_data.get_scope_parameters();
 	old_scope_structure = *scope_structure;
-	scope_structure->bDrawframe = options_view_data_->bFrameRect;
-	scope_structure->bClipRect = options_view_data_->bClipRect;
+	scope_structure->bDrawframe = options_view_data_->b_frame_rect;
+	scope_structure->bClipRect = options_view_data_->b_clip_rect;
 
 	// loop through all files	--------------------------------------------------------
 	const int old_dc = p_dc->SaveDC(); // save DC
@@ -1568,7 +1568,7 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 		}
 
 		// update display rectangle for next row
-		r_where.OffsetRect(0, r_height + options_view_data_->heightSeparator);
+		r_where.OffsetRect(0, r_height + options_view_data_->height_separator);
 
 		// restore DC and print comments --------------------------------------------------
 		p_dc->SetMapMode(MM_TEXT); // 1 LP = 1 pixel
@@ -1586,7 +1586,7 @@ void ViewData::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 			cs_comment = convert_file_index(chart_data.get_data_first_index(), chart_data.get_data_last_index());
 
 		// print comments stored into cs_comment
-		comment_rect.OffsetRect(options_view_data_->textseparator + comment_rect.Width(), 0);
+		comment_rect.OffsetRect(options_view_data_->text_separator + comment_rect.Width(), 0);
 		comment_rect.right = m_print_rect_.right;
 
 		// reset text align mode (otherwise pbs!) output text and restore text alignment

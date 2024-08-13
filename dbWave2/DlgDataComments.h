@@ -1,5 +1,5 @@
 #pragma once
-#include "OPTIONS_VIEWDATA.h"
+#include "OPTIONS_VIEW_DATA.h"
 
 class DlgDataComments : public CDialog
 {
@@ -17,7 +17,7 @@ public:
 	BOOL m_bacqchsetting{ false };
 	BOOL m_bdatabasecols{ false };
 	BOOL m_btoExcel{ false };
-	OPTIONS_VIEWDATA* m_pvO{ nullptr };
+	OPTIONS_VIEW_DATA* m_pvO{ nullptr };
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override; 

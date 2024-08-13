@@ -514,7 +514,7 @@ BOOL CMeasureResultsPage::MeasureParameters()
 		OutputTitle();
 		m_pdbDoc->db_set_current_record_position(i_first);
 		const CString filename = m_pdbDoc->db_get_current_dat_file_name();
-		auto* p_vd = new OPTIONS_VIEWDATA;
+		auto* p_vd = new OPTIONS_VIEW_DATA;
 		ASSERT(p_vd != NULL);
 		const CString cs_out = _T("**filename\tdate\ttime\tcomment\tchannel\r\n");
 
@@ -523,12 +523,12 @@ BOOL CMeasureResultsPage::MeasureParameters()
 			// open data file
 			m_pdbDoc->open_current_data_file();
 
-			p_vd->bacqcomments = TRUE; // global comment
-			p_vd->bacqdate = TRUE; // acquisition date
-			p_vd->bacqtime = TRUE; // acquisition time
-			p_vd->bfilesize = FALSE; // file size
-			p_vd->bacqchcomment = FALSE; // acq channel indiv comment
-			p_vd->bacqchsetting = FALSE; // acq chan indiv settings (gain, filter, etc)
+			p_vd->b_acq_comments = TRUE; // global comment
+			p_vd->b_acq_date = TRUE; // acquisition date
+			p_vd->b_acq_time = TRUE; // acquisition time
+			p_vd->b_file_size = FALSE; // file size
+			p_vd->b_acq_channel_comment = FALSE; // acq channel indiv comment
+			p_vd->b_acq_channel_setting = FALSE; // acq chan indiv settings (gain, filter, etc)
 			auto cs = cs_out;
 			cs += m_pdbDoc->m_p_dat->get_data_file_infos(p_vd);
 			p_copy += wsprintf(p_copy, _T("%s\r\n"), static_cast<LPCTSTR>(cs));

@@ -171,22 +171,22 @@ void ViewSpikeSort::init_charts_from_saved_parameters()
 
 	chart_shape_.display_all_files(false, GetDocument());
 	chart_shape_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class_); // PLOT_ONE_COLOR
-	chart_shape_.set_scope_parameters(&(options_view_data_->spksort1spk));
+	chart_shape_.set_scope_parameters(&(options_view_data_->spk_sort1_spk));
 	shape_t1_ = chart_shape_.vt_tags.add_tag(spike_classification_->shape_t1, 0);
 	shape_t2_ = chart_shape_.vt_tags.add_tag(spike_classification_->shape_t2, 0);
 
 	chart_measures_.display_all_files(false, GetDocument());
 	chart_measures_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class_);
-	chart_measures_.set_scope_parameters(&(options_view_data_->spksort1parms));
+	chart_measures_.set_scope_parameters(&(options_view_data_->spk_sort1_parameters));
 	tag_index_measures_up_ = chart_measures_.hz_tags.add_tag(spike_classification_->upper_threshold, 0);
 	tag_index_measures_low_ = chart_measures_.hz_tags.add_tag(spike_classification_->lower_threshold, 0);
 
 	chart_spike_bar_.display_all_files(false, GetDocument());
 	chart_spike_bar_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class_);
-	chart_spike_bar_.set_scope_parameters(&(options_view_data_->spksort1bars));
+	chart_spike_bar_.set_scope_parameters(&(options_view_data_->spk_sort1_bars));
 
 	chart_histogram_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class_);
-	chart_histogram_.set_scope_parameters(&(options_view_data_->spksort1hist));
+	chart_histogram_.set_scope_parameters(&(options_view_data_->spk_sort1_hist));
 
 	tag_index_hist_up_ = chart_histogram_.vt_tags.add_tag(spike_classification_->upper_threshold, 0);
 	tag_index_hist_low_ = chart_histogram_.vt_tags.add_tag(spike_classification_->lower_threshold, 0);
@@ -665,10 +665,10 @@ void ViewSpikeSort::change_chart_measure_hz_tag(const int value)
 
 void ViewSpikeSort::save_windows_properties_to_options()
 {
-	options_view_data_->spksort1spk = *chart_shape_.get_scope_parameters();
-	options_view_data_->spksort1parms = *chart_measures_.get_scope_parameters();
-	options_view_data_->spksort1hist = *chart_histogram_.get_scope_parameters();
-	options_view_data_->spksort1bars = *chart_spike_bar_.get_scope_parameters();
+	options_view_data_->spk_sort1_spk = *chart_shape_.get_scope_parameters();
+	options_view_data_->spk_sort1_parameters = *chart_measures_.get_scope_parameters();
+	options_view_data_->spk_sort1_hist = *chart_histogram_.get_scope_parameters();
+	options_view_data_->spk_sort1_bars = *chart_spike_bar_.get_scope_parameters();
 }
 
 LRESULT ViewSpikeSort::on_my_message(const WPARAM code, const LPARAM l_param)

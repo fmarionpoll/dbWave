@@ -34,12 +34,12 @@ BOOL DlgPrintDrawArea::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_HeightDoc = mdPM->HeightDoc;
-	m_WidthDoc = mdPM->WidthDoc;
-	m_spkheight = mdPM->spkheight;
-	m_spkwidth = mdPM->spkwidth;
-	m_heightSeparator = mdPM->heightSeparator;
-	m_bFilterDat = mdPM->bFilterDataSource;
+	m_HeightDoc = mdPM->height_doc;
+	m_WidthDoc = mdPM->width_doc;
+	m_spkheight = mdPM->spike_height;
+	m_spkwidth = mdPM->spike_width;
+	m_heightSeparator = mdPM->height_separator;
+	m_bFilterDat = mdPM->b_filter_data_source;
 	UpdateData(FALSE);
 
 	return TRUE; // return TRUE  unless you set the focus to a control
@@ -49,11 +49,11 @@ void DlgPrintDrawArea::OnOK()
 {
 	UpdateData(TRUE);
 
-	mdPM->HeightDoc = m_HeightDoc;
-	mdPM->WidthDoc = m_WidthDoc;
-	mdPM->heightSeparator = m_heightSeparator;
-	mdPM->spkheight = m_spkheight;
-	mdPM->spkwidth = m_spkwidth;
-	mdPM->bFilterDataSource = m_bFilterDat;
+	mdPM->height_doc = m_HeightDoc;
+	mdPM->width_doc = m_WidthDoc;
+	mdPM->height_separator = m_heightSeparator;
+	mdPM->spike_height = m_spkheight;
+	mdPM->spike_width = m_spkwidth;
+	mdPM->b_filter_data_source = m_bFilterDat;
 	CDialog::OnOK();
 }

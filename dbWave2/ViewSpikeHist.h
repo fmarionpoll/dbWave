@@ -40,7 +40,7 @@ protected:
 	int m_bhistType{0};
 	SCROLLINFO m_scrollFilePos_infos{};
 	OPTIONS_VIEWSPIKES* m_pvdS{nullptr};
-	OPTIONS_VIEWDATA* mdPM{nullptr};
+	OPTIONS_VIEW_DATA* mdPM{nullptr};
 
 	long* m_pPSTH{nullptr}; // histogram data (pointer to array)
 	int m_sizepPSTH{0}; // nbins within histogram

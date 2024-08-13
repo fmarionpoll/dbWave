@@ -177,7 +177,7 @@ void ViewSpikeDetection::OnActivateView(BOOL activate, CView* activated_view, CV
 	{
 		serialize_windows_state(b_save);
 		const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-		p_app->options_view_data.viewdata = *(m_chart_data_source_.get_scope_parameters());
+		p_app->options_view_data.view_data = *(m_chart_data_source_.get_scope_parameters());
 	}
 	dbTableView::OnActivateView(activate, activated_view, de_activated_view);
 }
@@ -236,7 +236,7 @@ void ViewSpikeDetection::update_spike_file(BOOL b_update_interface)
 		m_pSpkDoc = p_spike;
 		m_pSpkDoc->OnNewDocument();
 		m_pSpkDoc->clear_data();
-		if (options_view_data_->bDetectWhileBrowse)
+		if (options_view_data_->b_detect_while_browse)
 			on_measure_all();
 	}
 	else
@@ -618,9 +618,9 @@ void ViewSpikeDetection::OnInitialUpdate()
 		m_chart_data_filtered_.hz_tags.add_tag(0, 0);
 
 	update_file_parameters(TRUE);
-	m_chart_data_filtered_.set_scope_parameters(&(options_view_data_->viewdata));
+	m_chart_data_filtered_.set_scope_parameters(&(options_view_data_->view_data));
 	m_chart_data_filtered_.Invalidate();
-	m_chart_data_source_.set_scope_parameters(&(options_view_data_->viewdata));
+	m_chart_data_source_.set_scope_parameters(&(options_view_data_->view_data));
 	m_chart_data_source_.Invalidate();
 }
 
@@ -693,10 +693,10 @@ LRESULT ViewSpikeDetection::on_my_message(const WPARAM w_param, const LPARAM l_p
 		break;
 
 	case HINT_WINDOW_PROPS_CHANGED:
-		options_view_data_->viewspkdetectfiltered = *m_chart_data_filtered_.get_scope_parameters();
-		options_view_data_->viewspkdetectdata = *m_chart_data_source_.get_scope_parameters();
-		options_view_data_->viewspkdetectspk = *m_chart_spike_bar_.get_scope_parameters();
-		options_view_data_->viewspkdetectbars = *m_chart_spike_shape_.get_scope_parameters();
+		options_view_data_->view_spk_detect_filtered = *m_chart_data_filtered_.get_scope_parameters();
+		options_view_data_->view_spk_detect_data = *m_chart_data_source_.get_scope_parameters();
+		options_view_data_->view_spk_detect_spk = *m_chart_spike_bar_.get_scope_parameters();
+		options_view_data_->view_spk_detect_bars = *m_chart_spike_shape_.get_scope_parameters();
 		break;
 
 	case HINT_DEFINED_RECT:
@@ -1134,7 +1134,7 @@ void ViewSpikeDetection::detect_all(const BOOL b_all)
 
 
 	// center spikes, change nb spikes and update content of draw buttons
-	if (options_view_data_->bMaximizeGain
+	if (options_view_data_->b_maximize_gain
 		|| m_chart_spike_bar_.get_yw_extent() == 0
 		|| m_chart_spike_bar_.get_yw_org() == 0
 		|| m_chart_spike_shape_.get_yw_extent() == 0
@@ -1791,7 +1791,7 @@ void ViewSpikeDetection::print_data_cartridge(CDC* p_dc, ChartData* p_data_chart
 	SCOPESTRUCT* p_struct = p_data_chart_wnd->get_scope_parameters();
 	const auto b_draw_f = p_struct->bDrawframe;
 	p_struct->bDrawframe = TRUE;
-	p_data_chart_wnd->print(p_dc, p_rect, (options_view_data_->bcontours == 1));
+	p_data_chart_wnd->print(p_dc, p_rect, (options_view_data_->b_contours == 1));
 	p_struct->bDrawframe = b_draw_f;
 
 	// data vertical and horizontal bars
@@ -1807,20 +1807,20 @@ void ViewSpikeDetection::print_data_cartridge(CDC* p_dc, ChartData* p_data_chart
 void ViewSpikeDetection::on_edit_copy()
 {
 	DlgCopyAs dlg;
-	dlg.m_nabscissa = options_view_data_->hzResolution;
-	dlg.m_nordinates = options_view_data_->vtResolution;
-	dlg.m_bgraphics = options_view_data_->bgraphics;
-	dlg.m_ioption = options_view_data_->bcontours;
-	dlg.m_iunit = options_view_data_->bunits;
+	dlg.m_nabscissa = options_view_data_->hz_resolution;
+	dlg.m_nordinates = options_view_data_->vt_resolution;
+	dlg.m_bgraphics = options_view_data_->b_graphics;
+	dlg.m_ioption = options_view_data_->b_contours;
+	dlg.m_iunit = options_view_data_->b_units;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
-		options_view_data_->bgraphics = dlg.m_bgraphics;
-		options_view_data_->bcontours = dlg.m_ioption;
-		options_view_data_->bunits = dlg.m_iunit;
-		options_view_data_->hzResolution = dlg.m_nabscissa;
-		options_view_data_->vtResolution = dlg.m_nordinates;
+		options_view_data_->b_graphics = dlg.m_bgraphics;
+		options_view_data_->b_contours = dlg.m_ioption;
+		options_view_data_->b_units = dlg.m_iunit;
+		options_view_data_->hz_resolution = dlg.m_nabscissa;
+		options_view_data_->vt_resolution = dlg.m_nordinates;
 
 		if (!dlg.m_bgraphics)
 			m_chart_data_filtered_.copy_as_text(dlg.m_ioption, dlg.m_iunit, dlg.m_nabscissa);
@@ -1833,7 +1833,7 @@ void ViewSpikeDetection::on_edit_copy()
 			CRect old_rect2;
 			m_chart_data_source_.GetWindowRect(&old_rect2);
 
-			const CRect rect(0, 0, options_view_data_->hzResolution, options_view_data_->vtResolution);
+			const CRect rect(0, 0, options_view_data_->hz_resolution, options_view_data_->vt_resolution);
 			m_pixels_count_0_ = m_chart_data_filtered_.get_rect_width();
 
 			// create meta file
@@ -1856,11 +1856,11 @@ void ViewSpikeDetection::on_edit_copy()
 
 			// print comments : set font
 			m_p_old_font_ = nullptr;
-			const auto old_font_size = options_view_data_->fontsize;
-			options_view_data_->fontsize = 10;
+			const auto old_font_size = options_view_data_->font_size;
+			options_view_data_->font_size = 10;
 			print_create_font();
 			m_dc.SetBkMode(TRANSPARENT);
-			options_view_data_->fontsize = old_font_size;
+			options_view_data_->font_size = old_font_size;
 			m_p_old_font_ = m_dc.SelectObject(&m_font_print_);
 			const int line_height = m_log_font_.lfHeight + 5;
 			auto row = 0;
@@ -2019,14 +2019,14 @@ void ViewSpikeDetection::print_compute_page_size()
 	dc.Attach(h_dc);
 
 	// Get the size of the page in pixels
-	options_view_data_->horzRes = dc.GetDeviceCaps(HORZRES);
-	options_view_data_->vertRes = dc.GetDeviceCaps(VERTRES);
+	options_view_data_->horizontal_resolution = dc.GetDeviceCaps(HORZRES);
+	options_view_data_->vertical_resolution = dc.GetDeviceCaps(VERTRES);
 
 	// margins (pixels)
-	m_print_rect_.right = options_view_data_->horzRes - options_view_data_->rightPageMargin;
-	m_print_rect_.bottom = options_view_data_->vertRes - options_view_data_->bottomPageMargin;
-	m_print_rect_.left = options_view_data_->leftPageMargin;
-	m_print_rect_.top = options_view_data_->topPageMargin;
+	m_print_rect_.right = options_view_data_->horizontal_resolution - options_view_data_->right_page_margin;
+	m_print_rect_.bottom = options_view_data_->vertical_resolution - options_view_data_->bottom_page_margin;
+	m_print_rect_.left = options_view_data_->left_page_margin;
+	m_print_rect_.top = options_view_data_->top_page_margin;
 }
 
 void ViewSpikeDetection::print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_info)
@@ -2038,7 +2038,7 @@ void ViewSpikeDetection::print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_i
 		t.GetDay(), t.GetMonth(), t.GetYear());
 	const auto ch_date = GetDocument()->db_get_current_spk_file_name();
 	p_dc->SetTextAlign(TA_CENTER);
-	p_dc->TextOut(options_view_data_->horzRes / 2, options_view_data_->vertRes - 57, ch_date);
+	p_dc->TextOut(options_view_data_->horizontal_resolution / 2, options_view_data_->vertical_resolution - 57, ch_date);
 }
 
 CString ViewSpikeDetection::print_convert_file_index(const long l_first, const long l_last) const
@@ -2067,7 +2067,7 @@ BOOL ViewSpikeDetection::print_get_file_series_index_from_page(const int page, i
 	const auto total_rows = m_nb_rows_per_page_ * (page - 1);
 	l_first = m_l_print_first_;
 	file_number = 0; 
-	if (options_view_data_->bPrintSelection) 
+	if (options_view_data_->b_print_selection) 
 		file_number = m_file_0_;
 	else
 		GetDocument()->db_move_first();
@@ -2126,12 +2126,12 @@ CString ViewSpikeDetection::print_get_file_infos()
 	// document's name, date and time
 	const auto p_data_file = GetDocument()->m_p_dat;
 	const auto wave_format = p_data_file->get_wave_format();
-	if (options_view_data_->bDocName || options_view_data_->bAcqDateTime)
+	if (options_view_data_->b_doc_name || options_view_data_->b_acq_date_time)
 	{
-		if (options_view_data_->bDocName) 
+		if (options_view_data_->b_doc_name) 
 			str_comment += GetDocument()->db_get_current_dat_file_name() + tab;
 
-		if (options_view_data_->bAcqDateTime) 
+		if (options_view_data_->b_acq_date_time) 
 		{
 			const auto date = (wave_format->acquisition_time).Format(_T("%#d %B %Y %X")); 
 			str_comment += date;
@@ -2140,7 +2140,7 @@ CString ViewSpikeDetection::print_get_file_infos()
 	}
 
 	// document's main comment (print on multiple lines if necessary)
-	if (options_view_data_->bAcqComment)
+	if (options_view_data_->b_acq_comment)
 		str_comment += GetDocument()->export_database_data(); 
 
 	return str_comment;
@@ -2160,7 +2160,7 @@ CString ViewSpikeDetection::print_data_bars(CDC* p_dc, const ChartData* p_data_c
 	auto str_comment = print_convert_file_index(p_data_chart_wnd->get_data_first_index(), p_data_chart_wnd->get_data_last_index());
 
 	///// horizontal time bar ///////////////////////////
-	if (options_view_data_->bTimeScaleBar)
+	if (options_view_data_->b_time_scale_bar)
 	{
 		// convert bar size into time units and back into pixels
 		cs_unit = _T(" s"); 
@@ -2191,7 +2191,7 @@ CString ViewSpikeDetection::print_data_bars(CDC* p_dc, const ChartData* p_data_c
 	const auto z_nice = static_cast<float>(CNiceUnit::nice_unit(z_scale));
 	i_vertical_bar = static_cast<int>(z_nice * y_scale_factor / volts_per_pixel); // compute how many pixels it makes
 
-	if (options_view_data_->bVoltageScaleBar)
+	if (options_view_data_->b_voltage_scale_bar)
 	{
 		i_vertical_bar = MulDiv(i_vertical_bar, p_rect->Height(), p_data_chart_wnd->get_rect_height());
 		p_dc->MoveTo(p_rect->left + bar_origin.x, p_rect->bottom - bar_origin.y);
@@ -2199,7 +2199,7 @@ CString ViewSpikeDetection::print_data_bars(CDC* p_dc, const ChartData* p_data_c
 	}
 
 	// comments, bar value and chan settings for each channel
-	if (options_view_data_->bChansComment || options_view_data_->bVoltageScaleBar || options_view_data_->bChanSettings)
+	if (options_view_data_->b_channel_comment || options_view_data_->b_voltage_scale_bar || options_view_data_->b_channel_settings)
 	{
 		const auto channel_list_size = p_data_chart_wnd->get_channel_list_size();
 		for (auto channel_index = 0; channel_index < channel_list_size; channel_index++) // loop
@@ -2210,7 +2210,7 @@ CString ViewSpikeDetection::print_data_bars(CDC* p_dc, const ChartData* p_data_c
 
 			cs.Format(_T("chan#%i "), channel_index); 
 			str_comment += cs;
-			if (options_view_data_->bVoltageScaleBar) 
+			if (options_view_data_->b_voltage_scale_bar) 
 			{
 				const auto z = static_cast<float>(i_vertical_bar) * p_data_chart_wnd->get_channel_list_volts_per_pixel(channel_index);
 				const auto x = z / y_scale_factor;
@@ -2219,14 +2219,14 @@ CString ViewSpikeDetection::print_data_bars(CDC* p_dc, const ChartData* p_data_c
 				str_comment += cs;
 			}
 			// print chan comment
-			if (options_view_data_->bChansComment)
+			if (options_view_data_->b_channel_comment)
 			{
 				str_comment += tab;
 				str_comment += channel_item->GetComment();
 			}
 			str_comment += rc;
 			// print amplifiers settings (gain & filter), next line
-			if (options_view_data_->bChanSettings)
+			if (options_view_data_->b_channel_settings)
 			{
 				const auto source_channel = channel_item->GetSourceChan();
 				const auto wave_chan_array = GetDocument()->m_p_dat->get_wave_channels_array();
@@ -2251,7 +2251,7 @@ CString ViewSpikeDetection::print_spk_shape_bars(CDC* p_dc, const CRect* p_rect,
 	int k;
 
 	///// vertical voltage bars ///////////////////////////
-	if (options_view_data_->bVoltageScaleBar && m_pSpkList->get_spikes_count() > 0)
+	if (options_view_data_->b_voltage_scale_bar && m_pSpkList->get_spikes_count() > 0)
 	{
 		// the following assume that spikes are higher than 1 mV...
 		const CString cs_unit = _T("mV");
@@ -2278,7 +2278,7 @@ CString ViewSpikeDetection::print_spk_shape_bars(CDC* p_dc, const CRect* p_rect,
 		// compute coordinates of the rect
 		CRect rect_vertical_bar; 
 		const auto bar_width = CSize(5, 5);
-		rect_vertical_bar.left = p_rect->left - options_view_data_->textseparator;
+		rect_vertical_bar.left = p_rect->left - options_view_data_->text_separator;
 		rect_vertical_bar.right = rect_vertical_bar.left + bar_width.cx;
 		rect_vertical_bar.top = p_rect->top + (p_rect->Height() - vertical_bar) / 2;
 		rect_vertical_bar.bottom = rect_vertical_bar.top + vertical_bar;
@@ -2368,10 +2368,10 @@ void ViewSpikeDetection::serialize_windows_state(const BOOL save, int tab_index)
 		}
 		else
 		{
-			*m_chart_data_source_.get_scope_parameters() = options_view_data_->viewspkdetectdata;
-			*m_chart_data_filtered_.get_scope_parameters() = options_view_data_->viewspkdetectfiltered;
-			*m_chart_spike_bar_.get_scope_parameters() = options_view_data_->viewspkdetectspk;
-			*m_chart_spike_shape_.get_scope_parameters() = options_view_data_->viewspkdetectbars;
+			*m_chart_data_source_.get_scope_parameters() = options_view_data_->view_spk_detect_data;
+			*m_chart_data_filtered_.get_scope_parameters() = options_view_data_->view_spk_detect_filtered;
+			*m_chart_spike_bar_.get_scope_parameters() = options_view_data_->view_spk_detect_spk;
+			*m_chart_spike_shape_.get_scope_parameters() = options_view_data_->view_spk_detect_bars;
 		}
 	}
 }
@@ -2382,9 +2382,9 @@ BOOL ViewSpikeDetection::OnPreparePrinting(CPrintInfo* p_info)
 	serialize_windows_state(b_save);
 
 	// printing margins
-	if (options_view_data_->vertRes <= 0 || options_view_data_->horzRes <= 0
-		|| options_view_data_->horzRes != p_info->m_rectDraw.Width()
-		|| options_view_data_->vertRes != p_info->m_rectDraw.Height())
+	if (options_view_data_->vertical_resolution <= 0 || options_view_data_->horizontal_resolution <= 0
+		|| options_view_data_->horizontal_resolution != p_info->m_rectDraw.Width()
+		|| options_view_data_->vertical_resolution != p_info->m_rectDraw.Height())
 		print_compute_page_size();
 
 	// nb print pages?
@@ -2399,9 +2399,9 @@ BOOL ViewSpikeDetection::OnPreparePrinting(CPrintInfo* p_info)
 	if (!COleDocObjectItem::OnPreparePrinting(this, p_info))
 		return FALSE;
 
-	if (options_view_data_->bPrintSelection != p_info->m_pPD->PrintSelection())
+	if (options_view_data_->b_print_selection != p_info->m_pPD->PrintSelection())
 	{
-		options_view_data_->bPrintSelection = p_info->m_pPD->PrintSelection();
+		options_view_data_->b_print_selection = p_info->m_pPD->PrintSelection();
 		n_pages = print_get_n_pages();
 		p_info->SetMaxPage(n_pages);
 	}
@@ -2411,7 +2411,7 @@ BOOL ViewSpikeDetection::OnPreparePrinting(CPrintInfo* p_info)
 int ViewSpikeDetection::print_get_n_pages()
 {
 	// how many rows per page?
-	const auto size_row = options_view_data_->HeightDoc + options_view_data_->heightSeparator;
+	const auto size_row = options_view_data_->height_doc + options_view_data_->height_separator;
 	m_nb_rows_per_page_ = m_print_rect_.Height() / size_row;
 	if (m_nb_rows_per_page_ == 0)
 		m_nb_rows_per_page_ = 1;
@@ -2427,7 +2427,7 @@ int ViewSpikeDetection::print_get_n_pages()
 	m_files_count_ = 1;
 	auto i_file_0 = m_file_0_;
 	auto i_file_1 = m_file_0_;
-	if (!options_view_data_->bPrintSelection)
+	if (!options_view_data_->b_print_selection)
 	{
 		i_file_0 = 0;
 		m_files_count_ = p_document->db_get_n_records();
@@ -2493,7 +2493,7 @@ void ViewSpikeDetection::print_create_font()
 	//---------------------init objects-------------------------------------
 	memset(&m_log_font_, 0, sizeof(LOGFONT)); // prepare font
 	lstrcpy(m_log_font_.lfFaceName, _T("Arial")); // Arial font
-	m_log_font_.lfHeight = options_view_data_->fontsize; // font height
+	m_log_font_.lfHeight = options_view_data_->font_size; // font height
 	m_p_old_font_ = nullptr;
 	m_font_print_.CreateFontIndirect(&m_log_font_);
 }
@@ -2503,8 +2503,8 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 	m_p_old_font_ = p_dc->SelectObject(&m_font_print_);
 
 	// --------------------- RWhere = rectangle/row in which we plot the data, rWidth = row width
-	const auto r_width = options_view_data_->WidthDoc; // page margins
-	const auto r_height = options_view_data_->HeightDoc; // page margins
+	const auto r_width = options_view_data_->width_doc; // page margins
+	const auto r_height = options_view_data_->height_doc; // page margins
 	CRect r_where(m_print_rect_.left, // printing rectangle for one line of data
 		m_print_rect_.top,
 		m_print_rect_.left + r_width,
@@ -2513,21 +2513,21 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 	rw2.OffsetRect(-r_where.left, -r_where.top); // set RW2 origin = 0,0
 
 	// define spike shape area (rect): same height as data area
-	auto r_spk_height = options_view_data_->spkheight;
-	auto r_spk_width = options_view_data_->spkwidth;
+	auto r_spk_height = options_view_data_->spike_height;
+	auto r_spk_width = options_view_data_->spike_width;
 	if (r_spk_height == 0)
 	{
-		r_spk_height = r_height - options_view_data_->fontsize * 4;
+		r_spk_height = r_height - options_view_data_->font_size * 4;
 		r_spk_width = r_spk_height / 2;
 		if (r_spk_width < MulDiv(r_where.Width(), 10, 100))
 			r_spk_width = MulDiv(r_where.Width(), 10, 100);
-		options_view_data_->spkheight = r_spk_height;
-		options_view_data_->spkwidth = r_spk_width;
+		options_view_data_->spike_height = r_spk_height;
+		options_view_data_->spike_width = r_spk_width;
 	}
 
 	// save current draw mode (it will be modified to print only one channel)
 
-	if (!options_view_data_->bFilterDataSource)
+	if (!options_view_data_->b_filter_data_source)
 		m_chart_data_filtered_.set_channel_list_transform_mode(0, 0);
 
 	p_dc->SetMapMode(MM_TEXT); // change map mode to text (1 pixel = 1 logical point)
@@ -2558,9 +2558,9 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 		// load data and adjust display rectangle ----------------------------------------
 		// set data rectangle to half height to the row height
 		rect_data_ = r_where;
-		if (options_view_data_->bPrintSpkBars)
+		if (options_view_data_->b_print_spk_bars)
 			rect_data_.bottom = rect_data_.top + r_where.Height() / 2;
-		rect_data_.left += (r_spk_width + options_view_data_->textseparator);
+		rect_data_.left += (r_spk_width + options_view_data_->text_separator);
 		const auto old_size = rect_data_.Width(); 
 
 		// make sure enough data fit into this rectangle, otherwise clip rect
@@ -2573,7 +2573,7 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 		//--|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||--------
 
 		// if option requested, clip output to rect
-		if (options_view_data_->bClipRect) // clip curve display
+		if (options_view_data_->b_clip_rect) // clip curve display
 			p_dc->IntersectClipRect(&rect_data_); // (eventually)
 
 		// print detected channel only data
@@ -2584,7 +2584,7 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 		p_dc->SelectClipRgn(nullptr);
 
 		// print spike bars 
-		if (options_view_data_->bPrintSpkBars)
+		if (options_view_data_->b_print_spk_bars)
 		{
 			CRect BarsRect = r_where; 
 			BarsRect.top = rect_data_.bottom;
@@ -2598,7 +2598,7 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 		// print spike shape within a square (same width as height) 
 		rect_spike_ = r_where; 
 		rect_spike_.right = rect_spike_.left + r_spk_width;
-		rect_spike_.left += options_view_data_->textseparator;
+		rect_spike_.left += options_view_data_->text_separator;
 		rect_spike_.bottom = rect_spike_.top + r_spk_height; 
 
 		m_chart_spike_shape_.set_time_intervals(index_first_data_point, l_last);
@@ -2626,7 +2626,7 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 		}
 
 		// print comments stored into cs_comment
-		comment_rect.OffsetRect(options_view_data_->textseparator + comment_rect.Width(), 0);
+		comment_rect.OffsetRect(options_view_data_->text_separator + comment_rect.Width(), 0);
 		comment_rect.right = m_print_rect_.right;
 
 		// reset text align mode (otherwise pbs!) output text and restore text alignment
@@ -2639,7 +2639,7 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 		rect_spike_.right = rect_spike_.left + r_spk_height;
 		cs_comment = print_spk_shape_bars(p_dc, &rect_spike_, b_all);
 		rect_spike_.right = rect_spike_.left + r_spk_width;
-		rect_spike_.left -= options_view_data_->textseparator;
+		rect_spike_.left -= options_view_data_->text_separator;
 		rect_spike_.top = rect_spike_.bottom;
 		rect_spike_.bottom += m_log_font_.lfHeight * 3;
 		p_dc->DrawText(cs_comment, cs_comment.GetLength(), rect_spike_, format_parameters);
@@ -2649,7 +2649,7 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 
 		// update file parameters for next row --------------------------------------------
 
-		r_where.OffsetRect(0, r_height + options_view_data_->heightSeparator);
+		r_where.OffsetRect(0, r_height + options_view_data_->height_separator);
 		const auto i_file = file_index;
 		if (!print_get_next_row(file_index, index_first_data_point, index_last_data_point))
 		{
@@ -2665,7 +2665,7 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 
 	// end of file loop : restore initial conditions
 	m_chart_data_filtered_.get_channel_list_item(0)->SetflagPrintVisible(1);
-	if (!options_view_data_->bFilterDataSource)
+	if (!options_view_data_->b_filter_data_source)
 		m_chart_data_filtered_.set_channel_list_transform_mode(0, m_p_detect_parameters_->detect_transform);
 
 	if (m_p_old_font_ != nullptr)

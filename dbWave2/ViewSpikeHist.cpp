@@ -432,14 +432,14 @@ void ViewSpikeHist::getFileInfos(CString& str_comment)
 		const CString rc("\n"); // next line
 		if (m_bPrint)
 		{
-			if (mdPM->bDocName || mdPM->bAcqDateTime) // print doc infos?
+			if (mdPM->b_doc_name || mdPM->b_acq_date_time) // print doc infos?
 			{
-				if (mdPM->bDocName) // print file name
+				if (mdPM->b_doc_name) // print file name
 				{
 					const auto filename = GetDocument()->db_get_current_spk_file_name(FALSE);
 					str_comment += filename + tab;
 				}
-				if (mdPM->bAcqDateTime) // print data acquisition date & time
+				if (mdPM->b_acq_date_time) // print data acquisition date & time
 				{
 					const auto date = (p_spike_doc_->get_acq_time()).Format("%#d %m %Y %X"); //("%c");
 					str_comment += date;
@@ -699,9 +699,9 @@ BOOL ViewSpikeHist::OnPreparePrinting(CPrintInfo* pInfo)
 		return FALSE;
 
 	// printing margins
-	if (mdPM->vertRes <= 0 || mdPM->horzRes <= 0
-		|| mdPM->horzRes != pInfo->m_rectDraw.Width()
-		|| mdPM->vertRes != pInfo->m_rectDraw.Height())
+	if (mdPM->vertical_resolution <= 0 || mdPM->horizontal_resolution <= 0
+		|| mdPM->horizontal_resolution != pInfo->m_rectDraw.Width()
+		|| mdPM->vertical_resolution != pInfo->m_rectDraw.Height())
 	{
 		// compute printer's page dot resolution
 		CPrintDialog dlg(FALSE); // borrowed from VC++ sample\drawcli\drawdoc.cpp
@@ -711,13 +711,13 @@ BOOL ViewSpikeHist::OnPreparePrinting(CPrintInfo* pInfo)
 		ASSERT(h_dc != NULL);
 		dc.Attach(h_dc);
 		// Get the size of the page in pixels
-		mdPM->horzRes = dc.GetDeviceCaps(HORZRES);
-		mdPM->vertRes = dc.GetDeviceCaps(VERTRES);
+		mdPM->horizontal_resolution = dc.GetDeviceCaps(HORZRES);
+		mdPM->vertical_resolution = dc.GetDeviceCaps(VERTRES);
 	}
 
 	// how many rows per page?
-	const auto size_row = mdPM->HeightDoc + mdPM->heightSeparator;
-	auto nbrowsperpage = (mdPM->vertRes - 2 * mdPM->topPageMargin) / size_row;
+	const auto size_row = mdPM->height_doc + mdPM->height_separator;
+	auto nbrowsperpage = (mdPM->vertical_resolution - 2 * mdPM->top_page_margin) / size_row;
 	auto nfiles = 1;
 	if (m_nfiles == 1)
 		nfiles = GetDocument()->db_get_n_records();
@@ -731,7 +731,7 @@ BOOL ViewSpikeHist::OnPreparePrinting(CPrintInfo* pInfo)
 	pInfo->SetMaxPage(npages); // one page printing/preview
 	pInfo->m_nNumPreviewPages = 1; // preview 1 pages at a time
 	// allow print only selection
-	if (mdPM->bPrintSelection)
+	if (mdPM->b_print_selection)
 		pInfo->m_pPD->m_pd.Flags |= PD_SELECTION;
 	else
 		pInfo->m_pPD->m_pd.Flags &= ~PD_NOSELECTION;
@@ -739,8 +739,8 @@ BOOL ViewSpikeHist::OnPreparePrinting(CPrintInfo* pInfo)
 	// call dialog box
 	const auto flag = DoPreparePrinting(pInfo);
 	// set max nb of pages according to selection
-	mdPM->bPrintSelection = pInfo->m_pPD->PrintSelection();
-	if (mdPM->bPrintSelection)
+	mdPM->b_print_selection = pInfo->m_pPD->PrintSelection();
+	if (mdPM->b_print_selection)
 		pInfo->SetMaxPage(1);
 	return flag;
 }
@@ -762,18 +762,18 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	CString ch_date = GetDocument()->db_get_current_spk_file_name(FALSE);
 	ch_date = ch_date.Left(ch_date.GetLength() - 1) + cs_footer;
 	p_dc->SetTextAlign(TA_CENTER); // and print the footer
-	p_dc->TextOut(mdPM->horzRes / 2, mdPM->vertRes - 57, ch_date);
+	p_dc->TextOut(mdPM->horizontal_resolution / 2, mdPM->vertical_resolution - 57, ch_date);
 
 	// define page rectangle (where data and comments are plotted)
 	CRect rect_page; // = pInfo->m_rectDraw;
 	//rect_page.right = mdPM->horzRes-mdPM->rightPageMargin;
 	//rect_page.bottom = mdPM->vertRes-mdPM->bottomPageMargin;
-	rect_page.left = mdPM->leftPageMargin;
-	rect_page.top = mdPM->topPageMargin;
+	rect_page.left = mdPM->left_page_margin;
+	rect_page.top = mdPM->top_page_margin;
 
 	// define data file rectangle - position of the first file
-	const auto r_width = mdPM->WidthDoc; // margins
-	const auto r_height = mdPM->HeightDoc; // margins
+	const auto r_width = mdPM->width_doc; // margins
+	const auto r_height = mdPM->height_doc; // margins
 	CRect r_where(rect_page.left, rect_page.top,
 	              rect_page.left + r_width, rect_page.top + r_height);
 
@@ -781,7 +781,7 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	auto p_dbwave_doc = GetDocument();
 	/*int nfiles = */
 	p_dbwave_doc->db_get_n_records();
-	const auto size_row = mdPM->HeightDoc + mdPM->heightSeparator; // size of one row
+	const auto size_row = mdPM->height_doc + mdPM->height_separator; // size of one row
 	auto nbrowsperpage = pInfo->m_rectDraw.Height() / size_row; // nb of rows per page
 	if (nbrowsperpage == 0)
 		nbrowsperpage = 1;
@@ -795,7 +795,7 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	// loop through all files
 	for (auto ifile = file1; ifile < file2; ifile++)
 	{
-		if (mdPM->bFrameRect) // print data rect if necessary
+		if (mdPM->b_frame_rect) // print data rect if necessary
 		{
 			p_dc->MoveTo(r_where.left, r_where.top);
 			p_dc->LineTo(r_where.right, r_where.top);
@@ -804,7 +804,7 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			p_dc->LineTo(r_where.left, r_where.top);
 		}
 		m_commentRect = r_where; // calculate where the comments will be printed
-		m_commentRect.OffsetRect(mdPM->textseparator + m_commentRect.Width(), 0);
+		m_commentRect.OffsetRect(mdPM->text_separator + m_commentRect.Width(), 0);
 		m_commentRect.right = pInfo->m_rectDraw.right;
 		// refresh data if necessary
 		if (m_nfiles == 1) //??? (m_nfiles > 1)
@@ -830,7 +830,7 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 			break;
 		}
 		// update display rectangle for next row
-		r_where.OffsetRect(0, r_height + mdPM->heightSeparator);
+		r_where.OffsetRect(0, r_height + mdPM->height_separator);
 	}
 
 	// restore parameters
@@ -852,7 +852,7 @@ void ViewSpikeHist::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	memset(&m_logFont, 0, sizeof(LOGFONT)); // prepare font
 	lstrcpy(m_logFont.lfFaceName, _T("Arial")); // Arial font
-	m_logFont.lfHeight = mdPM->fontsize; // font height
+	m_logFont.lfHeight = mdPM->font_size; // font height
 	m_fontPrint.CreateFontIndirect(&m_logFont);
 	p_dc->SetBkMode(TRANSPARENT);
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "OPTIONS_VIEWDATA.h"
+#include "OPTIONS_VIEW_DATA.h"
 
 
 class DlgPrintDataOptions : public CDialog
@@ -17,7 +17,7 @@ public:
 	BOOL m_bVoltageScaleBar{ false };
 	BOOL m_bPrintSelection{ false };
 	BOOL m_bPrintSpkBars{ false };
-	OPTIONS_VIEWDATA* mdPM{ nullptr };
+	OPTIONS_VIEW_DATA* mdPM{ nullptr };
 
 	// Implementation
 protected:
@@ -46,7 +46,7 @@ public:
 	BOOL m_bdocname;
 	int m_fontsize;
 	int m_textseparator;
-	OPTIONS_VIEWDATA* mdPM;
+	OPTIONS_VIEW_DATA* mdPM;
 
 	// Implementation
 protected:

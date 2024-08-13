@@ -1,5 +1,5 @@
 #pragma once
-#include "OPTIONS_VIEWDATA.h"
+#include "OPTIONS_VIEW_DATA.h"
 
 class DlgPrintPageMargins : public CDialog
 {
@@ -14,7 +14,7 @@ public:
 	int m_bottomPageMargin{ 0 };
 	int m_rightPageMargin{ 0 };
 	int m_topPageMargin{ 0 };
-	OPTIONS_VIEWDATA* mdPM{ nullptr };
+	OPTIONS_VIEW_DATA* mdPM{ nullptr };
 
 	// Implementation
 protected:

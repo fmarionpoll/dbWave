@@ -125,50 +125,50 @@ void DlgPrintMargins::OnPaint()
 	center.x = (m_rect.right + m_rect.left) / 2;
 	center.y = (m_rect.bottom + m_rect.top) / 2;
 	const auto rectsize = min(m_rect.Width(), m_rect.Height()); // max size of the square
-	const auto maxresol = max(mdPM->vertRes, mdPM->horzRes); // max resolution
+	const auto maxresol = max(mdPM->vertical_resolution, mdPM->horizontal_resolution); // max resolution
 
 	// draw page area
-	auto diff = MulDiv(mdPM->horzRes, rectsize, maxresol) / 2;
+	auto diff = MulDiv(mdPM->horizontal_resolution, rectsize, maxresol) / 2;
 	m_pagerect.left = center.x - diff;
 	m_pagerect.right = center.x + diff;
-	diff = MulDiv(mdPM->vertRes, rectsize, maxresol) / 2;
+	diff = MulDiv(mdPM->vertical_resolution, rectsize, maxresol) / 2;
 	m_pagerect.top = center.y - diff;
 	m_pagerect.bottom = center.y + diff;
 	dc.Rectangle(&m_pagerect);
 
-	auto i = MulDiv(mdPM->leftPageMargin, rectsize, maxresol); // vertical lines
+	auto i = MulDiv(mdPM->left_page_margin, rectsize, maxresol); // vertical lines
 	m_bars[0] = CRect(m_pagerect.left + i, m_rect.top, m_pagerect.left + i, m_rect.bottom);
 
-	i = MulDiv(mdPM->rightPageMargin, rectsize, maxresol);
+	i = MulDiv(mdPM->right_page_margin, rectsize, maxresol);
 	m_bars[2] = CRect(m_pagerect.right - i, m_rect.top, m_pagerect.right - i, m_rect.bottom);
 
-	i = MulDiv(mdPM->topPageMargin, rectsize, maxresol);
+	i = MulDiv(mdPM->top_page_margin, rectsize, maxresol);
 	m_bars[1] = CRect(m_rect.left, m_pagerect.top + i, m_rect.right, m_pagerect.top + i);
 
-	i = MulDiv(mdPM->bottomPageMargin, rectsize, maxresol);
+	i = MulDiv(mdPM->bottom_page_margin, rectsize, maxresol);
 	m_bars[3] = CRect(m_rect.left, m_pagerect.bottom - i, m_rect.right, m_pagerect.bottom - i);
 
 	// draw drawing area
-	if (mdPM->bFrameRect)
+	if (mdPM->b_frame_rect)
 		dc.SelectStockObject(BLACK_PEN);
 	else
 		dc.SelectStockObject(WHITE_PEN);
 
 	const int rowmax = m_pagerect.bottom - i;
 	CRect docrect;
-	docrect.left = m_pagerect.left + MulDiv(mdPM->leftPageMargin, rectsize, maxresol);
-	docrect.right = docrect.left + MulDiv(mdPM->WidthDoc, rectsize, maxresol);
+	docrect.left = m_pagerect.left + MulDiv(mdPM->left_page_margin, rectsize, maxresol);
+	docrect.right = docrect.left + MulDiv(mdPM->width_doc, rectsize, maxresol);
 
 	CRect commtrect;
-	commtrect.left = docrect.right + MulDiv(mdPM->textseparator, rectsize, maxresol);
-	commtrect.right = m_pagerect.right - MulDiv(mdPM->rightPageMargin, rectsize, maxresol);
+	commtrect.left = docrect.right + MulDiv(mdPM->text_separator, rectsize, maxresol);
+	commtrect.right = m_pagerect.right - MulDiv(mdPM->right_page_margin, rectsize, maxresol);
 	if (commtrect.right < commtrect.left)
 		commtrect.right = commtrect.left + 10;
 
 	// draw comments
-	const auto rowheight = MulDiv(mdPM->HeightDoc, rectsize, maxresol);
-	const auto rowsep = MulDiv(mdPM->heightSeparator, rectsize, maxresol);
-	int toprow = m_pagerect.top + MulDiv(mdPM->topPageMargin, rectsize, maxresol);
+	const auto rowheight = MulDiv(mdPM->height_doc, rectsize, maxresol);
+	const auto rowsep = MulDiv(mdPM->height_separator, rectsize, maxresol);
+	int toprow = m_pagerect.top + MulDiv(mdPM->top_page_margin, rectsize, maxresol);
 	auto bottomrow = toprow + rowheight;
 
 	m_bars[4] = CRect(docrect.right, m_rect.top, docrect.right, m_rect.bottom);
@@ -224,13 +224,13 @@ void DlgPrintMargins::GetPageSize()
 	dc.Attach(h_dc);
 
 	// Get the size of the page in pixels
-	mdPM->horzRes = dc.GetDeviceCaps(HORZRES);
-	mdPM->vertRes = dc.GetDeviceCaps(VERTRES);
+	mdPM->horizontal_resolution = dc.GetDeviceCaps(HORZRES);
+	mdPM->vertical_resolution = dc.GetDeviceCaps(VERTRES);
 
 	CString csResolut;
-	csResolut.Format(_T("%i"), mdPM->vertRes);
+	csResolut.Format(_T("%i"), mdPM->vertical_resolution);
 	SetDlgItemText(IDC_PAGEHEIGHT, csResolut);
-	csResolut.Format(_T("%i"), mdPM->horzRes);
+	csResolut.Format(_T("%i"), mdPM->horizontal_resolution);
 	SetDlgItemText(IDC_PAGEWIDTH, csResolut);
 }
 
@@ -260,7 +260,7 @@ void DlgPrintMargins::OnLButtonUp(UINT nFlags, CPoint point)
 		m_bCaptured = FALSE;
 
 		const auto rectsize = min(m_rect.Width(), m_rect.Height()); // max size of the square
-		const auto maxresol = max(mdPM->vertRes, mdPM->horzRes); // max resolution
+		const auto maxresol = max(mdPM->vertical_resolution, mdPM->horizontal_resolution); // max resolution
 
 		switch (m_icapturedBar)
 		{
@@ -275,7 +275,7 @@ void DlgPrintMargins::OnLButtonUp(UINT nFlags, CPoint point)
 				m_bars[0].left = m_pagerect.right;
 				m_bars[0].right = m_pagerect.right;
 			}
-			mdPM->leftPageMargin = MulDiv(m_bars[0].right - m_pagerect.left, maxresol, rectsize);
+			mdPM->left_page_margin = MulDiv(m_bars[0].right - m_pagerect.left, maxresol, rectsize);
 			break;
 
 		case 1: // top page margin
@@ -289,7 +289,7 @@ void DlgPrintMargins::OnLButtonUp(UINT nFlags, CPoint point)
 				m_bars[1].top = m_pagerect.bottom;
 				m_bars[1].bottom = m_pagerect.bottom;
 			}
-			mdPM->topPageMargin = MulDiv(m_bars[1].top - m_pagerect.top, maxresol, rectsize);
+			mdPM->top_page_margin = MulDiv(m_bars[1].top - m_pagerect.top, maxresol, rectsize);
 			break;
 
 		case 2: // right page margin
@@ -303,7 +303,7 @@ void DlgPrintMargins::OnLButtonUp(UINT nFlags, CPoint point)
 				m_bars[2].left = m_pagerect.right;
 				m_bars[2].right = m_pagerect.right;
 			}
-			mdPM->rightPageMargin = MulDiv((m_pagerect.right - m_bars[2].right), maxresol, rectsize);
+			mdPM->right_page_margin = MulDiv((m_pagerect.right - m_bars[2].right), maxresol, rectsize);
 			break;
 
 		case 3: //bottom page margin
@@ -317,7 +317,7 @@ void DlgPrintMargins::OnLButtonUp(UINT nFlags, CPoint point)
 				m_bars[3].top = m_pagerect.bottom;
 				m_bars[3].bottom = m_pagerect.bottom;
 			}
-			mdPM->bottomPageMargin = MulDiv((m_pagerect.bottom - m_bars[3].top), maxresol, rectsize);
+			mdPM->bottom_page_margin = MulDiv((m_pagerect.bottom - m_bars[3].top), maxresol, rectsize);
 			break;
 
 		case 4: // signal right
@@ -326,7 +326,7 @@ void DlgPrintMargins::OnLButtonUp(UINT nFlags, CPoint point)
 				m_bars[4].right = m_bars[0].left;
 				m_bars[4].left = m_bars[0].left;
 			}
-			mdPM->WidthDoc = MulDiv((m_bars[4].right - m_bars[0].right), maxresol, rectsize);
+			mdPM->width_doc = MulDiv((m_bars[4].right - m_bars[0].right), maxresol, rectsize);
 			break;
 
 		case 5: // signal band width
@@ -340,7 +340,7 @@ void DlgPrintMargins::OnLButtonUp(UINT nFlags, CPoint point)
 				m_bars[5].top = m_bars[3].top;
 				m_bars[5].bottom = m_bars[3].top;
 			}
-			mdPM->HeightDoc = MulDiv((m_bars[5].top - m_bars[1].top), maxresol, rectsize);
+			mdPM->height_doc = MulDiv((m_bars[5].top - m_bars[1].top), maxresol, rectsize);
 			break;
 
 		case 6: // horizontal separator between signal and comment area
@@ -349,7 +349,7 @@ void DlgPrintMargins::OnLButtonUp(UINT nFlags, CPoint point)
 				m_bars[6].right = m_bars[4].right;
 				m_bars[6].left = m_bars[4].right;
 			}
-			mdPM->textseparator = MulDiv((m_bars[6].left - m_bars[4].right), maxresol, rectsize);
+			mdPM->text_separator = MulDiv((m_bars[6].left - m_bars[4].right), maxresol, rectsize);
 			break;
 
 		case 7: // separator beween consecutive bands
@@ -358,7 +358,7 @@ void DlgPrintMargins::OnLButtonUp(UINT nFlags, CPoint point)
 				m_bars[7].top = m_bars[5].top;
 				m_bars[7].bottom = m_bars[5].top;
 			}
-			mdPM->heightSeparator = MulDiv((m_bars[7].top - m_bars[5].top), maxresol, rectsize);
+			mdPM->height_separator = MulDiv((m_bars[7].top - m_bars[5].top), maxresol, rectsize);
 			break;
 		default:
 			break;

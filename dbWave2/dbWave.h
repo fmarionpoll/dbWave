@@ -11,7 +11,7 @@
 #include "OPTIONS_MEASURE.h"
 #include "OPTIONS_IMPORT.h"
 #include "OPTIONS_OUTPUTDATA.h"
-#include "OPTIONS_VIEWDATA.h"
+#include "OPTIONS_VIEW_DATA.h"
 #include "OPTIONS_VIEWSPIKES.h"
 #include "SPK_CLASSIF.h"
 #include "SPKDETECTARRAY.h"
@@ -53,7 +53,7 @@ public:
 	SPKDETECTARRAY spk_detect_array;
 	SPK_CLASSIF spk_classification;
 
-	OPTIONS_VIEWDATA options_view_data;
+	OPTIONS_VIEW_DATA options_view_data;
 	OPTIONS_VIEWSPIKES options_view_spikes;
 	OPTIONS_MEASURE options_view_data_measure;
 	OPTIONS_IMPORT options_import;

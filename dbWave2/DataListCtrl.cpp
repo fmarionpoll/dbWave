@@ -69,9 +69,9 @@ void DataListCtrl::save_columns_width() const
 	if (m_width_columns_ != nullptr)
 	{
 		const auto n_columns_stored = m_width_columns_->GetSize();
-		if (n_columns_stored != NCOLS)
-			m_width_columns_->SetSize(NCOLS);
-		for (auto i = 0; i < NCOLS; i++)
+		if (n_columns_stored != N_COLUMNS)
+			m_width_columns_->SetSize(N_COLUMNS);
+		for (auto i = 0; i < N_COLUMNS; i++)
 			m_width_columns_->SetAt(i, GetColumnWidth(i));
 	}
 }
@@ -129,13 +129,13 @@ void DataListCtrl::init_columns(CUIntArray* width_columns)
 	{
 		m_width_columns_ = width_columns;
 		const auto n_columns = width_columns->GetSize();
-		if (n_columns < NCOLS)
-			width_columns->SetSize(NCOLS);
+		if (n_columns < N_COLUMNS)
+			width_columns->SetSize(N_COLUMNS);
 		for (auto i = 0; i < n_columns; i++)
 			m_column_width_[i] = static_cast<int>(width_columns->GetAt(i));
 	}
 
-	for (auto i = 0; i < NCOLS; i++)
+	for (auto i = 0; i < N_COLUMNS; i++)
 	{
 		InsertColumn(i, m_column_headers_[i], m_column_format_[i], m_column_width_[i], -1);
 	}

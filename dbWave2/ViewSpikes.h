@@ -115,7 +115,7 @@ protected:
 	void OnActivateView(BOOL b_activate, CView* p_activate_view, CView* p_deactivate_view) override;
 
 	// page format printing parameters (pixel unit)
-	OPTIONS_VIEWDATA* options_view_data_ = nullptr; 
+	OPTIONS_VIEW_DATA* options_view_data_ = nullptr; 
 	OPTIONS_MEASURE* options_view_data_measure_ = nullptr; 
 	SPK_CLASSIF* spk_classification_parameters_ = nullptr;
 	SPKDETECTPARM* spk_detection_parameters_ = nullptr; 

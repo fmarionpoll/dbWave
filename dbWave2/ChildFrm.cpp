@@ -263,9 +263,9 @@ void CChildFrame::export_ascii(const int option)
 	case 0: // export CAcqData
 	{
 		auto flag = FALSE;
-		if (p_app->options_view_data.btoExcel)
+		if (p_app->options_view_data.b_to_excel)
 			flag = export_to_excel();
-		if (!p_app->options_view_data.btoExcel || !flag)
+		if (!p_app->options_view_data.b_to_excel || !flag)
 		{
 			CMultiDocTemplate* note_view_template = p_app->m_NoteView_Template;
 			const auto p_dbWave_doc_export = note_view_template->OpenDocumentFile(nullptr);
@@ -687,11 +687,11 @@ void CChildFrame::on_record_goto()
 		return;
 	dlg.m_recordPos = p_db_wave_doc->db_get_current_record_position();
 	dlg.m_recordID = p_db_wave_doc->db_get_current_record_id();
-	dlg.m_bGotoRecordID = static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.bGotoRecordID;
+	dlg.m_bGotoRecordID = static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.b_goto_record_id;
 
 	if (IDOK == dlg.DoModal())
 	{
-		static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.bGotoRecordID = dlg.m_bGotoRecordID;
+		static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.b_goto_record_id = dlg.m_bGotoRecordID;
 		if (!dlg.m_bGotoRecordID)
 			p_db_wave_doc->db_set_current_record_position(dlg.m_recordPos);
 		else
@@ -792,7 +792,7 @@ void CChildFrame::on_record_delete()
 		// delete records from the database and collect names of files to change
 		// save list of data files to delete into a temporary array
 		if (p_view->IsKindOf(RUNTIME_CLASS(ViewdbWave)))
-			static_cast<ViewdbWave*>(p_view)->DeleteRecords();
+			static_cast<ViewdbWave*>(p_view)->delete_records();
 		else
 			p_dbWave_doc->db_delete_current_record();
 
