@@ -99,9 +99,9 @@ void ViewdbWave::OnInitialUpdate()
 	GetDlgItem(IDC_TIMELAST)->EnableWindow(m_options_view_data_->b_set_time_span);
 	m_data_list_ctrl.set_timespan_adjust_mode(m_options_view_data_->b_set_time_span);
 
-	CheckDlgButton(IDC_CHECK2, m_options_view_data_->b_set_m_v_span);
-	GetDlgItem(IDC_AMPLITUDESPAN)->EnableWindow(m_options_view_data_->b_set_m_v_span);
-	m_data_list_ctrl.set_amplitude_adjust_mode(m_options_view_data_->b_set_m_v_span);
+	CheckDlgButton(IDC_CHECK2, m_options_view_data_->b_set_mv_span);
+	GetDlgItem(IDC_AMPLITUDESPAN)->EnableWindow(m_options_view_data_->b_set_mv_span);
+	m_data_list_ctrl.set_amplitude_adjust_mode(m_options_view_data_->b_set_mv_span);
 
 	m_data_list_ctrl.SetExtendedStyle
 	(m_data_list_ctrl.GetExtendedStyle()
@@ -592,10 +592,10 @@ void ViewdbWave::on_hdn_end_track_list_ctrl(NMHDR * p_nmhdr, LRESULT * p_result)
 
 void ViewdbWave::on_bn_clicked_check2()
 {
-	m_options_view_data_->b_set_m_v_span = IsDlgButtonChecked(IDC_CHECK2);
-	m_data_list_ctrl.set_amplitude_adjust_mode(m_options_view_data_->b_set_m_v_span);
+	m_options_view_data_->b_set_mv_span = IsDlgButtonChecked(IDC_CHECK2);
+	m_data_list_ctrl.set_amplitude_adjust_mode(m_options_view_data_->b_set_mv_span);
 	m_data_list_ctrl.refresh_display();
-	GetDlgItem(IDC_AMPLITUDESPAN)->EnableWindow(m_options_view_data_->b_set_m_v_span);
+	GetDlgItem(IDC_AMPLITUDESPAN)->EnableWindow(m_options_view_data_->b_set_mv_span);
 }
 
 void ViewdbWave::on_bn_clicked_check1()

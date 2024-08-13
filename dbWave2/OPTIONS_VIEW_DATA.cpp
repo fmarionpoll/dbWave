@@ -92,7 +92,7 @@ OPTIONS_VIEW_DATA& OPTIONS_VIEW_DATA::operator =(const OPTIONS_VIEW_DATA& arg)
 		display_mode = arg.display_mode;
 		b_display_file_name = arg.b_display_file_name;
 		b_set_time_span = arg.b_set_time_span;
-		b_set_m_v_span = arg.b_set_m_v_span;
+		b_set_mv_span = arg.b_set_mv_span;
 		b_display_all_classes = arg.b_display_all_classes;
 		spike_class = arg.spike_class;
 	}
@@ -175,7 +175,7 @@ void OPTIONS_VIEW_DATA::Serialize(CArchive& ar)
 		wMult += wMult;
 		wBrowseFlags += b_set_time_span * wMult; //4096
 		wMult += wMult;
-		wBrowseFlags += b_set_m_v_span * wMult; //8192
+		wBrowseFlags += b_set_mv_span * wMult; //8192
 		wMult += wMult;
 		wBrowseFlags += b_display_all_classes * wMult; //16384
 		ar << wBrowseFlags;
@@ -338,7 +338,7 @@ void OPTIONS_VIEW_DATA::Serialize(CArchive& ar)
 		wMult += wMult;
 		b_set_time_span = ((wBrowseFlags & wMult) > 0);
 		wMult += wMult;
-		b_set_m_v_span = ((wBrowseFlags & wMult) > 0);
+		b_set_mv_span = ((wBrowseFlags & wMult) > 0);
 		wMult += wMult;
 		b_display_all_classes = ((wBrowseFlags & wMult) > 0);
 
@@ -372,37 +372,37 @@ void OPTIONS_VIEW_DATA::Serialize(CArchive& ar)
 		{
 			WORD n_int_items;
 			ar >> n_int_items;
-			int nb_INT_items = n_int_items;
+			int nb_int_items = n_int_items;
 			ar >> hz_resolution;
-			nb_INT_items--; //1
+			nb_int_items--; //1
 			ar >> vt_resolution;
-			nb_INT_items--; //2
+			nb_int_items--; //2
 			ar >> unit_mode;
-			nb_INT_items--; //3
+			nb_int_items--; //3
 			ar >> spike_height;
-			nb_INT_items--; //4
+			nb_int_items--; //4
 			ar >> spike_width;
-			nb_INT_items--; //5
+			nb_int_items--; //5
 			ar >> n_filter_index;
-			nb_INT_items--; //6
+			nb_int_items--; //6
 			ar >> col0_width;
-			nb_INT_items--; //7
+			nb_int_items--; //7
 			ar >> row0_height;
-			nb_INT_items--; //8
+			nb_int_items--; //8
 			ar >> b_col0_visible;
-			nb_INT_items--; //9
+			nb_int_items--; //9
 			ar >> b_row0_visible;
-			nb_INT_items--; //10
+			nb_int_items--; //10
 			ar >> i_row_height;
-			nb_INT_items--; //11
+			nb_int_items--; //11
 			ar >> display_mode;
-			nb_INT_items--; //12
-			if (nb_INT_items > 0) ar >> spike_class;
-			nb_INT_items--;
+			nb_int_items--; //12
+			if (nb_int_items > 0) ar >> spike_class;
+			nb_int_items--;
 
-			ar >> nb_INT_items;
-			i_column_width.SetSize(nb_INT_items);
-			for (auto ii = 0; ii < nb_INT_items; ii++)
+			ar >> nb_int_items;
+			i_column_width.SetSize(nb_int_items);
+			for (auto ii = 0; ii < nb_int_items; ii++)
 				ar >> i_column_width[ii];
 			int n_float_items;
 			ar >> n_float_items;
