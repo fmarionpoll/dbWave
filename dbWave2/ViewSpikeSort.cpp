@@ -355,6 +355,7 @@ void ViewSpikeSort::update_file_parameters()
 	{
 		l_first_ = static_cast<long>(time_first_s_ * p_spk_list->get_acq_sampling_rate());
 		l_last_ = static_cast<long>(time_last_s_ * p_spk_list->get_acq_sampling_rate());
+		sampling_rate_ = p_spk_list->get_acq_sampling_rate();;
 		delta_ms_ = time_unit_ / p_spk_list->get_acq_sampling_rate();
 		delta_mv_ = p_spk_list->get_acq_volts_per_bin() * mv_unit_;
 
@@ -443,8 +444,8 @@ void ViewSpikeSort::select_spike()
 void ViewSpikeSort::update_legends()
 {
 	// update text abscissa and horizontal scroll position
-	time_first_s_ = static_cast<float>(l_first_) / p_spk_list->get_acq_sampling_rate();
-	time_last_s_ = static_cast<float>(l_last_) / p_spk_list->get_acq_sampling_rate();
+	time_first_s_ = static_cast<float>(l_first_) / sampling_rate_;
+	time_last_s_ = static_cast<float>(l_last_) / sampling_rate_;
 	update_file_scroll();
 
 	if (4 != spike_classification_->i_parameter)
@@ -787,16 +788,16 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 		switch (spike_classification_->i_parameter)
 		{
 		case 1: // value at t1
-			p_spk_list->measure_amplitude_at_t(spike_classification_->shape_t1);
+			p_spk_list->measure_amplitude_vt(spike_classification_->shape_t1);
 			b_measure_done_ = TRUE;
 			break;
 		case 2: // value at t2
-			p_spk_list->measure_amplitude_at_t(spike_classification_->shape_t2);
+			p_spk_list->measure_amplitude_vt(spike_classification_->shape_t2);
 			b_measure_done_ = TRUE;
 			break;
 
 		case 3: // value at t2- value at t1
-			p_spk_list->measure_amplitude_at_t2_minus_at_t1(spike_classification_->shape_t1, spike_classification_->shape_t2);
+			p_spk_list->measure_amplitude_vt2_minus_vt1(spike_classification_->shape_t1, spike_classification_->shape_t2);
 			b_measure_done_ = TRUE;
 			break;
 
@@ -1061,9 +1062,9 @@ void ViewSpikeSort::on_select_all_files()
 	on_measure_parameters_from_spikes();
 	on_select_all_files_display_interface();
 
-	chart_spike_bar_.display_all_files(b_all_files_, GetDocument());
-	chart_shape_.display_all_files(b_all_files_, GetDocument());
-	chart_measures_.display_all_files(b_all_files_, GetDocument());
+	chart_spike_bar_.set_display_all_files(static_cast<boolean>(b_all_files_));
+	chart_shape_.set_display_all_files(static_cast<boolean>(b_all_files_));
+	chart_measures_.set_display_all_files(static_cast<boolean>(b_all_files_));
 }
 
 void ViewSpikeSort::on_select_all_files_display_interface() const

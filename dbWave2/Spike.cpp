@@ -204,14 +204,14 @@ void Spike::measure_amplitude_min_to_max(const int t1, const int t2)
 	set_y1(max - min);
 }
 
-void Spike::measure_max_min_ex(int* value_max, int* index_max, int* value_min, int* index_min, const int i_first, const int i_last) const
+void Spike::measure_max_min_ex(int* value_max, int* index_max, int* value_min, int* index_min, const int t1, const int t2) const
 {
-	auto lp_buffer = get_p_data() + i_first;
+	auto lp_buffer = get_p_data() + t1;
 	auto val = *lp_buffer;
 	*value_max = val;
 	*value_min = val;
-	*index_min = *index_max = i_first;
-	for (auto i = i_first + 1; i < i_last; i++)
+	*index_min = *index_max = t1;
+	for (auto i = t1 + 1; i < t2; i++)
 	{
 		lp_buffer++;
 		val = *lp_buffer;
@@ -228,18 +228,18 @@ void Spike::measure_max_min_ex(int* value_max, int* index_max, int* value_min, i
 	}
 }
 
-void Spike::measure_max_then_min_ex(int* value_max, int* index_max, int* value_min, int* index_min, const int i_first, const int i_last) const
+void Spike::measure_max_then_min_ex(int* value_max, int* index_max, int* value_min, int* index_min, const int t1, const int t2) const
 {
-	auto lp_buffer = get_p_data() + i_first;
+	auto lp_buffer = get_p_data() + t1;
 	auto lp_buffer_max = lp_buffer;
 	auto val = *lp_buffer;
 	*value_max = val;
-	*index_max = i_first;
+	*index_max = t1;
 	*value_min = val;
-	*index_min = i_first;
+	*index_min = t1;
 
 	// first search for max
-	for (auto i = i_first + 1; i <= i_last; i++)
+	for (auto i = t1 + 1; i <= t2; i++)
 	{
 		lp_buffer++;
 		val = *lp_buffer;
@@ -255,7 +255,7 @@ void Spike::measure_max_then_min_ex(int* value_max, int* index_max, int* value_m
 	lp_buffer = lp_buffer_max;
 	*value_min = *value_max;
 	*index_min = *index_max;
-	for (int i = *index_min + 1; i <= i_last; i++)
+	for (int i = *index_min + 1; i <= t2; i++)
 	{
 		lp_buffer++;
 		val = *lp_buffer;

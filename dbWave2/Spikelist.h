@@ -118,8 +118,8 @@ public:
 	void change_all_spike_from_class_id_to_new_class_id(int old_class_ID, int new_class_ID);
 
 	void measure_amplitude_min_to_max(int t1, int t2);
-	void measure_amplitude_at_t(int t);
-	void measure_amplitude_at_t2_minus_at_t1(int t1, int t2);
+	void measure_amplitude_vt(int t);
+	void measure_amplitude_vt2_minus_vt1(int t1, int t2);
 	CSize measure_y1_max_min();
 
 	BOOL sort_spike_with_y1(CSize from_class_id_to_class_id, CSize time_bounds, CSize limits);

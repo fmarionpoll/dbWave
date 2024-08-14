@@ -952,7 +952,7 @@ void SpikeList::measure_amplitude_min_to_max(const int t1, const int t2)
 	}
 }
 
-void SpikeList::measure_amplitude_at_t(const int t)
+void SpikeList::measure_amplitude_vt(const int t)
 {
 	const auto n_spikes = get_spikes_count();
 
@@ -966,7 +966,7 @@ void SpikeList::measure_amplitude_at_t(const int t)
 	}
 }
 
-void SpikeList::measure_amplitude_at_t2_minus_at_t1(const int t1, const int t2)
+void SpikeList::measure_amplitude_vt2_minus_vt1(const int t1, const int t2)
 {
 	const auto n_spikes = get_spikes_count();
 

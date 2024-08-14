@@ -73,8 +73,8 @@ public:
 
 	void	transfer_data_to_spike_buffer(short* source_data, const int source_n_channels, const int spike_length);
 	void	measure_amplitude_min_to_max(int t1, int t2);
-	void	measure_max_min_ex(int* value_max, int* index_max, int* value_min, int* index_min, int i_first, int i_last) const;
-	void	measure_max_then_min_ex(int* value_max, int* index_max, int* value_min, int* index_min, int i_first, int i_last) const;
+	void	measure_max_min_ex(int* value_max, int* index_max, int* value_min, int* index_min, int t1, int t2) const;
+	void	measure_max_then_min_ex(int* value_max, int* index_max, int* value_min, int* index_min, int t1, int t2) const;
 	long	measure_sum_ex(int i_first, int i_last) const;
 
 	void	offset_spike_data(int offset);

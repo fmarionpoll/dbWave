@@ -96,6 +96,7 @@ protected:
 	const float mv_unit_ {1000.f};	// 1=V, 1000f=mV, 1e6=uV
 	float delta_mv_{};
 	float delta_ms_{};
+	float sampling_rate_{};
 
 	int m_measure_y1_max_{}; 
 	int m_measure_y1_min_{}; 
@@ -154,7 +155,6 @@ public:
 	void DoDataExchange(CDataExchange* p_dx) override;
 	void OnInitialUpdate() override;
 	void OnActivateView(BOOL b_activate, CView* p_activate_view, CView* p_deactive_view) override;
-	
 
 	// Generated message map functions
 	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
