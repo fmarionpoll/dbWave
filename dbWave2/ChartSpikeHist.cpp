@@ -22,10 +22,7 @@ BEGIN_MESSAGE_MAP(ChartSpikeHist, ChartSpike)
 END_MESSAGE_MAP()
 
 ChartSpikeHist::ChartSpikeHist()
-{
-	set_b_use_dib(FALSE);
-	cs_empty_ = _T("no \n_spikes (spikehist)");
-}
+= default;
 
 ChartSpikeHist::~ChartSpikeHist()
 {

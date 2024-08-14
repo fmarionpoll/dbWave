@@ -52,7 +52,7 @@ void ViewSpikeSort::DoDataExchange(CDataExchange* p_dx)
 	DDX_Text(p_dx, IDC_HISTOGRAM_BIN_MS, histogram_bin_mv_);
 	DDX_Check(p_dx, IDC_ALL_FILES, b_all_files_);
 	DDX_Text(p_dx, IDC_SPIKE_INDEX, spike_index_);
-	DDX_Text(p_dx, IDC_SPIKE_CLASS, spike_class_);
+	DDX_Text(p_dx, IDC_SPIKE_CLASS, class_index_);
 	DDX_Text(p_dx, IDC_EDIT_RIGHT, t_xy_right_);
 	DDX_Text(p_dx, IDC_EDIT_LEFT, t_xy_left_);
 
@@ -123,10 +123,14 @@ void ViewSpikeSort::define_sub_classed_items()
 	VERIFY(mm_t_xy_left_.SubclassDlgItem(IDC_EDIT_LEFT, this));
 	VERIFY(mm_histogram_bin_mv_.SubclassDlgItem(IDC_HISTOGRAM_BIN_MS, this));
 
+	VERIFY(mm_file_index_.SubclassDlgItem(IDC_FILE_INDEX, this));
+	mm_file_index_.ShowScrollBar(SB_VERT);
+	VERIFY(mm_list_index_.SubclassDlgItem(IDC_LIST_INDEX, this));
+	mm_list_index_.ShowScrollBar(SB_VERT);
 	VERIFY(mm_spike_index_.SubclassDlgItem(IDC_SPIKE_INDEX, this));
 	mm_spike_index_.ShowScrollBar(SB_VERT);
-	VERIFY(mm_spike_index_class_.SubclassDlgItem(IDC_SPIKE_CLASS, this));
-	mm_spike_index_class_.ShowScrollBar(SB_VERT);
+	VERIFY(mm_class_index_.SubclassDlgItem(IDC_SPIKE_CLASS, this));
+	mm_class_index_.ShowScrollBar(SB_VERT);
 
 	VERIFY(m_file_scroll_.SubclassDlgItem(IDC_FILESCROLL, this));
 	m_file_scroll_.SetScrollRange(0, 100, FALSE);
@@ -970,13 +974,13 @@ void ViewSpikeSort::select_spike(db_spike& spike_sel)
 	chart_measures_.select_spike_measure(spike_sel);
 	p_spk_list->m_selected_spike = spike_sel.spike_index;
 
-	spike_class_ = -1;
+	class_index_ = -1;
 	auto n_cmd_show = SW_HIDE;
 	if (spike_sel.spike_index >= 0)
 	{
 		const auto spike = p_spk_list->get_spike(spike_sel.spike_index);
 		if (spike != nullptr) {
-			spike_class_ = spike->get_class_id();
+			class_index_ = spike->get_class_id();
 			n_cmd_show = SW_SHOW;
 		}
 	}
@@ -1055,10 +1059,20 @@ void ViewSpikeSort::on_select_all_files()
 	b_all_files_ = static_cast<CButton*>(GetDlgItem(IDC_ALL_FILES))->GetCheck();
 	b_measure_done_ = FALSE;
 	on_measure_parameters_from_spikes();
+	on_select_all_files_display_interface();
 
 	chart_spike_bar_.display_all_files(b_all_files_, GetDocument());
 	chart_shape_.display_all_files(b_all_files_, GetDocument());
 	chart_measures_.display_all_files(b_all_files_, GetDocument());
+}
+
+void ViewSpikeSort::on_select_all_files_display_interface() const
+{
+	const int n_show = b_all_files_ ? SW_SHOW: SW_HIDE ;
+	GetDlgItem(IDC_FILE_STATIC)->ShowWindow(n_show);
+	GetDlgItem(IDC_FILE_INDEX)->ShowWindow(n_show);
+	GetDlgItem(IDC_LIST_STATIC)->ShowWindow(n_show);
+	GetDlgItem(IDC_LIST_INDEX)->ShowWindow(n_show);
 }
 
 void ViewSpikeSort::on_tools_align_spikes()
@@ -1629,17 +1643,17 @@ void ViewSpikeSort::on_en_change_spike_index()
 
 void ViewSpikeSort::on_en_change_spike_class()
 {
-	if (mm_spike_index_class_.m_bEntryDone)
+	if (mm_class_index_.m_bEntryDone)
 	{
-		const auto spike_index_class = spike_class_;
-		mm_spike_index_class_.OnEnChange(this, spike_class_, 1, -1);
+		const auto spike_index_class = class_index_;
+		mm_class_index_.OnEnChange(this, class_index_, 1, -1);
 
-		if (spike_class_ != spike_index_class)
+		if (class_index_ != spike_index_class)
 		{
 			p_spk_doc->SetModifiedFlag(TRUE);
 			const auto current_list = spk_list_tab_ctrl.GetCurSel();
 			auto* spike_list = p_spk_doc->set_spike_list_current_index(current_list);
-			spike_list->get_spike(spike_index_)->set_class_id(spike_class_);
+			spike_list->get_spike(spike_index_)->set_class_id(class_index_);
 			update_legends();
 		}
 	}

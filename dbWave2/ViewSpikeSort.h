@@ -23,10 +23,14 @@ protected:
 	BOOL b_all_files_{ false };
 
 	CComboBox combo_measure_type_;
+	CEditCtrl mm_file_index_;
+	CEditCtrl mm_list_index_;
 	CEditCtrl mm_spike_index_;
-	CEditCtrl mm_spike_index_class_;
+	CEditCtrl mm_class_index_;
+	int file_index_{ -1 };
+	int list_index_{ -1 };
 	int spike_index_{ -1 };
-	int spike_class_{ 0 };
+	int class_index_{ 0 };
 
 	ChartSpikeShape chart_shape_;
 	CEditCtrl mm_shape_t1_ms_;
@@ -126,6 +130,8 @@ protected:
 	void check_valid_threshold_limits();
 
 	boolean open_dat_and_spk_files_of_selected_spike(const db_spike& spike_coords);
+	void on_select_all_files_display_interface() const;
+
 	void all_charts_invalidate();
 	void all_charts_set_spike_list(SpikeList* spk_list);
 

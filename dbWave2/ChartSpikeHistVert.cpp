@@ -21,10 +21,7 @@ BEGIN_MESSAGE_MAP(ChartSpikeHistVert, ChartSpike)
 END_MESSAGE_MAP()
 
 ChartSpikeHistVert::ChartSpikeHistVert()
-{
-	set_b_use_dib(FALSE);
-	cs_empty_ = _T("no spikes (WndVerticalHistogram)");
-}
+= default;
 
 ChartSpikeHistVert::~ChartSpikeHistVert()
 {

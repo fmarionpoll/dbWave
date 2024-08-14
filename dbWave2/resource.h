@@ -372,6 +372,7 @@
 #define IDC_EXECUTE                     382
 #define IDC_STATIC3                     392
 #define IDC_STATIC4                     393
+#define IDC_FILE_STATIC                 394
 #define IDC_STATIC2                     395
 #define IDC_STATIC13                    396
 #define IDC_TIMEINTERVALS               398
@@ -846,6 +847,10 @@
 #define IDC_SHAPE_T1_MS                 1530
 #define IDC_SHAPE_T2_MS                 1531
 #define IDC_DETECT_WHAT                 1532
+#define IDC_SPIKE_INDEX2                1532
+#define IDC_LIST_INDEX                  1532
+#define IDC_FILE_INDEX                  1533
+#define IDC_LIST_STATIC                 1534
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768
@@ -976,7 +981,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        580
 #define _APS_NEXT_COMMAND_VALUE         33069
-#define _APS_NEXT_CONTROL_VALUE         1533
+#define _APS_NEXT_CONTROL_VALUE         1535
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
 #endif

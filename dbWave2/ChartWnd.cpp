@@ -501,11 +501,6 @@ void ChartWnd::send_my_message(const int code, const int code_parameter) const
 	GetParent()->SendMessage(WM_MYMESSAGE, code, MAKELONG(code_parameter, GetDlgCtrlID()));
 }
 
-//void ChartWnd::post_my_message(const int code, const int code_parameter) const
-//{
-//	GetParent()->PostMessage(WM_MYMESSAGE, code, MAKELONG(code_parameter, GetDlgCtrlID()));
-//}
-
 void ChartWnd::prepare_dc(CDC* p_dc, const CPrintInfo* p_info)
 {
 	if (p_info == nullptr)

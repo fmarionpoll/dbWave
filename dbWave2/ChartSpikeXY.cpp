@@ -15,10 +15,7 @@ BEGIN_MESSAGE_MAP(ChartSpikeXY, ChartSpike)
 END_MESSAGE_MAP()
 
 ChartSpikeXY::ChartSpikeXY()
-{
-	set_b_use_dib(FALSE);
-	cs_empty_ = _T("no spikes (spikexp)");
-}
+= default;
 
 ChartSpikeXY::~ChartSpikeXY()
 = default;

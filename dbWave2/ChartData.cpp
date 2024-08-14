@@ -815,7 +815,7 @@ void ChartData::plot_data_to_dc(CDC* p_dc)
 	if (!is_defined() || m_p_data_file_ == nullptr)
 	{
 		const auto text_length = cs_empty_.GetLength();
-		p_dc->DrawText(cs_empty_, text_length, rect, DT_LEFT);
+		p_dc->DrawText(cs_empty_, text_length, rect, DT_TOP | DT_LEFT);
 		return;
 	}
 

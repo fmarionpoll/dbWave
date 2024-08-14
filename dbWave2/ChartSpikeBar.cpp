@@ -16,10 +16,7 @@ BEGIN_MESSAGE_MAP(ChartSpikeBar, ChartSpike)
 END_MESSAGE_MAP()
 
 ChartSpikeBar::ChartSpikeBar()
-{
-	set_b_use_dib(FALSE);
-	cs_empty_ = _T("no spikes (spikebar)");
-}
+= default;
 
 ChartSpikeBar::~ChartSpikeBar()
 {
@@ -34,10 +31,10 @@ void ChartSpikeBar::plot_data_to_dc_prepare_dc(CDC* p_dc)
 {
 	if (b_erase_background_)
 		erase_background(p_dc);
-
 	p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 	saved_dc_ = p_dc->SaveDC();
 	saved_background_color_ = p_dc->GetBkColor();
+
 	display_rect_ = client_rect_;
 	saved_dc_ = p_dc->SaveDC();
 
@@ -46,7 +43,6 @@ void ChartSpikeBar::plot_data_to_dc_prepare_dc(CDC* p_dc)
 		x_we_ = display_rect_.Width();
 		x_wo_ = display_rect_.left;
 	}
-
 	p_dc->IntersectClipRect(&client_rect_);
 }
 
@@ -60,10 +56,9 @@ void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 
 	for (long i_file = 0; i_file < n_files; i_file++)
 	{
-		if (!get_spike_file(i_file))
+		if (!get_spike_file(i_file)&& !b_display_all_files_)
 		{
-			if (!b_display_all_files_)
-				message_no_spike(p_dc);
+			message_no_spike(p_dc);
 			continue;
 		}
 

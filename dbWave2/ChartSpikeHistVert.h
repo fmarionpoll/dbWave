@@ -26,7 +26,7 @@ protected:
 	int bin_size_ = 0; // size of one bin
 	int abscissa_min_val_ = 0; // minimum value from which histogram is built (abscissa)
 	int abscissa_max_val_ = 0; // maximum value (abscissa max)
-	int n_bins_; // n bins within histogram
+	int n_bins_ = 0; // n bins within histogram
 
 	DWORD m_lmax_ = 0; // value max
 	int m_imax_{}; // index max

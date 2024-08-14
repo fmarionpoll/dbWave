@@ -17,10 +17,7 @@ BEGIN_MESSAGE_MAP(ChartSpikeShape, ChartSpike)
 END_MESSAGE_MAP()
 
 ChartSpikeShape::ChartSpikeShape()
-{
-	set_b_use_dib(FALSE);
-	cs_empty_ = _T("no spikes (spikeshape)");
-}
+= default;
 
 ChartSpikeShape::~ChartSpikeShape()
 = default;
@@ -49,10 +46,9 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 
 	for (auto i_file = 0; i_file < n_files; i_file++)
 	{
-		if (!get_spike_file(i_file))
+		if (!get_spike_file(i_file) && !b_display_all_files_)
 		{
-			if (!b_display_all_files_)
-				message_no_spike(p_dc);
+			message_no_spike(p_dc);
 			continue;
 		}
 
@@ -80,7 +76,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			const Spike* spike = p_spike_list_->get_spike(i_spike);
 			if (range_mode_ == RANGE_TIME_INTERVALS)
 			{
-				if (spike->get_time() < l_first_ )
+				if (spike->get_time() < l_first_)
 					continue;
 				if (spike->get_time() > l_last_)
 					break;;
@@ -105,7 +101,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			default:
 				break;
 			}
-			display_spike_data(p_dc, spike, spike_length);
+			display_spike_data(p_dc, spike);
 		}
 		p_dc->SelectObject(old_pen);
 
@@ -122,35 +118,37 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 					&& (spike->get_time() < l_first_ || spike->get_time() > l_last_))
 					continue;
 				if (spike->get_class_id() != selected_class_)
-						continue;
+					continue;
 
-				display_spike_data(p_dc, spike, spike_length);
+				display_spike_data(p_dc, spike);
 			}
 		}
 
-		if (p_spike_list_->get_spike_flag_array_count() > 0)
-			draw_flagged_spikes(p_dc);
-
-		// restore resources
 		p_dc->SelectObject(old_pen);
-		p_dc->SetBkColor(saved_background_color_);
-		p_dc->RestoreDC(saved_dc_);
-
-		// display tags
-		if (hz_tags.get_tag_list_size() > 0)
-			display_hz_tags(p_dc);
-
-		if (vt_tags.get_tag_list_size() > 0) 
-			display_vt_tags_int_values(p_dc);
-
-		// display text
-		if (b_text_ && plot_mode_ == PLOT_ONE_CLASS_ONLY)
-		{
-			TCHAR num[10];
-			wsprintf(num, _T("%i"), get_selected_class());
-			p_dc->TextOut(1, 1, num);
-		}
 	}
+
+	if (p_spike_list_->get_spike_flag_array_count() > 0)
+		draw_flagged_spikes(p_dc);
+
+	// restore resources
+	p_dc->SetBkColor(saved_background_color_);
+	p_dc->RestoreDC(saved_dc_);
+
+	// display tags
+	if (hz_tags.get_tag_list_size() > 0)
+		display_hz_tags(p_dc);
+
+	if (vt_tags.get_tag_list_size() > 0) 
+		display_vt_tags_int_values(p_dc);
+
+	// display text
+	if (b_text_ && plot_mode_ == PLOT_ONE_CLASS_ONLY)
+	{
+		TCHAR num[10];
+		wsprintf(num, _T("%i"), get_selected_class());
+		p_dc->TextOut(1, 1, num);
+	}
+	
 
 	// display selected spike
 	if (spike_selected_.spike_index >= 0 && is_spike_within_range(spike_selected_))
@@ -160,13 +158,13 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 	}
 }
 
-void ChartSpikeShape::display_spike_data(CDC* p_dc, const Spike* spike, const int spike_length)
+void ChartSpikeShape::display_spike_data(CDC* p_dc, const Spike* spike)
 {
 	int* p_spike_data = spike->get_p_data();
 	if (p_spike_data != nullptr)
 	{
 		fill_polypoint_y_axis(p_spike_data);
-		p_dc->Polyline(&polyline_points_[0], spike_length);
+		p_dc->Polyline(&polyline_points_[0], spike->get_spike_length());
 	}
 }
 
@@ -191,7 +189,7 @@ void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
 		spike_sel.spike_index = p_spike_list_->get_spike_flag_array_at(i);
 		if (!is_spike_within_range(spike_sel))
 			continue;
-		display_spike_data(p_dc, dbwave_doc_->get_spike(spike_sel), p_spike_list_->get_spike_length());
+		display_spike_data(p_dc, dbwave_doc_->get_spike(spike_sel));
 	}
 
 	p_dc->SelectObject(old_pen);
@@ -233,7 +231,8 @@ void ChartSpikeShape::select_spike(const db_spike& spike_sel)
 	if (spike_sel.spike_index >= 0) 
 	{
 		const Spike* spike = dbwave_doc_->get_spike(spike_sel);
-		draw_spike(spike);
+		if (spike != nullptr)
+			draw_spike(spike);
 	}
 }
 
@@ -267,7 +266,7 @@ void ChartSpikeShape::draw_spike_on_dc(const Spike* spike, CDC * p_dc)
 	CPen new_pen(PS_SOLID, pen_size, color_table_[color_selected_spike_]);
 	auto* old_pen = p_dc->SelectObject(&new_pen);
 
-	display_spike_data(p_dc, spike, p_spike_list_->get_spike_length());
+	display_spike_data(p_dc, spike);
 
 	p_dc->SelectObject(old_pen);
 	p_dc->RestoreDC(n_saved_dc);
