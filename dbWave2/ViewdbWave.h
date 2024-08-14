@@ -52,7 +52,7 @@ public:
 protected:
 	DECLARE_MESSAGE_MAP()
 	afx_msg void OnSize(UINT n_type, int cx, int cy);
-	afx_msg void OnDestroy();
+	//afx_msg void OnDestroy();
 
 	afx_msg void on_record_page_up();
 	afx_msg void on_record_page_down();

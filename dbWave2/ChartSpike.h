@@ -27,7 +27,7 @@ protected:
 	int selected_pen_{};
 	int selected_class_{};					// index class selected
 	boolean track_curve_ = false;			// track curve ?
-	boolean display_all_files_ = false;		// display data from all files in CdbWaveDoc*
+	boolean b_display_all_files_ = false;		// display data from all files in CdbWaveDoc*
 
 	SpikeList* p_spike_list_ = nullptr;
 	CSpikeDoc* p_spike_doc_ = nullptr;
@@ -49,8 +49,8 @@ public:
 	boolean is_spike_within_range(const db_spike& spike_selected) const;
 	db_spike hit_curve_in_doc(CPoint point);
 
-	void set_display_all_files(const boolean display_all) { display_all_files_ = display_all; }
-	boolean get_display_all_files(const boolean display_all) const { return display_all_files_ ; }
+	void set_display_all_files(const boolean display_all) { b_display_all_files_ = display_all; }
+	boolean get_display_all_files(const boolean display_all) const { return b_display_all_files_ ; }
 
 	void set_range_mode(const int mode) { range_mode_ = mode; }
 	int get_range_mode() const { return range_mode_; }

@@ -22,7 +22,7 @@
 IMPLEMENT_DYNCREATE(ViewdbWave, dbTableView)
 
 BEGIN_MESSAGE_MAP(ViewdbWave, dbTableView)
-	ON_WM_DESTROY()
+	//ON_WM_DESTROY()
 	ON_WM_SIZE()
 
 	ON_COMMAND(ID_RECORD_PAGE_UP, &ViewdbWave::on_record_page_up)
@@ -30,7 +30,9 @@ BEGIN_MESSAGE_MAP(ViewdbWave, dbTableView)
 	ON_COMMAND(ID_FILE_PRINT, dbTableView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, dbTableView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, dbTableView::OnFilePrintPreview)
+
 	ON_BN_CLICKED(IDC_DISPLAYDATA, &ViewdbWave::on_bn_clicked_data)
+	ON_BN_CLICKED(IDC_DISPLAY_SPIKES, &ViewdbWave::on_bn_clicked_display_spikes)
 	ON_BN_CLICKED(IDC_DISPLAY_NOTHING, &ViewdbWave::on_bn_clicked_display_nothing)
 	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewdbWave::on_en_change_time_first)
 	ON_EN_CHANGE(IDC_TIMELAST, &ViewdbWave::on_en_change_time_last)
@@ -42,7 +44,8 @@ BEGIN_MESSAGE_MAP(ViewdbWave, dbTableView)
 	ON_BN_CLICKED(IDC_CHECK1, &ViewdbWave::on_bn_clicked_check1)
 	ON_BN_CLICKED(IDC_RADIOALLCLASSES, &ViewdbWave::on_bn_clicked_radio_all_classes)
 	ON_BN_CLICKED(IDC_RADIOONECLASS, &ViewdbWave::on_bn_clicked_radio_one_class)
-	ON_BN_CLICKED(IDC_DISPLAY_SPIKES, &ViewdbWave::on_bn_clicked_display_spikes)
+	
+
 	ON_NOTIFY(HDN_ENDTRACK, 0, &ViewdbWave::on_hdn_end_track_list_ctrl)
 	ON_NOTIFY(LVN_COLUMNCLICK, IDC_LISTCTRL, &ViewdbWave::on_lvn_column_click_list_ctrl)
 	ON_NOTIFY(LVN_ITEMACTIVATE, IDC_LISTCTRL, &ViewdbWave::on_item_activate_list_ctrl)
@@ -58,10 +61,10 @@ ViewdbWave::ViewdbWave() : dbTableView(IDD)
 ViewdbWave::~ViewdbWave()
 = default;
 
-void ViewdbWave::OnDestroy()
-{
-	dbTableView::OnDestroy();
-}
+//void ViewdbWave::OnDestroy()
+//{
+//	dbTableView::OnDestroy();
+//}
 
 void ViewdbWave::DoDataExchange(CDataExchange * p_dx)
 {
@@ -102,11 +105,11 @@ void ViewdbWave::OnInitialUpdate()
 	CheckDlgButton(IDC_CHECK1, m_options_view_data_->b_set_time_span);
 	GetDlgItem(IDC_TIMEFIRST)->EnableWindow(m_options_view_data_->b_set_time_span);
 	GetDlgItem(IDC_TIMELAST)->EnableWindow(m_options_view_data_->b_set_time_span);
-	m_data_list_ctrl.set_timespan_adjust_mode(m_options_view_data_->b_set_time_span);
+	m_data_list_ctrl.set_timespan_adjust_mode(static_cast<boolean>(m_options_view_data_->b_set_time_span));
 
 	CheckDlgButton(IDC_CHECK2, m_options_view_data_->b_set_mv_span);
 	GetDlgItem(IDC_AMPLITUDESPAN)->EnableWindow(m_options_view_data_->b_set_mv_span);
-	m_data_list_ctrl.set_amplitude_adjust_mode(m_options_view_data_->b_set_mv_span);
+	m_data_list_ctrl.set_amplitude_adjust_mode(static_cast<boolean>(m_options_view_data_->b_set_mv_span));
 
 	m_data_list_ctrl.SetExtendedStyle
 	(m_data_list_ctrl.GetExtendedStyle()
@@ -467,8 +470,8 @@ void ViewdbWave::delete_records()
 		n_files_to_delete++;
 	}
 
-	if (pdb_doc->db_set_current_record_position(current_index))
-		pdb_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+	BOOL result = pdb_doc->db_set_current_record_position(current_index);
+	pdb_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 }
 
 void ViewdbWave::on_lvn_column_click_list_ctrl(NMHDR * p_nmhdr, LRESULT * p_result)

@@ -36,7 +36,7 @@ public:
 
 	void display_all_files(const BOOL b_on, CdbWaveDoc* p_document)
 	{
-		display_all_files_ = static_cast<boolean>(b_on);
+		b_display_all_files_ = static_cast<boolean>(b_on);
 		dbwave_doc_ = p_document;
 	}
 

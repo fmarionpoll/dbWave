@@ -44,14 +44,14 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 	plot_data_to_dc_prepare_dc(p_dc);
 
 	auto n_files = 1;
-	if (display_all_files_)
+	if (b_display_all_files_)
 		n_files = dbwave_doc_->db_get_n_records();
 
 	for (auto i_file = 0; i_file < n_files; i_file++)
 	{
 		if (!get_spike_file(i_file))
 		{
-			if (!display_all_files_)
+			if (!b_display_all_files_)
 				message_no_spike(p_dc);
 			continue;
 		}
@@ -472,7 +472,7 @@ void ChartSpikeShape::get_extents()
 	const auto current_file_index = dbwave_doc_->db_get_current_record_position();
 	auto file_first = current_file_index;
 	auto file_last = current_file_index;
-	if (display_all_files_)
+	if (b_display_all_files_)
 	{
 		file_first = 0;
 		file_last = dbwave_doc_->db_get_n_records() - 1;

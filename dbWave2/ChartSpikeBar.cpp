@@ -55,14 +55,14 @@ void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 	plot_data_to_dc_prepare_dc(p_dc);
 
 	auto n_files = 1;
-	if (display_all_files_)
+	if (b_display_all_files_)
 		n_files = dbwave_doc_->db_get_n_records();
 
 	for (long i_file = 0; i_file < n_files; i_file++)
 	{
 		if (!get_spike_file(i_file))
 		{
-			if (!display_all_files_)
+			if (!b_display_all_files_)
 				message_no_spike(p_dc);
 			continue;
 		}

@@ -50,7 +50,7 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 
 	long n_files = 1;
 	long index_current_file = 0;
-	if (display_all_files_)
+	if (b_display_all_files_)
 	{
 		n_files = dbwave_doc_->db_get_n_records();
 		index_current_file = dbwave_doc_->db_get_current_record_position();
@@ -58,7 +58,7 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 
 	for (long index_file = 0; index_file < n_files; index_file++)
 	{
-		if (display_all_files_)
+		if (b_display_all_files_)
 		{
 			if (dbwave_doc_->db_set_current_record_position(index_file))
 				dbwave_doc_->open_current_spike_file();
@@ -71,7 +71,7 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 		// test presence of data
 		if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() == 0)
 		{
-			if (!display_all_files_)
+			if (!b_display_all_files_)
 				p_dc->DrawText(cs_empty_, cs_empty_.GetLength(), rect, DT_LEFT);
 			continue;
 		}
@@ -129,7 +129,7 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 	}
 
 	// restore selection to initial file
-	if (display_all_files_)
+	if (b_display_all_files_)
 	{
 		if(dbwave_doc_->db_set_current_record_position(index_current_file))
 			dbwave_doc_->open_current_spike_file();

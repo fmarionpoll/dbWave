@@ -33,19 +33,20 @@ int ChartSpike::get_color_according_to_plot_mode(const Spike* spike, int plot_mo
 boolean ChartSpike::get_spike_file(const int i_file)
 {
 	boolean success = true;
-	if (display_all_files_)
+	if (b_display_all_files_)
 	{
-		if (dbwave_doc_->db_set_current_record_position(i_file))
-			dbwave_doc_->open_current_spike_file();
-		else
-			success = false;
+		success = static_cast<boolean>(dbwave_doc_->db_set_current_record_position(i_file));
+		if (success) {
+			 dbwave_doc_->open_current_spike_file();
+			 success = (dbwave_doc_->m_p_spk != nullptr);
+		}
+
+		if (success)
+			p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
 	}
-	if (success && dbwave_doc_->m_p_spk == nullptr)
-		success = false;
 
 	if (success)
 	{
-		p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
 		if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() == 0)
 			success = false;
 	}
@@ -129,12 +130,12 @@ boolean ChartSpike::is_spike_within_range(const db_spike& spike_selected) const
 
 db_spike ChartSpike::hit_curve_in_doc(const CPoint point)
 {
-	const long n_files = display_all_files_ ? dbwave_doc_->db_get_n_records() : 1;
+	const long n_files = b_display_all_files_ ? dbwave_doc_->db_get_n_records() : 1;
 	db_spike result(1, -1, -1);
 
 	for (long i_file = 0; i_file < n_files; i_file++)
 	{
-		if (display_all_files_)
+		if (b_display_all_files_)
 		{
 			if (dbwave_doc_->db_set_current_record_position(i_file))
 				dbwave_doc_->open_current_spike_file();

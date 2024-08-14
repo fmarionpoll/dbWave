@@ -434,7 +434,9 @@ void DataListCtrl::set_empty_bitmap(const boolean b_forced_update)
 	CWindowDC dc(this);
 	CDC mem_dc;
 	VERIFY(mem_dc.CreateCompatibleDC(&dc));
-	m_p_empty_bitmap_->CreateBitmap(m_image_width_, m_image_height_, dc.GetDeviceCaps(PLANES), dc.GetDeviceCaps(BITSPIXEL), nullptr);
+	m_p_empty_bitmap_->CreateBitmap(m_image_width_, m_image_height_, 
+		dc.GetDeviceCaps(PLANES), 
+		dc.GetDeviceCaps(BITSPIXEL), nullptr);
 	mem_dc.SelectObject(m_p_empty_bitmap_);
 	mem_dc.SetMapMode(dc.GetMapMode());
 
@@ -573,8 +575,8 @@ void DataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int i_image)
 		ptr->cs_comment = ptr->p_data_doc->get_wave_format()->get_comments(_T(" "));
 		p_wnd->attach_data_file(ptr->p_data_doc);
 		p_wnd->load_all_channels(m_data_transform_);
-		p_wnd->load_data_within_window(m_b_set_time_span_, m_t_first_, m_t_last_);
-		p_wnd->adjust_gain(m_b_set_mv_span_, m_m_v_span_);
+		p_wnd->load_data_within_window(b_set_time_span_, m_t_first_, m_t_last_);
+		p_wnd->adjust_gain(b_set_mv_span_, m_m_v_span_);
 
 		ptr->p_data_doc->acq_close_file();
 	}
@@ -584,7 +586,7 @@ void DataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int i_image)
 
 void DataListCtrl::plot_data(const CDataListCtrl_Row* ptr, ChartData* p_wnd, int i_image)
 {
-	p_wnd->set_bottom_comment(m_b_display_file_name_, ptr->cs_datafile_name);
+	p_wnd->set_bottom_comment(b_display_file_name_, ptr->cs_datafile_name);
 	CRect client_rect;
 	p_wnd->GetClientRect(&client_rect);
 
@@ -605,7 +607,7 @@ void DataListCtrl::plot_data(const CDataListCtrl_Row* ptr, ChartData* p_wnd, int
 	m_image_list_.Replace(i_image, &bitmap_plot, nullptr);
 }
 
-void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int i_image)
+void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, const int i_image)
 {
 	// create spike window and spike document if necessary
 	if (ptr->p_spike_chart_wnd == nullptr)
@@ -615,7 +617,7 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int i_image)
 		ptr->p_spike_chart_wnd->Create(_T("SPKWND"), WS_CHILD, CRect(0, 0, m_image_width_, m_image_height_), this, ptr->index * 1000);
 		ptr->p_spike_chart_wnd->set_b_use_dib(FALSE);
 	}
-	const auto p_wnd = ptr->p_spike_chart_wnd;
+	const auto chart_spike_bar = ptr->p_spike_chart_wnd;
 
 	// open spike document
 	if (ptr->p_spike_doc == nullptr)
@@ -635,41 +637,45 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, int i_image)
 		if (i_tab < 0)
 			i_tab = 0;
 		const auto p_spk_list = ptr->p_spike_doc->set_spike_list_current_index(i_tab);
-		p_wnd->set_source_data(p_spk_list, p_parent->GetDocument());
-		p_wnd->set_plot_mode(m_spike_plot_mode_, m_selected_class_);
+
+		chart_spike_bar->set_source_data(p_spk_list, p_parent->GetDocument());
+		chart_spike_bar->set_plot_mode(m_spike_plot_mode_, m_selected_class_);
+
 		long l_first = 0;
 		auto l_last = ptr->p_spike_doc->get_acq_size();
-		if (m_b_set_time_span_)
+		if (b_set_time_span_)
 		{
 			const auto sampling_rate = ptr->p_spike_doc->get_acq_rate();
 			l_first = static_cast<long>(m_t_first_ * sampling_rate);
 			l_last = static_cast<long>(m_t_last_ * sampling_rate);
 		}
 
-		p_wnd->set_time_intervals(l_first, l_last);
-		if (m_b_set_mv_span_)
+		chart_spike_bar->set_time_intervals(l_first, l_last);
+		if (b_set_mv_span_)
 		{
 			const auto volts_per_bin = p_spk_list->get_acq_volts_per_bin();
 			const auto y_we = static_cast<int>(m_m_v_span_ / 1000.f / volts_per_bin);
 			const auto y_wo = p_spk_list->get_acq_bin_zero();
-			p_wnd->set_yw_ext_org(y_we, y_wo);
+			chart_spike_bar->set_yw_ext_org(y_we, y_wo);
 		}
-		p_wnd->set_bottom_comment(m_b_display_file_name_, ptr->cs_spike_file_name);
-
+		chart_spike_bar->set_bottom_comment(b_display_file_name_, ptr->cs_spike_file_name);
 		CRect client_rect;
-		p_wnd->GetClientRect(&client_rect);
+		chart_spike_bar->GetClientRect(&client_rect);
 
 		CBitmap bitmap_plot;
-		const auto p_dc = p_wnd->GetDC();
+		const auto p_dc = chart_spike_bar->GetDC();
 		CDC mem_dc;
 		VERIFY(mem_dc.CreateCompatibleDC(p_dc));
-		bitmap_plot.CreateBitmap(client_rect.right, client_rect.bottom, p_dc->GetDeviceCaps(PLANES),
-		                         p_dc->GetDeviceCaps(BITSPIXEL), nullptr);
+		bitmap_plot.CreateBitmap(client_rect.right, 
+			client_rect.bottom, 
+			p_dc->GetDeviceCaps(PLANES),
+			p_dc->GetDeviceCaps(BITSPIXEL), 
+			nullptr);
 		mem_dc.SelectObject(&bitmap_plot);
 		mem_dc.SetMapMode(p_dc->GetMapMode());
 
-		p_wnd->set_display_all_files(false);
-		p_wnd->plot_data_to_dc(&mem_dc);
+		chart_spike_bar->set_display_all_files(false);
+		chart_spike_bar->plot_data_to_dc(&mem_dc);
 
 		CPen pen;
 		pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0));

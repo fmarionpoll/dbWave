@@ -36,9 +36,9 @@ public:
 	}
 
 	void set_amplitude_span(const float mv_span) { m_m_v_span_ = mv_span; } // TODO ; get extent, mode from current line
-	void set_display_file_name(const boolean flag) { m_b_display_file_name_ = flag; }
-	void set_amplitude_adjust_mode(const boolean flag) { m_b_set_mv_span_ = flag; }
-	void set_timespan_adjust_mode(const boolean flag) { m_b_set_time_span_ = flag; }
+	void set_display_file_name(const boolean flag) { b_display_file_name_ = flag; }
+	void set_amplitude_adjust_mode(const boolean flag) { b_set_mv_span_ = flag; }
+	void set_timespan_adjust_mode(const boolean flag) { b_set_time_span_ = flag; }
 
 	void set_spike_plot_mode(const int spike_plot_mode, const int i_class)
 	{
@@ -54,8 +54,8 @@ public:
 	int get_spike_class() const { return m_selected_class_; }
 
 	ChartData* get_chart_data_of_current_record();
-	AcqDataDoc* get_visible_rows_acq_data_doc_at(int index) { return ptr_rows[index]->p_data_doc; }
-	CSpikeDoc* get_visible_rows_spike_doc_at(int index) { return ptr_rows[index]->p_spike_doc; }
+	AcqDataDoc* get_visible_rows_acq_data_doc_at(const int index) { return ptr_rows[index]->p_data_doc; }
+	CSpikeDoc* get_visible_rows_spike_doc_at(const int index) { return ptr_rows[index]->p_spike_doc; }
 	int get_visible_rows_size() const { return ptr_rows.GetSize(); }
 
 protected:
@@ -78,9 +78,9 @@ protected:
 	float m_t_first_ = 0.f;
 	float m_t_last_ = 0.f;
 	float m_m_v_span_ = 0.f;
-	boolean m_b_set_time_span_ = false;
-	boolean m_b_set_mv_span_ = false;
-	boolean m_b_display_file_name_ = false;
+	boolean b_set_time_span_ = false;
+	boolean b_set_mv_span_ = false;
+	boolean b_display_file_name_ = false;
 
 	void delete_ptr_array();
 	void save_columns_width() const;
