@@ -524,16 +524,14 @@ void ChartSpikeShape::init_polypoint_x_axis()
 
 void ChartSpikeShape::fill_polypoint_y_axis(int* lp_source)
 {
-	auto n_elements = polyline_points_.GetSize();
-	if (n_elements == 0 || n_elements < p_spike_list_->get_spike_length())
+ 
+	if (p_spike_list_->get_spike_length() > polyline_points_.GetSize())
 	{
-		n_elements = p_spike_list_->get_spike_length();
-		ASSERT(n_elements > 0);
-		polyline_points_.SetSize(n_elements, 2);
+		polyline_points_.SetSize(p_spike_list_->get_spike_length(), 2);
 		init_polypoint_x_axis();
 	}
 
-	for (auto i = 0; i < n_elements; i++, lp_source++)
+	for (auto i = 0; i < p_spike_list_->get_spike_length(); i++, lp_source++)
 		polyline_points_[i].y = static_cast<long>(static_cast<unsigned long>(*lp_source));
 }
 

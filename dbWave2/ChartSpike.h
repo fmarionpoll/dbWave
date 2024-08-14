@@ -20,14 +20,14 @@ protected:
 	long l_last_ = 0;						// time index of last pt displayed
 	int index_first_spike_ = 0;				// index first spike
 	int index_last_spike_ = 0;				// index last spike
-	int current_class_ = 0;					// current class in case of displaying classes
+	int current_class_ = 0;					// current class when displaying classes
 	db_spike spike_selected_ {};
 	db_spike spike_hit_ {};
 
 	int selected_pen_{};
 	int selected_class_{};					// index class selected
 	boolean track_curve_ = false;			// track curve ?
-	boolean b_display_all_files_ = false;		// display data from all files in CdbWaveDoc*
+	boolean b_display_all_files_ = false;	// display data from all files in CdbWaveDoc*
 
 	SpikeList* p_spike_list_ = nullptr;
 	CSpikeDoc* p_spike_doc_ = nullptr;
