@@ -2,7 +2,7 @@
 
 #include "DataListCtrl.h"
 #include <../ChartData.h>
-#include <../dbTableView.h>
+#include <../ViewDbTable.h>
 
 #include "DataListCtrl_Row.h"
 #include "ViewdbWave.h"
@@ -486,10 +486,10 @@ void DataListCtrl::OnVScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar*
 	switch (n_sb_code)
 	{
 	case SB_LINEUP:
-		static_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_PREV);
+		static_cast<ViewDbTable*>(GetParent())->OnMove(ID_RECORD_PREV);
 		break;
 	case SB_LINEDOWN:
-		static_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_NEXT);
+		static_cast<ViewDbTable*>(GetParent())->OnMove(ID_RECORD_NEXT);
 		break;
 	default:
 		CListCtrl::OnVScroll(n_sb_code, n_pos, p_scroll_bar);
@@ -508,10 +508,10 @@ void DataListCtrl::OnKeyUp(UINT n_char, UINT n_rep_cnt, UINT n_flags)
 		SendMessage(WM_VSCROLL, SB_PAGEDOWN, NULL);
 		break;
 	case VK_UP:
-		static_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_PREV);
+		static_cast<ViewDbTable*>(GetParent())->OnMove(ID_RECORD_PREV);
 		break;
 	case VK_DOWN:
-		static_cast<dbTableView*>(GetParent())->OnMove(ID_RECORD_NEXT);
+		static_cast<ViewDbTable*>(GetParent())->OnMove(ID_RECORD_NEXT);
 		break;
 
 	default:
@@ -633,7 +633,7 @@ void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, const int i_image)
 	else
 	{
 		const auto p_parent = static_cast<ViewdbWave*>(GetParent());
-		int i_tab = p_parent->m_tabCtrl.GetCurSel();
+		int i_tab = p_parent->spk_list_tab_ctrl.GetCurSel();
 		if (i_tab < 0)
 			i_tab = 0;
 		const auto p_spk_list = ptr->p_spike_doc->set_spike_list_current_index(i_tab);

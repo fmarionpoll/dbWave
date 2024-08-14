@@ -23,13 +23,16 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(ViewData, dbTableView)
+IMPLEMENT_DYNCREATE(ViewData, ViewDbTable)
 
-BEGIN_MESSAGE_MAP(ViewData, dbTableView)
+BEGIN_MESSAGE_MAP(ViewData, ViewDbTable)
 	ON_WM_SIZE()
+	ON_WM_SETFOCUS()
+	ON_WM_HSCROLL()
+	ON_WM_VSCROLL()
+
 	ON_BN_CLICKED(IDC_BIAS_button, &ViewData::on_clicked_bias)
 	ON_BN_CLICKED(IDC_GAIN_button, &ViewData::on_clicked_gain)
-	ON_WM_VSCROLL()
 	ON_COMMAND(ID_FORMAT_XSCALE, &ViewData::on_format_x_scale)
 	ON_COMMAND(ID_FORMAT_SET_ORDINATES, &ViewData::on_format_y_scale)
 	ON_COMMAND(ID_EDIT_COPY, &ViewData::on_edit_copy)
@@ -51,20 +54,18 @@ BEGIN_MESSAGE_MAP(ViewData, dbTableView)
 	ON_COMMAND(ID_TOOLS_HORIZONTAL_CURSORS, &ViewData::on_tools_horizontal_cursors)
 	ON_UPDATE_COMMAND_UI(ID_TOOLS_HORIZONTAL_CURSORS, &ViewData::on_update_tools_horizontal_cursors)
 	ON_UPDATE_COMMAND_UI(ID_TOOLS_VERTICAL_TAGS, &ViewData::on_update_tools_vertical_tags)
-	ON_WM_HSCROLL()
 	ON_COMMAND(ID_HARDWARE_DEFINE_EXPERIMENT, &ViewData::adc_on_hardware_define_experiment)
 	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewData::on_en_change_time_first)
 	ON_EN_CHANGE(IDC_TIMELAST, &ViewData::on_en_change_time_last)
-	ON_WM_SETFOCUS()
 	ON_COMMAND(ID_FORMAT_SET_ORDINATES, &ViewData::on_format_y_scale)
-	ON_COMMAND(ID_FILE_PRINT, dbTableView::OnFilePrint)
-	ON_COMMAND(ID_FILE_PRINT_DIRECT, dbTableView::OnFilePrint)
-	ON_COMMAND(ID_FILE_PRINT_PREVIEW, dbTableView::OnFilePrintPreview)
+	ON_COMMAND(ID_FILE_PRINT, ViewDbTable::OnFilePrint)
+	ON_COMMAND(ID_FILE_PRINT_DIRECT, ViewDbTable::OnFilePrint)
+	ON_COMMAND(ID_FILE_PRINT_PREVIEW, ViewDbTable::OnFilePrintPreview)
 	ON_CBN_SELCHANGE(IDC_COMBOCHAN, &ViewData::on_cbn_sel_change_combo_chan)
 END_MESSAGE_MAP()
 
 ViewData::ViewData()
-	: dbTableView(IDD)
+	: ViewDbTable(IDD)
 {
 }
 
@@ -77,8 +78,7 @@ ViewData::~ViewData()
 
 void ViewData::DoDataExchange(CDataExchange* pDX)
 {
-	// pass values
-	dbTableView::DoDataExchange(pDX);
+	ViewDbTable::DoDataExchange(pDX);
 
 	DDX_Text(pDX, IDC_EDIT1, m_first_hz_cursor);
 	DDX_Text(pDX, IDC_EDIT2, m_second_hz_cursor);
@@ -145,7 +145,7 @@ void ViewData::OnInitialUpdate()
 	options_data_measures_ = &(p_app->options_view_data_measure);
 
 	// set data file
-	dbTableView::OnInitialUpdate();
+	ViewDbTable::OnInitialUpdate();
 	update_file_parameters(TRUE); 
 
 	chart_data.set_scope_parameters(&(options_view_data_->view_data));
@@ -452,7 +452,7 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 		m_b_valid_doc_ = FALSE;
 		return;
 	}
-	m_p_dat_ = dbwave_doc->m_p_dat;
+	m_p_dat_ = dbwave_doc->m_p_data_doc;
 	m_p_dat_->read_data_infos();
 	const auto wave_format = m_p_dat_->get_wave_format();
 
@@ -855,7 +855,7 @@ void ViewData::OnVScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar* p_s
 	// form_view scroll: if pointer null
 	if (p_scroll_bar == nullptr)
 	{
-		dbTableView::OnVScroll(n_sb_code, n_pos, p_scroll_bar);
+		ViewDbTable::OnVScroll(n_sb_code, n_pos, p_scroll_bar);
 		return;
 	}
 
@@ -1052,7 +1052,7 @@ void ViewData::OnHScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar* p_s
 	// form_view scroll: if pointer null
 	if (p_scroll_bar == nullptr)
 	{
-		dbTableView::OnHScroll(n_sb_code, n_pos, p_scroll_bar);
+		ViewDbTable::OnHScroll(n_sb_code, n_pos, p_scroll_bar);
 		return;
 	}
 

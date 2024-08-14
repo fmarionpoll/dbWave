@@ -14,10 +14,10 @@
 #include "USBPxxS1Ctl.h"
 #include "options_input.h"
 #include "options_output.h"
-#include "dbTableView.h"
+#include "ViewDbTable.h"
 
 
-class ViewADcontinuous : public dbTableView
+class ViewADcontinuous : public ViewDbTable
 {
 protected:
 	ViewADcontinuous();

@@ -811,7 +811,7 @@
     <ClCompile Include="options_detect_spikes.cpp" />
     <ClCompile Include="options_detect_stimulus.cpp" />
     <ClCompile Include="USBPxxS1.cpp" />
-    <ClCompile Include="dbTableView.cpp" />
+    <ClCompile Include="ViewDbTable.cpp" />
     <ClCompile Include="DlgAbout.cpp" />
     <ClCompile Include="AcqWaveChan.cpp" />
     <ClCompile Include="AcqWaveChanArray.cpp" />
@@ -1398,7 +1398,7 @@
     <ClInclude Include="options_detect_spikes.h" />
     <ClInclude Include="options_detect_stimulus.h" />
     <ClInclude Include="USBPxxS1.h" />
-    <ClInclude Include="dbTableView.h" />
+    <ClInclude Include="ViewDbTable.h" />
     <ClInclude Include="dbWave_structures.h" />
     <ClInclude Include="DlgAbout.h" />
     <ClInclude Include="AcqWaveChan.h" />

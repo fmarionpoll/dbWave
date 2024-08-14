@@ -15,10 +15,10 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(ViewSpikeHist, dbTableView)
+IMPLEMENT_DYNCREATE(ViewSpikeHist, ViewDbTable)
 
 ViewSpikeHist::ViewSpikeHist()
-	: dbTableView(IDD)
+	: ViewDbTable(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE; // workaround to crash / accessibility
 }
@@ -34,12 +34,12 @@ ViewSpikeHist::~ViewSpikeHist()
 
 BOOL ViewSpikeHist::PreCreateWindow(CREATESTRUCT& cs)
 {
-	return dbTableView::PreCreateWindow(cs);
+	return ViewDbTable::PreCreateWindow(cs);
 }
 
 void ViewSpikeHist::DoDataExchange(CDataExchange* pDX)
 {
-	dbTableView::DoDataExchange(pDX);
+	ViewDbTable::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_TIMEFIRST, m_timefirst);
 	DDX_Text(pDX, IDC_TIMELAST, m_timelast);
 	DDX_Text(pDX, IDC_SPIKECLASS, m_spikeclass);
@@ -51,11 +51,12 @@ void ViewSpikeHist::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
 }
 
-BEGIN_MESSAGE_MAP(ViewSpikeHist, dbTableView)
+BEGIN_MESSAGE_MAP(ViewSpikeHist, ViewDbTable)
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_WM_SIZE()
 	ON_WM_HSCROLL()
+
 	ON_EN_CHANGE(IDC_TIMEFIRST, &ViewSpikeHist::OnEnChangeTimefirst)
 	ON_EN_CHANGE(IDC_TIMELAST, &ViewSpikeHist::OnEnChangeTimelast)
 	ON_EN_CHANGE(IDC_EDIT4, &ViewSpikeHist::OnEnChangeTimebin)
@@ -155,15 +156,15 @@ void ViewSpikeHist::OnInitialUpdate()
 	m_binit = TRUE;
 
 	// init database and load documents
-	dbTableView::OnInitialUpdate();
+	ViewDbTable::OnInitialUpdate();
 
 	const auto p_dbwave_doc = GetDocument();
-	if (p_dbwave_doc->m_p_spk == nullptr)
+	if (p_dbwave_doc->m_p_spk_doc == nullptr)
 	{
-		p_dbwave_doc->m_p_spk = new CSpikeDoc;
-		ASSERT(p_dbwave_doc->m_p_spk != NULL);
+		p_dbwave_doc->m_p_spk_doc = new CSpikeDoc;
+		ASSERT(p_dbwave_doc->m_p_spk_doc != NULL);
 	}
-	p_spike_doc_ = p_dbwave_doc->m_p_spk;
+	p_spike_doc_ = p_dbwave_doc->m_p_spk_doc;
 	p_spike_doc_->get_spike_list_current();
 	buildDataAndDisplay();
 	selectSpkList(p_spike_doc_->get_spike_list_current_index(), TRUE);
@@ -185,7 +186,7 @@ void ViewSpikeHist::OnSize(UINT nType, int cx, int cy)
 			break;
 		}
 	}
-	dbTableView::OnSize(nType, cx, cy);
+	ViewDbTable::OnSize(nType, cx, cy);
 }
 
 void ViewSpikeHist::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
@@ -201,7 +202,7 @@ void ViewSpikeHist::OnActivateView(BOOL bActivate, CView* pActivateView, CView* 
 		auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		p_app->options_view_spikes.ballfiles = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
 	}
-	dbTableView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	ViewDbTable::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
 void ViewSpikeHist::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
@@ -230,7 +231,7 @@ void ViewSpikeHist::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 BOOL ViewSpikeHist::OnMove(UINT nIDMoveCommand)
 {
-	const auto flag = dbTableView::OnMove(nIDMoveCommand);
+	const auto flag = ViewDbTable::OnMove(nIDMoveCommand);
 	auto p_document = GetDocument();
 	if (p_document->db_get_current_spk_file_name(TRUE).IsEmpty())
 	{
@@ -247,18 +248,18 @@ BOOL ViewSpikeHist::OnMove(UINT nIDMoveCommand)
 
 void ViewSpikeHist::OnDestroy()
 {
-	dbTableView::OnDestroy();
+	ViewDbTable::OnDestroy();
 }
 
 #ifdef _DEBUG
 void ViewSpikeHist::AssertValid() const
 {
-	dbTableView::AssertValid();
+	ViewDbTable::AssertValid();
 }
 
 void ViewSpikeHist::Dump(CDumpContext& dc) const
 {
-	dbTableView::Dump(dc);
+	ViewDbTable::Dump(dc);
 }
 #endif //_DEBUG
 
@@ -845,7 +846,7 @@ void ViewSpikeHist::OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo)
 {
 	m_fontPrint.DeleteObject();
 	m_bPrint = FALSE;
-	dbTableView::OnEndPrinting(p_dc, pInfo);
+	ViewDbTable::OnEndPrinting(p_dc, pInfo);
 }
 
 void ViewSpikeHist::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
@@ -2000,7 +2001,7 @@ void ViewSpikeHist::OnEnChangeEditlockonstim()
 void ViewSpikeHist::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	if (static_cast<CScrollBar*>(GetDlgItem(IDC_SCROLLBAR1)) != pScrollBar)
-		dbTableView::OnHScroll(nSBCode, nPos, pScrollBar);
+		ViewDbTable::OnHScroll(nSBCode, nPos, pScrollBar);
 
 	// Get the current position of scroll box.
 	auto curpos = pScrollBar->GetScrollPos();

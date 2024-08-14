@@ -26,10 +26,10 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(ViewADcontinuous, dbTableView)
+IMPLEMENT_DYNCREATE(ViewADcontinuous, ViewDbTable)
 
 ViewADcontinuous::ViewADcontinuous()
-	: dbTableView(IDD)
+	: ViewDbTable(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE;
 	m_AD_yRulerBar.AttachScopeWnd(&m_chartDataAD, FALSE);

@@ -2,10 +2,10 @@
 
 #include "DataListCtrl.h"
 #include "Editctrl.h"
-#include "dbTableView.h"
+#include "ViewDbTable.h"
 
 
-class ViewdbWave : public dbTableView
+class ViewdbWave : public ViewDbTable
 {
 protected: // create from serialization only
 	DECLARE_DYNCREATE(ViewdbWave)

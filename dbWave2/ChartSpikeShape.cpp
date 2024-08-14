@@ -63,24 +63,28 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 		init_polypoint_x_axis();
 
 		// loop through all spikes of the list
-		auto i_last_spike = p_spike_list_->get_spikes_count() - 1;
 		auto i_first_spike = 0;
+		auto i_last_spike = p_spike_list_->get_spikes_count() - 1;
 		if (range_mode_ == RANGE_INDEX)
 		{
-			i_last_spike = index_last_spike_;
 			i_first_spike = index_first_spike_;
+			i_last_spike = index_last_spike_;
 		}
 		auto selected_pen_color = BLACK_COLOR;
 		if (plot_mode_ == PLOT_ONE_CLASS || plot_mode_ == PLOT_ONE_COLOR)
 			selected_pen_color = SILVER_COLOR;
 		const auto old_pen = p_dc->SelectObject(&pen_table_[selected_pen_color]);
 
-		for (auto i_spike = i_last_spike; i_spike >= i_first_spike; i_spike--)
+		for (auto i_spike = i_first_spike; i_spike <= i_last_spike; i_spike++)
 		{
 			const Spike* spike = p_spike_list_->get_spike(i_spike);
-			if (range_mode_ == RANGE_TIME_INTERVALS
-				&& (spike->get_time() < l_first_ || spike->get_time() > l_last_))
-				continue;
+			if (range_mode_ == RANGE_TIME_INTERVALS)
+			{
+				if (spike->get_time() < l_first_ )
+					continue;
+				if (spike->get_time() > l_last_)
+					break;;
+			}
 
 			// select pen according to class
 			const auto spike_class = spike->get_class_id();
@@ -103,7 +107,6 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			}
 			display_spike_data(p_dc, spike, spike_length);
 		}
-		// restore pen
 		p_dc->SelectObject(old_pen);
 
 		if (plot_mode_ == PLOT_ONE_CLASS || plot_mode_ == PLOT_ONE_COLOR)
@@ -112,12 +115,13 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 			if (plot_mode_ == PLOT_ONE_COLOR)
 				selected_pen_color = selected_class_ % NB_COLORS;
 			p_dc->SelectObject(&pen_table_[selected_pen_color]);
-			for (auto i_spike = i_last_spike; i_spike >= i_first_spike; i_spike--)
+			for (auto i_spike = i_first_spike; i_spike <= i_last_spike; i_spike++)
 			{
 				const Spike* spike = p_spike_list_->get_spike(i_spike);
 				if (range_mode_ == RANGE_TIME_INTERVALS
 					&& (spike->get_time() < l_first_ || spike->get_time() > l_last_))
-					if (spike->get_class_id() != selected_class_)
+					continue;
+				if (spike->get_class_id() != selected_class_)
 						continue;
 
 				display_spike_data(p_dc, spike, spike_length);
@@ -179,7 +183,7 @@ void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
 	p_dc->SetViewportOrg(display_rect_.left, display_rect_.Height() / 2);
 	p_dc->SetViewportExt(display_rect_.right, -display_rect_.Height());
 	auto spike_sel = db_spike(dbwave_doc_->db_get_current_record_position(),
-		dbwave_doc_->m_p_spk->get_spike_list_current_index(),
+		dbwave_doc_->m_p_spk_doc->get_spike_list_current_index(),
 		0);
 
 	for (auto i = p_spike_list_->get_spike_flag_array_count() - 1; i >= 0; i--)
@@ -269,18 +273,12 @@ void ChartSpikeShape::draw_spike_on_dc(const Spike* spike, CDC * p_dc)
 	p_dc->RestoreDC(n_saved_dc);
 }
 
-void ChartSpikeShape::move_vt_track(const int i_track, const int new_value)
+void ChartSpikeShape::move_vt_track(const int i_track, const int value)
 {
-	//CPoint point;
-	//m_pt_last_.x = MulDiv(vertical_tags.get_value_int(i_track) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	//vertical_tags.set_value_int(i_track, new_value);
-	//point.x = MulDiv(new_value - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	//xor_vertical(point.x);
-
 	Tag* p_tag = vt_tags.get_tag(i_track);
-	const auto pixels = MulDiv(vt_tags.get_value_int(i_track) - x_wo_, x_viewport_extent_, x_we_) + x_viewport_origin_;
-	p_tag->value_int = new_value;
-	xor_vt_tag(pixels, p_tag->swap_pixel(pixels));
+	p_tag->value_int = value;
+	const auto pixel = MulDiv(vt_tags.get_value_int(i_track) - x_wo_, x_viewport_extent_, x_we_) + x_viewport_origin_;
+	xor_vt_tag(pixel, p_tag->swap_pixel(pixel));
 }
 
 void ChartSpikeShape::OnLButtonUp(const UINT n_flags, const CPoint point)
@@ -486,7 +484,7 @@ void ChartSpikeShape::get_extents()
 			{
 				if (dbwave_doc_->db_set_current_record_position(file_index))
 					dbwave_doc_->open_current_spike_file();
-				p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
+				p_spike_list_ = dbwave_doc_->m_p_spk_doc->get_spike_list_current();
 			}
 			if (p_spike_list_ != nullptr)
 			{

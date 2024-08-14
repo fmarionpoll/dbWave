@@ -42,8 +42,8 @@ CdbWaveDoc::CdbWaveDoc()
 CdbWaveDoc::~CdbWaveDoc()
 {
 	SAFE_DELETE(db_table)
-		SAFE_DELETE(m_p_dat)
-		SAFE_DELETE(m_p_spk)
+		SAFE_DELETE(m_p_data_doc)
+		SAFE_DELETE(m_p_spk_doc)
 
 		// store temp mdb filename to delete on exit within the application
 		// (it seems it is not possible to erase the file from here)
@@ -372,51 +372,51 @@ long CdbWaveDoc::db_get_data_len() const
 AcqDataDoc* CdbWaveDoc::open_current_data_file()
 {
 	// data doc to read data files
-	if (m_p_dat == nullptr)
+	if (m_p_data_doc == nullptr)
 	{
-		m_p_dat = new AcqDataDoc;
-		ASSERT(m_p_dat != NULL);
+		m_p_data_doc = new AcqDataDoc;
+		ASSERT(m_p_data_doc != NULL);
 	}
 
 	// open document; erase object if operation failed
 	db_get_current_dat_file_name(TRUE);
 	if (current_datafile_name_.IsEmpty()
-		|| !m_p_dat->open_document(current_datafile_name_))
+		|| !m_p_data_doc->open_document(current_datafile_name_))
 	{
-		delete m_p_dat;
-		m_p_dat = nullptr;
+		delete m_p_data_doc;
+		m_p_data_doc = nullptr;
 	}
 	else
-		m_p_dat->SetPathName(current_datafile_name_, FALSE);
-	return m_p_dat;
+		m_p_data_doc->SetPathName(current_datafile_name_, FALSE);
+	return m_p_data_doc;
 }
 
 void CdbWaveDoc::close_current_data_file() const
 {
-	if (m_p_dat != nullptr)
-		m_p_dat->acq_close_file();
+	if (m_p_data_doc != nullptr)
+		m_p_data_doc->acq_close_file();
 }
 
 CSpikeDoc* CdbWaveDoc::open_current_spike_file()
 {
 	// spike doc to read data files
-	if (m_p_spk == nullptr)
+	if (m_p_spk_doc == nullptr)
 	{
-		m_p_spk = new CSpikeDoc;
-		ASSERT(m_p_spk != NULL);
+		m_p_spk_doc = new CSpikeDoc;
+		ASSERT(m_p_spk_doc != NULL);
 	}
 	// open document; erase object if operation fails
 	if (db_get_current_record_position())
 		db_get_current_spk_file_name(TRUE);
 	if (current_spike_file_name_.IsEmpty()
-		|| !m_p_spk->OnOpenDocument(current_spike_file_name_))
+		|| !m_p_spk_doc->OnOpenDocument(current_spike_file_name_))
 	{
-		delete m_p_spk;
-		m_p_spk = nullptr;
+		delete m_p_spk_doc;
+		m_p_spk_doc = nullptr;
 	}
 	else
-		m_p_spk->SetPathName(current_spike_file_name_, FALSE);
-	return m_p_spk;
+		m_p_spk_doc->SetPathName(current_spike_file_name_, FALSE);
+	return m_p_spk_doc;
 }
 
 Spike* CdbWaveDoc::get_spike(const db_spike& spike_coords)
@@ -433,9 +433,9 @@ Spike* CdbWaveDoc::get_spike(const db_spike& spike_coords)
 
 	SpikeList* p_spike_list;
 	if (spike_coords.spike_list_index >= 0)
-		p_spike_list = m_p_spk->get_spike_list_at(spike_coords.spike_list_index);
+		p_spike_list = m_p_spk_doc->get_spike_list_at(spike_coords.spike_list_index);
 	else
-		p_spike_list = m_p_spk->get_spike_list_current();
+		p_spike_list = m_p_spk_doc->get_spike_list_current();
 	
 	return p_spike_list->get_spike(spike_coords.spike_index);
 }
@@ -444,7 +444,7 @@ boolean CdbWaveDoc::get_max_min_amplitude_of_all_spikes(const BOOL b_all_files, 
 {
 	boolean spikes_found = false;
 	const long n_files = b_all_files ? db_get_n_records() : 1;
-	const int current_spike_list_index = m_p_spk->get_spike_list_current_index();
+	const int current_spike_list_index = m_p_spk_doc->get_spike_list_current_index();
 	boolean initialized = false;
 
 	for (long i_file = 0; i_file < n_files; i_file++)
@@ -453,12 +453,12 @@ boolean CdbWaveDoc::get_max_min_amplitude_of_all_spikes(const BOOL b_all_files, 
 		{
 			if (db_set_current_record_position(i_file))
 				open_current_spike_file();
-			if (m_p_spk == nullptr)
+			if (m_p_spk_doc == nullptr)
 				continue;
-			m_p_spk->set_spike_list_current_index(current_spike_list_index);
+			m_p_spk_doc->set_spike_list_current_index(current_spike_list_index);
 		}
 
-		const auto p_spk_list = m_p_spk->get_spike_list_current();
+		const auto p_spk_list = m_p_spk_doc->get_spike_list_current();
 		if (p_spk_list->get_spikes_count() > 0) 
 		{
 			spikes_found = true;
@@ -489,7 +489,7 @@ boolean CdbWaveDoc::get_max_min_y1_of_all_spikes(const boolean b_all_files, int&
 {
 	boolean spikes_found = false;
 	const long n_files = b_all_files ? db_get_n_records() : 1;
-	const int current_spike_list_index = m_p_spk->get_spike_list_current_index();
+	const int current_spike_list_index = m_p_spk_doc->get_spike_list_current_index();
 	boolean initialized = false;
 
 	for (long i_file = 0; i_file < n_files; i_file++)
@@ -498,12 +498,12 @@ boolean CdbWaveDoc::get_max_min_y1_of_all_spikes(const boolean b_all_files, int&
 		{
 			if (db_set_current_record_position(i_file))
 				open_current_spike_file();
-			if (m_p_spk == nullptr)
+			if (m_p_spk_doc == nullptr)
 				continue;
-			m_p_spk->set_spike_list_current_index(current_spike_list_index);
+			m_p_spk_doc->set_spike_list_current_index(current_spike_list_index);
 		}
 
-		const auto p_spk_list = m_p_spk->get_spike_list_current();
+		const auto p_spk_list = m_p_spk_doc->get_spike_list_current();
 		if (p_spk_list->get_spikes_count() > 0)
 		{
 			int max_file_i = 0;
@@ -533,7 +533,7 @@ boolean CdbWaveDoc::get_max_min_y1_of_all_spikes(const boolean b_all_files, int&
 void CdbWaveDoc::center_spike_amplitude_all_spikes_between_t1_and_t2(const boolean b_all_files, const int spike_class, const int t1, const int t2)
 {
 	const long n_files = b_all_files ? db_get_n_records() : 1;
-	const int current_spike_list_index = m_p_spk->get_spike_list_current_index();
+	const int current_spike_list_index = m_p_spk_doc->get_spike_list_current_index();
 	boolean initialized = false;
 
 	for (long i_file = 0; i_file < n_files; i_file++)
@@ -542,12 +542,12 @@ void CdbWaveDoc::center_spike_amplitude_all_spikes_between_t1_and_t2(const boole
 		{
 			if (db_set_current_record_position(i_file))
 				open_current_spike_file();
-			if (m_p_spk == nullptr)
+			if (m_p_spk_doc == nullptr)
 				continue;
-			m_p_spk->set_spike_list_current_index(current_spike_list_index);
+			m_p_spk_doc->set_spike_list_current_index(current_spike_list_index);
 		}
 
-		const auto p_spk_list = m_p_spk->get_spike_list_current();
+		const auto p_spk_list = m_p_spk_doc->get_spike_list_current();
 		const auto n_spikes = p_spk_list->get_spikes_count();
 		if (n_spikes > 0)
 		{
@@ -688,7 +688,7 @@ void CdbWaveDoc::export_data_ascii_comments(CSharedFile * p_shared_file)
 		cs_dummy.Empty();
 		if (open_current_data_file() != nullptr)
 		{
-			cs_dummy += m_p_dat->get_data_file_infos(p_view_data_options); 
+			cs_dummy += m_p_data_doc->get_data_file_infos(p_view_data_options); 
 			if (p_view_data_options->b_data_base_columns)
 				cs_dummy += export_database_data();
 		}
@@ -1148,7 +1148,7 @@ source_data CdbWaveDoc::get_wave_format_from_either_file(CString cs_filename)
 	else if (record.spike_file_present)
 		cs_filename = record.cs_spk_file;
 	record.p_wave_format = get_wave_format(cs_filename, record.data_file_present);
-	m_p_dat->acq_close_file();
+	m_p_data_doc->acq_close_file();
 
 	return record;
 }
@@ -1234,7 +1234,7 @@ void CdbWaveDoc::set_record_file_names(const source_data * record) const
 		db_table->m_mainTableSet.SetFieldNull(&(db_table->m_mainTableSet.m_Filedat), FALSE);
 		db_table->m_mainTableSet.m_Filedat = record->cs_dat_file.Right(
 			record->cs_dat_file.GetLength() - record->i_last_backslash_position - 1);
-		db_table->m_mainTableSet.m_datalen = m_p_dat->get_doc_channel_length();
+		db_table->m_mainTableSet.m_datalen = m_p_data_doc->get_doc_channel_length();
 	}
 
 	if (record->spike_file_present)
@@ -1248,14 +1248,14 @@ void CdbWaveDoc::set_record_file_names(const source_data * record) const
 
 boolean CdbWaveDoc::set_record_spk_classes(const source_data * record) const
 {
-	const boolean flag = static_cast<boolean>(m_p_spk->OnOpenDocument(record->cs_spk_file));
+	const boolean flag = static_cast<boolean>(m_p_spk_doc->OnOpenDocument(record->cs_spk_file));
 	if (flag)
 	{
-		db_table->m_mainTableSet.m_nspikes = m_p_spk->get_spike_list_current()->get_spikes_count();
-		if (m_p_spk->get_spike_list_current()->get_classes_count() <= 0)
-			m_p_spk->get_spike_list_current()->update_class_list();
-		db_table->m_mainTableSet.m_nspikeclasses = m_p_spk->get_spike_list_current()->get_classes_count();
-		db_table->m_mainTableSet.m_datalen = m_p_spk->m_wave_format.get_nb_points_sampled_per_channel();
+		db_table->m_mainTableSet.m_nspikes = m_p_spk_doc->get_spike_list_current()->get_spikes_count();
+		if (m_p_spk_doc->get_spike_list_current()->get_classes_count() <= 0)
+			m_p_spk_doc->get_spike_list_current()->update_class_list();
+		db_table->m_mainTableSet.m_nspikeclasses = m_p_spk_doc->get_spike_list_current()->get_classes_count();
+		db_table->m_mainTableSet.m_datalen = m_p_spk_doc->m_wave_format.get_nb_points_sampled_per_channel();
 	}
 	return flag;
 }
@@ -1326,8 +1326,8 @@ void CdbWaveDoc::import_file_list(CStringArray& cs_descriptors_array, const int 
 	}
 
 	// close files opened here
-	SAFE_DELETE(m_p_dat)
-		SAFE_DELETE(m_p_spk)
+	SAFE_DELETE(m_p_data_doc)
+		SAFE_DELETE(m_p_spk_doc)
 		SAFE_DELETE(shared_file)
 }
 
@@ -1386,31 +1386,31 @@ BOOL CdbWaveDoc::is_extension_recognized_as_data_file(CString string)
 CWaveFormat* CdbWaveDoc::get_wave_format(CString cs_filename, const BOOL is_dat_file)
 {
 	// new data doc used to read data files
-	if (m_p_dat == nullptr)
+	if (m_p_data_doc == nullptr)
 	{
-		m_p_dat = new AcqDataDoc;
-		ASSERT(m_p_dat != NULL);
+		m_p_data_doc = new AcqDataDoc;
+		ASSERT(m_p_data_doc != NULL);
 	}
 
 	// new spike doc used to read data files
-	if (m_p_spk == nullptr)
+	if (m_p_spk_doc == nullptr)
 	{
-		m_p_spk = new CSpikeDoc;
-		ASSERT(m_p_spk != NULL);
+		m_p_spk_doc = new CSpikeDoc;
+		ASSERT(m_p_spk_doc != NULL);
 	}
 
 	CWaveFormat* p_wave_format = nullptr;
 	if (is_dat_file)
 	{
-		const auto b_is_read_ok = m_p_dat->open_document(cs_filename);
+		const auto b_is_read_ok = m_p_data_doc->open_document(cs_filename);
 		if (b_is_read_ok)
-			p_wave_format = m_p_dat->get_wave_format();
+			p_wave_format = m_p_data_doc->get_wave_format();
 	}
 	else if (cs_filename.Find(_T(".spk")) > 0)
 	{
-		const auto b_is_read_ok = m_p_spk->OnOpenDocument(cs_filename);
+		const auto b_is_read_ok = m_p_spk_doc->OnOpenDocument(cs_filename);
 		if (b_is_read_ok)
-			p_wave_format = &(m_p_spk->m_wave_format);
+			p_wave_format = &(m_p_spk_doc->m_wave_format);
 	}
 	return p_wave_format;
 }
@@ -1567,15 +1567,15 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 	const auto current_file = db_get_current_record_position();
 
 	// make sure there are objects to read / write data and spike files
-	if (m_p_dat == nullptr) // data doc
+	if (m_p_data_doc == nullptr) 
 	{
-		m_p_dat = new AcqDataDoc;
-		ASSERT(m_p_dat != NULL);
+		m_p_data_doc = new AcqDataDoc;
+		ASSERT(m_p_data_doc != NULL);
 	}
-	if (m_p_spk == nullptr) // spike doc
+	if (m_p_spk_doc == nullptr) // spike doc
 	{
-		m_p_spk = new CSpikeDoc;
-		ASSERT(m_p_spk != NULL);
+		m_p_spk_doc = new CSpikeDoc;
+		ASSERT(m_p_spk_doc != NULL);
 	}
 
 	// do only one iteration?
@@ -1599,9 +1599,9 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 		{
 			const auto p_spk = open_current_spike_file();
 			ASSERT(p_spk != nullptr);
-			wave_format = &(m_p_spk->m_wave_format);
+			wave_format = &(m_p_spk_doc->m_wave_format);
 			if (update_waveformat_from_database(wave_format))
-				m_p_spk->OnSaveDocument(current_spike_file_name_);
+				m_p_spk_doc->OnSaveDocument(current_spike_file_name_);
 		}
 		return;
 	}
@@ -1635,10 +1635,10 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 		{
 			const auto p_dat = open_current_data_file();
 			ASSERT(p_dat != nullptr);
-			p_wave_format = m_p_dat->get_wave_format();
+			p_wave_format = m_p_data_doc->get_wave_format();
 			if (update_waveformat_from_database(p_wave_format))
 			{
-				if (!m_p_dat->acq_save_data_descriptors())
+				if (!m_p_data_doc->acq_save_data_descriptors())
 					AfxMessageBox(_T("Error saving data descriptors\n"), MB_OK);
 			}
 		}
@@ -1647,9 +1647,9 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 		{
 			const auto p_spk = open_current_spike_file();
 			ASSERT(p_spk != nullptr);
-			p_wave_format = &(m_p_spk->m_wave_format);
+			p_wave_format = &(m_p_spk_doc->m_wave_format);
 			if (update_waveformat_from_database(p_wave_format))
-				m_p_spk->OnSaveDocument(current_spike_file_name_);
+				m_p_spk_doc->OnSaveDocument(current_spike_file_name_);
 		}
 		// move to next pRecord
 		db_table->m_mainTableSet.MoveNext();
@@ -1689,10 +1689,10 @@ BOOL CdbWaveDoc::update_waveformat_from_database(CWaveFormat * p_wave_format) co
 	b_changed |= db_table->get_record_value_long(CH_REPEAT, p_wave_format->repeat);
 	b_changed |= db_table->get_record_value_long(CH_REPEAT2, p_wave_format->repeat2);
 
-	const auto n_per_cycle = static_cast<int>(static_cast<float>(m_p_spk->m_stimulus_intervals.n_items) / 2.f
-		/ m_p_spk->get_acq_duration() / 8.192f);
-	b_changed |= (n_per_cycle != m_p_spk->m_stimulus_intervals.n_per_cycle);
-	m_p_spk->m_stimulus_intervals.n_per_cycle = n_per_cycle;
+	const auto n_per_cycle = static_cast<int>(static_cast<float>(m_p_spk_doc->m_stimulus_intervals.n_items) / 2.f
+		/ m_p_spk_doc->get_acq_duration() / 8.192f);
+	b_changed |= (n_per_cycle != m_p_spk_doc->m_stimulus_intervals.n_per_cycle);
+	m_p_spk_doc->m_stimulus_intervals.n_per_cycle = n_per_cycle;
 
 	return b_changed;
 }
@@ -1712,7 +1712,7 @@ void CdbWaveDoc::export_spk_descriptors(CSharedFile * p_sf, SpikeList * p_spike_
 	if (options_view_spikes->bspkcomments)
 	{
 		p_sf->Write(cs_tab, cs_tab.GetLength() * sizeof(TCHAR));
-		const auto cs_temp = m_p_spk->get_comment();
+		const auto cs_temp = m_p_spk_doc->get_comment();
 		p_sf->Write(cs_temp, cs_temp.GetLength() * sizeof(TCHAR));
 	}
 
@@ -1726,7 +1726,7 @@ void CdbWaveDoc::export_spk_descriptors(CSharedFile * p_sf, SpikeList * p_spike_
 		p_sf->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		cs_dummy.Format(_T("%s%i"), (LPCTSTR)cs_tab, p_spike_list->get_classes_count());
 		p_sf->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
-		const auto t_duration = m_p_spk->get_acq_duration();
+		const auto t_duration = m_p_spk_doc->get_acq_duration();
 		cs_dummy.Format(_T("%s%f"), (LPCTSTR)cs_tab, t_duration);
 		p_sf->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 	}
@@ -1831,20 +1831,20 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 	// save current selection and export header of the table
 	const int i_old_index = db_get_current_record_position();
 	const int n_files = db_get_n_records();
-	if (nullptr == m_p_spk)
+	if (nullptr == m_p_spk_doc)
 	{
-		m_p_spk = new CSpikeDoc;
-		ASSERT(m_p_spk != NULL);
-		m_p_spk->set_spike_list_current_index(get_current_spike_file()->get_spike_list_current_index());
+		m_p_spk_doc = new CSpikeDoc;
+		ASSERT(m_p_spk_doc != NULL);
+		m_p_spk_doc->set_spike_list_current_index(get_current_spike_file()->get_spike_list_current_index());
 	}
 
 	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	const auto options_view_spikes = &(p_app->options_view_spikes);
 
-	const auto i_old_list = m_p_spk->get_spike_list_current_index();
-	m_p_spk->export_table_title(p_sf, options_view_spikes, n_files);
+	const auto i_old_list = m_p_spk_doc->get_spike_list_current_index();
+	m_p_spk_doc->export_table_title(p_sf, options_view_spikes, n_files);
 	CSpikeDoc::export_headers_descriptors(p_sf, options_view_spikes);
-	m_p_spk->export_headers_data(p_sf, options_view_spikes); // this is for the measure
+	m_p_spk_doc->export_headers_data(p_sf, options_view_spikes); // this is for the measure
 
 	// single file export operation: EXTREMA, amplitude, SPIKE_POINTS
 	transpose_ = FALSE;
@@ -1856,8 +1856,8 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 		|| options_view_spikes->exportdatatype == EXPORT_SPIKEPOINTS) 
 	{
 		const CString cs_file_desc;
-		m_p_spk->export_spk_file_comment(p_sf, options_view_spikes, 0, cs_file_desc);
-		m_p_spk->export_spk_attributes_one_file(p_sf, options_view_spikes);
+		m_p_spk_doc->export_spk_file_comment(p_sf, options_view_spikes, 0, cs_file_desc);
+		m_p_spk_doc->export_spk_attributes_one_file(p_sf, options_view_spikes);
 	}
 	// multiple file export operations: ISI, AUTOCORRELATION, HIST_AMPL, AVERAGE, INTERVALS, PSTH
 	else
@@ -1876,8 +1876,8 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 			n_bins = options_view_spikes->histampl_nbins + 2;
 			break;
 		case EXPORT_AVERAGE: // assume that all spikes have the same length
-			p_double = new double[m_p_spk->get_spike_list_current()->get_spike_length() * 2 + 1 + 2];
-			*p_double = m_p_spk->get_spike_list_current()->get_spike_length();
+			p_double = new double[m_p_spk_doc->get_spike_list_current()->get_spike_length() * 2 + 1 + 2];
+			*p_double = m_p_spk_doc->get_spike_list_current()->get_spike_length();
 			break;
 		case EXPORT_INTERV: // feb 23, 2009
 			break;
@@ -1918,9 +1918,10 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 			dlg.SetStatus(cs_comment);
 
 			// open document
-			BOOL flag0 = db_set_current_record_position(i_file);
-			if (current_spike_file_name_.IsEmpty())
+			const BOOL flag0 = db_set_current_record_position(i_file);
+			if (!flag0 || current_spike_file_name_.IsEmpty())
 				continue;
+
 			// check if file is still present and open it
 			CFileStatus status;
 			if (!CFile::GetStatus(current_spike_file_name_, status))
@@ -1935,7 +1936,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 
 			// loop over the spike lists stored in that file
 			auto i_chan1 = 0;
-			auto i_chan2 = m_p_spk->get_spike_list_size();
+			auto i_chan2 = m_p_spk_doc->get_spike_list_size();
 			if (!options_view_spikes->ballChannels)
 			{
 				i_chan1 = i_old_list;
@@ -1945,7 +1946,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 			//----------------------------------------------------------
 			for (auto i_spike_list = i_chan1; i_spike_list < i_chan2; i_spike_list++)
 			{
-				const auto p_spike_list = m_p_spk->set_spike_list_current_index(i_spike_list);
+				const auto p_spike_list = m_p_spk_doc->set_spike_list_current_index(i_spike_list);
 				options_view_spikes->ichan = i_spike_list;
 				for (auto k_class = class1; k_class <= class2; k_class++)
 				{
@@ -1954,21 +1955,21 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 					switch (options_view_spikes->exportdatatype)
 					{
 					case EXPORT_HISTAMPL: // spike amplitude histogram
-						m_p_spk->export_spk_amplitude_histogram(p_sf, options_view_spikes, p_hist0, i_spike_list, k_class);
+						m_p_spk_doc->export_spk_amplitude_histogram(p_sf, options_view_spikes, p_hist0, i_spike_list, k_class);
 						break;
 					case EXPORT_LATENCY: // occurence time of the first 10 spikes
-						m_p_spk->export_spk_latencies(p_sf, options_view_spikes, 10, i_spike_list, k_class);
+						m_p_spk_doc->export_spk_latencies(p_sf, options_view_spikes, 10, i_spike_list, k_class);
 						break;
 					case EXPORT_INTERV: // feb 23, 2009 - occurence time of all spikes
-						m_p_spk->export_spk_latencies(p_sf, options_view_spikes, -1, i_spike_list, k_class);
+						m_p_spk_doc->export_spk_latencies(p_sf, options_view_spikes, -1, i_spike_list, k_class);
 						break;
 					case EXPORT_AVERAGE: // assume that all spikes have the same length
-						m_p_spk->export_spk_average_wave(p_sf, options_view_spikes, p_double, i_spike_list, k_class);
+						m_p_spk_doc->export_spk_average_wave(p_sf, options_view_spikes, p_double, i_spike_list, k_class);
 						break;
 					case EXPORT_PSTH: // PSTH
 					case EXPORT_ISI: // ISI
 					case EXPORT_AUTOCORR: // Autocorrelation
-						m_p_spk->export_spk_psth(p_sf, options_view_spikes, p_hist0, i_spike_list, k_class);
+						m_p_spk_doc->export_spk_psth(p_sf, options_view_spikes, p_hist0, i_spike_list, k_class);
 						break;
 					default:
 						ATLTRACE2(_T("option selected not implemented: %i /n"), options_view_spikes->exportdatatype);
@@ -1997,7 +1998,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 	if (db_set_current_record_position(i_old_index)) 
 	{
 		if (open_current_spike_file() != nullptr)
-			m_p_spk->set_spike_list_current_index(i_old_list);
+			m_p_spk_doc->set_spike_list_current_index(i_old_list);
 	}
 	UpdateAllViews(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 }
@@ -2239,8 +2240,8 @@ CSharedFile* CdbWaveDoc::file_discarded_message(CSharedFile * p_sf, const CStrin
 void CdbWaveDoc::delete_erased_files()
 {
 	// close current data file (no need to do that for spk file)(so far)
-	if (m_p_dat != nullptr)
-		m_p_dat->acq_close_file();
+	if (m_p_data_doc != nullptr)
+		m_p_data_doc->acq_close_file();
 
 	const auto n_files_to_delete = names_of_files_to_delete_.GetSize() - 1;
 
@@ -2416,7 +2417,7 @@ void CdbWaveDoc::remove_duplicate_files()
 			auto i_duplicate_file = -1;
 			if (b_ok)
 			{
-				const auto wave_format = m_p_dat->get_wave_format();
+				const auto wave_format = m_p_data_doc->get_wave_format();
 				o_time_file_current = wave_format->acquisition_time;
 				// loop to find if current file has a duplicate in the list of previous files stored in the array
 				for (auto i = 0; i < index_valid_records; i++)
@@ -2698,10 +2699,10 @@ void CdbWaveDoc::export_datafiles_as_text_files()
 	const auto index_current_record = db_get_current_record_position();
 
 	// make sure there are objects to read / write data and spike files
-	if (m_p_dat == nullptr) // data doc
+	if (m_p_data_doc == nullptr) // data doc
 	{
-		m_p_dat = new AcqDataDoc;
-		ASSERT(m_p_dat != NULL);
+		m_p_data_doc = new AcqDataDoc;
+		ASSERT(m_p_data_doc != NULL);
 	}
 
 	// prepare clipboard to receive names of files exported
@@ -2753,7 +2754,7 @@ void CdbWaveDoc::export_datafiles_as_text_files()
 			}
 
 			// export data
-			m_p_dat->export_data_file_to_txt_file(&data_dest);
+			m_p_data_doc->export_data_file_to_txt_file(&data_dest);
 			data_dest.Close();
 			cs_txt_file += _T("\n");
 			psf->Write(cs_txt_file, cs_txt_file.GetLength() * sizeof(TCHAR));

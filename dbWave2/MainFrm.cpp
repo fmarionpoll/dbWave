@@ -10,7 +10,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-#include "dbTableView.h"
+#include "ViewDbTable.h"
 #include "dbWave.h"
 #include "dbWave_constants.h"
 
@@ -238,7 +238,7 @@ CdbWaveDoc* CMainFrame::GetMDIActiveDocument()
 	const auto p_child = MDIGetActive();
 	if (p_child == nullptr)
 		return nullptr;
-	const auto db_table_view = static_cast<dbTableView*>(p_child->GetActiveView());
+	const auto db_table_view = static_cast<ViewDbTable*>(p_child->GetActiveView());
 	return db_table_view->GetDocument();
 }
 

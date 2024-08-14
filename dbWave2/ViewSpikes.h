@@ -2,14 +2,14 @@
 
 #include "SpikeClassListBox.h"
 #include "ScrollBarEx.h"
-#include "dbTableView.h"
+#include "ViewDbTable.h"
 #include "ChartData.h"
 #include "Editctrl.h"
 #include "OPTIONS_MEASURE.h"
 #include "options_spk_classification.h"
 #include "options_detect_spikes.h"
 
-class ViewSpikes : public dbTableView
+class ViewSpikes : public ViewDbTable
 {
 protected:
 	DECLARE_DYNCREATE(ViewSpikes)

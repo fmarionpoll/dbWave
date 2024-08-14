@@ -1,13 +1,13 @@
 #pragma once
 #include "ChartSpikeShape.h"
-#include "dbTableView.h"
+#include "ViewDbTable.h"
 #include "Editctrl.h"
 #include "OPTIONS_MEASURE.h"
 #include "options_spk_classification.h"
 #include "TemplateListWnd.h"
 
 
-class ViewSpikeTemplates : public dbTableView
+class ViewSpikeTemplates : public ViewDbTable
 {
 protected:
 	DECLARE_DYNCREATE(ViewSpikeTemplates)
@@ -86,11 +86,11 @@ protected:
 	void update_spike_file();
 	float convert_spike_index_to_time(const int index) const
 	{
-		return static_cast<float>(index) * t_unit / m_pSpkList->get_acq_sampling_rate();
+		return static_cast<float>(index) * t_unit / p_spk_list->get_acq_sampling_rate();
 	}
 	int convert_time_to_spike_index(const float time) const
 	{
-		return static_cast<int>(time * m_pSpkList->get_acq_sampling_rate() / t_unit);
+		return static_cast<int>(time * p_spk_list->get_acq_sampling_rate() / t_unit);
 	}
 
 public:

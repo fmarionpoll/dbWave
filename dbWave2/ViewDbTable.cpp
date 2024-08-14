@@ -1,33 +1,33 @@
 #include "StdAfx.h"
 #include "dbWaveDoc.h"
-#include "dbTableView.h"
+#include "ViewDbTable.h"
 #include "dbWave_constants.h"
 
-IMPLEMENT_DYNAMIC(dbTableView, CDaoRecordView)
+IMPLEMENT_DYNAMIC(ViewDbTable, CDaoRecordView)
 
-dbTableView::dbTableView(LPCTSTR lpszTemplateName)
-	: CDaoRecordView(lpszTemplateName)
+ViewDbTable::ViewDbTable(LPCTSTR lpsz_template_name)
+	: CDaoRecordView(lpsz_template_name)
 {
 	m_bEnableActiveAccessibility = FALSE;
 }
 
-dbTableView::dbTableView(UINT nIDTemplate)
-	: CDaoRecordView(nIDTemplate)
+ViewDbTable::ViewDbTable(UINT n_id_template)
+	: CDaoRecordView(n_id_template)
 {
 	m_bEnableActiveAccessibility = FALSE;
 }
 
-dbTableView::~dbTableView()
+ViewDbTable::~ViewDbTable()
 = default;
 
-BEGIN_MESSAGE_MAP(dbTableView, CDaoRecordView)
-	ON_NOTIFY(NM_CLICK, IDC_TAB1, &dbTableView::OnNMClickTab1)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &dbTableView::OnTcnSelchangeTab1)
+BEGIN_MESSAGE_MAP(ViewDbTable, CDaoRecordView)
+	ON_NOTIFY(NM_CLICK, IDC_TAB1, &ViewDbTable::OnNMClickTab1)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &ViewDbTable::OnTcnSelchangeTab1)
 
 END_MESSAGE_MAP()
 
 //  drawing
-void dbTableView::OnDraw(CDC* pDC)
+void ViewDbTable::OnDraw(CDC* p_dc)
 {
 	CDocument* pDoc = GetDocument();
 	// TODO: add draw code here
@@ -35,35 +35,35 @@ void dbTableView::OnDraw(CDC* pDC)
 
 // diagnostics
 #ifdef _DEBUG
-void dbTableView::AssertValid() const
+void ViewDbTable::AssertValid() const
 {
 	CDaoRecordView::AssertValid();
 }
 
-CdbWaveDoc* dbTableView::GetDocument()
+CdbWaveDoc* ViewDbTable::GetDocument()
 {
 	return static_cast<CdbWaveDoc*>(m_pDocument);
 }
 
-void dbTableView::Dump(CDumpContext& dc) const
+void ViewDbTable::Dump(CDumpContext& dc) const
 {
 	CDaoRecordView::Dump(dc);
 }
 
 #endif //_DEBUG
 
-BOOL dbTableView::PreCreateWindow(CREATESTRUCT& cs)
+BOOL ViewDbTable::PreCreateWindow(CREATESTRUCT& cs)
 {
 	// TODO: Modify the Window class or styles here by modifying the CREATESTRUCT cs
 	return CDaoRecordView::PreCreateWindow(cs);
 }
 
-CDaoRecordset* dbTableView::OnGetRecordset()
+CDaoRecordset* ViewDbTable::OnGetRecordset()
 {
 	return GetDocument()->db_get_recordset();
 }
 
-void dbTableView::OnSize(UINT nType, int cx, int cy)
+void ViewDbTable::OnSize(UINT nType, int cx, int cy)
 {
 	if (m_b_init_)
 	{
@@ -82,7 +82,7 @@ void dbTableView::OnSize(UINT nType, int cx, int cy)
 	CDaoRecordView::OnSize(nType, cx, cy);
 }
 
-BOOL dbTableView::OnMove(const UINT n_id_move_command)
+BOOL ViewDbTable::OnMove(const UINT n_id_move_command)
 {
 	const auto flag = CDaoRecordView::OnMove(n_id_move_command);
 	auto p_document = GetDocument();
@@ -94,7 +94,7 @@ BOOL dbTableView::OnMove(const UINT n_id_move_command)
 	return flag;
 }
 
-void dbTableView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+void ViewDbTable::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
 {
 	if (bActivate)
 	{
@@ -107,7 +107,7 @@ void dbTableView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pD
 	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 }
 
-BOOL dbTableView::OnPreparePrinting(CPrintInfo* pInfo)
+BOOL ViewDbTable::OnPreparePrinting(CPrintInfo* pInfo)
 {
 	if (!DoPreparePrinting(pInfo))
 		return FALSE;
@@ -118,17 +118,17 @@ BOOL dbTableView::OnPreparePrinting(CPrintInfo* pInfo)
 	return TRUE;
 }
 
-void dbTableView::OnBeginPrinting(CDC* /*p_dc*/, CPrintInfo* /*pInfo*/)
+void ViewDbTable::OnBeginPrinting(CDC* /*p_dc*/, CPrintInfo* /*pInfo*/)
 {
 	// TODO: add extra initialization before printing
 }
 
-void dbTableView::OnEndPrinting(CDC* /*p_dc*/, CPrintInfo* /*pInfo*/)
+void ViewDbTable::OnEndPrinting(CDC* /*p_dc*/, CPrintInfo* /*pInfo*/)
 {
 	// TODO: add cleanup after printing
 }
 
-void dbTableView::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
+void ViewDbTable::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 {
 	// TODO: add customized printing code here
 	if (pInfo->m_bDocObject)
@@ -137,37 +137,37 @@ void dbTableView::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		CView::OnPrint(p_dc, pInfo);
 }
 
-void dbTableView::save_current_spk_file()
+void ViewDbTable::save_current_spk_file()
 {
-	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
+	if (p_spk_doc != nullptr && p_spk_doc->IsModified())
 	{
 		const auto p_doc = GetDocument();
 		auto current_list = 0;
-		if (m_tabCtrl.m_hWnd != nullptr) current_list = m_tabCtrl.GetCurSel();
-		m_pSpkList = m_pSpkDoc->set_spike_list_current_index(current_list);
-		if (m_pSpkList != nullptr && !m_pSpkList->is_class_list_valid())
-			m_pSpkList->update_class_list();
+		if (spk_list_tab_ctrl.m_hWnd != nullptr) current_list = spk_list_tab_ctrl.GetCurSel();
+		p_spk_list = p_spk_doc->set_spike_list_current_index(current_list);
+		if (p_spk_list != nullptr && !p_spk_list->is_class_list_valid())
+			p_spk_list->update_class_list();
 
 		const auto spk_file_name = p_doc->db_set_current_spike_file_name();
-		m_pSpkDoc->OnSaveDocument(spk_file_name);
-		m_pSpkDoc->SetModifiedFlag(FALSE);
+		p_spk_doc->OnSaveDocument(spk_file_name);
+		p_spk_doc->SetModifiedFlag(FALSE);
 
 		auto n_spike_classes = 1;
-		const auto n_spikes = (m_pSpkList != nullptr) ? m_pSpkList->get_spikes_count() : 0;
+		const auto n_spikes = (p_spk_list != nullptr) ? p_spk_list->get_spikes_count() : 0;
 		if (n_spikes > 0)
 		{
-			n_spike_classes = m_pSpkList->get_classes_count();
-			if (!m_pSpkList->is_class_list_valid()) 
-				n_spike_classes = m_pSpkList->update_class_list();				
+			n_spike_classes = p_spk_list->get_classes_count();
+			if (!p_spk_list->is_class_list_valid()) 
+				n_spike_classes = p_spk_list->update_class_list();				
 		}
 		p_doc->set_db_n_spikes(n_spikes);
 		p_doc->set_db_n_spike_classes(n_spike_classes);
 	}
 }
 
-void dbTableView::increment_spike_flag()
+void ViewDbTable::increment_spike_flag()
 {
-	if (m_pSpkDoc != nullptr && m_pSpkDoc->IsModified())
+	if (p_spk_doc != nullptr && p_spk_doc->IsModified())
 	{
 		const auto p_doc = GetDocument();
 		// change flag is button is checked
@@ -177,16 +177,16 @@ void dbTableView::increment_spike_flag()
 	}
 }
 
-void dbTableView::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewDbTable::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	const auto i_cur_sel = m_tabCtrl.GetCurSel();
+	const auto i_cur_sel = spk_list_tab_ctrl.GetCurSel();
 	SendMessage(WM_MYMESSAGE, HINT_VIEW_TAB_CHANGE, MAKELPARAM(i_cur_sel, 0));
 	*pResult = 0;
 }
 
-void dbTableView::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewDbTable::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	const auto i_cur_sel = m_tabCtrl.GetCurSel();
+	const auto i_cur_sel = spk_list_tab_ctrl.GetCurSel();
 	PostMessage(WM_MYMESSAGE, HINT_VIEW_TAB_HAS_CHANGED, MAKELPARAM(i_cur_sel, 0));
 	*pResult = 0;
 }

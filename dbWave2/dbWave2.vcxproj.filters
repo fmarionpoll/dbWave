@@ -408,7 +408,7 @@
     <ClCompile Include="ViewSpikeTemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dbTableView.cpp">
+    <ClCompile Include="ViewDbTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Ruler.cpp">
@@ -1001,7 +1001,7 @@
     <ClInclude Include="ViewSpikeTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dbTableView.h">
+    <ClInclude Include="ViewDbTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dbWave_structures.h">

@@ -19,17 +19,17 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(ViewdbWave, dbTableView)
+IMPLEMENT_DYNCREATE(ViewdbWave, ViewDbTable)
 
-BEGIN_MESSAGE_MAP(ViewdbWave, dbTableView)
+BEGIN_MESSAGE_MAP(ViewdbWave, ViewDbTable)
 	//ON_WM_DESTROY()
 	ON_WM_SIZE()
 
 	ON_COMMAND(ID_RECORD_PAGE_UP, &ViewdbWave::on_record_page_up)
 	ON_COMMAND(ID_RECORD_PAGE_DOWN, &ViewdbWave::on_record_page_down)
-	ON_COMMAND(ID_FILE_PRINT, dbTableView::OnFilePrint)
-	ON_COMMAND(ID_FILE_PRINT_DIRECT, dbTableView::OnFilePrint)
-	ON_COMMAND(ID_FILE_PRINT_PREVIEW, dbTableView::OnFilePrintPreview)
+	ON_COMMAND(ID_FILE_PRINT, ViewDbTable::OnFilePrint)
+	ON_COMMAND(ID_FILE_PRINT_DIRECT, ViewDbTable::OnFilePrint)
+	ON_COMMAND(ID_FILE_PRINT_PREVIEW, ViewDbTable::OnFilePrintPreview)
 
 	ON_BN_CLICKED(IDC_DISPLAYDATA, &ViewdbWave::on_bn_clicked_data)
 	ON_BN_CLICKED(IDC_DISPLAY_SPIKES, &ViewdbWave::on_bn_clicked_display_spikes)
@@ -54,7 +54,7 @@ BEGIN_MESSAGE_MAP(ViewdbWave, dbTableView)
 	//ON_NOTIFY(NM_CLICK, IDC_TAB1, &dbTableView::OnNMClickTab1)
 END_MESSAGE_MAP()
 
-ViewdbWave::ViewdbWave() : dbTableView(IDD)
+ViewdbWave::ViewdbWave() : ViewDbTable(IDD)
 {
 }
 
@@ -68,20 +68,20 @@ ViewdbWave::~ViewdbWave()
 
 void ViewdbWave::DoDataExchange(CDataExchange * p_dx)
 {
-	dbTableView::DoDataExchange(p_dx);
+	ViewDbTable::DoDataExchange(p_dx);
 	DDX_Text(p_dx, IDC_TIMEFIRST, m_time_first_);
 	DDX_Text(p_dx, IDC_TIMELAST, m_time_last_);
 	DDX_Text(p_dx, IDC_AMPLITUDESPAN, m_amplitude_span_);
 	DDX_Text(p_dx, IDC_SPIKECLASS, m_spike_class_);
-	DDX_Control(p_dx, IDC_TAB1, m_tabCtrl);
+	DDX_Control(p_dx, IDC_TAB1, spk_list_tab_ctrl);
 }
 
 void ViewdbWave::OnInitialUpdate()
 {
 	// init document and dbTableView
 	const auto db_wave_doc = GetDocument();
-	m_pSet = &db_wave_doc->db_table->m_mainTableSet;
-	dbTableView::OnInitialUpdate();
+	p_db_table_main = &db_wave_doc->db_table->m_mainTableSet;
+	ViewDbTable::OnInitialUpdate();
 
 	subclass_dialog_controls();
 	make_controls_stretchable();
@@ -144,10 +144,10 @@ void ViewdbWave::OnInitialUpdate()
 		CSpikeDoc* p_spk_doc = GetDocument()->get_current_spike_file();
 		if (p_spk_doc != nullptr)
 		{
-			m_tabCtrl.InitctrlTabFromSpikeDoc(p_spk_doc);
-			m_tabCtrl.SetCurSel(p_spk_doc->get_spike_list_current_index());
+			spk_list_tab_ctrl.InitctrlTabFromSpikeDoc(p_spk_doc);
+			spk_list_tab_ctrl.SetCurSel(p_spk_doc->get_spike_list_current_index());
 		}
-		m_tabCtrl.ShowWindow(p_spk_doc != nullptr ? SW_SHOW : SW_HIDE);
+		spk_list_tab_ctrl.ShowWindow(p_spk_doc != nullptr ? SW_SHOW : SW_HIDE);
 	}
 }
 
@@ -184,7 +184,7 @@ void ViewdbWave::display_data()
 	static_cast<CButton*>(GetDlgItem(IDC_FILTERCHECK))->SetCheck(m_options_view_data_->b_filter_dat);
 	m_data_transform_ = m_options_view_data_->b_filter_dat ? 13 : 0;
 	m_data_list_ctrl.set_transform_mode(m_data_transform_);
-	m_tabCtrl.ShowWindow(SW_HIDE);
+	spk_list_tab_ctrl.ShowWindow(SW_HIDE);
 }
 
 void ViewdbWave::display_spikes()
@@ -230,12 +230,12 @@ void ViewdbWave::display_nothing()
 
 	m_options_view_data_->display_mode = 0;
 	m_data_list_ctrl.set_display_mode(m_options_view_data_->display_mode);
-	m_tabCtrl.ShowWindow(SW_HIDE);
+	spk_list_tab_ctrl.ShowWindow(SW_HIDE);
 }
 
 void ViewdbWave::OnSize(const UINT n_type, const int cx, const int cy)
 {
-	dbTableView::OnSize(n_type, cx, cy);
+	ViewDbTable::OnSize(n_type, cx, cy);
 	if (IsWindow(m_data_list_ctrl.m_hWnd))
 	{
 		CRect rect;
@@ -263,8 +263,8 @@ void ViewdbWave::update_controls()
 		if (p_spk_doc != nullptr)
 		{
 			const auto spk_list_size = p_spk_doc->get_spike_list_size();
-			if (m_tabCtrl.GetItemCount() < spk_list_size)
-				m_tabCtrl.InitctrlTabFromSpikeDoc(p_spk_doc);
+			if (spk_list_tab_ctrl.GetItemCount() < spk_list_size)
+				spk_list_tab_ctrl.InitctrlTabFromSpikeDoc(p_spk_doc);
 		}
 	}
 	//pdb_doc->SetModifiedFlag(true);
@@ -331,7 +331,7 @@ void ViewdbWave::OnActivateView(const BOOL b_activate, CView * p_activate_view, 
 		if (p_activate_view != nullptr)
 			static_cast<CChildFrame*>(p_mainframe->MDIGetActive())->m_n_status = m_nStatus;
 	}
-	dbTableView::OnActivateView(b_activate, p_activate_view, p_deactive_view);
+	ViewDbTable::OnActivateView(b_activate, p_activate_view, p_deactive_view);
 }
 
 void ViewdbWave::fill_list_box()
@@ -348,7 +348,7 @@ void ViewdbWave::on_item_activate_list_ctrl(NMHDR * p_nmhdr, LRESULT * p_result)
 	if (p_item_activate->iItem >= 0) 
 		GetDocument()->db_set_current_record_position(p_item_activate->iItem);
 	
-	dbTableView::OnInitialUpdate();
+	ViewDbTable::OnInitialUpdate();
 	GetDocument()->UpdateAllViews(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 
 	*p_result = 0;
@@ -477,7 +477,7 @@ void ViewdbWave::delete_records()
 void ViewdbWave::on_lvn_column_click_list_ctrl(NMHDR * p_nmhdr, LRESULT * p_result)
 {
 	const auto p_nmlv = reinterpret_cast<LPNMLISTVIEW>(p_nmhdr);
-	auto filter0 = m_pSet->GetSQL();
+	auto filter0 = p_db_table_main->GetSQL();
 	CString cs;
 	const auto pdb_doc = GetDocument();
 	switch (p_nmlv->iSubItem)
@@ -503,8 +503,8 @@ void ViewdbWave::on_lvn_column_click_list_ctrl(NMHDR * p_nmhdr, LRESULT * p_resu
 	default:
 		break;
 	}
-	m_pSet->m_strSort = cs;
-	m_pSet->Requery();
+	p_db_table_main->m_strSort = cs;
+	p_db_table_main->Requery();
 	GetDocument()->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 	*p_result = 0;
 }
@@ -527,10 +527,10 @@ void ViewdbWave::on_bn_clicked_display_spikes()
 		const auto p_spk_doc = m_data_list_ctrl.get_visible_rows_spike_doc_at(0);
 		if (p_spk_doc->get_spike_list_size() > 1)
 		{
-			m_tabCtrl.InitctrlTabFromSpikeDoc(p_spk_doc);
-			m_tabCtrl.ShowWindow(SW_SHOW);
-			m_tabCtrl.SetCurSel(p_spk_doc->get_spike_list_current_index());
-			m_tabCtrl.Invalidate();
+			spk_list_tab_ctrl.InitctrlTabFromSpikeDoc(p_spk_doc);
+			spk_list_tab_ctrl.ShowWindow(SW_SHOW);
+			spk_list_tab_ctrl.SetCurSel(p_spk_doc->get_spike_list_current_index());
+			spk_list_tab_ctrl.Invalidate();
 		}
 	}
 	m_data_list_ctrl.refresh_display();

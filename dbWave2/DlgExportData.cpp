@@ -96,14 +96,14 @@ BOOL DlgExportData::OnInitDialog()
 	GetDlgItem(IDC_TIMEFIRST)->EnableWindow(!iivO.entire_file);
 	GetDlgItem(IDC_TIMELAST)->EnableWindow(!iivO.entire_file);
 
-	if (m_dbDoc->m_p_dat->get_vt_tags_list()->get_tag_list_size() < 1)
+	if (m_dbDoc->m_p_data_doc->get_vt_tags_list()->get_tag_list_size() < 1)
 	{
 		m_timefirst = iivO.time_first;
 		m_timelast = iivO.time_last;
 	}
 	else
 	{
-		AcqDataDoc* pDat = m_dbDoc->m_p_dat;
+		AcqDataDoc* pDat = m_dbDoc->m_p_data_doc;
 		m_timefirst = static_cast<float>(pDat->get_vt_tags_list()->get_tag_value_long(0));
 		if (pDat->get_vt_tags_list()->get_tag_list_size() > 1)
 			m_timelast = static_cast<float>(pDat->get_vt_tags_list()->get_tag_value_long(1));
@@ -249,7 +249,7 @@ void DlgExportData::Export()
 	m_filedest = csPath + m_filedest; // and add path
 
 	// compute some parameters
-	m_pDat = m_dbDoc->m_p_dat; // pointer to data document
+	m_pDat = m_dbDoc->m_p_data_doc; // pointer to data document
 	CWaveFormat* pwaveFormat = m_pDat->get_wave_format();
 	if (iivO.entire_file) // if all data, load
 	{

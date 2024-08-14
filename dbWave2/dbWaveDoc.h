@@ -36,8 +36,8 @@ protected:
 	db_spike	spike_hit_{};
 
 public:
-	AcqDataDoc* m_p_dat = nullptr;
-	CSpikeDoc*	m_p_spk = nullptr;
+	AcqDataDoc* m_p_data_doc = nullptr;
+	CSpikeDoc*	m_p_spk_doc = nullptr;
 	HMENU		h_my_menu = nullptr;
 	CIntervals	stimulus_saved;
 
@@ -59,12 +59,12 @@ public:
 	CWaveFormat* get_wave_format(CString cs_filename, BOOL is_dat_file);
 
 	BOOL		open_new_document(LPCTSTR lpsz_path_name);
-	AcqDataDoc* get_current_dat_document() const { return m_p_dat; }
+	AcqDataDoc* get_current_dat_document() const { return m_p_data_doc; }
 	AcqDataDoc* open_current_data_file();
 	void		close_current_data_file() const;
 
 	CSpikeDoc*	open_current_spike_file();
-	CSpikeDoc*	get_current_spike_file() const { return m_p_spk; }
+	CSpikeDoc*	get_current_spike_file() const { return m_p_spk_doc; }
 	void		set_spike_hit(const db_spike& spike_hit) { spike_hit_ = spike_hit; }
 	db_spike	get_spike_hit() const { return spike_hit_ ; }
 	Spike*		get_spike(const db_spike& spike_coords);

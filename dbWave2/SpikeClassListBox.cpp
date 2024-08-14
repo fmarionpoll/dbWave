@@ -93,7 +93,7 @@ void SpikeClassListBox::set_source_data(SpikeList* p_s_list, CdbWaveDoc* pdb_doc
 	m_spike_list_ = p_s_list;
 	if (p_s_list == nullptr || pdb_doc == nullptr)
 		return;
-	m_spike_doc_ = pdb_doc->m_p_spk;
+	m_spike_doc_ = pdb_doc->m_p_spk_doc;
 	
 	// add as many windows as necessary; store pointer into listbox
 	auto i_id = 0;

@@ -626,7 +626,7 @@ void CChildFrame::on_tools_remove_artefact_files()
 		else
 			continue;
 
-		auto p_dat = p_db_wave_doc->m_p_dat;
+		auto p_dat = p_db_wave_doc->m_p_data_doc;
 		if (p_dat == nullptr)
 			continue;
 

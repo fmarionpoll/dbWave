@@ -592,7 +592,7 @@ void ChartSpikeHistVert::build_hist_from_document(CdbWaveDoc* p_doc, const BOOL 
 			if (p_doc->db_set_current_record_position(i_file))
 				p_doc->open_current_spike_file();
 		}
-		SpikeList* p_spike_list = p_doc->m_p_spk->get_spike_list_current();
+		SpikeList* p_spike_list = p_doc->m_p_spk_doc->get_spike_list_current();
 		if (p_spike_list != nullptr && p_spike_list->get_spikes_count() > 0)
 			build_hist_from_spike_list(p_spike_list, l_first, l_last, max, min, n_bins, b_new);
 	}

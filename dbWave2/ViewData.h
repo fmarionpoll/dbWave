@@ -5,10 +5,10 @@
 #include "afxwin.h"
 #include "ChartData.h"
 #include "Editctrl.h"
-#include "dbTableView.h"
+#include "ViewDbTable.h"
 
 
-class ViewData : public dbTableView
+class ViewData : public ViewDbTable
 {
 protected:
 	DECLARE_DYNCREATE(ViewData)

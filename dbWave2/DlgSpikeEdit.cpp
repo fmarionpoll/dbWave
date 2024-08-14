@@ -61,8 +61,8 @@ void DlgSpikeEdit::load_spike_parameters()
 BOOL DlgSpikeEdit::OnInitDialog()
 {
 	CDialog::OnInitDialog(); 
-	p_acq_data_doc_ = db_wave_doc->m_p_dat;
-	p_spk_list_ = db_wave_doc->m_p_spk->get_spike_list_current();
+	p_acq_data_doc_ = db_wave_doc->m_p_data_doc;
+	p_spk_list_ = db_wave_doc->m_p_spk_doc->get_spike_list_current();
 	if (p_spk_list_ == nullptr || p_spk_list_->get_spikes_count() == 0)
 	{
 		EndDialog(FALSE); 

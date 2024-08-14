@@ -38,11 +38,11 @@ boolean ChartSpike::get_spike_file(const int i_file)
 		success = static_cast<boolean>(dbwave_doc_->db_set_current_record_position(i_file));
 		if (success) {
 			 dbwave_doc_->open_current_spike_file();
-			 success = (dbwave_doc_->m_p_spk != nullptr);
+			 success = (dbwave_doc_->m_p_spk_doc != nullptr);
 		}
 
 		if (success)
-			p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
+			p_spike_list_ = dbwave_doc_->m_p_spk_doc->get_spike_list_current();
 	}
 
 	if (success)
@@ -69,7 +69,7 @@ void ChartSpike::set_plot_mode(const int mode, const int selected_class)
 void ChartSpike::set_source_data(SpikeList* p_spk_list, CdbWaveDoc* p_document)
 {
 	dbwave_doc_ = p_document;
-	p_spike_doc_ = dbwave_doc_->m_p_spk;
+	p_spike_doc_ = dbwave_doc_->m_p_spk_doc;
 	p_spike_list_ = p_spk_list;
 	spike_selected_.clear();
 }
@@ -139,13 +139,13 @@ db_spike ChartSpike::hit_curve_in_doc(const CPoint point)
 		{
 			if (dbwave_doc_->db_set_current_record_position(i_file))
 				dbwave_doc_->open_current_spike_file();
-			p_spike_list_ = dbwave_doc_->m_p_spk->get_spike_list_current();
+			p_spike_list_ = dbwave_doc_->m_p_spk_doc->get_spike_list_current();
 		}
 		if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() == 0)
 			continue;
 
 		result.database_position = dbwave_doc_->db_get_current_record_position();
-		result.spike_list_index = dbwave_doc_->m_p_spk->get_spike_list_current_index();
+		result.spike_list_index = dbwave_doc_->m_p_spk_doc->get_spike_list_current_index();
 
 		result.spike_index = hit_curve(point);
 		if (result.spike_index >= 0)

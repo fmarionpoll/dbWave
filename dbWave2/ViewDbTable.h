@@ -7,31 +7,31 @@
 #include "dbWaveDoc.h"
 
 
-class dbTableView : public CDaoRecordView
+class ViewDbTable : public CDaoRecordView
 {
-	DECLARE_DYNAMIC(dbTableView)
+	DECLARE_DYNAMIC(ViewDbTable)
 
 protected:
-	dbTableView(LPCTSTR lpszTemplateName);
-	dbTableView(UINT nIDTemplate);
-	~dbTableView() override;
+	ViewDbTable(LPCTSTR lpsz_template_name);
+	ViewDbTable(UINT n_id_template);
+	~ViewDbTable() override;
 
 public:
-	CdbTableMain* m_pSet{ nullptr };
+	CdbTableMain* p_db_table_main{ nullptr };
 	boolean m_auto_detect { false };
 	boolean m_auto_increment {false};
 
 	CdbWaveDoc* GetDocument();
 	CDaoRecordset* OnGetRecordset() override;
 	BOOL OnMove(UINT n_id_move_command) override;
-	void OnDraw(CDC* pDC) override;
+	void OnDraw(CDC* p_dc) override;
 	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 
-	CSpikeDoc* m_pSpkDoc { nullptr };
-	SpikeList* m_pSpkList{ nullptr };
+	CSpikeDoc* p_spk_doc { nullptr };
+	SpikeList* p_spk_list{ nullptr };
 	void save_current_spk_file();
 	void increment_spike_flag();
-	CSpkListTabCtrl m_tabCtrl {};
+	CSpkListTabCtrl spk_list_tab_ctrl {};
 
 #ifdef _DEBUG
 	void AssertValid() const override;

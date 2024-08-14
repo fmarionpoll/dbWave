@@ -5,11 +5,11 @@
 #include "RulerBar.h"
 #include "ScrollBarEx.h"
 #include "./Controls/cdxCRotBevelLine.h"
-#include "dbTableView.h"
+#include "ViewDbTable.h"
 #include "Editctrl.h"
 
 
-class ViewSpikeDetection : public dbTableView
+class ViewSpikeDetection : public ViewDbTable
 {
 protected:
 	DECLARE_DYNCREATE(ViewSpikeDetection)

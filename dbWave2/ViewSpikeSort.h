@@ -3,20 +3,19 @@
 #include "ChartSpikeHist.h"
 #include "ChartSpikeShape.h"
 #include "ChartSpikeXY.h"
-#include "dbTableView.h"
+#include "ViewDbTable.h"
 #include "Editctrl.h"
 #include "ScrollBarEx.h"
 #include "options_spk_classification.h"
 
 
-class ViewSpikeSort : public dbTableView
+class ViewSpikeSort : public ViewDbTable
 {
 protected:
 	DECLARE_DYNCREATE(ViewSpikeSort)
 	ViewSpikeSort();
 	~ViewSpikeSort() override;
 
-public:
 	// Form Data
 	enum { IDD = IDD_VIEWSPKSORT1 };
 
@@ -90,7 +89,7 @@ protected:
 	options_view_data* options_view_data_{};
 
 	const float time_unit_{ 1000.f }; // 1=s, 1000f=ms, 1e6=us
-	const float mv_unit_ {1000.f};		// 1=V, 1000f=mV, 1e6=uV
+	const float mv_unit_ {1000.f};	// 1=V, 1000f=mV, 1e6=uV
 	float delta_mv_{};
 	float delta_ms_{};
 
@@ -145,17 +144,16 @@ protected:
 public:
 	// Overrides
 	BOOL OnMove(UINT n_id_move_command) override;
-
 	void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint) override;
 	void DoDataExchange(CDataExchange* p_dx) override;
 	void OnInitialUpdate() override;
 	void OnActivateView(BOOL b_activate, CView* p_activate_view, CView* p_deactive_view) override;
+	
 
 	// Generated message map functions
-public:
-	afx_msg LRESULT on_my_message(WPARAM code, LPARAM l_param);
 	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
-
+	afx_msg LRESULT on_my_message(WPARAM code, LPARAM l_param);
+	
 	afx_msg void on_select_change_measure_type();
 	afx_msg void on_sort();
 

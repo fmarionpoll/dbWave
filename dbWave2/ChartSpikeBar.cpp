@@ -677,7 +677,7 @@ void ChartSpikeBar::print(CDC* p_dc, const CRect* rect)
 	const auto n_saved_dc = p_dc->SaveDC(); // save display context
 	display_bars(p_dc, rect);
 
-	if (dbwave_doc_->m_p_spk->m_stimulus_intervals.n_items > 0)
+	if (dbwave_doc_->m_p_spk_doc->m_stimulus_intervals.n_items > 0)
 		display_stimulus(p_dc, rect);
 
 	p_dc->RestoreDC(n_saved_dc);

@@ -1,8 +1,8 @@
 #pragma once
-#include "dbTableView.h"
+#include "ViewDbTable.h"
 #include "StretchControls.h"
 
-class ViewSpikeHist : public dbTableView
+class ViewSpikeHist : public ViewDbTable
 {
 	DECLARE_DYNCREATE(ViewSpikeHist)
 protected:
