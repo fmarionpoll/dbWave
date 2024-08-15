@@ -10,6 +10,8 @@
 #include "StdAfx.h"
 #include "ChartSpikeHist.h"
 
+#include "ColorNames.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -67,7 +69,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	p_dc->SetMapMode(MM_ANISOTROPIC);
 	prepare_dc(p_dc);
 
-	//loop over histograms (but not the selected one which is plotted on top afterward)
+	//loop over histograms (but not the selected one)
 	for (auto i_histogram = 0; i_histogram < histogram_array_.GetSize(); i_histogram++)
 	{
 		const auto p_dw = histogram_array_.GetAt(i_histogram);
@@ -83,10 +85,8 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 			if (PLOT_CLASS_COLORS == plot_mode_)
 				color_index = spike_class % NB_COLORS;
 			else if (plot_mode_ == PLOT_ONE_CLASS && spike_class == selected_class_)
-			{
-				//color_index = BLACK_COLOR;
+			
 				continue;
-			}
 		}
 
 		plot_histogram(p_dc, p_dw, color_index);
@@ -98,7 +98,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 		CDWordArray* p_dw = nullptr;
 		get_class_array(selected_class_, p_dw);
 		if (p_dw != nullptr)
-			plot_histogram(p_dc, p_dw, BLACK_COLOR);
+			plot_histogram(p_dc, p_dw, col_black);
 	}
 
 	p_dc->SetBkColor(old_background_color);
@@ -467,13 +467,16 @@ void ChartSpikeHist::get_histogram_limits(const int i_hist)
 	}
 }
 
-void ChartSpikeHist::resize_histograms(const double bin_mv, const double max_mv, const double min_mv)
+void ChartSpikeHist::resize_histograms(const double min_mv, const double max_mv, const double bin_mv)
 {
 	const int n_bins = static_cast<int>((max_mv - min_mv) / bin_mv) + 1;
 	abscissa_n_bins_ = n_bins;
 	abscissa_bin_mv_ = bin_mv;
 	abscissa_min_mv_ = min_mv;
-	abscissa_max_mv_ = min_mv + n_bins * abscissa_bin_mv_; 
+	abscissa_max_mv_ = min_mv + n_bins * abscissa_bin_mv_;
+	if (abscissa_max_mv_ < max_mv)
+		abscissa_max_mv_ += abscissa_bin_mv_;
+	ASSERT(abscissa_max_mv_ >= max_mv);
 
 	if (histogram_array_.GetSize() <= 0)
 	{
@@ -572,7 +575,7 @@ void ChartSpikeHist::build_hist_from_document(CdbWaveDoc* p_document, const BOOL
 	dbwave_doc_ = p_document;
 	constexpr auto file_first = 0;
 	const auto file_last = b_all_files ? p_document->db_get_n_records() : 1;
-	resize_histograms(bin_mv, max_mv, min_mv);
+	resize_histograms(min_mv, max_mv, bin_mv);
 
 	for (auto i_file = file_first; i_file < file_last; i_file++)
 	{

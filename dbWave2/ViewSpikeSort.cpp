@@ -191,7 +191,6 @@ void ViewSpikeSort::init_charts_from_saved_parameters()
 
 	chart_histogram_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class_);
 	chart_histogram_.set_scope_parameters(&(options_view_data_->spk_sort1_hist));
-
 	tag_index_hist_up_ = chart_histogram_.vt_tags.add_tag(spike_classification_->upper_threshold, 0);
 	tag_index_hist_low_ = chart_histogram_.vt_tags.add_tag(spike_classification_->lower_threshold, 0);
 }
@@ -887,6 +886,12 @@ void ViewSpikeSort::build_histogram()
 
 	chart_histogram_.build_hist_from_document(pdb_doc, b_all_files_, l_first_, l_last_,
 		measure_min_mv_, measure_max_mv_, histogram_bin_mv_);
+	chart_histogram_.get_extents();
+
+	upper_threshold_mv_ = static_cast<float>(spike_classification_->upper_threshold) * delta_mv_ ;
+	lower_threshold_mv_ = static_cast<float>(spike_classification_->lower_threshold) * delta_mv_;
+	chart_histogram_.move_vt_tag_to_value_mv(tag_index_hist_low_, lower_threshold_mv_);
+	chart_histogram_.move_vt_tag_to_value_mv(tag_index_hist_up_, upper_threshold_mv_);
 }
 
 void ViewSpikeSort::on_format_center_curve()
