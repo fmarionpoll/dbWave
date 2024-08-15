@@ -56,16 +56,16 @@ boolean ChartSpike::get_spike_file(const int i_file)
 	return success;
 }
 
-void ChartSpike::message_no_spike(CDC* p_dc) const
-{
-	CRect rect = display_rect_;
-	rect.DeflateRect(1, 1);
-	const int previous_map_mode = p_dc->SetMapMode(MM_TEXT);
-	if (previous_map_mode == MM_ANISOTROPIC)
-		rect.OffsetRect(0, -y_vo_);
-	p_dc->DrawText(cs_empty_, cs_empty_.GetLength(), rect, DT_LEFT | DT_TOP);
-	p_dc->SetMapMode(previous_map_mode);
-}
+//void ChartSpike::message_no_spike(CDC* p_dc) const
+//{
+//	CRect rect = display_rect_;
+//	rect.DeflateRect(1, 1);
+//	const int previous_map_mode = p_dc->SetMapMode(MM_TEXT);
+//	if (previous_map_mode == MM_ANISOTROPIC)
+//		rect.OffsetRect(0, -y_vo_);
+//	p_dc->DrawText(cs_empty_, cs_empty_.GetLength(), rect, DT_LEFT | DT_TOP);
+//	p_dc->SetMapMode(previous_map_mode);
+//}
 
 void ChartSpike::set_plot_mode(const int mode, const int selected_class)
 {

@@ -59,10 +59,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	if (l_max_ == 0)
 	{
 		p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
-		auto rect2 = display_rect_;
-		rect2.DeflateRect(1, 1);
-		const auto text_length = cs_empty_.GetLength();
-		p_dc->DrawText(cs_empty_, text_length, rect2, DT_LEFT);
+		message_no_data(p_dc);
 		return;
 	}
 	const int n_saved_dc = p_dc->SaveDC();
@@ -70,7 +67,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	p_dc->SetMapMode(MM_ANISOTROPIC);
 	prepare_dc(p_dc);
 
-	//loop to display all histograms (but not the selected one)
+	//loop over histograms (but not the selected one which is plotted on top afterward)
 	for (auto i_histogram = 0; i_histogram < histogram_array_.GetSize(); i_histogram++)
 	{
 		const auto p_dw = histogram_array_.GetAt(i_histogram);
@@ -112,10 +109,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 		display_hz_tags(p_dc);
 
 	if (vt_tags.get_tag_list_size() > 0)
-	{
-		//transform_tags_mv_to_int();
 		display_vt_tags_int_values(p_dc);
-	}
 }
 
 void ChartSpikeHist::plot_histogram(CDC* p_dc, const CDWordArray* p_dw, const int color) 

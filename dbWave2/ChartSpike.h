@@ -35,7 +35,7 @@ protected:
 
 	int get_color_according_to_plot_mode(const Spike* spike, int plot_mode) const;
 	boolean get_spike_file(int i_file);
-	virtual void message_no_spike(CDC* p_dc) const;
+	//virtual void message_no_spike(CDC* p_dc) const;
 
 public:
 	SpikeList* get_spike_list() { return p_spike_list_; }

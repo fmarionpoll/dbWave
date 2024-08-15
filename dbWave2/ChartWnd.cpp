@@ -2,6 +2,7 @@
 #include "resource.h"
 #include "ChartWnd.h"
 #include "DlgChartProps.h"
+#include "ColorNames.h"
 #include <cmath>
 
 #ifdef _DEBUG
@@ -10,23 +11,23 @@
 
 COLORREF ChartWnd::color_table_[] =
 {
-	RGB(0, 0, 0), // 0 black
-	RGB(128, 0, 128), // 1 purple
-	RGB(201, 192, 187), // 2 silver
-	RGB(128, 0, 0), // 3 maroon
-	RGB(196, 2, 51), // 4 red
-	RGB(128, 128, 128), // 5 grey
-	RGB(249, 132, 229), // 6 fuchsia
-	RGB(0, 128, 0), // 7 green
-	RGB(91, 255, 0), // 8 lime
-	RGB(107, 142, 35), // 9 olive
-	RGB(255, 205, 0), // 10 yellow
-	RGB(0, 0, 128), // 11 navy
-	RGB(0, 0, 255), // 12 blue
-	RGB(0, 128, 128), // 13 teal
-	RGB(0, 255, 255), // 14 aqua
-	RGB(255, 255, 255), // 15 white
-	RGB(1, 1, 1) // 16 dummy
+	col_black, // 0 black
+	col_purple, // 1 purple
+	col_silver, // 2 silver
+	col_maroon, // 3 maroon
+	col_red, // 4 red
+	col_gray, // 5 gray
+	col_fuchsia, // 6 fuchsia
+	col_green, // 7 green
+	col_lime, // 8 lime
+	col_olive, // 9 olive
+	col_yellow, // 10 yellow
+	col_navy, // 11 navy
+	col_blue, // 12 blue
+	col_teal, // 13 teal
+	col_aqua, // 14 aqua
+	col_white, // 15 white
+	col_salmon // 16 dummy
 };
 
 HCURSOR ChartWnd::cursors_[NB_CURSORS];
@@ -199,6 +200,20 @@ void ChartWnd::OnPaint()
 
 void ChartWnd::plot_data_to_dc(CDC* p_dc)
 {
+}
+
+void ChartWnd::message_no_data(CDC* p_dc) const
+{
+	CRect rect = display_rect_;
+	rect.DeflateRect(1, 1);
+	const COLORREF old_color = p_dc->SetTextColor(col_dark_gray);
+	const int previous_map_mode = p_dc->SetMapMode(MM_TEXT);
+	if (previous_map_mode == MM_ANISOTROPIC)
+		rect.OffsetRect(0, -y_vo_);
+	p_dc->DrawText(cs_empty_, cs_empty_.GetLength(), rect, DT_LEFT | DT_SINGLELINE | DT_BOTTOM); // DT_TOP
+	p_dc->SetMapMode(previous_map_mode);
+	p_dc->SetTextColor(old_color);
+
 }
 
 void ChartWnd::erase_background(CDC* p_dc)

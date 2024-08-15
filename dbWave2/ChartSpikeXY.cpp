@@ -66,10 +66,9 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 		p_spike_list_ = dbwave_doc_->m_p_spk_doc->get_spike_list_current();
 
 		// test presence of data
-		if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() == 0)
+		if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() == 0 && !b_display_all_files_)
 		{
-			if (!b_display_all_files_)
-				p_dc->DrawText(cs_empty_, cs_empty_.GetLength(), rect, DT_LEFT);
+			message_no_data(p_dc);
 			continue;
 		}
 

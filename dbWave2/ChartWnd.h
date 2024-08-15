@@ -112,6 +112,7 @@ protected:
 
 public:
 	virtual void plot_data_to_dc(CDC* p_dc);
+	void message_no_data(CDC* p_dc) const;
 	virtual options_scope_struct* get_scope_parameters();
 	virtual void set_scope_parameters(options_scope_struct* p_struct);
 	virtual int set_mouse_cursor_type(int cursor_type);
@@ -192,8 +193,7 @@ public:
 	// Implementation
 protected:
 	void PreSubclassWindow() override;
-	virtual int hit_curve(CPoint point);
-
+	
 	void prepare_dc(CDC* p_dc, const CPrintInfo* p_info = nullptr);
 	void capture_cursor();
 	void release_cursor();
@@ -202,8 +202,10 @@ protected:
 
 	void send_my_message(int code, int code_parameter) const;
 
-	void invert_tracker(CPoint point); 
-	int hit_horizontal_tag(int y); 
+	void invert_tracker(CPoint point);
+
+	virtual int hit_curve(CPoint point);
+	int hit_horizontal_tag(int y);
 	int hit_vertical_tag_pixel(const int x) {
 		return vt_tags.hit_vertical_tag_pixel(x, 3); }
 	int hit_vertical_tag_long(const long lx) {
@@ -212,6 +214,7 @@ protected:
 	void zoom_in();
 	void zoom_out();
 	void zoom_pop();
+
 	void draw_grid_evenly_spaced(CDC* p_dc) const;
 	void draw_grid_from_ruler(CDC* p_dc, const Ruler* p_ruler) const;
 	void draw_grid_nicely_spaced(CDC* p_dc);

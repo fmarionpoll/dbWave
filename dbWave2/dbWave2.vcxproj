@@ -1368,6 +1368,7 @@
     <ClInclude Include="ChartDataAD.h" />
     <ClInclude Include="ChartSpike.h" />
     <ClInclude Include="CNiceUnit.h" />
+    <ClInclude Include="ColorNames.h" />
     <ClInclude Include="Controls\GridComboEdit.h" />
     <ClInclude Include="Controls\InPlaceEdit.h" />
     <ClInclude Include="DlgOverwriteFileOptions.h" />
