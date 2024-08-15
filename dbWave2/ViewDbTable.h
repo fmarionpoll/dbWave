@@ -82,7 +82,7 @@ protected:
 };
 
 #ifndef _DEBUG  // debug version in dataView.cpp
-inline CdbWaveDoc* dbTableView::GetDocument()
+inline CdbWaveDoc* ViewDbTable::GetDocument()
 {
 	return (CdbWaveDoc*)m_pDocument;
 }
