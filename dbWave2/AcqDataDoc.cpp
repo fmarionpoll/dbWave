@@ -43,7 +43,7 @@ BOOL AcqDataDoc::open_document(CString& sz_path_name)
 {
 	// close data file unless it is already opened
 	if (x_file != nullptr)
-		x_file->CloseDataFile();
+		x_file->close_data_file();
 
 	// set file reading buffer as dirty
 	buf_valid_data = FALSE;
@@ -67,7 +67,7 @@ BOOL AcqDataDoc::open_document(CString& sz_path_name)
 
 int AcqDataDoc::import_file(CString& sz_path_name)
 {
-	x_file->CloseDataFile();
+	x_file->close_data_file();
 	SAFE_DELETE(x_file)
 	CString filename_new = sz_path_name;
 	if (!dlg_import_data_file(filename_new))
@@ -147,13 +147,13 @@ BOOL AcqDataDoc::open_acq_file(CString& cs_filename, const CFileStatus& status)
 	{
 		delete x_file;
 		instantiate_data_file_object(id);
-		if (0 != x_file->OpenDataFile(cs_filename, u_open_flag))
-			id_type = x_file->CheckFileType(cs_filename);
+		if (0 != x_file->open_data_file(cs_filename, u_open_flag))
+			id_type = x_file->check_file_type(cs_filename);
 		if (id_type != DOCTYPE_UNKNOWN)
 			break;
 	}
 
-	if (x_file == nullptr || x_file->m_idType == DOCTYPE_UNKNOWN)
+	if (x_file == nullptr || x_file->m_id_type == DOCTYPE_UNKNOWN)
 	{
 		allocate_buffer();
 		return false;
@@ -164,12 +164,12 @@ BOOL AcqDataDoc::open_acq_file(CString& cs_filename, const CFileStatus& status)
 	if (p_w_buf == nullptr)
 		p_w_buf = new CWaveBuf;
 	ASSERT(p_w_buf != NULL);
-	const auto b_flag = x_file->ReadDataInfos(p_w_buf);
+	const auto b_flag = x_file->read_data_infos(p_w_buf);
 
 	// create buffer
 	allocate_buffer();
-	x_file->ReadVTtags(p_w_buf->get_p_vt_tags());
-	x_file->ReadHZtags(p_w_buf->get_p_hz_tags());
+	x_file->read_vt_tags(p_w_buf->get_p_vt_tags());
+	x_file->read_hz_tags(p_w_buf->get_p_hz_tags());
 
 	return b_flag;
 }
@@ -455,7 +455,7 @@ BOOL AcqDataDoc::read_data_block(long l_first)
 	{
 		short* p_buffer = p_w_buf->get_pointer_to_raw_data_buffer();
 		ASSERT(p_buffer != NULL);
-		x_file->ReadAdcData(l_first, buf_size * static_cast<long>(sizeof(short)), p_buffer, get_wave_channels_array());
+		x_file->read_adc_data(l_first, buf_size * static_cast<long>(sizeof(short)), p_buffer, get_wave_channels_array());
 
 		// ugly patch: should fail if l_size < m_lBUFSize
 		buf_channel_last = buf_channel_first + buf_size / doc_n_channels - 1;
@@ -476,7 +476,7 @@ BOOL AcqDataDoc::read_data_block(long l_first)
 void AcqDataDoc::read_data_infos()
 {
 	ASSERT(x_file != NULL);
-	x_file->ReadDataInfos(p_w_buf);
+	x_file->read_data_infos(p_w_buf);
 	allocate_buffer();
 }
 
@@ -690,19 +690,19 @@ BOOL AcqDataDoc::acq_create_file(CString& cs_file_name)
 			x_file = new CDataFileAWAVE;
 			ASSERT(x_file != NULL);
 		}
-		if (x_file->m_idType != DOCTYPE_AWAVE)
+		if (x_file->m_id_type != DOCTYPE_AWAVE)
 		{
 			delete x_file;
 			x_file = new CDataFileAWAVE;
 			ASSERT(x_file != NULL);
 		}
 
-		if (!x_file->OpenDataFile(cs_file_name, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone))
+		if (!x_file->open_data_file(cs_file_name, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone))
 		{
 			AfxMessageBox(AFX_IDP_FAILED_TO_CREATE_DOC);
 			return FALSE;
 		}
-		x_file->InitFile();
+		x_file->init_file();
 	}
 
 	// create object as file
@@ -717,7 +717,7 @@ BOOL AcqDataDoc::write_hz_tags(TagList* p_tags) const
 		p_tags = p_w_buf->get_p_hz_tags();
 	if (p_tags == nullptr || p_tags->get_tag_list_size() == 0)
 		return TRUE;
-	return x_file->WriteHZtags(p_tags);
+	return x_file->write_hz_tags(p_tags);
 }
 
 BOOL AcqDataDoc::write_vt_tags(TagList* p_tags) const
@@ -726,12 +726,12 @@ BOOL AcqDataDoc::write_vt_tags(TagList* p_tags) const
 		p_tags = p_w_buf->get_p_vt_tags();
 	if (p_tags == nullptr || p_tags->get_tag_list_size() == 0)
 		return TRUE;
-	return x_file->WriteVTtags(p_tags);
+	return x_file->write_vt_tags(p_tags);
 }
 
 BOOL AcqDataDoc::acq_save_data_descriptors() const
 {
-	const auto flag = x_file->WriteDataInfos(get_wave_format(), get_wave_channels_array());
+	const auto flag = x_file->write_data_infos(get_wave_format(), get_wave_channels_array());
 	x_file->Flush();
 	return flag;
 }
@@ -739,14 +739,14 @@ BOOL AcqDataDoc::acq_save_data_descriptors() const
 void AcqDataDoc::acq_delete_file() const
 {
 	const auto cs_file_path = x_file->GetFilePath();
-	x_file->CloseDataFile();
+	x_file->close_data_file();
 	CFile::Remove(cs_file_path);
 }
 
 void AcqDataDoc::acq_close_file() const
 {
 	if (x_file != nullptr)
-		x_file->CloseDataFile();
+		x_file->close_data_file();
 }
 
 BOOL AcqDataDoc::save_as(CString& new_name, BOOL b_check_over_write, const int i_type)
@@ -809,7 +809,7 @@ BOOL AcqDataDoc::save_as(CString& new_name, BOOL b_check_over_write, const int i
 	auto n_samples = get_wave_format()->sample_count;
 
 	// position source file index to start of data
-	x_file->Seek(static_cast<LONGLONG>(x_file->m_ulOffsetData), CFile::begin);
+	x_file->Seek(static_cast<LONGLONG>(x_file->m_ul_offset_data), CFile::begin);
 	auto p_buf = p_w_buf->get_pointer_to_raw_data_buffer(); // buffer to store data
 	auto l_buf_size = buf_size; // length of the buffer
 
@@ -866,10 +866,10 @@ BOOL AcqDataDoc::save_as(CString& new_name, BOOL b_check_over_write, const int i
 		while (dw_read > 0);
 
 		// file is transferred, destroy temporary file
-		p_new_doc->x_file->CloseDataFile();
+		p_new_doc->x_file->close_data_file();
 
 		// delete current file object and open saved-as file ??
-		x_file->CloseDataFile();
+		x_file->close_data_file();
 		SAFE_DELETE(x_file)
 
 		// create / update CDataFileX associated object
@@ -877,7 +877,7 @@ BOOL AcqDataDoc::save_as(CString& new_name, BOOL b_check_over_write, const int i
 		ASSERT(x_file != NULL);
 
 		// open saved file
-		if (!x_file->OpenDataFile(new_name, CFile::modeReadWrite | CFile::shareDenyNone | CFile::typeBinary))
+		if (!x_file->open_data_file(new_name, CFile::modeReadWrite | CFile::shareDenyNone | CFile::typeBinary))
 			return FALSE;
 	}
 

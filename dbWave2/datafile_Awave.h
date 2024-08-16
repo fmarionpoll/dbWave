@@ -9,29 +9,29 @@ public:
 	CDataFileAWAVE(CFile* file);
 	~CDataFileAWAVE() override;
 
-	int CheckFileType(CString& cs_filename) override;
-	BOOL ReadDataInfos(CWaveBuf* pBuf) override;
-	BOOL ReadHZtags(TagList* pHZtags) override;
-	BOOL ReadVTtags(TagList* pVTtags) override;
-	BOOL WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC) override;
-	BOOL WriteHZtags(TagList* ptags) override;
-	BOOL WriteVTtags(TagList* ptags) override;
+	int check_file_type(CString& cs_file_name) override;
+	BOOL read_data_infos(CWaveBuf* p_buf) override;
+	BOOL read_hz_tags(TagList* p_hz_tags) override;
+	BOOL read_vt_tags(TagList* p_vt_tags) override;
+	BOOL write_data_infos(CWaveFormat* pwF, CWaveChanArray* pwC) override;
+	BOOL write_hz_tags(TagList* p_tags) override;
+	BOOL write_vt_tags(TagList* p_tags) override;
 
 	// I/O operations to be updated by Save
-	BOOL InitFile() override;
-	BOOL DataAppendStart() override;
-	BOOL DataAppend(short* pBU, UINT bytesLength) override;
-	BOOL DataAppendStop() override;
+	BOOL init_file() override;
+	BOOL data_append_start() override;
+	BOOL data_append(short* pBU, UINT bytesLength) override;
+	BOOL data_append_stop() override;
 
 	// protected variables
 protected:
-	CStringA m_csFiledesc; // ASCII chain w. file version
-	CMapWordToOb m_structMap; // subfile descriptors
-	BOOL m_bmodified{};
+	CStringA cs_file_desc_; // ASCII chain w. file version
+	CMapWordToOb m_struct_map_; // sub-file descriptors
+	BOOL b_modified_{};
 
 	// Implementation
 protected:
-	void DeleteMap();
-	void WriteFileMap();
-	void ReportSaveLoadException(LPCTSTR filename, CException* e, BOOL bSaving, UINT nIDP);
+	void delete_map();
+	void write_file_map();
+	static void report_save_load_exception(LPCTSTR lpsz_path_name, CException* e, BOOL b_saving, UINT n_idp);
 };

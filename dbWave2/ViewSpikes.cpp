@@ -64,7 +64,7 @@ BEGIN_MESSAGE_MAP(ViewSpikes, ViewDbTable)
 	ON_COMMAND(ID_FORMAT_VIEW_ALL_DATA_ON_ABSCISSA, &ViewSpikes::on_format_all_data)
 	ON_COMMAND(ID_FORMAT_CENTER_CURVE, &ViewSpikes::on_format_center_curve)
 	ON_COMMAND(ID_FORMAT_GAIN_ADJUST, &ViewSpikes::on_format_gain_adjust)
-	ON_COMMAND(ID_TOOLS_EDIT_SPIKES, &ViewSpikes::on_tools_edit_transform_spikes)
+	ON_COMMAND(ID_TOOLS_EDIT_SPIKES, &ViewSpikes::on_tools_edit_spikes)
 	ON_COMMAND(ID_EDIT_COPY, &ViewSpikes::OnEditCopy)
 	ON_COMMAND(ID_FORMAT_PREVIOUS_FRAME, &ViewSpikes::on_format_previous_frame)
 	ON_COMMAND(ID_FORMAT_NEXT_FRAME, &ViewSpikes::on_format_next_frame)
@@ -287,7 +287,7 @@ LRESULT ViewSpikes::on_my_message(WPARAM w_param, LPARAM l_param)
 		if (param_value < 0)
 			param_value = 0;
 		m_spike_index = param_value;
-		on_tools_edit_transform_spikes();
+		on_tools_edit_spikes();
 		break;
 
 	case HINT_DROPPED:
@@ -746,7 +746,7 @@ void ViewSpikes::select_spike_list(int current_selection)
 	chart_data_wnd_.Invalidate();
 }
 
-void ViewSpikes::on_tools_edit_transform_spikes()
+void ViewSpikes::on_tools_edit_spikes()
 {
 	// return if no spike shape
 	if (spike_class_listbox_.get_xw_extent() == 0) 

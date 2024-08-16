@@ -121,11 +121,11 @@ public:
 
 	BOOL init_wb_transform_buffer() const { return p_w_buf->wb_init_transform_buffer(); }
 
-	void set_offset_to_data(const ULONGLONG ul_offset) const { x_file->m_ulOffsetData = ul_offset; }
-	void set_offset_to_header(const ULONGLONG ul_offset) const { x_file->m_ulOffsetHeader = static_cast<LONGLONG>(ul_offset); }
-	ULONGLONG get_offset_to_data() const { return x_file->m_ulOffsetData; }
-	ULONGLONG get_offset_to_header() const { return x_file->m_ulOffsetHeader; }
-	int get_header_size() const { return x_file->m_bHeaderSize; }
+	void set_offset_to_data(const ULONGLONG ul_offset) const { x_file->m_ul_offset_data = ul_offset; }
+	void set_offset_to_header(const ULONGLONG ul_offset) const { x_file->m_ul_offset_header = static_cast<LONGLONG>(ul_offset); }
+	ULONGLONG get_offset_to_data() const { return x_file->m_ul_offset_data; }
+	ULONGLONG get_offset_to_header() const { return x_file->m_ul_offset_header; }
+	int get_header_size() const { return x_file->m_b_header_size; }
 	void set_reading_buffer_dirty() { buf_valid_data = FALSE; }
 	BOOL allocate_buffer();
 	BOOL adjust_buffer(const int elements_count);

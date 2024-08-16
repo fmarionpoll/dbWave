@@ -15,11 +15,11 @@ IMPLEMENT_DYNCREATE(CDataFileMCID, CDataFileX)
 
 CDataFileMCID::CDataFileMCID()
 {
-	m_bHeaderSize = sizeof(MCID_HEADER);
-	m_ulOffsetData = m_bHeaderSize;
-	m_ulOffsetHeader = 0;
-	m_idType = DOCTYPE_MCID;
-	m_csType = _T("MCID");
+	m_b_header_size = sizeof(MCID_HEADER);
+	m_ul_offset_data = m_b_header_size;
+	m_ul_offset_header = 0;
+	m_id_type = DOCTYPE_MCID;
+	m_cs_type = _T("MCID");
 }
 
 CDataFileMCID::~CDataFileMCID()
@@ -38,7 +38,7 @@ void CDataFileMCID::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-BOOL CDataFileMCID::ReadDataInfos(CWaveBuf* pBuf)
+BOOL CDataFileMCID::read_data_infos(CWaveBuf* pBuf)
 {
 	CWaveFormat* pWFormat = pBuf->get_p_wave_format();
 	CWaveChanArray* pArray = pBuf->get_p_wave_chan_array();
@@ -46,8 +46,8 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveBuf* pBuf)
 	Seek(0, begin);
 	Read(&mcidHeader, sizeof(MCID_HEADER));
 
-	m_bHeaderSize = sizeof(MCID_HEADER) + mcidHeader.application_header;
-	m_ulOffsetData = m_bHeaderSize;
+	m_b_header_size = sizeof(MCID_HEADER) + mcidHeader.application_header;
+	m_ul_offset_data = m_b_header_size;
 
 	pWFormat->scan_count = mcidHeader.number_of_channels; // 4   number of channels in scan list
 
@@ -94,14 +94,14 @@ BOOL CDataFileMCID::ReadDataInfos(CWaveBuf* pBuf)
 	return TRUE;
 }
 
-int CDataFileMCID::CheckFileType(CString& cs_filename)
+int CDataFileMCID::check_file_type(CString& cs_filename)
 {
 	BOOL flag = DOCTYPE_UNKNOWN;
 	MCID_HEADER mcidHeader;
 	Seek(0, begin);
 	Read(&mcidHeader, sizeof(MCID_HEADER));
-	m_bHeaderSize = mcidHeader.application_header;
-	m_ulOffsetData = mcidHeader.application_header;
+	m_b_header_size = mcidHeader.application_header;
+	m_ul_offset_data = mcidHeader.application_header;
 
 	// test "mcid"
 	/*if (tab[8]==166 && tab[9]==166 && tab[10]==166 && tab[11]==166)

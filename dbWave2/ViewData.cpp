@@ -76,17 +76,17 @@ ViewData::~ViewData()
 	DeleteObject(m_h_zoom_);
 }
 
-void ViewData::DoDataExchange(CDataExchange* pDX)
+void ViewData::DoDataExchange(CDataExchange* p_dx)
 {
-	ViewDbTable::DoDataExchange(pDX);
+	ViewDbTable::DoDataExchange(p_dx);
 
-	DDX_Text(pDX, IDC_EDIT1, m_first_hz_cursor);
-	DDX_Text(pDX, IDC_EDIT2, m_second_hz_cursor);
-	DDX_Text(pDX, IDC_EDIT3, m_difference_second_minus_first);
-	DDX_Text(pDX, IDC_TIMEFIRST, m_time_first_abscissa);
-	DDX_Text(pDX, IDC_TIMELAST, m_time_last_abscissa);
-	DDX_Control(pDX, IDC_FILESCROLL, file_scroll_bar_);
-	DDX_Control(pDX, IDC_COMBOCHAN, m_combo_select_chan);
+	DDX_Text(p_dx, IDC_EDIT1, m_first_hz_cursor);
+	DDX_Text(p_dx, IDC_EDIT2, m_second_hz_cursor);
+	DDX_Text(p_dx, IDC_EDIT3, m_difference_second_minus_first);
+	DDX_Text(p_dx, IDC_TIMEFIRST, m_time_first_abscissa);
+	DDX_Text(p_dx, IDC_TIMELAST, m_time_last_abscissa);
+	DDX_Control(p_dx, IDC_FILESCROLL, file_scroll_bar_);
+	DDX_Control(p_dx, IDC_COMBOCHAN, m_combo_select_chan);
 }
 
 void ViewData::define_sub_classed_items()
@@ -150,7 +150,7 @@ void ViewData::OnInitialUpdate()
 
 	chart_data.set_scope_parameters(&(options_view_data_->view_data));
 	constexpr int legends_options = UPD_ABSCISSA | CHG_X_SCALE | UPD_ORDINATES | CHG_Y_SCALE;
-	m_bCommonScale = TRUE;
+	b_common_scale_ = TRUE;
 	m_combo_select_chan.SetCurSel(chart_data.get_channel_list_size());
 	update_legends(legends_options);
 }
@@ -525,7 +525,7 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 	{
 		m_combo_select_chan.AddString(_T("all channels"));
 	}
-	if (!m_bCommonScale)
+	if (!b_common_scale_)
 		m_combo_select_chan.SetCurSel(0);
 	else
 		m_combo_select_chan.SetCurSel(chart_data.get_channel_list_size());
@@ -544,7 +544,7 @@ void ViewData::update_channels_display_parameters()
 	const auto n_line_view_channels = chart_data.get_channel_list_size();
 	int max;
 	int min;
-	if (!m_bCommonScale)
+	if (!b_common_scale_)
 	{
 		for (auto i = 0; i < n_line_view_channels; i++)
 		{
@@ -1699,12 +1699,12 @@ void ViewData::on_cbn_sel_change_combo_chan()
 	const auto i_chan = m_combo_select_chan.GetCurSel();
 	if (i_chan < chart_data.get_channel_list_size())
 	{
-		m_bCommonScale = FALSE;
+		b_common_scale_ = FALSE;
 		update_channel(i_chan);
 	}
 	else
 	{
-		m_bCommonScale = TRUE;
+		b_common_scale_ = TRUE;
 		m_channel_selected = 0;
 		const CChanlistItem* p_chan = chart_data.get_channel_list_item(0);
 		const auto y_extent = p_chan->GetYextent();

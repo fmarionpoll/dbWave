@@ -170,48 +170,52 @@ void SpikeList::serialize_spike_data_short(CArchive& ar)
 		const WORD spike_length = static_cast<WORD>(get_spike_length());
 		ar << spike_length;
 
-		const auto n_bytes_int = spike_length * sizeof(int);
-		if (n_bytes_int > 0)
+		const auto n_bytes_short = spike_length * sizeof(short);
+		if (n_bytes_short > 0)
 		{
-			const auto buffer = static_cast<int*>(malloc(n_bytes_int));
+			const auto buffer = static_cast<short*>(malloc(n_bytes_short * n_spikes));
 			if (buffer)
 			{
+				short* p_buffer = buffer;
 				for (auto i = 0; i < n_spikes; i++)
 				{
 					Spike* spike = get_spike(i);
 					int* p_data = spike->get_p_data(spike_length);
-					int* p_buffer = buffer;
+					
 					for (int j = 0; j < spike_length; j++, p_buffer++, p_data++)
 					{
-						const int val = static_cast<short>(*p_data);
-						*p_buffer = static_cast<int>(val);
+						const short val = static_cast<short>(*p_data);
+						*p_buffer = static_cast<short>(val);
 					}
-					ar.Write(buffer, n_bytes_int);
 				}
+				ar.Write(buffer, n_bytes_short * n_spikes);
 				free(buffer);
 			}
 		}
 	}
 	else
 	{
-		WORD spike_length = 1;
+		WORD spike_length;
 		ar >> spike_length;
+		spike_length_ = spike_length;
 
 		const auto n_bytes_short = spike_length * sizeof(short) ;
-		const auto buffer = static_cast<short*>(malloc(n_bytes_short));
+		const auto buffer = static_cast<short*>(malloc(n_bytes_short * n_spikes));
 		if (buffer)
 		{
+			ar.Read(buffer, n_bytes_short * n_spikes);
+			short* p_buffer = buffer;
 			for (auto i = 0; i < n_spikes; i++)
 			{
 				Spike* spike = get_spike(i);
-				ar.Read(buffer, n_bytes_short);
-
 				int* p_data = spike->get_p_data(spike_length);
-				short* p_buffer = buffer;
+				spike->set_spike_length (spike_length);
+				//spike->buffer_spike_length_ = spike_length;
+				
 				for (int j = 0; j < spike_length; j++, p_buffer++, p_data++ )
 				{
 					const int val = *p_buffer;
-					*p_data = static_cast<int>(val);
+					*p_data = val;
 				}
 			}
 			free(buffer);

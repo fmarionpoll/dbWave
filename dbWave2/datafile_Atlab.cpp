@@ -8,11 +8,11 @@ IMPLEMENT_DYNCREATE(CDataFileATLAB, CDataFileX)
 
 CDataFileATLAB::CDataFileATLAB()
 {
-	m_bHeaderSize = 1024;
-	m_ulOffsetData = m_bHeaderSize;
-	m_ulOffsetHeader = 0;
-	m_idType = DOCTYPE_ATLAB;
-	m_csType = _T("ATLAB");
+	m_b_header_size = 1024;
+	m_ul_offset_data = m_b_header_size;
+	m_ul_offset_header = 0;
+	m_id_type = DOCTYPE_ATLAB;
+	m_cs_type = _T("ATLAB");
 }
 
 CDataFileATLAB::~CDataFileATLAB()
@@ -30,19 +30,19 @@ void CDataFileATLAB::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
+BOOL CDataFileATLAB::read_data_infos(CWaveBuf* p_buf)
 {
 	CWaveFormat* p_WaveFormat = p_buf->get_p_wave_format();
 	CWaveChanArray* pWavechanArray = p_buf->get_p_wave_chan_array();
 	// Read file header
 	auto bflag = TRUE;
-	m_pWFormat = p_WaveFormat;
-	m_pArray = pWavechanArray;
+	m_p_w_format_ = p_WaveFormat;
+	m_p_array_ = pWavechanArray;
 
-	const auto p_header = new char[m_bHeaderSize];
+	const auto p_header = new char[m_b_header_size];
 	ASSERT(p_header != NULL);
-	Seek(m_ulOffsetHeader, begin);
-	Read(p_header, m_bHeaderSize);
+	Seek(m_ul_offset_header, begin);
+	Read(p_header, m_b_header_size);
 
 	// get A/D card type
 	auto pchar = p_header + DEVID;
@@ -83,11 +83,11 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 	// check if file is not corrupted
 	pchar = p_header + SAMCNT;
 	auto plong = reinterpret_cast<long*>(pchar);
-	const auto len1 = static_cast<long>(GetLength() - m_bHeaderSize) / 2;
+	const auto len1 = static_cast<long>(GetLength() - m_b_header_size) / 2;
 	if (len1 != *plong)
 	{
 		SeekToBegin();
-		Write(p_header, m_bHeaderSize);
+		Write(p_header, m_b_header_size);
 		bflag = 2;
 	}
 	p_WaveFormat->sample_count = len1;
@@ -176,7 +176,7 @@ BOOL CDataFileATLAB::ReadDataInfos(CWaveBuf* p_buf)
 
 	// init as if no amplifier were present
 	for (int i = 0; i < p_WaveFormat->scan_count; i++)
-		init_dummy_chans_info(i);
+		init_dummy_channels_info(i);
 
 	// 2) version dependent parameters
 	pchar = p_header + VERSION;
@@ -239,7 +239,7 @@ void CDataFileATLAB::init_channels_from_cyber_a320(char* p_header) const
 	// look for the first xgain that equals the Cyber gain
 	const auto pcyber2 = reinterpret_cast<CYBERCHAN*>(pchar);
 	if ((pcyber1->acqchan == pcyber2->acqchan)
-		&& m_pWFormat->scan_count > 1)
+		&& m_p_w_format_->scan_count > 1)
 	{
 		AfxMessageBox(_T("cyber channel not correctly set"), MB_OK);
 	}
@@ -247,16 +247,16 @@ void CDataFileATLAB::init_channels_from_cyber_a320(char* p_header) const
 	// default cyberamp description
 	else
 	{
-		if (pcyber1->acqchan <= m_pWFormat->scan_count)
+		if (pcyber1->acqchan <= m_p_w_format_->scan_count)
 		{
 			int chan = pcyber1->acqchan - 1;
 			if (chan < 0)
 				chan = 0;
 			load_channel_from_cyber(chan, reinterpret_cast<char*>(pcyber1));
-			if (m_pWFormat->scan_count == static_cast<short>(1))
+			if (m_p_w_format_->scan_count == static_cast<short>(1))
 				pcyber2->acqchan = static_cast<unsigned char>(255);
 		}
-		if (pcyber2->acqchan <= m_pWFormat->scan_count)
+		if (pcyber2->acqchan <= m_p_w_format_->scan_count)
 		{
 			short chan = pcyber2->acqchan - 1;
 			if (chan < 0)
@@ -266,15 +266,15 @@ void CDataFileATLAB::init_channels_from_cyber_a320(char* p_header) const
 	}
 }
 
-void CDataFileATLAB::load_channel_from_cyber(const int channel, char* pcyberchan) const
+void CDataFileATLAB::load_channel_from_cyber(const int channel, char* p_cyber_chan) const
 {
-	const auto pcyb = reinterpret_cast<CYBERCHAN*>(pcyberchan);
+	const auto pcyb = reinterpret_cast<CYBERCHAN*>(p_cyber_chan);
 	// special case if probe == "none"	: exit
 	const auto probe = CStringA(&(pcyb->probe[0]), 8);
 	if (probe.CompareNoCase("none    ") == 0
 		|| (probe.CompareNoCase("0       ") == 0))
 		return;
-	const auto p_chan = m_pArray->get_p_channel(channel);
+	const auto p_chan = m_p_array_->get_p_channel(channel);
 	p_chan->am_csheadstage = probe;
 	p_chan->am_gainheadstage = pcyb->gainprobe;
 	p_chan->am_csamplifier = CString(_T("CyberAmp"));
@@ -295,10 +295,10 @@ void CDataFileATLAB::load_channel_from_cyber(const int channel, char* pcyberchan
 
 // assume that code is filter cutoff * 10
 
-CString CDataFileATLAB::get_cyber_a320_filter(const int ncode)
+CString CDataFileATLAB::get_cyber_a320_filter(const int n_code)
 {
 	CString cs_coupling;
-	switch (ncode)
+	switch (n_code)
 	{
 	case -10: cs_coupling = _T("GND");
 		break;
@@ -322,9 +322,9 @@ CString CDataFileATLAB::get_cyber_a320_filter(const int ncode)
 	return cs_coupling;
 }
 
-void CDataFileATLAB::init_dummy_chans_info(const int chanlistindex) const
+void CDataFileATLAB::init_dummy_channels_info(const int chan_list_index) const
 {
-	auto* p_chan = m_pArray->get_p_channel(chanlistindex);
+	auto* p_chan = m_p_array_->get_p_channel(chan_list_index);
 	p_chan->am_csamplifier = CStringA("Unknown");
 	p_chan->am_csheadstage = p_chan->am_csamplifier;
 	p_chan->am_gainheadstage = 1;
@@ -338,15 +338,15 @@ void CDataFileATLAB::init_dummy_chans_info(const int chanlistindex) const
 	p_chan->am_csInputneg = CStringA("GND");
 }
 
-int CDataFileATLAB::CheckFileType(CString& cs_filename)
+int CDataFileATLAB::check_file_type(CString& cs_filename)
 {
 	WORD w_atlab; // struct for ATLab file
 	auto flag = DOCTYPE_UNKNOWN;
-	Seek(m_ulOffsetHeader, begin); // position pointer to start of file
+	Seek(m_ul_offset_header, begin); // position pointer to start of file
 	Read(&w_atlab, sizeof(w_atlab)); // Read data
 
 	// test Atlab
 	if (w_atlab == 0xAAAA) //	//&&( tab[2] == 0x07 || tab[2] == 0x06)
-		flag = m_idType;
+		flag = m_id_type;
 	return flag;
 }

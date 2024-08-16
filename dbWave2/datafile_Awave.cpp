@@ -16,36 +16,36 @@
 
 CDataFileAWAVE::CDataFileAWAVE()
 {
-	m_idType = DOCTYPE_AWAVE;
-	m_csType = "AWAVE";
-	m_csFiledesc = "aWave 001.060298";
-	m_ulOffsetHeader = static_cast<ULONGLONG>(m_csFiledesc.GetLength()) + 1;
-	m_bHeaderSize = 256;
-	m_bmodified = false;
+	m_id_type = DOCTYPE_AWAVE;
+	m_cs_type = "AWAVE";
+	cs_file_desc_ = "aWave 001.060298";
+	m_ul_offset_header = static_cast<ULONGLONG>(cs_file_desc_.GetLength()) + 1;
+	m_b_header_size = 256;
+	b_modified_ = false;
 }
 
-CDataFileAWAVE::CDataFileAWAVE(CFile* pfile) : m_bmodified(false)
+CDataFileAWAVE::CDataFileAWAVE(CFile* pfile) : b_modified_(false)
 {
-	m_idType = DOCTYPE_AWAVE;
-	m_csType = "AWAVE";
-	m_csFiledesc = "aWave 001.260197";
-	m_ulOffsetHeader = static_cast<ULONGLONG>(m_csFiledesc.GetLength()) + 1;
-	m_bHeaderSize = 256;
+	m_id_type = DOCTYPE_AWAVE;
+	m_cs_type = "AWAVE";
+	cs_file_desc_ = "aWave 001.260197";
+	m_ul_offset_header = static_cast<ULONGLONG>(cs_file_desc_.GetLength()) + 1;
+	m_b_header_size = 256;
 	m_hFile = pfile->m_hFile; // CFile
 
 	// if file length zero, initialize file
 	if (pfile->GetLength() < 1)
-		InitFile();
+		init_file();
 }
 
 // delete CDataFileAWAVE object
 
 CDataFileAWAVE::~CDataFileAWAVE()
 {
-	DeleteMap();
+	delete_map();
 }
 
-BOOL CDataFileAWAVE::InitFile()
+BOOL CDataFileAWAVE::init_file()
 {
 	// file type - ASCII infos : awave file signature
 	char* pdummy[257]; // create string with 256 chars
@@ -55,16 +55,16 @@ BOOL CDataFileAWAVE::InitFile()
 
 	// write file signature
 	Seek(0, begin); // position pointer
-	const auto len = m_csFiledesc.GetLength();
-	Write(m_csFiledesc.GetBuffer(len), static_cast<UINT>(len));
-	m_csFiledesc.ReleaseBuffer();
-	WriteFileMap();
+	const auto len = cs_file_desc_.GetLength();
+	Write(cs_file_desc_.GetBuffer(len), static_cast<UINT>(len));
+	cs_file_desc_.ReleaseBuffer();
+	write_file_map();
 	return TRUE;
 }
 
 // check if the datafile has a recognizable header format
 
-int CDataFileAWAVE::CheckFileType(CString& csFileName)
+int CDataFileAWAVE::check_file_type(CString& cs_file_name)
 {
 	Seek(0, begin);
 	char signature[6];
@@ -72,23 +72,23 @@ int CDataFileAWAVE::CheckFileType(CString& csFileName)
 	signature[5] = '\0';
 	CStringA cs_signature(signature);
 	auto flag = DOCTYPE_UNKNOWN;
-	if (cs_signature.CompareNoCase(m_csFiledesc.Left(5)) == 0)
-		flag = m_idType;
+	if (cs_signature.CompareNoCase(cs_file_desc_.Left(5)) == 0)
+		flag = m_id_type;
 	return flag;
 }
 
 // load horizontal tags if they are present
 
-BOOL CDataFileAWAVE::ReadHZtags(TagList* pHZtags)
+BOOL CDataFileAWAVE::read_hz_tags(TagList* p_hz_tags)
 {
 	CSubfileItem* p_struct; // CStruct pointer
-	if (!m_structMap.Lookup(STRUCT_HZTAGS, reinterpret_cast<CObject*&>(p_struct)))
+	if (!m_struct_map_.Lookup(STRUCT_HZTAGS, reinterpret_cast<CObject*&>(p_struct)))
 		return FALSE;
 
 	if (p_struct->GetDataLength() > 0)
 	{
 		Seek(p_struct->GetDataOffset(), begin);
-		if (!pHZtags->read(this))
+		if (!p_hz_tags->read(this))
 			return FALSE;
 	}
 	return TRUE;
@@ -96,16 +96,16 @@ BOOL CDataFileAWAVE::ReadHZtags(TagList* pHZtags)
 
 // load vertical tags if they are present
 
-BOOL CDataFileAWAVE::ReadVTtags(TagList* pVTtags)
+BOOL CDataFileAWAVE::read_vt_tags(TagList* p_vt_tags)
 {
 	CSubfileItem* p_struct; // CStruct pointer
-	if (!m_structMap.Lookup(STRUCT_VTAGS, reinterpret_cast<CObject*&>(p_struct)))
+	if (!m_struct_map_.Lookup(STRUCT_VTAGS, reinterpret_cast<CObject*&>(p_struct)))
 		return FALSE;
 
 	if (p_struct->GetDataLength() > 0)
 	{
 		Seek(p_struct->GetDataOffset(), begin);
-		if (!pVTtags->read(this))
+		if (!p_vt_tags->read(this))
 			return FALSE;
 	}
 	return TRUE;
@@ -114,21 +114,21 @@ BOOL CDataFileAWAVE::ReadVTtags(TagList* pVTtags)
 // delete map structure. this map is used to record the position of the
 // different objects stored into the file
 
-void CDataFileAWAVE::DeleteMap()
+void CDataFileAWAVE::delete_map()
 {
-	if (m_structMap.IsEmpty()) // delete nothing if structure is
+	if (m_struct_map_.IsEmpty()) // delete nothing if structure is
 		return; // empty
 
-	auto pos = m_structMap.GetStartPosition(); // get position of first elmt
+	auto pos = m_struct_map_.GetStartPosition(); // get position of first elmt
 	WORD w_key; // key associated
 	CSubfileItem* p_struct; // pointer to object
 	while (pos != nullptr) // loop over all elements
 	{
 		// get struct pointer & key
-		m_structMap.GetNextAssoc(pos, w_key, reinterpret_cast<CObject*&>(p_struct));
+		m_struct_map_.GetNextAssoc(pos, w_key, reinterpret_cast<CObject*&>(p_struct));
 		delete p_struct; // delete structure
 	}
-	m_structMap.RemoveAll(); // finish the work
+	m_struct_map_.RemoveAll(); // finish the work
 }
 
 // update map associated with objects contained within file
@@ -139,16 +139,16 @@ void CDataFileAWAVE::DeleteMap()
 // -minus initial signature) and then past the end of the file (or the last subfile
 // record). This "jump" is added if necessary -special descriptor.
 
-void CDataFileAWAVE::WriteFileMap()
+void CDataFileAWAVE::write_file_map()
 {
 	// set CFile pos after the signature
-	Seek(m_ulOffsetHeader, begin);
+	Seek(m_ul_offset_header, begin);
 
 	// Write header: loop over all elements of the map; at the end, mark a stop
 
 	// how much items fit within header ?
 	const int size_item = sizeof(SUBF_DESCRIP); // size of one element
-	auto nbitemsmax = static_cast<int>(m_bHeaderSize - m_ulOffsetHeader) / size_item;
+	auto nbitemsmax = static_cast<int>(m_b_header_size - m_ul_offset_header) / size_item;
 	nbitemsmax--; // minus struct_jump or struc_end
 	auto nbitems = 0; // init nb structures to zero
 
@@ -157,25 +157,25 @@ void CDataFileAWAVE::WriteFileMap()
 	// add a "jump" descriptor if header (256) is full
 	// and continue to write descriptors further at the end of the file
 
-	auto ul_size = m_ulOffsetHeader; // length of header / compare w. 256
+	auto ul_size = m_ul_offset_header; // length of header / compare w. 256
 	CSubfileItem* p_struct; // structure with descriptor
 	WORD w_key; // key value
-	auto pos = m_structMap.GetStartPosition(); // position
+	auto pos = m_struct_map_.GetStartPosition(); // position
 
 	while (pos != nullptr) // loop through entire map
 	{
 		// get pointer to object & key
-		m_structMap.GetNextAssoc(pos, w_key, reinterpret_cast<CObject*&>(p_struct));
+		m_struct_map_.GetNextAssoc(pos, w_key, reinterpret_cast<CObject*&>(p_struct));
 		if (w_key == STRUCT_END) // skip struct_end
 			continue; // look for next item
 		if (nbitems == nbitemsmax) // jump to the end of the file?
 		{
 			CSubfileItem* p_j_struct;
-			if (!m_structMap.Lookup(STRUCT_JUMP, reinterpret_cast<CObject*&>(p_j_struct)))
+			if (!m_struct_map_.Lookup(STRUCT_JUMP, reinterpret_cast<CObject*&>(p_j_struct)))
 			{
 				p_j_struct = new CSubfileItem(STRUCT_JUMP, "JUMP_TAG", 512, 0, NORMAL_MODE);
 				ASSERT(p_j_struct != NULL);
-				m_structMap.SetAt(STRUCT_JUMP, p_struct);
+				m_struct_map_.SetAt(STRUCT_JUMP, p_struct);
 			}
 			p_j_struct->SetDataOffset(GetLength());
 			p_j_struct->Write(this);
@@ -187,11 +187,11 @@ void CDataFileAWAVE::WriteFileMap()
 
 	// map is written, end list with a stop descriptor.
 	// write STRUCT_END (with a stop), create & add to map if not present
-	if (!m_structMap.Lookup(STRUCT_END, reinterpret_cast<CObject*&>(p_struct)))
+	if (!m_struct_map_.Lookup(STRUCT_END, reinterpret_cast<CObject*&>(p_struct)))
 	{
 		p_struct = new CSubfileItem(STRUCT_END, "END_TAGS", 512, 0, NORMAL_MODE);
 		ASSERT(p_struct != NULL);
-		m_structMap.SetAt(STRUCT_END, p_struct);
+		m_struct_map_.SetAt(STRUCT_END, p_struct);
 	}
 	p_struct->SetDataOffset(GetLength() - 1);
 	ul_size += p_struct->Write(this); // write STRUCT_END
@@ -209,44 +209,44 @@ void CDataFileAWAVE::WriteFileMap()
 
 // write tags horizontal or vertical
 
-BOOL CDataFileAWAVE::WriteHZtags(TagList* ptags)
+BOOL CDataFileAWAVE::write_hz_tags(TagList* p_tags)
 {
 	CSubfileItem* p_struct;
 
 	// save vertical tags
-	if (!m_structMap.Lookup(STRUCT_HZTAGS, reinterpret_cast<CObject*&>(p_struct)))
+	if (!m_struct_map_.Lookup(STRUCT_HZTAGS, reinterpret_cast<CObject*&>(p_struct)))
 	{
 		p_struct = new CSubfileItem(STRUCT_HZTAGS, "HZ_TAGS:", 512, 0, NORMAL_MODE);
 		ASSERT(p_struct != NULL);
-		m_structMap.SetAt(STRUCT_HZTAGS, p_struct);
+		m_struct_map_.SetAt(STRUCT_HZTAGS, p_struct);
 	}
 	SeekToEnd(); // CFile: end of file (EOF)
 	p_struct->SetDataOffset(GetPosition()); // get offset to EOF and save pos
-	p_struct->SetDataLength(ptags->write(this)); // write ACQDEF there & save length
-	WriteFileMap();
+	p_struct->SetDataLength(p_tags->write(this)); // write ACQDEF there & save length
+	write_file_map();
 	return TRUE;
 }
 
-BOOL CDataFileAWAVE::WriteVTtags(TagList* ptags)
+BOOL CDataFileAWAVE::write_vt_tags(TagList* p_tags)
 {
 	CSubfileItem* p_struct;
 
 	// save vertical tags
-	if (!m_structMap.Lookup(STRUCT_VTAGS, reinterpret_cast<CObject*&>(p_struct)))
+	if (!m_struct_map_.Lookup(STRUCT_VTAGS, reinterpret_cast<CObject*&>(p_struct)))
 	{
 		p_struct = new CSubfileItem(STRUCT_VTAGS, "VT_TAGS:", 512, 0, NORMAL_MODE);
 		ASSERT(p_struct != NULL);
-		m_structMap.SetAt(STRUCT_VTAGS, p_struct);
+		m_struct_map_.SetAt(STRUCT_VTAGS, p_struct);
 	}
 	SeekToEnd(); // CFile: end of file (EOF)
 	p_struct->SetDataOffset(GetPosition()); // get offset to EOF and save pos
-	p_struct->SetDataLength(ptags->write(this)); // write ACQDEF there & save length
-	WriteFileMap();
+	p_struct->SetDataLength(p_tags->write(this)); // write ACQDEF there & save length
+	write_file_map();
 	return TRUE;
 }
 
-void CDataFileAWAVE::ReportSaveLoadException(const LPCTSTR lpsz_path_name,
-                                             CException* e, const BOOL bSaving, UINT n_idp)
+void CDataFileAWAVE::report_save_load_exception(const LPCTSTR lpsz_path_name,
+                                             CException* e, const BOOL b_saving, UINT n_idp)
 {
 	if (e != nullptr)
 	{
@@ -264,7 +264,7 @@ void CDataFileAWAVE::ReportSaveLoadException(const LPCTSTR lpsz_path_name,
 				n_idp = AFX_IDP_FAILED_DISK_FULL;
 				break;
 			case CFileException::accessDenied:
-				n_idp = bSaving ? AFX_IDP_FAILED_ACCESS_WRITE : AFX_IDP_FAILED_ACCESS_READ;
+				n_idp = b_saving ? AFX_IDP_FAILED_ACCESS_WRITE : AFX_IDP_FAILED_ACCESS_READ;
 				if (ee->m_lOsError == ERROR_WRITE_PROTECT)
 					n_idp = IDS_WRITEPROTECT;
 				break;
@@ -282,7 +282,7 @@ void CDataFileAWAVE::ReportSaveLoadException(const LPCTSTR lpsz_path_name,
 			case CFileException::genericException:
 			case CFileException::invalidFile:
 			case CFileException::hardIO:
-				n_idp = bSaving ? AFX_IDP_FAILED_IO_ERROR_WRITE : AFX_IDP_FAILED_IO_ERROR_READ;
+				n_idp = b_saving ? AFX_IDP_FAILED_IO_ERROR_WRITE : AFX_IDP_FAILED_IO_ERROR_READ;
 				break;
 			default:
 				break;
@@ -307,17 +307,17 @@ void CDataFileAWAVE::ReportSaveLoadException(const LPCTSTR lpsz_path_name,
 // assume that byteIndex is correct, ex by requesting position past the end of the file
 // (assume no exception generated by CFile)
 
-BOOL CDataFileAWAVE::DataAppendStart()
+BOOL CDataFileAWAVE::data_append_start()
 {
 	CSubfileItem* p_struct; // get descriptor
 	auto item_max = 0;
 	WORD w_key; // key value
-	auto pos = m_structMap.GetStartPosition(); // position
+	auto pos = m_struct_map_.GetStartPosition(); // position
 	// search nb of STRUCT_DATA items
 	while (pos != nullptr) // loop through entire map
 	{
 		// get pointer to object & key
-		m_structMap.GetNextAssoc(pos, w_key, reinterpret_cast<CObject*&>(p_struct));
+		m_struct_map_.GetNextAssoc(pos, w_key, reinterpret_cast<CObject*&>(p_struct));
 		if (w_key == STRUCT_DATA) // skip struct_end
 			if (p_struct->GetItemnb() > item_max)
 				item_max = p_struct->GetItemnb();
@@ -325,7 +325,7 @@ BOOL CDataFileAWAVE::DataAppendStart()
 	item_max++;
 	const auto l_actual = Seek(0, end); // file pointer position
 
-	if (m_structMap.Lookup(STRUCT_DATA, reinterpret_cast<CObject*&>(p_struct)))
+	if (m_struct_map_.Lookup(STRUCT_DATA, reinterpret_cast<CObject*&>(p_struct)))
 		delete p_struct;
 
 	p_struct = new CSubfileItem(STRUCT_DATA,	// ucCode
@@ -335,10 +335,10 @@ BOOL CDataFileAWAVE::DataAppendStart()
 	                            NORMAL_MODE,	// ucEncoding
 	                            item_max);		// itemnb
 	ASSERT(p_struct != NULL);
-	m_structMap.SetAt(STRUCT_DATA, p_struct); // create new descriptor
+	m_struct_map_.SetAt(STRUCT_DATA, p_struct); // create new descriptor
 
-	m_bmodified = TRUE;
-	m_ulbytescount = 0;
+	b_modified_ = TRUE;
+	m_ul_bytes_count = 0;
 	return TRUE;
 }
 
@@ -346,23 +346,23 @@ BOOL CDataFileAWAVE::DataAppendStart()
 // assume that file index correctly set by a previous call to SeekData
 // assume no exception generated by CFile
 
-BOOL CDataFileAWAVE::DataAppend(short* pBU, UINT uibytesLength)
+BOOL CDataFileAWAVE::data_append(short* pBU, UINT uibytesLength)
 {
-	m_bmodified = TRUE; 
+	b_modified_ = TRUE; 
 	Write(pBU, uibytesLength); 
-	m_ulbytescount += static_cast<ULONGLONG>(uibytesLength);
+	m_ul_bytes_count += static_cast<ULONGLONG>(uibytesLength);
 	return TRUE; 
 }
 
 // stop appending data, update pointers, structures
 
-BOOL CDataFileAWAVE::DataAppendStop()
+BOOL CDataFileAWAVE::data_append_stop()
 {
 	CSubfileItem* p_struct; 
-	if (!m_structMap.Lookup(STRUCT_DATA, reinterpret_cast<CObject*&>(p_struct)))
+	if (!m_struct_map_.Lookup(STRUCT_DATA, reinterpret_cast<CObject*&>(p_struct)))
 		return 0;
-	p_struct->SetDataLength(m_ulbytescount);
-	WriteFileMap();
+	p_struct->SetDataLength(m_ul_bytes_count);
+	write_file_map();
 	return TRUE;
 }
 
@@ -371,16 +371,16 @@ BOOL CDataFileAWAVE::DataAppendStop()
 // but no reference from it are kept in the descriptors
 // this is potentially dangerous because the file could grow infinitely
 
-BOOL CDataFileAWAVE::WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC)
+BOOL CDataFileAWAVE::write_data_infos(CWaveFormat* pwF, CWaveChanArray* pwC)
 {
 	CSubfileItem* p_struct = nullptr;
 
 	// save ACQDEF
-	if (!m_structMap.Lookup(STRUCT_ACQDEF, reinterpret_cast<CObject*&>(p_struct)))
+	if (!m_struct_map_.Lookup(STRUCT_ACQDEF, reinterpret_cast<CObject*&>(p_struct)))
 	{
 		p_struct = new CSubfileItem(STRUCT_ACQDEF, "ACQDEF:", 512, 0, NORMAL_MODE);
 		ASSERT(p_struct);
-		m_structMap.SetAt(STRUCT_ACQDEF, p_struct);
+		m_struct_map_.SetAt(STRUCT_ACQDEF, p_struct);
 	}
 	SeekToEnd(); // CFile: end of file (EOF)
 	p_struct->SetDataOffset(GetPosition()); // get offset to EOF and save pos
@@ -388,11 +388,11 @@ BOOL CDataFileAWAVE::WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC)
 	p_struct->SetDataLength(ulLenwF);
 
 	// save ACQCHAN _ array
-	if (!m_structMap.Lookup(STRUCT_ACQCHAN, reinterpret_cast<CObject*&>(p_struct)))
+	if (!m_struct_map_.Lookup(STRUCT_ACQCHAN, reinterpret_cast<CObject*&>(p_struct)))
 	{
 		p_struct = new CSubfileItem(STRUCT_ACQCHAN, "ACQCHAN:", 512, 0, NORMAL_MODE);
 		ASSERT(p_struct);
-		m_structMap.SetAt(STRUCT_ACQCHAN, p_struct);
+		m_struct_map_.SetAt(STRUCT_ACQCHAN, p_struct);
 	}
 	SeekToEnd(); // CFile: end of file (EOF)
 	p_struct->SetDataOffset(GetPosition()); // get offset to EOF & save pos
@@ -400,21 +400,21 @@ BOOL CDataFileAWAVE::WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC)
 	p_struct->SetDataLength(u_lenw_c);
 
 	// update header with these infos
-	WriteFileMap();
+	write_file_map();
 	return TRUE;
 }
 
 // BOOL ReadDataInfos()
 // read and initialize the members variable
 
-BOOL CDataFileAWAVE::ReadDataInfos(CWaveBuf* pBuf)
+BOOL CDataFileAWAVE::read_data_infos(CWaveBuf* p_buf)
 {
-	CWaveFormat* pWFormat = pBuf->get_p_wave_format();
-	CWaveChanArray* pArray = pBuf->get_p_wave_chan_array();
-	DeleteMap(); // cleanup map
+	CWaveFormat* pWFormat = p_buf->get_p_wave_format();
+	CWaveChanArray* pArray = p_buf->get_p_wave_chan_array();
+	delete_map(); // cleanup map
 
 	// fill map by reading all descriptors until end of list
-	Seek(m_ulOffsetHeader, begin); // position pointer
+	Seek(m_ul_offset_header, begin); // position pointer
 
 	CSubfileItem* p_struct; // CStruct pointer
 	WORD ucCode; // struct code
@@ -424,14 +424,14 @@ BOOL CDataFileAWAVE::ReadDataInfos(CWaveBuf* pBuf)
 		ASSERT(p_struct);
 		p_struct->Read(this); // read struct from file
 		ucCode = p_struct->GetCode(); // get code
-		m_structMap.SetAt(ucCode, p_struct); // add struct to map
+		m_struct_map_.SetAt(ucCode, p_struct); // add struct to map
 		if (ucCode == STRUCT_JUMP) // if jump struct, update file pointer
 			Seek(p_struct->GetDataOffset(), begin);
 	}
 	while (ucCode != STRUCT_END); // stop?
 
 	// read ACQDEF structure: get file pointer and load data
-	if (m_structMap.Lookup(STRUCT_ACQDEF, reinterpret_cast<CObject*&>(p_struct)))
+	if (m_struct_map_.Lookup(STRUCT_ACQDEF, reinterpret_cast<CObject*&>(p_struct)))
 	{
 		if (p_struct->GetDataLength() > 0)
 		{
@@ -442,7 +442,7 @@ BOOL CDataFileAWAVE::ReadDataInfos(CWaveBuf* pBuf)
 	}
 
 	// read ACQCHAN datas: get file pointer and load data
-	if (m_structMap.Lookup(STRUCT_ACQCHAN, reinterpret_cast<CObject*&>(p_struct)))
+	if (m_struct_map_.Lookup(STRUCT_ACQCHAN, reinterpret_cast<CObject*&>(p_struct)))
 	{
 		if (p_struct->GetDataLength() > 0)
 		{
@@ -453,7 +453,7 @@ BOOL CDataFileAWAVE::ReadDataInfos(CWaveBuf* pBuf)
 	}
 
 	// get pointer to data area
-	if (m_structMap.Lookup(STRUCT_DATA, reinterpret_cast<CObject*&>(p_struct)))
-		m_ulOffsetData = p_struct->GetDataOffset();
+	if (m_struct_map_.Lookup(STRUCT_DATA, reinterpret_cast<CObject*&>(p_struct)))
+		m_ul_offset_data = p_struct->GetDataOffset();
 	return TRUE;
 }

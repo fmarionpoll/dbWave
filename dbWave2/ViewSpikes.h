@@ -137,7 +137,7 @@ protected:
 	afx_msg void on_format_previous_frame();
 	afx_msg void on_format_next_frame();
 
-	afx_msg void on_tools_edit_transform_spikes();
+	afx_msg void on_tools_edit_spikes();
 
 	afx_msg void on_en_change_no_spike();
 	afx_msg void on_en_change_spike_class();

@@ -63,20 +63,20 @@ protected:
 	CFont m_font_print_; 
 	CRect m_print_rect_;
 
-	BOOL OnPreparePrinting(CPrintInfo* pInfo) override;
-	void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
-	void OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
-	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
+	BOOL OnPreparePrinting(CPrintInfo* p_info) override;
+	void OnBeginPrinting(CDC* p_dc, CPrintInfo* p_info) override;
+	void OnEndPrinting(CDC* p_dc, CPrintInfo* p_info) override;
+	void OnPrint(CDC* p_dc, CPrintInfo* p_info) override;
+	void OnActivateView(BOOL b_activate, CView* p_activate_view, CView* p_deactive_view) override;
 
 	// parameters for OnSize
 	CStretchControl m_stretch_ {};
 	BOOL m_b_init_ {false};
 
 protected:
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnSize(UINT n_type, int cx, int cy);
+	afx_msg void OnNMClickTab1(NMHDR* p_nmhdr, LRESULT* p_result);
+	afx_msg void OnTcnSelchangeTab1(NMHDR* p_nmhdr, LRESULT* p_result);
 
 	DECLARE_MESSAGE_MAP()
 };

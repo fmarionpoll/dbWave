@@ -11,13 +11,13 @@ public:
 
 	// Operations
 public:
-	BOOL ReadDataInfos(CWaveBuf* pBuf) override;
-	int CheckFileType(CString& cs_filename) override;
+	BOOL read_data_infos(CWaveBuf* p_buf) override;
+	int check_file_type(CString& cs_filename) override;
 
 protected:
-	CString m_csOldStringID;
-	CString m_csStringID;
-	WORD m_wID;
+	CString m_cs_old_string_id_;
+	CString m_cs_string_id_;
+	WORD m_w_id_;
 
 	// Implementation
 public:

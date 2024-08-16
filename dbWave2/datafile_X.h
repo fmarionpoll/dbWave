@@ -17,32 +17,32 @@ public:
 	~CDataFileX() override;
 	DECLARE_DYNCREATE(CDataFileX)
 
-	virtual bool OpenDataFile(CString& sz_path_name, UINT u_open_flag);
-	virtual void CloseDataFile();
+	virtual bool open_data_file(CString& sz_path_name, UINT u_open_flag);
+	virtual void close_data_file();
 	// Operations
-	virtual int CheckFileType(CString& cs_filename);
-	virtual BOOL ReadDataInfos(CWaveBuf* pBuf);
-	virtual long ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveChanArray* pArray);
-	virtual BOOL ReadHZtags(TagList* pHZtags);
-	virtual BOOL ReadVTtags(TagList* pVTtags);
+	virtual int check_file_type(CString& cs_filename);
+	virtual BOOL read_data_infos(CWaveBuf* pBuf);
+	virtual long read_adc_data(long data_index, long nb_points, short* p_buffer, CWaveChanArray* p_array);
+	virtual BOOL read_hz_tags(TagList* p_hz_tags);
+	virtual BOOL read_vt_tags(TagList* p_vt_tags);
 
 	// I/O operations to be updated by Save
-	virtual BOOL InitFile();
-	virtual BOOL DataAppendStart();
-	virtual BOOL DataAppend(short* pBU, UINT uibytesLength);
-	virtual BOOL DataAppendStop();
-	virtual BOOL WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC);
-	virtual BOOL WriteHZtags(TagList* ptags);
-	virtual BOOL WriteVTtags(TagList* ptags);
+	virtual BOOL init_file();
+	virtual BOOL data_append_start();
+	virtual BOOL data_append(short* p_bu, UINT ui_bytes_length);
+	virtual BOOL data_append_stop();
+	virtual BOOL write_data_infos(CWaveFormat* pw_f, CWaveChanArray* pw_c);
+	virtual BOOL write_hz_tags(TagList* p_tags);
+	virtual BOOL write_vt_tags(TagList* p_tags);
 
 	//data parameters
 	UINT m_u_open_flag;
-	int m_bHeaderSize; // data header size
-	int m_idType; // file type 0=unknown; 1=atlab; 2=Asyst; 3=awave; ..
-	CStringA m_csType;
-	ULONGLONG m_ulOffsetData; // file offset of data start
-	LONGLONG m_ulOffsetHeader; // file offset of data header
-	ULONGLONG m_ulbytescount; // dummy parameter: Data append
+	int m_b_header_size; // data header size
+	int m_id_type; // file type 0=unknown; 1=atlab; 2=Asyst; 3=awave; ..
+	CStringA m_cs_type;
+	ULONGLONG m_ul_offset_data; // file offset of data start
+	LONGLONG m_ul_offset_header; // file offset of data header
+	ULONGLONG m_ul_bytes_count; // dummy parameter: Data append
 
 	// Implementation
 #ifdef _DEBUG
@@ -50,5 +50,5 @@ public:
 	void Dump(CDumpContext& dc) const override;
 #endif
 protected:
-	int isPatternPresent(char* bufRead, int lenRead, const char* bufPattern, int lenPattern);
+	int is_pattern_present(char* buf_read, int len_read, const char* buf_pattern, int len_pattern);
 };

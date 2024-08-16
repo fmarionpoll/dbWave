@@ -63,23 +63,23 @@ CDaoRecordset* ViewDbTable::OnGetRecordset()
 	return GetDocument()->db_get_recordset();
 }
 
-void ViewDbTable::OnSize(UINT nType, int cx, int cy)
+void ViewDbTable::OnSize(UINT n_type, int cx, int cy)
 {
 	if (m_b_init_)
 	{
-		switch (nType)
+		switch (n_type)
 		{
 		case SIZE_MAXIMIZED:
 		case SIZE_RESTORED:
 			if (cx <= 0 || cy <= 0)
 				break;
-			m_stretch_.ResizeControls(nType, cx, cy);
+			m_stretch_.ResizeControls(n_type, cx, cy);
 			break;
 		default:
 			break;
 		}
 	}
-	CDaoRecordView::OnSize(nType, cx, cy);
+	CDaoRecordView::OnSize(n_type, cx, cy);
 }
 
 BOOL ViewDbTable::OnMove(const UINT n_id_move_command)
@@ -94,25 +94,25 @@ BOOL ViewDbTable::OnMove(const UINT n_id_move_command)
 	return flag;
 }
 
-void ViewDbTable::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+void ViewDbTable::OnActivateView(BOOL b_activate, CView* p_activate_view, CView* p_deactive_view)
 {
-	if (bActivate)
+	if (b_activate)
 	{
 		AfxGetMainWnd()->PostMessage(WM_MYMESSAGE, HINT_ACTIVATE_VIEW,
-		                             reinterpret_cast<LPARAM>(pActivateView->GetDocument()));
+		                             reinterpret_cast<LPARAM>(p_activate_view->GetDocument()));
 	}
 	else
 	{
 	}
-	CDaoRecordView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	CDaoRecordView::OnActivateView(b_activate, p_activate_view, p_deactive_view);
 }
 
-BOOL ViewDbTable::OnPreparePrinting(CPrintInfo* pInfo)
+BOOL ViewDbTable::OnPreparePrinting(CPrintInfo* p_info)
 {
-	if (!DoPreparePrinting(pInfo))
+	if (!DoPreparePrinting(p_info))
 		return FALSE;
 
-	if (!COleDocObjectItem::OnPreparePrinting(this, pInfo))
+	if (!COleDocObjectItem::OnPreparePrinting(this, p_info))
 		return FALSE;
 
 	return TRUE;
@@ -128,13 +128,13 @@ void ViewDbTable::OnEndPrinting(CDC* /*p_dc*/, CPrintInfo* /*pInfo*/)
 	// TODO: add cleanup after printing
 }
 
-void ViewDbTable::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
+void ViewDbTable::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 {
 	// TODO: add customized printing code here
-	if (pInfo->m_bDocObject)
-		COleDocObjectItem::OnPrint(this, pInfo, TRUE);
+	if (p_info->m_bDocObject)
+		COleDocObjectItem::OnPrint(this, p_info, TRUE);
 	else
-		CView::OnPrint(p_dc, pInfo);
+		CView::OnPrint(p_dc, p_info);
 }
 
 void ViewDbTable::save_current_spk_file()
@@ -177,16 +177,16 @@ void ViewDbTable::increment_spike_flag()
 	}
 }
 
-void ViewDbTable::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewDbTable::OnNMClickTab1(NMHDR* p_nmhdr, LRESULT* p_result)
 {
 	const auto i_cur_sel = spk_list_tab_ctrl.GetCurSel();
 	SendMessage(WM_MYMESSAGE, HINT_VIEW_TAB_CHANGE, MAKELPARAM(i_cur_sel, 0));
-	*pResult = 0;
+	*p_result = 0;
 }
 
-void ViewDbTable::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewDbTable::OnTcnSelchangeTab1(NMHDR* p_nmhdr, LRESULT* p_result)
 {
 	const auto i_cur_sel = spk_list_tab_ctrl.GetCurSel();
 	PostMessage(WM_MYMESSAGE, HINT_VIEW_TAB_HAS_CHANGED, MAKELPARAM(i_cur_sel, 0));
-	*pResult = 0;
+	*p_result = 0;
 }

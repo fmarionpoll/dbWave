@@ -13,7 +13,7 @@ IMPLEMENT_DYNCREATE(CDataFileFromCEDSpike2, CDataFileX)
 const int LENCEDSON = 16;
 const char CEDSON64[] = "CED_DATA";
 
-number_id_to_text CDataFileFromCEDSpike2::errorMessages[] = {
+number_id_to_text CDataFileFromCEDSpike2::error_messages_[] = {
 	{S64_OK, _T("There was no error")},
 	{NO_FILE, _T("Attempt to use when file not open, or use of an invalid file handle, or no spare file handle")},
 	{
@@ -41,16 +41,16 @@ number_id_to_text CDataFileFromCEDSpike2::errorMessages[] = {
 
 CDataFileFromCEDSpike2::CDataFileFromCEDSpike2()
 {
-	m_bHeaderSize = 512;
-	m_ulOffsetData = m_bHeaderSize;
-	m_ulOffsetHeader = 0;
-	m_idType = DOCTYPE_SMR;
-	m_csType = CEDSON64;
+	m_b_header_size = 512;
+	m_ul_offset_data = m_b_header_size;
+	m_ul_offset_header = 0;
+	m_id_type = DOCTYPE_SMR;
+	m_cs_type = CEDSON64;
 }
 
 CDataFileFromCEDSpike2::~CDataFileFromCEDSpike2()
 {
-	CloseDataFile();
+	close_data_file();
 }
 
 #ifdef _DEBUG
@@ -65,30 +65,30 @@ void CDataFileFromCEDSpike2::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-bool CDataFileFromCEDSpike2::OpenDataFile(CString& sz_path_name, UINT u_open_flag)
+bool CDataFileFromCEDSpike2::open_data_file(CString& sz_path_name, UINT u_open_flag)
 {
-	m_nFid = S64Open(CT2A(sz_path_name), -1);
-	if (m_nFid <= 0)
+	m_n_fid_ = S64Open(CT2A(sz_path_name), -1);
+	if (m_n_fid_ <= 0)
 	{
-		CString message = CString("OpenCEDDataFile error: ") + getErrorMessage(m_nFid);
+		CString message = CString("OpenCEDDataFile error: ") + get_error_message(m_n_fid_);
 		AfxMessageBox(message, MB_OK);
 		return false;
 	}
 	return true;
 }
 
-void CDataFileFromCEDSpike2::CloseDataFile()
+void CDataFileFromCEDSpike2::close_data_file()
 {
-	if (m_nFid >= 0)
+	if (m_n_fid_ >= 0)
 	{
-		const int flag = S64Close(m_nFid);
+		const int flag = S64Close(m_n_fid_);
 		if (flag < 0)
-			AfxMessageBox(CString("CloseCEDDataFile error: ") + getErrorMessage(flag), MB_OK);
-		m_nFid = -1;
+			AfxMessageBox(CString("CloseCEDDataFile error: ") + get_error_message(flag), MB_OK);
+		m_n_fid_ = -1;
 	}
 }
 
-int CDataFileFromCEDSpike2::CheckFileType(CString& cs_fileName)
+int CDataFileFromCEDSpike2::check_file_type(CString& cs_fileName)
 {
 	cs_fileName.MakeLower();
 	if (cs_fileName.Find(_T("smr")) != -1)
@@ -98,50 +98,50 @@ int CDataFileFromCEDSpike2::CheckFileType(CString& cs_fileName)
 	return DOCTYPE_UNKNOWN;
 }
 
-BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
+BOOL CDataFileFromCEDSpike2::read_data_infos(CWaveBuf* p_buf)
 {
-	CWaveFormat* pWFormat = pBuf->get_p_wave_format();
-	CWaveChanArray* p_array = pBuf->get_p_wave_chan_array();
+	CWaveFormat* p_w_format = p_buf->get_p_wave_format();
+	CWaveChanArray* p_array = p_buf->get_p_wave_chan_array();
 
 	//	tentative
-	pWFormat->full_scale_volts = 5.0f; // 10 V full scale
-	pWFormat->bin_span = 65536; // 16 bits resolution
-	pWFormat->bin_zero = 0;
-	pWFormat->mode_encoding = OLx_ENC_BINARY;
-	pWFormat->mode_clock = INTERNAL_CLOCK;
-	pWFormat->mode_trigger = INTERNAL_TRIGGER;
-	pWFormat->cs_ad_card_name = "CED1401";
+	p_w_format->full_scale_volts = 5.0f; // 10 V full scale
+	p_w_format->bin_span = 65536; // 16 bits resolution
+	p_w_format->bin_zero = 0;
+	p_w_format->mode_encoding = OLx_ENC_BINARY;
+	p_w_format->mode_clock = INTERNAL_CLOCK;
+	p_w_format->mode_trigger = INTERNAL_TRIGGER;
+	p_w_format->cs_ad_card_name = "CED1401";
 
 	// get comments
-	pWFormat->cs_comment.Empty();
-	pWFormat->cs_stimulus.Empty();
-	pWFormat->cs_concentration.Empty();
-	pWFormat->cs_sensillum.Empty();
+	p_w_format->cs_comment.Empty();
+	p_w_format->cs_stimulus.Empty();
+	p_w_format->cs_concentration.Empty();
+	p_w_format->cs_sensillum.Empty();
 
 	// get global data and n channels
-	double time_base = S64GetTimeBase(m_nFid);
-	int lowest_free_chan = S64GetFreeChan(m_nFid);
-	const int max_chan = S64MaxChans(m_nFid);
+	double time_base = S64GetTimeBase(m_n_fid_);
+	int lowest_free_chan = S64GetFreeChan(m_n_fid_);
+	const int max_chan = S64MaxChans(m_n_fid_);
 
 	TTimeDate array_get_time_date{};
-	const int flag = S64TimeDate(m_nFid, reinterpret_cast<long long*>(&array_get_time_date), nullptr, -1);
+	const int flag = S64TimeDate(m_n_fid_, reinterpret_cast<long long*>(&array_get_time_date), nullptr, -1);
 	if (flag < 0)
 	{
-		const CString message = CString("Error reading date ") + getErrorMessage(flag) + CString(" \n");
+		const CString message = CString("Error reading date ") + get_error_message(flag) + CString(" \n");
 		AfxMessageBox(message, MB_OK);
 		return false;
 	}
-	pWFormat->acquisition_time = CTime(
-		array_get_time_date.wYear, array_get_time_date.ucMon, array_get_time_date.ucDay,
-		array_get_time_date.ucHour, array_get_time_date.ucMin, array_get_time_date.ucSec);
-	pWFormat->scan_count = 0;
+	p_w_format->acquisition_time = CTime(
+		array_get_time_date.w_year, array_get_time_date.uc_mon, array_get_time_date.uc_day,
+		array_get_time_date.uc_hour, array_get_time_date.uc_min, array_get_time_date.uc_sec);
+	p_w_format->scan_count = 0;
 	p_array->chan_array_remove_all();
 	int adcChan = -1;
 
 	for (int cedChan = 1; cedChan < max_chan; cedChan++)
 	{
 		// lowestFreeChan
-		int chanType = S64ChanType(m_nFid, cedChan);
+		int chanType = S64ChanType(m_n_fid_, cedChan);
 		if (chanType == 0)
 			continue;
 
@@ -153,16 +153,16 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 				descriptor = "Adc data";
 				const int i = p_array->chan_array_add();
 				const auto pChan = p_array->get_p_channel(i);
-				read_ChannelParameters(pChan, cedChan);
-				pWFormat->scan_count++;
-				pWFormat->sampling_rate_per_channel = static_cast<float>(1.0 / (static_cast<double>(pChan->am_CEDticksPerSample) * S64GetTimeBase(m_nFid)));
-				pWFormat->sample_count = static_cast<long>(pChan->am_CEDmaxTimeInTicks / pChan->am_CEDticksPerSample);
+				read_channel_parameters(pChan, cedChan);
+				p_w_format->scan_count++;
+				p_w_format->sampling_rate_per_channel = static_cast<float>(1.0 / (static_cast<double>(pChan->am_CEDticksPerSample) * S64GetTimeBase(m_n_fid_)));
+				p_w_format->sample_count = static_cast<long>(pChan->am_CEDmaxTimeInTicks / pChan->am_CEDticksPerSample);
 				adcChan = cedChan;
 			}
 			break;
 		case CHANTYPE_EventFall:
 			descriptor = "Event on falling edge";
-			read_EventFall(cedChan, pBuf);
+			read_event_fall(cedChan, p_buf);
 			break;
 		case CHANTYPE_EventRise:
 			descriptor = "Event on rising edge";
@@ -192,137 +192,137 @@ BOOL CDataFileFromCEDSpike2::ReadDataInfos(CWaveBuf* pBuf)
 		}
 	}
 	if (adcChan >= 0)
-		convert_VTtags_Ticks_to_ADintervals(pBuf, adcChan);
+		convert_vt_tags_ticks_to_ad_intervals(p_buf, adcChan);
 
-	TagList* pTags = pBuf->get_p_vt_tags();
-	if (pTags != nullptr && pTags->get_tag_list_size() > 0 && pWFormat->scan_count > 0)
+	TagList* pTags = p_buf->get_p_vt_tags();
+	if (pTags != nullptr && pTags->get_tag_list_size() > 0 && p_w_format->scan_count > 0)
 	{
 		for (int i = 0; i < p_array->chan_array_get_size(); i++)
 		{
 			const auto pChan = p_array->get_p_channel(i);
-			if (m_ticksPerSample != pChan->am_CEDticksPerSample)
-				m_ticksPerSample = pChan->am_CEDticksPerSample;
+			if (ticks_per_sample_ != pChan->am_CEDticksPerSample)
+				ticks_per_sample_ = pChan->am_CEDticksPerSample;
 		}
 		const Tag* pTag = pTags->get_tag(0);
-		m_llFileOffset = pTag->l_ticks / m_ticksPerSample;
-		const int newlength = pWFormat->sample_count - static_cast<int>(m_llFileOffset);
-		pWFormat->sample_count = newlength;
+		ll_file_offset_ = pTag->l_ticks / ticks_per_sample_;
+		const int newlength = p_w_format->sample_count - static_cast<int>(ll_file_offset_);
+		p_w_format->sample_count = newlength;
 	}
 
 	return TRUE;
 }
 
-void CDataFileFromCEDSpike2::read_ChannelParameters(CWaveChan* pChan, int cedChan)
+void CDataFileFromCEDSpike2::read_channel_parameters(CWaveChan* p_chan, int ced_chan)
 {
-	pChan->am_CEDchanID = cedChan;
-	pChan->am_csamplifier.Empty(); // amplifier type
-	pChan->am_csheadstage.Empty(); // headstage type
-	pChan->am_csComment.Empty(); // channel comment
-	pChan->am_csComment = read_ChannelComment(cedChan);
+	p_chan->am_CEDchanID = ced_chan;
+	p_chan->am_csamplifier.Empty(); // amplifier type
+	p_chan->am_csheadstage.Empty(); // headstage type
+	p_chan->am_csComment.Empty(); // channel comment
+	p_chan->am_csComment = read_channel_comment(ced_chan);
 
-	pChan->am_adchannel = 0; // channel scan list
-	pChan->am_gainAD = 1; // channel gain list
-	pChan->am_gainheadstage = 1; // assume headstage gain = 1
-	pChan->am_amplifierchan = 0; // assume 1 channel / amplifier
-	pChan->am_gainpre = 1; // assume gain -pre = 1
-	pChan->am_gainpost = 1; // assume gain -post = 1
-	pChan->am_notchfilt = 0; // assume no notch filter
-	pChan->am_lowpass = 0; // assume not low pass filtering
-	pChan->am_offset = 0.0f; // assume no offset compensation
-	pChan->am_csInputpos = "DC"; // assume input + = DC
-	pChan->am_csInputneg = "GND"; // assume input - = GND
+	p_chan->am_adchannel = 0; // channel scan list
+	p_chan->am_gainAD = 1; // channel gain list
+	p_chan->am_gainheadstage = 1; // assume headstage gain = 1
+	p_chan->am_amplifierchan = 0; // assume 1 channel / amplifier
+	p_chan->am_gainpre = 1; // assume gain -pre = 1
+	p_chan->am_gainpost = 1; // assume gain -post = 1
+	p_chan->am_notchfilt = 0; // assume no notch filter
+	p_chan->am_lowpass = 0; // assume not low pass filtering
+	p_chan->am_offset = 0.0f; // assume no offset compensation
+	p_chan->am_csInputpos = "DC"; // assume input + = DC
+	p_chan->am_csInputneg = "GND"; // assume input - = GND
 
-	int flag = S64GetChanOffset(m_nFid, cedChan, &pChan->am_CEDoffset);
-	flag = S64GetChanScale(m_nFid, cedChan, &pChan->am_CEDscale);
+	int flag = S64GetChanOffset(m_n_fid_, ced_chan, &p_chan->am_CEDoffset);
+	flag = S64GetChanScale(m_n_fid_, ced_chan, &p_chan->am_CEDscale);
 
-	pChan->am_amplifiergain = pChan->am_CEDscale * 10.;
-	pChan->am_resolutionV = 2.5 / pChan->am_amplifiergain / 65536;
-	pChan->am_gaintotal = pChan->am_amplifiergain;
+	p_chan->am_amplifiergain = p_chan->am_CEDscale * 10.;
+	p_chan->am_resolutionV = 2.5 / p_chan->am_amplifiergain / 65536;
+	p_chan->am_gaintotal = p_chan->am_amplifiergain;
 
-	pChan->am_CEDticksPerSample = S64ChanDivide(m_nFid, cedChan);
-	pChan->am_CEDmaxTimeInTicks = S64ChanMaxTime(m_nFid, cedChan);
+	p_chan->am_CEDticksPerSample = S64ChanDivide(m_n_fid_, ced_chan);
+	p_chan->am_CEDmaxTimeInTicks = S64ChanMaxTime(m_n_fid_, ced_chan);
 }
 
-CString CDataFileFromCEDSpike2::read_ChannelComment(int cedChan)
+CString CDataFileFromCEDSpike2::read_channel_comment(int ced_chan)
 {
-	const int size_comment = S64GetChanComment(m_nFid, cedChan, nullptr, -1);
+	const int size_comment = S64GetChanComment(m_n_fid_, ced_chan, nullptr, -1);
 	CString comment;
 	if (size_comment > 0)
 	{
 		const auto buffer = new char[size_comment];
-		int flag = S64GetChanComment(m_nFid, cedChan, buffer, 0);
+		int flag = S64GetChanComment(m_n_fid_, ced_chan, buffer, 0);
 		comment = CString(buffer);
 		delete[] buffer;
 	}
 	return comment;
 }
 
-CString CDataFileFromCEDSpike2::read_ChannelTitle(int cedChan)
+CString CDataFileFromCEDSpike2::read_channel_title(int ced_chan)
 {
-	const int size_comment = S64GetChanTitle(m_nFid, cedChan, nullptr, -1);
+	const int size_comment = S64GetChanTitle(m_n_fid_, ced_chan, nullptr, -1);
 	CString comment;
 	if (size_comment > 0)
 	{
 		const auto buffer = new char[size_comment];
-		int flag = S64GetChanTitle(m_nFid, cedChan, buffer, 0);
+		int flag = S64GetChanTitle(m_n_fid_, ced_chan, buffer, 0);
 		comment = CString(buffer);
 		delete[] buffer;
 	}
 	return comment;
 }
 
-CString CDataFileFromCEDSpike2::read_FileComment(int nInd) const
+CString CDataFileFromCEDSpike2::read_file_comment(int n_ind) const
 {
-	const int size_comment = S64GetFileComment(m_nFid, nInd, nullptr, -1);
+	const int size_comment = S64GetFileComment(m_n_fid_, n_ind, nullptr, -1);
 	CString comment;
 	if (size_comment > 0)
 	{
 		const auto buffer = new char[size_comment];
-		int flag = S64GetFileComment(m_nFid, nInd, buffer, 0);
+		int flag = S64GetFileComment(m_n_fid_, n_ind, buffer, 0);
 		comment = CString(buffer);
 		delete[] buffer;
 	}
 	return comment;
 }
 
-long CDataFileFromCEDSpike2::ReadAdcData(long l_First, long nbPointsAllChannels, short* pBuffer, CWaveChanArray* pArray)
+long CDataFileFromCEDSpike2::read_adc_data(const long l_first, const long nb_points_all_channels, short* p_buffer, CWaveChanArray* p_array)
 {
-	const int scan_count = pArray->chan_array_get_size();
-	const long long ll_data_n_values = nbPointsAllChannels / scan_count / sizeof(short);
+	const int scan_count = p_array->chan_array_get_size();
+	const long long ll_data_n_values = nb_points_all_channels / scan_count / sizeof(short);
 	int n_values_read = -1;
 
-	const long long ll_First = l_First + m_llFileOffset;
+	const long long ll_First = l_first + ll_file_offset_;
 
 	for (int channel = 0; channel < scan_count; channel++)
 	{
-		CWaveChan* pChan = pArray->get_p_channel(channel);
+		CWaveChan* pChan = p_array->get_p_channel(channel);
 		// TODO: create channel buffer
 		const size_t numberBytes = static_cast<int>(ll_data_n_values) * sizeof(short);
-		memset(pBuffer, 0, numberBytes);
-		n_values_read = read_ChannelData(pChan, pBuffer, ll_First, ll_data_n_values);
+		memset(p_buffer, 0, numberBytes);
+		n_values_read = read_channel_data(pChan, p_buffer, ll_First, ll_data_n_values);
 	}
 	// TODO: combine channels buffers to build interleaved data 
 	return n_values_read;
 }
 
-long CDataFileFromCEDSpike2::read_ChannelData(const CWaveChan* pChan, short* pData, long long ll_First, long long llNValues)
+long CDataFileFromCEDSpike2::read_channel_data(const CWaveChan* p_chan, short* p_data, const long long ll_first, const long long ll_n_values)
 {
-	const int chan_id = pChan->am_CEDchanID;
-	const long long ticks_per_sample = S64ChanDivide(m_nFid, chan_id);
-	const long long t_up_to = (ll_First + llNValues - 1) * ticks_per_sample;
+	const int chan_id = p_chan->am_CEDchanID;
+	const long long ticks_per_sample = S64ChanDivide(m_n_fid_, chan_id);
+	const long long t_up_to = (ll_first + ll_n_values - 1) * ticks_per_sample;
 	int number_of_values_read = 0;
 
-	while (number_of_values_read < llNValues)
+	while (number_of_values_read < ll_n_values)
 	{
 		constexpr int n_mask = 0;
-		const int n_max = static_cast<int>(llNValues) - number_of_values_read;
-		const long long t_from = (ll_First + number_of_values_read) * ticks_per_sample;
+		const int n_max = static_cast<int>(ll_n_values) - number_of_values_read;
+		const long long t_from = (ll_first + number_of_values_read) * ticks_per_sample;
 		if (t_from >= t_up_to)
 			break;
 
-		short* p_buffer = pData + number_of_values_read;
+		short* p_buffer = p_data + number_of_values_read;
 		long long t_first{};
-		const int n_values_read = S64ReadWaveS(m_nFid, chan_id, p_buffer, n_max, t_from, t_up_to, &t_first, n_mask);
+		const int n_values_read = S64ReadWaveS(m_n_fid_, chan_id, p_buffer, n_max, t_from, t_up_to, &t_first, n_mask);
 
 		if (n_values_read <= 0)
 			break;
@@ -330,69 +330,69 @@ long CDataFileFromCEDSpike2::read_ChannelData(const CWaveChan* pChan, short* pDa
 		number_of_values_read += n_values_read;
 		if (t_first > t_from)
 		{
-			if (m_bRelocate_if_StartWithGap)
-				relocate_ChannelData(p_buffer, t_from, t_first, n_values_read, ticks_per_sample);
+			if (b_relocate_if_start_with_gap_)
+				relocate_channel_data(p_buffer, t_from, t_first, n_values_read, ticks_per_sample);
 			number_of_values_read += static_cast<long>(t_first / ticks_per_sample);
 		}
 	}
 	return number_of_values_read;
 }
 
-long CDataFileFromCEDSpike2::relocate_ChannelData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead,
-                                                  long long ticksPerSample)
+long CDataFileFromCEDSpike2::relocate_channel_data(short* p_buffer, long long t_from, long long t_first, int n_values_read,
+                                                  long long ticks_per_sample)
 {
-	const long offset = static_cast<long>((tFirst - tFrom) / ticksPerSample);
-	size_t count = nValuesRead * sizeof(short);
-	memmove(pBuffer + offset, pBuffer, count);
+	const long offset = static_cast<long>((t_first - t_from) / ticks_per_sample);
+	size_t count = n_values_read * sizeof(short);
+	memmove(p_buffer + offset, p_buffer, count);
 
 	count = (offset - 1) * sizeof(short);
-	memset(pBuffer, 0, count);
+	memset(p_buffer, 0, count);
 	return offset;
 }
 
-CString CDataFileFromCEDSpike2::getErrorMessage(int flag)
+CString CDataFileFromCEDSpike2::get_error_message(int flag)
 {
-	constexpr int n_items = sizeof(errorMessages) / sizeof(errorMessages[0]);
+	constexpr int n_items = sizeof(error_messages_) / sizeof(error_messages_[0]);
 	ASSERT(n_items == 20);
 	CString error_msg = _T("error not found");
 	for (int i = 0; i < n_items; i++)
 	{
-		if (flag == errorMessages[i].value)
+		if (flag == error_messages_[i].value)
 		{
-			error_msg = errorMessages[i].cs_text;
+			error_msg = error_messages_[i].cs_text;
 			break;
 		}
 	}
 	return error_msg;
 }
 
-void CDataFileFromCEDSpike2::read_EventFall(int cedChan, CWaveBuf* pBuf)
+void CDataFileFromCEDSpike2::read_event_fall(int ced_chan, CWaveBuf* p_buf)
 {
-	TagList* pTags = pBuf->get_p_vt_tags();
+	TagList* pTags = p_buf->get_p_vt_tags();
 	pTags->remove_all_tags();
 	int n_read = 0;
 	long long data = -1;
 	do
 	{
-		n_read = S64ReadEvents(m_nFid, cedChan, &data, 1, data + 1, -1, 0);
+		n_read = S64ReadEvents(m_n_fid_, ced_chan, &data, 1, data + 1, -1, 0);
 		if (n_read > 0)
 			pTags->add_tag(Tag(data));
 	}
 	while (n_read > 0);
 }
 
-void CDataFileFromCEDSpike2::convert_VTtags_Ticks_to_ADintervals(CWaveBuf* pBuf, int cedChan)
+void CDataFileFromCEDSpike2::convert_vt_tags_ticks_to_ad_intervals(CWaveBuf* p_buf, int ced_chan)
 {
-	TagList* p_tags = pBuf->get_p_vt_tags();
+	TagList* p_tags = p_buf->get_p_vt_tags();
 	const int n_tags = p_tags->get_tag_list_size();
 	if (n_tags > 0)
 	{
-		const long long ticksPerSample = S64ChanDivide(m_nFid, cedChan);
+		const long long ticksPerSample = S64ChanDivide(m_n_fid_, ced_chan);
 		for (int i = 0; i < n_tags; i++)
 		{
 			Tag* ptag = p_tags->get_tag(i);
 			ptag->value_long = static_cast<long>(ptag->l_ticks / ticksPerSample);
-			ptag->ref_channel = cedChan;
+			ptag->ref_channel = ced_chan;
 		}
 	}
 }

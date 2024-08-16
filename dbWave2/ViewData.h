@@ -67,12 +67,12 @@ protected:
 	void chain_dialog(WORD i_id);
 	int print_get_n_pages();
 
-	BOOL m_bCommonScale = false;
+	BOOL b_common_scale_ = false;
 
-	ScrollBarEx file_scroll_bar_; // data position within file
-	SCROLLINFO file_scroll_bar_infos_{}; // infos for scrollbar
-	int m_v_bar_mode_ = 0; // flag V scrollbar state
-	CScrollBar scroll_y_; // V scrollbar
+	ScrollBarEx file_scroll_bar_; 
+	SCROLLINFO file_scroll_bar_infos_{}; 
+	int m_v_bar_mode_ = 0; 
+	CScrollBar scroll_y_; 
 
 	void on_file_scroll(UINT n_sb_code, UINT n_pos);
 	void on_gain_scroll(UINT n_sb_code, UINT n_pos);
@@ -95,7 +95,7 @@ protected:
 	// Overrides
 protected:
 	void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint) override;
-	void DoDataExchange(CDataExchange* pDX) override;
+	void DoDataExchange(CDataExchange* p_dx) override;
 	void OnInitialUpdate() override;
 	BOOL OnPreparePrinting(CPrintInfo* p_info) override;
 	void OnBeginPrinting(CDC* p_dc, CPrintInfo* p_info) override;

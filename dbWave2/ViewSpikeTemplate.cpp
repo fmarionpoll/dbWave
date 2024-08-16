@@ -319,10 +319,10 @@ void ViewSpikeTemplates::select_spike(db_spike& spike_sel)
 	p_spk_list->m_selected_spike = spike_no_;
 }
 
-LRESULT ViewSpikeTemplates::on_my_message(WPARAM wParam, LPARAM lParam)
+LRESULT ViewSpikeTemplates::on_my_message(WPARAM w_param, LPARAM l_param)
 {
-	short shortValue = LOWORD(lParam);
-	switch (wParam)
+	short shortValue = LOWORD(l_param);
+	switch (w_param)
 	{
 	case HINT_SET_MOUSE_CURSOR:
 		if (shortValue > CURSOR_ZOOM)
@@ -365,7 +365,7 @@ LRESULT ViewSpikeTemplates::on_my_message(WPARAM wParam, LPARAM lParam)
 		break;
 
 	case HINT_R_MOUSE_BUTTON_DOWN:
-		edit_spike_class(HIWORD(lParam), shortValue);
+		edit_spike_class(HIWORD(l_param), shortValue);
 		break;
 	case HINT_VIEW_TAB_HAS_CHANGED:
 		update_ctrl_tab1(shortValue);
@@ -422,12 +422,12 @@ void ViewSpikeTemplates::on_en_change_time_last()
 	}
 }
 
-void ViewSpikeTemplates::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void ViewSpikeTemplates::OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar)
 {
 	// form_view scroll: if pointer null
-	if (pScrollBar == nullptr)
+	if (p_scroll_bar == nullptr)
 	{
-		ViewDbTable::OnHScroll(nSBCode, nPos, pScrollBar);
+		ViewDbTable::OnHScroll(n_sb_code, n_pos, p_scroll_bar);
 		return;
 	}
 
@@ -438,7 +438,7 @@ void ViewSpikeTemplates::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollB
 	if (sb_scroll == 0)
 		sb_scroll = 1;
 	long l_first = l_first_;
-	switch (nSBCode)
+	switch (n_sb_code)
 	{
 	case SB_LEFT: l_first = 0; break; 
 	case SB_LINELEFT: l_first -= sb_scroll; break;
@@ -448,7 +448,7 @@ void ViewSpikeTemplates::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollB
 	case SB_RIGHT: l_first = total_scroll - page_scroll + 1; break;
 	case SB_THUMBPOSITION: 
 	case SB_THUMBTRACK: 
-		l_first = static_cast<int>(nPos); break;
+		l_first = static_cast<int>(n_pos); break;
 	default:
 		return;
 	}
@@ -966,9 +966,9 @@ void ViewSpikeTemplates::sort_spikes()
 	m_chart_spk_wnd_shape_.Invalidate();
 }
 
-void ViewSpikeTemplates::on_keydown_template_list(NMHDR* pNMHDR, LRESULT* p_result)
+void ViewSpikeTemplates::on_keydown_template_list(NMHDR* p_nmhdr, LRESULT* p_result)
 {
-	const auto* p_lv_key_dow = reinterpret_cast<LV_KEYDOWN*>(pNMHDR);
+	const auto* p_lv_key_dow = reinterpret_cast<LV_KEYDOWN*>(p_nmhdr);
 
 	// delete selected template
 	if (p_lv_key_dow->wVKey == VK_DELETE && m_template_list_.GetSelectedCount() > 0)
@@ -1176,18 +1176,18 @@ void ViewSpikeTemplates::on_en_change_i_first_sorted_class()
 	}
 }
 
-void ViewSpikeTemplates::on_tcn_sel_change_tab2(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewSpikeTemplates::on_tcn_sel_change_tab2(NMHDR* p_nmhdr, LRESULT* p_result)
 {
 	const auto icursel = spk_list_tab_ctrl.GetCurSel();
 	select_spike_list(icursel);
-	*pResult = 0;
+	*p_result = 0;
 }
 
-void ViewSpikeTemplates::on_nm_click_tab2(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewSpikeTemplates::on_nm_click_tab2(NMHDR* p_nmhdr, LRESULT* p_result)
 {
 	const auto icursel = spk_list_tab_ctrl.GetCurSel();
 	select_spike_list(icursel);
-	*pResult = 0;
+	*p_result = 0;
 }
 
 void ViewSpikeTemplates::on_bn_clicked_display_single_class()

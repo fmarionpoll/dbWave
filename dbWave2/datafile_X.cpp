@@ -14,12 +14,12 @@ IMPLEMENT_DYNCREATE(CDataFileX, CObject)
 
 CDataFileX::CDataFileX()
 {
-	m_bHeaderSize = 0;
-	m_ulOffsetData = 0;
-	m_ulOffsetHeader = 0;
-	m_ulbytescount = 0;
-	m_idType = DOCTYPE_UNKNOWN;
-	m_csType = _T("UNKNOWN");
+	m_b_header_size = 0;
+	m_ul_offset_data = 0;
+	m_ul_offset_header = 0;
+	m_ul_bytes_count = 0;
+	m_id_type = DOCTYPE_UNKNOWN;
+	m_cs_type = _T("UNKNOWN");
 	UINT m_u_open_flag = modeReadWrite | shareDenyNone | typeBinary;
 }
 
@@ -37,93 +37,93 @@ void CDataFileX::AssertValid() const
 void CDataFileX::Dump(CDumpContext& dc) const
 {
 	CObject::Dump(dc);
-	dc << "headersize = " << m_bHeaderSize;
-	dc << "header_offset = " << m_ulOffsetHeader;
-	dc << "data_offset = " << m_ulOffsetData;
+	dc << "header_size = " << m_b_header_size;
+	dc << "header_offset = " << m_ul_offset_header;
+	dc << "data_offset = " << m_ul_offset_data;
 }
 #endif //_DEBUG
 
-long CDataFileX::ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveChanArray* pArray)
+long CDataFileX::read_adc_data(long data_index, long nb_points, short* p_buffer, CWaveChanArray* p_array)
 {
 	// seek and read CFile
-	const LONGLONG l_off = (static_cast<LONGLONG>(dataIndex) * sizeof(short)) + m_ulOffsetData;
+	const LONGLONG l_off = (static_cast<LONGLONG>(data_index) * sizeof(short)) + m_ul_offset_data;
 	Seek(l_off, begin);
-	const long l_size = Read(pBuffer, nbpoints);
+	const long l_size = Read(p_buffer, nb_points);
 	// adjust dependent parameters
 	return l_size / sizeof(short);
 }
 
-int CDataFileX::CheckFileType(CString& cs_filename)
+int CDataFileX::check_file_type(CString& cs_filename)
 {
 	return DOCTYPE_UNKNOWN;
 }
 
-BOOL CDataFileX::ReadDataInfos(CWaveBuf* pBuf)
+BOOL CDataFileX::read_data_infos(CWaveBuf* pBuf)
 {
 	return TRUE;
 }
 
-BOOL CDataFileX::ReadHZtags(TagList* pHZtags)
+BOOL CDataFileX::read_hz_tags(TagList* p_hz_tags)
 {
 	return FALSE;
 }
 
-BOOL CDataFileX::ReadVTtags(TagList* pVTtags)
+BOOL CDataFileX::read_vt_tags(TagList* p_vt_tags)
 {
 	return FALSE;
 }
 
-BOOL CDataFileX::InitFile()
+BOOL CDataFileX::init_file()
 {
 	return FALSE;
 }
 
-BOOL CDataFileX::DataAppendStart()
+BOOL CDataFileX::data_append_start()
 {
-	m_ulbytescount = 0;
+	m_ul_bytes_count = 0;
 	return FALSE;
 }
 
-BOOL CDataFileX::DataAppend(short* pBU, UINT uibytesLength)
-{
-	return FALSE;
-}
-
-BOOL CDataFileX::DataAppendStop()
+BOOL CDataFileX::data_append(short* p_bu, UINT ui_bytes_length)
 {
 	return FALSE;
 }
 
-BOOL CDataFileX::WriteDataInfos(CWaveFormat* pwF, CWaveChanArray* pwC)
+BOOL CDataFileX::data_append_stop()
 {
 	return FALSE;
 }
 
-BOOL CDataFileX::WriteHZtags(TagList* ptags)
+BOOL CDataFileX::write_data_infos(CWaveFormat* pw_f, CWaveChanArray* pw_c)
 {
 	return FALSE;
 }
 
-BOOL CDataFileX::WriteVTtags(TagList* ptags)
+BOOL CDataFileX::write_hz_tags(TagList* p_tags)
 {
 	return FALSE;
 }
 
-int CDataFileX::isPatternPresent(char* bufRead, int lenRead, const char* bufPattern, int lenPattern)
+BOOL CDataFileX::write_vt_tags(TagList* p_tags)
 {
-	std::string needle(bufPattern, lenPattern - 1);
-	std::string haystack(bufRead, lenRead);
+	return FALSE;
+}
+
+int CDataFileX::is_pattern_present(char* buf_read, int len_read, const char* buf_pattern, int len_pattern)
+{
+	std::string needle(buf_pattern, len_pattern - 1);
+	std::string haystack(buf_read, len_read);
 	std::size_t n = haystack.find(needle);
 	int flag = DOCTYPE_UNKNOWN;
 	if (n != std::string::npos)
 	{
-		flag = m_idType;
-		m_csType = bufPattern;
+		flag = m_id_type;
+		m_cs_type = buf_pattern;
 	}
 	return flag;
 }
 
-bool CDataFileX::OpenDataFile(CString& sz_path_name, UINT u_open_flag)
+bool CDataFileX::open_data_file(CString& sz_path_name, UINT u_open_flag)
 {
 	CFileException error{};
 	bool flag = Open(sz_path_name, u_open_flag, &error);
@@ -132,7 +132,7 @@ bool CDataFileX::OpenDataFile(CString& sz_path_name, UINT u_open_flag)
 	return flag;
 }
 
-void CDataFileX::CloseDataFile()
+void CDataFileX::close_data_file()
 {
 	if (m_hFile != hFileNull)
 		Close();

@@ -188,7 +188,7 @@ public:
 	afx_msg void on_en_change_time_first();
 	afx_msg void on_en_change_time_last();
 	afx_msg void on_tools_detection_parameters();
-	afx_msg void on_tools_edit_transform_spikes();
+	afx_msg void on_tools_edit_spikes();
 	afx_msg void on_tools_data_series();
 	afx_msg void on_edit_copy();
 	afx_msg void on_file_save();
@@ -201,7 +201,7 @@ public:
 	afx_msg void on_en_change_spk_wnd_length();
 	afx_msg void on_bn_clicked_locate_button();
 
-	afx_msg void on_sel_change_tab(NMHDR* pNMHDR, LRESULT* p_result);
+	afx_msg void on_sel_change_tab(NMHDR* p_nmhdr, LRESULT* p_result);
 	afx_msg void on_bn_clicked_clear_all();
 	afx_msg void on_tools_edit_stimulus();
 	afx_msg void on_en_change_chan_selected();

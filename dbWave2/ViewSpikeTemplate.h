@@ -98,8 +98,8 @@ public:
 	afx_msg void on_en_change_class();
 	afx_msg void on_en_change_time_first();
 	afx_msg void on_en_change_time_last();
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg LRESULT on_my_message(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
+	afx_msg LRESULT on_my_message(WPARAM w_param, LPARAM l_param);
 	afx_msg void on_format_all_data();
 	afx_msg void on_format_gain_adjust();
 	afx_msg void on_format_center_curve();
@@ -107,7 +107,7 @@ public:
 	afx_msg void on_en_change_hit_rate();
 	afx_msg void on_en_change_tolerance();
 	afx_msg void on_en_change_hit_rate_sort();
-	afx_msg void on_keydown_template_list(NMHDR* pNMHDR, LRESULT* p_result);
+	afx_msg void on_keydown_template_list(NMHDR* p_nmhdr, LRESULT* p_result);
 	afx_msg void on_check1();
 	afx_msg void OnDestroy();
 
@@ -120,8 +120,8 @@ public:
 	afx_msg void on_bn_clicked_display();
 	afx_msg void on_en_change_i_first_sorted_class();
 
-	afx_msg void on_tcn_sel_change_tab2(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void on_nm_click_tab2(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void on_tcn_sel_change_tab2(NMHDR* p_nmhdr, LRESULT* p_result);
+	afx_msg void on_nm_click_tab2(NMHDR* p_nmhdr, LRESULT* p_result);
 	afx_msg void on_bn_clicked_display_single_class();
 	afx_msg void on_en_change_t1();
 	afx_msg void on_en_change_t2();

@@ -86,7 +86,7 @@ BEGIN_MESSAGE_MAP(ViewSpikeDetection, ViewDbTable)
 	ON_COMMAND(ID_TOOLS_DETECT_PARMS, &ViewSpikeDetection::on_tools_detection_parameters)
 	ON_COMMAND(ID_TOOLS_DETECT, &ViewSpikeDetection::on_measure_all)
 	ON_COMMAND(ID_TOOLS_EDIT_STIMULUS, &ViewSpikeDetection::on_tools_edit_stimulus)
-	ON_COMMAND(ID_TOOLS_EDIT_SPIKES, &ViewSpikeDetection::on_tools_edit_transform_spikes)
+	ON_COMMAND(ID_TOOLS_EDIT_SPIKES, &ViewSpikeDetection::on_tools_edit_spikes)
 	ON_COMMAND(ID_TOOLS_DATA_SERIES, &ViewSpikeDetection::on_tools_data_series)
 	ON_COMMAND(ID_EDIT_COPY, &ViewSpikeDetection::on_edit_copy)
 	ON_COMMAND(ID_FILE_SAVE, &ViewSpikeDetection::on_file_save)
@@ -224,7 +224,7 @@ void ViewSpikeDetection::update_legends()
 	UpdateData(FALSE);
 }
 
-void ViewSpikeDetection::update_spike_file(BOOL b_update_interface)
+void ViewSpikeDetection::update_spike_file(const BOOL b_update_interface)
 {
 	const auto pdb_doc = GetDocument();
 	if (pdb_doc->open_current_spike_file() == nullptr)
@@ -672,7 +672,7 @@ LRESULT ViewSpikeDetection::on_my_message(const WPARAM w_param, const LPARAM l_p
 		if (threshold < 0)
 			threshold = 0;
 		m_spike_index = threshold;
-		on_tools_edit_transform_spikes();
+		on_tools_edit_spikes();
 		break;
 
 	case HINT_CHANGE_ZOOM:
@@ -1396,31 +1396,25 @@ int ViewSpikeDetection::detect_method_1(const WORD channel_index)
 					+ spike_detection_parameters->extract_channel;
 				p_spk_list->add_spike(pM, n_channels, ii_time, source_channel, 0, TRUE);
 			}
-
-			// update loop parameters
 			cx = ii_time + refractory;
 		}
-
-		///////////////////////////////////////////////////////////////
 		l_data_first = cx + 1; // update for next loop
 	}
 
 	return p_spk_list->get_spikes_count();
 }
 
-void ViewSpikeDetection::on_tools_edit_transform_spikes()
+void ViewSpikeDetection::on_tools_edit_spikes()
 {
-	DlgSpikeEdit dlg; // dialog box
+	DlgSpikeEdit dlg; 
 	dlg.y_extent = m_chart_spike_shape_.get_yw_extent();
 	dlg.y_zero = m_chart_spike_shape_.get_yw_org(); 
 	dlg.x_extent = m_chart_spike_shape_.get_xw_extent(); 
 	dlg.x_zero = m_chart_spike_shape_.get_xw_org(); 
 	dlg.spike_index = m_spike_index; 
-	p_spk_list->remove_all_spike_flags();
+	//p_spk_list->remove_all_spike_flags();
 	dlg.db_wave_doc = GetDocument();
 	dlg.m_parent = this;
-
-	// open dialog box and wait for response
 	dlg.DoModal();
 
 	m_spike_index = dlg.spike_index;
@@ -3018,7 +3012,7 @@ void ViewSpikeDetection::update_detection_controls()
 	m_chart_spike_shape_.set_spike_list(p_spk_list);
 }
 
-void ViewSpikeDetection::on_sel_change_tab(NMHDR* pNMHDR, LRESULT* p_result)
+void ViewSpikeDetection::on_sel_change_tab(NMHDR* p_nmhdr, LRESULT* p_result)
 {
 	serialize_windows_state(b_save, m_i_detect_parameters_);
 	const auto selected_tab = spk_list_tab_ctrl.GetCurSel();

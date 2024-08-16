@@ -329,10 +329,6 @@ void ViewSpikeSort::load_current_spike_file()
 		p_spk_doc->SetPathName(GetDocument()->db_get_current_spk_file_name(), FALSE);
 		const int current_index = GetDocument()->get_current_spike_file()->get_spike_list_current_index();
 		p_spk_list = p_spk_doc->set_spike_list_current_index(current_index);
-
-		// update Tab at the bottom
-		spk_list_tab_ctrl.InitctrlTabFromSpikeDoc(p_spk_doc);
-		spk_list_tab_ctrl.SetCurSel(current_index);
 	}
 }
 
@@ -340,6 +336,9 @@ void ViewSpikeSort::update_file_parameters()
 {
 	const BOOL first_update = (p_spk_doc == nullptr);
 	load_current_spike_file();
+	// update Tab at the bottom
+	spk_list_tab_ctrl.InitctrlTabFromSpikeDoc(p_spk_doc);
+	spk_list_tab_ctrl.SetCurSel(GetDocument()->get_current_spike_file()->get_spike_list_current_index());
 
 	if (first_update || options_view_data_->b_complete_record)
 	{
@@ -1003,7 +1002,7 @@ boolean ViewSpikeSort::open_dat_and_spk_files_of_selected_spike(const db_spike& 
 		if (GetDocument()->db_set_current_record_position(spike_coords.database_position))
 		{
 			const auto spk_name = GetDocument()->db_get_current_dat_file_name();
-			GetDocument()->open_current_spike_file();
+			load_current_spike_file();
 		}
 		else
 		{
@@ -1050,11 +1049,8 @@ void ViewSpikeSort::on_tools_edit_spikes()
 		db_spike spike_sel(-1, -1, spike_index_);
 		select_spike(spike_sel);
 	}
-
 	if (dlg.b_changed)
-	{
 		p_spk_doc->SetModifiedFlag(TRUE);
-	}
 
 	update_legends();
 	UpdateData(FALSE);

@@ -11,16 +11,16 @@ public:
 	CDataFileATLAB();
 	DECLARE_DYNCREATE(CDataFileATLAB)
 
-	BOOL ReadDataInfos(CWaveBuf* p_buf) override;
-	int CheckFileType(CString& cs_filename) override;
+	BOOL read_data_infos(CWaveBuf* p_buf) override;
+	int check_file_type(CString& cs_filename) override;
 protected:
-	void init_dummy_chans_info(int chanlistindex) const;
-	void load_channel_from_cyber(int channel, char* pcyberchan) const;
+	void init_dummy_channels_info(int chan_list_index) const;
+	void load_channel_from_cyber(int channel, char* p_cyber_chan) const;
 	void init_channels_from_cyber_a320(char* p_header) const;
-	static CString get_cyber_a320_filter(int ncode);
+	static CString get_cyber_a320_filter(int n_code);
 
-	CWaveFormat* m_pWFormat{nullptr};
-	CWaveChanArray* m_pArray{nullptr};
+	CWaveFormat* m_p_w_format_{nullptr};
+	CWaveChanArray* m_p_array_{nullptr};
 
 public:
 	~CDataFileATLAB() override;

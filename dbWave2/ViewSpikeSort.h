@@ -39,7 +39,7 @@ protected:
 	float shape_t2_ms_{ 0.5f };
 	int shape_t1_{};
 	int shape_t2_{};
-	void change_chart_shape_vt_tag(const int tag_index);
+	void change_chart_shape_vt_tag(int tag_index);
 
 	CEditCtrl mm_source_class_;
 	CEditCtrl mm_destination_class_;
@@ -66,7 +66,7 @@ protected:
 	int tag_index_hist_low_{};
 	int tag_index_hist_up_{};
 	void build_histogram();
-	void change_chart_histogram_vt_tag(const int tag_index);
+	void change_chart_histogram_vt_tag(int tag_index);
 	void update_cursors_from_lower_threshold_mv();
 	void update_cursors_from_upper_threshold_mv();
 
@@ -80,10 +80,10 @@ protected:
 	int m_i_xy_left_{};
 	int tag_index_measures_low_{};
 	int tag_index_measures_up_{};
-	void change_chart_measure_hz_tag(const int value);
+	void change_chart_measure_hz_tag(int value);
 	void activate_mode4();
 	void show_controls_for_mode4(int n_cmd_show) const;
-	void change_chart_measure_vt_tag(const int value);
+	void change_chart_measure_vt_tag(int value);
 	
 	CEditCtrl mm_t_xy_left_;
 	float t_xy_right_{ 1.f };

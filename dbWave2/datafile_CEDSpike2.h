@@ -37,19 +37,19 @@ constexpr int MORE_DATA = -24;
 
 struct TTimeDate // bit compatible with TSONTimeDate
 {
-	uint8_t ucHun; //!< hundreths of a second, 0-99
-	uint8_t ucSec; //!< seconds, 0-59
-	uint8_t ucMin; //!< minutes, 0-59
-	uint8_t ucHour; //!< hour - 24 hour clock, 0-23
-	uint8_t ucDay; //!< day of month, 1-31
-	uint8_t ucMon; //!< month of year, 1-12
-	uint16_t wYear; //!< year 1980-65535! 0 means unset.
+	uint8_t uc_hun; //!< hundreths of a second, 0-99
+	uint8_t uc_sec; //!< seconds, 0-59
+	uint8_t uc_min; //!< minutes, 0-59
+	uint8_t uc_hour; //!< hour - 24 hour clock, 0-23
+	uint8_t uc_day; //!< day of month, 1-31
+	uint8_t uc_mon; //!< month of year, 1-12
+	uint16_t w_year; //!< year 1980-65535! 0 means unset.
 
 	//! Sets the contents to 0
 	void clear()
 	{
-		ucHun = ucSec = ucMin = ucHour = ucDay = ucMon = 0;
-		wYear = 0;
+		uc_hun = uc_sec = uc_min = uc_hour = uc_day = uc_mon = 0;
+		w_year = 0;
 	}
 };
 
@@ -63,11 +63,11 @@ public:
 
 	// Operations
 public:
-	int CheckFileType(CString& cs_filename) override;
-	BOOL ReadDataInfos(CWaveBuf* pBuf) override;
-	bool OpenDataFile(CString& sz_path_name, UINT u_open_flag) override;
-	void CloseDataFile() override;
-	long ReadAdcData(long dataIndex, long nbpoints, short* pBuffer, CWaveChanArray* pArray) override;
+	int check_file_type(CString& cs_filename) override;
+	BOOL read_data_infos(CWaveBuf* p_buf) override;
+	bool open_data_file(CString& sz_path_name, UINT u_open_flag) override;
+	void close_data_file() override;
+	long read_adc_data(long l_first, long nb_points_all_channels, short* p_buffer, CWaveChanArray* p_array) override;
 
 	// Implementation
 public:
@@ -77,21 +77,20 @@ public:
 #endif
 
 protected:
-	static number_id_to_text errorMessages[];
-	int m_nFid = -1;
-	boolean m_bRelocate_if_StartWithGap = false;
-	boolean m_bRemoveGaps = true;
-	long long m_ticksPerSample = -1;
-	long long m_llFileOffset = 0;
+	static number_id_to_text error_messages_[];
+	int m_n_fid_ = -1;
+	boolean b_relocate_if_start_with_gap_ = false;
+	boolean b_remove_gaps_ = true;
+	long long ticks_per_sample_ = -1;
+	long long ll_file_offset_ = 0;
 
-	void read_ChannelParameters(CWaveChan* pChan, int cedChan);
-	CString read_FileComment(int nInd) const;
-	CString read_ChannelComment(int cedChan);
-	CString read_ChannelTitle(int cedChan);
-	long read_ChannelData(const CWaveChan* pChan, short* pData, long long llDataIndex, long long llDataNValues);
-	long relocate_ChannelData(short* pBuffer, long long tFrom, long long tFirst, int nValuesRead,
-	                          long long ticksPerSample);
-	CString getErrorMessage(int flag);
-	void read_EventFall(int cedChan, CWaveBuf* pBuf);
-	void convert_VTtags_Ticks_to_ADintervals(CWaveBuf* pBuf, int cedChan);
+	void read_channel_parameters(CWaveChan* p_chan, int ced_chan);
+	CString read_file_comment(int n_ind) const;
+	CString read_channel_comment(int ced_chan);
+	CString read_channel_title(int ced_chan);
+	long read_channel_data(const CWaveChan* p_chan, short* p_data, long long ll_first, long long ll_n_values);
+	long relocate_channel_data(short* p_buffer, long long t_from, long long t_first, int n_values_read, long long ticks_per_sample);
+	CString get_error_message(int flag);
+	void read_event_fall(int ced_chan, CWaveBuf* p_buf);
+	void convert_vt_tags_ticks_to_ad_intervals(CWaveBuf* p_buf, int ced_chan);
 };

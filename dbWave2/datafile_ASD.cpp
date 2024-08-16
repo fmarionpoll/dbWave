@@ -23,12 +23,12 @@ IMPLEMENT_DYNCREATE(CDataFileASD, CDataFileX)
 
 CDataFileASD::CDataFileASD()
 {
-	m_idType = DOCTYPE_ASDSYNTECH;
-	m_csType = _T("ASDsyntech");
-	m_csOldStringID = "AutoSpike 97 Data File";
-	m_csStringID = "AutoSpike-32 Data File";
-	m_wID = 0xAAAA;
-	m_ulOffsetHeader = 29;
+	m_id_type = DOCTYPE_ASDSYNTECH;
+	m_cs_type = _T("ASDsyntech");
+	m_cs_old_string_id_ = "AutoSpike 97 Data File";
+	m_cs_string_id_ = "AutoSpike-32 Data File";
+	m_w_id_ = 0xAAAA;
+	m_ul_offset_header = 29;
 }
 
 CDataFileASD::~CDataFileASD()
@@ -47,10 +47,10 @@ void CDataFileASD::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-BOOL CDataFileASD::ReadDataInfos(CWaveBuf* pBuf)
+BOOL CDataFileASD::read_data_infos(CWaveBuf* p_buf)
 {
-	CWaveFormat* wave_format = pBuf->get_p_wave_format();
-	CWaveChanArray* wavechan_array = pBuf->get_p_wave_chan_array();
+	CWaveFormat* wave_format = p_buf->get_p_wave_format();
+	CWaveChanArray* wavechan_array = p_buf->get_p_wave_chan_array();
 
 	Seek(29, begin); // position pointer
 	CString cs_name;
@@ -87,7 +87,7 @@ BOOL CDataFileASD::ReadDataInfos(CWaveBuf* pBuf)
 	const UINT uicount = SWAPLONG(dw);
 
 	const auto l_offset1 = GetPosition(); // start of data area
-	m_ulOffsetData = l_offset1 + 1;
+	m_ul_offset_data = l_offset1 + 1;
 	const auto l_offset2 = static_cast<ULONGLONG>(uicount) * 2; // length of data area (in bytes)
 	Seek(l_offset2, current); // position pointer
 
@@ -96,7 +96,7 @@ BOOL CDataFileASD::ReadDataInfos(CWaveBuf* pBuf)
 
 	Read(&w, sizeof(WORD)); // read type
 	auto w_type = SWAPWORD(w);
-	ASSERT(w_type == m_wID);
+	ASSERT(w_type == m_w_id_);
 
 	// file subtype
 	Read(&w, sizeof(WORD)); // file subtype
@@ -212,7 +212,7 @@ BOOL CDataFileASD::ReadDataInfos(CWaveBuf* pBuf)
 	return DOCTYPE_ASDSYNTECH;
 }
 
-int CDataFileASD::CheckFileType(CString& cs_filename)
+int CDataFileASD::check_file_type(CString& cs_filename)
 {
 	Seek(0L, begin);
 	auto flag = DOCTYPE_UNKNOWN;
@@ -228,7 +228,7 @@ int CDataFileASD::CheckFileType(CString& cs_filename)
 	while (*(pbuf - 1) != 0 && i_len > 0);
 
 	// is it an ASD file?
-	if (buf != m_csOldStringID && buf != m_csStringID)
+	if (buf != m_cs_old_string_id_ && buf != m_cs_string_id_)
 		return flag;
 
 	// (2) file version number
@@ -251,7 +251,7 @@ int CDataFileASD::CheckFileType(CString& cs_filename)
 		// read tag / "new data block"
 		Read(&w, sizeof(WORD));
 		w_type2 = SWAPWORD(w);
-		ASSERT(w_type2 == m_wID); // assert tag = 0xAAAA
+		ASSERT(w_type2 == m_w_id_); // assert tag = 0xAAAA
 
 		// check file type
 		Read(&w, sizeof(WORD)); // (4) file version number
@@ -262,7 +262,7 @@ int CDataFileASD::CheckFileType(CString& cs_filename)
 		case DT_WAVE:
 			{
 				flag = DOCTYPE_ASDSYNTECH;
-				m_ulOffsetHeader = GetPosition();
+				m_ul_offset_header = GetPosition();
 
 				// (1) signal name
 				CString cs_name;
@@ -298,7 +298,7 @@ int CDataFileASD::CheckFileType(CString& cs_filename)
 				uicount = SWAPLONG(dw);
 
 				const auto l_offset1 = GetPosition(); // start of data area
-				m_ulOffsetData = l_offset1 + 1;
+				m_ul_offset_data = l_offset1 + 1;
 				const auto l_offset2 = static_cast<ULONGLONG>(uicount) * 2; // length of data area (in bytes)
 				Seek(l_offset2, current); // position pointer
 
@@ -318,9 +318,9 @@ int CDataFileASD::CheckFileType(CString& cs_filename)
 					Read(&w, sizeof(WORD));
 					WORD w_type = SWAPWORD(w);
 				}
-				while (w != m_wID && GetPosition() < filelength);
+				while (w != m_w_id_ && GetPosition() < filelength);
 				// 0xAAAA
-				if (w == m_wID)
+				if (w == m_w_id_)
 				{
 					const LONGLONG lpos = GetPosition() - 2;
 					Seek(lpos, begin);

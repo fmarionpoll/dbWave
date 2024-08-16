@@ -6,7 +6,7 @@
 class DlgSpikeEdit : public CDialog
 {
 public:
-	DlgSpikeEdit(CWnd* pParent = nullptr);
+	DlgSpikeEdit(CWnd* p_parent = nullptr);
 
 	enum { IDD = IDD_EDITSPIKE };
 
@@ -22,6 +22,7 @@ public:
 	CEditCtrl mm_yv_extent;
 
 	CdbWaveDoc* db_wave_doc { nullptr };
+	SpikeList* p_spk_list{ nullptr };
 	int spike_chan { 0 };
 	CWnd* m_parent { nullptr }; 
 	int x_extent { 0 };
@@ -31,7 +32,6 @@ public:
 	BOOL b_changed { 0 };
 
 protected:
-	SpikeList* p_spk_list_ { nullptr };
 	AcqDataDoc* p_acq_data_doc_ { nullptr };
 	int spk_pre_trigger_{ 0 };
 	int spk_length_{ 0 };
@@ -48,7 +48,7 @@ protected:
 	SCROLLINFO m_v_scroll_infos_{};
 
 protected:
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	void DoDataExchange(CDataExchange* p_dx) override; // DDX/DDV support
 	void load_spike_parameters();
 	void load_source_view_data();
 	void load_spike_from_data(int shift);
@@ -56,14 +56,14 @@ protected:
 
 	// Generated message map functions
 	BOOL OnInitDialog() override;
-	afx_msg void OnEnChangespike_index();
-	afx_msg void OnEnChangeSpikeclass();
-	afx_msg void OnArtefact();
-	afx_msg void OnEnChangeDisplayratio();
-	afx_msg void OnEnChangeYextent();
+	afx_msg void on_en_change_spike_index();
+	afx_msg void on_en_change_spike_class();
+	afx_msg void on_artefact();
+	afx_msg void on_en_change_display_ratio();
+	afx_msg void on_en_change_y_extent();
 	afx_msg void OnDestroy();
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
+	afx_msg void OnVScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
 
 	DECLARE_MESSAGE_MAP()
 };

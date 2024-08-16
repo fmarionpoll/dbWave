@@ -69,8 +69,8 @@ public:
 	~CDataFileMCID() override;
 
 public:
-	BOOL ReadDataInfos(CWaveBuf* pBuf) override;
-	int CheckFileType(CString& cs_filename) override;
+	BOOL read_data_infos(CWaveBuf* pBuf) override;
+	int check_file_type(CString& cs_filename) override;
 
 public:
 #ifdef _DEBUG
