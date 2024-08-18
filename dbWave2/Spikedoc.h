@@ -27,12 +27,12 @@ protected:
 	CTime acquisition_time_{};
 	float acquisition_rate_ = 1.f;
 	long acquisition_size_ = 0;
-	int current_spike_list_index_ = -1;
+	int current_spike_list_index_ = 0;
 
 	// Operations
 public:
-	CString get_file_infos();
-	void init_source_doc(const AcqDataDoc* p_document);
+	CString 	get_file_infos();
+	void 		init_source_doc(const AcqDataDoc* p_document);
 
 	CString		get_acq_filename() const { return acquisition_file_name_; }
 	void		set_acq_filename(const CString& name) { acquisition_file_name_ = name; }
@@ -49,7 +49,7 @@ public:
 	int			get_spike_list_current_index() const { return current_spike_list_index_; }
 	SpikeList*	set_spike_list_current_index(int spike_list_index);
 	SpikeList*	get_spike_list_current();
-	int add_spk_list()
+	int 		add_spk_list()
 	{
 		spike_list_array_.SetSize(get_spike_list_size() + 1);
 		return get_spike_list_size();
@@ -71,9 +71,9 @@ public:
 	static void export_headers_descriptors(CSharedFile* shared_file, options_view_spikes* options_view_spikes);
 	void export_headers_data(CSharedFile* shared_file, const options_view_spikes* options_view_spikes);
 	void export_spk_amplitude_histogram(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, long* p_hist0, int spike_list_index, int class_index);
-	void export_spk_average_wave(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, double* value, int spike_list_index, int class_index);
-	void export_spk_psth(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, long* sum0, int spike_list_index, int class_index);
-	void export_spk_latencies(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, int intervals_count, int spike_list_index, int class_index);
+	void 		export_spk_average_wave(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, double* value, int spike_list_index, int class_index);
+	void 		export_spk_psth(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, long* sum0, int spike_list_index, int class_index);
+	void 		export_spk_latencies(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, int intervals_count, int spike_list_index, int class_index);
 
 	BOOL OnSaveDocument(LPCTSTR psz_path_name) override;
 	BOOL OnNewDocument() override;

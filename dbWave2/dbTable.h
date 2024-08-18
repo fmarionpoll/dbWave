@@ -24,7 +24,7 @@ public:
 	static column_properties m_column_properties[];
 
 	// CDaoRecordSets
-	CdbTableMain m_mainTableSet;
+	CdbTableMain m_main_table_set;
 
 	//protected:
 	CdbTableAssociated m_operator_set;
@@ -41,14 +41,14 @@ public:
 	//CdbTableAssociated	m_stim2Set; // TODO
 	//CdbTableAssociated	m_conc2Set;	// TODO
 
-	CString* m_current_data_filename = nullptr;
-	CString* m_p_current_spike_filename = nullptr;
+	CString current_data_filename = {};
+	CString current_spike_filename = {};
 	CString m_database_path = _T("");
 
-	void attach(CString* cs_data_file_name, CString* cs_spike_file_name);
+	void attach(const CString& cs_data_file_name, const CString& cs_spike_file_name);
 
 	// operations
-	BOOL create_main_table(const CString& cs);
+	BOOL create_main_table(const CString& cs_table);
 	void create_all_tables();
 
 	BOOL open_tables();
@@ -89,9 +89,9 @@ public:
 	BOOL move_to_next_record() { return move_to(ID_RECORD_NEXT); }
 	BOOL move_to_previous_record() { return move_to(ID_RECORD_PREV); }
 	BOOL move_to_last_record() { return move_to(ID_RECORD_LAST); }
-	void set_data_length(const long data_length) { m_mainTableSet.SetDataLen(data_length); }
-	long get_n_records() { return m_mainTableSet.GetNRecords(); }
-	long get_n_fields() const { return m_mainTableSet.m_nFields; }
+	void set_data_length(const long data_length) { m_main_table_set.set_data_len(data_length); }
+	long get_records_count() { return m_main_table_set.get_records_count(); }
+	long get_n_fields() const { return m_main_table_set.m_nFields; }
 
 	// get associated table?
 	// get list of items in associated tables?

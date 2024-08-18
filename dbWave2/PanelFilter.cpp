@@ -228,18 +228,18 @@ void CFilterPanel::InitFilterList()
 		for (auto i = 0; i < N_TABLE_COLUMNS; i++)
 			p_combo->AddSortedItem(CdbTable::m_column_properties[i].description, i);
 	}
-	p_combo->SelectItem(p_db->m_mainTableSet.m_strSort);
+	p_combo->SelectItem(p_db->m_main_table_set.m_strSort);
 
 	// fill items of the tree
 	dlg.SetStatus(_T("Populate categories..."));
-	if (p_db->m_mainTableSet.IsBOF() && p_db->m_mainTableSet.IsEOF())
+	if (p_db->m_main_table_set.IsBOF() && p_db->m_main_table_set.IsEOF())
 		return;
 	m_wnd_filter_view_.LockWindowUpdate(); // prevent screen update (and flicker)
 	if (m_wnd_filter_view_.GetCount() > 0)
 		m_wnd_filter_view_.DeleteAllItems();
 
 	auto i = 0;
-	p_db->m_mainTableSet.BuildAndSortIDArrays();
+	p_db->m_main_table_set.build_and_sort_id_arrays();
 
 	CString cs_comment;
 	while (m_no_col_[i] > 0)
@@ -320,7 +320,7 @@ void CFilterPanel::InitFilterList()
 
 void CFilterPanel::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
 {
-	const auto p_set = &m_p_doc_->db_table->m_mainTableSet;
+	const auto p_set = &m_p_doc_->db_table->m_main_table_set;
 	const auto cs_col_head = pdesc->header_name;
 	const auto array_size = pdesc->liArray.GetSize();
 	if (pdesc->b_array_filter)
@@ -361,7 +361,7 @@ void CFilterPanel::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 	ASSERT(!str2.IsEmpty());
 
 	auto p_linked_set = pdesc->plinkedSet;
-	auto p_set = &m_p_doc_->db_table->m_mainTableSet;
+	auto p_set = &m_p_doc_->db_table->m_main_table_set;
 	if (pdesc->b_array_filter)
 		return;
 
@@ -402,7 +402,7 @@ void CFilterPanel::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 {
 	CString cs; // to construct date
 	const auto cs_column_head = pdesc->header_name;
-	const auto p_main_table_set = &m_p_doc_->db_table->m_mainTableSet;
+	const auto p_main_table_set = &m_p_doc_->db_table->m_main_table_set;
 	const auto array_size = p_main_table_set->m_desc[CH_ACQDATE_DAY].tiArray.GetSize();
 
 	if (pdesc->b_array_filter)
@@ -551,8 +551,8 @@ void CFilterPanel::OnApplyFilter()
 	}
 
 	// update recordset and tell other views...
-	p_db->m_mainTableSet.BuildFilters();
-	p_db->m_mainTableSet.RefreshQuery();
+	p_db->m_main_table_set.build_filters();
+	p_db->m_main_table_set.refresh_query();
 	m_p_doc_->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
 }
 
@@ -566,9 +566,9 @@ void CFilterPanel::OnSortRecords()
 	const auto i_sel = p_combo->GetCurSel();
 	ASSERT(i_sel != CB_ERR);
 	const int i = p_combo->GetItemData(i_sel);
-	p_database->m_mainTableSet.m_strSort = CdbTable::m_column_properties[i].header_name;
+	p_database->m_main_table_set.m_strSort = CdbTable::m_column_properties[i].header_name;
 
-	p_database->m_mainTableSet.RefreshQuery();
+	p_database->m_main_table_set.refresh_query();
 	m_p_doc_->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
 }
 

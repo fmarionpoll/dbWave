@@ -72,28 +72,28 @@ constexpr int NCOLUMNS = 30;
 class CdbTableMain : public CDaoRecordset
 {
 public:
-	CdbTableMain(CDaoDatabase* pDatabase = nullptr);
+	CdbTableMain(CDaoDatabase* p_database = nullptr);
 	DECLARE_DYNAMIC(CdbTableMain)
 
 	// Field/Param Data - these parameters are equivalent to column headers in a table, where each row is a record
 
-	long m_ID = 0;					// 1
-	CString m_Filedat = _T("");		// 2
-	CString m_Filespk = _T("");		// 3
+	long m_id = 0;					// 1
+	CString m_FileDat = _T("");		// 2
+	CString m_FileSpk = _T("");		// 3
 	COleDateTime m_table_acq_date = static_cast<DATE>(0); // 4
 	CString m_acq_comment = _T(""); // 5
-	long m_IDinsect = 0;			// 6
-	long m_IDsensillum = 0;			// 7
+	long m_id_insect = 0;			// 6
+	long m_id_sensillum = 0;		// 7
 	CString m_more = _T("");		// 8
 	long m_insect_ID = 0;			// 9
 	long m_location_ID = 0;			// 10
 	long m_operator_ID = 0;			// 11
 	long m_sensillum_ID = 0;		// 12
 	long m_path_ID = 0;				// 13
-	long m_path2_ID = 0;			// 14 xxxxxx suppress this parameter, leave a dummy instead ?
-	long m_datalen = 0;				// 15
-	long m_nspikes = 0;				// 16
-	long m_nspikeclasses = 0;		// 17
+	long m_path2_ID = 0;			// 14 unused 
+	long m_dataLen = 0;				// 15
+	long m_nSpikes = 0;				// 16
+	long m_nSpikeClasses = 0;		// 17
 	long m_stim_ID = 0;				// 18
 	long m_conc_ID = 0;				// 19
 	long m_stim2_ID = 0;			// 20
@@ -103,37 +103,37 @@ public:
 	long m_sex_ID = 0;				// 24
 	long m_repeat = 0;				// 25
 	long m_repeat2 = 0;				// 26
-	COleDateTime m_acqdate_day = static_cast<DATE>(0); // 27
-	COleDateTime m_acqdate_time = static_cast<DATE>(0); // 28 xxxxxxx suppress this parameter, leave dummy ?
-	long m_expt_ID = 0;				// 29
+	COleDateTime m_acqDate_day = static_cast<DATE>(0); // 27
+	COleDateTime m_acqDate_time = static_cast<DATE>(0); // 28 xxxxxxx suppress this parameter, leave dummy ?
+	long m_experiment_ID = 0;				// 29
 
 	// filter parameters
-	BOOL m_bFilterON = false;
+	BOOL m_b_filter_on = false;
 	DB_ITEMDESC m_desc[NCOLUMNS];
-	CString m_csdefaultSQL = _T("[table]");
+	CString m_cs_default_sql = _T("[table]");
 
 	// temp values
 	long max_insectID = 0;
 	long max_sensillumID = 0;
 	long max_ID = 0;
-	CString m_defaultName = _T("");
+	CString m_default_name = _T("");
 
-	void BuildAndSortIDArrays();
-	void CopyPathToPath2();
-	void AddCurrentRecordToIDArrays();
-	boolean OpenTable(int nOpenType = AFX_DAO_USE_DEFAULT_TYPE, LPCTSTR lpszSQL = nullptr, int nOptions = 0);
+	void build_and_sort_id_arrays();
+	void copy_path_to_path2();
+	void add_current_record_to_id_arrays();
+	boolean open_table(int n_open_type = AFX_DAO_USE_DEFAULT_TYPE, LPCTSTR lpsz_sql = nullptr, int n_options = 0);
 
 protected:
-	void AddtoliArray(int icol);
-	void AddtoIDArray(CUIntArray* pmIDArray, long uiID);
-	void AddDaytoDateArray(COleDateTime& o_time);
-	void DeleteDateArray();
+	void add_to_li_array(int i_col);
+	static void add_to_id_array(CUIntArray* p_ui_id_array, long i_id);
+	void add_day_to_date_array(const COleDateTime& o_time);
+	void delete_date_array();
 
 	// Overrides
 public:
 	CString GetDefaultDBName() override;
-	CString GetDefaultSQL() override; // default SQL for Recordset
-	void DoFieldExchange(CDaoFieldExchange* pFX) override; // RFX support
+	CString GetDefaultSQL() override; 
+	void DoFieldExchange(CDaoFieldExchange* p_fx) override; 
 
 	// Implementation
 	~CdbTableMain() override;
@@ -141,23 +141,23 @@ public:
 	void AssertValid() const override;
 	void Dump(CDumpContext& dc) const override;
 #endif
-	long GetNRecords();
-	BOOL SetLongValue(long iID, CString cscolname);
-	BOOL SetValueNull(CString cscolname);
-	void GetAcqdateArray(CPtrArray* pacqdate);
-	BOOL CheckIfAcqDateTimeIsUnique(COleDateTime* ptime);
-	void GetMaxIDs();
-	BOOL FindIDinColumn(long iID, int icolumn);
-	int	 GetColumnIndex(CString csName);
+	long get_records_count();
+	BOOL set_long_value(long i_id, const CString& cs_col_name);
+	BOOL set_value_null(const CString& cs_col_name);
+	void get_acq_date_array(CPtrArray* p_acq_date);
+	BOOL check_if_acq_date_time_is_unique(const COleDateTime* p_time);
+	void get_max_id();
+	BOOL find_id_in_column(long i_id, int i_column);
+	int	 get_column_index(const CString& cs_name);
 
-	void BuildFilters();
-	void ClearFilters();
-	void RefreshQuery();
-	void SetDataLen(long datalen);
+	void build_filters();
+	void clear_filters();
+	void refresh_query();
+	void set_data_len(long data_len);
 
-	void SetFilterSingleItem(DB_ITEMDESC* pdesc)
+	void set_filter_single_item(const DB_ITEMDESC* p_desc)
 	{
-		m_desc[pdesc->index].b_single_filter = pdesc->b_single_filter;
-		m_desc[pdesc->index].l_param_single_filter = pdesc->l_param_single_filter;
+		m_desc[p_desc->index].b_single_filter = p_desc->b_single_filter;
+		m_desc[p_desc->index].l_param_single_filter = p_desc->l_param_single_filter;
 	}
 };

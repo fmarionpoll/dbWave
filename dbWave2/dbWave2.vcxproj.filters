@@ -1127,7 +1127,7 @@
     <ClInclude Include="DlgOverwriteFileOptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dbSpike.h">
+    <ClInclude Include="db_spike.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CNiceUnit.h">

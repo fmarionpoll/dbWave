@@ -42,11 +42,11 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 
 	auto n_files = 1;
 	if (b_display_all_files_)
-		n_files = dbwave_doc_->db_get_n_records();
+		n_files = dbwave_doc_->db_get_records_count();
 
 	for (auto i_file = 0; i_file < n_files; i_file++)
 	{
-		if (!get_spike_file(i_file))
+		if (!get_spike_file(i_file) && !b_display_all_files_)
 		{
 			message_no_data(p_dc);
 			continue;
@@ -225,7 +225,7 @@ int ChartSpikeShape::display_ex_data(int* p_data, const int color)
 	return color;
 }
 
-void ChartSpikeShape::select_spike(const db_spike& spike_sel)
+void ChartSpikeShape::select_spike(db_spike& spike_sel)
 {
 	spike_selected_ = spike_sel;
 	if (spike_sel.spike_index >= 0) 
@@ -472,7 +472,7 @@ void ChartSpikeShape::get_extents()
 	if (b_display_all_files_)
 	{
 		file_first = 0;
-		file_last = dbwave_doc_->db_get_n_records() - 1;
+		file_last = dbwave_doc_->db_get_records_count() - 1;
 	}
 
 	if (y_we_ == 1 || y_we_ == 0)

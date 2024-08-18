@@ -574,7 +574,7 @@ void ChartSpikeHist::build_hist_from_document(CdbWaveDoc* p_document, const BOOL
 
 	dbwave_doc_ = p_document;
 	constexpr auto file_first = 0;
-	const auto file_last = b_all_files ? p_document->db_get_n_records() : 1;
+	const auto file_last = b_all_files ? p_document->db_get_records_count() : 1;
 	resize_histograms(min_mv, max_mv, bin_mv);
 
 	for (auto i_file = file_first; i_file < file_last; i_file++)

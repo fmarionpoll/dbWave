@@ -1449,7 +1449,7 @@ int ViewData::print_get_n_pages()
 	if (!options_view_data_->b_print_selection)
 	{
 		file0 = 0;
-		m_files_count_ = p_dbwave_doc->db_get_n_records();
+		m_files_count_ = p_dbwave_doc->db_get_records_count();
 		file1 = m_files_count_;
 	}
 

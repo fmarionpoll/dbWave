@@ -760,13 +760,13 @@ void ViewSpikes::on_tools_edit_spikes()
 	dlg.y_zero = spike_class_listbox_.get_yw_org(); 
 	dlg.x_extent = spike_class_listbox_.get_xw_extent(); 
 	dlg.x_zero = spike_class_listbox_.get_xw_org();
-	dlg.spike_index = m_spike_index; 
+	dlg.dlg_spike_index = m_spike_index; 
 	dlg.db_wave_doc = GetDocument();
 	dlg.m_parent = this;
 	dlg.DoModal();
 
 	if (!dlg.b_artefact)
-		m_spike_index = dlg.spike_index;
+		m_spike_index = dlg.dlg_spike_index;
 
 	if (dlg.b_changed)
 	{
@@ -1078,7 +1078,7 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 	if (!options_view_data_->b_print_selection)
 	{
 		m_print_first_ = 0;
-		m_files_count_ = p_dbwave_doc->db_get_n_records();
+		m_files_count_ = p_dbwave_doc->db_get_records_count();
 		m_print_last_ = m_files_count_ - 1;
 	}
 

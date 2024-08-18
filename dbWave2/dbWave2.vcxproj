@@ -1393,7 +1393,7 @@
     <ClInclude Include="options_scope_channel.h" />
     <ClInclude Include="options_scope_struct.h" />
     <ClInclude Include="SpikeClassDescriptor.h" />
-    <ClInclude Include="dbSpike.h" />
+    <ClInclude Include="db_spike.h" />
     <ClInclude Include="options_spk_classification.h" />
     <ClInclude Include="spike_detection_array.h" />
     <ClInclude Include="options_detect_spikes.h" />

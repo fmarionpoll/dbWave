@@ -310,25 +310,35 @@ void ViewSpikeTemplates::update_legends()
 
 void ViewSpikeTemplates::select_spike(db_spike& spike_sel)
 {
-	const CdbWaveDoc* p_doc = m_chart_spk_wnd_shape_.get_db_wave_doc();
-	spike_sel.database_position = p_doc->db_get_current_record_position();
-	spike_sel.spike_list_index = p_doc->m_p_spk_doc->get_spike_list_current_index();
+	const CdbWaveDoc* p_doc = GetDocument();
+	if (spike_sel.record_id < 0) 
+	{
+		spike_sel.record_id = p_doc->db_get_current_record_id();
+		spike_sel.spike_list_index = p_doc->m_p_spk_doc->get_spike_list_current_index();
+	}
+	else if (spike_sel.record_id != p_doc->db_get_current_record_id())
+	{
+		if (p_doc->db_move_to_id(spike_sel.record_id))
+		{
+			;
+		}
+	}
 
 	m_chart_spk_wnd_shape_.select_spike(spike_sel);
 	spike_no_ = spike_sel.spike_index;
 	p_spk_list->m_selected_spike = spike_no_;
 }
 
-LRESULT ViewSpikeTemplates::on_my_message(WPARAM w_param, LPARAM l_param)
+LRESULT ViewSpikeTemplates::on_my_message(const WPARAM w_param, const LPARAM l_param)
 {
-	short shortValue = LOWORD(l_param);
+	short short_value = LOWORD(l_param);
 	switch (w_param)
 	{
 	case HINT_SET_MOUSE_CURSOR:
-		if (shortValue > CURSOR_ZOOM)
-			shortValue = 0;
-		set_view_mouse_cursor(shortValue);
-		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(shortValue, 0));
+		if (short_value > CURSOR_ZOOM)
+			short_value = 0;
+		set_view_mouse_cursor(short_value);
+		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(short_value, 0));
 		break;
 
 	case HINT_HIT_SPIKE:
@@ -339,14 +349,14 @@ LRESULT ViewSpikeTemplates::on_my_message(WPARAM w_param, LPARAM l_param)
 		break;
 
 	case HINT_CHANGE_VERT_TAG:
-		if (shortValue == spk_form_tag_left_)
+		if (short_value == spk_form_tag_left_)
 		{
 			spike_classification_parameters_->k_left = m_chart_spk_wnd_shape_.vt_tags.get_value_int(spk_form_tag_left_);
 			m_t1 = convert_spike_index_to_time(spike_classification_parameters_->k_left);
 			mm_t1_.m_bEntryDone = TRUE;
 			on_en_change_t1();
 		}
-		else if (shortValue == spk_form_tag_right_)
+		else if (short_value == spk_form_tag_right_)
 		{
 			spike_classification_parameters_->k_right = m_chart_spk_wnd_shape_.vt_tags.get_value_int(spk_form_tag_right_);
 			m_t2 = convert_spike_index_to_time(spike_classification_parameters_->k_right);
@@ -365,10 +375,10 @@ LRESULT ViewSpikeTemplates::on_my_message(WPARAM w_param, LPARAM l_param)
 		break;
 
 	case HINT_R_MOUSE_BUTTON_DOWN:
-		edit_spike_class(HIWORD(l_param), shortValue);
+		edit_spike_class(HIWORD(l_param), short_value);
 		break;
 	case HINT_VIEW_TAB_HAS_CHANGED:
-		update_ctrl_tab1(shortValue);
+		update_ctrl_tab1(short_value);
 		break;
 	default:
 		break;
@@ -618,7 +628,7 @@ void ViewSpikeTemplates::display_avg(const boolean b_all_files, CTemplateListWnd
 	if (b_all_files)
 	{
 		first_file = 0; // index first file
-		last_file = p_dbwave_doc->db_get_n_records() - 1; // index last file
+		last_file = p_dbwave_doc->db_get_records_count() - 1; // index last file
 	}
 	// loop over files
 	for (auto i_file = first_file; i_file <= last_file; i_file++)
@@ -700,7 +710,7 @@ void ViewSpikeTemplates::on_build_templates()
 	if (m_b_all_files)
 	{
 		firstfile = 0;
-		lastfile = p_dbwave_doc->db_get_n_records() - 1;
+		lastfile = p_dbwave_doc->db_get_records_count() - 1;
 	}
 
 	// add as many forms as we have classes
@@ -849,7 +859,7 @@ void ViewSpikeTemplates::sort_spikes()
 	if (m_b_all_files)
 	{
 		first_file = 0; // index first file
-		last_file = p_dbwave_doc->db_get_n_records() - 1; // index last file
+		last_file = p_dbwave_doc->db_get_records_count() - 1; // index last file
 	}
 
 	// loop CFrameWnd
@@ -1053,7 +1063,7 @@ void ViewSpikeTemplates::edit_spike_class(const int control_id, const int contro
 			if (b_all_files)
 			{
 				index_first_file = 0; // index first file
-				index_last_file = dbwave_doc->db_get_n_records() - 1; // index last file
+				index_last_file = dbwave_doc->db_get_records_count() - 1; // index last file
 			}
 
 			// loop CFrameWnd

@@ -114,7 +114,7 @@ void ViewSpikeHist::OnInitialUpdate()
 	// fill controls with initial values
 	static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(m_pvdS->ballfiles);
 	if (m_pvdS->ballfiles)
-		m_nfiles = GetDocument()->db_get_n_records();
+		m_nfiles = GetDocument()->db_get_records_count();
 	else
 		m_nfiles = 1;
 	SetDlgItemInt(IDC_EDITNSTIPERCYCLE, m_pvdS->nstipercycle);
@@ -214,7 +214,7 @@ void ViewSpikeHist::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	{
 	case HINT_REQUERY:
 		if (m_pvdS->ballfiles)
-			m_nfiles = GetDocument()->db_get_n_records();
+			m_nfiles = GetDocument()->db_get_records_count();
 		else
 			m_nfiles = 1;
 		break;
@@ -456,7 +456,7 @@ void ViewSpikeHist::OnClickAllfiles()
 	if (static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck())
 	{
 		m_pvdS->ballfiles = TRUE;
-		m_nfiles = GetDocument()->db_get_n_records();
+		m_nfiles = GetDocument()->db_get_records_count();
 	}
 	else
 	{
@@ -721,7 +721,7 @@ BOOL ViewSpikeHist::OnPreparePrinting(CPrintInfo* pInfo)
 	auto nbrowsperpage = (mdPM->vertical_resolution - 2 * mdPM->top_page_margin) / size_row;
 	auto nfiles = 1;
 	if (m_nfiles == 1)
-		nfiles = GetDocument()->db_get_n_records();
+		nfiles = GetDocument()->db_get_records_count();
 
 	if (nbrowsperpage == 0) // prevent zero pages
 		nbrowsperpage = 1;
@@ -781,7 +781,7 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	// prepare file loop
 	auto p_dbwave_doc = GetDocument();
 	/*int nfiles = */
-	p_dbwave_doc->db_get_n_records();
+	p_dbwave_doc->db_get_records_count();
 	const auto size_row = mdPM->height_doc + mdPM->height_separator; // size of one row
 	auto nbrowsperpage = pInfo->m_rectDraw.Height() / size_row; // nb of rows per page
 	if (nbrowsperpage == 0)
@@ -790,8 +790,8 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	auto file2 = file1 + nbrowsperpage; // index last file
 	if (m_nfiles != 1) // special case: all together
 		file2 = file1 + 1;
-	if (file2 > p_dbwave_doc->db_get_n_records())
-		file2 = p_dbwave_doc->db_get_n_records();
+	if (file2 > p_dbwave_doc->db_get_records_count())
+		file2 = p_dbwave_doc->db_get_records_count();
 
 	// loop through all files
 	for (auto ifile = file1; ifile < file2; ifile++)

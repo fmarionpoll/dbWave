@@ -603,7 +603,7 @@ void CChildFrame::on_tools_remove_artefact_files()
 	CdbWaveDoc* p_db_wave_doc = CdbWaveDoc::get_active_mdi_document();
 	if (p_db_wave_doc == nullptr)
 		return;
-	const int n_files = p_db_wave_doc->db_get_n_records();
+	const int n_files = p_db_wave_doc->db_get_records_count();
 
 	for (int i_file = 0; i_file < n_files; i_file++)
 	{

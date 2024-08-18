@@ -409,10 +409,10 @@ void ViewADcontinuous::TransferFilesToDatabase()
 	pdbDoc->import_file_list(m_csNameArray); // add file name(s) to the list of records in the database
 	m_csNameArray.RemoveAll(); // clear file names
 
-	CdbTableMain* pSet = &(pdbDoc->db_table->m_mainTableSet);
-	pSet->BuildAndSortIDArrays();
-	pSet->RefreshQuery();
-	pdbDoc->db_set_current_record_position(pdbDoc->db_table->get_n_records() - 1);
+	CdbTableMain* pSet = &(pdbDoc->db_table->m_main_table_set);
+	pSet->build_and_sort_id_arrays();
+	pSet->refresh_query();
+	pdbDoc->db_set_current_record_position(pdbDoc->db_table->get_records_count() - 1);
 	pdbDoc->update_all_views_db_wave(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 }
 

@@ -39,7 +39,8 @@ boolean ChartSpike::get_spike_file(const int i_file)
 	if (b_display_all_files_)
 	{
 		success = static_cast<boolean>(dbwave_doc_->db_set_current_record_position(i_file));
-		if (success) {
+		if (success) 
+		{
 			 dbwave_doc_->open_current_spike_file();
 			 success = (dbwave_doc_->m_p_spk_doc != nullptr);
 		}
@@ -50,22 +51,11 @@ boolean ChartSpike::get_spike_file(const int i_file)
 
 	if (success)
 	{
-		if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() == 0)
+		if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() <= 0)
 			success = false;
 	}
 	return success;
 }
-
-//void ChartSpike::message_no_spike(CDC* p_dc) const
-//{
-//	CRect rect = display_rect_;
-//	rect.DeflateRect(1, 1);
-//	const int previous_map_mode = p_dc->SetMapMode(MM_TEXT);
-//	if (previous_map_mode == MM_ANISOTROPIC)
-//		rect.OffsetRect(0, -y_vo_);
-//	p_dc->DrawText(cs_empty_, cs_empty_.GetLength(), rect, DT_LEFT | DT_TOP);
-//	p_dc->SetMapMode(previous_map_mode);
-//}
 
 void ChartSpike::set_plot_mode(const int mode, const int selected_class)
 {
@@ -113,7 +103,7 @@ void ChartSpike::sub_item_create(CWnd* parent_wnd, const CRect& rect, int i_id, 
 	set_cursor_max_on_dbl_click(cursor_index_max_);
 }
 
-boolean ChartSpike::is_spike_within_range(const db_spike& spike_selected) const
+boolean ChartSpike::is_spike_within_range(db_spike& spike_selected) const
 {
 	if (range_mode_ == RANGE_INDEX
 		&& (spike_selected.spike_index > index_last_spike_ || spike_selected.spike_index < index_first_spike_))
@@ -137,7 +127,7 @@ boolean ChartSpike::is_spike_within_range(const db_spike& spike_selected) const
 
 db_spike ChartSpike::hit_curve_in_doc(const CPoint point)
 {
-	const long n_files = b_display_all_files_ ? dbwave_doc_->db_get_n_records() : 1;
+	const long n_files = b_display_all_files_ ? dbwave_doc_->db_get_records_count() : 1;
 	db_spike result(1, -1, -1);
 
 	for (long i_file = 0; i_file < n_files; i_file++)
@@ -151,7 +141,7 @@ db_spike ChartSpike::hit_curve_in_doc(const CPoint point)
 		if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() == 0)
 			continue;
 
-		result.database_position = dbwave_doc_->db_get_current_record_position();
+		result.record_id = dbwave_doc_->db_get_current_record_id();
 		result.spike_list_index = dbwave_doc_->m_p_spk_doc->get_spike_list_current_index();
 
 		result.spike_index = hit_curve(point);

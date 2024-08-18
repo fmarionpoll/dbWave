@@ -6,7 +6,7 @@
 #include "Spikedoc.h"
 #include "AcqDataDoc.h"
 #include "dbWave_structures.h"
-#include "dbSpike.h"
+#include "db_spike.h"
 
 struct source_data
 {
@@ -67,7 +67,7 @@ public:
 	CSpikeDoc*	get_current_spike_file() const { return m_p_spk_doc; }
 	void		set_spike_hit(const db_spike& spike_hit) { spike_hit_ = spike_hit; }
 	db_spike	get_spike_hit() const { return spike_hit_ ; }
-	Spike*		get_spike(const db_spike& spike_coords);
+	Spike*		get_spike(db_spike& spike_coords);
 
 	void	remove_duplicate_files();
 	void	remove_missing_files() const;
@@ -143,8 +143,8 @@ public:
 #endif
 
 	// DAO database functions
-	long	db_get_n_records() const { return db_table->get_n_records(); }
-	CdbTableMain* db_get_recordset() const { return &db_table->m_mainTableSet; }
+	long	db_get_records_count() const { return db_table->get_records_count(); }
+	CdbTableMain* db_get_recordset() const { return &db_table->m_main_table_set; }
 	void	db_delete_current_record();
 	CString db_get_current_dat_file_name(BOOL b_test = FALSE);
 	CString db_get_current_spk_file_name(BOOL b_test = FALSE);
@@ -153,7 +153,7 @@ public:
 	void	db_set_data_len(const long len) const { db_table->set_data_length(len); }
 	long	db_get_data_len() const;
 	void	db_set_current_record_flag(int flag) const;
-	int		db_get_current_record_flag() const { return db_table->m_mainTableSet.m_flag; }
+	int		db_get_current_record_flag() const { return db_table->m_main_table_set.m_flag; }
 	void	db_set_paths_relative() const;
 	void	db_set_paths_absolute() const;
 	void	db_transfer_dat_path_to_spk_path() const;
@@ -169,8 +169,8 @@ public:
 	BOOL	db_move_prev() const { return db_table->move_to(ID_RECORD_PREV); }
 	BOOL	db_move_last() const { return db_table->move_to(ID_RECORD_LAST); }
 	void	db_refresh_query() const {
-		if (db_table->m_mainTableSet.IsBOF()) db_table->m_mainTableSet.SetFieldNull(nullptr);
-		db_table->m_mainTableSet.RefreshQuery();
+		if (db_table->m_main_table_set.IsBOF()) db_table->m_main_table_set.SetFieldNull(nullptr);
+		db_table->m_main_table_set.refresh_query();
 	}
 
 protected:

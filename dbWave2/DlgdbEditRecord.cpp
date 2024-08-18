@@ -83,7 +83,7 @@ END_MESSAGE_MAP()
 BOOL DlgdbEditRecord::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	m_pSet = &m_pdbDoc->db_table->m_mainTableSet;
+	m_pSet = &m_pdbDoc->db_table->m_main_table_set;
 	PopulateControls();
 	// TODO? disable controls corresponding to a filtered field
 	UpdateData(FALSE);
@@ -107,18 +107,18 @@ void DlgdbEditRecord::PopulateControls()
 	PopulateCombo_WithText(p_db->m_operator_set, m_ctlOperator, m_pSet->m_operator_ID);
 	PopulateCombo_WithText(p_db->m_path_set, m_ctlpathdat, m_pSet->m_path_ID);
 	PopulateCombo_WithText(p_db->m_path_set, m_ctlpathspk, m_pSet->m_path2_ID);
-	PopulateCombo_WithText(p_db->m_experiment_set, m_ctlexpt, m_pSet->m_expt_ID);
+	PopulateCombo_WithText(p_db->m_experiment_set, m_ctlexpt, m_pSet->m_experiment_ID);
 	// ID combos
-	PopulateCombo_WithNumbers(m_ctlinsectID, &m_pSet->m_desc[CH_IDINSECT].liArray, m_pSet->m_IDinsect);
-	PopulateCombo_WithNumbers(m_ctlSensillumID, &m_pSet->m_desc[CH_IDSENSILLUM].liArray, m_pSet->m_IDsensillum);
+	PopulateCombo_WithNumbers(m_ctlinsectID, &m_pSet->m_desc[CH_IDINSECT].liArray, m_pSet->m_id_insect);
+	PopulateCombo_WithNumbers(m_ctlSensillumID, &m_pSet->m_desc[CH_IDSENSILLUM].liArray, m_pSet->m_id_sensillum);
 	PopulateCombo_WithNumbers(m_ctlrepeat, &m_pSet->m_desc[CH_REPEAT].liArray, m_pSet->m_repeat);
 	PopulateCombo_WithNumbers(m_ctlrepeat2, &m_pSet->m_desc[CH_REPEAT2].liArray, m_pSet->m_repeat2);
 	PopulateCombo_WithNumbers(m_ctlflag, &m_pSet->m_desc[CH_FLAG].liArray, m_pSet->m_flag);
 
 	// fixed parameters
 	m_cs_more = m_pSet->m_more;
-	m_csnameDat = m_pSet->m_Filedat;
-	m_csnameSpk = m_pSet->m_Filespk;
+	m_csnameDat = m_pSet->m_FileDat;
+	m_csnameSpk = m_pSet->m_FileSpk;
 
 	// update IDC_NEXT IDC_PREVIOUS
 	if (m_bshowIDC_NEXT != GetDlgItem(IDC_NEXT)->IsWindowEnabled())
@@ -200,14 +200,14 @@ void DlgdbEditRecord::UpdateDatabaseFromDialog()
 	UpdateSetFromCombo(p_database->m_sensillum_set, m_ctlsensillum, m_pSet->m_sensillum_ID);
 	UpdateSetFromCombo(p_database->m_location_set, m_ctllocation, m_pSet->m_location_ID);
 	UpdateSetFromCombo(p_database->m_operator_set, m_ctlOperator, m_pSet->m_operator_ID);
-	UpdateSetFromCombo(p_database->m_experiment_set, m_ctlexpt, m_pSet->m_expt_ID);
+	UpdateSetFromCombo(p_database->m_experiment_set, m_ctlexpt, m_pSet->m_experiment_ID);
 
 	//// save fixed parameters
 	CString cs;
 	m_ctlinsectID.GetWindowText(cs);
-	m_pSet->m_IDinsect = _ttoi(cs);
+	m_pSet->m_id_insect = _ttoi(cs);
 	m_ctlSensillumID.GetWindowText(cs);
-	m_pSet->m_IDsensillum = _ttoi(cs);
+	m_pSet->m_id_sensillum = _ttoi(cs);
 	m_ctlrepeat.GetWindowText(cs);
 	m_pSet->m_repeat = _ttoi(cs);
 	m_ctlrepeat2.GetWindowText(cs);
@@ -215,8 +215,8 @@ void DlgdbEditRecord::UpdateDatabaseFromDialog()
 	m_ctlflag.GetWindowText(cs);
 	m_pSet->m_flag = _ttoi(cs);
 	m_pSet->m_more = m_cs_more;
-	m_pSet->m_Filedat = m_csnameDat;
-	m_pSet->m_Filespk = m_csnameSpk;
+	m_pSet->m_FileDat = m_csnameDat;
+	m_pSet->m_FileSpk = m_csnameSpk;
 	m_pSet->Update();
 }
 
@@ -329,7 +329,7 @@ void DlgdbEditRecord::EditChangeItem_MainField(int IDC)
 	if (dlg.DoModal() == IDOK)
 	{
 		// update array
-		m_pSet->BuildAndSortIDArrays();
+		m_pSet->build_and_sort_id_arrays();
 		PopulateCombo_WithNumbers(*p_desc->pComboBox, &p_desc->liArray, *p_desc->pdataItem);
 
 		// find current selection and set combo to this position

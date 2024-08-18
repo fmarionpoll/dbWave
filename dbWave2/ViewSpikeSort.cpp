@@ -99,6 +99,8 @@ BEGIN_MESSAGE_MAP(ViewSpikeSort, ViewDbTable)
 
 	ON_BN_DOUBLECLICKED(IDC_CHART_MEASURE, &ViewSpikeSort::on_tools_edit_spikes)
 
+	ON_EN_CHANGE(IDC_LIST_INDEX, &ViewSpikeSort::on_en_change_list_index)
+	ON_EN_CHANGE(IDC_FILE_INDEX, &ViewSpikeSort::on_en_change_file_index)
 END_MESSAGE_MAP()
 
 void ViewSpikeSort::define_sub_classed_items()
@@ -408,13 +410,8 @@ void ViewSpikeSort::update_file_parameters()
 				t_xy_left_ = static_cast<float>(spike_classification_->i_xy_left) / delta;
 			}
 		}
-		// update text , display and compute histogram
-		//b_measure_done_ = FALSE;
-		//on_measure_parameters_from_spikes();
 	}
-	////b_measure_done_ = FALSE;
-	////on_measure_parameters_from_spikes();
-	/*select_spike();*/
+
 }
 void ViewSpikeSort::select_spike()
 {
@@ -464,7 +461,7 @@ void ViewSpikeSort::on_sort()
 	const int current_file = pdb_doc->db_get_current_record_position();
 	auto first_file = current_file;
 	auto last_file = first_file;
-	const auto n_files = pdb_doc->db_get_n_records();
+	const auto n_files = pdb_doc->db_get_records_count();
 	auto current_list = 0;
 	if (p_spk_doc != nullptr)
 		current_list = p_spk_doc->get_spike_list_current_index();
@@ -476,7 +473,7 @@ void ViewSpikeSort::on_sort()
 	if (b_all_files_)
 	{
 		first_file = 0; // index first file
-		last_file = pdb_doc->db_get_n_records() - 1; // index last file
+		last_file = pdb_doc->db_get_records_count() - 1; // index last file
 		dlg_progress = new DlgProgress;
 		dlg_progress->Create();
 		dlg_progress->SetStep(1);
@@ -736,7 +733,7 @@ void ViewSpikeSort::clear_flag_all_spikes()
 	if (b_all_files_)
 	{
 		const auto pdb_doc = GetDocument();
-		for (auto i_file = 0; i_file < pdb_doc->db_get_n_records(); i_file++)
+		for (auto i_file = 0; i_file < pdb_doc->db_get_records_count(); i_file++)
 		{
 			if (pdb_doc->db_set_current_record_position(i_file)) {
 				p_spk_doc = pdb_doc->open_current_spike_file();
@@ -756,7 +753,7 @@ void ViewSpikeSort::clear_flag_all_spikes()
 void ViewSpikeSort::on_measure_parameters_from_spikes()
 {
 	const auto pdb_doc = GetDocument();
-	const int n_files = pdb_doc->db_get_n_records();
+	const int n_files = pdb_doc->db_get_records_count();
 	const auto current_spike_list = p_spk_doc->get_spike_list_current_index();
 	const int index_current_file = pdb_doc->db_get_current_record_position();
 	db_spike spike_sel(-1, -1, -1);
@@ -968,12 +965,16 @@ void ViewSpikeSort::gain_adjust_xy_and_histogram()
 
 void ViewSpikeSort::select_spike(db_spike& spike_sel)
 {
-	if (spike_sel.database_position >= 0 || spike_sel.spike_list_index < 0) {
-		const CdbWaveDoc* p_doc = chart_shape_.get_db_wave_doc();
-		spike_sel.database_position = p_doc->db_get_current_record_position();
+	if (spike_sel.record_id < 0 || spike_sel.spike_list_index < 0) {
+		const CdbWaveDoc* p_doc = GetDocument();
+		spike_sel.record_id = p_doc->db_get_current_record_id();
 		if (p_doc->m_p_spk_doc != nullptr)
 			spike_sel.spike_list_index = p_doc->m_p_spk_doc->get_spike_list_current_index();
 	}
+	record_id_ = spike_sel.record_id;
+	list_index_ = spike_sel.spike_list_index;
+	spike_index_ = spike_sel.spike_index;
+
 	chart_shape_.select_spike(spike_sel);
 	chart_spike_bar_.select_spike(spike_sel);
 	chart_measures_.select_spike_measure(spike_sel);
@@ -997,11 +998,13 @@ void ViewSpikeSort::select_spike(db_spike& spike_sel)
 
 boolean ViewSpikeSort::open_dat_and_spk_files_of_selected_spike(const db_spike& spike_coords)
 {
-	if (spike_coords.database_position >= 0)
+	const auto p_doc = GetDocument();
+	if (spike_coords.record_id >= 0 
+		&& spike_coords.record_id != p_doc->db_get_current_record_id())
 	{
-		if (GetDocument()->db_set_current_record_position(spike_coords.database_position))
+		if (p_doc->db_move_to_id(spike_coords.record_id))
 		{
-			const auto spk_name = GetDocument()->db_get_current_dat_file_name();
+			const auto spk_name = p_doc->db_get_current_spk_file_name();
 			load_current_spike_file();
 		}
 		else
@@ -1038,15 +1041,14 @@ void ViewSpikeSort::on_tools_edit_spikes()
 	dlg.y_zero = chart_shape_.get_yw_org();
 	dlg.x_extent = chart_shape_.get_xw_extent();
 	dlg.x_zero = chart_shape_.get_xw_org();
-	dlg.spike_index = spike_index_;
+	dlg.dlg_spike_index = spike_index_;
 	dlg.db_wave_doc = GetDocument();
 	dlg.m_parent = this;
 	dlg.DoModal();
 
 	if (!dlg.b_artefact)
 	{
-		spike_index_ = dlg.spike_index;
-		db_spike spike_sel(-1, -1, spike_index_);
+		db_spike spike_sel(spike_coords.record_id, -spike_coords.spike_list_index, spike_index_);
 		select_spike(spike_sel);
 	}
 	if (dlg.b_changed)
@@ -1606,6 +1608,45 @@ void ViewSpikeSort::on_en_change_max_mv()
 	}
 }
 
+void ViewSpikeSort::on_en_change_file_index()
+{
+	if (mm_file_index_.m_bEntryDone)
+	{
+		const auto file_index = record_id_;
+		mm_file_index_.OnEnChange(this, record_id_, 1, -1);
+
+		//if (file_index_ != file_index)
+		//{
+			//p_spk_doc->SetModifiedFlag(TRUE);
+			//const auto current_list = spk_list_tab_ctrl.GetCurSel();
+			//auto* spike_list = p_spk_doc->set_spike_list_current_index(current_list);
+			//spike_list->get_spike(spike_index_)->set_class_id(class_index_);
+		//	
+		//}
+	}
+	update_legends();
+}
+
+
+void ViewSpikeSort::on_en_change_list_index()
+{
+	if (mm_list_index_.m_bEntryDone)
+	{
+		const auto list_index = list_index_;
+		mm_file_index_.OnEnChange(this, list_index_, 1, -1);
+
+		//if (list_index_ != list_index)
+		//{
+			//p_spk_doc->SetModifiedFlag(TRUE);
+			//const auto current_list = spk_list_tab_ctrl.GetCurSel();
+			//auto* spike_list = p_spk_doc->set_spike_list_current_index(current_list);
+			//spike_list->get_spike(spike_index_)->set_class_id(class_index_);
+			//update_legends();
+		//}
+	}
+	update_legends();
+}
+
 void ViewSpikeSort::on_en_change_spike_index()
 {
 	if (mm_spike_index_.m_bEntryDone)
@@ -1676,7 +1717,5 @@ void ViewSpikeSort::on_en_change_hist_bin_ms()
 		}
 	}
 }
-
-
 
 

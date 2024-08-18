@@ -488,7 +488,7 @@ BOOL CMeasureResultsPage::MeasureParameters()
 	if (m_pMO->b_all_files)
 	{
 		i_first = 0;
-		i_last = m_pdbDoc->db_get_n_records() - 1;
+		i_last = m_pdbDoc->db_get_records_count() - 1;
 	}
 
 	// prepare listcontrol

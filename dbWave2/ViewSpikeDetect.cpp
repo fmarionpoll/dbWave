@@ -1411,13 +1411,13 @@ void ViewSpikeDetection::on_tools_edit_spikes()
 	dlg.y_zero = m_chart_spike_shape_.get_yw_org(); 
 	dlg.x_extent = m_chart_spike_shape_.get_xw_extent(); 
 	dlg.x_zero = m_chart_spike_shape_.get_xw_org(); 
-	dlg.spike_index = m_spike_index; 
+	dlg.dlg_spike_index = m_spike_index; 
 	//p_spk_list->remove_all_spike_flags();
 	dlg.db_wave_doc = GetDocument();
 	dlg.m_parent = this;
 	dlg.DoModal();
 
-	m_spike_index = dlg.spike_index;
+	m_spike_index = dlg.dlg_spike_index;
 	db_spike spike_sel(-1, -1, m_spike_index);
 	select_spike_no(spike_sel, FALSE);
 	update_spike_display();
@@ -2424,7 +2424,7 @@ int ViewSpikeDetection::print_get_n_pages()
 	if (!options_view_data_->b_print_selection)
 	{
 		i_file_0 = 0;
-		m_files_count_ = p_document->db_get_n_records();
+		m_files_count_ = p_document->db_get_records_count();
 		i_file_1 = m_files_count_;
 	}
 

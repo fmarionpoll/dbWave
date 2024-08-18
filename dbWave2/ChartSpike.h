@@ -4,7 +4,7 @@
 #include "ChartWnd.h"
 #include "dbWaveDoc.h"
 #include "Spikedoc.h"
-#include "dbSpike.h"
+#include "db_spike.h"
 #include "Spikelist.h"
 
 
@@ -46,7 +46,7 @@ public:
 	db_spike get_selected_spike() const { return spike_selected_; }
 	void set_selected_spike(const db_spike& selected) { spike_selected_ = selected; }
 
-	boolean is_spike_within_range(const db_spike& spike_selected) const;
+	boolean is_spike_within_range(db_spike& spike_selected) const;
 	db_spike hit_curve_in_doc(CPoint point);
 
 	void set_display_all_files(const boolean display_all) { b_display_all_files_ = display_all; }

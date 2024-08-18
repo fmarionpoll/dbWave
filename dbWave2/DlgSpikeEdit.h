@@ -10,16 +10,16 @@ public:
 
 	enum { IDD = IDD_EDITSPIKE };
 
-	int spike_class{ 0 };
-	int spike_index{ 0 };
+	int dlg_spike_class{ 0 };
+	int dlg_spike_index{ 0 };
 	BOOL b_artefact{ false };
-	int display_ratio{ 0 };
-	int yv_extent{ 0 };
+	int dlg_display_ratio { 20 };
+	int dlg_yv_extent { 0 };
 
-	CEditCtrl mm_spike_index;
-	CEditCtrl mm_spike_class;
-	CEditCtrl mm_display_ratio;
-	CEditCtrl mm_yv_extent;
+	CEditCtrl mm_dlg_spike_index;
+	CEditCtrl mm_dlg_spike_class;
+	CEditCtrl mm_dlg_display_ratio;
+	CEditCtrl mm_dlg_yv_extent;
 
 	CdbWaveDoc* db_wave_doc { nullptr };
 	SpikeList* p_spk_list{ nullptr };
@@ -56,6 +56,8 @@ protected:
 
 	// Generated message map functions
 	BOOL OnInitDialog() override;
+	void init_chart_spike();
+	void init_chart_data();
 	afx_msg void on_en_change_spike_index();
 	afx_msg void on_en_change_spike_class();
 	afx_msg void on_artefact();

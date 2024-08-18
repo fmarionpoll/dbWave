@@ -331,10 +331,10 @@ void DlgdbEditField::modify_current()
 	switch (m_dest_action)
 	{
 	case CHGE_ID: // change ID
-		m_pMainTable->SetLongValue(m_dest_id_, m_csColName);
+		m_pMainTable->set_long_value(m_dest_id_, m_csColName);
 		break;
 	case CHGE_CLEAR: // erase iID
-		m_pMainTable->SetValueNull(m_csColName);
+		m_pMainTable->set_value_null(m_csColName);
 		break;
 	// replace text within current record with new text
 	case CHGE_TXT:
@@ -347,7 +347,7 @@ void DlgdbEditField::modify_current()
 			const auto id_new = m_pIndexTable->get_string_in_linked_table(cs_new);
 			if (id_new >= 0)
 			{
-				m_pMainTable->SetLongValue(id_new, m_csColName);
+				m_pMainTable->set_long_value(id_new, m_csColName);
 				// make sure that the new string is stored in the combobox
 				m_first = m_co_dictionary.FindStringExact(m_first, cs_new);
 				if (CB_ERR == m_first)
@@ -356,7 +356,7 @@ void DlgdbEditField::modify_current()
 		}
 		// raw value
 		else
-			m_pMainTable->SetLongValue(m_dest_id_, m_csColName);
+			m_pMainTable->set_long_value(m_dest_id_, m_csColName);
 		break;
 	default:
 		break;

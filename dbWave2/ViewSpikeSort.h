@@ -24,12 +24,12 @@ protected:
 
 	CComboBox combo_measure_type_;
 	CEditCtrl mm_file_index_;
+	int record_id_{ -1 };
 	CEditCtrl mm_list_index_;
-	CEditCtrl mm_spike_index_;
-	CEditCtrl mm_class_index_;
-	int file_index_{ -1 };
 	int list_index_{ -1 };
+	CEditCtrl mm_spike_index_;
 	int spike_index_{ -1 };
+	CEditCtrl mm_class_index_;
 	int class_index_{ 0 };
 
 	ChartSpikeShape chart_shape_;
@@ -93,7 +93,7 @@ protected:
 	options_view_data* options_view_data_{};
 
 	const float time_unit_{ 1000.f }; // 1=s, 1000f=ms, 1e6=us
-	const float mv_unit_ {1000.f};	// 1=V, 1000f=mV, 1e6=uV
+	const float mv_unit_ {1000.f}; // 1=V, 1000f=mV, 1e6=uV
 	float delta_mv_{};
 	float delta_ms_{};
 	float sampling_rate_{};
@@ -157,6 +157,7 @@ public:
 	void OnActivateView(BOOL b_activate, CView* p_activate_view, CView* p_deactive_view) override;
 
 	// Generated message map functions
+	
 	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
 	afx_msg LRESULT on_my_message(WPARAM code, LPARAM l_param);
 	
@@ -174,19 +175,27 @@ public:
 
 	afx_msg void on_en_change_lower_threshold();
 	afx_msg void on_en_change_upper_threshold();
+
 	afx_msg void on_en_change_shape_t1();
 	afx_msg void on_en_change_shape_t2();
 	afx_msg void on_en_change_source_class();
 	afx_msg void on_en_change_destination_class();
+
 	afx_msg void on_en_change_time_first();
 	afx_msg void on_en_change_time_last();
+
 	afx_msg void on_en_change_min_mv();
 	afx_msg void on_en_change_max_mv();
+
+	afx_msg void on_en_change_list_index();
+	afx_msg void on_en_change_file_index();
 	afx_msg void on_en_change_spike_index();
 	afx_msg void on_en_change_spike_class();
+
 	afx_msg void on_en_change_edit_left2();
 	afx_msg void on_en_change_edit_right2();
 	afx_msg void on_en_change_hist_bin_ms();
 
 	DECLARE_MESSAGE_MAP()
+
 };

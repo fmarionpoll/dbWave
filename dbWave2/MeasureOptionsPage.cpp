@@ -1,4 +1,4 @@
-// TODO : measure data and output to notedocview
+// TODO : measure data and output to note_doc_view
 
 #include "StdAfx.h"
 #include "ChartWnd.h"

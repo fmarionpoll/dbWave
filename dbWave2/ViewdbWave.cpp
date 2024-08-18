@@ -80,7 +80,7 @@ void ViewdbWave::OnInitialUpdate()
 {
 	// init document and dbTableView
 	const auto db_wave_doc = GetDocument();
-	p_db_table_main = &db_wave_doc->db_table->m_mainTableSet;
+	p_db_table_main = &db_wave_doc->db_table->m_main_table_set;
 	ViewDbTable::OnInitialUpdate();
 
 	subclass_dialog_controls();
@@ -337,7 +337,7 @@ void ViewdbWave::OnActivateView(const BOOL b_activate, CView * p_activate_view, 
 void ViewdbWave::fill_list_box()
 {
 	m_data_list_ctrl.DeleteAllItems();
-	const int n_records = GetDocument()->db_get_n_records();
+	const int n_records = GetDocument()->db_get_records_count();
 	m_data_list_ctrl.SetItemCountEx(n_records);
 }
 
@@ -482,23 +482,23 @@ void ViewdbWave::on_lvn_column_click_list_ctrl(NMHDR * p_nmhdr, LRESULT * p_resu
 	const auto pdb_doc = GetDocument();
 	switch (p_nmlv->iSubItem)
 	{
-	case CTRL_COL_CURVE: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_DATALEN].header_name;
+	case CTRL_COL_CURVE: cs = pdb_doc->db_table->m_main_table_set.m_desc[CH_DATALEN].header_name;
 		break; 
-	case CTRL_COL_INDEX: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_ID].header_name;
+	case CTRL_COL_INDEX: cs = pdb_doc->db_table->m_main_table_set.m_desc[CH_ID].header_name;
 		break; 
-	case CTRL_COL_SENSI: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_SENSILLUM_ID].header_name;
+	case CTRL_COL_SENSI: cs = pdb_doc->db_table->m_main_table_set.m_desc[CH_SENSILLUM_ID].header_name;
 		break; 
-	case CTRL_COL_STIM1: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_STIM_ID].header_name;
+	case CTRL_COL_STIM1: cs = pdb_doc->db_table->m_main_table_set.m_desc[CH_STIM_ID].header_name;
 		break; 
-	case CTRL_COL_CONC1: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_CONC_ID].header_name;
+	case CTRL_COL_CONC1: cs = pdb_doc->db_table->m_main_table_set.m_desc[CH_CONC_ID].header_name;
 		break;
-	case CTRL_COL_STIM2: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_STIM2_ID].header_name;
+	case CTRL_COL_STIM2: cs = pdb_doc->db_table->m_main_table_set.m_desc[CH_STIM2_ID].header_name;
 		break;
-	case CTRL_COL_CONC2: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_CONC2_ID].header_name;
+	case CTRL_COL_CONC2: cs = pdb_doc->db_table->m_main_table_set.m_desc[CH_CONC2_ID].header_name;
 		break;
-	case CTRL_COL_NBSPK: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_NSPIKES].header_name;
+	case CTRL_COL_NBSPK: cs = pdb_doc->db_table->m_main_table_set.m_desc[CH_NSPIKES].header_name;
 		break;
-	case CTRL_COL_FLAG: cs = pdb_doc->db_table->m_mainTableSet.m_desc[CH_FLAG].header_name;
+	case CTRL_COL_FLAG: cs = pdb_doc->db_table->m_main_table_set.m_desc[CH_FLAG].header_name;
 		break;
 	default:
 		break;

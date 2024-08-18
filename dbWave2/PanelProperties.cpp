@@ -166,7 +166,7 @@ void CPropertiesPanel::UpdatePropList()
 
 	// database general section
 	const int current_record_position = m_pDoc->db_get_current_record_position() + 1;
-	const int n_records = m_pDoc->db_get_n_records();
+	const int n_records = m_pDoc->db_get_records_count();
 	if (n_records == 0)
 		return;
 
@@ -196,13 +196,13 @@ void CPropertiesPanel::UpdateGroupPropFromTable(CMFCPropertyGridProperty* p_grou
 		const int i_column = p_prop->GetData();
 		p_db->get_record_item_value(i_column, &desc);
 		p_prop->ResetOriginalValue();
-		switch (p_db->m_mainTableSet.m_desc[i_column].data_code_number)
+		switch (p_db->m_main_table_set.m_desc[i_column].data_code_number)
 		{
 		case FIELD_IND_TEXT:
 		case FIELD_IND_FILEPATH:
 			p_prop->SetValue(desc.csVal);
 			p_prop->SetOriginalValue(desc.csVal);
-			p2_linked_set = p_db->m_mainTableSet.m_desc[i_column].plinkedSet;
+			p2_linked_set = p_db->m_main_table_set.m_desc[i_column].plinkedSet;
 			if (m_bUpdateCombos || (p_prop->GetOptionCount() != p2_linked_set->GetRecordCount()))
 			{
 				p_prop->RemoveAllOptions();
@@ -249,7 +249,7 @@ void CPropertiesPanel::UpdateGroupPropFromTable(CMFCPropertyGridProperty* p_grou
 void CPropertiesPanel::UpdateTableFromProp()
 {
 	const auto p_database = m_pDoc->db_table;
-	const auto p_main_table_set = &p_database->m_mainTableSet;
+	const auto p_main_table_set = &p_database->m_main_table_set;
 	m_bchangedProperty = FALSE; 
 	p_main_table_set->Edit();
 
@@ -341,8 +341,8 @@ void CPropertiesPanel::InitPropList()
 	const auto p_group0 = new CMFCPropertyGridProperty(_T("Database"));
 	p_group0->SetData(m__i_id);
 	m__i_id++; // iID = 1000
-	const int record_position = p_database->m_mainTableSet.GetAbsolutePosition() + 1;
-	const int records_count = p_database->m_mainTableSet.GetNRecords();
+	const int record_position = p_database->m_main_table_set.GetAbsolutePosition() + 1;
+	const int records_count = p_database->m_main_table_set.get_records_count();
 	auto p_prop = new CMFCPropertyGridProperty(_T("current record"), static_cast<_variant_t>(record_position),
 	                                           _T("current record in the database (soft index)"));
 	p_prop->SetData(m__i_id);
@@ -381,7 +381,7 @@ void CPropertiesPanel::InitPropList()
 	InitGroupFromTable(p_group4, i_col0);
 	m_wndPropList.AddProperty(p_group4);
 
-	if (p_database && m_pDoc->db_get_n_records() > 0)
+	if (p_database && m_pDoc->db_get_records_count() > 0)
 	{
 		m_bUpdateCombos = TRUE;
 		UpdatePropList();
@@ -396,7 +396,7 @@ void CPropertiesPanel::InitPropList()
 int CPropertiesPanel::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int icol0)
 {
 	const auto p_database = m_pDoc->db_table;
-	p_database->m_mainTableSet.GetNRecords();
+	p_database->m_main_table_set.get_records_count();
 	constexpr int i_col1 = sizeof(m_noCol) / sizeof(int);
 	if (icol0 > i_col1) icol0 = i_col1 - 1;
 	int i;
@@ -410,7 +410,7 @@ int CPropertiesPanel::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int i
 		DB_ITEMDESC desc;
 		desc.csVal = _T("undefined");
 		desc.lVal = 0;
-		desc.data_code_number = p_database->m_mainTableSet.m_desc[i_desc_tab].data_code_number;
+		desc.data_code_number = p_database->m_main_table_set.m_desc[i_desc_tab].data_code_number;
 
 		CMFCPropertyGridProperty* p_prop = nullptr;
 		CString cs_comment;

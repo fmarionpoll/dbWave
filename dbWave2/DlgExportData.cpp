@@ -124,7 +124,7 @@ BOOL DlgExportData::OnInitDialog()
 	m_icurrentfile = m_dbDoc->db_get_current_record_position();
 	if (m_bAllFiles)
 	{
-		int nfiles = m_dbDoc->db_get_n_records();
+		int nfiles = m_dbDoc->db_get_records_count();
 		for (int i = 0; i < nfiles; i++)
 		{
 			m_dbDoc->db_set_current_record_position(i);

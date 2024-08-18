@@ -578,7 +578,7 @@ void ChartSpikeHistVert::build_hist_from_document(CdbWaveDoc* p_doc, const BOOL 
 	if (b_all_files)
 	{
 		file_first = 0;
-		file_last = p_doc->db_get_n_records() - 1;
+		file_last = p_doc->db_get_records_count() - 1;
 		current_file = p_doc->db_get_current_record_position();
 	}
 

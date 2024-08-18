@@ -49,7 +49,7 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 	long index_current_file = 0;
 	if (b_display_all_files_)
 	{
-		n_files = dbwave_doc_->db_get_n_records();
+		n_files = dbwave_doc_->db_get_records_count();
 		index_current_file = dbwave_doc_->db_get_current_record_position();
 	}
 
@@ -91,7 +91,7 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 		}
 
 		// display spike selected
-		if (spike_selected_.database_position == index_file && spike_selected_.spike_index >= 0)
+		if (spike_selected_.record_id == dbwave_doc_->db_get_current_record_id() && spike_selected_.spike_index >= 0)
 		{
 			const Spike* spike = dbwave_doc_->get_spike(spike_selected_);
 			highlight_spike_measure(spike);
