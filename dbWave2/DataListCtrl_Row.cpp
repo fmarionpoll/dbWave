@@ -306,6 +306,7 @@ void DataListCtrl_Row::plot_data(DataListCtrlInfos* infos, const int i_image)
 	CDC mem_dc;
 	VERIFY(mem_dc.CreateCompatibleDC(p_dc));
 
+	CBitmap bitmap_plot;
 	bitmap_plot.CreateBitmap(client_rect.right, client_rect.bottom, p_dc->GetDeviceCaps(PLANES),
 		p_dc->GetDeviceCaps(BITSPIXEL), nullptr);
 
@@ -330,6 +331,8 @@ void DataListCtrl_Row::plot_spikes(DataListCtrlInfos* infos, const int i_image)
 	const auto p_dc = p_spike_chart_wnd->GetDC();
 	CDC mem_dc;
 	VERIFY(mem_dc.CreateCompatibleDC(p_dc));
+
+	CBitmap bitmap_plot;
 	bitmap_plot.CreateBitmap(client_rect.right,
 		client_rect.bottom,
 		p_dc->GetDeviceCaps(PLANES),

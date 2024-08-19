@@ -19,7 +19,6 @@ class DataListCtrl_Row : public CObject
 	BOOL b_init {false};
 	int index {0};
 	long insect_id {0};
-	CBitmap bitmap_plot{};
 
 	CString cs_comment{};
 	CString cs_datafile_name{};
