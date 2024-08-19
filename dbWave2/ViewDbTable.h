@@ -41,8 +41,8 @@ public:
 #endif
 	// print view
 protected:
-	CRect m_margin_;				// margins (pixels)
-	int m_file_0_ {0};				// current file
+	CRect pixels_margin_;				
+	int m_file_0_ {0};
 	long m_l_first_0_{ 0 };
 	long m_l_last0_{ 0 };
 	int m_pixels_count_0_{ 0 };

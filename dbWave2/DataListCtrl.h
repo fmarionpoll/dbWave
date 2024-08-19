@@ -11,6 +11,8 @@
 #define CTRL_COL_CONC2		CTRL_COL_INDEX+7
 #define CTRL_COL_NBSPK		CTRL_COL_INDEX+8
 #define CTRL_COL_FLAG		CTRL_COL_INDEX+9
+
+#include "DataListCtrl_Infos.h"
 #include "DataListCtrl_Row.h"
 
 class DataListCtrl : public CListCtrl
@@ -22,74 +24,60 @@ public:
 	void init_columns(CUIntArray* width_columns = nullptr);
 	void set_cur_sel(int record_position);
 	void update_cache(int index_first, int index_last);
+
 	void refresh_display();
 	void resize_signal_column(int n_pixels);
 	void fit_columns_to_size(int n_pixels);
 
-	void set_transform_mode(const int i_mode) { m_data_transform_ = i_mode; }
-	void set_display_mode(const int i_mode) { m_display_mode_ = i_mode; }
+	void set_transform_mode(const int i_mode) { infos.data_transform = i_mode; }
+	void set_display_mode(const int i_mode) { infos.display_mode = i_mode; }
 
-	void set_time_intervals(const float t_first, const float t_last)
+	void set_time_intervals(const float t_first_new, const float t_last_new)
 	{
-		m_t_first_ = t_first;
-		m_t_last_ = t_last;
+		infos.t_first = t_first_new;
+		infos.t_last = t_last_new;
 	}
 
-	void set_amplitude_span(const float mv_span) { m_m_v_span_ = mv_span; } // TODO ; get extent, mode from current line
-	void set_display_file_name(const boolean flag) { b_display_file_name_ = flag; }
-	void set_amplitude_adjust_mode(const boolean flag) { b_set_mv_span_ = flag; }
-	void set_timespan_adjust_mode(const boolean flag) { b_set_time_span_ = flag; }
+	void set_amplitude_span(const float mv_span_new) { infos.mv_span = mv_span_new; }
+	// TODO: get extent, mode from current line
+	void set_display_file_name(const boolean flag) { infos.b_display_file_name = flag; }
+	void set_amplitude_adjust_mode(const boolean flag) { infos.b_set_mv_span = flag; }
+	void set_timespan_adjust_mode(const boolean flag) { infos.b_set_time_span = flag; }
 
-	void set_spike_plot_mode(const int spike_plot_mode, const int i_class)
+	void set_spike_plot_mode(const int spike_plot_mode_new, const int i_class)
 	{
-		m_spike_plot_mode_ = spike_plot_mode;
-		m_selected_class_ = i_class;
+		infos.spike_plot_mode = spike_plot_mode_new;
+		infos.selected_class = i_class;
 	}
 
-	int get_display_mode() const { return m_display_mode_; }
-	float get_time_first() const { return m_t_first_; }
-	float get_time_last() const { return m_t_last_; }
-	float get_amplitude_span() const { return m_m_v_span_; }
-	int get_spike_plot_mode() const { return m_spike_plot_mode_; }
-	int get_spike_class() const { return m_selected_class_; }
+	int get_display_mode() const { return infos.display_mode; }
+	float get_time_first() const { return infos.t_first; }
+	float get_time_last() const { return infos.t_last; }
+	float get_amplitude_span() const { return infos.mv_span; }
+	int get_spike_plot_mode() const { return infos.spike_plot_mode; }
+	int get_spike_class() const { return infos.selected_class; }
 
 	ChartData* get_chart_data_of_current_record();
-	AcqDataDoc* get_visible_rows_acq_data_doc_at(const int index) { return ptr_rows[index]->p_data_doc; }
-	CSpikeDoc* get_visible_rows_spike_doc_at(const int index) { return ptr_rows[index]->p_spike_doc; }
-	int get_visible_rows_size() const { return ptr_rows.GetSize(); }
+	AcqDataDoc* get_visible_rows_acq_data_doc_at(const int index) { return ptr_rows_[index]->p_data_doc; }
+	CSpikeDoc* get_visible_rows_spike_doc_at(const int index) { return ptr_rows_[index]->p_spike_doc; }
+	int get_visible_rows_size() const { return ptr_rows_.GetSize(); }
 
 protected:
-	CArray<CDataListCtrl_Row*, CDataListCtrl_Row*> ptr_rows;
-	CImageList m_image_list_;
+	CArray<DataListCtrl_Row*, DataListCtrl_Row*> ptr_rows_;
 	static int m_column_width_[N_COLUMNS];
 	static CString m_column_headers_[N_COLUMNS];
 	static int m_column_format_[N_COLUMNS];
 	static int m_column_index_[N_COLUMNS];
+	CUIntArray* m_width_columns_ {nullptr};
 
-	CUIntArray* m_width_columns_ = nullptr;
-	CBitmap* m_p_empty_bitmap_ = nullptr;
+public:
+	DataListCtrlInfos infos;
 
-	int m_image_width_ = 400;
-	int m_image_height_ = 50; 
-	int m_data_transform_ = 0;
-	int m_display_mode_ = 1;
-	int m_spike_plot_mode_ = PLOT_BLACK;
-	int m_selected_class_ = 0;
-	float m_t_first_ = 0.f;
-	float m_t_last_ = 0.f;
-	float m_m_v_span_ = 0.f;
-	boolean b_set_time_span_ = false;
-	boolean b_set_mv_span_ = false;
-	boolean b_display_file_name_ = false;
-
+protected:
 	void delete_ptr_array();
 	void save_columns_width() const;
 	void resize_ptr_array(int n_items);
-	void set_empty_bitmap(boolean b_forced_update = false);
-	void display_spike_wnd(CDataListCtrl_Row* ptr, int i_image);
-	void display_data_wnd(CDataListCtrl_Row* ptr, int i_image);
-	void display_empty_wnd(CDataListCtrl_Row* ptr, const int i_image);
-	void plot_data(const CDataListCtrl_Row* ptr, ChartData* p_wnd, int i_image);
+	void build_empty_bitmap(boolean b_forced_update = false);
 
 	// Generated message map functions
 	afx_msg void OnGetDisplayInfo(NMHDR* p_nmhdr, LRESULT* p_result);

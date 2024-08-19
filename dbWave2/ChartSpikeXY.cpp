@@ -68,7 +68,7 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 		// test presence of data
 		if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() == 0 && !b_display_all_files_)
 		{
-			message_no_data(p_dc);
+			display_text_bottom_left(p_dc, cs_empty_);
 			continue;
 		}
 

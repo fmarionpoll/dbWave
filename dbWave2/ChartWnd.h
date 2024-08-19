@@ -112,7 +112,7 @@ protected:
 
 public:
 	virtual void plot_data_to_dc(CDC* p_dc);
-	void message_no_data(CDC* p_dc) const;
+	void display_text_bottom_left(CDC* p_dc, const CString& text) const;
 	virtual options_scope_struct* get_scope_parameters();
 	virtual void set_scope_parameters(options_scope_struct* p_struct);
 	virtual int set_mouse_cursor_type(int cursor_type);

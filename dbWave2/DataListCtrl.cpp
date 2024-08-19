@@ -56,7 +56,7 @@ DataListCtrl::DataListCtrl()
 DataListCtrl::~DataListCtrl()
 {
 	delete_ptr_array();
-	SAFE_DELETE(m_p_empty_bitmap_)
+	SAFE_DELETE(infos.p_empty_bitmap)
 }
 
 void DataListCtrl::OnDestroy()
@@ -78,45 +78,45 @@ void DataListCtrl::save_columns_width() const
 
 void DataListCtrl::delete_ptr_array()
 {
-	if (ptr_rows.GetSize() == NULL)
+	if (ptr_rows_.GetSize() == NULL)
 		return;
-	const auto n_rows = ptr_rows.GetSize();
+	const auto n_rows = ptr_rows_.GetSize();
 	for (auto i = 0; i < n_rows; i++)
 	{
-		const auto* ptr = ptr_rows.GetAt(i);
+		const auto* ptr = ptr_rows_.GetAt(i);
 		SAFE_DELETE(ptr)
 	}
-	ptr_rows.RemoveAll();
+	ptr_rows_.RemoveAll();
 }
 
 void DataListCtrl::resize_ptr_array(const int n_items)
 {
-	if (n_items == ptr_rows.GetSize())
+	if (n_items == ptr_rows_.GetSize())
 		return;
 
 	// Resize m_image_list CImageList
-	m_image_list_.SetImageCount(n_items);
+	infos.image_list.SetImageCount(n_items);
 
 	// reduce size
-	if (ptr_rows.GetSize() > n_items)
+	if (ptr_rows_.GetSize() > n_items)
 	{
-		for (auto i = ptr_rows.GetSize() - 1; i >= n_items; i--)
-			delete ptr_rows.GetAt(i);
-		ptr_rows.SetSize(n_items);
+		for (auto i = ptr_rows_.GetSize() - 1; i >= n_items; i--)
+			delete ptr_rows_.GetAt(i);
+		ptr_rows_.SetSize(n_items);
 	}
 	// grow size
 	else
 	{
-		const auto size_before_change = ptr_rows.GetSize();
-		ptr_rows.SetSize(n_items);
+		const auto size_before_change = ptr_rows_.GetSize();
+		ptr_rows_.SetSize(n_items);
 		auto index = 0;
 		if (size_before_change > 0)
-			index = ptr_rows.GetAt(size_before_change - 1)->index;
+			index = ptr_rows_.GetAt(size_before_change - 1)->index;
 		for (auto i = size_before_change; i < n_items; i++)
 		{
-			auto* ptr = new CDataListCtrl_Row;
+			auto* ptr = new DataListCtrl_Row;
 			ASSERT(ptr != NULL);
-			ptr_rows.SetAt(i, ptr);
+			ptr_rows_.SetAt(i, ptr);
 			index++;
 			ptr->index = index;
 		}
@@ -140,19 +140,19 @@ void DataListCtrl::init_columns(CUIntArray* width_columns)
 		InsertColumn(i, m_column_headers_[i], m_column_format_[i], m_column_width_[i], -1);
 	}
 
-	m_image_width_ = m_column_width_[CTRL_COL_CURVE];
-	m_image_list_.Create(m_image_width_, m_image_height_, ILC_COLOR4, 10, 10);
-	SetImageList(&m_image_list_, LVSIL_SMALL);
+	infos.image_width = m_column_width_[CTRL_COL_CURVE];
+	infos.image_list.Create(infos.image_width, infos.image_height, ILC_COLOR4, 10, 10);
+	SetImageList(&infos.image_list, LVSIL_SMALL);
 }
 
 void DataListCtrl::OnGetDisplayInfo(NMHDR* p_nmhdr, LRESULT* p_result)
 {
 	auto first_array = 0;
 	auto last_array = 0;
-	if (ptr_rows.GetSize() > 0)
+	if (ptr_rows_.GetSize() > 0)
 	{
-		first_array = ptr_rows.GetAt(0)->index;
-		last_array = ptr_rows.GetAt(ptr_rows.GetUpperBound())->index;
+		first_array = ptr_rows_.GetAt(0)->index;
+		last_array = ptr_rows_.GetAt(ptr_rows_.GetUpperBound())->index;
 	}
 
 	// is item within the cache?
@@ -175,7 +175,7 @@ void DataListCtrl::OnGetDisplayInfo(NMHDR* p_nmhdr, LRESULT* p_result)
 		first_array = last_array - GetCountPerPage() + 1;
 		update_cache(first_array, last_array);
 	}
-	else if (ptr_rows.GetSize() == 0)
+	else if (ptr_rows_.GetSize() == 0)
 		update_cache(first_array, last_array);
 
 	// now, the requested item is in the cache
@@ -184,12 +184,12 @@ void DataListCtrl::OnGetDisplayInfo(NMHDR* p_nmhdr, LRESULT* p_result)
 	if (pdb_doc == nullptr)
 		return;
 
-	const int i_first_visible = ptr_rows.GetAt(0)->index;
+	const int i_first_visible = ptr_rows_.GetAt(0)->index;
 	auto i_cache_index = item_index - i_first_visible;
-	if (i_cache_index > (ptr_rows.GetSize() - 1))
-		i_cache_index = ptr_rows.GetSize() - 1;
+	if (i_cache_index > (ptr_rows_.GetSize() - 1))
+		i_cache_index = ptr_rows_.GetSize() - 1;
 
-	const auto* row = ptr_rows.GetAt(i_cache_index);
+	const auto* row = ptr_rows_.GetAt(i_cache_index);
 
 	if (item->mask & LVIF_TEXT) //valid text buffer?
 	{
@@ -270,10 +270,10 @@ void DataListCtrl::update_cache(int index_first, int index_last)
 
 	// resize array if the number of visible records < all records
 	auto b_forced_update = FALSE;
-	if (inb_visible != ptr_rows.GetSize())
+	if (inb_visible != ptr_rows_.GetSize())
 	{
 		// if cache size increases, erase old information (set flag)
-		if (inb_visible > ptr_rows.GetSize())
+		if (inb_visible > ptr_rows_.GetSize())
 			b_forced_update = TRUE;
 		// if cache size decreases, just delete extra rows
 		resize_ptr_array(inb_visible);
@@ -283,15 +283,16 @@ void DataListCtrl::update_cache(int index_first, int index_last)
 	const auto db_wave_doc = static_cast<ViewdbWave*>(GetParent())->GetDocument();
 	if (db_wave_doc == nullptr)
 		return;
+
 	const int index_current_file = db_wave_doc->db_get_current_record_position();
 
 	// which update is necessary?
 	// conditions for out of range (renew all items)
-	auto n_to_rebuild = ptr_rows.GetSize(); // number of items to refresh
+	auto n_to_rebuild = ptr_rows_.GetSize(); // number of items to refresh
 	auto new1 = 0;
 	auto i_first_array = 0;
-	if (ptr_rows.GetSize() > 0)
-		i_first_array = ptr_rows.GetAt(0)->index;
+	if (ptr_rows_.GetSize() > 0)
+		i_first_array = ptr_rows_.GetAt(0)->index;
 	const auto difference = index_first - i_first_array;
 
 	// change indexes according to case
@@ -302,37 +303,37 @@ void DataListCtrl::update_cache(int index_first, int index_last)
 		auto dest1 = 0;
 		auto delta = 0;
 		auto n_to_transfer = 0;
-		if (difference > 0 && difference < ptr_rows.GetSize())
+		if (difference > 0 && difference < ptr_rows_.GetSize())
 		{
 			delta = 1; // copy forward
-			n_to_transfer = ptr_rows.GetSize() - difference;
+			n_to_transfer = ptr_rows_.GetSize() - difference;
 			n_to_rebuild -= n_to_transfer;
 			source1 = difference;
 			dest1 = 0;
 			new1 = n_to_transfer;
 		}
 		// scroll down (go backwards i.e. towards indexes of lower value)
-		else if (difference < 0 && -difference < ptr_rows.GetSize())
+		else if (difference < 0 && -difference < ptr_rows_.GetSize())
 		{
 			delta = -1;
-			n_to_transfer = ptr_rows.GetSize() + difference;
+			n_to_transfer = ptr_rows_.GetSize() + difference;
 			n_to_rebuild -= n_to_transfer;
 			source1 = n_to_transfer - 1;
-			dest1 = ptr_rows.GetSize() - 1;
+			dest1 = ptr_rows_.GetSize() - 1;
 			new1 = 0;
 		}
 
-		// n to Transfer 
+		// n to transfer 
 		auto source = source1;
 		auto dest = dest1;
 		while (n_to_transfer > 0)
 		{
 			// exchange objects
-			auto* p_source = ptr_rows.GetAt(source);
-			const auto p_dest = ptr_rows.GetAt(dest);
-			ptr_rows.SetAt(dest, p_source);
-			ptr_rows.SetAt(source, p_dest);
-			m_image_list_.Copy(dest, source, ILCF_SWAP);
+			auto* p_source = ptr_rows_.GetAt(source);
+			const auto p_dest = ptr_rows_.GetAt(dest);
+			ptr_rows_.SetAt(dest, p_source);
+			ptr_rows_.SetAt(source, p_dest);
+			infos.image_list.Copy(dest, source, ILCF_SWAP);
 
 			// update indexes
 			source += delta;
@@ -345,70 +346,15 @@ void DataListCtrl::update_cache(int index_first, int index_last)
 	int index = new1;
 
 	// left, top, right, bottom
-	set_empty_bitmap();
-	DB_ITEMDESC desc;
+	build_empty_bitmap();
+	infos.parent = this;
 
 	while (n_to_rebuild > 0)
 	{
-		// get data; create object if null
-		const auto row = ptr_rows.GetAt(index);
-
-		// create line view and spike superposition
+		const auto row = ptr_rows_.GetAt(index);
 		row->index = index + index_first;
-		if (db_wave_doc->db_set_current_record_position(row->index))
-		{
-			db_wave_doc->open_current_data_file();
-			db_wave_doc->open_current_spike_file();
-		}
-		row->cs_datafile_name = db_wave_doc->db_get_current_dat_file_name(TRUE);
-		row->cs_spike_file_name = db_wave_doc->db_get_current_spk_file_name(TRUE);
-		const auto database = db_wave_doc->db_table;
-
-		database->get_record_item_value(CH_IDINSECT, &desc);
-		row->insect_id = desc.lVal;
-
-		// column: stimulus, concentration, type = load indirect data from database
-		database->get_record_item_value(CH_STIM_ID, &desc);
-		row->cs_stimulus1 = desc.csVal;
-		database->get_record_item_value(CH_CONC_ID, &desc);
-		row->cs_concentration1 = desc.csVal;
-		database->get_record_item_value(CH_STIM2_ID, &desc);
-		row->cs_stimulus2 = desc.csVal;
-		database->get_record_item_value(CH_CONC2_ID, &desc);
-		row->cs_concentration2 = desc.csVal;
-
-		database->get_record_item_value(CH_SENSILLUM_ID, &desc);
-		row->cs_sensillum_name = desc.csVal;
-
-		database->get_record_item_value(CH_FLAG, &desc);
-		row->cs_flag.Format(_T("%i"), desc.lVal);
-
-		// column: number of spike = verify that spike file is defined, if yes, load nb spikes
-		if (db_wave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
-			row->cs_n_spikes.Empty();
-		else
-		{
-			database->get_record_item_value(CH_NSPIKES, &desc);
-			const int n_spikes = desc.lVal;
-			database->get_record_item_value(CH_NSPIKECLASSES, &desc);
-			row->cs_n_spikes.Format(_T("%i (%i classes)"), n_spikes, desc.lVal);
-		}
-
-		// build bitmap corresponding to data/spikes/nothing
-		switch (m_display_mode_)
-		{
-		// data mode
-		case 1:
-			display_data_wnd(row, index);
-			break;
-		// spike bars
-		case 2:
-			display_spike_wnd(row, index);
-			break;
-		default:
-			display_empty_wnd(row, index);
-			break;
-		}
+		row->build_row(db_wave_doc);
+		row->display_row(&infos, index);
 		index++;
 		n_to_rebuild--;
 	}
@@ -423,21 +369,21 @@ void DataListCtrl::update_cache(int index_first, int index_last)
 	}
 }
 
-void DataListCtrl::set_empty_bitmap(const boolean b_forced_update)
+void DataListCtrl::build_empty_bitmap(const boolean b_forced_update)
 {
-	if (m_p_empty_bitmap_ != nullptr && !b_forced_update)
+	if (infos.p_empty_bitmap != nullptr && !b_forced_update)
 		return;
 
-	SAFE_DELETE(m_p_empty_bitmap_)
-	m_p_empty_bitmap_ = new CBitmap;
+	SAFE_DELETE(infos.p_empty_bitmap)
+		infos.p_empty_bitmap = new CBitmap;
 
 	CWindowDC dc(this);
 	CDC mem_dc;
 	VERIFY(mem_dc.CreateCompatibleDC(&dc));
-	m_p_empty_bitmap_->CreateBitmap(m_image_width_, m_image_height_, 
+	infos.p_empty_bitmap->CreateBitmap(infos.image_width, infos.image_height,
 		dc.GetDeviceCaps(PLANES), 
 		dc.GetDeviceCaps(BITSPIXEL), nullptr);
-	mem_dc.SelectObject(m_p_empty_bitmap_);
+	mem_dc.SelectObject(infos.p_empty_bitmap);
 	mem_dc.SetMapMode(dc.GetMapMode());
 
 	CBrush brush(RGB(204, 204, 204)); //light gray
@@ -445,36 +391,26 @@ void DataListCtrl::set_empty_bitmap(const boolean b_forced_update)
 	CPen pen;
 	pen.CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
 	mem_dc.SelectObject(&pen);
-	const auto rect_data = CRect(1, 0, m_image_width_, m_image_height_);
+	const auto rect_data = CRect(1, 0, infos.image_width, infos.image_height);
 	mem_dc.Rectangle(&rect_data);
 }
 
 void DataListCtrl::refresh_display()
 {
-	if (ptr_rows.GetSize() == NULL)
+	if (ptr_rows_.GetSize() == NULL)
 		return;
-	const int first_row = ptr_rows.GetAt(0)->index;
-	const int last_row = ptr_rows.GetAt(ptr_rows.GetUpperBound())->index;
-	set_empty_bitmap();
+	const int first_row = ptr_rows_.GetAt(0)->index;
+	const int last_row = ptr_rows_.GetAt(ptr_rows_.GetUpperBound())->index;
+	build_empty_bitmap();
 
-	const auto n_rows = ptr_rows.GetSize();
+	const auto n_rows = ptr_rows_.GetSize();
+	infos.parent = this;
 	for (auto index = 0; index < n_rows; index++)
 	{
-		auto* ptr = ptr_rows.GetAt(index);
-		if (ptr == nullptr)
+		auto* row = ptr_rows_.GetAt(index);
+		if (row == nullptr)
 			continue;
-		switch (m_display_mode_)
-		{
-		case 1:
-			display_data_wnd(ptr, index);
-			break;
-		case 2:
-			display_spike_wnd(ptr, index);
-			break;
-		default:
-			display_empty_wnd(ptr, index);
-			break;
-		}
+		row->display_row(&infos, index);
 	}
 	RedrawItems(first_row, last_row);
 	Invalidate();
@@ -532,176 +468,24 @@ ChartData* DataListCtrl::get_chart_data_of_current_record()
 		n_item = GetNextItem(n_item, LVNI_SELECTED);
 		ASSERT(n_item != -1);
 		n_item -= GetTopIndex();
-		if (n_item >= 0 && n_item < ptr_rows.GetSize())
-			ptr = ptr_rows.GetAt(n_item)->p_data_chart_wnd;
+		if (n_item >= 0 && n_item < ptr_rows_.GetSize())
+			ptr = ptr_rows_.GetAt(n_item)->p_data_chart_wnd;
 	}
 	return ptr;
-}
-
-void DataListCtrl::display_data_wnd(CDataListCtrl_Row* ptr, int i_image)
-{
-	// create objects if necessary : CLineView and AcqDataDoc
-	if (ptr->p_data_chart_wnd == nullptr)
-	{
-		ptr->p_data_chart_wnd = new ChartData;
-		ASSERT(ptr->p_data_chart_wnd != NULL);
-		ptr->p_data_chart_wnd->Create(_T("DATAWND"), WS_CHILD, CRect(0, 0, m_image_width_, m_image_height_), this, i_image * 100);
-		ptr->p_data_chart_wnd->set_b_use_dib(FALSE);
-	}
-	const auto p_wnd = ptr->p_data_chart_wnd;
-	p_wnd->set_string(ptr->cs_comment);
-
-	// open data document
-	if (ptr->p_data_doc == nullptr)
-	{
-		ptr->p_data_doc = new AcqDataDoc;
-		ASSERT(ptr->p_data_doc != NULL);
-	}
-	if (ptr->cs_datafile_name.IsEmpty() || !ptr->p_data_doc->open_document(ptr->cs_datafile_name))
-	{
-		p_wnd->remove_all_channel_list_items();
-		auto comment = _T("File name: ") + ptr->cs_datafile_name;
-		comment += _T(" -- data not available");
-		p_wnd->set_string(comment);
-	}
-	else
-	{
-		if (ptr->cs_n_spikes.IsEmpty())
-			p_wnd->get_scope_parameters()->cr_scope_fill = ChartData::get_color(2);
-		else
-			p_wnd->get_scope_parameters()->cr_scope_fill = ChartData::get_color(15);
-
-		ptr->p_data_doc->read_data_infos();
-		ptr->cs_comment = ptr->p_data_doc->get_wave_format()->get_comments(_T(" "));
-		p_wnd->attach_data_file(ptr->p_data_doc);
-		p_wnd->load_all_channels(m_data_transform_);
-		p_wnd->load_data_within_window(b_set_time_span_, m_t_first_, m_t_last_);
-		p_wnd->adjust_gain(b_set_mv_span_, m_m_v_span_);
-
-		ptr->p_data_doc->acq_close_file();
-	}
-	plot_data(ptr, p_wnd, i_image);
-}
-
-
-void DataListCtrl::plot_data(const CDataListCtrl_Row* ptr, ChartData* p_wnd, int i_image)
-{
-	p_wnd->set_bottom_comment(b_display_file_name_, ptr->cs_datafile_name);
-	CRect client_rect;
-	p_wnd->GetClientRect(&client_rect);
-
-	CBitmap bitmap_plot;
-	const auto p_dc = p_wnd->GetDC();
-	CDC mem_dc;
-	VERIFY(mem_dc.CreateCompatibleDC(p_dc));
-	bitmap_plot.CreateBitmap(client_rect.right, client_rect.bottom, p_dc->GetDeviceCaps(PLANES),
-		p_dc->GetDeviceCaps(BITSPIXEL), nullptr);
-	mem_dc.SelectObject(&bitmap_plot);
-	mem_dc.SetMapMode(p_dc->GetMapMode());
-
-	p_wnd->plot_data_to_dc(&mem_dc);
-	CPen pen;
-	pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0)); // black//RGB(0, 0, 0)); // black
-	mem_dc.MoveTo(1, 0);
-	mem_dc.LineTo(1, client_rect.bottom);
-	m_image_list_.Replace(i_image, &bitmap_plot, nullptr);
-}
-
-void DataListCtrl::display_spike_wnd(CDataListCtrl_Row* ptr, const int i_image)
-{
-	// create spike window and spike document if necessary
-	if (ptr->p_spike_chart_wnd == nullptr)
-	{
-		ptr->p_spike_chart_wnd = new ChartSpikeBar;
-		ASSERT(ptr->p_spike_chart_wnd != NULL);
-		ptr->p_spike_chart_wnd->Create(_T("SPKWND"), WS_CHILD, CRect(0, 0, m_image_width_, m_image_height_), this, ptr->index * 1000);
-		ptr->p_spike_chart_wnd->set_b_use_dib(FALSE);
-	}
-	const auto chart_spike_bar = ptr->p_spike_chart_wnd;
-
-	// open spike document
-	if (ptr->p_spike_doc == nullptr)
-	{
-		ptr->p_spike_doc = new CSpikeDoc;
-		ASSERT(ptr->p_spike_doc != NULL);
-	}
-
-	if (ptr->cs_spike_file_name.IsEmpty() || !ptr->p_spike_doc->OnOpenDocument(ptr->cs_spike_file_name))
-	{
-		m_image_list_.Replace(i_image, m_p_empty_bitmap_, nullptr);
-	}
-	else
-	{
-		const auto p_parent = static_cast<ViewdbWave*>(GetParent());
-		int i_tab = p_parent->spk_list_tab_ctrl.GetCurSel();
-		if (i_tab < 0)
-			i_tab = 0;
-		const auto p_spk_list = ptr->p_spike_doc->set_spike_list_current_index(i_tab);
-
-		chart_spike_bar->set_source_data(p_spk_list, p_parent->GetDocument());
-		chart_spike_bar->set_plot_mode(m_spike_plot_mode_, m_selected_class_);
-
-		long l_first = 0;
-		auto l_last = ptr->p_spike_doc->get_acq_size();
-		if (b_set_time_span_)
-		{
-			const auto sampling_rate = ptr->p_spike_doc->get_acq_rate();
-			l_first = static_cast<long>(m_t_first_ * sampling_rate);
-			l_last = static_cast<long>(m_t_last_ * sampling_rate);
-		}
-
-		chart_spike_bar->set_time_intervals(l_first, l_last);
-		if (b_set_mv_span_)
-		{
-			const auto volts_per_bin = p_spk_list->get_acq_volts_per_bin();
-			const auto y_we = static_cast<int>(m_m_v_span_ / 1000.f / volts_per_bin);
-			const auto y_wo = p_spk_list->get_acq_bin_zero();
-			chart_spike_bar->set_yw_ext_org(y_we, y_wo);
-		}
-		chart_spike_bar->set_bottom_comment(b_display_file_name_, ptr->cs_spike_file_name);
-		CRect client_rect;
-		chart_spike_bar->GetClientRect(&client_rect);
-
-		CBitmap bitmap_plot;
-		const auto p_dc = chart_spike_bar->GetDC();
-		CDC mem_dc;
-		VERIFY(mem_dc.CreateCompatibleDC(p_dc));
-		bitmap_plot.CreateBitmap(client_rect.right, 
-			client_rect.bottom, 
-			p_dc->GetDeviceCaps(PLANES),
-			p_dc->GetDeviceCaps(BITSPIXEL), 
-			nullptr);
-		mem_dc.SelectObject(&bitmap_plot);
-		mem_dc.SetMapMode(p_dc->GetMapMode());
-
-		chart_spike_bar->set_display_all_files(false);
-		chart_spike_bar->plot_data_to_dc(&mem_dc);
-
-		CPen pen;
-		pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
-		mem_dc.MoveTo(1, 0);
-		mem_dc.LineTo(1, client_rect.bottom);
-		m_image_list_.Replace(i_image, &bitmap_plot, nullptr);
-	}
-}
-
-void DataListCtrl::display_empty_wnd(CDataListCtrl_Row* ptr, const int i_image)
-{
-	m_image_list_.Replace(i_image, m_p_empty_bitmap_, nullptr);
 }
 
 void DataListCtrl::resize_signal_column(const int n_pixels)
 {
 	m_column_width_[CTRL_COL_CURVE] = n_pixels;
-	m_image_list_.DeleteImageList();
-	m_image_width_ = m_column_width_[CTRL_COL_CURVE];
-	m_image_list_.Create(m_image_width_, m_image_height_, ILC_COLOR4, 10, 10);
-	SetImageList(&m_image_list_, LVSIL_SMALL);
-	m_image_list_.SetImageCount(ptr_rows.GetSize());
+	infos.image_list.DeleteImageList();
+	infos.image_width = m_column_width_[CTRL_COL_CURVE];
+	infos.image_list.Create(infos.image_width, infos.image_height, ILC_COLOR4, 10, 10);
+	SetImageList(&infos.image_list, LVSIL_SMALL);
+	infos.image_list.SetImageCount(ptr_rows_.GetSize());
 
-	for (int i = 0; i < ptr_rows.GetSize(); i++)
+	for (int i = 0; i < ptr_rows_.GetSize(); i++)
 	{
-		auto* ptr = ptr_rows.GetAt(i);
+		auto* ptr = ptr_rows_.GetAt(i);
 		SAFE_DELETE(ptr->p_data_chart_wnd)
 		SAFE_DELETE(ptr->p_spike_chart_wnd)
 	}

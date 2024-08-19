@@ -13,7 +13,7 @@ public:
 	void Serialize(CArchive& archive) override;
 
 protected:
-	BOOL b_plot_spikes_ = FALSE; // FALSE=bars; TRUE=spikes
+	BOOL b_plot_spikes_ = FALSE; // FALSE=bars; TRUE=spike shapes
 	int bar_height_ = 10;
 	CDWordArray* p_envelope_ = nullptr; 
 

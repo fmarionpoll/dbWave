@@ -43,6 +43,7 @@ boolean ChartSpike::get_spike_file(const int i_file)
 		{
 			 dbwave_doc_->open_current_spike_file();
 			 success = (dbwave_doc_->m_p_spk_doc != nullptr);
+			 p_spike_doc_ = dbwave_doc_->m_p_spk_doc;
 		}
 
 		if (success)

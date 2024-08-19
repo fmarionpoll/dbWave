@@ -1048,7 +1048,7 @@ void ViewSpikeSort::on_tools_edit_spikes()
 
 	if (!dlg.b_artefact)
 	{
-		db_spike spike_sel(spike_coords.record_id, -spike_coords.spike_list_index, spike_index_);
+		db_spike spike_sel(spike_coords.record_id, spike_coords.spike_list_index, spike_index_);
 		select_spike(spike_sel);
 	}
 	if (dlg.b_changed)

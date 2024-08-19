@@ -3,21 +3,23 @@
 #include "Spikedoc.h"
 #include "ChartData.h"
 #include "ChartSpikeBar.h"
+#include "DataListCtrl_Infos.h"
 
 
-class CDataListCtrl_Row : public CObject
+class DataListCtrl_Row : public CObject
 {
-	DECLARE_SERIAL(CDataListCtrl_Row)
-public:
-	CDataListCtrl_Row();
-	CDataListCtrl_Row(int i);
-	~CDataListCtrl_Row() override;
+	DECLARE_SERIAL(DataListCtrl_Row)
 
-	BOOL b_changed = false;
-	WORD w_version = 0;
-	BOOL b_init = false;
-	int index = 0;
-	long insect_id = 0;
+	DataListCtrl_Row();
+	DataListCtrl_Row(int i);
+	~DataListCtrl_Row() override;
+
+	BOOL b_changed {false};
+	WORD w_version {0};
+	BOOL b_init {false};
+	int index {0};
+	long insect_id {0};
+	CBitmap bitmap_plot{};
 
 	CString cs_comment{};
 	CString cs_datafile_name{};
@@ -31,11 +33,24 @@ public:
 	CString cs_flag{};
 	CString cs_date{};
 
-	AcqDataDoc* p_data_doc = nullptr;
-	ChartData* p_data_chart_wnd = nullptr;
-	CSpikeDoc* p_spike_doc = nullptr;
-	ChartSpikeBar* p_spike_chart_wnd = nullptr;
+	AcqDataDoc* p_data_doc  {nullptr};
+	ChartData* p_data_chart_wnd = {nullptr};
+	
+	CSpikeDoc* p_spike_doc {nullptr};
+	ChartSpikeBar* p_spike_chart_wnd {nullptr};
 
-	CDataListCtrl_Row& operator =(const CDataListCtrl_Row& arg);
+	DataListCtrl_Row& operator =(const DataListCtrl_Row& arg);
 	void Serialize(CArchive& ar) override;
+
+	void build_row(CdbWaveDoc* db_wave_doc);
+	void display_row(DataListCtrlInfos* infos, int i_image);
+
+protected:
+	void display_data_wnd(DataListCtrlInfos* infos, int i_image);
+	void display_spike_wnd(DataListCtrlInfos* infos, int i_image);
+	void display_empty_wnd(DataListCtrlInfos* infos, int i_image);
+
+	void plot_data(DataListCtrlInfos* infos, int i_image);
+	void plot_spikes(DataListCtrlInfos* infos, int i_image);
+
 };

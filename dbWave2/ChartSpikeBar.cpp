@@ -58,16 +58,21 @@ void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 	{
 		if (!get_spike_file(i_file) && !b_display_all_files_)
 		{
-			message_no_data(p_dc);
+			display_text_bottom_left(p_dc, cs_empty_);
 			continue;
 		}
 
-		if (b_bottom_comment)
-			p_dc->DrawText(cs_bottom_comment, cs_bottom_comment.GetLength(), display_rect_,DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
+		// TODO remove after debug
+		if (p_spike_doc_ != nullptr)
+			display_text_bottom_left(p_dc, p_spike_doc_->GetPathName());
+		p_dc->DrawText(cs_bottom_comment, cs_bottom_comment.GetLength(), display_rect_, DT_RIGHT | DT_TOP | DT_SINGLELINE);
+
+		//if (b_bottom_comment)
+		//	p_dc->DrawText(cs_bottom_comment, cs_bottom_comment.GetLength(), display_rect_,DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
 
 		display_bars(p_dc, &display_rect_);
 
-		if (p_spike_doc_->m_stimulus_intervals.n_items > 0)
+		if (p_spike_doc_ != nullptr && p_spike_doc_->m_stimulus_intervals.n_items > 0)
 			display_stimulus(p_dc, &display_rect_);
 
 		if (vt_tags.get_tag_list_size() > 0)
@@ -128,7 +133,7 @@ void ChartSpikeBar::display_stimulus(CDC* p_dc, const CRect* rect) const
 	const auto ii_last = l_last_;
 	const auto ii_length = ii_last - ii_first;
 	auto i0 = 0;
-	CIntervals* p_intervals = &(p_spike_doc_->m_stimulus_intervals);
+	CIntervals* p_intervals = &p_spike_doc_->m_stimulus_intervals;
 
 	while (i0 < p_intervals->GetSize()
 		&& p_intervals->GetAt(i0) < ii_first)

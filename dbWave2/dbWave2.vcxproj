@@ -1371,6 +1371,7 @@
     <ClInclude Include="ColorNames.h" />
     <ClInclude Include="Controls\GridComboEdit.h" />
     <ClInclude Include="Controls\InPlaceEdit.h" />
+    <ClInclude Include="DataListCtrl_Infos.h" />
     <ClInclude Include="DlgOverwriteFileOptions.h" />
     <ClInclude Include="GridCtrl\GridDefaultCell.h" />
     <ClInclude Include="GridCtrl\GridDefines.h" />

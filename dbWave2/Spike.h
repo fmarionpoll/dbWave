@@ -12,14 +12,14 @@ class Spike : public CObject
 
 	// Attributes
 private:
-	long ii_time_ = 0;					// occurrence time - multiply by rate to get time in seconds
+	long ii_time_ = 0;					// occurrence time in ticks
 	int class_id_ = 0;					// spike class - init to zero at first
 	int detection_parameters_index_ = 0;	// spike detection array index
 	int value_max_ = 4096;				// spike max (used to scan rapidly to adjust display)
 	int value_min_ = 0;					// spike min (used to scan rapidly to adjust display)
 	int d_max_min_ = 0;
 	int offset_ = 2048;					// offset voltage pt 1
-	int y1_ = 0;							// parameter measured and stored
+	int y1_ = 0;						// parameter measured and stored
 	int y2_ = 0;
 	int dt_ = 0;
 
@@ -27,7 +27,7 @@ private:
 	int buffer_spike_length_ = 0;		// n points in the buffer
 	int spike_length_ = 0;				// length of buffer
 	boolean selected_state_ = false;
-	int bin_zero_ = 2048;					// zero (2048 if 12 bits scale = 0-4095)
+	int bin_zero_ = 2048;				// zero (2048 if 12 bits scale = 0-4095)
 
 public:
 	int		get_bin_zero() const { return bin_zero_; }

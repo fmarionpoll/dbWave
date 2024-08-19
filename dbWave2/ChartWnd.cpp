@@ -202,15 +202,17 @@ void ChartWnd::plot_data_to_dc(CDC* p_dc)
 {
 }
 
-void ChartWnd::message_no_data(CDC* p_dc) const
+void ChartWnd::display_text_bottom_left(CDC* p_dc, const CString& text) const
 {
 	CRect rect = display_rect_;
-	rect.DeflateRect(1, 1);
-	const COLORREF old_color = p_dc->SetTextColor(col_dark_gray);
+	rect.DeflateRect(2, 2);
 	const int previous_map_mode = p_dc->SetMapMode(MM_TEXT);
 	if (previous_map_mode == MM_ANISOTROPIC)
 		rect.OffsetRect(0, -y_vo_);
-	p_dc->DrawText(cs_empty_, cs_empty_.GetLength(), rect, DT_LEFT | DT_SINGLELINE | DT_BOTTOM); // DT_TOP
+
+	const COLORREF old_color = p_dc->SetTextColor(col_dark_gray);
+	p_dc->DrawText(text, text.GetLength(), rect, DT_LEFT | DT_SINGLELINE | DT_BOTTOM); // DT_TOP
+
 	p_dc->SetMapMode(previous_map_mode);
 	p_dc->SetTextColor(old_color);
 
