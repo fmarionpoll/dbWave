@@ -2,6 +2,7 @@
 #include "resource.h"
 #include "DlgPrintMargins.h"
 
+#include "ColorNames.h"
 #include "dbWave.h"
 #include "DlgPrintDataOptions.h"
 #include "DlgPrintDrawArea.h"
@@ -112,8 +113,8 @@ void DlgPrintMargins::OnPaint()
 	dc.SelectStockObject(WHITE_BRUSH);
 	const auto p_old_pen = static_cast<CPen*>(dc.SelectStockObject(BLACK_PEN));
 
-	const auto page_background = RGB(192, 192, 192);
-	const auto comment_area = page_background; //RGB(  0, 128, 128);
+	constexpr auto page_background = col_silver;
+	constexpr auto comment_area = page_background; //RGB(  0, 128, 128);
 
 	// erase background
 	const auto p_f_wnd = GetDlgItem(IDC_RECT1);
@@ -196,9 +197,9 @@ void DlgPrintMargins::OnPaint()
 	dc.SelectObject(p_old_pen);
 }
 
-void DlgPrintMargins::DrawBar(CRect* bar, CDC* pdc)
+void DlgPrintMargins::DrawBar(const CRect* bar, CDC* pdc)
 {
-	CPen penbars(PS_DOT, 1, RGB(0, 0, 255));
+	CPen penbars(PS_DOT, 1, col_blue);
 	const auto p_old_pen = pdc->SelectObject(&penbars);
 
 	pdc->MoveTo(bar->left, bar->top);

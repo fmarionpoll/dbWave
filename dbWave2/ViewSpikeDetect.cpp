@@ -299,7 +299,7 @@ void ViewSpikeDetection::highlight_spikes(BOOL flag)
 	const auto array_size = p_spk_list->get_spikes_count() * 2 + 3;
 	m_dw_intervals_.SetSize(array_size);
 	m_dw_intervals_.SetAt(0, 0);
-	m_dw_intervals_.SetAt(1, static_cast<DWORD>(RGB(255, 0, 0))); // red 
+	m_dw_intervals_.SetAt(1, col_red); 
 	m_dw_intervals_.SetAt(2, 1);
 	const auto total_spikes = p_spk_list->get_spikes_count();
 	auto j_index = 3;
@@ -1842,7 +1842,7 @@ void ViewSpikeDetection::on_edit_copy()
 			ASSERT(hm_dc != NULL);
 
 			// Draw document in meta file.
-			CPen black_pen(PS_SOLID, 0, RGB(0, 0, 0));
+			CPen black_pen(PS_SOLID, 0, col_black);
 			const auto old_pen = m_dc.SelectObject(&black_pen);
 			const auto p_old_brush = static_cast<CBrush*>(m_dc.SelectStockObject(BLACK_BRUSH));
 			CClientDC attribute_dc(this); 

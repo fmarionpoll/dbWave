@@ -124,6 +124,8 @@
 // OLE stuff for clipboard operations
 #include <afxadv.h>            // For CSharedFile
 
+#include "ColorNames.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -175,7 +177,7 @@ GridCtrl::GridCtrl(int nRows, int nCols, int nFixedRows, int nFixedCols)
 	m_crWindowColour = GetSysColor(COLOR_WINDOW);
 	m_cr3DFace = GetSysColor(COLOR_3DFACE);
 	m_crShadow = GetSysColor(COLOR_3DSHADOW);
-	m_crGridLineColour = RGB(192, 192, 192);
+	m_crGridLineColour = col_silver;
 
 	m_nRows = 0;
 	m_nCols = 0;
@@ -7048,7 +7050,7 @@ void GridCtrl::PrintFooter(CDC* p_dc, CPrintInfo* pInfo)
 
 	// EFW - Bug fix - Force text color to black.  It doesn't always
 	// get set to a printable color when it gets here.
-	p_dc->SetTextColor(RGB(0, 0, 0));
+	p_dc->SetTextColor(col_black);
 
 	if (!strLeft.IsEmpty())
 		p_dc->DrawText(strLeft, &rc, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_VCENTER);

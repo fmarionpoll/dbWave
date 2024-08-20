@@ -33,7 +33,7 @@ int ChartSpike::get_color_according_to_plot_mode(const Spike* spike, int plot_mo
 	return color;
 }
 
-boolean ChartSpike::get_spike_file(const int i_file)
+boolean ChartSpike::get_spike_list_from_file(const int i_file)
 {
 	boolean success = true;
 	if (b_display_all_files_)

@@ -1304,10 +1304,10 @@ void ViewSpikeHist::displayDot(CDC* p_dc, CRect* pRect)
 
 	// save old pen and brush / restore on exit
 	CPen penbars;
-	penbars.CreatePen(PS_SOLID, 0, RGB(0x80, 0x80, 0x80));
+	penbars.CreatePen(PS_SOLID, 0, col_black);
 	const auto pold_pen = p_dc->SelectObject(&penbars);
 	CBrush brushbars;
-	brushbars.CreateSolidBrush(RGB(0x80, 0x80, 0x80));
+	brushbars.CreateSolidBrush(col_black);
 
 	const auto pold_brush = static_cast<CBrush*>(p_dc->SelectStockObject(BLACK_BRUSH));
 	auto disp_rect = *pRect; // this will be the display rect for histogram

@@ -603,7 +603,7 @@ void ViewSpikes::update_data_file(const BOOL b_update_interface)
 
 	highlighted_intervals_.SetSize(3 + 2);					// total size
 	highlighted_intervals_.SetAt(0, 0);		// source channel
-	highlighted_intervals_.SetAt(1, RGB(255, 0, 0));	// red color
+	highlighted_intervals_.SetAt(1, col_red);	
 	highlighted_intervals_.SetAt(2, 1);		// pen size
 	highlighted_intervals_.SetAt(3, 0);		// pen size
 	highlighted_intervals_.SetAt(4, 0);		// pen size
@@ -1318,11 +1318,11 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 		if (p_spk_doc->m_stimulus_intervals.n_items > 0)
 		{
 			CBrush blue_brush; 
-			blue_brush.CreateSolidBrush(RGB(0, 0, 255));
+			blue_brush.CreateSolidBrush(col_blue);
 			const auto old_brush = p_dc->SelectObject(&blue_brush);
 
 			CPen blue_pen; 
-			blue_pen.CreatePen(PS_SOLID, 0, RGB(0, 0, 255));
+			blue_pen.CreatePen(PS_SOLID, 0, col_blue);
 			const auto old_pen = p_dc->SelectObject(&blue_pen);
 
 			rw_spikes.bottom = rw2.bottom;
@@ -1608,7 +1608,7 @@ void ViewSpikes::OnEditCopy()
 		mDC.CreateEnhanced(p_dc_ref, nullptr, &rect_bound, cs_title);
 
 		// Draw document in metafile.
-		CPen black_pen(PS_SOLID, 0, RGB(0, 0, 0));
+		CPen black_pen(PS_SOLID, 0, col_black);
 		const auto old_pen = mDC.SelectObject(&black_pen);
 		if (!static_cast<CBrush*>(mDC.SelectStockObject(BLACK_BRUSH)))
 			return;

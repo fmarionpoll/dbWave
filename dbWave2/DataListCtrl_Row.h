@@ -17,9 +17,10 @@ class DataListCtrl_Row : public CObject
 	BOOL b_changed {false};
 	WORD w_version {0};
 	BOOL b_init {false};
+
+	int record_id{ 0 };
 	int index {0};
 	long insect_id {0};
-
 	CString cs_comment{};
 	CString cs_datafile_name{};
 	CString cs_spike_file_name{};
@@ -41,15 +42,15 @@ class DataListCtrl_Row : public CObject
 	DataListCtrl_Row& operator =(const DataListCtrl_Row& arg);
 	void Serialize(CArchive& ar) override;
 
-	void build_row(CdbWaveDoc* db_wave_doc);
-	void display_row(DataListCtrlInfos* infos, int i_image);
+	void attach_database_record(CdbWaveDoc* db_wave_doc);
+	void set_display_parameters(DataListCtrlInfos* infos, int i_image);
 
 protected:
 	void display_data_wnd(DataListCtrlInfos* infos, int i_image);
 	void display_spike_wnd(DataListCtrlInfos* infos, int i_image);
-	void display_empty_wnd(DataListCtrlInfos* infos, int i_image);
+	static void display_empty_wnd(DataListCtrlInfos* infos, int i_image);
 
-	void plot_data(DataListCtrlInfos* infos, int i_image);
-	void plot_spikes(DataListCtrlInfos* infos, int i_image);
+	void plot_data(DataListCtrlInfos* infos, int i_image) const;
+	void plot_spikes(DataListCtrlInfos* infos, int i_image) const;
 
 };

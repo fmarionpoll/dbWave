@@ -61,12 +61,12 @@ void SpikeClassListBox::set_left_column_width(const int row_width)
 
 void SpikeClassListBox::set_columns_width(const int width_spikes, const int width_separator)
 {
-	context_.m_widthSpikes = width_spikes;
-	context_.m_widthSeparator = width_separator;
-	context_.m_widthText = context_.m_left_column_width - width_spikes - 2 * width_separator;
+	context_.m_width_spikes = width_spikes;
+	context_.m_width_separator = width_separator;
+	context_.m_width_text = context_.m_left_column_width - width_spikes - 2 * width_separator;
 	CRect rect;
 	GetClientRect(rect);
-	context_.m_widthBars = rect.Width() - context_.m_left_column_width;
+	context_.m_width_bars = rect.Width() - context_.m_left_column_width;
 }
 
 int SpikeClassListBox::CompareItem(LPCOMPAREITEMSTRUCT lpCIS)
@@ -226,7 +226,7 @@ int SpikeClassListBox::set_mouse_cursor_type(const int cursor_m) const
 void SpikeClassListBox::OnSize(UINT nType, int cx, int cy)
 {
 	CListBox::OnSize(nType, cx, cy);
-	context_.m_widthBars = cx - context_.m_left_column_width;
+	context_.m_width_bars = cx - context_.m_left_column_width;
 	// move all windows out of the way to prevent displaying old rows
 	for (auto i = 0; i < GetCount(); i++)
 	{
@@ -488,7 +488,7 @@ void SpikeClassListBox::set_class_of_dropped_spike(const int row_selected) const
 
 void SpikeClassListBox::OnMouseMove(const UINT nFlags, CPoint point)
 {
-	if (h_wnd_bars_reflect_ != nullptr && point.x >= (context_.m_widthText + context_.m_widthSpikes))
+	if (h_wnd_bars_reflect_ != nullptr && point.x >= (context_.m_width_text + context_.m_width_spikes))
 	{
 		// convert coordinates
 		CRect rect0, rect1;
@@ -506,7 +506,7 @@ void SpikeClassListBox::OnMouseMove(const UINT nFlags, CPoint point)
 
 void SpikeClassListBox::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	if (h_wnd_bars_reflect_ != nullptr && point.x >= (context_.m_widthText + context_.m_widthSpikes))
+	if (h_wnd_bars_reflect_ != nullptr && point.x >= (context_.m_width_text + context_.m_width_spikes))
 	{
 		// convert coordinates and reflect move message
 		CRect rect0, rect1;

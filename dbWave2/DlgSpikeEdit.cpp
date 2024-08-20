@@ -7,6 +7,8 @@
 #include "ChartSpikeShape.h"
 #include "DlgSpikeEdit.h"
 
+#include "ColorNames.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -158,7 +160,7 @@ void DlgSpikeEdit::init_chart_data()
 
 	intervals_to_highlight_spikes_.SetSize(3 + 2); // total size
 	intervals_to_highlight_spikes_.SetAt(0, 0); // source channel
-	intervals_to_highlight_spikes_.SetAt(1, RGB(255, 0, 0)); // red color
+	intervals_to_highlight_spikes_.SetAt(1, col_red); // color
 	intervals_to_highlight_spikes_.SetAt(2, 1); // pen size
 	chart_data_.set_highlight_data(&intervals_to_highlight_spikes_); // tell source_view to highlight spk
 }

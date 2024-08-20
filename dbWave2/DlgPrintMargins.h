@@ -27,7 +27,7 @@ protected:
 	int m_captureMode{ 0 };
 	int m_icapturedBar{ 0 };
 
-	void DrawBar(CRect* bar, CDC* pdc);
+	void DrawBar(const CRect* bar, CDC* pdc);
 	int IsMouseOverAnyBar(CPoint* point);
 
 	void DoDataExchange(CDataExchange* pDX) override;

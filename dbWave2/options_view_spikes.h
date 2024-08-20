@@ -11,6 +11,7 @@
 #define EXPORT_AMPLIT		7
 #define EXPORT_HISTAMPL		8
 #define EXPORT_SPIKEPOINTS	9
+#include "ColorNames.h"
 
 class options_view_spikes final : public CObject
 {
@@ -73,11 +74,11 @@ public:
 	BOOL bYmaxAuto{true};
 	float Ymax{1.f};
 
-	COLORREF crHistFill{RGB(0x80, 0x80, 0x80)};
-	COLORREF crHistBorder{RGB(0x80, 0x80, 0x80)};
-	COLORREF crStimFill{RGB(117, 192, 239)};
-	COLORREF crStimBorder{RGB(117, 192, 239)};
-	COLORREF crChartArea{RGB(255, 255, 255)};
+	COLORREF crHistFill{col_black};
+	COLORREF crHistBorder{col_black};
+	COLORREF crStimFill{col_blue};
+	COLORREF crStimBorder{col_blue};
+	COLORREF crChartArea{col_white};
 	COLORREF crScale[18]{};
 
 	float fScalemax{100.f};

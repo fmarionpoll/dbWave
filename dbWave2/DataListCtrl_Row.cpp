@@ -1,5 +1,7 @@
 #include "StdAfx.h"
 #include "DataListCtrl_Row.h"
+
+#include "ColorNames.h"
 #include "ViewdbWave.h"
 
 #ifdef _DEBUG
@@ -137,7 +139,7 @@ void DataListCtrl_Row::Serialize(CArchive& ar)
 	}
 }
 
-void DataListCtrl_Row::build_row(CdbWaveDoc* db_wave_doc)
+void DataListCtrl_Row::attach_database_record(CdbWaveDoc* db_wave_doc)
 {
 	if (db_wave_doc->db_set_current_record_position(index))
 	{
@@ -149,10 +151,10 @@ void DataListCtrl_Row::build_row(CdbWaveDoc* db_wave_doc)
 	const auto database = db_wave_doc->db_table;
 
 	DB_ITEMDESC desc;
+	database->get_record_item_value(CH_ID, &desc);
+	record_id = desc.lVal;
 	database->get_record_item_value(CH_IDINSECT, &desc);
 	insect_id = desc.lVal;
-
-	// column: stimulus, concentration, type = load indirect data from database
 	database->get_record_item_value(CH_STIM_ID, &desc);
 	cs_stimulus1 = desc.csVal;
 	database->get_record_item_value(CH_CONC_ID, &desc);
@@ -161,14 +163,12 @@ void DataListCtrl_Row::build_row(CdbWaveDoc* db_wave_doc)
 	cs_stimulus2 = desc.csVal;
 	database->get_record_item_value(CH_CONC2_ID, &desc);
 	cs_concentration2 = desc.csVal;
-
 	database->get_record_item_value(CH_SENSILLUM_ID, &desc);
 	cs_sensillum_name = desc.csVal;
-
 	database->get_record_item_value(CH_FLAG, &desc);
 	cs_flag.Format(_T("%i"), desc.lVal);
 
-	// column: number of spike = verify that spike file is defined, if yes, load nb spikes
+	// column: number of spikes = verify that spike file is defined, if yes, load nb spikes
 	if (db_wave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
 		cs_n_spikes.Empty();
 	else
@@ -180,7 +180,7 @@ void DataListCtrl_Row::build_row(CdbWaveDoc* db_wave_doc)
 	}
 }
 
-void DataListCtrl_Row::display_row(DataListCtrlInfos* infos, const int i_image)
+void DataListCtrl_Row::set_display_parameters(DataListCtrlInfos* infos, const int i_image)
 {
 	switch (infos->display_mode)
 	{
@@ -215,6 +215,7 @@ void DataListCtrl_Row::display_data_wnd(DataListCtrlInfos* infos, const int i_im
 		p_data_doc = new AcqDataDoc;
 		ASSERT(p_data_doc != NULL);
 	}
+
 	if (cs_datafile_name.IsEmpty() || !p_data_doc->open_document(cs_datafile_name))
 	{
 		p_data_chart_wnd->remove_all_channel_list_items();
@@ -241,6 +242,33 @@ void DataListCtrl_Row::display_data_wnd(DataListCtrlInfos* infos, const int i_im
 	plot_data(infos, i_image);
 }
 
+void DataListCtrl_Row::plot_data(DataListCtrlInfos* infos, const int i_image) const
+{
+	p_data_chart_wnd->set_bottom_comment(infos->b_display_file_name, cs_datafile_name);
+	CRect client_rect;
+	p_data_chart_wnd->GetClientRect(&client_rect);
+
+	const auto p_dc = p_data_chart_wnd->GetDC();
+	CDC mem_dc;
+	VERIFY(mem_dc.CreateCompatibleDC(p_dc));
+
+	CBitmap bitmap_plot;
+	bitmap_plot.CreateBitmap(client_rect.right, client_rect.bottom, p_dc->GetDeviceCaps(PLANES),
+		p_dc->GetDeviceCaps(BITSPIXEL), nullptr);
+
+	mem_dc.SelectObject(&bitmap_plot);
+	mem_dc.SetMapMode(p_dc->GetMapMode());
+
+	p_data_chart_wnd->plot_data_to_dc(&mem_dc);
+
+	CPen pen;
+	pen.CreatePen(PS_SOLID, 1, col_red);
+	mem_dc.MoveTo(1, 0);
+	mem_dc.LineTo(1, client_rect.bottom);
+
+	infos->image_list.Replace(i_image, &bitmap_plot, nullptr);
+}
+
 void DataListCtrl_Row::display_spike_wnd(DataListCtrlInfos* infos, const int i_image)
 {
 	// create spike window and spike document if necessary
@@ -250,6 +278,7 @@ void DataListCtrl_Row::display_spike_wnd(DataListCtrlInfos* infos, const int i_i
 		ASSERT(p_spike_chart_wnd != NULL);
 		p_spike_chart_wnd->Create(_T("SPKWND"), WS_CHILD, CRect(0, 0, infos->image_width, infos->image_height), infos->parent, index * 1000);
 		p_spike_chart_wnd->set_b_use_dib(FALSE);
+		p_spike_chart_wnd->set_display_all_files(false);
 	}
 
 	// open spike document
@@ -272,6 +301,7 @@ void DataListCtrl_Row::display_spike_wnd(DataListCtrlInfos* infos, const int i_i
 		const auto p_spk_list = p_spike_doc->set_spike_list_current_index(i_tab);
 
 		p_spike_chart_wnd->set_source_data(p_spk_list, p_parent0->GetDocument());
+		p_spike_chart_wnd->set_spike_doc(p_spike_doc);
 		p_spike_chart_wnd->set_plot_mode(infos->spike_plot_mode, infos->selected_class);
 
 		long l_first = 0;
@@ -282,8 +312,8 @@ void DataListCtrl_Row::display_spike_wnd(DataListCtrlInfos* infos, const int i_i
 			l_first = static_cast<long>(infos->t_first * sampling_rate);
 			l_last = static_cast<long>(infos->t_last * sampling_rate);
 		}
-
 		p_spike_chart_wnd->set_time_intervals(l_first, l_last);
+
 		if (infos->b_set_mv_span)
 		{
 			const auto volts_per_bin = p_spk_list->get_acq_volts_per_bin();
@@ -296,37 +326,14 @@ void DataListCtrl_Row::display_spike_wnd(DataListCtrlInfos* infos, const int i_i
 	}
 }
 
-void DataListCtrl_Row::plot_data(DataListCtrlInfos* infos, const int i_image)
-{
-	p_data_chart_wnd->set_bottom_comment(infos->b_display_file_name, cs_datafile_name);
-	CRect client_rect;
-	p_data_chart_wnd->GetClientRect(&client_rect);
-
-	const auto p_dc = p_data_chart_wnd->GetDC();
-	CDC mem_dc;
-	VERIFY(mem_dc.CreateCompatibleDC(p_dc));
-
-	CBitmap bitmap_plot;
-	bitmap_plot.CreateBitmap(client_rect.right, client_rect.bottom, p_dc->GetDeviceCaps(PLANES),
-		p_dc->GetDeviceCaps(BITSPIXEL), nullptr);
-
-	mem_dc.SelectObject(&bitmap_plot);
-	mem_dc.SetMapMode(p_dc->GetMapMode());
-
-	p_data_chart_wnd->plot_data_to_dc(&mem_dc);
-	CPen pen;
-	pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
-	mem_dc.MoveTo(1, 0);
-	mem_dc.LineTo(1, client_rect.bottom);
-
-	infos->image_list.Replace(i_image, &bitmap_plot, nullptr);
-}
-
-void DataListCtrl_Row::plot_spikes(DataListCtrlInfos* infos, const int i_image)
+void DataListCtrl_Row::plot_spikes(DataListCtrlInfos* infos, const int i_image) const
 {
 	p_spike_chart_wnd->set_bottom_comment(infos->b_display_file_name, cs_spike_file_name);
+
 	CRect client_rect;
 	p_spike_chart_wnd->GetClientRect(&client_rect);
+	client_rect.DeflateRect(2, 2);
+	client_rect.OffsetRect(1, 1);
 
 	const auto p_dc = p_spike_chart_wnd->GetDC();
 	CDC mem_dc;
@@ -341,13 +348,13 @@ void DataListCtrl_Row::plot_spikes(DataListCtrlInfos* infos, const int i_image)
 	mem_dc.SelectObject(&bitmap_plot);
 	mem_dc.SetMapMode(p_dc->GetMapMode());
 
-	p_spike_chart_wnd->set_display_all_files(false);
 	p_spike_chart_wnd->plot_data_to_dc(&mem_dc);
 
 	CPen pen;
-	pen.CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
+	pen.CreatePen(PS_SOLID, 1, col_red);
 	mem_dc.MoveTo(1, 0);
 	mem_dc.LineTo(1, client_rect.bottom);
+
 	infos->image_list.Replace(i_image, &bitmap_plot, nullptr);
 }
 

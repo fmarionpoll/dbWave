@@ -78,49 +78,62 @@ void DataListCtrl::save_columns_width() const
 
 void DataListCtrl::delete_ptr_array()
 {
-	if (ptr_rows_.GetSize() == NULL)
+	if (rows_.GetSize() == NULL)
 		return;
-	const auto n_rows = ptr_rows_.GetSize();
+	const auto n_rows = rows_.GetSize();
 	for (auto i = 0; i < n_rows; i++)
 	{
-		const auto* ptr = ptr_rows_.GetAt(i);
+		const auto* ptr = rows_.GetAt(i);
 		SAFE_DELETE(ptr)
 	}
-	ptr_rows_.RemoveAll();
+	rows_.RemoveAll();
 }
 
-void DataListCtrl::resize_ptr_array(const int n_items)
+boolean DataListCtrl::rows_array_set_size(const int rows_count)
 {
-	if (n_items == ptr_rows_.GetSize())
-		return;
+	auto b_forced_update = false;
+	if (rows_count != rows_.GetSize())
+	{
+		// if cache size increases, erase old information (set flag)
+		if (rows_count > rows_.GetSize())
+			b_forced_update = true;
+		// if cache size decreases, just delete extra rows
+	}
+	else
+		return b_forced_update;
+
+	if (rows_count == rows_.GetSize())
+		return b_forced_update;
 
 	// Resize m_image_list CImageList
-	infos.image_list.SetImageCount(n_items);
+	infos.image_list.SetImageCount(rows_count);
 
 	// reduce size
-	if (ptr_rows_.GetSize() > n_items)
+	if (rows_.GetSize() > rows_count)
 	{
-		for (auto i = ptr_rows_.GetSize() - 1; i >= n_items; i--)
-			delete ptr_rows_.GetAt(i);
-		ptr_rows_.SetSize(n_items);
+		for (auto i = rows_.GetSize() - 1; i >= rows_count; i--)
+			delete rows_.GetAt(i);
+		rows_.SetSize(rows_count);
 	}
 	// grow size
 	else
 	{
-		const auto size_before_change = ptr_rows_.GetSize();
-		ptr_rows_.SetSize(n_items);
+		const auto size_before_change = rows_.GetSize();
+		rows_.SetSize(rows_count);
 		auto index = 0;
 		if (size_before_change > 0)
-			index = ptr_rows_.GetAt(size_before_change - 1)->index;
-		for (auto i = size_before_change; i < n_items; i++)
+			index = rows_.GetAt(size_before_change - 1)->index;
+		for (auto i = size_before_change; i < rows_count; i++)
 		{
 			auto* ptr = new DataListCtrl_Row;
 			ASSERT(ptr != NULL);
-			ptr_rows_.SetAt(i, ptr);
+			rows_.SetAt(i, ptr);
 			index++;
 			ptr->index = index;
 		}
 	}
+
+	return b_forced_update;
 }
 
 void DataListCtrl::init_columns(CUIntArray* width_columns)
@@ -149,10 +162,10 @@ void DataListCtrl::OnGetDisplayInfo(NMHDR* p_nmhdr, LRESULT* p_result)
 {
 	auto first_array = 0;
 	auto last_array = 0;
-	if (ptr_rows_.GetSize() > 0)
+	if (rows_.GetSize() > 0)
 	{
-		first_array = ptr_rows_.GetAt(0)->index;
-		last_array = ptr_rows_.GetAt(ptr_rows_.GetUpperBound())->index;
+		first_array = rows_.GetAt(0)->index;
+		last_array = rows_.GetAt(rows_.GetUpperBound())->index;
 	}
 
 	// is item within the cache?
@@ -175,7 +188,7 @@ void DataListCtrl::OnGetDisplayInfo(NMHDR* p_nmhdr, LRESULT* p_result)
 		first_array = last_array - GetCountPerPage() + 1;
 		update_cache(first_array, last_array);
 	}
-	else if (ptr_rows_.GetSize() == 0)
+	else if (rows_.GetSize() == 0)
 		update_cache(first_array, last_array);
 
 	// now, the requested item is in the cache
@@ -184,12 +197,12 @@ void DataListCtrl::OnGetDisplayInfo(NMHDR* p_nmhdr, LRESULT* p_result)
 	if (pdb_doc == nullptr)
 		return;
 
-	const int i_first_visible = ptr_rows_.GetAt(0)->index;
+	const int i_first_visible = rows_.GetAt(0)->index;
 	auto i_cache_index = item_index - i_first_visible;
-	if (i_cache_index > (ptr_rows_.GetSize() - 1))
-		i_cache_index = ptr_rows_.GetSize() - 1;
+	if (i_cache_index > (rows_.GetSize() - 1))
+		i_cache_index = rows_.GetSize() - 1;
 
-	const auto* row = ptr_rows_.GetAt(i_cache_index);
+	const auto* row = rows_.GetAt(i_cache_index);
 
 	if (item->mask & LVIF_TEXT) //valid text buffer?
 	{
@@ -253,114 +266,116 @@ void DataListCtrl::set_cur_sel(const int record_position)
 // create objects if necessary
 // scroll or load new data
 
-void DataListCtrl::update_cache(int index_first, int index_last)
+int DataListCtrl::cache_adjust_boundaries(int& index_first, int& index_last) const
 {
-	// adjust number of items in the array and adjust index_first and index_last
-	const auto inb_visible = index_last - index_first + 1;
+	const int inb_visible = index_last - index_first + 1;
 	if (index_first < 0)
 	{
 		index_first = 0;
 		index_last = inb_visible - 1;
 	}
+
 	if (index_last < 0 || index_last >= GetItemCount())
 	{
 		index_last = GetItemCount() - 1;
 		index_first = index_last - inb_visible + 1;
 	}
+	return inb_visible;
+}
 
-	// resize array if the number of visible records < all records
-	auto b_forced_update = FALSE;
-	if (inb_visible != ptr_rows_.GetSize())
+void DataListCtrl::cache_shift_rows_positions(const int source1, const int dest1, int rows_count_to_exchange, const int delta)
+{
+	auto source = source1;
+	auto dest = dest1;
+	while (rows_count_to_exchange > 0)
 	{
-		// if cache size increases, erase old information (set flag)
-		if (inb_visible > ptr_rows_.GetSize())
-			b_forced_update = TRUE;
-		// if cache size decreases, just delete extra rows
-		resize_ptr_array(inb_visible);
-	}
+		// exchange objects
+		auto* p_source = rows_.GetAt(source);
+		const auto p_dest = rows_.GetAt(dest);
+		rows_.SetAt(dest, p_source);
+		rows_.SetAt(source, p_dest);
+		infos.image_list.Copy(dest, source, ILCF_SWAP);
 
-	// get data file pointer and pointer to database
+		// update indexes
+		source += delta;
+		dest += delta;
+		rows_count_to_exchange--;
+	}
+}
+
+void DataListCtrl::cache_build_rows(const int new1, const int index_first, int n_rows_to_build, CdbWaveDoc* db_wave_doc)
+{
+	build_empty_bitmap();
+
+	infos.parent = this;
+	int image_index = new1;
+	while (n_rows_to_build > 0)
+	{
+		const auto row = rows_.GetAt(image_index);
+		row->index = image_index + index_first;
+		row->attach_database_record(db_wave_doc);
+		row->set_display_parameters(&infos, image_index);
+
+		image_index++;
+		n_rows_to_build--;
+	}
+}
+
+void DataListCtrl::update_cache(int index_first, int index_last)
+{
+	const auto rows_count = cache_adjust_boundaries(index_first, index_last);
+	const auto b_forced_update = rows_array_set_size(rows_count);
 	const auto db_wave_doc = static_cast<ViewdbWave*>(GetParent())->GetDocument();
 	if (db_wave_doc == nullptr)
 		return;
 
+	// which update is necessary?
 	const int index_current_file = db_wave_doc->db_get_current_record_position();
 
-	// which update is necessary?
-	// conditions for out of range (renew all items)
-	auto n_to_rebuild = ptr_rows_.GetSize(); // number of items to refresh
+	// set conditions for out of range (renew all items)
+	auto n_rows_to_build = rows_.GetSize(); 
 	auto new1 = 0;
-	auto i_first_array = 0;
-	if (ptr_rows_.GetSize() > 0)
-		i_first_array = ptr_rows_.GetAt(0)->index;
-	const auto difference = index_first - i_first_array;
+	auto rows_index_first = 0;
+	if (rows_.GetSize() > 0)
+		rows_index_first = rows_.GetAt(0)->index;
+	const auto offset = index_first - rows_index_first;
 
 	// change indexes according to case
-	// scroll up (go forwards i.e. towards indexes of higher value)
 	if (!b_forced_update)
 	{
 		auto source1 = 0;
 		auto dest1 = 0;
 		auto delta = 0;
-		auto n_to_transfer = 0;
-		if (difference > 0 && difference < ptr_rows_.GetSize())
+		auto n_rows_to_shift = 0;
+		// scroll up (go forwards i.e. towards indexes of higher value)
+		if (offset > 0 && offset < rows_.GetSize())
 		{
 			delta = 1; // copy forward
-			n_to_transfer = ptr_rows_.GetSize() - difference;
-			n_to_rebuild -= n_to_transfer;
-			source1 = difference;
+			n_rows_to_shift = rows_.GetSize() - offset;
+			n_rows_to_build -= n_rows_to_shift;
+			source1 = offset;
 			dest1 = 0;
-			new1 = n_to_transfer;
+			new1 = n_rows_to_shift;
 		}
 		// scroll down (go backwards i.e. towards indexes of lower value)
-		else if (difference < 0 && -difference < ptr_rows_.GetSize())
+		else if (offset < 0 && -offset < rows_.GetSize())
 		{
 			delta = -1;
-			n_to_transfer = ptr_rows_.GetSize() + difference;
-			n_to_rebuild -= n_to_transfer;
-			source1 = n_to_transfer - 1;
-			dest1 = ptr_rows_.GetSize() - 1;
+			n_rows_to_shift = rows_.GetSize() + offset;
+			n_rows_to_build -= n_rows_to_shift;
+			source1 = n_rows_to_shift - 1;
+			dest1 = rows_.GetSize() - 1;
 			new1 = 0;
 		}
 
-		// n to transfer 
-		auto source = source1;
-		auto dest = dest1;
-		while (n_to_transfer > 0)
-		{
-			// exchange objects
-			auto* p_source = ptr_rows_.GetAt(source);
-			const auto p_dest = ptr_rows_.GetAt(dest);
-			ptr_rows_.SetAt(dest, p_source);
-			ptr_rows_.SetAt(source, p_dest);
-			infos.image_list.Copy(dest, source, ILCF_SWAP);
-
-			// update indexes
-			source += delta;
-			dest += delta;
-			n_to_transfer--;
-		}
+		cache_shift_rows_positions( source1, dest1, n_rows_to_shift,   delta);
 	}
 
-	// set file and update file names
-	int index = new1;
-
-	// left, top, right, bottom
-	build_empty_bitmap();
-	infos.parent = this;
-
-	while (n_to_rebuild > 0)
-	{
-		const auto row = ptr_rows_.GetAt(index);
-		row->index = index + index_first;
-		row->build_row(db_wave_doc);
-		row->display_row(&infos, index);
-		index++;
-		n_to_rebuild--;
-	}
+	cache_build_rows(new1, index_first, n_rows_to_build, db_wave_doc);
 
 	// restore document conditions
-	if (index_current_file >= 0) {
+	if (index_current_file >= 0) 
+	{
 		if (db_wave_doc->db_set_current_record_position(index_current_file))
 		{
 			db_wave_doc->open_current_data_file();
@@ -386,10 +401,10 @@ void DataListCtrl::build_empty_bitmap(const boolean b_forced_update)
 	mem_dc.SelectObject(infos.p_empty_bitmap);
 	mem_dc.SetMapMode(dc.GetMapMode());
 
-	CBrush brush(RGB(204, 204, 204)); //light gray
+	CBrush brush(col_silver); 
 	mem_dc.SelectObject(&brush);
 	CPen pen;
-	pen.CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
+	pen.CreatePen(PS_SOLID, 1, col_black);
 	mem_dc.SelectObject(&pen);
 	const auto rect_data = CRect(1, 0, infos.image_width, infos.image_height);
 	mem_dc.Rectangle(&rect_data);
@@ -397,20 +412,21 @@ void DataListCtrl::build_empty_bitmap(const boolean b_forced_update)
 
 void DataListCtrl::refresh_display()
 {
-	if (ptr_rows_.GetSize() == NULL)
+	if (rows_.GetSize() == NULL)
 		return;
-	const int first_row = ptr_rows_.GetAt(0)->index;
-	const int last_row = ptr_rows_.GetAt(ptr_rows_.GetUpperBound())->index;
+
+	const int first_row = rows_.GetAt(0)->index;
+	const int last_row = rows_.GetAt(rows_.GetUpperBound())->index;
 	build_empty_bitmap();
 
-	const auto n_rows = ptr_rows_.GetSize();
+	const auto n_rows = rows_.GetSize();
 	infos.parent = this;
-	for (auto index = 0; index < n_rows; index++)
+	for (auto image_index = 0; image_index < n_rows; image_index++)
 	{
-		auto* row = ptr_rows_.GetAt(index);
+		auto* row = rows_.GetAt(image_index);
 		if (row == nullptr)
 			continue;
-		row->display_row(&infos, index);
+		row->set_display_parameters(&infos, image_index);
 	}
 	RedrawItems(first_row, last_row);
 	Invalidate();
@@ -468,8 +484,8 @@ ChartData* DataListCtrl::get_chart_data_of_current_record()
 		n_item = GetNextItem(n_item, LVNI_SELECTED);
 		ASSERT(n_item != -1);
 		n_item -= GetTopIndex();
-		if (n_item >= 0 && n_item < ptr_rows_.GetSize())
-			ptr = ptr_rows_.GetAt(n_item)->p_data_chart_wnd;
+		if (n_item >= 0 && n_item < rows_.GetSize())
+			ptr = rows_.GetAt(n_item)->p_data_chart_wnd;
 	}
 	return ptr;
 }
@@ -481,11 +497,11 @@ void DataListCtrl::resize_signal_column(const int n_pixels)
 	infos.image_width = m_column_width_[CTRL_COL_CURVE];
 	infos.image_list.Create(infos.image_width, infos.image_height, ILC_COLOR4, 10, 10);
 	SetImageList(&infos.image_list, LVSIL_SMALL);
-	infos.image_list.SetImageCount(ptr_rows_.GetSize());
+	infos.image_list.SetImageCount(rows_.GetSize());
 
-	for (int i = 0; i < ptr_rows_.GetSize(); i++)
+	for (int i = 0; i < rows_.GetSize(); i++)
 	{
-		auto* ptr = ptr_rows_.GetAt(i);
+		auto* ptr = rows_.GetAt(i);
 		SAFE_DELETE(ptr->p_data_chart_wnd)
 		SAFE_DELETE(ptr->p_spike_chart_wnd)
 	}

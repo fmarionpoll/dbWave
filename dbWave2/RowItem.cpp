@@ -57,7 +57,7 @@ void RowItem::draw_item(const LPDRAWITEMSTRUCT lp_dis) const
 	{
 		// get data
 		CRect rc_text = lp_dis->rcItem;
-		rc_text.right = rc_text.left + parent_context_->m_widthText;
+		rc_text.right = rc_text.left + parent_context_->m_width_text;
 	
 
 		// display text
@@ -65,13 +65,13 @@ void RowItem::draw_item(const LPDRAWITEMSTRUCT lp_dis) const
 		dc.DrawText(*row_comment_, text_length, rc_text, DT_LEFT | DT_WORDBREAK);
 
 		// display spikes
-		const auto col1 = parent_context_->m_widthText + parent_context_->m_widthSeparator;
-		const auto col2 = col1 + parent_context_->m_widthSpikes + parent_context_->m_widthSeparator;
-		auto rect_spikes = CRect(col1 + 1, lp_dis->rcItem.top + 1, col1 + parent_context_->m_widthSpikes, lp_dis->rcItem.bottom - 1);
+		const auto col1 = parent_context_->m_width_text + parent_context_->m_width_separator;
+		const auto col2 = col1 + parent_context_->m_width_spikes + parent_context_->m_width_separator;
+		auto rect_spikes = CRect(col1 + 1, lp_dis->rcItem.top + 1, col1 + parent_context_->m_width_spikes, lp_dis->rcItem.bottom - 1);
 		chart_spike_shape_->sub_item_draw(dc, rect_spikes);
 
 		// display bars
-		auto rect_bars = CRect(col2 + 1, lp_dis->rcItem.top + 1, col2 + parent_context_->m_widthBars, lp_dis->rcItem.bottom - 1);
+		auto rect_bars = CRect(col2 + 1, lp_dis->rcItem.top + 1, col2 + parent_context_->m_width_bars, lp_dis->rcItem.bottom - 1);
 		chart_spike_bar_->sub_item_draw(dc, rect_bars);
 	}
 
@@ -79,8 +79,7 @@ void RowItem::draw_item(const LPDRAWITEMSTRUCT lp_dis) const
 	if ((lp_dis->itemState & ODS_SELECTED) &&
 		(lp_dis->itemAction & (ODA_SELECT | ODA_DRAWENTIRE)))
 	{
-		constexpr auto color_blue = RGB(0, 0, 255);
-		CBrush br(color_blue);
+		CBrush br(col_blue);
 		dc.FrameRect(&(lp_dis->rcItem), &br);
 	}
 

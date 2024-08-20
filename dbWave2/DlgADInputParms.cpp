@@ -7,6 +7,7 @@
 #include "DlgADInputParms.h"
 
 #include "AcqWaveChan.h"
+#include "ColorNames.h"
 
 
 #ifdef _DEBUG
@@ -145,7 +146,7 @@ BOOL DlgADInputs::OnInitDialog()
 
 	// initialise grid properties
 	m_Grid.EnableDragAndDrop(TRUE);
-	m_Grid.GetDefaultCell(FALSE, FALSE)->SetBackClr(RGB(0xFF, 0xFF, 0xFF));
+	m_Grid.GetDefaultCell(FALSE, FALSE)->SetBackClr(col_white);
 	m_Grid.SetColumnCount(m_nacqchans + 1);
 	m_Grid.SetFixedColumnCount(1);
 	m_Grid.SetFixedRowCount(1);

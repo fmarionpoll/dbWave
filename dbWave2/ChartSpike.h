@@ -34,7 +34,7 @@ protected:
 	CdbWaveDoc* dbwave_doc_{ nullptr };
 
 	int get_color_according_to_plot_mode(const Spike* spike, int plot_mode) const;
-	boolean get_spike_file(int i_file);
+	boolean get_spike_list_from_file(int i_file);
 
 public:
 	void set_source_data(SpikeList* p_spk_list, CdbWaveDoc* p_document);

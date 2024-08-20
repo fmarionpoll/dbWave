@@ -46,6 +46,8 @@
 #include "GridCtrl.h"
 #include "GridCellBase.h"
 
+#include "ColorNames.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -685,7 +687,7 @@ BOOL GridCellBase::PrintCell(CDC* p_dc, int /*nRow*/, int /*nCol*/, CRect rect)
 	else
 	{
 		crBG = CLR_DEFAULT;
-		crFG = RGB(0, 0, 0);
+		crFG = col_black;
 	}
 
 	p_dc->SetTextColor(crFG);

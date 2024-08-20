@@ -1,6 +1,8 @@
 ﻿#include "StdAfx.h"
 #include "options_view_spikes.h"
 
+#include "ColorNames.h"
+
 
 IMPLEMENT_SERIAL(options_view_spikes, CObject, 0 /* schema number*/)
 

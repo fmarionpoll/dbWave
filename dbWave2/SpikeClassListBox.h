@@ -39,10 +39,10 @@ public:
 
 	int get_row_height() const { return context_.m_row_height; }
 	int get_left_column_width() const { return context_.m_left_column_width; }
-	int get_columns_text_width() const { return context_.m_widthText; }
-	int get_columns_spikes_width() const { return context_.m_widthSpikes; }
-	int get_columns_time_width() const { return context_.m_widthBars; }
-	int get_columns_separator_width() const { return context_.m_widthSeparator; }
+	int get_columns_text_width() const { return context_.m_width_text; }
+	int get_columns_spikes_width() const { return context_.m_width_spikes; }
+	int get_columns_time_width() const { return context_.m_width_bars; }
+	int get_columns_separator_width() const { return context_.m_width_separator; }
 	float get_extent_mv() const;
 
 	void set_y_zoom(int y_we, int y_wo) const;

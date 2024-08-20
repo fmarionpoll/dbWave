@@ -10,6 +10,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+#include "ColorNames.h"
 #include "ViewDbTable.h"
 #include "dbWave.h"
 #include "dbWave_constants.h"
@@ -259,7 +260,7 @@ BOOL CMainFrame::create_outlook_bar()
 	// add images to this bar
 	CImageList img1;
 
-	img1.Create(IDB_NAVIGATIONLARGE, 32, 0, RGB(255, 0, 255));
+	img1.Create(IDB_NAVIGATIONLARGE, 32, 0, col_fuchsia);
 
 #define N_BUTTONS 8
 	constexpr WORD dw_style = TBSTYLE_BUTTON | TBSTYLE_AUTOSIZE;

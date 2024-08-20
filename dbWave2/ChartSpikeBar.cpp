@@ -56,7 +56,7 @@ void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 
 	for (long i_file = 0; i_file < n_files; i_file++)
 	{
-		if (!get_spike_file(i_file) && !b_display_all_files_)
+		if (!get_spike_list_from_file(i_file) && !b_display_all_files_)
 		{
 			display_text_bottom_left(p_dc, cs_empty_);
 			continue;
@@ -64,11 +64,10 @@ void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 
 		// TODO remove after debug
 		if (p_spike_doc_ != nullptr)
-			display_text_bottom_left(p_dc, p_spike_doc_->GetPathName());
-		p_dc->DrawText(cs_bottom_comment, cs_bottom_comment.GetLength(), display_rect_, DT_RIGHT | DT_TOP | DT_SINGLELINE);
+			p_dc->DrawText(p_spike_doc_->GetPathName(), cs_bottom_comment.GetLength(), display_rect_, DT_RIGHT | DT_TOP | DT_SINGLELINE);
 
-		//if (b_bottom_comment)
-		//	p_dc->DrawText(cs_bottom_comment, cs_bottom_comment.GetLength(), display_rect_,DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
+		if (b_bottom_comment)
+			display_text_bottom_left(p_dc, cs_bottom_comment);
 
 		display_bars(p_dc, &display_rect_);
 

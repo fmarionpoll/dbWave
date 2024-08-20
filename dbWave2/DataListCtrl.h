@@ -23,6 +23,9 @@ public:
 
 	void init_columns(CUIntArray* width_columns = nullptr);
 	void set_cur_sel(int record_position);
+	int cache_adjust_boundaries(int& index_first, int& index_last) const;
+	void cache_shift_rows_positions(int source1, int dest1, int rows_count_to_exchange, int delta);
+	void cache_build_rows(int new1, int index_first, int n_rows_to_build, CdbWaveDoc* db_wave_doc);
 	void update_cache(int index_first, int index_last);
 
 	void refresh_display();
@@ -58,12 +61,12 @@ public:
 	int get_spike_class() const { return infos.selected_class; }
 
 	ChartData* get_chart_data_of_current_record();
-	AcqDataDoc* get_visible_rows_acq_data_doc_at(const int index) { return ptr_rows_[index]->p_data_doc; }
-	CSpikeDoc* get_visible_rows_spike_doc_at(const int index) { return ptr_rows_[index]->p_spike_doc; }
-	int get_visible_rows_size() const { return ptr_rows_.GetSize(); }
+	AcqDataDoc* get_visible_rows_acq_data_doc_at(const int index) { return rows_[index]->p_data_doc; }
+	CSpikeDoc* get_visible_rows_spike_doc_at(const int index) { return rows_[index]->p_spike_doc; }
+	int get_visible_rows_size() const { return rows_.GetSize(); }
 
 protected:
-	CArray<DataListCtrl_Row*, DataListCtrl_Row*> ptr_rows_;
+	CArray<DataListCtrl_Row*, DataListCtrl_Row*> rows_;
 	static int m_column_width_[N_COLUMNS];
 	static CString m_column_headers_[N_COLUMNS];
 	static int m_column_format_[N_COLUMNS];
@@ -76,7 +79,7 @@ public:
 protected:
 	void delete_ptr_array();
 	void save_columns_width() const;
-	void resize_ptr_array(int n_items);
+	boolean rows_array_set_size(int rows_count);
 	void build_empty_bitmap(boolean b_forced_update = false);
 
 	// Generated message map functions

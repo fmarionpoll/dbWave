@@ -1,4 +1,5 @@
 #pragma once
+#include "ColorNames.h"
 
 
 class CHighLight : public CObject
@@ -9,9 +10,8 @@ public:
 	void Serialize(CArchive& ar) override;
 	CHighLight& operator =(const CHighLight& arg);
 
-public:
-	int channel = 0;
-	COLORREF color = RGB(255, 0, 0);
+	int channel {0};
+	COLORREF color {col_red};
 	int pen_size = 1;
 	CArray<long, long> l_first;
 	CArray<long, long> l_last;
