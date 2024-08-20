@@ -66,7 +66,7 @@
     <ClCompile Include="DlgBrowseFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="chanlistitem.cpp">
+    <ClCompile Include="ChanListItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ChildFrm.cpp">

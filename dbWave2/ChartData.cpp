@@ -819,13 +819,8 @@ void ChartData::plot_data_to_dc(CDC* p_dc)
 		return;
 	}
 
-	// plot comment at the bottom
 	if (b_bottom_comment)
-	{
-		const auto text_length = cs_bottom_comment.GetLength();
-		p_dc->SetTextColor(RGB(0, 0, 255)); // BLUE
-		p_dc->DrawText(cs_bottom_comment, text_length, rect, DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
-	}
+		display_text_bottom_left(p_dc, cs_bottom_comment, col_blue);
 
 	// save DC
 	const auto n_saved_dc = p_dc->SaveDC();

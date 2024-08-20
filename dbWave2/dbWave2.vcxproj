@@ -839,7 +839,7 @@
     <ClCompile Include="CSpkListTabCtrl.cpp" />
     <ClCompile Include="datafile_CEDSpike2.cpp" />
     <ClCompile Include="DlgDataTranslationBoard.cpp" />
-    <ClCompile Include="chanlistitem.cpp">
+    <ClCompile Include="ChanListItem.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>

@@ -61,7 +61,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 	if (l_max_ == 0)
 	{
 		p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
-		display_text_bottom_left(p_dc, cs_empty_);
+		display_text_bottom_left(p_dc, cs_empty_, col_dark_gray);
 		return;
 	}
 	const int n_saved_dc = p_dc->SaveDC();

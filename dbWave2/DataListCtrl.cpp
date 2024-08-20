@@ -122,14 +122,14 @@ boolean DataListCtrl::rows_array_set_size(const int rows_count)
 		rows_.SetSize(rows_count);
 		auto index = 0;
 		if (size_before_change > 0)
-			index = rows_.GetAt(size_before_change - 1)->index;
+			index = rows_.GetAt(size_before_change - 1)->index +1;
 		for (auto i = size_before_change; i < rows_count; i++)
 		{
-			auto* ptr = new DataListCtrl_Row;
-			ASSERT(ptr != NULL);
-			rows_.SetAt(i, ptr);
+			auto* row = new DataListCtrl_Row;
+			ASSERT(row != NULL);
+			rows_.SetAt(i, row);
+			row->index = index;
 			index++;
-			ptr->index = index;
 		}
 	}
 
@@ -164,8 +164,9 @@ void DataListCtrl::OnGetDisplayInfo(NMHDR* p_nmhdr, LRESULT* p_result)
 	auto last_array = 0;
 	if (rows_.GetSize() > 0)
 	{
+		const int upper_index = rows_.GetUpperBound();
 		first_array = rows_.GetAt(0)->index;
-		last_array = rows_.GetAt(rows_.GetUpperBound())->index;
+		last_array = rows_.GetAt(upper_index)->index;
 	}
 
 	// is item within the cache?
@@ -378,8 +379,8 @@ void DataListCtrl::update_cache(int index_first, int index_last)
 	{
 		if (db_wave_doc->db_set_current_record_position(index_current_file))
 		{
-			db_wave_doc->open_current_data_file();
-			db_wave_doc->open_current_spike_file();
+			//db_wave_doc->open_current_data_file();
+			//db_wave_doc->open_current_spike_file();
 		}
 	}
 }

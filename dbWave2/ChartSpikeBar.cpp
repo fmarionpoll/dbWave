@@ -58,16 +58,12 @@ void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 	{
 		if (!get_spike_list_from_file(i_file) && !b_display_all_files_)
 		{
-			display_text_bottom_left(p_dc, cs_empty_);
+			display_text_bottom_left(p_dc, cs_empty_, col_dark_gray);
 			continue;
 		}
 
-		// TODO remove after debug
-		if (p_spike_doc_ != nullptr)
-			p_dc->DrawText(p_spike_doc_->GetPathName(), cs_bottom_comment.GetLength(), display_rect_, DT_RIGHT | DT_TOP | DT_SINGLELINE);
-
 		if (b_bottom_comment)
-			display_text_bottom_left(p_dc, cs_bottom_comment);
+			display_text_bottom_left(p_dc, cs_bottom_comment, col_blue);
 
 		display_bars(p_dc, &display_rect_);
 

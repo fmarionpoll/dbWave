@@ -200,9 +200,13 @@ void ChartWnd::OnPaint()
 
 void ChartWnd::plot_data_to_dc(CDC* p_dc)
 {
+	CRect rect = display_rect_;
+	rect.DeflateRect(2, 2);
+	const CString text = _T("nothing to display (stub)");
+	p_dc->DrawText(text, text.GetLength(), rect, DT_LEFT | DT_SINGLELINE | DT_CENTER);
 }
 
-void ChartWnd::display_text_bottom_left(CDC* p_dc, const CString& text) const
+void ChartWnd::display_text_bottom_left(CDC* p_dc, const CString& text, const COLORREF& color) const
 {
 	CRect rect = display_rect_;
 	rect.DeflateRect(2, 2);
@@ -210,12 +214,11 @@ void ChartWnd::display_text_bottom_left(CDC* p_dc, const CString& text) const
 	if (previous_map_mode == MM_ANISOTROPIC)
 		rect.OffsetRect(0, -y_vo_);
 
-	const COLORREF old_color = p_dc->SetTextColor(col_dark_gray);
+	const COLORREF old_color = p_dc->SetTextColor(color);
 	p_dc->DrawText(text, text.GetLength(), rect, DT_LEFT | DT_SINGLELINE | DT_BOTTOM); // DT_TOP
 
 	p_dc->SetMapMode(previous_map_mode);
 	p_dc->SetTextColor(old_color);
-
 }
 
 void ChartWnd::erase_background(CDC* p_dc)

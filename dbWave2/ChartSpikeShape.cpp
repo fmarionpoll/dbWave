@@ -48,7 +48,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 	{
 		if (!get_spike_list_from_file(i_file) && !b_display_all_files_)
 		{
-			display_text_bottom_left(p_dc, cs_empty_);
+			display_text_bottom_left(p_dc, cs_empty_, col_dark_gray);
 			continue;
 		}
 
