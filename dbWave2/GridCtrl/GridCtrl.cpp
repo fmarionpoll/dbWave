@@ -124,7 +124,7 @@
 // OLE stuff for clipboard operations
 #include <afxadv.h>            // For CSharedFile
 
-#include "ColorNames.h"
+#include "../ColorNames.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

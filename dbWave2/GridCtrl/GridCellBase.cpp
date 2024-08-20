@@ -46,7 +46,7 @@
 #include "GridCtrl.h"
 #include "GridCellBase.h"
 
-#include "ColorNames.h"
+#include "../ColorNames.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
