@@ -537,7 +537,8 @@ void ViewSpikeSort::on_sort()
 	if (b_all_files_)
 	{
 		delete dlg_progress;
-		if (pdb_doc->db_set_current_record_position(current_file)) {
+		if (pdb_doc->db_set_current_record_position(current_file)) 
+		{
 			p_spk_doc = pdb_doc->open_current_spike_file();
 			if (p_spk_doc != nullptr)
 				p_spk_list = p_spk_doc->get_spike_list_current();
@@ -545,6 +546,7 @@ void ViewSpikeSort::on_sort()
 	}
 
 	// refresh data windows
+	update_file_parameters();
 	build_histogram();
 	all_charts_invalidate();
 }
