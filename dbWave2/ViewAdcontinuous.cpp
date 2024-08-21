@@ -150,14 +150,14 @@ void ViewADcontinuous::attach_controls()
 	m_chart_data_ad_.attach_external_y_ruler(&m_ad_y_ruler_bar);
 	m_chart_data_ad_.b_nice_grid = TRUE;
 
-	m_stretch_.AttachParent(this);
-	m_stretch_.newProp(IDC_DISPLAYDATA, XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch_.newProp(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
-	m_stretch_.newProp(IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
-	m_stretch_.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch_.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YBEQ);
-	m_stretch_.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, YTEQ_YBEQ);
-	m_stretch_.newProp(IDC_UNZOOM, SZEQ_XREQ, SZEQ_YTEQ);
+	stretch_.AttachParent(this);
+	stretch_.newProp(IDC_DISPLAYDATA, XLEQ_XREQ, YTEQ_YBEQ);
+	stretch_.newProp(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
+	stretch_.newProp(IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
+	stretch_.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
+	stretch_.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YBEQ);
+	stretch_.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, YTEQ_YBEQ);
+	stretch_.newProp(IDC_UNZOOM, SZEQ_XREQ, SZEQ_YTEQ);
 
 	// bitmap buttons: load icons & set buttons
 	m_h_bias_ = AfxGetApp()->LoadIcon(IDI_BIAS);
@@ -643,7 +643,7 @@ void ViewADcontinuous::OnSize(const UINT n_type, const int cx, const int cy)
 
 		if (cx <= 0 || cy <= 0)
 			break;
-		m_stretch_.ResizeControls(n_type, cx, cy);
+		stretch_.ResizeControls(n_type, cx, cy);
 		break;
 	default:
 		break;

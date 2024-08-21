@@ -41,8 +41,8 @@ void SpikeList::Serialize(CArchive& ar)
 			WORD version; ar >> version;
 			if (version == 9)
 				serialize_version_9(ar);
-			else if (version == 8)
-				serialize_version_8(ar);
+			//else if (version == 8)
+			//	serialize_version_8(ar);
 			else if (version == 7 || version == 6)
 				serialize_version_7(ar);
 			else if (version == 5)
@@ -118,7 +118,7 @@ void SpikeList::serialize_version_9(CArchive& ar)
 		ar << volts_per_bin_; n_stored++;
 		ar << channel_description_; n_stored++;
 
-		ASSERT(n_items + 1 == n_stored);
+		ASSERT(n_items  == n_stored);
 	}
 	else
 	{

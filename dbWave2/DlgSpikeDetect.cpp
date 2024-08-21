@@ -1,8 +1,8 @@
-// spikedetec.cpp : implementation file
+
 //
 // caller must set:
-// m_iDetectParmsDlgDlg	= index spk detection parameters set to edit
-// m_spkDA = address of structure containing array of spk detection parameters structures
+// m_i_Detect_Parms_Dlg	= index spk detection parameters set to edit
+// m_spk_DA = address of structure containing array of spk detection parameters structures
 
 #include "StdAfx.h"
 #include "resource.h"
@@ -13,33 +13,33 @@
 #define new DEBUG_NEW
 #endif
 
-DlgSpikeDetect::DlgSpikeDetect(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgSpikeDetect::DlgSpikeDetect(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
-void DlgSpikeDetect::DoDataExchange(CDataExchange* pDX)
+void DlgSpikeDetect::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_PARAMETERSTAB, m_cParameterTabCtrl);
+	CDialog::DoDataExchange(p_dx);
+	DDX_Control(p_dx, IDC_PARAMETERSTAB, m_c_parameter_tab_ctrl);
 }
 
 BEGIN_MESSAGE_MAP(DlgSpikeDetect, CDialog)
-	ON_BN_CLICKED(IDC_DETECTFROMTAG, OnDetectfromtag)
-	ON_BN_CLICKED(IDC_DETECTFROMCHAN, OnDetectfromchan)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_PARAMETERSTAB, OnTcnSelchangeParameterstab)
-	ON_BN_CLICKED(IDC_SPIKESRADIO, OnBnClickedSpikesradio)
-	ON_BN_CLICKED(IDC_STIMRADIO, OnBnClickedStimradio)
-	ON_BN_CLICKED(IDC_ADDPARAMBTTN, OnBnClickedAddparambttn)
-	ON_BN_CLICKED(IDC_DELPARAMBTTN, OnBnClickedDelparambttn)
-	ON_EN_CHANGE(IDC_DETECTTHRESHOLD, OnEnChangeDetectthreshold)
-	ON_CBN_SELCHANGE(IDC_DETECTCHAN, OnCbnSelchangeDetectchan)
-	ON_CBN_SELCHANGE(IDC_DETECTTRANSFORM, OnCbnSelchangeDetecttransform)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN1, OnDeltaposSpin1)
-	ON_CBN_SELCHANGE(IDC_EXTRACTCHAN, OnCbnSelchangeExtractchan)
-	ON_EN_CHANGE(IDC_COMMENT, OnEnChangeComment)
-	ON_BN_CLICKED(IDC_RIGHTSHIFT, OnBnClickedShiftright)
-	ON_BN_CLICKED(IDC_LEFTSHIFT, OnBnClickedShiftleft)
+	ON_BN_CLICKED(IDC_DETECTFROMTAG, on_detect_from_tag)
+	ON_BN_CLICKED(IDC_DETECTFROMCHAN, on_detect_from_chan)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_PARAMETERSTAB, on_tcn_sel_change_parameters_tab)
+	ON_BN_CLICKED(IDC_SPIKESRADIO, on_bn_clicked_spikes_radio)
+	ON_BN_CLICKED(IDC_STIMRADIO, on_bn_clicked_stimulus_radio)
+	ON_BN_CLICKED(IDC_ADDPARAMBTTN, on_bn_clicked_add_parameters_button)
+	ON_BN_CLICKED(IDC_DELPARAMBTTN, on_bn_clicked_del_parameters_button)
+	ON_EN_CHANGE(IDC_DETECTTHRESHOLD, on_en_change_detect_threshold)
+	ON_CBN_SELCHANGE(IDC_DETECTCHAN, on_cbn_sel_change_detect_channel)
+	ON_CBN_SELCHANGE(IDC_DETECTTRANSFORM, on_cbn_sel_change_detect_transform)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN1, on_delta_pos_spin1)
+	ON_CBN_SELCHANGE(IDC_EXTRACTCHAN, on_cbn_sel_change_extract_channel)
+	ON_EN_CHANGE(IDC_COMMENT, on_en_change_comment)
+	ON_BN_CLICKED(IDC_RIGHTSHIFT, on_bn_clicked_shift_right)
+	ON_BN_CLICKED(IDC_LEFTSHIFT, on_bn_clicked_shift_left)
 END_MESSAGE_MAP()
 
 BOOL DlgSpikeDetect::OnInitDialog()
@@ -50,52 +50,52 @@ BOOL DlgSpikeDetect::OnInitDialog()
 	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->ResetContent();
 	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->ResetContent();
 
-	const auto pwave_format = m_dbDoc->get_wave_format();
-	const auto pchan_array = m_dbDoc->get_wave_channels_array();
-	int chanmax = pwave_format->scan_count;
-	m_scancount = chanmax;
+	const auto p_wave_format = m_db_doc->get_wave_format();
+	const auto p_chan_array = m_db_doc->get_wave_channels_array();
+	int chan_max = p_wave_format->scan_count;
+	m_scan_count_ = chan_max;
 
 	// load list of channels into combo boxes
-	for (auto i = 0; i < chanmax; i++)
+	for (auto i = 0; i < chan_max; i++)
 	{
 		comment.Format(_T("%i"), i); // channel index CString
-		const auto pchan = pchan_array->get_p_channel(i);
-		comment += _T(" - ") + pchan->am_csComment;
+		const auto p_chan = p_chan_array->get_p_channel(i);
+		comment += _T(" - ") + p_chan->am_csComment;
 		VERIFY(((CComboBox*)GetDlgItem(IDC_DETECTCHAN))->AddString(comment) != CB_ERR);
 		VERIFY(((CComboBox*)GetDlgItem(IDC_EXTRACTCHAN))->AddString(comment) != CB_ERR);
 	}
 
 	// load list of transform methods
-	chanmax = m_dbDoc->get_transforms_count();
+	chan_max = AcqDataDoc::get_transforms_count();
 	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->ResetContent();
 	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTTRANSFORM))->ResetContent();
-	for (int i = 0; i < chanmax; i++)
+	for (int i = 0; i < chan_max; i++)
 	{
-		VERIFY(((CComboBox*)GetDlgItem(IDC_DETECTTRANSFORM))->AddString(m_dbDoc->get_transform_name(i)) != CB_ERR);
-		VERIFY(((CComboBox*)GetDlgItem(IDC_EXTRACTTRANSFORM))->AddString(m_dbDoc->get_transform_name(i)) != CB_ERR);
+		VERIFY(((CComboBox*)GetDlgItem(IDC_DETECTTRANSFORM))->AddString(m_db_doc->get_transform_name(i)) != CB_ERR);
+		VERIFY(((CComboBox*)GetDlgItem(IDC_EXTRACTTRANSFORM))->AddString(m_db_doc->get_transform_name(i)) != CB_ERR);
 	}
 
 	// load list of detection parameters
-	for (int i = 0; i < m_pDetectSettingsArray->GetSize(); i++)
+	for (int i = 0; i < m_p_detect_settings_array->get_size(); i++)
 	{
 		CString cs;
 		cs.Format(_T("#%i "), i);
-		cs += (m_pDetectSettingsArray->GetItem(i))->comment;
-		m_cParameterTabCtrl.InsertItem(i, cs);
+		cs += (m_p_detect_settings_array->get_item(i))->comment;
+		m_c_parameter_tab_ctrl.InsertItem(i, cs);
 	}
 
 	// fill dialog with values from array
-	LoadChanParameters(m_iDetectParmsDlg);
-	UpdateTabShiftButtons();
+	load_chan_parameters(m_i_detect_parameters_dlg);
+	update_tab_shift_buttons();
 
 	return TRUE; // return TRUE  unless you set the focus to a control
 }
 
-void DlgSpikeDetect::SaveChanParameters(int chan)
+void DlgSpikeDetect::save_chan_parameters(const int chan)
 {
-	m_pspkD = m_pDetectSettingsArray->GetItem(chan);
+	m_pspkD = m_p_detect_settings_array->get_item(chan);
 	GetDlgItem(IDC_COMMENT)->GetWindowText(m_pspkD->comment);
-	mdPM->b_detect_while_browse = static_cast<CButton*>(GetDlgItem(IDC_DETECTBROWSE))->GetCheck();
+	md_pm->b_detect_while_browse = static_cast<CButton*>(GetDlgItem(IDC_DETECTBROWSE))->GetCheck();
 
 	// spikes detection parameters
 	const auto flag2 = static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMCHAN))->GetCheck();
@@ -110,9 +110,9 @@ void DlgSpikeDetect::SaveChanParameters(int chan)
 		m_pspkD->detect_what = DETECT_SPIKES;
 		m_pspkD->extract_channel = static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->GetCurSel();
 		m_pspkD->extract_transform = static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTTRANSFORM))->GetCurSel();
-		m_pspkD->extract_n_points = GetDlgItemInt(IDC_SPIKENPOINTS);
-		m_pspkD->detect_pre_threshold = GetDlgItemInt(IDC_PRETHRESHOLD);
-		m_pspkD->detect_refractory_period = GetDlgItemInt(IDC_REFRACTORY);
+		m_pspkD->extract_n_points = static_cast<int>(GetDlgItemInt(IDC_SPIKENPOINTS));
+		m_pspkD->detect_pre_threshold = static_cast<int>(GetDlgItemInt(IDC_PRETHRESHOLD));
+		m_pspkD->detect_refractory_period = static_cast<int>(GetDlgItemInt(IDC_REFRACTORY));
 	}
 	// detect stimulus
 	else
@@ -123,10 +123,10 @@ void DlgSpikeDetect::SaveChanParameters(int chan)
 	}
 }
 
-void DlgSpikeDetect::LoadChanParameters(int chan)
+void DlgSpikeDetect::load_chan_parameters(const int chan)
 {
-	m_iDetectParmsDlg = chan;
-	m_pspkD = m_pDetectSettingsArray->GetItem(chan);
+	m_i_detect_parameters_dlg = chan;
+	m_pspkD = m_p_detect_settings_array->get_item(chan);
 	GetDlgItem(IDC_COMMENT)->SetWindowText(m_pspkD->comment);
 
 	if (m_pspkD->detect_what == DETECT_SPIKES)
@@ -139,13 +139,13 @@ void DlgSpikeDetect::LoadChanParameters(int chan)
 		static_cast<CButton*>(GetDlgItem(IDC_SPIKESRADIO))->SetCheck(BST_UNCHECKED);
 		static_cast<CButton*>(GetDlgItem(IDC_STIMRADIO))->SetCheck(BST_CHECKED);
 	}
-	SetDlgInterfaceState(m_pspkD->detect_what);
+	set_dlg_interface_state(m_pspkD->detect_what);
 
 	// spikes detection parameters
 	const BOOL flag = (m_pspkD->detect_from == 0);
 	static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMCHAN))->SetCheck(flag);
 	static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMTAG))->SetCheck(!flag);
-	DisplayDetectFromChan();
+	display_detect_from_chan();
 	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->SetCurSel(m_pspkD->detect_channel);
 	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->SetCurSel(m_pspkD->detect_transform);
 	SetDlgItemInt(IDC_DETECTTHRESHOLD, m_pspkD->detect_threshold_bin);
@@ -155,23 +155,23 @@ void DlgSpikeDetect::LoadChanParameters(int chan)
 	SetDlgItemInt(IDC_SPIKENPOINTS, m_pspkD->extract_n_points);
 	SetDlgItemInt(IDC_PRETHRESHOLD, m_pspkD->detect_pre_threshold);
 	SetDlgItemInt(IDC_REFRACTORY, m_pspkD->detect_refractory_period);
-	static_cast<CButton*>(GetDlgItem(IDC_DETECTBROWSE))->SetCheck(mdPM->b_detect_while_browse);
+	static_cast<CButton*>(GetDlgItem(IDC_DETECTBROWSE))->SetCheck(md_pm->b_detect_while_browse);
 
 	// stimulus detection parameters
 	static_cast<CComboBox*>(GetDlgItem(IDC_STIMDETECTMODE))->SetCurSel(m_pspkD->detect_mode);
 
 	// select proper tab
-	m_cParameterTabCtrl.SetCurSel(chan);
+	m_c_parameter_tab_ctrl.SetCurSel(chan);
 }
 
 void DlgSpikeDetect::OnOK()
 {
 	// save spike detection parameters
-	SaveChanParameters(m_iDetectParmsDlg);
+	save_chan_parameters(m_i_detect_parameters_dlg);
 	CDialog::OnOK();
 }
 
-void DlgSpikeDetect::DisplayDetectFromChan()
+void DlgSpikeDetect::display_detect_from_chan()
 {
 	BOOL flag = FALSE;
 	if (static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMCHAN))->GetCheck())
@@ -181,37 +181,35 @@ void DlgSpikeDetect::DisplayDetectFromChan()
 	GetDlgItem(IDC_DETECTTHRESHOLD)->EnableWindow(flag);
 }
 
-void DlgSpikeDetect::OnDetectfromtag()
+void DlgSpikeDetect::on_detect_from_tag()
 {
-	DisplayDetectFromChan();
+	display_detect_from_chan();
 }
 
-void DlgSpikeDetect::OnDetectfromchan()
+void DlgSpikeDetect::on_detect_from_chan()
 {
-	DisplayDetectFromChan();
+	display_detect_from_chan();
 }
 
-void DlgSpikeDetect::OnTcnSelchangeParameterstab(NMHDR* pNMHDR, LRESULT* pResult)
+void DlgSpikeDetect::on_tcn_sel_change_parameters_tab(NMHDR* p_nmhdr, LRESULT* p_result)
 {
-	SaveChanParameters(m_iDetectParmsDlg);
-	*pResult = 0;
-	const auto ichan = m_cParameterTabCtrl.GetCurSel();
-	LoadChanParameters(ichan);
+	save_chan_parameters(m_i_detect_parameters_dlg);
+	*p_result = 0;
+	const auto i_chan = m_c_parameter_tab_ctrl.GetCurSel();
+	load_chan_parameters(i_chan);
 	Invalidate();
-
-	// update sourceview
-	UpdateSourceView();
-	UpdateTabShiftButtons();
+	update_source_view();
+	update_tab_shift_buttons();
 }
 
-void DlgSpikeDetect::SetDlgInterfaceState(int detectWhat) const
+void DlgSpikeDetect::set_dlg_interface_state(const int detect_what) const
 {
 	auto b_spike_detect_items = TRUE;
-	auto b_stim_detect_items = FALSE;
-	if (detectWhat == 1)
+	auto b_stimulus_detect_items = FALSE;
+	if (detect_what == 1)
 	{
 		b_spike_detect_items = FALSE;
-		b_stim_detect_items = TRUE;
+		b_stimulus_detect_items = TRUE;
 	}
 	GetDlgItem(IDC_DETECTFROMTAG)->EnableWindow(b_spike_detect_items);
 	GetDlgItem(IDC_DETECTFROMCHAN)->EnableWindow(b_spike_detect_items);
@@ -221,150 +219,150 @@ void DlgSpikeDetect::SetDlgInterfaceState(int detectWhat) const
 	GetDlgItem(IDC_PRETHRESHOLD)->EnableWindow(b_spike_detect_items);
 	GetDlgItem(IDC_REFRACTORY)->EnableWindow(b_spike_detect_items);
 
-	GetDlgItem(IDC_STIMDETECTMODE)->EnableWindow(b_stim_detect_items);
+	GetDlgItem(IDC_STIMDETECTMODE)->EnableWindow(b_stimulus_detect_items);
 }
 
-void DlgSpikeDetect::OnBnClickedSpikesradio()
+void DlgSpikeDetect::on_bn_clicked_spikes_radio() 
 {
 	m_pspkD->detect_what = DETECT_SPIKES;
-	SetDlgInterfaceState(m_pspkD->detect_what);
+	set_dlg_interface_state(m_pspkD->detect_what);
 }
 
-void DlgSpikeDetect::OnBnClickedStimradio()
+void DlgSpikeDetect::on_bn_clicked_stimulus_radio()
 {
 	m_pspkD->detect_what = DETECT_STIMULUS;
-	SetDlgInterfaceState(m_pspkD->detect_what);
+	set_dlg_interface_state(m_pspkD->detect_what);
 }
 
-void DlgSpikeDetect::OnBnClickedAddparambttn()
+void DlgSpikeDetect::on_bn_clicked_add_parameters_button()
 {
 	// save current parameters set
-	SaveChanParameters(m_iDetectParmsDlg);
+	save_chan_parameters(m_i_detect_parameters_dlg);
 
 	// Add parameter set
-	const auto ilast = m_pDetectSettingsArray->AddItem() - 1;
+	const auto i_last = m_p_detect_settings_array->add_item() - 1;
 	CString cs;
-	cs.Format(_T("set #%i"), ilast);
-	m_cParameterTabCtrl.InsertItem(ilast, cs);
-	LoadChanParameters(ilast);
+	cs.Format(_T("set #%i"), i_last);
+	m_c_parameter_tab_ctrl.InsertItem(i_last, cs);
+	load_chan_parameters(i_last);
 }
 
-void DlgSpikeDetect::OnBnClickedDelparambttn()
+void DlgSpikeDetect::on_bn_clicked_del_parameters_button()
 {
-	const auto ilast = m_pDetectSettingsArray->RemoveItem(m_iDetectParmsDlg) - 1;
-	m_cParameterTabCtrl.DeleteItem(m_iDetectParmsDlg);
-	LoadChanParameters(ilast);
+	const auto i_last = m_p_detect_settings_array->remove_item(m_i_detect_parameters_dlg) - 1;
+	m_c_parameter_tab_ctrl.DeleteItem(m_i_detect_parameters_dlg);
+	load_chan_parameters(i_last);
 	Invalidate();
 }
 
-void DlgSpikeDetect::OnEnChangeDetectthreshold() 
+void DlgSpikeDetect::on_en_change_detect_threshold() 
 {
-	const int ithreshold = GetDlgItemInt(IDC_DETECTTHRESHOLD);
-	m_pChartDataDetectWnd->move_hz_tag_to_val(0, ithreshold);
+	const int i_threshold = static_cast<int>(GetDlgItemInt(IDC_DETECTTHRESHOLD));
+	m_p_chart_data_detect_wnd->move_hz_tag_to_val(0, i_threshold);
 }
 
-void DlgSpikeDetect::OnCbnSelchangeDetectchan() 
+void DlgSpikeDetect::on_cbn_sel_change_detect_channel() 
 {
-	UpdateSourceView();
+	update_source_view();
 }
 
-void DlgSpikeDetect::UpdateSourceView() const
+void DlgSpikeDetect::update_source_view() const
 {
-	const auto icursel = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->GetCurSel();
-	const auto icursel2 = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->GetCurSel();
+	const auto i_cursel = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->GetCurSel();
+	const auto i_cursel_2 = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->GetCurSel();
 	// TODO not used??
-	//int icursel3 = ((CComboBox*) GetDlgItem(IDC_EXTRACTCHAN))->GetCurSel();
-	m_pChartDataDetectWnd->set_channel_list_y(0, icursel, icursel2);
-	m_pChartDataDetectWnd->get_data_from_doc();
-	m_pChartDataDetectWnd->auto_zoom_chan(0);
-	m_pChartDataDetectWnd->Invalidate();
+	//int icursel3 = ((CComboBox*) GetDlgItem(IDC_EXTRACT CHAN))->GetCurSel();
+	m_p_chart_data_detect_wnd->set_channel_list_y(0, i_cursel, i_cursel_2);
+	m_p_chart_data_detect_wnd->get_data_from_doc();
+	m_p_chart_data_detect_wnd->auto_zoom_chan(0);
+	m_p_chart_data_detect_wnd->Invalidate();
 }
 
-void DlgSpikeDetect::OnCbnSelchangeDetecttransform() 
+void DlgSpikeDetect::on_cbn_sel_change_detect_transform() 
 {
-	UpdateSourceView();
+	update_source_view();
 }
 
-void DlgSpikeDetect::OnDeltaposSpin1(NMHDR* pNMHDR, LRESULT* pResult)
+void DlgSpikeDetect::on_delta_pos_spin1(NMHDR* p_nmhdr, LRESULT* p_result)
 {
-	const auto p_nm_up_down = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
-	int ithreshold = GetDlgItemInt(IDC_DETECTTHRESHOLD);
-	ithreshold -= MulDiv(m_pChartDataDetectWnd->get_channel_list_item(0)->GetYextent(), p_nm_up_down->iDelta, 10);
-	SetDlgItemInt(IDC_DETECTTHRESHOLD, ithreshold);
+	const auto p_nm_up_down = reinterpret_cast<LPNMUPDOWN>(p_nmhdr);
+	int i_threshold = GetDlgItemInt(IDC_DETECTTHRESHOLD);
+	i_threshold -= MulDiv(m_p_chart_data_detect_wnd->get_channel_list_item(0)->GetYextent(), p_nm_up_down->iDelta, 10);
+	SetDlgItemInt(IDC_DETECTTHRESHOLD, i_threshold);
 
-	*pResult = 0;
+	*p_result = 0;
 }
 
-void DlgSpikeDetect::OnCbnSelchangeExtractchan() 
+void DlgSpikeDetect::on_cbn_sel_change_extract_channel() 
 {
-	UpdateSourceView();
+	update_source_view();
 }
 
-void DlgSpikeDetect::OnEnChangeComment()
+void DlgSpikeDetect::on_en_change_comment()
 {
 	CString cs;
 	GetDlgItem(IDC_COMMENT)->GetWindowText(cs);
-	SetTabComment(m_iDetectParmsDlg, cs);
+	set_tab_comment(m_i_detect_parameters_dlg, cs);
 }
 
-void DlgSpikeDetect::SetTabComment(int i, CString& cs)
+void DlgSpikeDetect::set_tab_comment(const int i, const CString& cs)
 {
 	TCITEM tc_item;
 	tc_item.mask = TCIF_TEXT;
 	CString cs1;
-	cs1.Format(_T("#%i %s"), m_iDetectParmsDlg, (LPCTSTR)cs);
+	cs1.Format(_T("#%i %s"), m_i_detect_parameters_dlg, (LPCTSTR)cs);
 	//  Set the new text for the item.
 	tc_item.pszText = cs1.GetBuffer(2);
-	m_cParameterTabCtrl.SetItem(i, &tc_item);
+	m_c_parameter_tab_ctrl.SetItem(i, &tc_item);
 }
 
 // move current parameter settings one slot more
 
-void DlgSpikeDetect::OnBnClickedShiftright()
+void DlgSpikeDetect::on_bn_clicked_shift_right()
 {
-	const auto isource = m_iDetectParmsDlg;
-	const auto idest = isource + 1;
-	if (idest < m_pDetectSettingsArray->GetSize())
-		ExchangeParms(isource, idest);
+	const auto i_source = m_i_detect_parameters_dlg;
+	const auto i_destination = i_source + 1;
+	if (i_destination < m_p_detect_settings_array->get_size())
+		exchange_parameters(i_source, i_destination);
 }
 
-void DlgSpikeDetect::OnBnClickedShiftleft()
+void DlgSpikeDetect::on_bn_clicked_shift_left()
 {
-	const auto isource = m_iDetectParmsDlg;
-	const auto idest = isource - 1;
-	if (idest <= 0)
-		ExchangeParms(isource, idest);
+	const auto i_source = m_i_detect_parameters_dlg;
+	const auto i_destination = i_source - 1;
+	if (i_destination <= 0)
+		exchange_parameters(i_source, i_destination);
 }
 
-void DlgSpikeDetect::ExchangeParms(int isource, int idest)
+void DlgSpikeDetect::exchange_parameters(const int i_source, const int i_destination)
 {
-	SaveChanParameters(isource); // save current data
+	save_chan_parameters(i_source); // save current data
 	const auto p_sp = new options_detect_spikes(); // create temporary data to exchange
-	const auto p_source = m_pDetectSettingsArray->GetItem(isource);
-	const auto p_destination = m_pDetectSettingsArray->GetItem(idest);
+	const auto p_source = m_p_detect_settings_array->get_item(i_source);
+	const auto p_destination = m_p_detect_settings_array->get_item(i_destination);
 	*p_sp = *p_source;
 	*p_source = *p_destination;
 	*p_destination = *p_sp;
-	m_iDetectParmsDlg = idest;
-	LoadChanParameters(idest);
-	SetTabComment(isource, (m_pDetectSettingsArray->GetItem(isource))->comment);
-	SetTabComment(idest, (m_pDetectSettingsArray->GetItem(idest))->comment);
+	m_i_detect_parameters_dlg = i_destination;
+	load_chan_parameters(i_destination);
+	set_tab_comment(i_source, (m_p_detect_settings_array->get_item(i_source))->comment);
+	set_tab_comment(i_destination, (m_p_detect_settings_array->get_item(i_destination))->comment);
 
 	// update interface
-	m_cParameterTabCtrl.SetCurSel(idest);
+	m_c_parameter_tab_ctrl.SetCurSel(i_destination);
 	Invalidate();
-	UpdateSourceView();
-	UpdateTabShiftButtons();
+	update_source_view();
+	update_tab_shift_buttons();
 }
 
-void DlgSpikeDetect::UpdateTabShiftButtons() const
+void DlgSpikeDetect::update_tab_shift_buttons() const
 {
 	auto b_enable = TRUE;
-	if (m_iDetectParmsDlg < 1)
+	if (m_i_detect_parameters_dlg < 1)
 		b_enable = FALSE;
 	GetDlgItem(IDC_LEFTSHIFT)->EnableWindow(b_enable);
 	b_enable = TRUE;
-	if (m_iDetectParmsDlg >= m_pDetectSettingsArray->GetSize() - 1)
+	if (m_i_detect_parameters_dlg >= m_p_detect_settings_array->get_size() - 1)
 		b_enable = FALSE;
 	GetDlgItem(IDC_RIGHTSHIFT)->EnableWindow(b_enable);
 }

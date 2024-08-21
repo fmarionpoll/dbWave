@@ -140,25 +140,25 @@ void ViewSpikeSort::define_sub_classed_items()
 
 void ViewSpikeSort::define_stretch_parameters()
 {
-	m_stretch_.AttachParent(this);
+	stretch_.AttachParent(this);
 
-	m_stretch_.newProp(IDC_MEASURE_MIN_MV, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch_.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
-	m_stretch_.newProp(IDC_CHART_MEASURE, XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch_.newProp(IDC_CHART_BARS, XLEQ_XREQ, SZEQ_YTEQ);
-	m_stretch_.newProp(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YTEQ);
-	m_stretch_.newProp(IDC_TIME_LAST, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch_.newProp(IDC_STATICRIGHT, SZEQ_XREQ, SZEQ_YBEQ);
+	stretch_.newProp(IDC_MEASURE_MIN_MV, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
+	stretch_.newProp(IDC_CHART_MEASURE, XLEQ_XREQ, YTEQ_YBEQ);
+	stretch_.newProp(IDC_CHART_BARS, XLEQ_XREQ, SZEQ_YTEQ);
+	stretch_.newProp(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YTEQ);
+	stretch_.newProp(IDC_TIME_LAST, SZEQ_XREQ, SZEQ_YTEQ);
+	stretch_.newProp(IDC_STATICRIGHT, SZEQ_XREQ, SZEQ_YBEQ);
 
-	m_stretch_.newProp(IDC_STATICLEFT, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch_.newProp(IDC_STATIC12, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch_.newProp(IDC_EDIT_LEFT, SZEQ_XLEQ, SZEQ_YBEQ);
-	m_stretch_.newProp(IDC_EDIT_RIGHT, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.newProp(IDC_STATICLEFT, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.newProp(IDC_STATIC12, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.newProp(IDC_EDIT_LEFT, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.newProp(IDC_EDIT_RIGHT, SZEQ_XLEQ, SZEQ_YBEQ);
 }
 
 void ViewSpikeSort::init_charts_from_saved_parameters()
 {
-	m_b_init_ = TRUE;
+	b_init_ = TRUE;
 	m_auto_increment = true;
 	m_auto_detect = true;
 
@@ -299,7 +299,7 @@ BOOL ViewSpikeSort::OnMove(const UINT n_id_move_command)
 
 void ViewSpikeSort::OnUpdate(CView* p_sender, const LPARAM l_hint, CObject* p_hint)
 {
-	if (m_b_init_)
+	if (b_init_)
 	{
 		switch (LOWORD(l_hint))
 		{

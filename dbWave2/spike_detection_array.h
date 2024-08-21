@@ -8,14 +8,14 @@ class spike_detection_array : public CObject
 {
 	DECLARE_SERIAL(spike_detection_array)
 public:
-	BOOL bChanged; // flag set TRUE if contents has changed
-	void SetChanArray(int acqchan, SpikeDetectArray* pspk);
-	SpikeDetectArray* GetChanArray(int acqchan);
+	BOOL b_changed; // flag set TRUE if contents has changed
+	void set_chan_array(int acq_chan, SpikeDetectArray* p_spk);
+	SpikeDetectArray* get_chan_array(int acq_chan);
 
 protected:
-	WORD wversion; // version number
-	CMapWordToPtr chanArrayMap; // array of CPtrArray
-	void DeleteAll(); // erase all arrays of parmItems (and all parmItems within them)
+	WORD w_version_;
+	CMapWordToPtr chan_array_map_; 
+	void delete_all(); 
 
 public:
 	spike_detection_array();

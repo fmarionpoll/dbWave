@@ -89,7 +89,7 @@ BOOL ViewSpikeTemplates::OnMove(UINT n_id_move_command)
 
 void ViewSpikeTemplates::OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint)
 {
-	if (m_b_init_)
+	if (b_init_)
 	{
 		switch (LOWORD(l_hint))
 		{
@@ -134,11 +134,11 @@ void ViewSpikeTemplates::define_sub_classed_items()
 
 void ViewSpikeTemplates::define_stretch_parameters()
 {
-	m_stretch_.AttachParent(this); // attach form_view pointer
-	m_stretch_.newProp(IDC_LIST1, SZEQ_XLEQ, YTEQ_YBEQ);
-	m_stretch_.newProp(IDC_LIST2, XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch_.newProp(IDC_LIST3, XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch_.newProp(IDC_TAB2, XLEQ_XREQ, SZEQ_YBEQ);
+	stretch_.AttachParent(this); // attach form_view pointer
+	stretch_.newProp(IDC_LIST1, SZEQ_XLEQ, YTEQ_YBEQ);
+	stretch_.newProp(IDC_LIST2, XLEQ_XREQ, YTEQ_YBEQ);
+	stretch_.newProp(IDC_LIST3, XLEQ_XREQ, YTEQ_YBEQ);
+	stretch_.newProp(IDC_TAB2, XLEQ_XREQ, SZEQ_YBEQ);
 }
 
 void ViewSpikeTemplates::OnInitialUpdate()
@@ -146,7 +146,7 @@ void ViewSpikeTemplates::OnInitialUpdate()
 	ViewDbTable::OnInitialUpdate();
 	define_sub_classed_items();
 	define_stretch_parameters();
-	m_b_init_ = TRUE;
+	b_init_ = TRUE;
 	m_auto_increment = true;
 	m_auto_detect = true;
 

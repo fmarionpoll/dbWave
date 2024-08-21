@@ -39,16 +39,16 @@ public:
 
 	// form variables
 protected:
-	int m_scan_count_doc_ = -1;
-	CDWordArray m_dw_intervals_;
+	int scan_count_ = -1;
+	CDWordArray dw_intervals_;
 
-	ChartData m_chart_data_filtered_;
-	ChartData m_chart_data_source_;
-	ChartSpikeBar m_chart_spike_bar_;
-	ChartSpikeShape m_chart_spike_shape_;
+	ChartData chart_data_filtered_;
+	ChartData chart_data_source_;
+	ChartSpikeBar chart_spike_bar_;
+	ChartSpikeShape chart_spike_shape_;
 
-	ScrollBarEx m_file_scroll_;
-	SCROLLINFO m_file_scroll_infos_{};
+	ScrollBarEx file_scrollbar_;
+	SCROLLINFO file_scrollbar_infos_{};
 
 	CEditCtrl mm_spike_no_;
 	CEditCtrl mm_threshold_val_;
@@ -59,9 +59,9 @@ protected:
 	CEditCtrl mm_selected_channel_;
 	CEditCtrl mm_selected_channel2_;
 
-	int m_zoom_integer_ = 0;
-	spike_detection_array* m_p_array_from_app_ = nullptr;
-	SpikeDetectArray m_spk_detect_array_current_;
+	int zoom_integer_ = 0;
+	spike_detection_array* spike_detection_array_ = nullptr;
+	SpikeDetectArray spk_detect_array_;
 	options_detect_spikes* m_p_detect_parameters_ = nullptr;
 	int m_i_detect_parameters_ = 0;
 
@@ -76,13 +76,26 @@ protected:
 
 	int m_cursor_state_ = 0;
 
+	// gain and bias setting: data
+	HICON m_h_bias_ = nullptr;
+	HICON m_h_zoom_ = nullptr;
+	CScrollBar m_scroll_y_;
+	float m_y_scale_factor_ = 0.f;
+	int m_v_bar_mode_ = 0;
+
+	HICON m_h_bias2_ = nullptr;
+	HICON m_h_zoom2_ = nullptr;
+	CScrollBar m_scroll_y2_;
+	float m_y_scale_factor2_ = 0.f;
+	int m_v_bar_mode2_ = 0;
+
 public:
 	void set_view_mouse_cursor(const int cursor_mode)
 	{
-		m_chart_spike_bar_.set_mouse_cursor_type(cursor_mode);
-		m_chart_spike_shape_.set_mouse_cursor_type(cursor_mode);
-		m_chart_data_filtered_.set_mouse_cursor_type(cursor_mode);
-		m_chart_data_source_.set_mouse_cursor_type(cursor_mode);
+		chart_spike_bar_.set_mouse_cursor_type(cursor_mode);
+		chart_spike_shape_.set_mouse_cursor_type(cursor_mode);
+		chart_data_filtered_.set_mouse_cursor_type(cursor_mode);
+		chart_data_source_.set_mouse_cursor_type(cursor_mode);
 	}
 
 	// Implementation
@@ -116,9 +129,8 @@ protected:
 	void update_vt_tags();
 	void update_spike_display();
 
-	// public interface to view
+// Overrides
 public:
-	// Overrides
 	BOOL OnMove(UINT n_id_move_command) override;
 
 protected:
@@ -135,7 +147,6 @@ protected:
 	void print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_info);
 	CString print_convert_file_index(long l_first, long l_last) const;
 	void print_compute_page_size();
-
 	CString print_get_file_infos();
 	CString print_data_bars(CDC* p_dc, const ChartData* p_data_chart_wnd, const CRect* p_rect);
 	CString print_spk_shape_bars(CDC* p_dc, const CRect* p_rect, BOOL b_all);
@@ -146,18 +157,6 @@ protected:
 	void print_data_cartridge(CDC* p_dc, ChartData* p_data_chart_wnd, const CRect* p_rect);
 
 	// gain and bias setting: data and functions
-	HICON m_h_bias_ = nullptr;
-	HICON m_h_zoom_ = nullptr;
-	CScrollBar m_scroll_y_;
-	float m_y_scale_factor_ = 0.f;
-	int m_v_bar_mode_ = 0;
-
-	HICON m_h_bias2_ = nullptr;
-	HICON m_h_zoom2_ = nullptr;
-	CScrollBar m_scroll_y2_;
-	float m_y_scale_factor2_ = 0.f;
-	int m_v_bar_mode2_ = 0;
-
 	void on_gain_scroll(UINT n_sb_code, UINT n_pos, int i_id);
 	void on_bias_scroll(UINT n_sb_code, UINT n_pos, int i_id);
 	void update_gain_scroll(int i_id);
@@ -167,11 +166,13 @@ protected:
 
 	// Generated message map functions
 public:
+	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
+	afx_msg void OnVScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
+
 	afx_msg LRESULT on_my_message(WPARAM w_param, LPARAM l_param);
 	afx_msg void on_first_frame();
 	afx_msg void on_last_frame();
-	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
-
+	
 	afx_msg void on_measure_all();
 	afx_msg void on_sel_change_detect_chan();
 	afx_msg void on_sel_change_transform();
@@ -196,7 +197,6 @@ public:
 
 	afx_msg void on_bn_clicked_bias_button();
 	afx_msg void on_bn_clicked_gain_button();
-	afx_msg void OnVScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
 	afx_msg void on_en_change_spk_wnd_amplitude();
 	afx_msg void on_en_change_spk_wnd_length();
 	afx_msg void on_bn_clicked_locate_button();

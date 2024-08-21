@@ -162,10 +162,10 @@ void ViewdbWave::subclass_dialog_controls()
 
 void ViewdbWave::make_controls_stretchable()
 {
-	m_stretch_.AttachParent(this);
-	m_stretch_.newProp(IDC_LISTCTRL, XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch_.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
-	m_b_init_ = TRUE;
+	stretch_.AttachParent(this);
+	stretch_.newProp(IDC_LISTCTRL, XLEQ_XREQ, YTEQ_YBEQ);
+	stretch_.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
+	b_init_ = TRUE;
 }
 
 void ViewdbWave::display_data()
@@ -376,7 +376,7 @@ LRESULT ViewdbWave::on_my_message(const WPARAM w_param, const LPARAM l_param)
 
 void ViewdbWave::OnUpdate(CView * p_sender, const LPARAM l_hint, CObject * p_hint)
 {
-	if (!m_b_init_ )
+	if (!b_init_ )
 		return;
 
 	switch (LOWORD(l_hint))

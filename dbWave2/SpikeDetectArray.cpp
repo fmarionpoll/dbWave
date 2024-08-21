@@ -14,78 +14,75 @@ SpikeDetectArray::SpikeDetectArray()
 {
 	const auto spk_detect_parameters = new options_detect_spikes();
 	ASSERT(spk_detect_parameters != NULL);
-	spkdetectparm_ptr_array.SetSize(0);
-	spkdetectparm_ptr_array.Add(spk_detect_parameters);
+	spk_detect_options_array_.SetSize(0);
+	spk_detect_options_array_.Add(spk_detect_parameters);
 }
 
 SpikeDetectArray::~SpikeDetectArray()
 {
-	DeleteArray();
+	delete_array();
 }
 
-void SpikeDetectArray::DeleteArray()
+void SpikeDetectArray::delete_array()
 {
-	const auto isize = spkdetectparm_ptr_array.GetSize();
-	for (auto i = 0; i < isize; i++)
+	const auto i_size = spk_detect_options_array_.GetSize();
+	for (auto i = 0; i < i_size; i++)
 	{
-		const auto pparm = spkdetectparm_ptr_array[i];
-		delete pparm;
+		const auto p_parameters_set = spk_detect_options_array_[i];
+		delete p_parameters_set;
 	}
-	spkdetectparm_ptr_array.RemoveAll();
+	spk_detect_options_array_.RemoveAll();
 }
 
-void SpikeDetectArray::SetSize(int nitems)
+void SpikeDetectArray::set_size(const int n_items)
 {
-	const auto isize = spkdetectparm_ptr_array.GetSize();
+	const auto i_size = spk_detect_options_array_.GetSize();
 	// delete items
-	if (isize > nitems)
+	if (i_size > n_items)
 	{
-		for (auto i = isize - 1; i >= nitems; i--)
+		for (auto i = i_size - 1; i >= n_items; i--)
 		{
-			auto pparm = spkdetectparm_ptr_array[i];
-			delete pparm;
+			auto p_parameters_set = spk_detect_options_array_[i];
+			delete p_parameters_set;
 		}
-		spkdetectparm_ptr_array.SetSize(nitems);
+		spk_detect_options_array_.SetSize(n_items);
 	}
 	// add dummy items
-	else if (isize < nitems)
+	else if (i_size < n_items)
 	{
-		for (auto i = isize; i < nitems; i++)
-			AddItem();
+		for (auto i = i_size; i < n_items; i++)
+			add_item();
 	}
 }
 
-// insert one parameter array item
-int SpikeDetectArray::AddItem()
+int SpikeDetectArray::add_item()
 {
-	const auto pparm = new options_detect_spikes();
-	ASSERT(pparm != NULL);
-	spkdetectparm_ptr_array.Add(pparm);
-	return spkdetectparm_ptr_array.GetSize();
+	const auto p_parameters_set = new options_detect_spikes();
+	ASSERT(p_parameters_set != NULL);
+	spk_detect_options_array_.Add(p_parameters_set);
+	return spk_detect_options_array_.GetSize();
 }
 
-// delete one parameter array item
-// return isize left
-int SpikeDetectArray::RemoveItem(int ichan)
+int SpikeDetectArray::remove_item(const int i)
 {
-	const auto isize = spkdetectparm_ptr_array.GetSize() - 1;
-	if (ichan > isize)
+	const auto i_size = spk_detect_options_array_.GetSize() - 1;
+	if (i > i_size)
 		return -1;
 
-	const auto pparm = spkdetectparm_ptr_array[ichan];
-	delete pparm;
-	spkdetectparm_ptr_array.RemoveAt(ichan);
-	return isize;
+	const auto p_parameters_set = spk_detect_options_array_[i];
+	delete p_parameters_set;
+	spk_detect_options_array_.RemoveAt(i);
+	return i_size;
 }
 
 SpikeDetectArray& SpikeDetectArray::operator =(const SpikeDetectArray& arg)
 {
 	if (this != &arg)
 	{
-		const auto n_items = arg.spkdetectparm_ptr_array.GetSize();
-		SetSize(n_items);
+		const auto n_items = arg.spk_detect_options_array_.GetSize();
+		set_size(n_items);
 		for (auto i = 0; i < n_items; i++)
-			*(spkdetectparm_ptr_array[i]) = *(arg.spkdetectparm_ptr_array[i]);
+			*(spk_detect_options_array_[i]) = *(arg.spk_detect_options_array_[i]);
 	}
 	return *this;
 }
@@ -94,30 +91,30 @@ void SpikeDetectArray::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		ar << w_version_number;
-		const WORD n_items = spkdetectparm_ptr_array.GetSize();
+		ar << w_version_number_;
+		const WORD n_items = spk_detect_options_array_.GetSize();
 		ar << n_items;
 		for (auto i = 0; i < n_items; i++)
-			spkdetectparm_ptr_array[i]->Serialize(ar);
+			spk_detect_options_array_[i]->Serialize(ar);
 	}
 	else
 	{
 		WORD version;
 		ar >> version;
 		// version 1 (11-2-96 FMP)
-		Serialize_Load(ar, version);
+		load(ar, version);
 	}
 }
 
-void SpikeDetectArray::Serialize_Load(CArchive& ar, WORD wversion)
+void SpikeDetectArray::load(CArchive& ar, const WORD w_version)
 {
 	ASSERT(ar.IsLoading());
 	WORD n_items;
 	ar >> n_items;
-	SetSize(n_items);
+	set_size(n_items);
 	for (auto i = 0; i < n_items; i++)
-		spkdetectparm_ptr_array[i]->Serialize(ar);
-	if (wversion > 1 && wversion < 3)
+		spk_detect_options_array_[i]->Serialize(ar);
+	if (w_version > 1 && w_version < 3)
 	{
 		int dummy;
 		ar >> dummy;

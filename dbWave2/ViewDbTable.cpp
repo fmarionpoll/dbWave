@@ -21,8 +21,8 @@ ViewDbTable::~ViewDbTable()
 = default;
 
 BEGIN_MESSAGE_MAP(ViewDbTable, CDaoRecordView)
-	ON_NOTIFY(NM_CLICK, IDC_TAB1, &ViewDbTable::OnNMClickTab1)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &ViewDbTable::OnTcnSelchangeTab1)
+	ON_NOTIFY(NM_CLICK, IDC_TAB1, &ViewDbTable::on_nm_click_tab1)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &ViewDbTable::on_tcn_sel_change_tab1)
 
 END_MESSAGE_MAP()
 
@@ -65,7 +65,7 @@ CDaoRecordset* ViewDbTable::OnGetRecordset()
 
 void ViewDbTable::OnSize(UINT n_type, int cx, int cy)
 {
-	if (m_b_init_)
+	if (b_init_)
 	{
 		switch (n_type)
 		{
@@ -73,7 +73,7 @@ void ViewDbTable::OnSize(UINT n_type, int cx, int cy)
 		case SIZE_RESTORED:
 			if (cx <= 0 || cy <= 0)
 				break;
-			m_stretch_.ResizeControls(n_type, cx, cy);
+			stretch_.ResizeControls(n_type, cx, cy);
 			break;
 		default:
 			break;
@@ -139,9 +139,12 @@ void ViewDbTable::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 
 void ViewDbTable::save_current_spk_file()
 {
+	const auto p_doc = GetDocument();
+	const long current_position = p_doc->db_get_current_record_position();
+	const long record_id = p_doc->db_get_current_record_id();
+
 	if (p_spk_doc != nullptr && p_spk_doc->IsModified())
 	{
-		const auto p_doc = GetDocument();
 		auto current_list = 0;
 		if (spk_list_tab_ctrl.m_hWnd != nullptr) current_list = spk_list_tab_ctrl.GetCurSel();
 		p_spk_list = p_spk_doc->set_spike_list_current_index(current_list);
@@ -163,6 +166,8 @@ void ViewDbTable::save_current_spk_file()
 		p_doc->set_db_n_spikes(n_spikes);
 		p_doc->set_db_n_spike_classes(n_spike_classes);
 	}
+
+	BOOL success = p_doc->db_move_to_id(record_id);
 }
 
 void ViewDbTable::increment_spike_flag()
@@ -177,14 +182,14 @@ void ViewDbTable::increment_spike_flag()
 	}
 }
 
-void ViewDbTable::OnNMClickTab1(NMHDR* p_nmhdr, LRESULT* p_result)
+void ViewDbTable::on_nm_click_tab1(NMHDR* p_nmhdr, LRESULT* p_result)
 {
 	const auto i_cur_sel = spk_list_tab_ctrl.GetCurSel();
 	SendMessage(WM_MYMESSAGE, HINT_VIEW_TAB_CHANGE, MAKELPARAM(i_cur_sel, 0));
 	*p_result = 0;
 }
 
-void ViewDbTable::OnTcnSelchangeTab1(NMHDR* p_nmhdr, LRESULT* p_result)
+void ViewDbTable::on_tcn_sel_change_tab1(NMHDR* p_nmhdr, LRESULT* p_result)
 {
 	const auto i_cur_sel = spk_list_tab_ctrl.GetCurSel();
 	PostMessage(WM_MYMESSAGE, HINT_VIEW_TAB_HAS_CHANGED, MAKELPARAM(i_cur_sel, 0));
