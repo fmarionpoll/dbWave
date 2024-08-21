@@ -8,27 +8,11 @@
 
 IMPLEMENT_SERIAL(options_detect_spikes, CObject, 0 /* schema number*/)
 
-options_detect_spikes::options_detect_spikes() : b_changed(0)
-{
-	w_version = 7; // version 6 (Aug 19 2005 FMP)
-	detect_channel = 0; // source channel
-	detect_transform = 13; // detect from data transformed - i = transform method cf AcqDataDoc
-	detect_from = 0; // detection method 0=data, 1=tags
-	extract_channel = 0;
-	extract_transform = 13;
-	compensate_baseline = FALSE;
-	detect_threshold_bin = 0; // value of threshold 1
-	extract_n_points = 60; // spike length (n data pts)
-	detect_pre_threshold = 20; // offset spike npts before threshold
-	detect_refractory_period = 20; // re-start detection n pts after threshold
-	detect_threshold_mv = 0.5f; // detection threshold in mV
-	detect_what = DETECT_SPIKES; // detect spikes, 1=detect stimulus
-	detect_mode = MODE_ON_OFF; // if sti, = ON/OFF
-}
+options_detect_spikes::options_detect_spikes()
+= default;
 
 options_detect_spikes::~options_detect_spikes()
-{
-}
+= default;
 
 options_detect_spikes& options_detect_spikes::operator =(const options_detect_spikes& arg)
 {
@@ -52,7 +36,7 @@ options_detect_spikes& options_detect_spikes::operator =(const options_detect_sp
 	return *this;
 }
 
-void options_detect_spikes::Read_v5(CArchive& ar, int version)
+void options_detect_spikes::read_v5(CArchive& ar, const int version)
 {
 	long lw;
 	WORD wi;
@@ -77,7 +61,7 @@ void options_detect_spikes::Read_v5(CArchive& ar, int version)
 	detect_refractory_period = lw; // long
 	if (version < 3) // dummy reading (threshold adjust method)
 	{
-		// removed at version 3, moved to SPKdetectARRAY
+		// removed at version 3, moved to SPK_detect_ARRAY
 		ar >> lw; // (int)
 		float fw;
 		ar >> fw;
@@ -93,36 +77,36 @@ void options_detect_spikes::Read_v5(CArchive& ar, int version)
 	}
 }
 
-void options_detect_spikes::Read_v6(CArchive& ar)
+void options_detect_spikes::read_v6(CArchive& ar)
 {
-	int nitems;
-	ar >> nitems;
-	ar >> comment; nitems--;
-	ASSERT(nitems == 0);
+	int n_items;
+	ar >> n_items;
+	ar >> comment; n_items--;
+	ASSERT(n_items == 0);
 
-	ar >> nitems;
-	ar >> detect_from; nitems--;
-	ar >> compensate_baseline; nitems--;
-	ASSERT(nitems == 0);
+	ar >> n_items;
+	ar >> detect_from; n_items--;
+	ar >> compensate_baseline; n_items--;
+	ASSERT(n_items == 0);
 
-	ar >> nitems;
-	ar >> detect_channel; nitems--;
-	ar >> detect_transform; nitems--;
-	ar >> detect_threshold_bin; nitems--;
-	ar >> extract_n_points; nitems--;
-	ar >> detect_pre_threshold; nitems--;
-	ar >> detect_refractory_period; nitems--;
-	ar >> extract_channel; nitems--;
-	ar >> extract_transform; nitems--;
-	if (nitems > 0) ar >> detect_what; nitems--;
-	if (nitems > 0) ar >> detect_mode; nitems--;
+	ar >> n_items;
+	ar >> detect_channel; n_items--;
+	ar >> detect_transform; n_items--;
+	ar >> detect_threshold_bin; n_items--;
+	ar >> extract_n_points; n_items--;
+	ar >> detect_pre_threshold; n_items--;
+	ar >> detect_refractory_period; n_items--;
+	ar >> extract_channel; n_items--;
+	ar >> extract_transform; n_items--;
+	if (n_items > 0) ar >> detect_what; n_items--;
+	if (n_items > 0) ar >> detect_mode; n_items--;
 
-	ar >> nitems;
-	ar >> detect_threshold_mv; nitems--;
-	ASSERT(nitems == 0);
+	ar >> n_items;
+	ar >> detect_threshold_mv; n_items--;
+	ASSERT(n_items == 0);
 }
 
-void options_detect_spikes::Serialize_v7(CArchive& ar)
+void options_detect_spikes::serialize_v7(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
@@ -153,29 +137,29 @@ void options_detect_spikes::Serialize_v7(CArchive& ar)
 	}
 	else
 	{
-		int nitems;  // string parameters
-		ar >> nitems;
-		ar >> comment; nitems--;
-		ASSERT(nitems == 0);
+		int n_items;  
+		ar >> n_items;
+		ar >> comment; n_items--;
+		ASSERT(n_items == 0);
 		
-		ar >> nitems; // int parameters
-		ar >> detect_from; nitems--;
-		ar >> compensate_baseline; nitems--;
-		ar >> detect_channel; nitems--;
-		ar >> detect_transform; nitems--;
-		ar >> detect_threshold_bin; nitems--;
-		ar >> extract_n_points; nitems--;
-		ar >> detect_pre_threshold; nitems--;
-		ar >> detect_refractory_period; nitems--;
-		ar >> extract_channel; nitems--;
-		ar >> extract_transform; nitems--;
-		ar >> detect_what; nitems--;
-		ar >> detect_mode; nitems--;
-		ASSERT(nitems == 0);
+		ar >> n_items; // int parameters
+		ar >> detect_from; n_items--;
+		ar >> compensate_baseline; n_items--;
+		ar >> detect_channel; n_items--;
+		ar >> detect_transform; n_items--;
+		ar >> detect_threshold_bin; n_items--;
+		ar >> extract_n_points; n_items--;
+		ar >> detect_pre_threshold; n_items--;
+		ar >> detect_refractory_period; n_items--;
+		ar >> extract_channel; n_items--;
+		ar >> extract_transform; n_items--;
+		ar >> detect_what; n_items--;
+		ar >> detect_mode; n_items--;
+		ASSERT(n_items == 0);
 		
-		ar >> nitems; // float
-		ar >> detect_threshold_mv; nitems--;
-		ASSERT(nitems == 0);
+		ar >> n_items; // float
+		ar >> detect_threshold_mv; n_items--;
+		ASSERT(n_items == 0);
 	}
 }
 
@@ -183,17 +167,17 @@ void options_detect_spikes::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		Serialize_v7(ar);
+		serialize_v7(ar);
 	}
 	else
 	{
 		WORD version; ar >> version;
 		if (version == 7)
-			Serialize_v7(ar);
+			serialize_v7(ar);
 		else if (version > 0 && version < 5)
-			Read_v5(ar, version);
+			read_v5(ar, version);
 		else if (version < 7) //== 6)
-			Read_v6(ar);
+			read_v6(ar);
 		else
 		{
 			ASSERT(FALSE);

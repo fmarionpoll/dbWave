@@ -2,52 +2,6 @@
 #include "IntervalPoints.h"
 
 
-// -------------------------------------------------------
-//
-//IMPLEMENT_SERIAL(CIntervalPoint, CObject, 0 )
-//
-//CIntervalPoint::CIntervalPoint()
-//{
-//	ii = 0;
-//	w = 0;
-//}
-//
-//CIntervalPoint::CIntervalPoint(const CIntervalPoint& pt)
-//{
-//	ii = pt.ii;
-//	w = pt.w;
-//}
-//
-//CIntervalPoint::~CIntervalPoint()
-//{
-//}
-//
-//void CIntervalPoint::Serialize(CArchive & ar)
-//{
-//	if (ar.IsStoring())
-//	{
-//		int n = 2;
-//		ar << n;
-//		ar << ii;
-//		ar << w;
-//	}
-//	else
-//	{
-//		int n;
-//		ar >> n;
-//		if (n>0) ar >> ii;	n--;
-//		if (n>0) ar >> w;	n--;
-//	}
-//}
-//
-//void CIntervalPoint::operator = (const CIntervalPoint & arg)
-//{
-//	ii = arg.ii;
-//	w = arg.w;
-//}
-
-// --------------------------------------------------------
-
 IMPLEMENT_SERIAL(CIntervalPoints, CObject, 0)
 
 CIntervalPoints::CIntervalPoints()
@@ -59,25 +13,24 @@ CIntervalPoints::CIntervalPoints()
 
 CIntervalPoints::CIntervalPoints(const CIntervalPoints& arg) : version(0)
 {
-	const auto nitems = arg.intervalpoint_array.GetSize();
-	intervalpoint_array.SetSize(nitems);
-	for (auto i = 0; i < nitems; i++)
+	const auto n_items = arg.intervalpoint_array.GetSize();
+	intervalpoint_array.SetSize(n_items);
+	for (auto i = 0; i < n_items; i++)
 		intervalpoint_array[i] = arg.intervalpoint_array.GetAt(i);
 	chrate = arg.chrate;
 }
 
 CIntervalPoints::~CIntervalPoints()
-{
-}
+= default;
 
 void CIntervalPoints::Serialize(CArchive& ar)
 {
-	auto lversion = 2;
+	auto l_version = 2;
 	if (ar.IsStoring())
 	{
 		auto n = 1;
 		ar << n;
-		ar << lversion;
+		ar << l_version;
 		n = 1;
 		ar << n;
 		intervalpoint_array.Serialize(ar);
@@ -89,12 +42,12 @@ void CIntervalPoints::Serialize(CArchive& ar)
 	{
 		int n;
 		ar >> n;
-		if (n > 0) ar >> lversion;
+		if (n > 0) ar >> l_version;
 		n--;
 		ar >> n;
 		if (n > 0) intervalpoint_array.Serialize(ar);
 		n--;
-		if (lversion > 1) ar >> n;
+		if (l_version > 1) ar >> n;
 		if (n > 0) ar >> chrate;
 		n--;
 	}
@@ -102,38 +55,39 @@ void CIntervalPoints::Serialize(CArchive& ar)
 
 void CIntervalPoints::operator =(const CIntervalPoints& arg)
 {
-	const auto nitems = arg.intervalpoint_array.GetSize();
-	intervalpoint_array.SetSize(nitems);
-	for (auto i = 0; i < nitems; i++)
+	const auto n_items = arg.intervalpoint_array.GetSize();
+	intervalpoint_array.SetSize(n_items);
+	for (auto i = 0; i < n_items; i++)
 		intervalpoint_array[i] = arg.intervalpoint_array.GetAt(i);
 	chrate = arg.chrate;
 }
 
-CIntervalPoint CIntervalPoints::GetIntervalPointAt(int i)
+CIntervalPoint CIntervalPoints::get_interval_point_at(int i)
 {
 	return intervalpoint_array[i];
 }
 
-void CIntervalPoints::EraseAllData()
+void CIntervalPoints::erase_all_data()
 {
 	intervalpoint_array.RemoveAll();
 }
 
-void CIntervalPoints::ImportIntervalsSeries(CIntervals* pIntervals, WORD valUP, BOOL bcopyRate)
+void CIntervalPoints::import_intervals_series(CIntervals* p_intervals, const WORD val_up, const BOOL b_copy_rate)
 {
-	const auto ichrate = pIntervals->channel_sampling_rate;
-	if (bcopyRate)
-		chrate = pIntervals->channel_sampling_rate;
-	const double ratio = chrate / ichrate;
-	const int nitems = pIntervals->GetSize();
-	intervalpoint_array.SetSize(nitems);
-	const WORD w_low = 0;
-	const auto w_up = valUP;
+	const auto i_ch_rate = p_intervals->channel_sampling_rate;
+	if (b_copy_rate)
+		chrate = p_intervals->channel_sampling_rate;
+	const double ratio = chrate / i_ch_rate;
+	const int n_items = p_intervals->GetSize();
+	intervalpoint_array.SetSize(n_items);
+	const auto w_up = val_up;
 	auto w_state = w_up;
-	CIntervalPoint dummy{};
-	for (auto i = 0; i < nitems; i++)
+	
+	for (auto i = 0; i < n_items; i++)
 	{
-		dummy.ii = static_cast<long>(pIntervals->GetAt(i) * ratio);
+		constexpr WORD w_low = 0;
+		CIntervalPoint dummy;
+		dummy.ii = static_cast<long>(p_intervals->GetAt(i) * ratio);
 		dummy.w = w_state;
 		intervalpoint_array[i] = dummy;
 		if (w_state == w_low)
@@ -143,58 +97,57 @@ void CIntervalPoints::ImportIntervalsSeries(CIntervals* pIntervals, WORD valUP, 
 	}
 }
 
-// combine up to 8 chans stored into CIntervals(s).
-// in the resulting CIntervaAndWordsSeries, each bit is coding for a channel
-// the channel number is sotred in the CIntervals (parameter "channel")
+// combine up to 8 channels stored into CIntervals(s).
+// in the resulting CIntervalAndWordsSeries, each bit is coding for a channel
+// the channel number is sorted in the CIntervals (parameter "channel")
 // 1) create separate CIntervalPoints objects with bits set
 // 2) merge the series
 
-void CIntervalPoints::ImportAndMergeIntervalsArrays(CPtrArray* pSourceIntervals)
+void CIntervalPoints::import_and_merge_intervals_arrays(const CPtrArray* p_source_intervals)
 {
 	intervalpoint_array.RemoveAll();
-	auto nseries = pSourceIntervals->GetSize();
-	if (nseries > 8)
-		nseries = 8;
-	auto nintervals = 0;
-	CArray<CIntervalPoints*, CIntervalPoints*> intervalsandwordseries_ptr_array;
-	intervalsandwordseries_ptr_array.SetSize(8);
+	auto n_series = p_source_intervals->GetSize();
+	if (n_series > 8)
+		n_series = 8;
+	auto n_intervals = 0;
+	CArray<CIntervalPoints*, CIntervalPoints*> intervals_and_word_series_ptr_array;
+	intervals_and_word_series_ptr_array.SetSize(8);
 
 	// (1) transform series into CIntervalsAndWordSeries
-	auto iseries = 0;
-	for (auto i = 0; i < nseries; i++)
+	auto i_series = 0;
+	for (auto i = 0; i < n_series; i++)
 	{
 		// transform this series if not empty
-		auto* p_source = static_cast<CIntervals*>(pSourceIntervals->GetAt(i));
+		auto* p_source = static_cast<CIntervals*>(p_source_intervals->GetAt(i));
 		if (p_source->GetSize() == 0)
 			continue;
 
-		auto pTransf = new CIntervalPoints();
-		const WORD val_up = 2 << p_source->GetChannel();
-		pTransf->ImportIntervalsSeries(p_source, val_up, FALSE);
-		intervalsandwordseries_ptr_array[iseries] = pTransf;
-		nintervals += pTransf->GetSize();
-		iseries++;
+		const auto p_transfer = new CIntervalPoints();
+		const WORD val_up = static_cast<WORD>(2 << p_source->GetChannel());
+		p_transfer->import_intervals_series(p_source, val_up, FALSE);
+		intervals_and_word_series_ptr_array[i_series] = p_transfer;
+		n_intervals += p_transfer->GetSize();
+		i_series++;
 	}
 
 	// (2) now ptrInter contains 8 channels with a list of ON/OFF states (with the proper bit set)
 	// merge the 8 channels
 
 	WORD output_state = 0;
-	for (auto i = 0; i < iseries; i++)
+	for (auto i = 0; i < i_series; i++)
 	{
-		auto p_transf = intervalsandwordseries_ptr_array.GetAt(i);
-		if (p_transf == nullptr)
+		const auto p_transfer = intervals_and_word_series_ptr_array.GetAt(i);
+		if (p_transfer == nullptr)
 			continue;
 
 		// loop over all intervals stored in this transformed series
-		auto k = 0;
-		for (auto j = 0; j < p_transf->GetSize(); j++)
+		for (auto j = 0; j < p_transfer->GetSize(); j++)
 		{
-			auto pt = p_transf->intervalpoint_array[j];
+			auto pt = p_transfer->intervalpoint_array[j];
 			BOOL b_found = false;
 
 			// loop over all intervals stored into the local array and merge output state
-			for (k; k < intervalpoint_array.GetSize(); k++)
+			for (auto k=0; k < intervalpoint_array.GetSize(); k++)
 			{
 				if (pt.ii < intervalpoint_array.GetAt(k).ii)
 				{
@@ -222,27 +175,26 @@ void CIntervalPoints::ImportAndMergeIntervalsArrays(CPtrArray* pSourceIntervals)
 		}
 	}
 
-	// (3) delete pTransf objects
+	// (3) delete pTransfer objects
 
 	for (auto i = 0; i < 8; i++)
 	{
-		const auto p_interv = intervalsandwordseries_ptr_array.GetAt(i);
-		if (p_interv != nullptr)
-			delete p_interv;
+		const auto p_intervals = intervals_and_word_series_ptr_array.GetAt(i);
+		delete p_intervals;
 	}
-	intervalsandwordseries_ptr_array.RemoveAll();
+	intervals_and_word_series_ptr_array.RemoveAll();
 }
 
-void CIntervalPoints::ExportIntervalsSeries(int chan, CIntervals* pOut)
+void CIntervalPoints::export_intervals_series(const int chan, CIntervals* p_out)
 {
-	const WORD ifilter = 2 << chan;
-	WORD istatus = 0;
+	const WORD i_filter = static_cast<WORD>(2 << chan);
+	WORD i_status = 0;
 	for (auto i = 0; i < intervalpoint_array.GetSize(); i++)
 	{
-		if ((ifilter & intervalpoint_array[i].w) != istatus)
+		if ((i_filter & intervalpoint_array[i].w) != i_status)
 		{
-			istatus = ifilter & intervalpoint_array[i].w;
-			pOut->Add(intervalpoint_array[i].ii);
+			i_status = i_filter & intervalpoint_array[i].w;
+			p_out->Add(intervalpoint_array[i].ii);
 		}
 	}
 }

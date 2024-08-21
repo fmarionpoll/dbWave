@@ -20,61 +20,61 @@ class DlgDAChannels : public CDialogEx
 	DECLARE_DYNAMIC(DlgDAChannels)
 
 public:
-	DlgDAChannels(CWnd* pParent = nullptr); // standard constructor
+	DlgDAChannels(CWnd* p_parent = nullptr); // standard constructor
 	~DlgDAChannels() override;
 
 	// Dialog Data
 	enum { IDD = IDD_DA_CHANNELS };
 
-	CArray<output_parameters, output_parameters> outputparms_array;
+	CArray<output_parameters, output_parameters> output_params_array;
 	CArray<CComboBox*, CComboBox*> combobox_ptr_array;
 	BOOL m_bChannel2;
 
 protected:
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
-	void EditSequence(int isel, int channel);
-	void FillCombo(int channel);
-	void SelectComboItemFromOutputParm(int ival);
-	void OnBnClickedButtonsource(int channel);
-	void OnCbnSelchangeCombosource(int ival);
+	void DoDataExchange(CDataExchange* p_dx) override; // DDX/DDV support
+	void edit_sequence(int i_id, int channel);
+	void fill_combo(int channel);
+	void select_combo_item_from_output_parameters_array(int i_val);
+	void on_bn_clicked_button_source(int channel);
+	void on_cbn_sel_change_combo_source(int i_val);
 
 	static CString comboText[];
 	static DWORD comboVal[];
 
 public:
-	CIntervals m_stimsaved;
-	float m_samplingRate;
-	int m_iseldigital;
+	CIntervals m_stimulus_saved;
+	float m_sampling_rate;
+	int m_i_sel_digital;
 
 	BOOL OnInitDialog() override;
 
-	afx_msg void OnBnClickedOk();
+	afx_msg void on_bn_clicked_ok();
 
-	afx_msg void OnBnClickedCheckchan0();
-	afx_msg void OnBnClickedCheckchan1();
-	afx_msg void OnBnClickedCheckchan2();
+	afx_msg void on_bn_clicked_check_chan0();
+	afx_msg void on_bn_clicked_check_chan1();
+	afx_msg void on_bn_clicked_check_chan2();
 
-	afx_msg void OnCbnSelchangeCombosource0();
-	afx_msg void OnCbnSelchangeCombosource1();
-	afx_msg void OnCbnSelchangeCombosource2();
+	afx_msg void on_cbn_sel_change_combo_source0();
+	afx_msg void on_cbn_sel_change_combo_source1();
+	afx_msg void on_cbn_sel_change_combo_source2();
 
-	afx_msg void OnBnClickedButtonsource0();
-	afx_msg void OnBnClickedButtonsource1();
-	afx_msg void OnBnClickedButtonsource2();
-	afx_msg void OnBnClickedButtonsource3();
-	afx_msg void OnBnClickedButtonsource4();
-	afx_msg void OnBnClickedButtonsource5();
-	afx_msg void OnBnClickedButtonsource6();
-	afx_msg void OnBnClickedButtonsource7();
-	afx_msg void OnBnClickedButtonsource8();
-	afx_msg void OnBnClickedButtonsource9();
-	afx_msg void OnCbnSelchangeCombosource3();
-	afx_msg void OnCbnSelchangeCombosource4();
-	afx_msg void OnCbnSelchangeCombosource5();
-	afx_msg void OnCbnSelchangeCombosource6();
-	afx_msg void OnCbnSelchangeCombosource7();
-	afx_msg void OnCbnSelchangeCombosource8();
-	afx_msg void OnCbnSelchangeCombosource9();
+	afx_msg void on_bn_clicked_button_source0();
+	afx_msg void on_bn_clicked_button_source1();
+	afx_msg void on_bn_clicked_button_source2();
+	afx_msg void on_bn_clicked_button_source3();
+	afx_msg void on_bn_clicked_button_source4();
+	afx_msg void on_bn_clicked_button_source5();
+	afx_msg void on_bn_clicked_button_source6();
+	afx_msg void on_bn_clicked_button_source7();
+	afx_msg void on_bn_clicked_button_source8();
+	afx_msg void on_bn_clicked_button_source9();
+	afx_msg void on_cbn_sel_change_combo_source3();
+	afx_msg void on_cbn_sel_change_combo_source4();
+	afx_msg void on_cbn_sel_change_combo_source5();
+	afx_msg void on_cbn_sel_change_combo_source6();
+	afx_msg void on_cbn_sel_change_combo_source7();
+	afx_msg void on_cbn_sel_change_combo_source8();
+	afx_msg void on_cbn_sel_change_combo_source9();
 
 	DECLARE_MESSAGE_MAP()
 };

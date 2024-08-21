@@ -30,7 +30,7 @@ public:
 	~SpikeList() override;
 
 	int m_selected_spike {-1};
-	int m_jitter_sl  {2};
+	int m_jitter_sl {2};
 	int m_i_center_1_sl {0};
 	int m_i_center_2_sl {60};
 	int shape_t1 {0};
@@ -39,24 +39,24 @@ public:
 	// Description
 protected:
 	// (0) ---------------infos about file version and ID
-	WORD w_version_ {6};		// aug 2013 change spike element
+	WORD w_version_ {9};		// Aug 2024 save spike data into "spikes"
 	CString id_string_ {_T("Awave Spike file v")};
 
 	// (1) ---------------infos about data acquisition and spike detection
 	CWaveChan wave_channel_{};	
 	WORD data_encoding_mode_  {0};
-	long bin_zero_  {4096}; 
+	long bin_zero_ {4096}; 
 	float sampling_rate_ {10000.f};
-	float volts_per_bin_  {0.001f}; 
-	options_detect_spikes spk_detect_parameters_ {};
+	float volts_per_bin_ {0.001f}; 
+	options_detect_spikes options_detect_spk_ {};
 	CString channel_description_ {};
 
 	// (2) -------------ordered spike list with class, time, etc
-	BOOL extrema_valid_  {false};
+	BOOL extrema_valid_ {false};
 	int minimum_over_all_spikes_ {0}; 
 	int maximum_over_all_spikes_ {0};
-	int min_y1_over_all_spikes_{ 0 };
-	int max_y1_over_all_spikes_{ 0 };
+	int min_y1_over_all_spikes_ {0};
+	int max_y1_over_all_spikes_ {0};
 	int spike_length_ {60};
 	CArray<Spike*, Spike*> spikes_;
 
@@ -98,8 +98,8 @@ public:
 	float convert_acquisition_point_to_mv (const int value) const { return volts_per_bin_ * 1000.f * static_cast<float>(value - bin_zero_); }
 	float convert_difference_to_mv(const int value) const { return volts_per_bin_ * 1000.f * static_cast<float>(value); }
 
-	void set_detection_parameters(const options_detect_spikes* p_sd) { spk_detect_parameters_ = *p_sd; }
-	options_detect_spikes* get_detection_parameters() { return &spk_detect_parameters_; }
+	void set_detection_parameters(const options_detect_spikes* p_sd) { options_detect_spk_ = *p_sd; }
+	options_detect_spikes* get_detection_parameters() { return &options_detect_spk_; }
 
 	int add_spike(short* source_data, int n_channels, long ii_time, int source_channel, int i_class, BOOL b_check);
 
@@ -140,14 +140,15 @@ public:
 	void change_class_of_flagged_spikes(int new_class_id);
 
 protected:
-	void read_file_version1(CArchive& ar);
+	void read_file_version_1(CArchive& ar);
 	void remove_artefacts();
-	void serialize_version8(CArchive& ar);
-	void read_file_version_before5(CArchive& ar, int version);
-	void read_file_version5(CArchive& ar);
+	void serialize_version_9(CArchive& ar);
+	void serialize_version_8(CArchive& ar);
+	void read_file_version_before_5(CArchive& ar, int version);
+	void read_file_version_5(CArchive& ar);
 
 	void delete_arrays();
-	void serialize_version7(CArchive& ar);
+	void serialize_version_7(CArchive& ar);
 	void serialize_data_parameters(CArchive& ar);
 	void serialize_spikes(CArchive& ar);
 	void serialize_spike_data_short(CArchive& ar);

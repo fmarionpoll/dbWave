@@ -674,9 +674,9 @@ void ChartSpikeShape::Serialize(CArchive & ar)
 {
 	int dummy_int = 1;
 	WORD w_version = 1;
+	ChartSpike::Serialize(ar);
 	if (ar.IsStoring())
 	{
-		ChartSpike::Serialize(ar);
 		ar << w_version;
 		ar << range_mode_; 
 		ar << l_first_; 
@@ -693,7 +693,6 @@ void ChartSpikeShape::Serialize(CArchive & ar)
 	}
 	else
 	{
-		ChartSpike::Serialize(ar);
 		ar >> w_version;
 		ar >> range_mode_; 
 		ar >> l_first_;

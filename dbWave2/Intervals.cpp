@@ -39,7 +39,7 @@ CIntervals& CIntervals::operator =(const CIntervals& arg)
 
 void CIntervals::Serialize(CArchive& ar)
 {
-	auto iversion = 2;
+	auto i_version = 2;
 	if (ar.IsStoring())
 	{
 		auto n = 4;
@@ -47,7 +47,7 @@ void CIntervals::Serialize(CArchive& ar)
 		ar << iID;
 		ar << n_items;
 		ar << n_per_cycle;
-		ar << iversion;
+		ar << i_version;
 
 		n = 1;
 		ar << n;
@@ -75,9 +75,9 @@ void CIntervals::Serialize(CArchive& ar)
 
 		if (n > 0)
 		{
-			ar >> iversion;
+			ar >> i_version;
 			n--;
-			ASSERT(iversion == 2);
+			ASSERT(i_version == 2);
 
 			ar >> n;
 			if (n > 0) ar >> cs_descriptor;
@@ -85,7 +85,7 @@ void CIntervals::Serialize(CArchive& ar)
 			ar >> n;
 			if (n > 0) array.Serialize(ar);
 			n--;
-			if (iversion > 1)
+			if (i_version > 1)
 				ar >> n;
 			if (n > 0) ar >> channel_sampling_rate;
 			n--;

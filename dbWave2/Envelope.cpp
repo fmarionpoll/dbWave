@@ -151,7 +151,7 @@ void CEnvelope::export_to_ordinates(CArray<CPoint, CPoint>& dest)
 
 void CEnvelope::Serialize(CArchive& ar)
 {
-	m_envelope_.Serialize(ar); // Envelope array
+	m_envelope_.Serialize(ar); 
 
 	if (ar.IsStoring())
 	{

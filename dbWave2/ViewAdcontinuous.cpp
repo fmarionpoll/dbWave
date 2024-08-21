@@ -32,85 +32,88 @@ ViewADcontinuous::ViewADcontinuous()
 	: ViewDbTable(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE;
-	m_AD_yRulerBar.AttachScopeWnd(&m_chartDataAD, FALSE);
+	m_ad_y_ruler_bar.AttachScopeWnd(&m_chart_data_ad_, FALSE);
 }
 
 ViewADcontinuous::~ViewADcontinuous()
 = default;
 
-void ViewADcontinuous::DoDataExchange(CDataExchange * pDX)
+void ViewADcontinuous::DoDataExchange(CDataExchange * p_dx)
 {
-	CFormView::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_ANALOGTODIGIT, m_Acq32_AD);
-	DDX_Control(pDX, IDC_DIGITTOANALOG, m_Acq32_DA);
-	DDX_Control(pDX, IDC_COMBOBOARD, m_Combo_ADcard);
-	DDX_Control(pDX, IDC_STARTSTOP, m_btnStartStop_AD);
-	DDX_CBIndex(pDX, IDC_COMBOSTARTOUTPUT, m_bStartOutPutMode);
-	DDX_Control(pDX, IDC_STARTSTOP2, m_Button_StartStop_DA);
-	DDX_Control(pDX, IDC_SAMPLINGMODE, m_Button_SamplingMode);
-	DDX_Control(pDX, IDC_DAPARAMETERS2, m_Button_OutputChannels);
-	DDX_Control(pDX, IDC_WRITETODISK, m_Button_WriteToDisk);
-	DDX_Control(pDX, IDC_OSCILLOSCOPE, m_Button_Oscilloscope);
+	CFormView::DoDataExchange(p_dx);
+	DDX_Control(p_dx, IDC_ANALOGTODIGIT, m_acq32_ad);
+	DDX_Control(p_dx, IDC_DIGITTOANALOG, m_acq32_da);
+	DDX_Control(p_dx, IDC_COMBOBOARD, m_combo_ad_card);
+	DDX_Control(p_dx, IDC_STARTSTOP, m_btn_start_stop_ad);
+	DDX_CBIndex(p_dx, IDC_COMBOSTARTOUTPUT, m_b_start_out_put_mode);
+	DDX_Control(p_dx, IDC_STARTSTOP2, m_button_start_stop_da);
+	DDX_Control(p_dx, IDC_SAMPLINGMODE, m_button_sampling_mode);
+	DDX_Control(p_dx, IDC_DAPARAMETERS2, m_button_output_channels);
+	DDX_Control(p_dx, IDC_WRITETODISK, m_button_write_to_disk);
+	DDX_Control(p_dx, IDC_OSCILLOSCOPE, m_button_oscilloscope);
 }
 
 BEGIN_MESSAGE_MAP(ViewADcontinuous, CFormView)
-	ON_MESSAGE(WM_MYMESSAGE, &ViewADcontinuous::OnMyMessage)
-	ON_COMMAND(ID_HARDWARE_ADCHANNELS, &ViewADcontinuous::OnInputChannels)
-	ON_COMMAND(ID_HARDWARE_AD_INTERVALS, &ViewADcontinuous::OnSamplingMode)
-	ON_COMMAND(ID_HARDWARE_DEFINE_EXPERIMENT, &ViewADcontinuous::OnHardwareDefineexperiment)
 	ON_WM_SIZE()
 	ON_WM_DESTROY()
 	ON_WM_CTLCOLOR()
-	ON_BN_CLICKED(IDC_SAMPLINGMODE, &ViewADcontinuous::OnSamplingMode)
-	ON_BN_CLICKED(IDC_INPUTCHANNELS, &ViewADcontinuous::OnInputChannels)
-	ON_BN_CLICKED(IDC_GAIN_button, &ViewADcontinuous::OnBnClickedGainbutton)
-	ON_BN_CLICKED(IDC_BIAS_button, &ViewADcontinuous::OnBnClickedBiasbutton)
 	ON_WM_VSCROLL()
-	ON_BN_CLICKED(IDC_DAPARAMETERS2, &ViewADcontinuous::OnBnClickedDaparameters2)
-	ON_CBN_SELCHANGE(IDC_COMBOBOARD, &ViewADcontinuous::OnCbnSelchangeComboboard)
-	ON_BN_CLICKED(IDC_STARTSTOP, &ViewADcontinuous::OnBnClickedStartstop)
-	ON_BN_CLICKED(IDC_WRITETODISK, &ViewADcontinuous::OnBnClickedWriteToDisk)
-	ON_BN_CLICKED(IDC_OSCILLOSCOPE, &ViewADcontinuous::OnBnClickedOscilloscope)
-	ON_BN_CLICKED(IDC_CARDFEATURES, &ViewADcontinuous::OnBnClickedCardfeatures)
-	ON_CBN_SELCHANGE(IDC_COMBOSTARTOUTPUT, &ViewADcontinuous::OnCbnSelchangeCombostartoutput)
-	ON_BN_CLICKED(IDC_STARTSTOP2, &ViewADcontinuous::OnBnClickedStartstop2)
-	ON_BN_CLICKED(IDC_UNZOOM, &ViewADcontinuous::OnBnClickedUnzoom)
+
+	ON_MESSAGE(WM_MYMESSAGE, &ViewADcontinuous::on_my_message)
+	ON_COMMAND(ID_HARDWARE_ADCHANNELS, &ViewADcontinuous::on_input_channels)
+	ON_COMMAND(ID_HARDWARE_AD_INTERVALS, &ViewADcontinuous::on_sampling_mode)
+	ON_COMMAND(ID_HARDWARE_DEFINE_EXPERIMENT, &ViewADcontinuous::on_hardware_define_experiment)
+
+	ON_BN_CLICKED(IDC_SAMPLINGMODE, &ViewADcontinuous::on_sampling_mode)
+	ON_BN_CLICKED(IDC_INPUTCHANNELS, &ViewADcontinuous::on_input_channels)
+	ON_BN_CLICKED(IDC_GAIN_button, &ViewADcontinuous::on_bn_clicked_gain_button)
+	ON_BN_CLICKED(IDC_BIAS_button, &ViewADcontinuous::on_bn_clicked_bias_button)
+	ON_BN_CLICKED(IDC_DAPARAMETERS2, &ViewADcontinuous::on_bn_clicked_da_parameters2)
+	ON_BN_CLICKED(IDC_STARTSTOP, &ViewADcontinuous::on_bn_clicked_start_stop)
+	ON_BN_CLICKED(IDC_WRITETODISK, &ViewADcontinuous::on_bn_clicked_write_to_disk)
+	ON_BN_CLICKED(IDC_OSCILLOSCOPE, &ViewADcontinuous::on_bn_clicked_oscilloscope)
+	ON_BN_CLICKED(IDC_CARDFEATURES, &ViewADcontinuous::on_bn_clicked_card_features)
+	ON_BN_CLICKED(IDC_STARTSTOP2, &ViewADcontinuous::on_bn_clicked_start_stop2)
+	ON_BN_CLICKED(IDC_UNZOOM, &ViewADcontinuous::on_bn_clicked_un_zoom)
+
+	ON_CBN_SELCHANGE(IDC_COMBOBOARD, &ViewADcontinuous::on_cbn_sel_change_combo_board)
+	ON_CBN_SELCHANGE(IDC_COMBOSTARTOUTPUT, &ViewADcontinuous::on_cbn_sel_change_combo_start_output)
 END_MESSAGE_MAP()
 
 void ViewADcontinuous::OnDestroy()
 {
-	if (m_Acq32_AD.IsInProgress())
-		StopAcquisition();
+	if (m_acq32_ad.IsInProgress())
+		stop_acquisition();
 
-	m_Acq32_DA.StopAndLiberateBuffers();
+	m_acq32_da.StopAndLiberateBuffers();
 
 	if (m_b_found_dt_open_layer_dll_)
 	{
 		// TODO: save data here 
-		if (m_Acq32_AD.GetHDass() != NULL)
-			m_Acq32_AD.DeleteBuffers();
+		if (m_acq32_ad.GetHDass() != NULL)
+			m_acq32_ad.DeleteBuffers();
 
-		if (m_Acq32_DA.GetHDass() != NULL)
-			m_Acq32_DA.DeleteBuffers();
+		if (m_acq32_da.GetHDass() != NULL)
+			m_acq32_da.DeleteBuffers();
 	}
 
 	CFormView::OnDestroy();
 	delete m_p_background_brush_;
 }
 
-HBRUSH ViewADcontinuous::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
+HBRUSH ViewADcontinuous::OnCtlColor(CDC * p_dc, CWnd * p_wnd, UINT n_ctl_color)
 {
 	HBRUSH hbr;
-	switch (nCtlColor)
+	switch (n_ctl_color)
 	{
 	case CTLCOLOR_EDIT:
 	case CTLCOLOR_MSGBOX:
-		pDC->SetBkColor(m_background_color_);
+		p_dc->SetBkColor(m_background_color_);
 		hbr = static_cast<HBRUSH>(m_p_background_brush_->GetSafeHandle());
 		break;
 
 	default:
-		hbr = CFormView::OnCtlColor(pDC, pWnd, nCtlColor);
+		hbr = CFormView::OnCtlColor(p_dc, p_wnd, n_ctl_color);
 		break;
 	}
 	return hbr;
@@ -118,57 +121,57 @@ HBRUSH ViewADcontinuous::OnCtlColor(CDC * pDC, CWnd * pWnd, UINT nCtlColor)
 
 BEGIN_EVENTSINK_MAP(ViewADcontinuous, CFormView)
 
-	ON_EVENT(ViewADcontinuous, IDC_ANALOGTODIGIT, 1, ViewADcontinuous::OnBufferDone_ADC, VTS_NONE)
-	ON_EVENT(ViewADcontinuous, IDC_ANALOGTODIGIT, 2, ViewADcontinuous::OnQueueDone_ADC, VTS_NONE)
-	ON_EVENT(ViewADcontinuous, IDC_ANALOGTODIGIT, 4, ViewADcontinuous::OnTriggerError_ADC, VTS_NONE)
-	ON_EVENT(ViewADcontinuous, IDC_ANALOGTODIGIT, 5, ViewADcontinuous::OnOverrunError_ADC, VTS_NONE)
+	ON_EVENT(ViewADcontinuous, IDC_ANALOGTODIGIT, 1, ViewADcontinuous::on_buffer_done_adc, VTS_NONE)
+	ON_EVENT(ViewADcontinuous, IDC_ANALOGTODIGIT, 2, ViewADcontinuous::on_queue_done_adc, VTS_NONE)
+	ON_EVENT(ViewADcontinuous, IDC_ANALOGTODIGIT, 4, ViewADcontinuous::on_trigger_error_adc, VTS_NONE)
+	ON_EVENT(ViewADcontinuous, IDC_ANALOGTODIGIT, 5, ViewADcontinuous::on_overrun_error_adc, VTS_NONE)
 
-	ON_EVENT(ViewADcontinuous, IDC_DIGITTOANALOG, 1, ViewADcontinuous::OnBufferDone_DAC, VTS_NONE)
-	ON_EVENT(ViewADcontinuous, IDC_DIGITTOANALOG, 5, ViewADcontinuous::OnOverrunError_DAC, VTS_NONE)
-	ON_EVENT(ViewADcontinuous, IDC_DIGITTOANALOG, 2, ViewADcontinuous::OnQueueDone_DAC, VTS_NONE)
-	ON_EVENT(ViewADcontinuous, IDC_DIGITTOANALOG, 4, ViewADcontinuous::OnTriggerError_DAC, VTS_NONE)
+	ON_EVENT(ViewADcontinuous, IDC_DIGITTOANALOG, 1, ViewADcontinuous::on_buffer_done_dac, VTS_NONE)
+	ON_EVENT(ViewADcontinuous, IDC_DIGITTOANALOG, 5, ViewADcontinuous::on_overrun_error_dac, VTS_NONE)
+	ON_EVENT(ViewADcontinuous, IDC_DIGITTOANALOG, 2, ViewADcontinuous::on_queue_done_dac, VTS_NONE)
+	ON_EVENT(ViewADcontinuous, IDC_DIGITTOANALOG, 4, ViewADcontinuous::on_trigger_error_dac, VTS_NONE)
 
 END_EVENTSINK_MAP()
 
-void ViewADcontinuous::AttachControls()
+void ViewADcontinuous::attach_controls()
 {
 	// attach controls
-	VERIFY(m_chartDataAD.SubclassDlgItem(IDC_DISPLAYDATA, this));
-	VERIFY(m_AD_yRulerBar.SubclassDlgItem(IDC_YSCALE, this));
-	VERIFY(m_AD_xRulerBar.SubclassDlgItem(IDC_XSCALE, this));
-	VERIFY(m_BiasButton.SubclassDlgItem(IDC_BIAS_button, this));
-	VERIFY(m_ZoomButton.SubclassDlgItem(IDC_GAIN_button, this));
-	VERIFY(m_UnZoomButton.SubclassDlgItem(IDC_UNZOOM, this));
-	VERIFY(m_Combo_StartOutput.SubclassDlgItem(IDC_COMBOSTARTOUTPUT, this));
+	VERIFY(m_chart_data_ad_.SubclassDlgItem(IDC_DISPLAYDATA, this));
+	VERIFY(m_ad_y_ruler_bar.SubclassDlgItem(IDC_YSCALE, this));
+	VERIFY(m_ad_x_ruler_bar.SubclassDlgItem(IDC_XSCALE, this));
+	VERIFY(m_bias_button.SubclassDlgItem(IDC_BIAS_button, this));
+	VERIFY(m_zoom_button.SubclassDlgItem(IDC_GAIN_button, this));
+	VERIFY(m_un_zoom_button.SubclassDlgItem(IDC_UNZOOM, this));
+	VERIFY(m_combo_start_output.SubclassDlgItem(IDC_COMBOSTARTOUTPUT, this));
 
-	m_AD_yRulerBar.AttachScopeWnd(&m_chartDataAD, FALSE);
-	m_AD_xRulerBar.AttachScopeWnd(&m_chartDataAD, TRUE);
-	m_chartDataAD.attach_external_x_ruler(&m_AD_xRulerBar);
-	m_chartDataAD.attach_external_y_ruler(&m_AD_yRulerBar);
-	m_chartDataAD.b_nice_grid = TRUE;
+	m_ad_y_ruler_bar.AttachScopeWnd(&m_chart_data_ad_, FALSE);
+	m_ad_x_ruler_bar.AttachScopeWnd(&m_chart_data_ad_, TRUE);
+	m_chart_data_ad_.attach_external_x_ruler(&m_ad_x_ruler_bar);
+	m_chart_data_ad_.attach_external_y_ruler(&m_ad_y_ruler_bar);
+	m_chart_data_ad_.b_nice_grid = TRUE;
 
-	m_stretch.AttachParent(this);
-	m_stretch.newProp(IDC_DISPLAYDATA, XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YBEQ);
-	m_stretch.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDC_UNZOOM, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch_.AttachParent(this);
+	m_stretch_.newProp(IDC_DISPLAYDATA, XLEQ_XREQ, YTEQ_YBEQ);
+	m_stretch_.newProp(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
+	m_stretch_.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch_.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YBEQ);
+	m_stretch_.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, YTEQ_YBEQ);
+	m_stretch_.newProp(IDC_UNZOOM, SZEQ_XREQ, SZEQ_YTEQ);
 
 	// bitmap buttons: load icons & set buttons
-	m_hBias = AfxGetApp()->LoadIcon(IDI_BIAS);
-	m_hZoom = AfxGetApp()->LoadIcon(IDI_ZOOM);
-	m_hUnZoom = AfxGetApp()->LoadIcon(IDI_UNZOOM);
-	m_BiasButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_hBias)));
-	m_ZoomButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_hZoom)));
-	m_UnZoomButton.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_hUnZoom)));
+	m_h_bias_ = AfxGetApp()->LoadIcon(IDI_BIAS);
+	m_h_zoom_ = AfxGetApp()->LoadIcon(IDI_ZOOM);
+	m_h_un_zoom_ = AfxGetApp()->LoadIcon(IDI_UNZOOM);
+	m_bias_button.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_h_bias_)));
+	m_zoom_button.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_h_zoom_)));
+	m_un_zoom_button.SendMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON), reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_h_un_zoom_)));
 
 	const BOOL b32BitIcons = afxGlobalData.m_nBitsPerPixel >= 16;
-	m_btnStartStop_AD.SetImage(b32BitIcons ? IDB_CHECK32 : IDB_CHECK);
-	m_btnStartStop_AD.SetCheckedImage(b32BitIcons ? IDB_CHECKNO32 : IDB_CHECKNO);
+	m_btn_start_stop_ad.SetImage(b32BitIcons ? IDB_CHECK32 : IDB_CHECK);
+	m_btn_start_stop_ad.SetCheckedImage(b32BitIcons ? IDB_CHECKNO32 : IDB_CHECKNO);
 	CMFCButton::EnableWindowsTheming(false);
-	m_btnStartStop_AD.m_nFlatStyle = CMFCButton::BUTTONSTYLE_3D;
+	m_btn_start_stop_ad.m_nFlatStyle = CMFCButton::BUTTONSTYLE_3D;
 
 	// scrollbar
 	VERIFY(m_scroll_y_.SubclassDlgItem(IDC_SCROLLY_scrollbar, this));
@@ -185,7 +188,7 @@ void ViewADcontinuous::get_acquisition_parameters_from_data_file()
 		options_input_data_->wave_format.copy(pDat->get_wave_format());
 		options_input_data_->chan_array.chan_array_set_size(options_input_data_->wave_format.scan_count);
 		options_input_data_->chan_array.Copy(pDat->get_wave_channels_array());
-		options_input_data_->wave_format.b_ad_write_to_file = m_bADwritetofile;
+		options_input_data_->wave_format.b_ad_write_to_file = b_ad_write_to_file;
 	}
 }
 
@@ -193,164 +196,164 @@ void ViewADcontinuous::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
 
-	AttachControls();
+	attach_controls();
 
 	const auto pApp = static_cast<CdbWaveApp*>(AfxGetApp());
 	options_input_data_ = &(pApp->options_acq_data);
 	options_output_data_ = &(pApp->options_output_data);
 
 	m_b_found_dt_open_layer_dll_ = FALSE;
-	m_bADwritetofile = options_input_data_->wave_format.b_ad_write_to_file;
-	m_bStartOutPutMode = options_output_data_->b_allow_output_data;
-	m_Combo_StartOutput.SetCurSel(m_bStartOutPutMode);
+	b_ad_write_to_file = options_input_data_->wave_format.b_ad_write_to_file;
+	m_b_start_out_put_mode = options_output_data_->b_allow_output_data;
+	m_combo_start_output.SetCurSel(m_b_start_out_put_mode);
 
 	// if current document, load parameters from current document into the local set of parameters
 	get_acquisition_parameters_from_data_file();
 
 	// create data file and copy data acquisition parameters into it
-	m_inputDataFile.OnNewDocument(); 
-	m_inputDataFile.get_wave_format()->copy( &options_input_data_->wave_format);
+	input_data_file_.OnNewDocument(); 
+	input_data_file_.get_wave_format()->copy( &options_input_data_->wave_format);
 	options_input_data_->chan_array.chan_array_set_size(options_input_data_->wave_format.scan_count);
-	m_inputDataFile.get_wave_channels_array()->Copy(&options_input_data_->chan_array);
-	m_chartDataAD.attach_data_file(&m_inputDataFile);
+	input_data_file_.get_wave_channels_array()->Copy(&options_input_data_->chan_array);
+	m_chart_data_ad_.attach_data_file(&input_data_file_);
 
-	pApp->m_ad_card_found = FindDTOpenLayersBoards();
+	pApp->m_ad_card_found = find_dt_open_layers_boards();
 	if (pApp->m_ad_card_found)
 	{
-		InitOutput_AD();
-		InitializeAmplifiers(); 
-		m_Acq32_DA.InitSubSystem(options_input_data_);
-		m_Acq32_DA.ClearAllOutputs();
+		init_output_ad();
+		initialize_amplifiers(); 
+		m_acq32_da.InitSubSystem(options_input_data_);
+		m_acq32_da.ClearAllOutputs();
 	}
 	else
 	{
-		m_btnStartStop_AD.ShowWindow(SW_HIDE);
-		m_Button_SamplingMode.ShowWindow(SW_HIDE);
-		m_Button_OutputChannels.ShowWindow(SW_HIDE);
+		m_btn_start_stop_ad.ShowWindow(SW_HIDE);
+		m_button_sampling_mode.ShowWindow(SW_HIDE);
+		m_button_output_channels.ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_ADGROUP)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_DAGROUP)->ShowWindow(SW_HIDE);
-		m_Combo_StartOutput.ShowWindow(SW_HIDE);
-		m_Button_StartStop_DA.ShowWindow(SW_HIDE);
+		m_combo_start_output.ShowWindow(SW_HIDE);
+		m_button_start_stop_da.ShowWindow(SW_HIDE);
 	}
 
-	UpdateGainScroll();
-	UpdateRadioButtons();
-	GetParent()->PostMessage(WM_MYMESSAGE, NULL, MAKELPARAM(m_cursorstate, HINT_SET_MOUSE_CURSOR));
+	update_gain_scroll();
+	update_radio_buttons();
+	GetParent()->PostMessage(WM_MYMESSAGE, NULL, MAKELPARAM(m_cursor_state_, HINT_SET_MOUSE_CURSOR));
 }
 
-void ViewADcontinuous::OnCbnSelchangeComboboard()
+void ViewADcontinuous::on_cbn_sel_change_combo_board()
 {
-	const int item_selected = m_Combo_ADcard.GetCurSel();
+	const int item_selected = m_combo_ad_card.GetCurSel();
 	CString card_name;
-	m_Combo_ADcard.GetLBText(item_selected, card_name);
-	SelectDTOpenLayersBoard(card_name);
+	m_combo_ad_card.GetLBText(item_selected, card_name);
+	select_dt_open_layers_board(card_name);
 }
 
-BOOL ViewADcontinuous::FindDTOpenLayersBoards()
+BOOL ViewADcontinuous::find_dt_open_layers_boards()
 {
-	m_Combo_ADcard.ResetContent();
+	m_combo_ad_card.ResetContent();
 
 	// load board name - skip dialog if only one is present
-	const short uiNumBoards = m_Acq32_AD.GetNumBoards();
+	const short uiNumBoards = m_acq32_ad.GetNumBoards();
 	if (uiNumBoards == 0)
 	{
-		m_Combo_ADcard.AddString(_T("No Board"));
-		m_Combo_ADcard.SetCurSel(0);
+		m_combo_ad_card.AddString(_T("No Board"));
+		m_combo_ad_card.SetCurSel(0);
 		return FALSE;
 	}
 
 	for (short i = 0; i < uiNumBoards; i++)
-		m_Combo_ADcard.AddString(m_Acq32_AD.GetBoardList(i));
+		m_combo_ad_card.AddString(m_acq32_ad.GetBoardList(i));
 
-	short isel = 0;
+	short i_sel = 0;
 	// if name already defined, check if board present
 	if (!(options_input_data_->wave_format).cs_ad_card_name.IsEmpty())
-		isel = static_cast<short>(m_Combo_ADcard.FindString(-1, (options_input_data_->wave_format).cs_ad_card_name));
-	if (isel < 0)
-		isel = 0;
+		i_sel = static_cast<short>(m_combo_ad_card.FindString(-1, (options_input_data_->wave_format).cs_ad_card_name));
+	if (i_sel < 0)
+		i_sel = 0;
 
-	m_Combo_ADcard.SetCurSel(isel);
-	m_boardName = m_Acq32_AD.GetBoardList(isel);
-	SelectDTOpenLayersBoard(m_boardName);
+	m_combo_ad_card.SetCurSel(i_sel);
+	m_boardName = m_acq32_ad.GetBoardList(i_sel);
+	select_dt_open_layers_board(m_boardName);
 	return TRUE;
 }
 
-BOOL ViewADcontinuous::SelectDTOpenLayersBoard(const CString& card_name)
+BOOL ViewADcontinuous::select_dt_open_layers_board(const CString& card_name)
 {
 	// get infos
 	m_b_found_dt_open_layer_dll_ = TRUE;
 	(options_input_data_->wave_format).cs_ad_card_name = card_name;
 
 	// connect A/D subsystem and display/hide buttons
-	m_bStartOutPutMode = 0;
-	const BOOL flag_AD = m_Acq32_AD.OpenSubSystem(card_name);
-	const BOOL flag_DA = m_Acq32_DA.OpenSubSystem(card_name);
-	if (flag_DA)
-		m_bStartOutPutMode = 0;
-	m_bSimultaneousStart = m_start_da_simultaneously_ && m_Acq32_AD.IsSimultaneousStart();
+	m_b_start_out_put_mode = 0;
+	const BOOL flag_ad = m_acq32_ad.OpenSubSystem(card_name);
+	const BOOL flag_da = m_acq32_da.OpenSubSystem(card_name);
+	if (flag_da)
+		m_b_start_out_put_mode = 0;
+	b_simultaneous_start_ = m_start_da_simultaneously_ && m_acq32_ad.IsSimultaneousStart();
 
 	// display additional interface elements
-	int show = (flag_AD ? SW_SHOW : SW_HIDE);
-	m_Button_SamplingMode.ShowWindow(show);
-	m_Button_OutputChannels.ShowWindow(show);
-	m_Combo_StartOutput.ShowWindow(show);
+	int show = (flag_ad ? SW_SHOW : SW_HIDE);
+	m_button_sampling_mode.ShowWindow(show);
+	m_button_output_channels.ShowWindow(show);
+	m_combo_start_output.ShowWindow(show);
 
-	show = (flag_DA ? SW_SHOW : SW_HIDE);
+	show = (flag_da ? SW_SHOW : SW_HIDE);
 	GetDlgItem(IDC_DAPARAMETERS2)->ShowWindow(show);
 	GetDlgItem(IDC_DAGROUP)->ShowWindow(show);
-	m_Combo_StartOutput.ShowWindow(show);
-	m_Button_StartStop_DA.ShowWindow(show);
+	m_combo_start_output.ShowWindow(show);
+	m_button_start_stop_da.ShowWindow(show);
 	if (show == SW_SHOW)
-		SetCombostartoutput(options_output_data_->b_allow_output_data);
+		set_combo_start_output(options_output_data_->b_allow_output_data);
 
 	return TRUE;
 }
 
-void ViewADcontinuous::StopAcquisition()
+void ViewADcontinuous::stop_acquisition()
 {
-	if (!m_Acq32_AD.IsInProgress())
+	if (!m_acq32_ad.IsInProgress())
 		return;
 
 	// special treatment if simultaneous list
-	if (m_bSimultaneousStart && m_bStartOutPutMode == 0)
+	if (b_simultaneous_start_ && m_b_start_out_put_mode == 0)
 	{
-		HSSLIST hSSlist;
+		HSSLIST h_ss_list;
 		CHAR error_string[255];
-		ECODE ecode = olDaGetSSList(&hSSlist);
-		olDaGetErrorString(ecode, error_string, 255);
-		ecode = olDaReleaseSSList(hSSlist);
-		olDaGetErrorString(ecode, error_string, 255);
+		ECODE e_code = olDaGetSSList(&h_ss_list);
+		olDaGetErrorString(e_code, error_string, 255);
+		e_code = olDaReleaseSSList(h_ss_list);
+		olDaGetErrorString(e_code, error_string, 255);
 	}
 
-	// stop AD, liberate DTbuffers
-	m_Acq32_AD.StopAndLiberateBuffers();
-	m_chartDataAD.stop_display();
-	m_bchanged = TRUE;
+	// stop AD, liberate DT_buffers
+	m_acq32_ad.StopAndLiberateBuffers();
+	m_chart_data_ad_.stop_display();
+	b_changed_ = TRUE;
 
 	// stop DA, liberate buffers
-	if (m_bStartOutPutMode == 0)
-		m_Acq32_DA.StopAndLiberateBuffers();
+	if (m_b_start_out_put_mode == 0)
+		m_acq32_da.StopAndLiberateBuffers();
 
 	// close file and update display
-	if (m_bFileOpen)
+	if (b_file_open_)
 	{
 		save_and_close_file();
-		UpdateViewDataFinal();
+		update_view_data_final();
 	}
 }
 
 void ViewADcontinuous::save_and_close_file()
 {
-	m_inputDataFile.AcqDoc_DataAppendStop();
-	const CWaveFormat* pWFormat = m_inputDataFile.get_wave_format();
+	input_data_file_.AcqDoc_DataAppendStop();
+	const CWaveFormat* pWFormat = input_data_file_.get_wave_format();
 
 	// if burst data acquisition mode ------------------------------------
 	if (m_b_hide_subsequent_)
 	{
 		if (pWFormat->sample_count > 1) // make sure real data have been acquired
-			m_csNameArray.Add(m_szFileName);
+			cs_name_array_.Add(sz_file_name_);
 		else
-			m_inputDataFile.acq_delete_file();
+			input_data_file_.acq_delete_file();
 	}
 
 	// normal data acquisition mode --------------------------------------
@@ -360,93 +363,93 @@ void ViewADcontinuous::save_and_close_file()
 		if (pWFormat->sample_count > 1) // make sure real data have been acquired
 		{
 			DlgConfirmSave dlg;
-			dlg.m_csfilename = m_szFileName;
+			dlg.m_csfilename = sz_file_name_;
 			result = dlg.DoModal();
 		}
 		// if no data or user answered no, erase the data
 		if (IDOK != result)
 		{
-			m_inputDataFile.acq_delete_file();
+			input_data_file_.acq_delete_file();
 		}
 		else
 		{
 			// -----------------------------------------------------
-			// if current document name is the same, it means something happened and we have erased a previously existing file
+			// if current document name is the same, it means something happened, and we have erased a previously existing file
 			// if so, skip
 			// otherwise add data file name to the database
 			auto* pdb_doc = GetDocument();
-			if (m_szFileName.CompareNoCase(pdb_doc->db_get_current_dat_file_name(FALSE)) != 0)
+			if (sz_file_name_.CompareNoCase(pdb_doc->db_get_current_dat_file_name(FALSE)) != 0)
 			{
 				// add document to database
-				m_csNameArray.Add(m_szFileName);
-				TransferFilesToDatabase();
-				UpdateViewDataFinal();
+				cs_name_array_.Add(sz_file_name_);
+				transfer_files_to_database();
+				update_view_data_final();
 			}
 		}
 	}
 }
 
-void ViewADcontinuous::UpdateViewDataFinal()
+void ViewADcontinuous::update_view_data_final()
 {
 	// update view data	
 	auto* pdb_doc = GetDocument();
-	AcqDataDoc* pDocDat = pdb_doc->open_current_data_file();
-	if (pDocDat == nullptr)
+	AcqDataDoc* p_doc_dat = pdb_doc->open_current_data_file();
+	if (p_doc_dat == nullptr)
 	{
 		ATLTRACE2(_T("error reading current document "));
 		return;
 	}
-	pDocDat->read_data_infos();
-	const long length_doc_channel = pDocDat->get_doc_channel_length();
-	m_chartDataAD.attach_data_file(pDocDat);
-	m_chartDataAD.resize_channels(m_chartDataAD.get_rect_width(), length_doc_channel);
-	m_chartDataAD.get_data_from_doc(0, length_doc_channel);
+	p_doc_dat->read_data_infos();
+	const long length_doc_channel = p_doc_dat->get_doc_channel_length();
+	m_chart_data_ad_.attach_data_file(p_doc_dat);
+	m_chart_data_ad_.resize_channels(m_chart_data_ad_.get_rect_width(), length_doc_channel);
+	m_chart_data_ad_.get_data_from_doc(0, length_doc_channel);
 }
 
-void ViewADcontinuous::TransferFilesToDatabase()
+void ViewADcontinuous::transfer_files_to_database()
 {
-	const auto pdbDoc = GetDocument();
-	pdbDoc->import_file_list(m_csNameArray); // add file name(s) to the list of records in the database
-	m_csNameArray.RemoveAll(); // clear file names
+	const auto pdb_doc = GetDocument();
+	pdb_doc->import_file_list(cs_name_array_); // add file name(s) to the list of records in the database
+	cs_name_array_.RemoveAll(); // clear file names
 
-	CdbTableMain* pSet = &(pdbDoc->db_table->m_main_table_set);
-	pSet->build_and_sort_id_arrays();
-	pSet->refresh_query();
-	pdbDoc->db_set_current_record_position(pdbDoc->db_table->get_records_count() - 1);
-	pdbDoc->update_all_views_db_wave(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
+	CdbTableMain* p_set = &(pdb_doc->db_table->m_main_table_set);
+	p_set->build_and_sort_id_arrays();
+	p_set->refresh_query();
+	pdb_doc->db_set_current_record_position(pdb_doc->db_table->get_records_count() - 1);
+	pdb_doc->update_all_views_db_wave(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 }
 
-BOOL ViewADcontinuous::InitOutput_DA()
+BOOL ViewADcontinuous::init_output_da()
 {
-	m_DA_present = m_Acq32_DA.InitSubSystem(options_input_data_);
-	if (m_bStartOutPutMode == 0 && m_DA_present)
-		m_Acq32_DA.DeclareAndFillBuffers(options_input_data_);
-	return m_DA_present;
+	m_da_present = m_acq32_da.InitSubSystem(options_input_data_);
+	if (m_b_start_out_put_mode == 0 && m_da_present)
+		m_acq32_da.DeclareAndFillBuffers(options_input_data_);
+	return m_da_present;
 }
 
-BOOL ViewADcontinuous::InitOutput_AD()
+BOOL ViewADcontinuous::init_output_ad()
 {
-	m_AD_present = m_Acq32_AD.InitSubSystem(options_input_data_);
-	if (m_AD_present)
+	m_ad_present = m_acq32_ad.InitSubSystem(options_input_data_);
+	if (m_ad_present)
 	{
-		m_Acq32_AD.DeclareBuffers(options_input_data_);
-		InitAcquisitionInputFile();
-		InitAcquisitionDisplay();
+		m_acq32_ad.DeclareBuffers(options_input_data_);
+		init_acquisition_input_file();
+		init_acquisition_display();
 	}
-	return m_AD_present;
+	return m_ad_present;
 }
 
-void ViewADcontinuous::InitAcquisitionDisplay()
+void ViewADcontinuous::init_acquisition_display()
 {
 	const CWaveFormat* pWFormat = &(options_input_data_->wave_format);
-	m_chartDataAD.attach_data_file(&m_inputDataFile);
-	m_chartDataAD.resize_channels(0, m_channel_sweep_length);
-	if (m_chartDataAD.get_channel_list_size() != pWFormat->scan_count)
+	m_chart_data_ad_.attach_data_file(&input_data_file_);
+	m_chart_data_ad_.resize_channels(0, m_channel_sweep_length);
+	if (m_chart_data_ad_.get_channel_list_size() != pWFormat->scan_count)
 	{
-		m_chartDataAD.remove_all_channel_list_items();
+		m_chart_data_ad_.remove_all_channel_list_items();
 		for (int j = 0; j < pWFormat->scan_count; j++)
 		{
-			m_chartDataAD.add_channel_list_item(j, 0);
+			m_chart_data_ad_.add_channel_list_item(j, 0);
 		}
 	}
 
@@ -458,133 +461,133 @@ void ViewADcontinuous::InitAcquisitionDisplay()
 	for (int i = 0; i < pWFormat->scan_count; i++)
 	{
 		constexpr int i_offset = 0;
-		CChanlistItem* pD = m_chartDataAD.get_channel_list_item(i);
-		pD->SetYzero(i_offset);
-		pD->SetYextent(i_extent);
-		pD->SetColor(static_cast<WORD>(i));
+		CChanlistItem* p_d = m_chart_data_ad_.get_channel_list_item(i);
+		p_d->SetYzero(i_offset);
+		p_d->SetYextent(i_extent);
+		p_d->SetColor(static_cast<WORD>(i));
 		float doc_volts_per_bin;
-		m_inputDataFile.get_volts_per_bin(i, &doc_volts_per_bin);
-		pD->SetDataBinFormat(pWFormat->bin_zero, pWFormat->bin_span);
-		pD->SetDataVoltsFormat(doc_volts_per_bin, pWFormat->full_scale_volts);
+		input_data_file_.get_volts_per_bin(i, &doc_volts_per_bin);
+		p_d->SetDataBinFormat(pWFormat->bin_zero, pWFormat->bin_span);
+		p_d->SetDataVoltsFormat(doc_volts_per_bin, pWFormat->full_scale_volts);
 	}
 
-	UpdateGainScroll();
-	m_chartDataAD.Invalidate();
+	update_gain_scroll();
+	m_chart_data_ad_.Invalidate();
 }
 
-BOOL ViewADcontinuous::StartAcquisition()
+BOOL ViewADcontinuous::start_acquisition()
 {
 	// set display
-	if (m_bADwritetofile && !define_experiment())
+	if (b_ad_write_to_file && !define_experiment())
 	{
-		StopAcquisition();
-		UpdateStartStop(m_Acq32_AD.IsInProgress());
+		stop_acquisition();
+		update_start_stop(m_acq32_ad.IsInProgress());
 		return FALSE;
 	}
 
-	InitOutput_DA();
-	InitOutput_AD();
+	init_output_da();
+	init_output_ad();
 
 	// start AD display
 	m_channel_sweep_start_ = 0;
 	m_channel_sweep_end_ = -1;
-	m_chartDataAD.start_display(m_channel_sweep_length);
-	CWaveFormat* pWFormat = m_inputDataFile.get_wave_format();
-	pWFormat->sample_count = 0; 
-	pWFormat->sampling_rate_per_channel = pWFormat->sampling_rate_per_channel / static_cast<float>(options_input_data_->i_under_sample);
-	m_clock_rate_ = pWFormat->sampling_rate_per_channel * static_cast<float>(pWFormat->scan_count);
-	pWFormat->acquisition_time = CTime::GetCurrentTime();
+	m_chart_data_ad_.start_display(m_channel_sweep_length);
+	CWaveFormat* p_w_format = input_data_file_.get_wave_format();
+	p_w_format->sample_count = 0; 
+	p_w_format->sampling_rate_per_channel = p_w_format->sampling_rate_per_channel / static_cast<float>(options_input_data_->i_under_sample);
+	m_clock_rate_ = p_w_format->sampling_rate_per_channel * static_cast<float>(p_w_format->scan_count);
+	p_w_format->acquisition_time = CTime::GetCurrentTime();
 
 	// data format
-	pWFormat->bin_span = (options_input_data_->wave_format).bin_span;
-	pWFormat->full_scale_volts = (options_input_data_->wave_format).full_scale_volts;
+	p_w_format->bin_span = (options_input_data_->wave_format).bin_span;
+	p_w_format->full_scale_volts = (options_input_data_->wave_format).full_scale_volts;
 	// trick: if OLx_ENC_BINARY, it is changed on the fly within AD_Transfer function 
-	pWFormat->mode_encoding = OLx_ENC_2SCOMP;
-	pWFormat->bin_zero = 0;
+	p_w_format->mode_encoding = OLx_ENC_2SCOMP;
+	p_w_format->bin_zero = 0;
 
 	// start acquisition and save data to file?
-	if (m_bADwritetofile && (pWFormat->trig_mode == OLx_TRG_EXTRA + 1))
+	if (b_ad_write_to_file && (p_w_format->trig_mode == OLx_TRG_EXTRA + 1))
 	{
 		if (AfxMessageBox(_T("Start data acquisition"), MB_OKCANCEL) != IDOK)
 		{
-			StopAcquisition();
-			UpdateStartStop(m_Acq32_AD.IsInProgress());
+			stop_acquisition();
+			update_start_stop(m_acq32_ad.IsInProgress());
 			return FALSE;
 		}
 	}
 
 	// start
-	if (!m_bSimultaneousStart || m_bStartOutPutMode != 0)
+	if (!b_simultaneous_start_ || m_b_start_out_put_mode != 0)
 	{
-		m_Acq32_AD.ConfigAndStart();
-		if (m_bStartOutPutMode == 0 && m_DA_present)
-			m_Acq32_DA.ConfigAndStart();
+		m_acq32_ad.ConfigAndStart();
+		if (m_b_start_out_put_mode == 0 && m_da_present)
+			m_acq32_da.ConfigAndStart();
 	}
 	else
 	{
-		StartSimultaneousList();
+		start_simultaneous_list();
 	}
 
 	return TRUE;
 }
 
-ECODE ViewADcontinuous::StartSimultaneousList()
+ECODE ViewADcontinuous::start_simultaneous_list()
 {
 	ECODE code_returned;
-	HSSLIST hSSlist;
+	HSSLIST h_ss_list;
 	CHAR error_string[255];
 
 	// create simultaneous starting list
-	ECODE ecode = olDaGetSSList(&hSSlist);
-	olDaGetErrorString(ecode, error_string, 255);
+	ECODE e_code = olDaGetSSList(&h_ss_list);
+	olDaGetErrorString(e_code, error_string, 255);
 
 	// DA system
-	m_Acq32_DA.Config();
-	ecode = olDaPutDassToSSList(hSSlist, (HDASS)m_Acq32_DA.GetHDass());
-	if (ecode != OLNOERROR)
+	m_acq32_da.Config();
+	e_code = olDaPutDassToSSList(h_ss_list, (HDASS)m_acq32_da.GetHDass());
+	if (e_code != OLNOERROR)
 	{
-		code_returned = olDaReleaseSSList(hSSlist);
+		code_returned = olDaReleaseSSList(h_ss_list);
 		TRACE("error %i \n", code_returned);
-		return ecode;
+		return e_code;
 	}
 
 	// AD system
-	m_Acq32_AD.Config();
-	ecode = olDaPutDassToSSList(hSSlist, (HDASS)m_Acq32_AD.GetHDass());
-	if (ecode != OLNOERROR)
+	m_acq32_ad.Config();
+	e_code = olDaPutDassToSSList(h_ss_list, (HDASS)m_acq32_ad.GetHDass());
+	if (e_code != OLNOERROR)
 	{
-		code_returned = olDaReleaseSSList(hSSlist);
+		code_returned = olDaReleaseSSList(h_ss_list);
 		TRACE("error %i \n", code_returned);
-		return ecode;
+		return e_code;
 	}
 
 	// prestart
-	ecode = olDaSimultaneousPrestart(hSSlist);
-	if (ecode != OLNOERROR)
+	e_code = olDaSimultaneousPrestart(h_ss_list);
+	if (e_code != OLNOERROR)
 	{
-		olDaGetErrorString(ecode, error_string, 255);
+		olDaGetErrorString(e_code, error_string, 255);
 		display_ol_da_error_message(error_string);
 	}
 
 	// start simultaneously
-	ecode = olDaSimultaneousStart(hSSlist);
-	if (ecode != OLNOERROR)
+	e_code = olDaSimultaneousStart(h_ss_list);
+	if (e_code != OLNOERROR)
 	{
-		olDaGetErrorString(ecode, error_string, 255);
+		olDaGetErrorString(e_code, error_string, 255);
 		display_ol_da_error_message(error_string);
 	}
 
-	m_Acq32_AD.SetInProgress();
-	m_Acq32_DA.SetInProgress();
-	return ecode;
+	m_acq32_ad.SetInProgress();
+	m_acq32_da.SetInProgress();
+	return e_code;
 }
 
-void ViewADcontinuous::display_ol_da_error_message(const CHAR * error_string) const
+void ViewADcontinuous::display_ol_da_error_message(const CHAR * error_string)
 {
-	CString csError;
+	CString cs_error;
 	const CStringA string_a(error_string);
-	csError = string_a;
-	AfxMessageBox(csError);
+	cs_error = string_a;
+	AfxMessageBox(cs_error);
 }
 
 #ifdef _DEBUG
@@ -602,129 +605,129 @@ void ViewADcontinuous::Dump(CDumpContext & dc) const
 
 CdbTableMain* ViewADcontinuous::OnGetRecordset()
 {
-	return m_ptableSet;
+	return m_p_table_set;
 }
 
-void ViewADcontinuous::OnUpdate(CView * pSender, LPARAM lHint, CObject * pHint)
+void ViewADcontinuous::OnUpdate(CView * p_sender, LPARAM l_hint, CObject * p_hint)
 {
 	// update sent from within this class
-	if (pSender == this)
+	if (p_sender == this)
 	{
 		ASSERT(GetDocument() != NULL);
-		m_chartDataAD.Invalidate(); // display data
+		m_chart_data_ad_.Invalidate(); // display data
 	}
 }
 
-void ViewADcontinuous::OnActivateView(BOOL bActivate, CView * pActivateView, CView * pDeactiveView)
+void ViewADcontinuous::OnActivateView(BOOL b_activate, CView * p_activate_view, CView * p_deactive_view)
 {
 	const auto pmF = static_cast<CMainFrame*>(AfxGetMainWnd());
-	if (bActivate)
+	if (b_activate)
 	{
 		pmF->ActivatePropertyPane(FALSE);
 		static_cast<CChildFrame*>(pmF->MDIGetActive())->m_cursor_state = 0;
 	}
-	CFormView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	CFormView::OnActivateView(b_activate, p_activate_view, p_deactive_view);
 }
 
-void ViewADcontinuous::OnSize(UINT nType, int cx, int cy)
+void ViewADcontinuous::OnSize(const UINT n_type, const int cx, const int cy)
 {
-	switch (nType)
+	switch (n_type)
 	{
 	case SIZE_MAXIMIZED:
 	case SIZE_RESTORED:
-		if (m_Acq32_AD.IsInProgress())
+		if (m_acq32_ad.IsInProgress())
 		{
-			StopAcquisition();
-			UpdateStartStop(false);
+			stop_acquisition();
+			update_start_stop(false);
 		}
 
 		if (cx <= 0 || cy <= 0)
 			break;
-		m_stretch.ResizeControls(nType, cx, cy);
+		m_stretch_.ResizeControls(n_type, cx, cy);
 		break;
 	default:
 		break;
 	}
-	CFormView::OnSize(nType, cx, cy);
+	CFormView::OnSize(n_type, cx, cy);
 }
 
-LRESULT ViewADcontinuous::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT ViewADcontinuous::on_my_message(WPARAM w_param, LPARAM l_param)
 {
-	// message emitted by IDC_DISPLAREA_button	
-	//if (j == IDC_DISPLAREA_button)		// always true here...
+	// message emitted by IDC_DISPLAY_AREA_button	
+	//if (j == IDC_DISPLAY_AREA_button)		// always true here...
 	//int j = wParam;				// control ID of sender
 
 	// parameters
-	const int code = HIWORD(lParam); // code parameter
-	// code = 0: chan hit 			lowp = channel
-	// code = 1: cursor change		lowp = new cursor value
-	// code = 2: horiz cursor hit	lowp = cursor index	
-	int low_lParam = LOWORD(lParam); // value associated with code
+	const int code = HIWORD(l_param); // code parameter
+	// code = 0: chan hit 			low_p = channel
+	// code = 1: cursor change		low_p = new cursor value
+	// code = 2: horizontal cursor hit	low_p = cursor index	
+	int low_l_param = LOWORD(l_param); // value associated with code
 
 	if (code == HINT_SET_MOUSE_CURSOR) {
-		if (low_lParam > CURSOR_ZOOM)
-			low_lParam = 0;
-		m_cursorstate = m_chartDataAD.set_mouse_cursor_type(low_lParam);
-		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursorstate, 0));
+		if (low_l_param > CURSOR_ZOOM)
+			low_l_param = 0;
+		m_cursor_state_ = m_chart_data_ad_.set_mouse_cursor_type(low_l_param);
+		GetParent()->PostMessage(WM_MYMESSAGE, HINT_SET_MOUSE_CURSOR, MAKELPARAM(m_cursor_state_, 0));
 	}
 	else {
-		if (low_lParam == 0)
+		if (low_l_param == 0)
 			MessageBeep(MB_ICONEXCLAMATION);
 	}
 	return 0L;
 }
 
-void ViewADcontinuous::OnBnClickedStartstop()
+void ViewADcontinuous::on_bn_clicked_start_stop()
 {
-	if (m_btnStartStop_AD.IsChecked())
+	if (m_btn_start_stop_ad.IsChecked())
 	{
-		if (StartAcquisition())
+		if (start_acquisition())
 		{
-			if ((m_inputDataFile.get_wave_format())->trig_mode == OLx_TRG_EXTERN)
-				OnBufferDone_ADC();
+			if ((input_data_file_.get_wave_format())->trig_mode == OLx_TRG_EXTERN)
+				on_buffer_done_adc();
 		}
 		else
 		{
-			StopAcquisition();
+			stop_acquisition();
 		}
 	}
 	else
 	{
-		StopAcquisition();
+		stop_acquisition();
 		if (m_b_hide_subsequent_)
 		{
-			TransferFilesToDatabase();
-			UpdateViewDataFinal();
+			transfer_files_to_database();
+			update_view_data_final();
 		}
-		else if (m_bchanged && m_bAskErase)
+		else if (b_changed_ && b_ask_erase_)
 			if (AfxMessageBox(IDS_ACQDATA_SAVEYESNO, MB_YESNO) == IDYES)
-				m_bchanged = FALSE;
+				b_changed_ = FALSE;
 	}
-	UpdateStartStop(m_Acq32_AD.IsInProgress());
+	update_start_stop(m_acq32_ad.IsInProgress());
 }
 
-void ViewADcontinuous::UpdateStartStop(BOOL bStart)
+void ViewADcontinuous::update_start_stop(const BOOL b_start)
 {
-	if (bStart)
+	if (b_start)
 	{
-		m_btnStartStop_AD.SetWindowText(_T("STOP"));
+		m_btn_start_stop_ad.SetWindowText(_T("STOP"));
 		GetDlgItem(IDC_STATIC2)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_STATIC1)->ShowWindow(SW_SHOW);
 	}
 	else
 	{
-		m_btnStartStop_AD.SetWindowText(_T("START"));
+		m_btn_start_stop_ad.SetWindowText(_T("START"));
 		GetDlgItem(IDC_STATIC2)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_STATIC1)->ShowWindow(SW_HIDE);
 		if (options_input_data_->b_audible_sound)
 			Beep(500, 400);
-		ASSERT(m_Acq32_AD.IsInProgress() == FALSE);
+		ASSERT(m_acq32_ad.IsInProgress() == FALSE);
 	}
-	m_btnStartStop_AD.SetCheck(bStart);
-	m_chartDataAD.Invalidate();
+	m_btn_start_stop_ad.SetCheck(b_start);
+	m_chart_data_ad_.Invalidate();
 }
 
-void ViewADcontinuous::OnHardwareDefineexperiment()
+void ViewADcontinuous::on_hardware_define_experiment()
 {
 	define_experiment();
 }
@@ -732,7 +735,7 @@ void ViewADcontinuous::OnHardwareDefineexperiment()
 BOOL ViewADcontinuous::define_experiment()
 {
 	CString file_name;
-	m_bFileOpen = FALSE;
+	b_file_open_ = FALSE;
 	if (!m_b_hide_subsequent_)
 	{
 		DlgADExperiment dlg;
@@ -750,50 +753,50 @@ BOOL ViewADcontinuous::define_experiment()
 	else
 	{
 		// build file name
-		CString csBufTemp;
+		CString cs_buf_temp;
 		options_input_data_->experiment_number++;
-		csBufTemp.Format(_T("%06.6lu"), options_input_data_->experiment_number);
-		file_name = options_input_data_->cs_pathname + options_input_data_->cs_basename + csBufTemp + _T(".dat");
+		cs_buf_temp.Format(_T("%06.6lu"), options_input_data_->experiment_number);
+		file_name = options_input_data_->cs_pathname + options_input_data_->cs_basename + cs_buf_temp + _T(".dat");
 
 		// check if this file is already present, exit if not...
 		CFileStatus status;
-		int iIDresponse = IDYES; 
+		int i_id_response = IDYES; 
 		if (CFile::GetStatus(file_name, status))
-			iIDresponse = AfxMessageBox(IDS_FILEOVERWRITE, MB_YESNO | MB_ICONWARNING);
-		// no .. find first available number
-		while (IDNO == iIDresponse)
+			i_id_response = AfxMessageBox(IDS_FILEOVERWRITE, MB_YESNO | MB_ICONWARNING);
+		// no? find first available number
+		while (IDNO == i_id_response)
 		{
 			BOOL flag = TRUE;
 			while (flag)
 			{
 				options_input_data_->experiment_number++;
-				csBufTemp.Format(_T("%06.6lu"), options_input_data_->experiment_number);
-				file_name = options_input_data_->cs_pathname + options_input_data_->cs_basename + csBufTemp + _T(".dat");
+				cs_buf_temp.Format(_T("%06.6lu"), options_input_data_->experiment_number);
+				file_name = options_input_data_->cs_pathname + options_input_data_->cs_basename + cs_buf_temp + _T(".dat");
 				flag = CFile::GetStatus(file_name, status);
 			}
 			const CString cs = _T("Next available file name: ") + file_name;
-			iIDresponse = AfxMessageBox(cs, MB_YESNO | MB_ICONWARNING);
+			i_id_response = AfxMessageBox(cs, MB_YESNO | MB_ICONWARNING);
 		}
 	}
 	// close current file and open new file to prepare it for adding chunks of data
-	m_inputDataFile.acq_close_file();
-	if (!m_inputDataFile.acq_create_file(file_name))
+	input_data_file_.acq_close_file();
+	if (!input_data_file_.acq_create_file(file_name))
 		return FALSE;
-	m_szFileName = file_name;
-	m_inputDataFile.AcqDoc_DataAppendStart();
-	m_bFileOpen = TRUE;
+	sz_file_name_ = file_name;
+	input_data_file_.AcqDoc_DataAppendStart();
+	b_file_open_ = TRUE;
 	return TRUE;
 }
 
-void ViewADcontinuous::OnInputChannels()
+void ViewADcontinuous::on_input_channels()
 {
 	UpdateData(TRUE);
 
 	DlgADInputs dlg;
 	dlg.m_pwFormat = &(options_input_data_->wave_format);
 	dlg.m_pchArray = &(options_input_data_->chan_array);
-	dlg.m_numchansMAXDI = m_Acq32_AD.GetSSCaps(OLSSC_MAXDICHANS);
-	dlg.m_numchansMAXSE = m_Acq32_AD.GetSSCaps(OLSSC_MAXSECHANS);
+	dlg.m_numchansMAXDI = m_acq32_ad.GetSSCaps(OLSSC_MAXDICHANS);
+	dlg.m_numchansMAXSE = m_acq32_ad.GetSSCaps(OLSSC_MAXSECHANS);
 	dlg.m_bchantype = options_input_data_->b_channel_type;
 	dlg.m_bchainDialog = TRUE;
 	dlg.m_bcommandAmplifier = TRUE;
@@ -805,60 +808,60 @@ void ViewADcontinuous::OnInputChannels()
 	if (IDOK == dlg.DoModal())
 	{
 		options_input_data_->b_channel_type = dlg.m_bchantype;
-		const boolean is_acquisition_running = m_Acq32_AD.IsInProgress();
+		const boolean is_acquisition_running = m_acq32_ad.IsInProgress();
 		if (dlg.is_AD_changed) 
 		{
 			if (is_acquisition_running)
-				StopAcquisition();
-			InitOutput_AD();
+				stop_acquisition();
+			init_output_ad();
 		}
 		UpdateData(FALSE);
-		UpdateGainScroll();
+		update_gain_scroll();
 		if (is_acquisition_running && dlg.is_AD_changed)
-			StartAcquisition();
+			start_acquisition();
 	}
 	delete p_alligator;
 
 	if (dlg.m_postmessage != NULL)
-		ChainDialog(dlg.m_postmessage);
+		chain_dialog(dlg.m_postmessage);
 }
 
-void ViewADcontinuous::OnSamplingMode()
+void ViewADcontinuous::on_sampling_mode()
 {
 	DlgADIntervals dlg;
-	CWaveFormat* pWFormat = &(options_input_data_->wave_format);
-	dlg.m_p_wave_format = pWFormat;
+	CWaveFormat* p_w_format = &(options_input_data_->wave_format);
+	dlg.m_p_wave_format = p_w_format;
 	dlg.m_rate_minimum = 1.0f;
-	dlg.m_rate_maximum = static_cast<float>(m_Acq32_AD.GetMaximumFrequency() / pWFormat->scan_count);
+	dlg.m_rate_maximum = static_cast<float>(m_acq32_ad.GetMaximumFrequency() / p_w_format->scan_count);
 	dlg.m_buffer_W_size_maximum = static_cast<UINT>(65536) * 4;
 	dlg.m_under_sample_factor = options_input_data_->i_under_sample;
 	dlg.m_b_audible_sound = options_input_data_->b_audible_sound;
 	dlg.m_acquisition_duration = options_input_data_->duration_to_acquire;
-	dlg.m_sweep_duration = m_sweepduration;
+	dlg.m_sweep_duration = m_sweep_duration_;
 	dlg.m_b_chain_dialog = TRUE;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
-		if (m_Acq32_AD.IsInProgress()) {
-			StopAcquisition();
-			UpdateStartStop(m_Acq32_AD.IsInProgress());
+		if (m_acq32_ad.IsInProgress()) {
+			stop_acquisition();
+			update_start_stop(m_acq32_ad.IsInProgress());
 		}
 
 		options_input_data_->i_under_sample = static_cast<int>(dlg.m_under_sample_factor);
 		options_input_data_->b_audible_sound = dlg.m_b_audible_sound;
 		options_input_data_->duration_to_acquire = dlg.m_acquisition_duration;
-		m_sweepduration = dlg.m_sweep_duration;
-		options_input_data_->sweep_duration = m_sweepduration;
-		InitOutput_AD();
+		m_sweep_duration_ = dlg.m_sweep_duration;
+		options_input_data_->sweep_duration = m_sweep_duration_;
+		init_output_ad();
 		UpdateData(FALSE);
 	}
 
 	if (dlg.m_postmessage != NULL)
-		ChainDialog(dlg.m_postmessage);
+		chain_dialog(dlg.m_postmessage);
 }
 
-void ViewADcontinuous::ChainDialog(const WORD i_id)
+void ViewADcontinuous::chain_dialog(const WORD i_id)
 {
 	WORD menu_id;
 	switch (i_id)
@@ -875,172 +878,170 @@ void ViewADcontinuous::ChainDialog(const WORD i_id)
 	PostMessage(WM_COMMAND, menu_id, NULL);
 }
 
-void ViewADcontinuous::OnTriggerError_ADC()
+void ViewADcontinuous::on_trigger_error_adc()
 {
-	StopAcquisition();
-	UpdateStartStop(m_Acq32_AD.IsInProgress());
+	stop_acquisition();
+	update_start_stop(m_acq32_ad.IsInProgress());
 	AfxMessageBox(IDS_ACQDATA_TRIGGERERROR, MB_ICONEXCLAMATION | MB_OK);
 }
 
-void ViewADcontinuous::OnQueueDone_ADC()
+void ViewADcontinuous::on_queue_done_adc()
 {
-	StopAcquisition();
-	UpdateStartStop(m_Acq32_AD.IsInProgress());
+	stop_acquisition();
+	update_start_stop(m_acq32_ad.IsInProgress());
 	AfxMessageBox(IDS_ACQDATA_TOOFAST);
 }
 
-void ViewADcontinuous::OnOverrunError_ADC()
+void ViewADcontinuous::on_overrun_error_adc()
 {
-	StopAcquisition();
-	UpdateStartStop(m_Acq32_AD.IsInProgress());
+	stop_acquisition();
+	update_start_stop(m_acq32_ad.IsInProgress());
 	AfxMessageBox(IDS_ACQDATA_OVERRUN);
 }
 
-void ViewADcontinuous::OnOverrunError_DAC()
+void ViewADcontinuous::on_overrun_error_dac()
 {
-	m_Acq32_DA.StopAndLiberateBuffers();
+	m_acq32_da.StopAndLiberateBuffers();
 	AfxMessageBox(IDS_DAC_OVERRUN);
 }
 
-void ViewADcontinuous::OnQueueDone_DAC()
+void ViewADcontinuous::on_queue_done_dac()
 {
-	m_Acq32_DA.StopAndLiberateBuffers();
+	m_acq32_da.StopAndLiberateBuffers();
 	AfxMessageBox(IDS_DAC_TOOFAST);
 }
 
-void ViewADcontinuous::OnTriggerError_DAC()
+void ViewADcontinuous::on_trigger_error_dac()
 {
-	m_Acq32_DA.StopAndLiberateBuffers();
+	m_acq32_da.StopAndLiberateBuffers();
 	AfxMessageBox(IDS_DAC_TRIGGERERROR, MB_ICONEXCLAMATION | MB_OK);
 }
 
-void ViewADcontinuous::OnBufferDone_ADC()
+void ViewADcontinuous::on_buffer_done_adc()
 {
-	short* p_buffer_done = m_Acq32_AD.OnBufferDone();
+	short* p_buffer_done = m_acq32_ad.OnBufferDone();
 	if (p_buffer_done == nullptr)
 		return;
 
-	CWaveFormat* wave_format = m_inputDataFile.get_wave_format();
-	short* pRawDataBuf = ADC_Transfer(p_buffer_done, wave_format);
-	ADC_TransferToFile(wave_format);
-	ADC_TransferToChart(pRawDataBuf, wave_format);
+	CWaveFormat* wave_format = input_data_file_.get_wave_format();
+	short* p_raw_data_buf = adc_transfer(p_buffer_done, wave_format);
+	adc_transfer_to_file(wave_format);
+	adc_transfer_to_chart(p_raw_data_buf, wave_format);
 }
 
-short* ViewADcontinuous::ADC_Transfer(short* source_data, const CWaveFormat * pWFormat)
+short* ViewADcontinuous::adc_transfer(short* source_data, const CWaveFormat * p_w_format)
 {
-	short* pRawDataBuf = m_inputDataFile.get_raw_data_buffer();
+	short* p_raw_data_buf = input_data_file_.get_raw_data_buffer();
 
 	m_channel_sweep_start_ = m_channel_sweep_end_ + 1;
 	if (m_channel_sweep_start_ >= m_channel_sweep_length)
 		m_channel_sweep_start_ = 0;
-	m_channel_sweep_end_ = m_channel_sweep_start_ + m_Acq32_AD.Getchbuflen() - 1;
+	m_channel_sweep_end_ = m_channel_sweep_start_ + m_acq32_ad.Getchbuflen() - 1;
 	m_channel_sweep_refresh_ = m_channel_sweep_end_ - m_channel_sweep_start_ + 1;
-	pRawDataBuf += (m_channel_sweep_start_ * pWFormat->scan_count);
+	p_raw_data_buf += (m_channel_sweep_start_ * p_w_format->scan_count);
 
 	// if offset binary (unsigned words), transform data into signed integers (two's complement)
 	if ((options_input_data_->wave_format).bin_zero != NULL)
 	{
 		const auto bin_zero_value = static_cast<short>(options_input_data_->wave_format.bin_zero);
 		short* p_data_acquisition_value = source_data;
-		for (int j = 0; j < m_Acq32_AD.Getbuflen(); j++, p_data_acquisition_value++)
+		for (int j = 0; j < m_acq32_ad.Getbuflen(); j++, p_data_acquisition_value++)
 			*p_data_acquisition_value -= bin_zero_value;
 	}
 
 	if (options_input_data_->i_under_sample <= 1)
-		memcpy(pRawDataBuf, source_data, m_Acq32_AD.Getbuflen() * sizeof(short));
+		memcpy(p_raw_data_buf, source_data, m_acq32_ad.Getbuflen() * sizeof(short));
 	else
-		under_sample_buffer(pRawDataBuf, source_data, pWFormat, options_input_data_->i_under_sample);
+		under_sample_buffer(p_raw_data_buf, source_data, p_w_format, options_input_data_->i_under_sample);
 
-	m_byte_sweep_refresh_ = m_channel_sweep_refresh_ * static_cast<int>(sizeof(short)) * static_cast<int>(pWFormat->scan_count);
+	m_byte_sweep_refresh_ = m_channel_sweep_refresh_ * static_cast<int>(sizeof(short)) * static_cast<int>(p_w_format->scan_count);
 
-	return pRawDataBuf;
+	return p_raw_data_buf;
 }
 
-void ViewADcontinuous::under_sample_buffer(short* pRawDataBuf, short* pDTbuf0, const CWaveFormat* pWFormat, const int under_sample_factor)
+void ViewADcontinuous::under_sample_buffer(short* p_raw_data_buf, short* p_dt_buf0, const CWaveFormat* p_w_format, const int under_sample_factor)
 {
-	short* pdataBuf2 = pRawDataBuf;
-	short* pDTbuf = pDTbuf0;
+	short* pdata_buf2 = p_raw_data_buf;
+	short* p_dt_buf = p_dt_buf0;
 	m_channel_sweep_refresh_ = m_channel_sweep_refresh_ / under_sample_factor;
 	// loop and compute average between consecutive points
-	for (int j = 0; j < pWFormat->scan_count; j++, pdataBuf2++, pDTbuf++)
+	for (int j = 0; j < p_w_format->scan_count; j++, pdata_buf2++, p_dt_buf++)
 	{
-		short* pSource = pDTbuf;
-		short* pDest = pdataBuf2;
-		for (int i = 0; i < m_Acq32_AD.Getchbuflen(); i += under_sample_factor)
+		const short* p_source = p_dt_buf;
+		short* p_dest = pdata_buf2;
+		for (int i = 0; i < m_acq32_ad.Getchbuflen(); i += under_sample_factor)
 		{
-			long SUM = 0;
+			long sum = 0;
 			for (int k = 0; k < under_sample_factor; k++)
 			{
-				SUM += *pSource;
-				pSource += pWFormat->scan_count;
+				sum += *p_source;
+				p_source += p_w_format->scan_count;
 			}
-			*pDest = static_cast<short>(SUM / under_sample_factor);
-			pDest += pWFormat->scan_count;
+			*p_dest = static_cast<short>(sum / under_sample_factor);
+			p_dest += p_w_format->scan_count;
 		}
 	}
 }
 
-void ViewADcontinuous::ADC_TransferToChart(short* pdataBuf, const CWaveFormat * pWFormat)
+void ViewADcontinuous::adc_transfer_to_chart(short* p_data_buf, const CWaveFormat * p_w_format)
 {
-	if (pWFormat->b_online_display)
-	{
-		//short* pdataBuf = m_inputDataFile.GetpRawDataBUF();
-		m_chartDataAD.display_buffer(pdataBuf, m_channel_sweep_refresh_);
-	}
-	const double duration = static_cast<double>(pWFormat->sample_count) / static_cast<double>(m_clock_rate_);
+	if (p_w_format->b_online_display)
+		m_chart_data_ad_.display_buffer(p_data_buf, m_channel_sweep_refresh_);
+	
+	const double duration = static_cast<double>(p_w_format->sample_count) / static_cast<double>(m_clock_rate_);
 	CString cs;
 	cs.Format(_T("%.3lf"), duration);
 	SetDlgItemText(IDC_STATIC1, cs);
 }
 
-void ViewADcontinuous::ADC_TransferToFile(CWaveFormat * pWFormat)
+void ViewADcontinuous::adc_transfer_to_file(CWaveFormat * p_w_format)
 {
-	pWFormat->sample_count += m_byte_sweep_refresh_ / 2;
-	const float duration = static_cast<float>(pWFormat->sample_count) / m_clock_rate_;
+	p_w_format->sample_count += m_byte_sweep_refresh_ / 2;
+	const float duration = static_cast<float>(p_w_format->sample_count) / m_clock_rate_;
 
-	short* pdataBuf = m_inputDataFile.get_raw_data_buffer();
-	pdataBuf += (m_channel_sweep_start_ * pWFormat->scan_count);
+	short* pdata_buf = input_data_file_.get_raw_data_buffer();
+	pdata_buf += (m_channel_sweep_start_ * p_w_format->scan_count);
 
-	if (pWFormat->b_ad_write_to_file)
+	if (p_w_format->b_ad_write_to_file)
 	{
-		const BOOL flag = m_inputDataFile.AcqDoc_DataAppend(pdataBuf, m_byte_sweep_refresh_);
+		const BOOL flag = input_data_file_.AcqDoc_DataAppend(pdata_buf, m_byte_sweep_refresh_);
 		ASSERT(flag);
 		// end of acquisition
 		if (duration >= options_input_data_->duration_to_acquire)
 		{
-			StopAcquisition();
+			stop_acquisition();
 			if (m_b_hide_subsequent_)
 			{
-				if (!StartAcquisition())
-					StopAcquisition();
-				else if ((m_inputDataFile.get_wave_format())->trig_mode == OLx_TRG_EXTERN)
-					OnBufferDone_ADC();
+				if (!start_acquisition())
+					stop_acquisition();
+				else if ((input_data_file_.get_wave_format())->trig_mode == OLx_TRG_EXTERN)
+					on_buffer_done_adc();
 				return;
 			}
-			UpdateStartStop(FALSE);
+			update_start_stop(FALSE);
 			return;
 		}
 	}
-	m_Acq32_AD.ReleaseLastBufferToQueue();
+	m_acq32_ad.ReleaseLastBufferToQueue();
 }
 
-void ViewADcontinuous::OnBufferDone_DAC()
+void ViewADcontinuous::on_buffer_done_dac()
 {
-	m_Acq32_DA.OnBufferDone();
+	m_acq32_da.OnBufferDone();
 }
 
-void ViewADcontinuous::InitializeAmplifiers()
+void ViewADcontinuous::initialize_amplifiers() const
 {
-	InitCyberAmp(); // TODO init other amplifiers and look at pwaveformat?
+	init_cyber_amp(); // TODO init other amplifiers and look at p_wave_format?
 }
 
-BOOL ViewADcontinuous::InitCyberAmp() const
+BOOL ViewADcontinuous::init_cyber_amp() const
 {
-	CyberAmp cyberAmp;
-	BOOL cyberAmp_is_present = FALSE;
+	CyberAmp cyber_amp;
+	BOOL cyber_amp_is_present = FALSE;
 	const int n_ad_channels = (options_input_data_->chan_array).chan_array_get_size();
 
-	// test if Cyberamp320 selected
+	// test if Cyber_amp320 selected
 	for (int i = 0; i < n_ad_channels; i++)
 	{
 		const CWaveChan* p_wave_channel = (options_input_data_->chan_array).get_p_channel(i);
@@ -1049,73 +1050,73 @@ BOOL ViewADcontinuous::InitCyberAmp() const
 		const int b = p_wave_channel->am_csamplifier.Find(_T("Axon Instrument"));
 		if (a == 0 || b == 0)
 		{
-			if (!cyberAmp_is_present)
-				cyberAmp_is_present = (cyberAmp.Initialize() == C300_SUCCESS);
-			if (!cyberAmp_is_present)
+			if (!cyber_amp_is_present)
+				cyber_amp_is_present = (cyber_amp.Initialize() == C300_SUCCESS);
+			if (!cyber_amp_is_present)
 			{
 				AfxMessageBox(_T("CyberAmp not found"), MB_OK);
 				continue;
 			}
 
 			// chan, gain, filter + low-pass, notch	
-			cyberAmp.SetHPFilter(p_wave_channel->am_amplifierchan, C300_POSINPUT, p_wave_channel->am_csInputpos);
-			cyberAmp.SetmVOffset(p_wave_channel->am_amplifierchan, p_wave_channel->am_offset);
+			cyber_amp.SetHPFilter(p_wave_channel->am_amplifierchan, C300_POSINPUT, p_wave_channel->am_csInputpos);
+			cyber_amp.SetmVOffset(p_wave_channel->am_amplifierchan, p_wave_channel->am_offset);
 
-			cyberAmp.SetNotchFilter(p_wave_channel->am_amplifierchan, p_wave_channel->am_notchfilt);
-			cyberAmp.SetGain(
+			cyber_amp.SetNotchFilter(p_wave_channel->am_amplifierchan, p_wave_channel->am_notchfilt);
+			cyber_amp.SetGain(
 				p_wave_channel->am_amplifierchan,
 				static_cast<int>(p_wave_channel->am_gaintotal / (static_cast<double>(p_wave_channel->am_gainheadstage) * static_cast<double>(p_wave_channel->
 					am_gainAD))));
-			cyberAmp.SetLPFilter(p_wave_channel->am_amplifierchan, static_cast<int>(p_wave_channel->am_lowpass));
-			cyberAmp.C300_FlushCommandsAndAwaitResponse();
+			cyber_amp.SetLPFilter(p_wave_channel->am_amplifierchan, static_cast<int>(p_wave_channel->am_lowpass));
+			cyber_amp.C300_FlushCommandsAndAwaitResponse();
 		}
 	}
-	return cyberAmp_is_present;
+	return cyber_amp_is_present;
 }
 
-void ViewADcontinuous::OnBnClickedGainbutton()
+void ViewADcontinuous::on_bn_clicked_gain_button()
 {
-	SetVBarMode(BAR_GAIN);
+	set_v_bar_mode(BAR_GAIN);
 }
 
-void ViewADcontinuous::OnBnClickedBiasbutton()
+void ViewADcontinuous::on_bn_clicked_bias_button()
 {
-	SetVBarMode(BAR_BIAS);
+	set_v_bar_mode(BAR_BIAS);
 }
 
-void ViewADcontinuous::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar * pScrollBar)
+void ViewADcontinuous::OnVScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar * p_scroll_bar)
 {
-	if (pScrollBar == nullptr)
+	if (p_scroll_bar == nullptr)
 	{
-		CFormView::OnVScroll(nSBCode, nPos, pScrollBar);
+		CFormView::OnVScroll(n_sb_code, n_pos, p_scroll_bar);
 		return;
 	}
 
-	if(m_VBarMode == BAR_GAIN)
-		OnGainScroll(nSBCode, nPos);
+	if(m_v_bar_mode_ == BAR_GAIN)
+		on_gain_scroll(n_sb_code, n_pos);
 	else
-		OnBiasScroll(nSBCode, nPos);
+		on_bias_scroll(n_sb_code, n_pos);
 
 }
 
-void ViewADcontinuous::SetVBarMode(short bMode)
+void ViewADcontinuous::set_v_bar_mode(short b_mode)
 {
-	m_VBarMode = bMode;
-	m_BiasButton.SetState(bMode == BAR_BIAS);
-	m_ZoomButton.SetState(bMode == BAR_GAIN);
-	if (bMode == BAR_GAIN)
-		UpdateGainScroll();
+	m_v_bar_mode_ = b_mode;
+	m_bias_button.SetState(b_mode == BAR_BIAS);
+	m_zoom_button.SetState(b_mode == BAR_GAIN);
+	if (b_mode == BAR_GAIN)
+		update_gain_scroll();
 	else 
-		UpdateBiasScroll();
+		update_bias_scroll();
 }
 
-void ViewADcontinuous::OnGainScroll(UINT nSBCode, UINT nPos)
+void ViewADcontinuous::on_gain_scroll(const UINT n_sb_code, const UINT n_pos)
 {
-	const CChanlistItem* pChan = m_chartDataAD.get_channel_list_item(0);
-	int y_extent = pChan->GetYextent();
-	const int span = pChan->GetDataBinSpan();
+	const CChanlistItem* p_chan = m_chart_data_ad_.get_channel_list_item(0);
+	int y_extent = p_chan->GetYextent();
+	const int span = p_chan->GetDataBinSpan();
 
-	switch (nSBCode)
+	switch (n_sb_code)
 	{
 		case SB_LEFT: y_extent = Y_EXTENT_MIN;
 			break;
@@ -1130,7 +1131,7 @@ void ViewADcontinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 		case SB_RIGHT: y_extent = Y_EXTENT_MAX;
 			break;
 		case SB_THUMBPOSITION:
-		case SB_THUMBTRACK: y_extent = MulDiv(static_cast<int>(nPos - 50), pChan->GetDataBinSpan(), 100);
+		case SB_THUMBTRACK: y_extent = MulDiv(static_cast<int>(n_pos - 50), p_chan->GetDataBinSpan(), 100);
 			break;
 		default: break;
 	}
@@ -1141,24 +1142,24 @@ void ViewADcontinuous::OnGainScroll(UINT nSBCode, UINT nPos)
 		const int last_channel = pWFormat->scan_count - 1;
 		for (int channel = 0; channel <= last_channel; channel++)
 		{
-			CChanlistItem* ppChan = m_chartDataAD.get_channel_list_item(channel);
+			CChanlistItem* ppChan = m_chart_data_ad_.get_channel_list_item(channel);
 			ppChan->SetYextent(y_extent);
 		}
-		m_chartDataAD.Invalidate();
+		m_chart_data_ad_.Invalidate();
 		options_input_data_->i_zoom_cur_sel = y_extent;
 	}
 
-	UpdateGainScroll();
+	update_gain_scroll();
 	UpdateData(false);
 }
 
-void ViewADcontinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
+void ViewADcontinuous::on_bias_scroll(const UINT n_sb_code, const UINT n_pos)
 {
-	const CChanlistItem* pChan = m_chartDataAD.get_channel_list_item(0);
-	int y_zero = pChan->GetYzero();
-	const int span = pChan->GetDataBinSpan() / 2;
+	const CChanlistItem* p_chan = m_chart_data_ad_.get_channel_list_item(0);
+	int y_zero = p_chan->GetYzero();
+	const int span = p_chan->GetDataBinSpan() / 2;
 	const int initial = y_zero;
-	switch (nSBCode)
+	switch (n_sb_code)
 	{
 		case SB_LEFT: 
 			y_zero = Y_ZERO_MIN;
@@ -1180,167 +1181,167 @@ void ViewADcontinuous::OnBiasScroll(UINT nSBCode, UINT nPos)
 			break;
 		case SB_THUMBPOSITION: 		
 		case SB_THUMBTRACK:
-			y_zero = static_cast<int>(nPos - 50) * (Y_ZERO_SPAN / 100);
+			y_zero = static_cast<int>(n_pos - 50) * (Y_ZERO_SPAN / 100);
 			break;
 		default: // NOP: set position only
 			break;
 	}
 	
-	const CWaveFormat* pWFormat = &(options_input_data_->wave_format);
+	const CWaveFormat* p_w_format = &(options_input_data_->wave_format);
 	constexpr int first_channel = 0;
-	const int last_channel = pWFormat->scan_count - 1;
+	const int last_channel = p_w_format->scan_count - 1;
 	for (int i = first_channel; i <= last_channel; i++)
 	{
-		CChanlistItem* pChani = m_chartDataAD.get_channel_list_item(i);
-		pChani->SetYzero(y_zero);
+		CChanlistItem* p_chan_i = m_chart_data_ad_.get_channel_list_item(i);
+		p_chan_i->SetYzero(y_zero);
 	}
-	m_chartDataAD.Invalidate();
+	m_chart_data_ad_.Invalidate();
 
-	UpdateBiasScroll();
+	update_bias_scroll();
 	UpdateData(false);
 }
 
-void ViewADcontinuous::UpdateBiasScroll()
+void ViewADcontinuous::update_bias_scroll()
 {
-	const CChanlistItem* pChan = m_chartDataAD.get_channel_list_item(0);
-	m_chartDataAD.update_y_ruler();
-	const int iPos = MulDiv(pChan->GetYzero(), 100, pChan->GetDataBinSpan())+50;
-	m_scroll_y_.SetScrollPos(iPos, TRUE);
+	const CChanlistItem* p_chan = m_chart_data_ad_.get_channel_list_item(0);
+	m_chart_data_ad_.update_y_ruler();
+	const int i_pos = MulDiv(p_chan->GetYzero(), 100, p_chan->GetDataBinSpan())+50;
+	m_scroll_y_.SetScrollPos(i_pos, TRUE);
 }
 
-void ViewADcontinuous::UpdateGainScroll()
+void ViewADcontinuous::update_gain_scroll()
 {
-	const CChanlistItem* pChan = m_chartDataAD.get_channel_list_item(0);
-	m_chartDataAD.update_y_ruler();
-	const int iPos = MulDiv(pChan->GetYextent(), 100, pChan->GetDataBinSpan()) + 50;
-	m_scroll_y_.SetScrollPos(iPos, TRUE);
+	const CChanlistItem* p_chan = m_chart_data_ad_.get_channel_list_item(0);
+	m_chart_data_ad_.update_y_ruler();
+	const int i_pos = MulDiv(p_chan->GetYextent(), 100, p_chan->GetDataBinSpan()) + 50;
+	m_scroll_y_.SetScrollPos(i_pos, TRUE);
 }
 
-void ViewADcontinuous::OnCbnSelchangeCombostartoutput()
+void ViewADcontinuous::on_cbn_sel_change_combo_start_output()
 {
-	m_bStartOutPutMode = m_Combo_StartOutput.GetCurSel();
-	options_output_data_->b_allow_output_data = m_bStartOutPutMode;
-	m_Button_StartStop_DA.EnableWindow(m_bStartOutPutMode != 0);
+	m_b_start_out_put_mode = m_combo_start_output.GetCurSel();
+	options_output_data_->b_allow_output_data = m_b_start_out_put_mode;
+	m_button_start_stop_da.EnableWindow(m_b_start_out_put_mode != 0);
 }
 
-void ViewADcontinuous::SetCombostartoutput(int option)
+void ViewADcontinuous::set_combo_start_output(int option)
 {
-	m_Combo_StartOutput.SetCurSel(option);
-	option = m_Combo_StartOutput.GetCurSel();
-	m_bStartOutPutMode = option;
+	m_combo_start_output.SetCurSel(option);
+	option = m_combo_start_output.GetCurSel();
+	m_b_start_out_put_mode = option;
 	options_output_data_->b_allow_output_data = option;
-	m_Button_StartStop_DA.EnableWindow(m_bStartOutPutMode != 0);
+	m_button_start_stop_da.EnableWindow(m_b_start_out_put_mode != 0);
 }
 
-void ViewADcontinuous::OnBnClickedDaparameters2()
+void ViewADcontinuous::on_bn_clicked_da_parameters2()
 {
 	DlgDAChannels dlg;
 	const auto i_size = options_output_data_->output_parms_array.GetSize();
 	if (i_size < 10)
 		options_output_data_->output_parms_array.SetSize(10);
-	dlg.outputparms_array.SetSize(10);
+	dlg.output_params_array.SetSize(10);
 	for (auto i = 0; i < 10; i++)
-		dlg.outputparms_array[i] = options_output_data_->output_parms_array[i];
+		dlg.output_params_array[i] = options_output_data_->output_parms_array[i];
 	const CWaveFormat* wave_format = &(options_input_data_->wave_format);
-	dlg.m_samplingRate = wave_format->sampling_rate_per_channel;
+	dlg.m_sampling_rate = wave_format->sampling_rate_per_channel;
 
 	if (IDOK == dlg.DoModal())
 	{
 		for (int i = 0; i < 10; i++)
-			options_output_data_->output_parms_array[i] = dlg.outputparms_array[i];
-		m_Acq32_DA.SetChannelList();
-		m_Button_StartStop_DA.EnableWindow(m_Acq32_DA.GetDigitalChannel() > 0);
+			options_output_data_->output_parms_array[i] = dlg.output_params_array[i];
+		m_acq32_da.SetChannelList();
+		m_button_start_stop_da.EnableWindow(m_acq32_da.GetDigitalChannel() > 0);
 	}
 }
 
-void ViewADcontinuous::OnBnClickedWriteToDisk()
+void ViewADcontinuous::on_bn_clicked_write_to_disk()
 {
-	m_bADwritetofile = TRUE;
-	options_input_data_->wave_format.b_ad_write_to_file = m_bADwritetofile;
-	m_inputDataFile.get_wave_format()->b_ad_write_to_file = m_bADwritetofile;
+	b_ad_write_to_file = TRUE;
+	options_input_data_->wave_format.b_ad_write_to_file = b_ad_write_to_file;
+	input_data_file_.get_wave_format()->b_ad_write_to_file = b_ad_write_to_file;
 }
 
-void ViewADcontinuous::OnBnClickedOscilloscope()
+void ViewADcontinuous::on_bn_clicked_oscilloscope()
 {
-	m_bADwritetofile = FALSE;
-	options_input_data_->wave_format.b_ad_write_to_file = m_bADwritetofile;
-	m_inputDataFile.get_wave_format()->b_ad_write_to_file = m_bADwritetofile;
+	b_ad_write_to_file = FALSE;
+	options_input_data_->wave_format.b_ad_write_to_file = b_ad_write_to_file;
+	input_data_file_.get_wave_format()->b_ad_write_to_file = b_ad_write_to_file;
 }
 
-void ViewADcontinuous::UpdateRadioButtons()
+void ViewADcontinuous::update_radio_buttons()
 {
-	if (m_bADwritetofile)
-		m_Button_WriteToDisk.SetCheck(BST_CHECKED);
+	if (b_ad_write_to_file)
+		m_button_write_to_disk.SetCheck(BST_CHECKED);
 	else
-		m_Button_Oscilloscope.SetCheck(BST_CHECKED);
+		m_button_oscilloscope.SetCheck(BST_CHECKED);
 	UpdateData(TRUE);
 }
 
-void ViewADcontinuous::OnBnClickedCardfeatures()
+void ViewADcontinuous::on_bn_clicked_card_features()
 {
 	DlgDataTranslationBoard dlg;
-	dlg.m_pAnalogIN = &m_Acq32_AD;
-	dlg.m_pAnalogOUT = &m_Acq32_DA;
+	dlg.m_pAnalogIN = &m_acq32_ad;
+	dlg.m_pAnalogOUT = &m_acq32_da;
 	dlg.DoModal();
 }
 
-void ViewADcontinuous::OnBnClickedStartstop2()
+void ViewADcontinuous::on_bn_clicked_start_stop2()
 {
 	CString cs;
-	if (m_Acq32_DA.IsInProgress())
+	if (m_acq32_da.IsInProgress())
 	{
 		cs = _T("Start");
-		StopOutput();
+		stop_output();
 	}
 	else
 	{
 		cs = _T("Stop");
-		StartOutput();
+		start_output();
 	}
-	m_Button_StartStop_DA.SetWindowTextW(cs);
+	m_button_start_stop_da.SetWindowTextW(cs);
 }
 
-BOOL ViewADcontinuous::StartOutput()
+BOOL ViewADcontinuous::start_output()
 {
-	if (!m_Acq32_DA.InitSubSystem(options_input_data_))
+	if (!m_acq32_da.InitSubSystem(options_input_data_))
 		return FALSE;
-	m_Acq32_DA.DeclareAndFillBuffers(options_input_data_);
-	m_Acq32_AD.DeclareBuffers(options_input_data_);
-	m_Acq32_DA.ConfigAndStart();
+	m_acq32_da.DeclareAndFillBuffers(options_input_data_);
+	m_acq32_ad.DeclareBuffers(options_input_data_);
+	m_acq32_da.ConfigAndStart();
 	return TRUE;
 }
 
-void ViewADcontinuous::StopOutput()
+void ViewADcontinuous::stop_output()
 {
-	m_Acq32_DA.StopAndLiberateBuffers();
+	m_acq32_da.StopAndLiberateBuffers();
 }
 
-void ViewADcontinuous::InitAcquisitionInputFile()
+void ViewADcontinuous::init_acquisition_input_file()
 {
 	const CWaveFormat* pWFormat = &(options_input_data_->wave_format);
 
-	m_channel_sweep_length = static_cast<long>(m_sweepduration * pWFormat->sampling_rate_per_channel / static_cast<float>(options_input_data_->i_under_sample));
+	m_channel_sweep_length = static_cast<long>(m_sweep_duration_ * pWFormat->sampling_rate_per_channel / static_cast<float>(options_input_data_->i_under_sample));
 	// AD system is changed:  update AD buffers & change encoding: it is changed on-the-fly in the transfer loop
-	m_inputDataFile.get_wave_channels_array()->Copy(&options_input_data_->chan_array);
-	m_inputDataFile.get_wave_format()->copy( &options_input_data_->wave_format);
+	input_data_file_.get_wave_channels_array()->Copy(&options_input_data_->chan_array);
+	input_data_file_.get_wave_format()->copy( &options_input_data_->wave_format);
 
 	// set sweep length to the nb of data buffers
-	m_inputDataFile.get_wave_format()->sample_count = m_channel_sweep_length * static_cast<long>(pWFormat->scan_count);
-	m_inputDataFile.adjust_buffer(m_channel_sweep_length);
+	input_data_file_.get_wave_format()->sample_count = m_channel_sweep_length * static_cast<long>(pWFormat->scan_count);
+	input_data_file_.adjust_buffer(m_channel_sweep_length);
 }
 
-void ViewADcontinuous::OnBnClickedUnzoom()
+void ViewADcontinuous::on_bn_clicked_un_zoom()
 {
-	const CWaveFormat* pWFormat = &(options_input_data_->wave_format);
-	const int i_extent = pWFormat->bin_span;
+	const CWaveFormat* p_w_format = &(options_input_data_->wave_format);
+	const int i_extent = p_w_format->bin_span;
 
-	for (int i = 0; i < pWFormat->scan_count; i++)
+	for (int i = 0; i < p_w_format->scan_count; i++)
 	{
 		constexpr int i_offset = 0;
-		CChanlistItem* pD = m_chartDataAD.get_channel_list_item(i);
-		pD->SetYzero(i_offset);
-		pD->SetYextent(i_extent);
+		CChanlistItem* p_d = m_chart_data_ad_.get_channel_list_item(i);
+		p_d->SetYzero(i_offset);
+		p_d->SetYextent(i_extent);
 	}
 
-	SetVBarMode(BAR_GAIN);
+	set_v_bar_mode(BAR_GAIN);
 }

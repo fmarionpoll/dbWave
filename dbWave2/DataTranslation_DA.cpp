@@ -371,10 +371,10 @@ void DataTranslation_DA::FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, output
 	// find end = first interval after buffer_end; find start 
 	for (interval = 0; interval < pstim->GetSize(); interval++)
 	{
-		stim_end = static_cast<long>(pstim->GetIntervalPointAt(interval).ii * chFreqRatio);
+		stim_end = static_cast<long>(pstim->get_interval_point_at(interval).ii * chFreqRatio);
 		if (stim_end > buffer_start)
 			break;
-		wamp = pstim->GetIntervalPointAt(interval).w;
+		wamp = pstim->get_interval_point_at(interval).w;
 	}
 	double amp = ampUp * wamp + ampLow * !wamp;
 	WORD wout = static_cast<WORD>(amp);
@@ -391,8 +391,8 @@ void DataTranslation_DA::FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, output
 			interval++;
 			wamp = FALSE;
 			if (interval < pstim->GetSize())
-				stim_end = static_cast<long>(pstim->GetIntervalPointAt(interval).ii * chFreqRatio);
-			wamp = pstim->GetIntervalPointAt(interval - 1).w;
+				stim_end = static_cast<long>(pstim->get_interval_point_at(interval).ii * chFreqRatio);
+			wamp = pstim->get_interval_point_at(interval - 1).w;
 			amp = ampUp * wamp + ampLow * !wamp;
 			wout = static_cast<WORD>(amp);
 			if (GetEncoding() == OLx_ENC_BINARY)
@@ -472,10 +472,10 @@ void DataTranslation_DA::Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, ou
 	// find end = first interval after buffer_end; find start 
 	for (interval = 0; interval < pstim->GetSize(); interval++)
 	{
-		stim_end = static_cast<long>(pstim->GetIntervalPointAt(interval).ii * chFreqRatio);
+		stim_end = static_cast<long>(pstim->get_interval_point_at(interval).ii * chFreqRatio);
 		if (stim_end > buffer_start)
 			break;
-		wamp = pstim->GetIntervalPointAt(interval).w;
+		wamp = pstim->get_interval_point_at(interval).w;
 	}
 	WORD wout = ampLow;
 	if (wamp > 0)
@@ -493,8 +493,8 @@ void DataTranslation_DA::Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, ou
 		{
 			interval++;
 			if (interval < pstim->GetSize())
-				stim_end = static_cast<long>(pstim->GetIntervalPointAt(interval).ii * chFreqRatio);
-			wamp = pstim->GetIntervalPointAt(interval - 1).w;
+				stim_end = static_cast<long>(pstim->get_interval_point_at(interval).ii * chFreqRatio);
+			wamp = pstim->get_interval_point_at(interval - 1).w;
 			if (wamp > 0)
 				wout = ampUp;
 			else

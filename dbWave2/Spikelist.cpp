@@ -28,9 +28,9 @@ void SpikeList::Serialize(CArchive& ar)
 	if (ar.IsStoring())
 	{
 		ar << id_string_;
-		w_version_ = 8;
+		w_version_ = 9;
 		ar << w_version_;
-		serialize_version8(ar);
+		serialize_version_9(ar);
 	}
 	else
 	{
@@ -39,14 +39,16 @@ void SpikeList::Serialize(CArchive& ar)
 		if (cs_id == id_string_)
 		{
 			WORD version; ar >> version;
-			if (version == 8)
-				serialize_version8(ar);
+			if (version == 9)
+				serialize_version_9(ar);
+			else if (version == 8)
+				serialize_version_8(ar);
 			else if (version == 7 || version == 6)
-				serialize_version7(ar);
+				serialize_version_7(ar);
 			else if (version == 5)
-				read_file_version5(ar);
+				read_file_version_5(ar);
 			else if (version > 0 && version < 5)
-				read_file_version_before5(ar, version);
+				read_file_version_before_5(ar, version);
 			else
 			{
 				ASSERT(FALSE);
@@ -56,15 +58,14 @@ void SpikeList::Serialize(CArchive& ar)
 			}
 		}
 		else
-			read_file_version1(ar);
-
+			read_file_version_1(ar);
 	}
 }
 
-void SpikeList::read_file_version1(CArchive& ar)
+void SpikeList::read_file_version_1(CArchive& ar)
 {
 	m_i_center_1_sl = 0;
-	m_i_center_2_sl = spk_detect_parameters_.detect_pre_threshold;
+	m_i_center_2_sl = options_detect_spk_.detect_pre_threshold;
 	shape_t1 = m_i_center_2_sl;
 	shape_t2 = get_spike_length() - 1;
 }
@@ -89,7 +90,71 @@ void SpikeList::remove_artefacts()
 	update_class_list();
 }
 
-void SpikeList::serialize_version8(CArchive& ar)
+void SpikeList::serialize_version_9(CArchive& ar)
+{
+	// TODO - finalize
+	CString id_string =  _T("dbwave spike list v9") ;
+	int n_items = 15;
+	
+	if (ar.IsStoring())
+	{
+		int n_stored = 0;
+		ar << n_items;
+		// ---
+		ar << id_string; n_stored++;
+		ar << data_encoding_mode_; n_stored++;
+		ar << bin_zero_; n_stored++;
+		ar << sampling_rate_; n_stored++;
+		ar << volts_per_bin_; n_stored++;
+		ar << channel_description_; n_stored++;
+		ar << m_i_center_1_sl; n_stored++;
+		ar << m_i_center_2_sl; n_stored++;
+		ar << shape_t1; n_stored++;
+		ar << shape_t2; n_stored++;
+
+		ar << data_encoding_mode_; n_stored++;
+		ar << bin_zero_; n_stored++;
+		ar << sampling_rate_; n_stored++;
+		ar << volts_per_bin_; n_stored++;
+		ar << channel_description_; n_stored++;
+
+		ASSERT(n_items + 1 == n_stored);
+	}
+	else
+	{
+		ar >> n_items;
+		// --
+		if (n_items > 0) ar >> id_string; n_items--;
+		if (n_items > 0) ar >> data_encoding_mode_; n_items--;
+		if (n_items > 0) ar >> bin_zero_; n_items--;
+		if (n_items > 0) ar >> sampling_rate_; n_items--;
+		if (n_items > 0) ar >> volts_per_bin_; n_items--;
+		if (n_items > 0) ar >> channel_description_; n_items--;
+		if (n_items > 0) ar >> m_i_center_1_sl; n_items--;
+		if (n_items > 0) ar >> m_i_center_2_sl; n_items--;
+		if (n_items > 0) ar >> shape_t1; n_items--;
+		if (n_items > 0) ar >> shape_t2; n_items--;
+
+		if (n_items > 0) ar >> data_encoding_mode_; n_items--;
+		if (n_items > 0) ar >> bin_zero_; n_items--;
+		if (n_items > 0) ar >> sampling_rate_; n_items--;
+		if (n_items > 0) ar >> volts_per_bin_; n_items--;
+		if (n_items > 0) ar >> channel_description_; n_items--;
+	}
+
+	int n_objects = 4;
+	options_detect_spk_.Serialize(ar); n_objects--;
+	wave_channel_.Serialize(ar); n_objects--;
+	serialize_spikes(ar); n_objects--;
+	serialize_spike_class_descriptors(ar); n_objects--;
+
+	ASSERT(n_objects == 0);
+
+	if (ar.IsStoring())
+		ar.Flush();
+}
+
+void SpikeList::serialize_version_8(CArchive& ar)
 {
 	serialize_data_parameters(ar);
 	serialize_spikes(ar);
@@ -100,7 +165,7 @@ void SpikeList::serialize_version8(CArchive& ar)
 		ar.Flush();
 }
 
-void SpikeList::serialize_version7(CArchive& ar)
+void SpikeList::serialize_version_7(CArchive& ar)
 {
 	serialize_data_parameters(ar);
 	serialize_spikes(ar);
@@ -130,7 +195,7 @@ void SpikeList::serialize_data_parameters(CArchive& ar)
 		ar >> volts_per_bin_;
 		ar >> channel_description_;
 	}
-	spk_detect_parameters_.Serialize(ar);
+	options_detect_spk_.Serialize(ar);
 	wave_channel_.Serialize(ar);
 }
 
@@ -279,7 +344,7 @@ void SpikeList::serialize_additional_data(CArchive& ar)
 	}
 }
 
-void SpikeList::read_file_version5(CArchive& ar)
+void SpikeList::read_file_version_5(CArchive& ar)
 {
 	serialize_data_parameters(ar);
 
@@ -325,7 +390,7 @@ void SpikeList::read_file_version5(CArchive& ar)
 	serialize_additional_data(ar);
 }
 
-void SpikeList::read_file_version_before5(CArchive& ar, int version)
+void SpikeList::read_file_version_before_5(CArchive& ar, const int version)
 {
 	// (1) version ID already loaded
 
@@ -344,7 +409,7 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 		sampling_rate_ = pf_c->sampling_rate; 
 		volts_per_bin_ = pf_c->volts_per_bin;
 		channel_description_ = pf_c->comment; 
-		spk_detect_parameters_ = pf_c->detect_spikes_parameters; 
+		options_detect_spk_ = pf_c->detect_spikes_parameters; 
 	}
 	delete pf_c;
 	wave_channel_.Serialize(ar);
@@ -423,7 +488,7 @@ void SpikeList::read_file_version_before5(CArchive& ar, int version)
 	if (version < 3)
 	{
 		m_i_center_1_sl = 0;
-		m_i_center_2_sl = spk_detect_parameters_.detect_pre_threshold;
+		m_i_center_2_sl = options_detect_spk_.detect_pre_threshold;
 		shape_t1 = m_i_center_2_sl;
 		shape_t2 = get_spike_length() - 1;
 	}
@@ -492,20 +557,6 @@ BOOL SpikeList::is_any_spike_around(const long ii_time, const int jitter, int& s
 
 	return FALSE;
 }
-
-//int SpikeList::get_classes_count() const
-//{
-//	int n_classes = m_spike_class_descriptors.GetCount();
-//	if (m_keep_only_valid_classes) 
-//	{
-//		for (int i = 0; i < m_spike_class_descriptors.GetCount(); i++)
-//		{
-//			if (m_spike_class_descriptors.GetAt(i).get_class_id() < 0)
-//				n_classes--;
-//		}
-//	}
-//	return n_classes;
-//}
 
 int SpikeList::get_class_id_descriptor_index(const int class_id)
 {
@@ -716,7 +767,7 @@ BOOL SpikeList::init_spike_list(const AcqDataDoc* acq_data_doc, const options_de
 
 	// copy data from CObArray
 	if (spk_detect_parameters != nullptr)
-		spk_detect_parameters_ = *spk_detect_parameters;
+		options_detect_spk_ = *spk_detect_parameters;
 
 	auto flag = false;
 	if (acq_data_doc != nullptr)
@@ -725,7 +776,7 @@ BOOL SpikeList::init_spike_list(const AcqDataDoc* acq_data_doc, const options_de
 		data_encoding_mode_ = wave_format->mode_encoding;
 		bin_zero_ = wave_format->bin_zero;
 		sampling_rate_ = wave_format->sampling_rate_per_channel;
-		flag = acq_data_doc->get_volts_per_bin(spk_detect_parameters_.detect_channel, &volts_per_bin_);
+		flag = acq_data_doc->get_volts_per_bin(options_detect_spk_.detect_channel, &volts_per_bin_);
 	}
 
 	if (!flag)
@@ -736,7 +787,7 @@ BOOL SpikeList::init_spike_list(const AcqDataDoc* acq_data_doc, const options_de
 	}
 
 	// reset buffers, list, spk params
-	set_spike_length(spk_detect_parameters_.extract_n_points);
+	set_spike_length(options_detect_spk_.extract_n_points);
 
 	// reset classes
 	keep_only_valid_classes_ = FALSE; // default: no valid array
