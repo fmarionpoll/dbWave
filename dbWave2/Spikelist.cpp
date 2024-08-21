@@ -936,13 +936,13 @@ int SpikeList::add_class_id(const int id)
 	return index;
 }
 
-void SpikeList::change_all_spike_from_class_id_to_new_class_id(const int old_class_ID, const int new_class_ID)
+void SpikeList::change_all_spike_from_class_id_to_new_class_id(const int old_class_id, const int new_class_id)
 {
 	// first find valid max and min
 	for (auto index = 0; index < spikes_.GetSize(); index++)
 	{
-		if (get_spike(index)->get_class_id() == old_class_ID)
-			get_spike(index)->set_class_id(new_class_ID);
+		if (get_spike(index)->get_class_id() == old_class_id)
+			get_spike(index)->set_class_id(new_class_id);
 	}
 }
 

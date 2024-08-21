@@ -115,7 +115,7 @@ public:
 	BOOL init_spike_list(const AcqDataDoc* acq_data_doc, const options_detect_spikes* spk_detect_parameters);
 	long update_class_list();
 	void erase_data();
-	void change_all_spike_from_class_id_to_new_class_id(int old_class_ID, int new_class_ID);
+	void change_all_spike_from_class_id_to_new_class_id(int old_class_id, int new_class_id);
 
 	void measure_amplitude_min_to_max(int t1, int t2);
 	void measure_amplitude_vt(int t);
