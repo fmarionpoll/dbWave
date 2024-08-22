@@ -58,6 +58,7 @@ protected:
 	int min_y1_over_all_spikes_ {0};
 	int max_y1_over_all_spikes_ {0};
 	int spike_length_ {60};
+
 	CArray<Spike*, Spike*> spikes_;
 
 	// (3) --------classes of spikes
@@ -129,14 +130,17 @@ public:
 	int get_next_spike(int spike_index, int delta, BOOL b_keep_same_class) ;
 
 	int toggle_spike_flag(int spike_index);
-	void set_single_spike_flag(int spike_index);
-	BOOL get_spike_flag(int spike_index);
-	void remove_all_spike_flags();
-	void flag_range_of_spikes(long l_first, long l_last, BOOL b_set);
-	void select_spikes_within_bounds(int v_min, int v_max, long l_first, long l_last, BOOL b_add);
+	void set_spike_flag(int spike_index, boolean exclusive = true);
+	boolean get_spike_flag(int spike_index) const;
+	void clear_flagged_spikes();
+	void flag_range_of_spikes(long l_first, long l_last, boolean b_set);
+	void flag_spikes_within_bounds(int v_min, int v_max, long l_first, long l_last, boolean b_add);
 	void get_range_of_spike_flagged(long& l_first, long& l_last);
-	BOOL get_spike_flag_array_at(const int i) const { return flagged_spikes_.GetAt(i); }
-	int get_spike_flag_array_count() const { return flagged_spikes_.GetCount(); }
+	int get_spike_index_of_flag(const int i) const
+	{
+		return i <= flagged_spikes_.GetCount() ? flagged_spikes_.GetAt(i):-1;
+	}
+	int get_spike_flag_array_count() const {return flagged_spikes_.GetCount(); }
 	void change_class_of_flagged_spikes(int new_class_id);
 
 protected:

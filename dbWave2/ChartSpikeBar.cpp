@@ -130,8 +130,8 @@ void ChartSpikeBar::display_stimulus(CDC* p_dc, const CRect* rect) const
 	auto i0 = 0;
 	CIntervals* p_intervals = &p_spike_doc_->m_stimulus_intervals;
 
-	while (i0 < p_intervals->GetSize()
-		&& p_intervals->GetAt(i0) < ii_first)
+	while (i0 < p_intervals->get_size()
+		&& p_intervals->get_at(i0) < ii_first)
 		i0++; 
 
 	auto state = bottom;	 // use this variable to keep track of pulse broken by display limits
@@ -140,11 +140,11 @@ void ChartSpikeBar::display_stimulus(CDC* p_dc, const CRect* rect) const
 		state = top;
 	p_dc->MoveTo(rect->left, state);
 
-	const auto n_stimuli = ((p_intervals->GetSize()) / 2) * 2;
+	const auto n_stimuli = ((p_intervals->get_size()) / 2) * 2;
 	for (auto ii = jj; ii < n_stimuli; ii += 2)
 	{
 		// stimulus starts here
-		int iix0 = p_intervals->GetAt(ii) - ii_first;
+		int iix0 = p_intervals->get_at(ii) - ii_first;
 		if (iix0 >= ii_length) // first transition ON after last graph pt?
 			break; 
 		if (iix0 < 0) // first transition off graph?
@@ -156,7 +156,7 @@ void ChartSpikeBar::display_stimulus(CDC* p_dc, const CRect* rect) const
 
 		// stimulus ends here
 		state = bottom; // after pulse, descend to bottom level
-		int iix1 = p_intervals->GetAt(ii + 1) - ii_first;
+		int iix1 = p_intervals->get_at(ii + 1) - ii_first;
 		if (iix1 > ii_length) // last transition off graph?
 		{
 			iix1 = ii_length; // yes = clip
@@ -289,7 +289,7 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 	for (auto i = p_spike_list_->get_spike_flag_array_count() - 1; i >= 0; i--)
 	{
 		constexpr auto pen_size = 0;
-		const auto no_spike = p_spike_list_->get_spike_flag_array_at(i);
+		const auto no_spike = p_spike_list_->get_spike_index_of_flag(i);
 
 		const Spike* spike = p_spike_list_->get_spike(no_spike);
 		const auto no_spike_class = spike->get_class_id();
@@ -452,7 +452,7 @@ void ChartSpikeBar::select_spikes_within_rect(CRect* p_rect, const UINT n_flags)
 	const auto v_min = MulDiv(p_rect->bottom - y_vo_, y_we_, y_ve_) + y_wo_;
 	const auto v_max = MulDiv(p_rect->top - y_vo_, y_we_, y_ve_) + y_wo_;
 	const auto b_flag = (n_flags & MK_SHIFT) || (n_flags & MK_CONTROL);
-	p_spike_list_->select_spikes_within_bounds(v_min, v_max, l_first, l_last, b_flag);
+	p_spike_list_->flag_spikes_within_bounds(v_min, v_max, l_first, l_last, b_flag);
 }
 
 void ChartSpikeBar::OnLButtonUp(const UINT n_flags, const CPoint point)

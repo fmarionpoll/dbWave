@@ -5,27 +5,23 @@ class CIntervals : public CObject
 {
 	DECLARE_SERIAL(CIntervals)
 
-public:
 	CIntervals();
 	~CIntervals() override;
 	void Serialize(CArchive& ar) override;
-
 	CIntervals& operator =(const CIntervals& arg);
 
-	long GetAt(int i) { return array.GetAt(i); }
-	void SetAt(int i, long ii_time) {array.SetAt(i, ii_time); }
-	void SetAtGrow(int i, long value) { array.SetAtGrow(i, value); }
-	long GetSize() const { return array.GetSize(); }
-	void Add(long ii) { array.Add(ii); n_items++; }
-	void RemoveAll() { array.RemoveAll(); n_items = 0; }
-	void RemoveAt(int i) { array.RemoveAt(i); n_items--; }
-	void InsertAt(int i, long value) { array.InsertAt(i, value); }
+	long get_at(const int i) { return array_.GetAt(i); }
+	void set_at(const int i, const long ii_time) {array_.SetAt(i, ii_time); }
+	void set_at_grow(const int i, const long l_value) { array_.SetAtGrow(i, l_value); }
+	long get_size() const { return array_.GetSize(); }
+	void add_item(const long ii) { array_.Add(ii); n_items++; }
+	void remove_all() { array_.RemoveAll(); n_items = 0; }
+	void remove_at(const int i) { array_.RemoveAt(i); n_items--; }
+	void insert_at(const int i, const long l_value) { array_.InsertAt(i, l_value); }
+	int  get_channel() const { return channel; }
+	void set_channel(const int chan) { channel = chan; }
 
-	int  GetChannel() { return channel; }
-	void SetChannel(int chan) { channel = chan; }
-
-public:
-	int iID = 1;
+	int i_id = 1;
 	int channel = 0;
 	CString cs_descriptor = _T("stimulus intervals"); 
 	int n_items = 0;		
@@ -33,7 +29,7 @@ public:
 	float channel_sampling_rate = 10000.f;
 
 protected:
-	CArray<long, long> array; // time on, time off (n clock intervals)
-	int version = 4;
+	CArray<long, long> array_; // time on, time off (n clock intervals)
+	int version_ = 4;
 };
 

@@ -8,7 +8,7 @@
 #include "IntervalPoints.h"
 
 
-BOOL DataTranslation_DA::OpenSubSystem(const CString card_name)
+BOOL DataTranslation_DA::OpenSubSystem(const CString& card_name)
 {
 	try
 	{
@@ -17,8 +17,8 @@ BOOL DataTranslation_DA::OpenSubSystem(const CString card_name)
 			return FALSE;
 
 		SetSubSysType(OLSS_DA);
-		const int nDA = GetDevCaps(OLDC_DAELEMENTS);
-		if (nDA < 1)
+		const int n_da = GetDevCaps(OLDC_DAELEMENTS);
+		if (n_da < 1)
 			return FALSE;
 		SetSubSysElement(0);
 		ASSERT(GetHDass() != NULL),
@@ -68,7 +68,7 @@ BOOL DataTranslation_DA::ClearAllOutputs()
 
 BOOL DataTranslation_DA::InitSubSystem(const options_input* pADC_options)
 {
-	const auto ADC_channel_samplingrate = double(pADC_options->wave_format.sampling_rate_per_channel);
+	const auto ADC_channel_sampling_rate = double(pADC_options->wave_format.sampling_rate_per_channel);
 	const int ADC_trigger_mode = int( pADC_options->wave_format.trig_mode);
 	try
 	{
@@ -82,7 +82,7 @@ BOOL DataTranslation_DA::InitSubSystem(const options_input* pADC_options)
 
 		// set clock the same as for A/D
 		SetClockSource(OLx_CLK_INTERNAL);
-		const double clock_rate = ADC_channel_samplingrate;
+		const double clock_rate = ADC_channel_sampling_rate;
 		SetFrequency(clock_rate); // set sampling frequency (total throughput)
 
 		// set trigger mode
@@ -359,7 +359,7 @@ void DataTranslation_DA::FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, output
 	int nchans = m_listsize;
 
 	CIntervalPoints* pstim = &outputparms_array->sti;
-	double chFreqRatio = m_frequency / pstim->chrate;
+	double chFreqRatio = m_frequency / pstim->ch_rate;
 	long buffer_start = m_nBuffersFilledSinceStart * m_chbuflen;
 	long buffer_end = (m_nBuffersFilledSinceStart + 1) * m_chbuflen;
 	long buffer_ii = buffer_start;
@@ -369,7 +369,7 @@ void DataTranslation_DA::FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, output
 	long stim_end = 0;
 
 	// find end = first interval after buffer_end; find start 
-	for (interval = 0; interval < pstim->GetSize(); interval++)
+	for (interval = 0; interval < pstim->get_size(); interval++)
 	{
 		stim_end = static_cast<long>(pstim->get_interval_point_at(interval).ii * chFreqRatio);
 		if (stim_end > buffer_start)
@@ -386,11 +386,11 @@ void DataTranslation_DA::FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, output
 	{
 		*(pDTbuf + i) = wout;
 
-		if ((interval < pstim->GetSize()) && buffer_ii >= stim_end)
+		if ((interval < pstim->get_size()) && buffer_ii >= stim_end)
 		{
 			interval++;
 			wamp = FALSE;
-			if (interval < pstim->GetSize())
+			if (interval < pstim->get_size())
 				stim_end = static_cast<long>(pstim->get_interval_point_at(interval).ii * chFreqRatio);
 			wamp = pstim->get_interval_point_at(interval - 1).w;
 			amp = ampUp * wamp + ampLow * !wamp;
@@ -460,7 +460,7 @@ void DataTranslation_DA::Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, ou
 	int nchans = m_listsize;
 
 	CIntervalPoints* pstim = &outputparms_array->sti;
-	double chFreqRatio = m_frequency / pstim->chrate;
+	double chFreqRatio = m_frequency / pstim->ch_rate;
 	long buffer_start = m_nBuffersFilledSinceStart * m_chbuflen;
 	long buffer_end = (m_nBuffersFilledSinceStart + 1) * m_chbuflen;
 	long buffer_ii = buffer_start;
@@ -470,7 +470,7 @@ void DataTranslation_DA::Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, ou
 	long stim_end = 0;
 
 	// find end = first interval after buffer_end; find start 
-	for (interval = 0; interval < pstim->GetSize(); interval++)
+	for (interval = 0; interval < pstim->get_size(); interval++)
 	{
 		stim_end = static_cast<long>(pstim->get_interval_point_at(interval).ii * chFreqRatio);
 		if (stim_end > buffer_start)
@@ -489,10 +489,10 @@ void DataTranslation_DA::Dig_FillBufferWith_ONOFFSeq(short* pDTbuf, int chan, ou
 		else
 			*(pDTbuf + i) |= wout;
 
-		if ((interval < pstim->GetSize()) && buffer_ii >= stim_end)
+		if ((interval < pstim->get_size()) && buffer_ii >= stim_end)
 		{
 			interval++;
-			if (interval < pstim->GetSize())
+			if (interval < pstim->get_size())
 				stim_end = static_cast<long>(pstim->get_interval_point_at(interval).ii * chFreqRatio);
 			wamp = pstim->get_interval_point_at(interval - 1).w;
 			if (wamp > 0)

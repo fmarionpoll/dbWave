@@ -743,13 +743,13 @@ void ViewSpikeSort::clear_flag_all_spikes()
 				for (auto j = 0; j < p_spk_doc->get_spike_list_size(); j++)
 				{
 					p_spk_list = p_spk_doc->set_spike_list_current_index(j);
-					p_spk_list->remove_all_spike_flags();
+					p_spk_list->clear_flagged_spikes();
 				}
 			}
 		}
 	}
 	else
-		p_spk_list->remove_all_spike_flags();
+		p_spk_list->clear_flagged_spikes();
 }
 
 void ViewSpikeSort::on_measure_parameters_from_spikes()

@@ -17,7 +17,7 @@ void CSpikeDoc::clear_data()
 	m_spike_class.erase_data();
 	if (m_stimulus_intervals.n_items > 0)
 	{
-		m_stimulus_intervals.RemoveAll();
+		m_stimulus_intervals.remove_all();
 		m_stimulus_intervals.n_items = 0;
 	}
 	spike_list_array_.SetSize(1);
@@ -71,21 +71,21 @@ void CSpikeDoc::Serialize(CArchive& ar)
 
 void CSpikeDoc::sort_stimulus_array()
 {
-	const auto stimulus_intervals_count = m_stimulus_intervals.GetSize();
-	if (stimulus_intervals_count == 0 || (m_stimulus_intervals.GetAt(stimulus_intervals_count - 1) > m_stimulus_intervals.GetAt(0)))
+	const auto stimulus_intervals_count = m_stimulus_intervals.get_size();
+	if (stimulus_intervals_count == 0 || (m_stimulus_intervals.get_at(stimulus_intervals_count - 1) > m_stimulus_intervals.get_at(0)))
 		return;
 
 	// bubble sort from bottom to top
 	for (auto j = 0; j < stimulus_intervals_count; j++)
 	{
-		int lowest_stimulus_interval = m_stimulus_intervals.GetAt(j);
+		int lowest_stimulus_interval = m_stimulus_intervals.get_at(j);
 		for (auto k = j + 1; k < stimulus_intervals_count; k++)
 		{
-			if (m_stimulus_intervals.GetAt(k) < lowest_stimulus_interval)
+			if (m_stimulus_intervals.get_at(k) < lowest_stimulus_interval)
 			{
-				lowest_stimulus_interval = m_stimulus_intervals.GetAt(k);
-				m_stimulus_intervals.SetAt(k, m_stimulus_intervals.GetAt(j));
-				m_stimulus_intervals.SetAt(j, lowest_stimulus_interval);
+				lowest_stimulus_interval = m_stimulus_intervals.get_at(k);
+				m_stimulus_intervals.set_at(k, m_stimulus_intervals.get_at(j));
+				m_stimulus_intervals.set_at(j, lowest_stimulus_interval);
 			}
 		}
 	}
@@ -540,7 +540,7 @@ void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, const options_view_spi
 	}
 
 	// export stimulus occurence time(s) that fit(s) into the time interval requested
-	if (options_view_spikes->exportdatatype == EXPORT_PSTH && m_stimulus_intervals.GetSize() > 0)
+	if (options_view_spikes->exportdatatype == EXPORT_PSTH && m_stimulus_intervals.get_size() > 0)
 	{
 		auto sampling_rate = spike_list->get_acq_sampling_rate();
 		if (sampling_rate == 0.f)
@@ -549,17 +549,17 @@ void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, const options_view_spi
 		}
 		ASSERT(sampling_rate != 0.f);
 		constexpr auto stimulus_index0 = 0;
-		const auto stimulus_index1 = m_stimulus_intervals.GetSize() - 1;
+		const auto stimulus_index1 = m_stimulus_intervals.get_size() - 1;
 		auto ii_offset0 = 0;
 		if (!options_view_spikes->babsolutetime)
-			ii_offset0 = m_stimulus_intervals.GetAt(options_view_spikes->istimulusindex);
+			ii_offset0 = m_stimulus_intervals.get_at(options_view_spikes->istimulusindex);
 		const auto ii_start = static_cast<long>(options_view_spikes->timestart * sampling_rate) + ii_offset0;
 		const auto ii_end = static_cast<long>(options_view_spikes->timeend * sampling_rate) + ii_offset0;
 		auto b_up = -1;
 
 		for (auto stimulus_index = stimulus_index0; stimulus_index <= stimulus_index1; stimulus_index++)
 		{
-			const int ii_stimulus = m_stimulus_intervals.GetAt(stimulus_index);
+			const int ii_stimulus = m_stimulus_intervals.get_at(stimulus_index);
 			b_up *= -1;
 			if (ii_stimulus < ii_start)
 				continue;
@@ -654,7 +654,7 @@ void CSpikeDoc::export_spk_amplitude_histogram(CSharedFile* shared_file, const o
 	// update offset
 	auto ii_offset0 = 0;
 	if (!options_view_spikes->babsolutetime && m_stimulus_intervals.n_items > 0)
-		ii_offset0 = m_stimulus_intervals.GetAt(options_view_spikes->istimulusindex);
+		ii_offset0 = m_stimulus_intervals.get_at(options_view_spikes->istimulusindex);
 
 	// clear histogram area
 	ASSERT(options_view_spikes->exportdatatype == EXPORT_HISTAMPL);
@@ -789,7 +789,7 @@ void CSpikeDoc::export_spk_attributes_one_file(CSharedFile* shared_file, const o
 	int ii_offset0 = 0;
 	if (!options_view_spikes->babsolutetime && m_stimulus_intervals.n_items > 0)
 	{
-		ii_offset0 = m_stimulus_intervals.GetAt(options_view_spikes->istimulusindex);
+		ii_offset0 = m_stimulus_intervals.get_at(options_view_spikes->istimulusindex);
 	}
 
 	// ................................DATA
@@ -1211,8 +1211,8 @@ long CSpikeDoc::build_psth(const options_view_spikes* options_view_spikes, long*
 
 	// check validity of stimulus_index
 	auto stimulus_index = options_view_spikes->istimulusindex;
-	if (stimulus_index > m_stimulus_intervals.GetSize() - 1)
-		stimulus_index = m_stimulus_intervals.GetSize() - 1;
+	if (stimulus_index > m_stimulus_intervals.get_size() - 1)
+		stimulus_index = m_stimulus_intervals.get_size() - 1;
 	if (stimulus_index < 0)
 		stimulus_index = 0;
 	const auto stimulus_index_0 = stimulus_index;
@@ -1220,7 +1220,7 @@ long CSpikeDoc::build_psth(const options_view_spikes* options_view_spikes, long*
 	auto increment = 2;
 	if (options_view_spikes->bCycleHist && !options_view_spikes->babsolutetime)
 	{
-		stimulus_index_1 = m_stimulus_intervals.GetSize();
+		stimulus_index_1 = m_stimulus_intervals.get_size();
 		increment = options_view_spikes->nstipercycle;
 		if (m_stimulus_intervals.n_per_cycle > 1 && increment > m_stimulus_intervals.n_per_cycle)
 			increment = m_stimulus_intervals.n_per_cycle;
@@ -1233,7 +1233,7 @@ long CSpikeDoc::build_psth(const options_view_spikes* options_view_spikes, long*
 		if (!options_view_spikes->babsolutetime)
 		{
 			if (m_stimulus_intervals.n_items > 0)
-				ii_offset_0 = m_stimulus_intervals.GetAt(stimulus_index_i);
+				ii_offset_0 = m_stimulus_intervals.get_at(stimulus_index_i);
 			else
 				ii_offset_0 = static_cast<long>(-(options_view_spikes->timestart * rate));
 		}
@@ -1307,7 +1307,7 @@ long CSpikeDoc::build_isi(const options_view_spikes* options_view_spikes, long* 
 	auto increment = 2;
 	if (options_view_spikes->bCycleHist && !options_view_spikes->babsolutetime)
 	{
-		stimulus_index_1 = m_stimulus_intervals.GetSize();
+		stimulus_index_1 = m_stimulus_intervals.get_size();
 		increment = options_view_spikes->nstipercycle;
 		if (m_stimulus_intervals.n_per_cycle > 1 && increment > m_stimulus_intervals.n_per_cycle)
 			increment = m_stimulus_intervals.n_per_cycle;
@@ -1321,8 +1321,8 @@ long CSpikeDoc::build_isi(const options_view_spikes* options_view_spikes, long* 
 		if (!options_view_spikes->babsolutetime && m_stimulus_intervals.n_items > 0) // adjust boundaries if ref is made to
 		{
 			// a stimulus
-			ii_start += m_stimulus_intervals.GetAt(stimulus_index);
-			ii_end += m_stimulus_intervals.GetAt(stimulus_index);
+			ii_start += m_stimulus_intervals.get_at(stimulus_index);
+			ii_end += m_stimulus_intervals.get_at(stimulus_index);
 		}
 
 		// find first spike within interval requested
@@ -1398,7 +1398,7 @@ long CSpikeDoc::build_autocorrelation(const options_view_spikes* options_view_sp
 	auto increment = 2;
 	if (options_view_spikes->bCycleHist && !options_view_spikes->babsolutetime)
 	{
-		next_stimulus_index = m_stimulus_intervals.GetSize();
+		next_stimulus_index = m_stimulus_intervals.get_size();
 		increment = options_view_spikes->nstipercycle;
 		if (m_stimulus_intervals.n_per_cycle > 1 && increment > m_stimulus_intervals.n_per_cycle)
 			increment = m_stimulus_intervals.n_per_cycle;
@@ -1411,7 +1411,7 @@ long CSpikeDoc::build_autocorrelation(const options_view_spikes* options_view_sp
 		if (!options_view_spikes->babsolutetime) // if stimulus locking
 		{
 			if (m_stimulus_intervals.n_items > 0)
-				initial_offset = m_stimulus_intervals.GetAt(stimulus_index);
+				initial_offset = m_stimulus_intervals.get_at(stimulus_index);
 			else
 				initial_offset = static_cast<long>(-(options_view_spikes->timestart * sampling_rate));
 		}
@@ -1509,7 +1509,7 @@ long CSpikeDoc::build_psth_autocorrelation(const options_view_spikes* options_vi
 	auto increment = 2;
 	if (options_view_spikes->bCycleHist && !options_view_spikes->babsolutetime)
 	{
-		stimulus_index_1 = m_stimulus_intervals.GetSize();
+		stimulus_index_1 = m_stimulus_intervals.get_size();
 		increment = options_view_spikes->nstipercycle;
 		if (m_stimulus_intervals.n_per_cycle > 1 && increment > m_stimulus_intervals.n_per_cycle)
 			increment = m_stimulus_intervals.n_per_cycle;
@@ -1522,7 +1522,7 @@ long CSpikeDoc::build_psth_autocorrelation(const options_view_spikes* options_vi
 		if (!options_view_spikes->babsolutetime)
 		{
 			if (m_stimulus_intervals.n_items > 0)
-				ii_offset_0 = m_stimulus_intervals.GetAt(stimulus_index);
+				ii_offset_0 = m_stimulus_intervals.get_at(stimulus_index);
 			else
 				ii_offset_0 = static_cast<long>(-(options_view_spikes->timestart * sampling_rate));
 		}
@@ -1610,7 +1610,7 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, const options_
 	// update offset
 	auto ii_offset_0 = 0;
 	if (!options_view_spikes->babsolutetime && m_stimulus_intervals.n_items > 0)
-		ii_offset_0 = m_stimulus_intervals.GetAt(options_view_spikes->istimulusindex);
+		ii_offset_0 = m_stimulus_intervals.get_at(options_view_spikes->istimulusindex);
 	// prepare parameters
 	const auto rate = spike_list->get_acq_sampling_rate();
 	const auto ii_time_start = static_cast<long>(options_view_spikes->timestart * rate) + ii_offset_0;

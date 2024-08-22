@@ -79,7 +79,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 				if (spike->get_time() < l_first_)
 					continue;
 				if (spike->get_time() > l_last_)
-					break;;
+					break;
 			}
 
 			// select pen according to class
@@ -184,9 +184,9 @@ void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
 		dbwave_doc_->m_p_spk_doc->get_spike_list_current_index(),
 		0);
 
-	for (auto i = p_spike_list_->get_spike_flag_array_count() - 1; i >= 0; i--)
+	for (auto i = 0; i < p_spike_list_->get_spike_flag_array_count(); i ++)
 	{
-		spike_sel.spike_index = p_spike_list_->get_spike_flag_array_at(i);
+		spike_sel.spike_index = p_spike_list_->get_spike_index_of_flag(i);
 		if (!is_spike_within_range(spike_sel))
 			continue;
 		display_spike_data(p_dc, dbwave_doc_->get_spike(spike_sel));

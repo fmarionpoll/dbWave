@@ -14,11 +14,11 @@ class CIntervalPoints : public CObject
 	CIntervalPoints();
 	CIntervalPoints(const CIntervalPoints& arg);
 	~CIntervalPoints() override;
-	void operator =(const CIntervalPoints& arg);
+	CIntervalPoints& operator =(const CIntervalPoints& arg);
 	void Serialize(CArchive& ar) override;
 
 	void erase_all_data();
-	long GetSize() { return intervalpoint_array.GetSize(); }
+	long get_size() const { return interval_point_array.GetSize(); }
 	CIntervalPoint get_interval_point_at(int i);
 
 	void import_intervals_series(CIntervals* p_intervals, WORD val_up = 1, BOOL b_copy_rate = TRUE);
@@ -26,8 +26,8 @@ class CIntervalPoints : public CObject
 	void export_intervals_series(int chan, CIntervals* p_out);
 
 public:
-	CArray<CIntervalPoint, CIntervalPoint> intervalpoint_array;
-	float chrate;
+	CArray<CIntervalPoint, CIntervalPoint> interval_point_array;
+	float ch_rate;
 	int version;
 };
 

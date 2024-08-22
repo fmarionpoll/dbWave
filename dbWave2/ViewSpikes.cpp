@@ -1331,12 +1331,12 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 			if (rw_spikes.top == rw_spikes.bottom)
 				rw_spikes.bottom++;
 
-			for (auto ii = 0; ii < p_spk_doc->m_stimulus_intervals.GetSize(); ii++, ii++)
+			for (auto ii = 0; ii < p_spk_doc->m_stimulus_intervals.get_size(); ii++, ii++)
 			{
-				int ii_first = p_spk_doc->m_stimulus_intervals.GetAt(ii);
-				if ((ii + 1) >= p_spk_doc->m_stimulus_intervals.GetSize())
+				int ii_first = p_spk_doc->m_stimulus_intervals.get_at(ii);
+				if ((ii + 1) >= p_spk_doc->m_stimulus_intervals.get_size())
 					continue;
-				int ii_last = p_spk_doc->m_stimulus_intervals.GetAt(ii + 1);
+				int ii_last = p_spk_doc->m_stimulus_intervals.get_at(ii + 1);
 				if (ii_first > l_last || ii_last < l_first)
 					continue;
 				if (ii_first < l_first)
@@ -1899,7 +1899,8 @@ void ViewSpikes::on_artefact()
 	}
 	else
 	{
-		auto spk_class = p_spk_list->get_spike(m_spike_index)->get_class_id();
+		const auto spike = p_spk_list->get_spike(m_spike_index);
+		auto spk_class = spike->get_class_id();
 		spk_class = -(spk_class + 1);
 		//// if artefact: set class to negative value
 		//if (m_b_artefact) 

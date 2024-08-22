@@ -8,14 +8,14 @@ SpikeClassDescriptor::SpikeClassDescriptor()
 
 SpikeClassDescriptor::SpikeClassDescriptor(int number, int items)
 {
-	class_id = number;
-	n_items = items;
+	class_id_ = number;
+	n_items_ = items;
 }
 
 SpikeClassDescriptor::SpikeClassDescriptor(const SpikeClassDescriptor & other)
 {
-	class_id = other.class_id;
-	n_items = other.n_items;
+	class_id_ = other.class_id_;
+	n_items_ = other.n_items_;
 }
 
 SpikeClassDescriptor::~SpikeClassDescriptor()
@@ -25,13 +25,13 @@ void SpikeClassDescriptor::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		ar << class_id;
-		ar << n_items ;
+		ar << class_id_;
+		ar << n_items_ ;
 	}
 	else
 	{
-		ar >> class_id;
-		ar >> n_items;
+		ar >> class_id_;
+		ar >> n_items_;
 	}
 }
 
@@ -39,8 +39,8 @@ SpikeClassDescriptor& SpikeClassDescriptor::operator=(const SpikeClassDescriptor
 {
 	if (&arg != this)
 	{
-		class_id = arg.class_id;
-		n_items = arg.n_items;
+		class_id_ = arg.class_id_;
+		n_items_ = arg.n_items_;
 	}
 	return *this;
 }

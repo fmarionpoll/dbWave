@@ -13,13 +13,14 @@ IMPLEMENT_SERIAL(SpikeList, CObject, 0)
 
 SpikeList::SpikeList()
 {
+	flagged_spikes_.SetSize(0);
 	class_descriptors_.SetSize(1);
 	class_descriptors_.Add(SpikeClassDescriptor(0,0));
-	flagged_spikes_.SetSize(0);
 }
 
 SpikeList::~SpikeList()
 {
+	clear_flagged_spikes();
 	delete_arrays();
 }
 
@@ -51,7 +52,6 @@ void SpikeList::Serialize(CArchive& ar)
 				read_file_version_before_5(ar, version);
 			else
 			{
-				ASSERT(FALSE);
 				CString message;
 				message.Format(_T("reading spike list: unrecognizable version %i"), version);
 				AfxMessageBox(message, MB_OK);
@@ -763,7 +763,7 @@ BOOL SpikeList::init_spike_list(const AcqDataDoc* acq_data_doc, const options_de
 {
 	// remove data from spike list
 	erase_data();
-	remove_all_spike_flags();
+	clear_flagged_spikes();
 
 	// copy data from CObArray
 	if (spk_detect_parameters != nullptr)
@@ -803,11 +803,10 @@ void SpikeList::erase_data()
 	m_selected_spike = -1;
 }
 
-int SpikeList::toggle_spike_flag(const int spike_index)
+int SpikeList::toggle_spike_flag(const int spike_index) 
 {
-	// find spike within array
 	auto index = -1;
-	for (auto i = flagged_spikes_.GetCount() - 1; i >= 0; i--)
+	for (auto i = 0; i <flagged_spikes_.GetCount() ; i ++)
 	{
 		if (flagged_spikes_.GetAt(i) == spike_index)
 		{
@@ -824,64 +823,70 @@ int SpikeList::toggle_spike_flag(const int spike_index)
 	return flagged_spikes_.GetCount();
 }
 
-void SpikeList::set_single_spike_flag(const int spike_index)
+void SpikeList::set_spike_flag(const int spike_index, const boolean exclusive)
 {
-	if (!flagged_spikes_.IsEmpty()) 
-		flagged_spikes_.RemoveAll();
-	flagged_spikes_.Add(spike_index);
+	if (exclusive)
+		clear_flagged_spikes();
+	if (!get_spike_flag(spike_index))
+		flagged_spikes_.Add(spike_index);
 }
 
-BOOL SpikeList::get_spike_flag(const int spike_index)
+boolean SpikeList::get_spike_flag(const int spike_index) const
 {
-	BOOL b_flag = FALSE;
-	// search if spike_index is in the list
-	for (int i = flagged_spikes_.GetCount() - 1; i >= 0; i--)
+	boolean b_flag = false;
+	if (flagged_spikes_.GetCount() > 0)
 	{
-		if (flagged_spikes_.GetAt(i) == spike_index)
+		// search if spike_index is in the list
+		for (int i = 0; i < flagged_spikes_.GetCount(); i++)
 		{
-			b_flag = TRUE;
-			break;
+			if (flagged_spikes_.GetAt(i) == spike_index)
+			{
+				b_flag = true;
+				break;
+			}
 		}
 	}
 	return b_flag;
 }
 
-void SpikeList::remove_all_spike_flags()
+void SpikeList::clear_flagged_spikes()
 {
-	if (!flagged_spikes_.IsEmpty())
-		flagged_spikes_.RemoveAll();
+	flagged_spikes_.RemoveAll();
 }
 
-void SpikeList::flag_range_of_spikes(const long l_first, const long l_last, const BOOL b_set)
+void SpikeList::flag_range_of_spikes(const long l_first, const long l_last, const boolean b_set)
 {
 	// first clear flags of spikes within the flagged array which fall within limits
-	long l_time;
-	for (auto i = flagged_spikes_.GetCount() - 1; i >= 0; i--)
+	if (flagged_spikes_ .GetCount() > 0)
 	{
-		const int spike_index = flagged_spikes_.GetAt(i);
-		l_time = get_spike(spike_index)->get_time();
-		if (l_time < l_first || l_time > l_last)
-			continue;
-		flagged_spikes_.RemoveAt(i);
+		for (auto i = flagged_spikes_.GetCount() - 1; i >= 0; i--)
+		{
+			const int spike_index = flagged_spikes_.GetAt(i);
+			const long l_time = get_spike(spike_index)->get_time();
+			if (l_time < l_first || l_time > l_last)
+				continue;
+			flagged_spikes_.RemoveAt(i);
+		}
 	}
 	// if bSet was set to FALSE, the job is done
-	if (b_set == FALSE)
+	if (!b_set)
 		return;
 
 	// then if bSet is ON, search spike file for spikes falling within this range and flag them
 	for (auto i = 0; i < get_spikes_count(); i++)
 	{
-		l_time = get_spike(i)->get_time();
+		const long l_time = get_spike(i)->get_time();
 		if (l_time < l_first || l_time > l_last)
 			continue;
 		flagged_spikes_.Add(i);
 	}
 }
 
-void SpikeList::select_spikes_within_bounds(const int v_min, const int v_max, const long l_first, const long l_last, const BOOL b_add)
+void SpikeList::flag_spikes_within_bounds(const int v_min, const int v_max, const long l_first, const long l_last, const boolean b_add)
 {
 	if (!b_add)
-		remove_all_spike_flags();
+		clear_flagged_spikes();
+
 	for (auto i = 0; i < get_spikes_count(); i++)
 	{
 		const auto l_time = get_spike(i)->get_time();
@@ -912,7 +917,7 @@ void SpikeList::get_range_of_spike_flagged(long& l_first, long& l_last)
 	l_last = l_first;
 
 	// search if spike is in the list
-	for (auto i = flagged_spikes_.GetCount() - 1; i >= 0; i--)
+	for (auto i = 0; i < flagged_spikes_.GetCount() ; i++)
 	{
 		const auto l_time = get_spike(flagged_spikes_.GetAt(i))->get_time();
 		if (l_time < l_first)
@@ -922,12 +927,12 @@ void SpikeList::get_range_of_spike_flagged(long& l_first, long& l_last)
 	}
 }
 
-void SpikeList::change_class_of_flagged_spikes(int new_class_id)
+void SpikeList::change_class_of_flagged_spikes(const int new_class_id)
 {
 	const auto n_spikes = get_spike_flag_array_count();
 	for (auto i = 0; i < n_spikes; i++)
 	{
-		const auto spike_no = get_spike_flag_array_at(i);
+		const auto spike_no = get_spike_index_of_flag(i);
 		Spike* spike = get_spike(spike_no);
 		spike->set_class_id(new_class_id);
 	}

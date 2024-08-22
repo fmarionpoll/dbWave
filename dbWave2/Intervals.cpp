@@ -1,4 +1,3 @@
-// StimLevelArray.cpp : implementation file
 
 #include "StdAfx.h"
 #include "Intervals.h"
@@ -11,28 +10,28 @@ IMPLEMENT_SERIAL(CIntervals, CObject, 0)
 
 CIntervals::CIntervals()
 {
-	array.SetSize(0); // time on, time off
+	array_.SetSize(0); // time on, time off
 }
 
 CIntervals::~CIntervals()
 {
-	array.RemoveAll();
+	array_.RemoveAll();
 }
 
 CIntervals& CIntervals::operator =(const CIntervals& arg)
 {
 	if (this != &arg)
 	{
-		iID	= arg.iID;
+		i_id	= arg.i_id;
 		channel = arg.channel;
 		cs_descriptor = arg.cs_descriptor; 
 		n_items = arg.n_items;
 		n_per_cycle = arg.n_per_cycle;
 		channel_sampling_rate = arg.channel_sampling_rate;
 
-		array.SetSize(arg.array.GetSize());
-		for (auto i = 0; i < arg.array.GetSize(); i++)
-			array.SetAt(i, arg.array.GetAt(i)); 
+		array_.SetSize(arg.array_.GetSize());
+		for (auto i = 0; i < arg.array_.GetSize(); i++)
+			array_.SetAt(i, arg.array_.GetAt(i)); 
 	}
 	return *this;
 }
@@ -44,7 +43,7 @@ void CIntervals::Serialize(CArchive& ar)
 	{
 		auto n = 4;
 		ar << n;
-		ar << iID;
+		ar << i_id;
 		ar << n_items;
 		ar << n_per_cycle;
 		ar << i_version;
@@ -55,7 +54,7 @@ void CIntervals::Serialize(CArchive& ar)
 
 		n = 1;
 		ar << n;
-		array.Serialize(ar);
+		array_.Serialize(ar);
 
 		n = 1;
 		ar << n;
@@ -65,7 +64,7 @@ void CIntervals::Serialize(CArchive& ar)
 	{
 		int n;
 		ar >> n;
-		ar >> iID;
+		ar >> i_id;
 		n--;
 		ar >> n_items;
 		n--;
@@ -83,7 +82,7 @@ void CIntervals::Serialize(CArchive& ar)
 			if (n > 0) ar >> cs_descriptor;
 			n--;
 			ar >> n;
-			if (n > 0) array.Serialize(ar);
+			if (n > 0) array_.Serialize(ar);
 			n--;
 			if (i_version > 1)
 				ar >> n;
@@ -95,7 +94,7 @@ void CIntervals::Serialize(CArchive& ar)
 			ar >> n;
 			ar >> cs_descriptor; 
 			ar >> n;
-			array.Serialize(ar);
+			array_.Serialize(ar);
 		}
 	}
 }

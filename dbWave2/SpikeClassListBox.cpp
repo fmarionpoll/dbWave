@@ -184,11 +184,11 @@ int SpikeClassListBox::select_spike(db_spike& spike_selected)
 		//		spike_selected.spike_index = -1;
 		//}
 		// single selection
-		m_spike_list_->set_single_spike_flag(spike_selected.spike_index);
+		m_spike_list_->set_spike_flag(spike_selected.spike_index, true);
 	}
 	// un-select all spikes
 	else
-		m_spike_list_->remove_all_spike_flags();
+		m_spike_list_->clear_flagged_spikes();
 
 	// select corresponding row
 	if (spike_selected.spike_index >= 0)

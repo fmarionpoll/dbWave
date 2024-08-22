@@ -3,8 +3,8 @@ class SpikeClassDescriptor : public CObject
 {
 	DECLARE_SERIAL(SpikeClassDescriptor)
 protected:
-	int class_id = 0;
-	int n_items = 0;
+	int class_id_ = 0;
+	int n_items_ = 0;
 
 public:
 	SpikeClassDescriptor(); 
@@ -14,13 +14,13 @@ public:
 	void Serialize(CArchive& ar) override;
 	SpikeClassDescriptor& operator=(const SpikeClassDescriptor& arg);
 
-	int get_class_id() const {return class_id; }
-	void set_class_id(const int id) { class_id = id; }
+	int get_class_id() const {return class_id_; }
+	void set_class_id(const int id) { class_id_ = id; }
 
-	int get_n_items() const {return n_items; }
-	void set_n_items(const int n) { n_items = n; }
+	int get_n_items() const {return n_items_; }
+	void set_n_items(const int n) { n_items_ = n; }
 
-	int increment_n_items() { n_items++; return n_items; }
-	int decrement_n_items() { if (n_items > 0)  n_items--; return n_items; }
+	int increment_n_items() { n_items_++; return n_items_; }
+	int decrement_n_items() { if (n_items_ > 0)  n_items_--; return n_items_; }
 };
 

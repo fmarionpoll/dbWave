@@ -65,7 +65,7 @@ BOOL DlgEditStimArray::OnInitDialog()
 
 	transfer_intervals_array_to_control_list();
 
-	if (intervals_saved.GetSize() < 1)
+	if (intervals_saved.get_size() < 1)
 		GetDlgItem(IDC_PASTE)->EnableWindow(FALSE);
 
 	if (tag_list == nullptr)
@@ -78,11 +78,11 @@ BOOL DlgEditStimArray::OnInitDialog()
 void DlgEditStimArray::transfer_intervals_array_to_control_list()
 {
 	list_control.DeleteAllItems();
-	const auto n_items = intervals.GetSize();
+	const auto n_items = intervals.get_size();
 	intervals.channel_sampling_rate = m_sampling_rate;
 	for (int i = 0; i < n_items; i++) 
 	{
-		const float time_interval = static_cast<float>(intervals.GetAt(i)) / m_sampling_rate;
+		const float time_interval = static_cast<float>(intervals.get_at(i)) / m_sampling_rate;
 		list_control.add_new_item(i, time_interval);
 	}
 }
@@ -90,13 +90,13 @@ void DlgEditStimArray::transfer_intervals_array_to_control_list()
 void DlgEditStimArray::transfer_control_list_to_intervals_array()
 {
 	const int n_items = list_control.GetItemCount();
-	intervals.RemoveAll();
+	intervals.remove_all();
 
 	for (auto i = 0; i < n_items; i++) 
 	{
 		const float value = list_control.get_item_value(i);
 		const long ii = static_cast<long>(value * m_sampling_rate);
-		intervals.Add(ii);
+		intervals.add_item(ii);
 	}
 }
 
@@ -115,7 +115,7 @@ void DlgEditStimArray::OnBnClickedDelete()
 
 	list_control.SetItemState(m_item_index, 0, LVIS_SELECTED | LVIS_FOCUSED);
 	list_control.DeleteItem(m_item_index);
-	intervals.RemoveAt(m_item_index);
+	intervals.remove_at(m_item_index);
 	const auto last_index = list_control.GetItemCount() - 1;
 	if (m_item_index > last_index)
 		m_item_index = last_index;
@@ -138,24 +138,24 @@ void DlgEditStimArray::OnBnClickedInsert()
 void DlgEditStimArray::OnBnClickedDelete3()
 {
 	list_control.DeleteAllItems();
-	intervals.RemoveAll();
+	intervals.remove_all();
 }
 
 void DlgEditStimArray::OnBnClickedReOrder()
 {
 	transfer_control_list_to_intervals_array();
 
-	auto n_items = intervals.GetSize();
+	auto n_items = intervals.get_size();
 	for (auto i = 0; i < n_items - 1; i++)
 	{
-		auto i_min = intervals.GetAt(i);
+		auto i_min = intervals.get_at(i);
 		for (auto j = i + 1; j < n_items; j++)
 		{
-			if (intervals.GetAt(j) < i_min)
+			if (intervals.get_at(j) < i_min)
 			{
-				intervals.SetAt(i, intervals.GetAt(j));
-				intervals.SetAt(j, i_min);
-				i_min = intervals.GetAt(i);
+				intervals.set_at(i, intervals.get_at(j));
+				intervals.set_at(j, i_min);
+				i_min = intervals.get_at(i);
 			}
 		}
 	}
@@ -182,11 +182,11 @@ void DlgEditStimArray::OnBnClickedPaste()
 			m_item_index = list_control.GetNextSelectedItem(pos) + 1;
 		else
 			m_item_index = 0;
-		const float time_interval = static_cast<float>(intervals.GetAt(m_item_index)) / m_sampling_rate;
+		const float time_interval = static_cast<float>(intervals.get_at(m_item_index)) / m_sampling_rate;
 		list_control.set_item(m_item_index, time_interval);
 
-		intervals.InsertAt(m_item_index, 0L);
-		intervals.SetAt(m_item_index, intervals_saved.GetAt(j));
+		intervals.insert_at(m_item_index, 0L);
+		intervals.set_at(m_item_index, intervals_saved.get_at(j));
 	}
 	reset_list_order();
 }
@@ -219,7 +219,7 @@ void DlgEditStimArray::OnBnClickedImportfromdata()
 	for (int i = 0; i < n_tags; i++)
 	{
 		const long l_interval = tag_list->get_tag_value_long(i);
-		intervals.Add(l_interval);
+		intervals.add_item(l_interval);
 		const float time_interval = static_cast<float>(l_interval) / m_sampling_rate;
 		list_control.add_new_item(i, time_interval);
 	}

@@ -73,32 +73,32 @@ protected:
 	// Overrides
 public:
 	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
-	BOOL OnMove(UINT nIDMoveCommand) override;
+	BOOL OnMove(UINT n_id_move_command) override;
 protected:
-	void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+	void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint) override;
 	void DoDataExchange(CDataExchange* pDX) override;
 	void OnInitialUpdate() override;
-	void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView) override;
+	void OnActivateView(BOOL b_activate, CView* p_activate_view, CView* p_deactive_view) override;
 	void OnDraw(CDC* p_dc) override;
 	void OnPrint(CDC* p_dc, CPrintInfo* pInfo) override;
-	BOOL OnPreparePrinting(CPrintInfo* pInfo) override;
+	BOOL OnPreparePrinting(CPrintInfo* p_info) override;
 	void OnEndPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
 	void OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo) override;
 
 protected:
-	void buildData();
-	void getFileInfos(CString& str_comment);
-	void displayHistogram(CDC* p_dc, CRect* pRect);
-	void displayDot(CDC* p_dc, CRect* pRect);
-	void displayPSTHAutoc(CDC* p_dc, CRect* pRect);
-	void displayStim(CDC* p_dc, CRect* pRect, long* l_first, long* l_last);
-	void buildDataAndDisplay();
-	void showControls(int iselect);
-	void selectSpkList(int icursel, BOOL bRefreshInterface = FALSE);
+	void build_data();
+	void get_file_infos(CString& str_comment);
+	void display_histogram(CDC* p_dc, const CRect* p_rect);
+	void display_dot(CDC* p_dc, CRect* p_rect);
+	void display_psth_autocorrelation(CDC* p_dc, CRect* p_rect);
+	void display_stimulus(CDC* p_dc, const CRect* p_rect, const long* l_first, const long* l_last) const;
+	void build_data_and_display();
+	void show_controls(int i_select);
+	void select_spk_list(int i_cur_sel, BOOL b_refresh_interface = FALSE);
 
 	// Implementation
 protected:
-	long plotHistog(CDC* p_dc, CRect* dispRect, int nbins, long* phistog0, int orientation = 0, int btype = 0);
+	long plot_histogram(CDC* p_dc, CRect* p_display_rect, int n_bins, long* p_hist0, int orientation = 0, int b_type = 0);
 
 #ifdef _DEBUG
 	void AssertValid() const override;
@@ -107,23 +107,23 @@ protected:
 
 	// Generated message map functions
 	afx_msg void OnDestroy();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnEnChangeTimefirst();
-	afx_msg void OnEnChangeTimelast();
-	afx_msg void OnEnChangeTimebin();
-	afx_msg void OnEnChangebinISI();
-	afx_msg void OnClickAllfiles();
-	afx_msg void OnabsoluteTime();
-	afx_msg void OnrelativeTime();
-	afx_msg void OnClickOneclass();
-	afx_msg void OnClickAllclasses();
-	afx_msg void OnEnChangeSpikeclass();
-	afx_msg void OnEnChangenbins();
-	afx_msg void OnEnChangerowheight();
-	afx_msg void OnEnChangeDotheight();
-	afx_msg void OnFormatHistogram();
-	afx_msg void OnClickCycleHist();
-	afx_msg void OnEditCopy();
+	afx_msg void OnSize(UINT n_type, int cx, int cy);
+	afx_msg void on_en_change_time_first();
+	afx_msg void on_en_change_time_last();
+	afx_msg void on_en_change_time_bin();
+	afx_msg void on_en_change_bin_isi();
+	afx_msg void on_click_all_files();
+	afx_msg void on_absolute_time();
+	afx_msg void on_relative_time();
+	afx_msg void on_click_one_class();
+	afx_msg void on_click_all_classes();
+	afx_msg void on_en_change_spike_class();
+	afx_msg void on_en_change_n_bins();
+	afx_msg void on_en_change_row_height();
+	afx_msg void on_en_change_dot_height();
+	afx_msg void on_format_histogram();
+	afx_msg void on_click_cycle_hist();
+	afx_msg void on_edit_copy();
 	afx_msg void OnSelchangeHistogramtype();
 	afx_msg void OnEnChangeEditnstipercycle();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
