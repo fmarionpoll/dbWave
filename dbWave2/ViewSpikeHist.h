@@ -124,15 +124,15 @@ protected:
 	afx_msg void on_format_histogram();
 	afx_msg void on_click_cycle_hist();
 	afx_msg void on_edit_copy();
-	afx_msg void OnSelchangeHistogramtype();
-	afx_msg void OnEnChangeEditnstipercycle();
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnEnChangeEditlockonstim();
+	afx_msg void on_sel_change_histogram_type();
+	afx_msg void on_en_change_edit_n_stimuli_per_cycle();
+	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
+	afx_msg void on_en_change_edit_lock_on_stim();
 
 public:
 	CTabCtrl m_tabCtrl;
-	afx_msg void OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void on_nm_click_tab1(NMHDR* p_nmhdr, LRESULT* p_result);
+	afx_msg void on_tcn_sel_change_tab1(NMHDR* p_nmhdr, LRESULT* p_result);
 	DECLARE_MESSAGE_MAP()
 };
 

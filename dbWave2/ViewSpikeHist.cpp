@@ -73,13 +73,13 @@ BEGIN_MESSAGE_MAP(ViewSpikeHist, ViewDbTable)
 	ON_COMMAND(ID_FORMAT_HISTOGRAM, &ViewSpikeHist::on_format_histogram)
 	ON_BN_CLICKED(IDC_CHECK2, &ViewSpikeHist::on_click_cycle_hist)
 	ON_COMMAND(ID_EDIT_COPY, &ViewSpikeHist::on_edit_copy)
-	ON_LBN_SELCHANGE(IDC_LIST1, &ViewSpikeHist::OnSelchangeHistogramtype)
-	ON_EN_CHANGE(IDC_EDITNSTIPERCYCLE, &ViewSpikeHist::OnEnChangeEditnstipercycle)
-	ON_EN_CHANGE(IDC_EDITLOCKONSTIM, &ViewSpikeHist::OnEnChangeEditlockonstim)
+	ON_LBN_SELCHANGE(IDC_LIST1, &ViewSpikeHist::on_sel_change_histogram_type)
+	ON_EN_CHANGE(IDC_EDITNSTIPERCYCLE, &ViewSpikeHist::on_en_change_edit_n_stimuli_per_cycle)
+	ON_EN_CHANGE(IDC_EDITLOCKONSTIM, &ViewSpikeHist::on_en_change_edit_lock_on_stim)
 	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
-	ON_NOTIFY(NM_CLICK, IDC_TAB1, &ViewSpikeHist::OnNMClickTab1)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &ViewSpikeHist::OnTcnSelchangeTab1)
+	ON_NOTIFY(NM_CLICK, IDC_TAB1, &ViewSpikeHist::on_nm_click_tab1)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &ViewSpikeHist::on_tcn_sel_change_tab1)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1906,15 +1906,15 @@ void ViewSpikeHist::display_stimulus(CDC* p_dc, const CRect* p_rect, const long*
 
 	// start looping from the first interval that meet the criteria
 	// set baseline according to the interval (broken pulse?)
-	auto istate = bottom; // use this variable to keep track of pulse broken by display limits
+	auto i_state = bottom; // use this variable to keep track of pulse broken by display limits
 	auto ii = (i0 / 2) * 2; // keep index of the ON transition
 	if (ii != i0)
-		istate = top;
-	p_dc->MoveTo(p_rect->left, istate);
+		i_state = top;
+	p_dc->MoveTo(p_rect->left, i_state);
 
 	for (ii; ii < p_spike_doc_->m_stimulus_intervals.get_size(); ii++, ii++)
 	{
-		// stim starts here
+		// stimulus starts here
 		int iix0 = p_spike_doc_->m_stimulus_intervals.get_at(ii) - ii_start;
 		if (iix0 >= ii_len) // first transition ON after last graph pt?
 			break; // yes = exit loop
@@ -1923,32 +1923,32 @@ void ViewSpikeHist::display_stimulus(CDC* p_dc, const CRect* p_rect, const long*
 			iix0 = 0; // yes = clip
 
 		iix0 = MulDiv(display_len, iix0, ii_len) + p_rect->left;
-		p_dc->LineTo(iix0, istate); // draw line up to the first point of the pulse
+		p_dc->LineTo(iix0, i_state); // draw line up to the first point of the pulse
 		p_dc->LineTo(iix0, top); // draw vertical line to top of pulse
 
-		// stim ends here
-		istate = bottom; // after pulse, descend to bottom level
+		// stimulus ends here
+		i_state = bottom; // after pulse, descend to bottom level
 		int iix1 = ii_len;
 		if (ii < p_spike_doc_->m_stimulus_intervals.get_size() - 1)
 			iix1 = p_spike_doc_->m_stimulus_intervals.get_at(ii + 1) - ii_start;
 		if (iix1 > ii_len) // last transition off graph?
 		{
 			iix1 = ii_len; // yes = clip
-			istate = top; // do not descend..
+			i_state = top; // do not descend
 		}
 
 		iix1 = MulDiv(display_len, iix1, ii_len) + p_rect->left + 1;
 
 		p_dc->LineTo(iix1, top); // draw top of pulse
-		p_dc->LineTo(iix1, istate); // draw descent to bottom line
+		p_dc->LineTo(iix1, i_state); // draw descent to bottom line
 	}
 
 	// end of loop - draw the rest
-	p_dc->LineTo(p_rect->right, istate);
+	p_dc->LineTo(p_rect->right, i_state);
 	p_dc->SelectObject(p_old_p);
 }
 
-void ViewSpikeHist::OnSelchangeHistogramtype()
+void ViewSpikeHist::on_sel_change_histogram_type()
 {
 	const auto i = static_cast<CListBox*>(GetDlgItem(IDC_LIST1))->GetCurSel();
 	if (m_bhistType == i)
@@ -1957,40 +1957,40 @@ void ViewSpikeHist::OnSelchangeHistogramtype()
 	build_data_and_display();
 }
 
-void ViewSpikeHist::OnEnChangeEditnstipercycle()
+void ViewSpikeHist::on_en_change_edit_n_stimuli_per_cycle()
 {
 	m_pvdS->nstipercycle = GetDlgItemInt(IDC_EDITNSTIPERCYCLE);
 	build_data_and_display();
 }
 
-void ViewSpikeHist::OnEnChangeEditlockonstim()
+void ViewSpikeHist::on_en_change_edit_lock_on_stim()
 {
 	if (p_spike_doc_ == nullptr)
 		return;
-	int ilock = GetDlgItemInt(IDC_EDITLOCKONSTIM);
-	if (ilock != m_pvdS->istimulusindex)
+	int i_lock = GetDlgItemInt(IDC_EDITLOCKONSTIM);
+	if (i_lock != m_pvdS->istimulusindex)
 	{
-		if (ilock >= p_spike_doc_->m_stimulus_intervals.get_size())
-			ilock = p_spike_doc_->m_stimulus_intervals.get_size() - 1;
-		if (ilock < 0)
-			ilock = 0;
-		m_pvdS->istimulusindex = ilock;
+		if (i_lock >= p_spike_doc_->m_stimulus_intervals.get_size())
+			i_lock = p_spike_doc_->m_stimulus_intervals.get_size() - 1;
+		if (i_lock < 0)
+			i_lock = 0;
+		m_pvdS->istimulusindex = i_lock;
 		SetDlgItemInt(IDC_EDITLOCKONSTIM, m_pvdS->istimulusindex);
 	}
 	build_data_and_display();
 }
 
-void ViewSpikeHist::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void ViewSpikeHist::OnHScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar* p_scroll_bar)
 {
-	if (static_cast<CScrollBar*>(GetDlgItem(IDC_SCROLLBAR1)) != pScrollBar)
-		ViewDbTable::OnHScroll(nSBCode, nPos, pScrollBar);
+	if (static_cast<CScrollBar*>(GetDlgItem(IDC_SCROLLBAR1)) != p_scroll_bar)
+		ViewDbTable::OnHScroll(n_sb_code, n_pos, p_scroll_bar);
 
 	// Get the current position of scroll box.
-	auto curpos = pScrollBar->GetScrollPos();
+	auto cur_pos = p_scroll_bar->GetScrollPos();
 	float delta;
 
 	// Determine the new position of scroll box.
-	switch (nSBCode)
+	switch (n_sb_code)
 	{
 	case SB_LEFT: // Scroll to far left - next frame forwards
 		delta = m_timelast - m_timefirst;
@@ -1999,7 +1999,7 @@ void ViewSpikeHist::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		delta = m_timefirst - m_timelast;
 		break;
 	case SB_ENDSCROLL: // End scroll.
-		delta = (m_timelast - m_timefirst) * (curpos - 50) / 100;
+		delta = (m_timelast - m_timefirst) * (cur_pos - 50) / 100;
 		break;
 	case SB_LINELEFT: // Scroll left.
 		delta = -2 * m_timebinms / t1000;
@@ -2014,19 +2014,19 @@ void ViewSpikeHist::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		delta = m_timelast - m_timefirst;
 		break;
 	case SB_THUMBPOSITION: // Scroll to absolute position. nPos is the position
-		curpos = nPos; // of the scroll box at the end of the drag operation.
+		cur_pos = n_pos; // of the scroll box at the end of the drag operation.
 		return; // no action
 	case SB_THUMBTRACK: // Drag scroll box to specified position. nPos is the
-		curpos = nPos; // position that the scroll box has been dragged to.
+		cur_pos = n_pos; // position that the scroll box has been dragged to.
 		return; // no action
 	default:
 		return;
 	}
 
 	// Set the new position of the thumb (scroll box).
-	pScrollBar->SetScrollPos(50);
-	const auto nbins = static_cast<int>(delta * t1000 / m_timebinms);
-	delta = m_timebinms * nbins / t1000;
+	p_scroll_bar->SetScrollPos(50);
+	const auto n_bins = static_cast<int>(delta * t1000 / m_timebinms);
+	delta = m_timebinms * static_cast<float>(n_bins) / t1000;
 	m_timefirst += delta;
 	m_timelast += delta;
 	m_pvdS->timestart = m_timefirst;
@@ -2035,7 +2035,7 @@ void ViewSpikeHist::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	UpdateData(FALSE);
 }
 
-void ViewSpikeHist::select_spk_list(int icur, BOOL b_refresh_interface)
+void ViewSpikeHist::select_spk_list(const int i_cur_sel, const BOOL b_refresh_interface)
 {
 	if (b_refresh_interface)
 	{
@@ -2056,22 +2056,22 @@ void ViewSpikeHist::select_spk_list(int icur, BOOL b_refresh_interface)
 	}
 
 	// select spike list
-	GetDocument()->get_current_spike_file()->set_spike_list_current_index(icur);
-	m_tabCtrl.SetCurSel(icur);
+	GetDocument()->get_current_spike_file()->set_spike_list_current_index(i_cur_sel);
+	m_tabCtrl.SetCurSel(i_cur_sel);
 }
 
-void ViewSpikeHist::OnNMClickTab1(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewSpikeHist::on_nm_click_tab1(NMHDR* p_nmhdr, LRESULT* p_result)
 {
-	const auto icursel = m_tabCtrl.GetCurSel();
-	select_spk_list(icursel);
+	const auto i_cur_sel = m_tabCtrl.GetCurSel();
+	select_spk_list(i_cur_sel);
 	build_data_and_display();
-	*pResult = 0;
+	*p_result = 0;
 }
 
-void ViewSpikeHist::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
+void ViewSpikeHist::on_tcn_sel_change_tab1(NMHDR* p_nmhdr, LRESULT* p_result)
 {
-	const auto icursel = m_tabCtrl.GetCurSel();
-	select_spk_list(icursel);
+	const auto i_cu_sel = m_tabCtrl.GetCurSel();
+	select_spk_list(i_cu_sel);
 	build_data_and_display();
-	*pResult = 0;
+	*p_result = 0;
 }
