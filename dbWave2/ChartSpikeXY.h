@@ -9,6 +9,7 @@ class ChartSpikeXY : public ChartSpike
 public:
 	ChartSpikeXY();
 	~ChartSpikeXY() override;
+	void plot_data_to_dc_prepare_dc(CDC* p_dc);
 
 protected:
 	int dot_width_ = 6;

@@ -2,6 +2,8 @@
 #include "StdAfx.h"
 #include "ChartSpikeXY.h"
 
+#include "ChartSpikeShape.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -20,7 +22,7 @@ ChartSpikeXY::ChartSpikeXY()
 ChartSpikeXY::~ChartSpikeXY()
 = default;
 
-void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
+void ChartSpikeXY::plot_data_to_dc_prepare_dc(CDC * p_dc)
 {
 	if (b_erase_background_)
 		erase_background(p_dc);
@@ -30,14 +32,19 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 	rect.DeflateRect(1, 1);
 
 	// save context
-	const auto saved_dc = p_dc->SaveDC();
-	const auto saved_background_color = p_dc->GetBkColor();
+	saved_dc_ = p_dc->SaveDC();
+	saved_background_color_ = p_dc->GetBkColor();
 
 	// display data: trap error conditions
-	const auto window_duration = l_last_ - l_first_ + 1; 
-	get_extents(); 
+	window_duration_ = l_last_ - l_first_ + 1;
+	get_extents();
 	ASSERT(x_we_ != 1);
 	p_dc->SetMapMode(MM_TEXT);
+}
+
+void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
+{
+	plot_data_to_dc_prepare_dc(p_dc);
 
 	// prepare brush & rectangles (small for all spikes, larger for spikes belonging to the selected class)
 	auto width = dot_width_ / 2;
@@ -46,27 +53,14 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 	const CRect rect1(-width, -width, width, width);
 
 	long n_files = 1;
-	long index_current_file = 0;
+	const long index_current_file = dbwave_doc_->db_get_current_record_position();
 	if (b_display_all_files_)
-	{
 		n_files = dbwave_doc_->db_get_records_count();
-		index_current_file = dbwave_doc_->db_get_current_record_position();
-	}
 
 	for (long index_file = 0; index_file < n_files; index_file++)
 	{
-		if (b_display_all_files_)
-		{
-			if (dbwave_doc_->db_set_current_record_position(index_file))
-				dbwave_doc_->open_current_spike_file();
-		}
-		if (dbwave_doc_->m_p_spk_doc == nullptr)
-			continue;
-
 		p_spike_list_ = dbwave_doc_->m_p_spk_doc->get_spike_list_current();
-
-		// test presence of data
-		if (p_spike_list_ == nullptr || p_spike_list_->get_spikes_count() == 0 && !b_display_all_files_)
+		if (!get_spike_list_from_file(index_file) && !b_display_all_files_)
 		{
 			display_text_bottom_left(p_dc, cs_empty_, col_dark_gray);
 			continue;
@@ -85,9 +79,10 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 		}
 
 		// loop over all spikes
-		for (auto spike_index = last_spike_index; spike_index >= first_spike_index; spike_index--)
+		for (int spike_index = last_spike_index; spike_index >= first_spike_index; spike_index--)
 		{
-			display_spike_measure(p_spike_list_->get_spike(spike_index), p_dc, rect0, rect1, window_duration);
+			const Spike* spike = p_spike_list_->get_spike(spike_index);
+			display_spike_measure(spike, p_dc, rect0, rect1, window_duration_);
 		}
 
 		// display spike selected
@@ -111,8 +106,8 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 	}
 
 	// restore resources
-	p_dc->SetBkColor(saved_background_color);
-	p_dc->RestoreDC(saved_dc);
+	p_dc->SetBkColor(saved_background_color_);
+	p_dc->RestoreDC(saved_dc_);
 
 	//display cursors
 	if (hz_tags.get_tag_list_size() > 0)

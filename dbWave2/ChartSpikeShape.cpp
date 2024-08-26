@@ -41,12 +41,16 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 	plot_data_to_dc_prepare_dc(p_dc);
 
 	auto n_files = 1;
+	long index_current_file = 0;
 	if (b_display_all_files_)
-		n_files = dbwave_doc_->db_get_records_count();
-
-	for (auto i_file = 0; i_file < n_files; i_file++)
 	{
-		if (!get_spike_list_from_file(i_file) && !b_display_all_files_)
+		n_files = dbwave_doc_->db_get_records_count();
+		index_current_file = dbwave_doc_->db_get_current_record_position();
+	}
+
+	for (auto index_file = 0; index_file < n_files; index_file++)
+	{
+		if (!get_spike_list_from_file(index_file) && !b_display_all_files_)
 		{
 			display_text_bottom_left(p_dc, cs_empty_, col_dark_gray);
 			continue;
@@ -148,13 +152,21 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 		wsprintf(num, _T("%i"), get_selected_class());
 		p_dc->TextOut(1, 1, num);
 	}
-	
 
 	// display selected spike
 	if (spike_selected_.spike_index >= 0 && is_spike_within_range(spike_selected_))
 	{
 		const Spike* spike = dbwave_doc_->get_spike(spike_selected_);
 		draw_spike_on_dc(spike, p_dc);
+	}
+
+	// restore selection to initial file
+	if (b_display_all_files_)
+	{
+		if (dbwave_doc_->db_set_current_record_position(index_current_file))
+			dbwave_doc_->open_current_spike_file();
+		if (dbwave_doc_->m_p_spk_doc != nullptr)
+			p_spike_list_ = dbwave_doc_->m_p_spk_doc->get_spike_list_current();
 	}
 }
 

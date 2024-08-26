@@ -51,8 +51,12 @@ void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 	plot_data_to_dc_prepare_dc(p_dc);
 
 	auto n_files = 1;
+	long index_current_file = 0;
 	if (b_display_all_files_)
+	{
 		n_files = dbwave_doc_->db_get_records_count();
+		index_current_file = dbwave_doc_->db_get_current_record_position();
+	}
 
 	for (long i_file = 0; i_file < n_files; i_file++)
 	{
@@ -80,6 +84,15 @@ void ChartSpikeBar::plot_data_to_dc(CDC* p_dc)
 	// restore resources
 	p_dc->SetBkColor(saved_background_color_);
 	p_dc->RestoreDC(saved_dc_);
+
+	// restore selection to initial file
+	if (b_display_all_files_)
+	{
+		if (dbwave_doc_->db_set_current_record_position(index_current_file))
+			dbwave_doc_->open_current_spike_file();
+		if (dbwave_doc_->m_p_spk_doc != nullptr)
+			p_spike_list_ = dbwave_doc_->m_p_spk_doc->get_spike_list_current();
+	}
 }
 
 void ChartSpikeBar::display_temporary_tag(CDC* p_dc)

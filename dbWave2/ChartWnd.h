@@ -57,6 +57,7 @@ protected:
 	CDC plot_dc_{};
 	int saved_dc_;
 	COLORREF saved_background_color_;
+	long window_duration_{ 1 };
 
 	CWordArray array_mark_{};
 	CPen black_dotted_pen_{};
