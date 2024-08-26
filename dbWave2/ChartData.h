@@ -95,7 +95,7 @@ public:
 
 	float get_channel_list_volts_per_pixel(const int item) const {
 		const CChanlistItem* channel_item = get_channel_list_item(item);
-		return (static_cast<float>(channel_item->GetYextent()) * channel_item->GetVoltsperDataBin() / static_cast<float>(-y_ve_));
+		return (static_cast<float>(channel_item->get_y_extent()) * channel_item->get_volts_per_bin() / static_cast<float>(-y_ve_));
 	}
 
 	float get_time_per_pixel() const{
@@ -104,14 +104,14 @@ public:
 	}
 
 	int get_channel_list_bin_to_y_pixel(const int chan, const int bin) {
-		return MulDiv(bin - chan_list_item_ptr_array_[chan]->GetYzero(), y_ve_,
-		              chan_list_item_ptr_array_[chan]->GetYextent()) + y_vo_;
+		return MulDiv(bin - chan_list_item_ptr_array_[chan]->get_y_zero(), y_ve_,
+		              chan_list_item_ptr_array_[chan]->get_y_extent()) + y_vo_;
 	}
 
 	int get_channel_list_y_pixels_to_bin(const int chan, const int y_pixel_relative_to_top_client_window) {
-		return chan_list_item_ptr_array_[chan]->GetYzero() + 
+		return chan_list_item_ptr_array_[chan]->get_y_zero() + 
 				MulDiv(y_pixel_relative_to_top_client_window - y_vo_,
-					chan_list_item_ptr_array_[chan]->GetYextent(), 
+					chan_list_item_ptr_array_[chan]->get_y_extent(), 
 					y_ve_);
 	}
 

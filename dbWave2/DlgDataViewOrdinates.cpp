@@ -86,8 +86,8 @@ BOOL DlgDataViewOrdinates::OnInitDialog()
 	for (i = 0; i < m_nChanmax; i++) // browse through all chans
 	{
 		CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(i);
-		m_settings.Add(chan->GetYzero()); // save zero
-		m_settings.Add(chan->GetYextent()); // save extent
+		m_settings.Add(chan->get_y_zero()); // save zero
+		m_settings.Add(chan->get_y_extent()); // save extent
 	}
 	CDialog::OnInitDialog();
 
@@ -96,11 +96,11 @@ BOOL DlgDataViewOrdinates::OnInitDialog()
 	for (i = 0; i < m_nChanmax; i++) // browse through all chans again
 	{
 		CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(i);
-		chan->SetYzero(m_settings.GetAt(j));
+		chan->set_y_zero(m_settings.GetAt(j));
 		j++; // restore zero
-		chan->SetYextent(m_settings.GetAt(j));
+		chan->set_y_extent(m_settings.GetAt(j));
 		j++; // restore extent
-		m_chanSelect.AddString(chan->GetComment()); // load comment/chan
+		m_chanSelect.AddString(chan->get_comment()); // load comment/chan
 	}
 	m_chanSelect.SetCurSel(m_Channel); // select chan zero
 
@@ -116,9 +116,9 @@ void DlgDataViewOrdinates::LoadChanlistData(int i)
 {
 	CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(i);
 	// compute max and min from zero and extent
-	m_VoltsperBin = chan->GetVoltsperDataBin();
-	const auto zero = static_cast<float>(chan->GetYzero());
-	const auto extent = static_cast<float>(chan->GetYextent());
+	m_VoltsperBin = chan->get_volts_per_bin();
+	const auto zero = static_cast<float>(chan->get_y_zero());
+	const auto extent = static_cast<float>(chan->get_y_extent());
 	//const auto binzero =  static_cast<float>(0.0)  /*m_plinev->GetChanlistBinZero(i)*/;
 
 	m_xcenter = (zero/*- binzero*/) * m_VoltsperBin / m_p10;
@@ -143,13 +143,13 @@ void DlgDataViewOrdinates::SaveChanlistData(int indexlist)
 	for (auto j = indexfirst; j < indexlast; j++)
 	{
 		CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(j);
-		const auto vper_bin = chan->GetVoltsperDataBin();
+		const auto vper_bin = chan->get_volts_per_bin();
 		const auto xzero = ((m_xmax + m_xmin) / 2.f) * m_p10;
 		const auto xextent = (m_xmax - m_xmin) * m_p10;
-		auto i = static_cast<int>(xzero / vper_bin) + chan->GetDataBinZero();
-		chan->SetYzero(i);
+		auto i = static_cast<int>(xzero / vper_bin) + chan->get_data_bin_zero();
+		chan->set_y_zero(i);
 		i = static_cast<int>(xextent / vper_bin);
-		chan->SetYextent(i);
+		chan->set_y_extent(i);
 	}
 	m_pChartDataWnd->Invalidate();
 }
@@ -211,10 +211,10 @@ void DlgDataViewOrdinates::OnKillfocusVertcenter()
 	m_xmin += diff;
 
 	CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(m_Channel);
-	const auto vper_bin = chan->GetVoltsperDataBin();
+	const auto vper_bin = chan->get_volts_per_bin();
 	const auto xzero = ((m_xmax + m_xmin) / 2.f) * m_p10;
-	const auto zero = static_cast<int>(xzero / vper_bin) + chan->GetDataBinZero();
-	chan->SetYzero(zero);
+	const auto zero = static_cast<int>(xzero / vper_bin) + chan->get_data_bin_zero();
+	chan->set_y_zero(zero);
 	m_bChanged = TRUE;
 	UpdateData(FALSE);
 }
@@ -225,14 +225,14 @@ void DlgDataViewOrdinates::OnKillfocusVertMxMi()
 
 	// save into lineview and reload to change scale and voltsperpixel
 	CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(m_Channel);
-	const auto vper_bin = chan->GetVoltsperDataBin();
+	const auto vper_bin = chan->get_volts_per_bin();
 	const auto xzero = ((m_xmax + m_xmin) / 2.f) * m_p10;
 	const auto xextent = (m_xmax - m_xmin) * m_p10;
-	const auto zero = static_cast<int>(xzero / vper_bin) + chan->GetDataBinZero();
+	const auto zero = static_cast<int>(xzero / vper_bin) + chan->get_data_bin_zero();
 	const auto extent = static_cast<int>(xextent / vper_bin);
 
-	chan->SetYzero(zero);
-	chan->SetYextent(extent);
+	chan->set_y_zero(zero);
+	chan->set_y_extent(extent);
 	LoadChanlistData(m_Channel);
 	ChangeUnits(m_iUnit, FALSE);
 
@@ -248,9 +248,9 @@ void DlgDataViewOrdinates::OnCancel()
 	for (auto i = 0; i < m_nChanmax; i++)
 	{
 		CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(i);
-		chan->SetYzero(m_settings[j]);
+		chan->set_y_zero(m_settings[j]);
 		j++;
-		chan->SetYextent(m_settings[j]);
+		chan->set_y_extent(m_settings[j]);
 		j++;
 	}
 	CDialog::OnCancel();

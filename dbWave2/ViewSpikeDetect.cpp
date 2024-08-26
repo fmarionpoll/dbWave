@@ -413,9 +413,9 @@ boolean ViewSpikeDetection::update_data_file(BOOL b_update_interface)
 		chart_data_filtered_.remove_all_channel_list_items();
 		chart_data_filtered_.add_channel_list_item(0, 0);
 		CChanlistItem* channel_item = chart_data_filtered_.get_channel_list_item(0);
-		channel_item->SetColor(0);
+		channel_item->set_color(0);
 		chart_data_filtered_.hz_tags.remove_all_tags();
-		m_p_detect_parameters_->detect_threshold_bin = channel_item->ConvertVoltsToDataBins(m_p_detect_parameters_->detect_threshold_mv / 1000.f);
+		m_p_detect_parameters_->detect_threshold_bin = channel_item->convert_volts_to_data_bins(m_p_detect_parameters_->detect_threshold_mv / 1000.f);
 		chart_data_filtered_.hz_tags.add_tag(m_p_detect_parameters_->detect_threshold_bin, 0);
 	}
 
@@ -430,8 +430,8 @@ boolean ViewSpikeDetection::update_data_file(BOOL b_update_interface)
 		{
 			// test if this data chan is present + no transformation
 			const CChanlistItem* channel_item = chart_data_source_.get_channel_list_item(j);
-			if (channel_item->GetSourceChan() == i
-				&& channel_item->GetTransformMode() == 0)
+			if (channel_item->get_source_chan() == i
+				&& channel_item->get_transform_mode() == 0)
 			{
 				b_present = TRUE;
 				break;
@@ -442,7 +442,7 @@ boolean ViewSpikeDetection::update_data_file(BOOL b_update_interface)
 			chart_data_source_.add_channel_list_item(i, 0);
 			channel_list_size++;
 		}
-		chart_data_source_.get_channel_list_item(i)->SetColor(static_cast<WORD>(i));
+		chart_data_source_.get_channel_list_item(i)->set_color(static_cast<WORD>(i));
 	}
 
 	// if browse through another file ; keep previous display parameters & load data
@@ -647,7 +647,7 @@ LRESULT ViewSpikeDetection::on_my_message(const WPARAM w_param, const LPARAM l_p
 	case HINT_MOVE_HZ_TAG:
 		m_p_detect_parameters_->detect_threshold_bin = chart_data_filtered_.hz_tags.get_value_int(threshold);
 		m_threshold_val = chart_data_filtered_.get_channel_list_item(0)
-			->ConvertDataBinsToVolts(
+			->convert_data_bins_to_volts(
 				chart_data_filtered_.hz_tags.get_value_int(threshold)) * 1000.f;
 		m_p_detect_parameters_->detect_threshold_mv = m_threshold_val;
 		mm_threshold_val_.m_bEntryDone = TRUE;
@@ -1019,7 +1019,7 @@ void ViewSpikeDetection::on_sel_change_detect_chan()
 	m_p_detect_parameters_->b_changed = TRUE;
 	chart_data_filtered_.set_channel_list_y(0, m_p_detect_parameters_->detect_channel, m_p_detect_parameters_->detect_transform);
 	const CChanlistItem* channel_list_item = chart_data_filtered_.get_channel_list_item(0);
-	m_p_detect_parameters_->detect_threshold_bin = channel_list_item->ConvertVoltsToDataBins(m_p_detect_parameters_->detect_threshold_mv / 1000.f);
+	m_p_detect_parameters_->detect_threshold_bin = channel_list_item->convert_volts_to_data_bins(m_p_detect_parameters_->detect_threshold_mv / 1000.f);
 	chart_data_filtered_.move_hz_tag_to_val(0, m_p_detect_parameters_->detect_threshold_bin);
 	chart_data_filtered_.get_data_from_doc();
 	chart_data_filtered_.auto_zoom_chan(0);
@@ -1437,8 +1437,8 @@ void ViewSpikeDetection::on_format_x_scale()
 	{
 		dlg.m_xparam = FALSE;
 		const CChanlistItem* p_chan = chart_data_filtered_.get_channel_list_item(m_p_detect_parameters_->detect_channel);
-		dlg.m_yzero = p_chan->GetYzero();
-		dlg.m_yextent = p_chan->GetYextent();
+		dlg.m_yzero = p_chan->get_y_zero();
+		dlg.m_yextent = p_chan->get_y_extent();
 		dlg.m_bDisplaysource = TRUE;
 	}
 	else if (pFocus != nullptr && chart_spike_bar_.m_hWnd == pFocus->m_hWnd)
@@ -1462,8 +1462,8 @@ void ViewSpikeDetection::on_format_x_scale()
 		if (dlg.m_bDisplaysource)
 		{
 			CChanlistItem* chan = chart_data_filtered_.get_channel_list_item(0);
-			chan->SetYzero(dlg.m_yzero);
-			chan->SetYextent(dlg.m_yextent);
+			chan->set_y_zero(dlg.m_yzero);
+			chan->set_y_extent(dlg.m_yextent);
 			chart_data_filtered_.Invalidate();
 		}
 		if (dlg.m_bDisplaybars)
@@ -1728,7 +1728,7 @@ void ViewSpikeDetection::on_en_change_threshold()
 			m_threshold_val = threshold_value;
 			m_p_detect_parameters_->detect_threshold_mv = threshold_value;
 			const CChanlistItem* channel_item = chart_data_filtered_.get_channel_list_item(0);
-			m_p_detect_parameters_->detect_threshold_bin = channel_item->ConvertVoltsToDataBins(m_threshold_val / 1000.f);
+			m_p_detect_parameters_->detect_threshold_bin = channel_item->convert_volts_to_data_bins(m_threshold_val / 1000.f);
 			chart_data_filtered_.move_hz_tag_to_val(0, m_p_detect_parameters_->detect_threshold_bin);
 		}
 		UpdateData(FALSE);
@@ -1963,7 +1963,7 @@ void ViewSpikeDetection::update_combo_box()
 	m_detect_channel_combo.SetCurSel(m_p_detect_parameters_->detect_channel);
 	m_transform_combo.SetCurSel(m_p_detect_parameters_->detect_transform);
 	chart_data_filtered_.set_channel_list_y(0, m_p_detect_parameters_->detect_channel, m_p_detect_parameters_->detect_transform);
-	m_p_detect_parameters_->detect_threshold_bin = chart_data_filtered_.get_channel_list_item(0)->ConvertVoltsToDataBins(
+	m_p_detect_parameters_->detect_threshold_bin = chart_data_filtered_.get_channel_list_item(0)->convert_volts_to_data_bins(
 		m_threshold_val / 1000.f);
 	chart_data_filtered_.hz_tags.set_channel(0, 0);
 	chart_data_filtered_.hz_tags.set_value_int(0, m_p_detect_parameters_->detect_threshold_bin);
@@ -2199,7 +2199,7 @@ CString ViewSpikeDetection::print_data_bars(CDC* p_dc, const ChartData* p_data_c
 		for (auto channel_index = 0; channel_index < channel_list_size; channel_index++) // loop
 		{
 			CChanlistItem* channel_item = p_data_chart_wnd->get_channel_list_item(channel_index);
-			if (!channel_item->GetflagPrintVisible())
+			if (!channel_item->is_print_visible())
 				continue;
 
 			cs.Format(_T("chan#%i "), channel_index); 
@@ -2216,13 +2216,13 @@ CString ViewSpikeDetection::print_data_bars(CDC* p_dc, const ChartData* p_data_c
 			if (options_view_data_->b_channel_comment)
 			{
 				str_comment += tab;
-				str_comment += channel_item->GetComment();
+				str_comment += channel_item->get_comment();
 			}
 			str_comment += rc;
 			// print amplifiers settings (gain & filter), next line
 			if (options_view_data_->b_channel_settings)
 			{
-				const auto source_channel = channel_item->GetSourceChan();
+				const auto source_channel = channel_item->get_source_chan();
 				const auto wave_chan_array = GetDocument()->m_p_data_doc->get_wave_channels_array();
 				const auto p_chan = wave_chan_array->get_p_channel(source_channel);
 				cs.Format(_T("headstage=%s  g=%li LP=%i  IN+=%s  IN-=%s"),
@@ -2571,7 +2571,7 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 			p_dc->IntersectClipRect(&rect_data_); // (eventually)
 
 		// print detected channel only data
-		chart_data_filtered_.get_channel_list_item(0)->SetflagPrintVisible(chan_0_draw_mode);
+		chart_data_filtered_.get_channel_list_item(0)->set_flag_print_visible(chan_0_draw_mode);
 		chart_data_filtered_.resize_channels(rect_data_.Width(), 0);
 		chart_data_filtered_.get_data_from_doc(index_first_data_point, l_last);
 		chart_data_filtered_.print(p_dc, &rect_data_);
@@ -2653,12 +2653,12 @@ void ViewSpikeDetection::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 		if (i_file != file_index)
 		{
 			update_file_parameters(FALSE);
-			chart_data_filtered_.get_channel_list_item(0)->SetflagPrintVisible(0); // cancel printing channel zero
+			chart_data_filtered_.get_channel_list_item(0)->set_flag_print_visible(0); // cancel printing channel zero
 		}
 	}
 
 	// end of file loop : restore initial conditions
-	chart_data_filtered_.get_channel_list_item(0)->SetflagPrintVisible(1);
+	chart_data_filtered_.get_channel_list_item(0)->set_flag_print_visible(1);
 	if (!options_view_data_->b_filter_data_source)
 		chart_data_filtered_.set_channel_list_transform_mode(0, m_p_detect_parameters_->detect_transform);
 
@@ -2747,10 +2747,10 @@ void ViewSpikeDetection::update_gain_scroll(const int i_id)
 {
 	if (i_id == IDC_SCROLLY)
 		m_scroll_y_.SetScrollPos(
-			MulDiv(chart_data_filtered_.get_channel_list_item(m_selected_channel)->GetYextent(), 100, Y_EXTENT_MAX) + 50, TRUE);
+			MulDiv(chart_data_filtered_.get_channel_list_item(m_selected_channel)->get_y_extent(), 100, Y_EXTENT_MAX) + 50, TRUE);
 	else
 		m_scroll_y2_.SetScrollPos(
-			MulDiv(chart_data_filtered_.get_channel_list_item(m_selected_channel2)->GetYextent(), 100, Y_EXTENT_MAX) + 50, TRUE);
+			MulDiv(chart_data_filtered_.get_channel_list_item(m_selected_channel2)->get_y_extent(), 100, Y_EXTENT_MAX) + 50, TRUE);
 }
 
 void ViewSpikeDetection::on_gain_scroll(const UINT n_sb_code, const UINT n_pos, const int i_id)
@@ -2762,7 +2762,7 @@ void ViewSpikeDetection::on_gain_scroll(const UINT n_sb_code, const UINT n_pos, 
 		p_view_data_filtered = &chart_data_source_;
 		selected_channel = m_selected_channel2;
 	}
-	int y_extent = p_view_data_filtered->get_channel_list_item(selected_channel)->GetYextent();
+	int y_extent = p_view_data_filtered->get_channel_list_item(selected_channel)->get_y_extent();
 
 	// get corresponding data
 	switch (n_sb_code)
@@ -2788,7 +2788,7 @@ void ViewSpikeDetection::on_gain_scroll(const UINT n_sb_code, const UINT n_pos, 
 	// change y extent
 	if (y_extent > 0) 
 	{
-		p_view_data_filtered->get_channel_list_item(selected_channel)->SetYextent(y_extent);
+		p_view_data_filtered->get_channel_list_item(selected_channel)->set_y_extent(y_extent);
 		update_legends();
 	}
 	// update scrollBar
@@ -2801,14 +2801,14 @@ void ViewSpikeDetection::update_bias_scroll(const int i_id)
 	if (i_id == IDC_SCROLLY)
 	{
 		const CChanlistItem* channel_item = chart_data_filtered_.get_channel_list_item(m_selected_channel);
-		const auto i_pos = static_cast<int>((channel_item->GetYzero() - channel_item->GetDataBinZero())
+		const auto i_pos = static_cast<int>((channel_item->get_y_zero() - channel_item->get_data_bin_zero())
 			* 100 / static_cast<int>(Y_ZERO_SPAN)) + static_cast<int>(50);
 		m_scroll_y_.SetScrollPos(i_pos, TRUE);
 	}
 	else
 	{
 		const CChanlistItem* channel_item = chart_data_filtered_.get_channel_list_item(m_selected_channel2);
-		const auto i_pos = static_cast<int>((channel_item->GetYzero() - channel_item->GetDataBinZero())
+		const auto i_pos = static_cast<int>((channel_item->get_y_zero() - channel_item->get_data_bin_zero())
 			* 100 / static_cast<int>(Y_ZERO_SPAN)) + static_cast<int>(50);
 		m_scroll_y2_.SetScrollPos(i_pos, TRUE);
 	}
@@ -2825,8 +2825,8 @@ void ViewSpikeDetection::on_bias_scroll(const UINT n_sb_code, const UINT n_pos, 
 	}
 
 	const CChanlistItem* channel_item = chart_data_filtered_.get_channel_list_item(selected_channel_index);
-	auto l_size = channel_item->GetYzero() - channel_item->GetDataBinZero();
-	const auto y_extent = channel_item->GetYextent();
+	auto l_size = channel_item->get_y_zero() - channel_item->get_data_bin_zero();
+	const auto y_extent = channel_item->get_y_extent();
 	// get corresponding data
 	switch (n_sb_code)
 	{
@@ -2853,7 +2853,7 @@ void ViewSpikeDetection::on_bias_scroll(const UINT n_sb_code, const UINT n_pos, 
 	if (l_size > Y_ZERO_MIN && l_size < Y_ZERO_MAX)
 	{
 		CChanlistItem* chan = p_view->get_channel_list_item(selected_channel_index);
-		chan->SetYzero(l_size + chan->GetDataBinZero());
+		chan->set_y_zero(l_size + chan->get_data_bin_zero());
 		p_view->Invalidate();
 	}
 	// update scrollBar
@@ -2918,11 +2918,11 @@ void ViewSpikeDetection::on_bn_clicked_locate_button()
 {
 	int max, min;
 	const CChanlistItem* channel_item = chart_data_filtered_.get_channel_list_item(0);
-	channel_item->GetMaxMin(&max, &min);
+	channel_item->get_max_min(&max, &min);
 
 	// modify value
 	m_p_detect_parameters_->detect_threshold_bin = (max + min) / 2;
-	m_threshold_val = channel_item->ConvertDataBinsToVolts(m_p_detect_parameters_->detect_threshold_bin) * 1000.f;
+	m_threshold_val = channel_item->convert_data_bins_to_volts(m_p_detect_parameters_->detect_threshold_bin) * 1000.f;
 	m_p_detect_parameters_->detect_threshold_mv = m_threshold_val;
 	// update user-interface: edit control and threshold bar in source_view
 	CString cs;
@@ -2996,12 +2996,12 @@ void ViewSpikeDetection::update_detection_controls()
 	m_transform2_combo.SetCurSel(p_spk_list->get_detection_parameters()->extract_transform);
 
 	CChanlistItem* channel_item = chart_data_filtered_.get_channel_list_item(0);
-	channel_item->SetColor(static_cast<WORD>(detection_channel));
+	channel_item->set_color(static_cast<WORD>(detection_channel));
 
 	chart_data_filtered_.get_data_from_doc(); 
 
 	const auto detect_threshold = detect_parameters->detect_threshold_bin;
-	m_threshold_val = channel_item->ConvertDataBinsToVolts(detect_threshold) * 1000.f;
+	m_threshold_val = channel_item->convert_data_bins_to_volts(detect_threshold) * 1000.f;
 	if (chart_data_filtered_.hz_tags.get_tag_list_size() < 1)
 		chart_data_filtered_.hz_tags.add_tag(detect_threshold, 0);
 	else

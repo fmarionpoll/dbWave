@@ -287,7 +287,7 @@ void DlgSpikeDetect::on_delta_pos_spin1(NMHDR* p_nmhdr, LRESULT* p_result)
 {
 	const auto p_nm_up_down = reinterpret_cast<LPNMUPDOWN>(p_nmhdr);
 	int i_threshold = GetDlgItemInt(IDC_DETECTTHRESHOLD);
-	i_threshold -= MulDiv(m_p_chart_data_detect_wnd->get_channel_list_item(0)->GetYextent(), p_nm_up_down->iDelta, 10);
+	i_threshold -= MulDiv(m_p_chart_data_detect_wnd->get_channel_list_item(0)->get_y_extent(), p_nm_up_down->iDelta, 10);
 	SetDlgItemInt(IDC_DETECTTHRESHOLD, i_threshold);
 
 	*p_result = 0;

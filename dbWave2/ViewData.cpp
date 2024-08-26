@@ -199,7 +199,7 @@ void ViewData::update_legends(int legends_options)
 	if (legends_options & UPD_Y_SCALE)
 		legends_options |= CHG_Y_BAR;
 	if (legends_options & CHG_Y_BAR)
-		update_y_zero(m_channel_selected, chart_data.get_channel_list_item(m_channel_selected)->GetYzero());
+		update_y_zero(m_channel_selected, chart_data.get_channel_list_item(m_channel_selected)->get_y_zero());
 
 	UpdateData(FALSE);
 }
@@ -491,7 +491,7 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 			auto b_present = FALSE;
 			for (auto j = chan_list_size - 1; j >= 0; j--)
 			{
-				if ((b_present = (chart_data.get_channel_list_item(j)->GetSourceChan() == doc_channel)))
+				if ((b_present = (chart_data.get_channel_list_item(j)->get_source_chan() == doc_channel)))
 					break;
 			}
 			if (!b_present)
@@ -499,7 +499,7 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 				chart_data.add_channel_list_item(doc_channel, 0);
 				chan_list_size++;
 			}
-			chart_data.get_channel_list_item(doc_channel)->SetColor(static_cast<WORD>(doc_channel));
+			chart_data.get_channel_list_item(doc_channel)->set_color(static_cast<WORD>(doc_channel));
 		}
 	}
 
@@ -518,7 +518,7 @@ void ViewData::update_file_parameters(const BOOL b_update_interface)
 	{
 		CString cs;
 		cs.Format(_T("channel %i - "), i);
-		cs = cs + chart_data.get_channel_list_item(i)->GetComment();
+		cs = cs + chart_data.get_channel_list_item(i)->get_comment();
 		m_combo_select_chan.AddString(cs);
 	}
 	if (scan_count_ > 1)
@@ -550,9 +550,9 @@ void ViewData::update_channels_display_parameters()
 		{
 			// keep final gain constant even if amplifier gain has changed
 			const CChanlistItem* chan_list_item = chart_data.get_channel_list_item(i);
-			chan_list_item->GetMaxMin(&max, &min);
-			auto y_extent = chan_list_item->GetYextent();
-			auto y_zero = chan_list_item->GetYzero();
+			chan_list_item->get_max_min(&max, &min);
+			auto y_extent = chan_list_item->get_y_extent();
+			auto y_zero = chan_list_item->get_y_zero();
 
 			if (options_view_data_->b_maximize_gain)
 				y_extent = MulDiv(max - min + 1, 11, 10);
@@ -568,8 +568,8 @@ void ViewData::update_channels_display_parameters()
 	{
 		constexpr auto chan_0 = 0;
 		const CChanlistItem* p_chan0 = chart_data.get_channel_list_item(chan_0);
-		auto y_extent = p_chan0->GetYextent();
-		auto y_zero = p_chan0->GetYzero();
+		auto y_extent = p_chan0->get_y_extent();
+		auto y_zero = p_chan0->get_y_zero();
 		if (options_view_data_->b_maximize_gain)
 		{
 			float v_max = 0.;
@@ -578,16 +578,16 @@ void ViewData::update_channels_display_parameters()
 			{
 				// keep final gain constant even if amplifier gain changed
 				const CChanlistItem* p_chan = chart_data.get_channel_list_item(i);
-				p_chan->GetMaxMin(&max, &min);
-				const auto max_chan_i = p_chan->ConvertDataBinsToVolts(max);
-				const auto min_chan_i = p_chan->ConvertDataBinsToVolts(min);
+				p_chan->get_max_min(&max, &min);
+				const auto max_chan_i = p_chan->convert_data_bins_to_volts(max);
+				const auto min_chan_i = p_chan->convert_data_bins_to_volts(min);
 				if (max_chan_i > v_max)
 					v_max = max_chan_i;
 				if (min_chan_i < v_min)
 					v_min = min_chan_i;
 			}
-			max = p_chan0->ConvertVoltsToDataBins(v_max);
-			min = p_chan0->ConvertVoltsToDataBins(v_min);
+			max = p_chan0->convert_volts_to_data_bins(v_max);
+			min = p_chan0->convert_volts_to_data_bins(v_min);
 			y_extent = MulDiv(max - min + 1, 10, 8);
 			y_zero = (max + min) / 2;
 		}
@@ -626,7 +626,7 @@ void ViewData::update_horizontal_tags_value()
 	if (chart_data.hz_tags.get_tag_list_size() > 1)
 		i_tag = 1;
 	const auto v2 = chart_data.hz_tags.get_value_int(i_tag);
-	const auto mv_per_bin = chart_data.get_channel_list_item(m_channel_selected)->GetVoltsperDataBin() * 1000.0f;
+	const auto mv_per_bin = chart_data.get_channel_list_item(m_channel_selected)->get_volts_per_bin() * 1000.0f;
 	m_first_hz_cursor = static_cast<float>(v1) * mv_per_bin;
 	m_second_hz_cursor = static_cast<float>(v2) * mv_per_bin;
 	m_difference_second_minus_first = m_first_hz_cursor - m_second_hz_cursor;
@@ -885,7 +885,7 @@ void ViewData::update_gain_scroll()
 {
 	scroll_y_.SetScrollPos(
 		MulDiv(
-			chart_data.get_channel_list_item(m_channel_selected)->GetYextent(),
+			chart_data.get_channel_list_item(m_channel_selected)->get_y_extent(),
 			100,
 			Y_EXTENT_MAX)
 		+ 50,
@@ -894,7 +894,7 @@ void ViewData::update_gain_scroll()
 
 void ViewData::on_gain_scroll(const UINT n_sb_code, const UINT n_pos)
 {
-	int y_extent = chart_data.get_channel_list_item(m_channel_selected)->GetYextent();
+	int y_extent = chart_data.get_channel_list_item(m_channel_selected)->get_y_extent();
 	// get corresponding data
 	switch (n_sb_code)
 	{
@@ -930,7 +930,7 @@ void ViewData::on_gain_scroll(const UINT n_sb_code, const UINT n_pos)
 void ViewData::update_bias_scroll()
 {
 	const CChanlistItem* p_chan_list_item = chart_data.get_channel_list_item(m_channel_selected);
-	const auto i_pos = (p_chan_list_item->GetYzero() - p_chan_list_item->GetDataBinZero())
+	const auto i_pos = (p_chan_list_item->get_y_zero() - p_chan_list_item->get_data_bin_zero())
 		* 100 / static_cast<int>(Y_ZERO_SPAN) + 50;
 	scroll_y_.SetScrollPos(i_pos, TRUE);
 	update_legends(UPD_ORDINATES | CHG_Y_SCALE);
@@ -939,8 +939,8 @@ void ViewData::update_bias_scroll()
 void ViewData::on_bias_scroll(const UINT n_sb_code, const UINT n_pos)
 {
 	const CChanlistItem* p_chan_list_item = chart_data.get_channel_list_item(m_channel_selected);
-	auto l_size = p_chan_list_item->GetYzero() - p_chan_list_item->GetDataBinZero();
-	const auto y_extent = p_chan_list_item->GetYextent();
+	auto l_size = p_chan_list_item->get_y_zero() - p_chan_list_item->get_data_bin_zero();
+	const auto y_extent = p_chan_list_item->get_y_extent();
 	// get corresponding data
 	switch (n_sb_code)
 	{
@@ -958,7 +958,7 @@ void ViewData::on_bias_scroll(const UINT n_sb_code, const UINT n_pos)
 	// try to read data with this new size
 	if (l_size > Y_ZERO_MIN && l_size < Y_ZERO_MAX)
 	{
-		update_y_zero(m_channel_selected, l_size + p_chan_list_item->GetDataBinZero());
+		update_y_zero(m_channel_selected, l_size + p_chan_list_item->get_data_bin_zero());
 	}
 	// update scrollBar
 	chart_data.Invalidate();
@@ -971,9 +971,9 @@ void ViewData::on_center_curve()
 	chart_data.Invalidate();
 
 	const CChanlistItem* p_chan_list_item = chart_data.get_channel_list_item(m_channel_selected);
-	const auto y_extent = p_chan_list_item->GetYextent();
+	const auto y_extent = p_chan_list_item->get_y_extent();
 	update_y_extent(m_channel_selected, y_extent);
-	const auto y_zero = p_chan_list_item->GetYzero();
+	const auto y_zero = p_chan_list_item->get_y_zero();
 	update_y_zero(m_channel_selected, y_zero);
 }
 
@@ -983,9 +983,9 @@ void ViewData::on_gain_adjust_curve()
 	chart_data.Invalidate();
 
 	const CChanlistItem* p_chan_list_item = chart_data.get_channel_list_item(m_channel_selected);
-	const auto y_extent = p_chan_list_item->GetYextent();
+	const auto y_extent = p_chan_list_item->get_y_extent();
 	update_y_extent(m_channel_selected, y_extent);
-	const auto y_zero = p_chan_list_item->GetYzero();
+	const auto y_zero = p_chan_list_item->get_y_zero();
 	update_y_zero(m_channel_selected, y_zero);
 	update_legends(CHG_Y_SCALE);
 }
@@ -1002,12 +1002,12 @@ void ViewData::on_split_curves()
 	for (auto i = 0; i < n_channels; i++)
 	{
 		CChanlistItem* chan = chart_data.get_channel_list_item(i);
-		chan->GetMaxMin(&max, &min);
+		chan->get_max_min(&max, &min);
 		const auto extent = MulDiv(max - min + 1, 100 * n_channels, 100);
 		const auto bias = MulDiv(zero, extent, height); // convert pixel into bins
 		const auto i_zero = (max + min) / 2 - bias; // change bias
-		chan->SetYextent(extent);
-		chan->SetYzero(i_zero);
+		chan->set_y_extent(extent);
+		chan->set_y_zero(i_zero);
 		zero -= offset; // update position of next curve
 	}
 	update_legends(CHG_Y_SCALE);
@@ -1372,7 +1372,7 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect) const
 			if (options_view_data_->b_channel_comment)
 			{
 				str_comment += tab;
-				str_comment += chart_data.get_channel_list_item(i_chan)->GetComment();
+				str_comment += chart_data.get_channel_list_item(i_chan)->get_comment();
 			}
 			str_comment += rc;
 
@@ -1380,7 +1380,7 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect) const
 			if (options_view_data_->b_channel_settings)
 			{
 				CString cs;
-				const WORD chan_count = static_cast<WORD>(chart_data.get_channel_list_item(i_chan)->GetSourceChan());
+				const WORD chan_count = static_cast<WORD>(chart_data.get_channel_list_item(i_chan)->get_source_chan());
 				const auto channels_array = m_p_dat_->get_wave_channels_array();
 				const auto p_chan = channels_array->get_p_channel(chan_count);
 				cs.Format(_T("headstage=%s gain=%.0f  filter= %s - %i Hz"), (LPCTSTR)p_chan->am_csheadstage,
@@ -1707,9 +1707,9 @@ void ViewData::on_cbn_sel_change_combo_chan()
 		b_common_scale_ = TRUE;
 		m_channel_selected = 0;
 		const CChanlistItem* p_chan = chart_data.get_channel_list_item(0);
-		const auto y_extent = p_chan->GetYextent();
+		const auto y_extent = p_chan->get_y_extent();
 		update_y_extent(0, y_extent);
-		const auto y_zero = p_chan->GetYzero();
+		const auto y_zero = p_chan->get_y_zero();
 		update_y_zero(0, y_zero);
 	}
 }
@@ -1717,10 +1717,10 @@ void ViewData::on_cbn_sel_change_combo_chan()
 void ViewData::update_y_extent(const int i_chan, const int y_extent)
 {
 	CChanlistItem* p_chan = chart_data.get_channel_list_item(i_chan);
-	p_chan->SetYextent(y_extent);
+	p_chan->set_y_extent(y_extent);
 	if (m_combo_select_chan.GetCurSel() == chart_data.get_channel_list_size())
 	{
-		const auto y_volts_extent = p_chan->GetVoltsperDataBin() * static_cast<float>(y_extent);
+		const auto y_volts_extent = p_chan->get_volts_per_bin() * static_cast<float>(y_extent);
 		chart_data.set_channel_list_volts_extent(-1, &y_volts_extent);
 	}
 }
@@ -1728,10 +1728,10 @@ void ViewData::update_y_extent(const int i_chan, const int y_extent)
 void ViewData::update_y_zero(const int i_chan, const int y_bias)
 {
 	CChanlistItem* chan = chart_data.get_channel_list_item(i_chan);
-	chan->SetYzero(y_bias);
+	chan->set_y_zero(y_bias);
 	if (m_combo_select_chan.GetCurSel() == chart_data.get_channel_list_size())
 	{
-		const auto y_volts_extent = chan->GetVoltsperDataBin() * static_cast<float>(y_bias);
+		const auto y_volts_extent = chan->get_volts_per_bin() * static_cast<float>(y_bias);
 		chart_data.set_channel_list_volts_zero(-1, &y_volts_extent);
 	}
 }

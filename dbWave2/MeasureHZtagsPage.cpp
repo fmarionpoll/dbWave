@@ -59,7 +59,7 @@ BOOL CMeasureHZtagsPage::GetHZcursorVal(const int index)
 	m_index = index;
 	m_datachannel = m_pChartDataWnd->hz_tags.get_channel(index);
 	int k = m_pChartDataWnd->hz_tags.get_value_int(m_index);
-	m_mvlevel = m_pChartDataWnd->get_channel_list_item(m_datachannel)->ConvertDataBinsToVolts(k) * 1000.f;
+	m_mvlevel = m_pChartDataWnd->get_channel_list_item(m_datachannel)->convert_data_bins_to_volts(k) * 1000.f;
 
 	return TRUE;
 }
@@ -68,11 +68,11 @@ void CMeasureHZtagsPage::OnCenter()
 {
 	int max, min;
 	CChanlistItem* pchan = m_pChartDataWnd->get_channel_list_item(m_datachannel);
-	pchan->GetMaxMin(&max, &min);
+	pchan->get_max_min(&max, &min);
 	const auto val = (max + min) / 2;
 	m_pChartDataWnd->hz_tags.set_value_int(m_index, val);
 	m_pChartDataWnd->Invalidate();
-	m_mvlevel = pchan->ConvertDataBinsToVolts(val) * 1000.f;
+	m_mvlevel = pchan->convert_data_bins_to_volts(val) * 1000.f;
 	UpdateData(FALSE);
 }
 
@@ -133,7 +133,7 @@ void CMeasureHZtagsPage::OnEnChangeMvlevel()
 		UpdateData(FALSE);
 		if (m_nbcursors > 0 && m_index >= 0 && m_index < m_nbcursors)
 		{
-			const auto val = m_pChartDataWnd->get_channel_list_item(m_datachannel)->ConvertVoltsToDataBins(
+			const auto val = m_pChartDataWnd->get_channel_list_item(m_datachannel)->convert_volts_to_data_bins(
 				m_mvlevel / 1000.0f);
 			m_pChartDataWnd->hz_tags.set_value_int(m_index, val);
 			m_pChartDataWnd->Invalidate();
@@ -144,7 +144,7 @@ void CMeasureHZtagsPage::OnEnChangeMvlevel()
 void CMeasureHZtagsPage::OnAdjust()
 {
 	int max, min;
-	m_pChartDataWnd->get_channel_list_item(m_datachannel)->GetMaxMin(&max, &min);
+	m_pChartDataWnd->get_channel_list_item(m_datachannel)->get_max_min(&max, &min);
 	// get nb cursors / m_datachannel
 	auto n_cursors = 0;
 	for (auto i = m_nbcursors - 1; i >= 0; i--)
@@ -170,7 +170,7 @@ void CMeasureHZtagsPage::OnAdjust()
 	}
 	m_pChartDataWnd->Invalidate();
 	val = m_pChartDataWnd->hz_tags.get_value_int(m_index);
-	m_mvlevel = m_pChartDataWnd->get_channel_list_item(m_datachannel)->ConvertDataBinsToVolts(val) * 1000.f;
+	m_mvlevel = m_pChartDataWnd->get_channel_list_item(m_datachannel)->convert_data_bins_to_volts(val) * 1000.f;
 	UpdateData(FALSE);
 }
 

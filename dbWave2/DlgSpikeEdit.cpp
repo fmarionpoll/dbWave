@@ -153,8 +153,8 @@ void DlgSpikeEdit::init_chart_data()
 	if (p_spk_list->get_detection_parameters()->compensate_baseline)
 	{
 		chart_data_.add_channel_list_item(p_spk_list->get_detection_parameters()->extract_channel, MOVAVG30);
-		chart_data_.get_channel_list_item(1)->SetColor(6);
-		chart_data_.get_channel_list_item(1)->SetPenWidth(1);
+		chart_data_.get_channel_list_item(1)->set_color(6);
+		chart_data_.get_channel_list_item(1)->set_pen_width(1);
 		static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(1);
 	}
 
@@ -233,9 +233,9 @@ void DlgSpikeEdit::on_en_change_y_extent()
 		UpdateData(FALSE);
 		ASSERT(dlg_yv_extent != 0);
 		y_extent = dlg_yv_extent;
-		chart_data_.get_channel_list_item(0)->SetYextent(y_extent);
+		chart_data_.get_channel_list_item(0)->set_y_extent(y_extent);
 		if (p_spk_list->get_detection_parameters()->compensate_baseline)
-			chart_data_.get_channel_list_item(1)->SetYextent(y_extent);
+			chart_data_.get_channel_list_item(1)->set_y_extent(y_extent);
 		chart_spike_shape_.set_yw_ext_org(y_extent, y_zero);
 		chart_data_.Invalidate();
 		chart_spike_shape_.Invalidate();
@@ -271,14 +271,14 @@ void DlgSpikeEdit::load_source_view_data()
 
 	// adjust offset (center spike) : use initial offset from spike
 	CChanlistItem* chan0 = chart_data_.get_channel_list_item(0);
-	chan0->SetYzero(y_zero + spike->get_amplitude_offset());
-	chan0->SetYextent(y_extent);
+	chan0->set_y_zero(y_zero + spike->get_amplitude_offset());
+	chan0->set_y_extent(y_extent);
 
 	if (p_spk_list->get_detection_parameters()->compensate_baseline)
 	{
 		CChanlistItem* chan1 = chart_data_.get_channel_list_item(1);
-		chan1->SetYzero(y_zero + spike->get_amplitude_offset());
-		chan1->SetYextent(y_extent);
+		chan1->set_y_zero(y_zero + spike->get_amplitude_offset());
+		chan1->set_y_extent(y_extent);
 	}
 	chart_data_.Invalidate();
 }

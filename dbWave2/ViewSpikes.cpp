@@ -580,11 +580,11 @@ void ViewSpikes::update_data_file(const BOOL b_update_interface)
 			b_init_source_view_ = FALSE;
 			int max, min;
 			CChanlistItem* chan = chart_data_wnd_.get_channel_list_item(0);
-			chan->GetMaxMin(&max, &min);
+			chan->get_max_min(&max, &min);
 			const auto extent = MulDiv(max - min + 1, 11, 10);
 			const auto zero = (max + min) / 2;
-			chan->SetYextent(extent);
-			chan->SetYzero(zero);
+			chan->set_y_extent(extent);
+			chan->set_y_zero(zero);
 		}
 	}
 
@@ -737,11 +737,11 @@ void ViewSpikes::select_spike_list(int current_selection)
 		chart_data_wnd_.get_data_from_doc(l_first_, l_last_);
 		int max, min;
 		CChanlistItem* chan = chart_data_wnd_.get_channel_list_item(0);
-		chan->GetMaxMin(&max, &min);
+		chan->get_max_min(&max, &min);
 		const auto extent = MulDiv(max - min + 1, 11, 10);
 		const auto zero = (max + min) / 2;
-		chan->SetYextent(extent);
-		chan->SetYzero(zero);
+		chan->set_y_extent(extent);
+		chan->set_y_zero(zero);
 	}
 	chart_data_wnd_.Invalidate();
 }
@@ -1284,7 +1284,7 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 			chart_data_wnd_.print(p_dc, &rw_bars); 
 			p_dc->SelectClipRgn(nullptr);
 
-			extent = chart_data_wnd_.get_channel_list_item(0)->GetYextent();
+			extent = chart_data_wnd_.get_channel_list_item(0)->get_y_extent();
 			rw_bars.top = rw_bars.bottom;
 		}
 
@@ -1499,7 +1499,7 @@ void ViewSpikes::center_data_display_on_spike(const int spike_no)
 		if (value > max_data) max_data = value;
 		if (value < min_data) min_data = value;
 	}
-	chan->SetYzero((max_data + min_data) / 2);
+	chan->set_y_zero((max_data + min_data) / 2);
 
 	// display data
 	spike_class_listbox_.Invalidate();
@@ -1766,7 +1766,7 @@ void ViewSpikes::set_v_bar_mode(const short b_mode)
 void ViewSpikes::update_gain_scroll()
 {
 	scrollbar_y_.SetScrollPos(
-		MulDiv(chart_data_wnd_.get_channel_list_item(0)->GetYextent(),
+		MulDiv(chart_data_wnd_.get_channel_list_item(0)->get_y_extent(),
 		       100,
 		       Y_EXTENT_MAX)
 		+ 50,
@@ -1775,7 +1775,7 @@ void ViewSpikes::update_gain_scroll()
 
 void ViewSpikes::scroll_gain(const UINT n_sb_code, const UINT n_pos)
 {
-	int l_size = chart_data_wnd_.get_channel_list_item(0)->GetYextent();
+	int l_size = chart_data_wnd_.get_channel_list_item(0)->get_y_extent();
 	// get corresponding data
 	switch (n_sb_code)
 	{
@@ -1808,7 +1808,7 @@ void ViewSpikes::scroll_gain(const UINT n_sb_code, const UINT n_pos)
 	// change y extent
 	if (l_size > 0) 
 	{
-		chart_data_wnd_.get_channel_list_item(0)->SetYextent(l_size);
+		chart_data_wnd_.get_channel_list_item(0)->set_y_extent(l_size);
 		update_legends(TRUE);
 		chart_data_wnd_.Invalidate();
 	}
@@ -1820,8 +1820,8 @@ void ViewSpikes::scroll_gain(const UINT n_sb_code, const UINT n_pos)
 void ViewSpikes::update_bias_scroll()
 {
 	const CChanlistItem* chan_list_item = chart_data_wnd_.get_channel_list_item(0);
-	const auto i_pos = (chan_list_item->GetYzero()
-			- chan_list_item->GetDataBinZero())
+	const auto i_pos = (chan_list_item->get_y_zero()
+			- chan_list_item->get_data_bin_zero())
 			* 100 / static_cast<int>(Y_ZERO_SPAN) + 50;
 	scrollbar_y_.SetScrollPos(i_pos, TRUE);
 }
@@ -1829,8 +1829,8 @@ void ViewSpikes::update_bias_scroll()
 void ViewSpikes::scroll_bias(const UINT n_sb_code, const UINT n_pos)
 {
 	CChanlistItem* chan = chart_data_wnd_.get_channel_list_item(0);
-	auto l_size = chan->GetYzero() - chan->GetDataBinZero();
-	const auto y_extent = chan->GetYextent();
+	auto l_size = chan->get_y_zero() - chan->get_data_bin_zero();
+	const auto y_extent = chan->get_y_extent();
 	// get corresponding data
 	switch (n_sb_code)
 	{
@@ -1863,7 +1863,7 @@ void ViewSpikes::scroll_bias(const UINT n_sb_code, const UINT n_pos)
 	// try to read data with this new size
 	if (l_size > Y_ZERO_MIN && l_size < Y_ZERO_MAX)
 	{
-		chan->SetYzero(l_size + chan->GetDataBinZero());
+		chan->set_y_zero(l_size + chan->get_data_bin_zero());
 		chart_data_wnd_.Invalidate();
 	}
 	// update scrollBar

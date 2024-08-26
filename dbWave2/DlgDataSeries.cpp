@@ -42,7 +42,7 @@ BOOL DlgDataSeries::OnInitDialog()
 	int chanmax = m_pChartDataWnd->get_channel_list_size();
 	int i = 0;
 	for (i = 0; i < chanmax; i++)
-		m_listseries.AddString(m_pChartDataWnd->get_channel_list_item(i)->GetComment());
+		m_listseries.AddString(m_pChartDataWnd->get_channel_list_item(i)->get_comment());
 
 	// doc channel comments
 	chanmax = (m_pdbDoc->get_wave_format())->scan_count;
@@ -71,9 +71,9 @@ void DlgDataSeries::OnSelchangeListseries()
 		// select corresp source chan & transform mode
 		CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(m_listindex);
 		m_listseries.GetText(m_listindex + 1, m_name); // chan comment
-		auto i = chan->GetSourceChan(); // data source chan
+		auto i = chan->get_source_chan(); // data source chan
 		m_ordinates.SetCurSel(i); // and transform mode
-		i = chan->GetTransformMode();
+		i = chan->get_transform_mode();
 		m_transform.SetCurSel(i);
 		b_delete_series = TRUE; // Un-enable "define new series button"
 	}
@@ -113,7 +113,7 @@ void DlgDataSeries::OnClickedDefineseries()
 		if (i >= 0) // new channel created? yes
 		{
 			CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(i);
-			m_name = chan->GetComment();
+			m_name = chan->get_comment();
 			m_listseries.AddString(m_name); // controls' variables
 			m_listindex = i; // update current index
 			m_listseries.SetCurSel(m_listindex + 1); // select new channel
@@ -124,9 +124,9 @@ void DlgDataSeries::OnClickedDefineseries()
 	m_pChartDataWnd->get_data_from_doc(); // load data from document
 	int max, min;
 	CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(m_listindex);
-	chan->GetMaxMin(&max, &min);
-	chan->SetYzero((max + min) / 2);
-	chan->SetYextent(static_cast<int>((max - min + 1) * 1.2));
+	chan->get_max_min(&max, &min);
+	chan->set_y_zero((max + min) / 2);
+	chan->set_y_extent(static_cast<int>((max - min + 1) * 1.2));
 	m_pChartDataWnd->Invalidate();
 
 	OnSelchangeListseries();

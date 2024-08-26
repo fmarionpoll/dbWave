@@ -37,11 +37,11 @@ void DlgDataSeriesFormat::OnOK()
 void DlgDataSeriesFormat::GetParams(int index)
 {
 	CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(index);
-	m_yzero = chan->GetYzero();
-	m_yextent = chan->GetYextent();
-	const auto color = chan->GetColorIndex();
+	m_yzero = chan->get_y_zero();
+	m_yextent = chan->get_y_extent();
+	const auto color = chan->get_color_index();
 	m_colorbutton.SetColor(color);
-	m_mVperbin = chan->GetVoltsperDataBin() * 1000.0f;
+	m_mVperbin = chan->get_volts_per_bin() * 1000.0f;
 	m_binzero = 0; // m_dbDoc->m_pDataFile->GetpWaveFormat()->binzero;
 	m_maxmv = (m_yextent / 2.f + m_yzero - m_binzero) * m_mVperbin;
 	m_minmv = (-m_yextent / 2.f + m_yzero - m_binzero) * m_mVperbin;
@@ -52,8 +52,8 @@ void DlgDataSeriesFormat::SetParams(const int index)
 	CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(index);
 	m_yzero = static_cast<int>((m_maxmv + m_minmv) / (m_mVperbin * 2.0f)) + m_binzero;
 	m_yextent = static_cast<int>((m_maxmv - m_minmv) / m_mVperbin);
-	chan->SetYzero(m_yzero);
-	chan->SetYextent(m_yextent);
+	chan->set_y_zero(m_yzero);
+	chan->set_y_extent(m_yextent);
 	const auto ccolor = m_colorbutton.GetColor();
 	auto icolor = m_pChartDataWnd->find_color_index(ccolor);
 	if (icolor < 0)
@@ -61,7 +61,7 @@ void DlgDataSeriesFormat::SetParams(const int index)
 		icolor = NB_COLORS - 1;
 		m_pChartDataWnd->set_color_table_at(icolor, ccolor);
 	}
-	chan->SetColor(icolor);
+	chan->set_color(icolor);
 }
 
 void DlgDataSeriesFormat::OnCancel()
@@ -83,7 +83,7 @@ BOOL DlgDataSeriesFormat::OnInitDialog()
 	// load channel description CComboBox
 	const auto chanmax = m_pChartDataWnd->get_channel_list_size();
 	for (auto i = 0; i < chanmax; i++)
-		m_listseries.AddString(m_pChartDataWnd->get_channel_list_item(i)->GetComment());
+		m_listseries.AddString(m_pChartDataWnd->get_channel_list_item(i)->get_comment());
 
 	// select...
 	GetParams(m_listindex);

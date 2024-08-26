@@ -85,14 +85,14 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 		// load channel descriptors
 		const auto channel_item = chan_list_item_ptr_array_[channel_number];
 		CPen temp_pen;
-		temp_pen.CreatePen(PS_SOLID, 0, color_table_[channel_item->GetColorIndex()]);
+		temp_pen.CreatePen(PS_SOLID, 0, color_table_[channel_item->get_color_index()]);
 		p_dc->SelectObject(&temp_pen);
 
 		// compute max min and plot array
 		auto ppt = points_to_display;
 		auto p_data = samples_buffer + channel_number;
-		const auto y_zero = channel_item->GetYzero();
-		const auto y_extent = channel_item->GetYextent();
+		const auto y_zero = channel_item->get_y_zero();
+		const auto y_extent = channel_item->get_y_extent();
 		const int n_channels = m_p_data_file_->get_wave_format()->scan_count;
 
 		// only one data point per pixel

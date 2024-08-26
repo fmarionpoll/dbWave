@@ -534,12 +534,12 @@ void DlgImportGenericData::UpdatePreview()
 	{
 		int max, min;
 		CChanlistItem* chan = m_ChartDataWnd.get_channel_list_item(i);
-		chan->GetMaxMin(&max, &min);
+		chan->get_max_min(&max, &min);
 		// split curves if requested by options
 		int iextent = MulDiv(max - min + 1, 11, 10);
 		int izero = (max + min) / 2;
-		chan->SetYextent(iextent);
-		chan->SetYzero(izero);
+		chan->set_y_extent(iextent);
+		chan->set_y_zero(izero);
 	}
 	m_ChartDataWnd.Invalidate();
 }

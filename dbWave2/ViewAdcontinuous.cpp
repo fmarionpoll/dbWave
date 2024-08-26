@@ -462,13 +462,13 @@ void ViewADcontinuous::init_acquisition_display()
 	{
 		constexpr int i_offset = 0;
 		CChanlistItem* p_d = m_chart_data_ad_.get_channel_list_item(i);
-		p_d->SetYzero(i_offset);
-		p_d->SetYextent(i_extent);
-		p_d->SetColor(static_cast<WORD>(i));
+		p_d->set_y_zero(i_offset);
+		p_d->set_y_extent(i_extent);
+		p_d->set_color(static_cast<WORD>(i));
 		float doc_volts_per_bin;
 		input_data_file_.get_volts_per_bin(i, &doc_volts_per_bin);
-		p_d->SetDataBinFormat(pWFormat->bin_zero, pWFormat->bin_span);
-		p_d->SetDataVoltsFormat(doc_volts_per_bin, pWFormat->full_scale_volts);
+		p_d->set_data_bin_format(pWFormat->bin_zero, pWFormat->bin_span);
+		p_d->set_data_volts_format(doc_volts_per_bin, pWFormat->full_scale_volts);
 	}
 
 	update_gain_scroll();
@@ -1113,8 +1113,8 @@ void ViewADcontinuous::set_v_bar_mode(short b_mode)
 void ViewADcontinuous::on_gain_scroll(const UINT n_sb_code, const UINT n_pos)
 {
 	const CChanlistItem* p_chan = m_chart_data_ad_.get_channel_list_item(0);
-	int y_extent = p_chan->GetYextent();
-	const int span = p_chan->GetDataBinSpan();
+	int y_extent = p_chan->get_y_extent();
+	const int span = p_chan->get_data_bin_span();
 
 	switch (n_sb_code)
 	{
@@ -1131,7 +1131,7 @@ void ViewADcontinuous::on_gain_scroll(const UINT n_sb_code, const UINT n_pos)
 		case SB_RIGHT: y_extent = Y_EXTENT_MAX;
 			break;
 		case SB_THUMBPOSITION:
-		case SB_THUMBTRACK: y_extent = MulDiv(static_cast<int>(n_pos - 50), p_chan->GetDataBinSpan(), 100);
+		case SB_THUMBTRACK: y_extent = MulDiv(static_cast<int>(n_pos - 50), p_chan->get_data_bin_span(), 100);
 			break;
 		default: break;
 	}
@@ -1143,7 +1143,7 @@ void ViewADcontinuous::on_gain_scroll(const UINT n_sb_code, const UINT n_pos)
 		for (int channel = 0; channel <= last_channel; channel++)
 		{
 			CChanlistItem* ppChan = m_chart_data_ad_.get_channel_list_item(channel);
-			ppChan->SetYextent(y_extent);
+			ppChan->set_y_extent(y_extent);
 		}
 		m_chart_data_ad_.Invalidate();
 		options_input_data_->i_zoom_cur_sel = y_extent;
@@ -1156,8 +1156,8 @@ void ViewADcontinuous::on_gain_scroll(const UINT n_sb_code, const UINT n_pos)
 void ViewADcontinuous::on_bias_scroll(const UINT n_sb_code, const UINT n_pos)
 {
 	const CChanlistItem* p_chan = m_chart_data_ad_.get_channel_list_item(0);
-	int y_zero = p_chan->GetYzero();
-	const int span = p_chan->GetDataBinSpan() / 2;
+	int y_zero = p_chan->get_y_zero();
+	const int span = p_chan->get_data_bin_span() / 2;
 	const int initial = y_zero;
 	switch (n_sb_code)
 	{
@@ -1193,7 +1193,7 @@ void ViewADcontinuous::on_bias_scroll(const UINT n_sb_code, const UINT n_pos)
 	for (int i = first_channel; i <= last_channel; i++)
 	{
 		CChanlistItem* p_chan_i = m_chart_data_ad_.get_channel_list_item(i);
-		p_chan_i->SetYzero(y_zero);
+		p_chan_i->set_y_zero(y_zero);
 	}
 	m_chart_data_ad_.Invalidate();
 
@@ -1205,7 +1205,7 @@ void ViewADcontinuous::update_bias_scroll()
 {
 	const CChanlistItem* p_chan = m_chart_data_ad_.get_channel_list_item(0);
 	m_chart_data_ad_.update_y_ruler();
-	const int i_pos = MulDiv(p_chan->GetYzero(), 100, p_chan->GetDataBinSpan())+50;
+	const int i_pos = MulDiv(p_chan->get_y_zero(), 100, p_chan->get_data_bin_span())+50;
 	m_scroll_y_.SetScrollPos(i_pos, TRUE);
 }
 
@@ -1213,7 +1213,7 @@ void ViewADcontinuous::update_gain_scroll()
 {
 	const CChanlistItem* p_chan = m_chart_data_ad_.get_channel_list_item(0);
 	m_chart_data_ad_.update_y_ruler();
-	const int i_pos = MulDiv(p_chan->GetYextent(), 100, p_chan->GetDataBinSpan()) + 50;
+	const int i_pos = MulDiv(p_chan->get_y_extent(), 100, p_chan->get_data_bin_span()) + 50;
 	m_scroll_y_.SetScrollPos(i_pos, TRUE);
 }
 
@@ -1339,8 +1339,8 @@ void ViewADcontinuous::on_bn_clicked_un_zoom()
 	{
 		constexpr int i_offset = 0;
 		CChanlistItem* p_d = m_chart_data_ad_.get_channel_list_item(i);
-		p_d->SetYzero(i_offset);
-		p_d->SetYextent(i_extent);
+		p_d->set_y_zero(i_offset);
+		p_d->set_y_extent(i_extent);
 	}
 
 	set_v_bar_mode(BAR_GAIN);
