@@ -406,7 +406,7 @@ CSpikeDoc* CdbWaveDoc::open_current_spike_file()
 		ASSERT(m_p_spk_doc != NULL);
 	}
 	// open document; erase object if operation fails
-	if (db_get_current_record_position())
+	if (db_get_current_record_position() >= 0)
 		db_get_current_spk_file_name(TRUE);
 	if (current_spike_file_name_.IsEmpty()
 		|| !m_p_spk_doc->OnOpenDocument(current_spike_file_name_))
