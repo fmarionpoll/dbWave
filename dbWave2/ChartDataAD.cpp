@@ -6,7 +6,7 @@
 void ChartDataAD::start_display(int points_per_channel)
 {
 	// init parameters related to AD display
-	m_b_ad_buffers_ = TRUE; // yes, display ADbuffers
+	m_b_ad_buffers_ = TRUE; // yes, display AD buffers
 	m_l_ad_buffer_done_ = 0; // length of data already displayed
 	const auto envelope = envelope_ptr_array_.GetAt(0);
 	envelope->fill_envelope_with_abscissa_ex(1, display_rect_.right - 1, points_per_channel);
@@ -71,13 +71,13 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 	p_dc->IntersectClipRect(rect);
 	p_dc->FillSolidRect(&rect, scope_structure_.cr_scope_fill);
 
-	auto* ppen_old = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
+	auto* pen_old = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 
 	p_dc->SetMapMode(MM_ANISOTROPIC);
 	p_dc->SetViewportExt(x_viewport_extent_, y_ve_);
 	p_dc->SetViewportOrg(x_viewport_origin_, y_vo_);
-	p_dc->SetWindowExt(m_n_pixels_, y_ve_); //chanlist_item->GetYextent());
-	p_dc->SetWindowOrg(0, 0); //chanlist_item->GetYzero());
+	p_dc->SetWindowExt(m_n_pixels_, y_ve_); 
+	p_dc->SetWindowOrg(0, 0); 
 	const auto yVE = y_ve_;
 
 	for (int channel_number = 0; channel_number < chan_list_item_ptr_array_.GetSize(); channel_number++)
@@ -140,7 +140,7 @@ void ChartDataAD::display_buffer(short* samples_buffer, long samples_number)
 	}
 
 	// restore the old pen and exit
-	p_dc->SelectObject(ppen_old);
+	p_dc->SelectObject(pen_old);
 	p_dc->RestoreDC(dc_old);
 	p_dc->SetMapMode(MM_TEXT);
 	p_dc->SetViewportOrg(0, 0);

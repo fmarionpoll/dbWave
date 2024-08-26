@@ -50,5 +50,5 @@ public:
 	void Dump(CDumpContext& dc) const override;
 #endif
 protected:
-	int is_pattern_present(char* buf_read, int len_read, const char* buf_pattern, int len_pattern);
+	int is_pattern_present(const char* buf_read, int len_read, const char* buf_pattern, int len_pattern);
 };

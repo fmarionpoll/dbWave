@@ -144,7 +144,7 @@ void ViewdbWave::OnInitialUpdate()
 		CSpikeDoc* p_spk_doc = GetDocument()->get_current_spike_file();
 		if (p_spk_doc != nullptr)
 		{
-			spk_list_tab_ctrl.InitctrlTabFromSpikeDoc(p_spk_doc);
+			spk_list_tab_ctrl.init_ctrl_tab_from_spike_doc(p_spk_doc);
 			spk_list_tab_ctrl.SetCurSel(p_spk_doc->get_spike_list_current_index());
 		}
 		spk_list_tab_ctrl.ShowWindow(p_spk_doc != nullptr ? SW_SHOW : SW_HIDE);
@@ -264,7 +264,7 @@ void ViewdbWave::update_controls()
 		{
 			const auto spk_list_size = p_spk_doc->get_spike_list_size();
 			if (spk_list_tab_ctrl.GetItemCount() < spk_list_size)
-				spk_list_tab_ctrl.InitctrlTabFromSpikeDoc(p_spk_doc);
+				spk_list_tab_ctrl.init_ctrl_tab_from_spike_doc(p_spk_doc);
 		}
 	}
 	//pdb_doc->SetModifiedFlag(true);
@@ -527,7 +527,7 @@ void ViewdbWave::on_bn_clicked_display_spikes()
 		const auto p_spk_doc = m_data_list_ctrl.get_visible_rows_spike_doc_at(0);
 		if (p_spk_doc->get_spike_list_size() > 1)
 		{
-			spk_list_tab_ctrl.InitctrlTabFromSpikeDoc(p_spk_doc);
+			spk_list_tab_ctrl.init_ctrl_tab_from_spike_doc(p_spk_doc);
 			spk_list_tab_ctrl.ShowWindow(SW_SHOW);
 			spk_list_tab_ctrl.SetCurSel(p_spk_doc->get_spike_list_current_index());
 			spk_list_tab_ctrl.Invalidate();

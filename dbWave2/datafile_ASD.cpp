@@ -52,7 +52,7 @@ BOOL CDataFileASD::read_data_infos(CWaveBuf* p_buf)
 	CWaveFormat* wave_format = p_buf->get_p_wave_format();
 	CWaveChanArray* wavechan_array = p_buf->get_p_wave_chan_array();
 
-	Seek(29, begin); // position pointer
+	Seek(29, begin); 
 	CString cs_name;
 	auto ch = ' ';
 	while (ch != 0) // (1) signal name
@@ -65,8 +65,8 @@ BOOL CDataFileASD::read_data_infos(CWaveBuf* p_buf)
 	WORD w;
 	Read(&dw, sizeof(DWORD));
 	const DWORD rec_factor = SWAPLONG(dw);
-	const auto gainpost = static_cast<short>(rec_factor); // max is 32768
-	const auto gainpre = 1;
+	const auto gain_post = static_cast<short>(rec_factor); // max is 32768
+	constexpr auto gain_pre = 1;
 	ASSERT(rec_factor <= 32768);
 
 	Read(&dw, sizeof(DWORD));
@@ -78,21 +78,21 @@ BOOL CDataFileASD::read_data_infos(CWaveBuf* p_buf)
 	for (DWORD index = 0; index < count; index++) // (6-7) percent and time
 	{
 		Read(&w, sizeof(WORD));
-		//int percent = SWAPWORD(w);
+		int percent = SWAPWORD(w);
 		Read(&dw, sizeof(DWORD));
-		//auto time = SWAPLONG(dw);
+		auto time = SWAPLONG(dw);
 	}
 
 	Read(&dw, sizeof(DWORD));
-	const UINT uicount = SWAPLONG(dw);
+	const UINT ui_count = SWAPLONG(dw);
 
-	const auto l_offset1 = GetPosition(); // start of data area
+	const LONGLONG l_offset1 = static_cast<LONGLONG>(GetPosition()); // start of data area
 	m_ul_offset_data = l_offset1 + 1;
-	const auto l_offset2 = static_cast<ULONGLONG>(uicount) * 2; // length of data area (in bytes)
+	const LONGLONG l_offset2 = static_cast<LONGLONG>(ui_count) * 2; // length of data area (in bytes)
 	Seek(l_offset2, current); // position pointer
 
 	Read(&w, sizeof(WORD));
-	//auto check_sum = SWAPWORD(w);
+	auto check_sum = SWAPWORD(w);
 
 	Read(&w, sizeof(WORD)); // read type
 	auto w_type = SWAPWORD(w);
@@ -125,86 +125,86 @@ BOOL CDataFileASD::read_data_infos(CWaveBuf* p_buf)
 	wave_format->mode_clock = INTERNAL_CLOCK;
 	wave_format->mode_trigger = INTERNAL_TRIGGER;
 	wave_format->sampling_rate_per_channel = static_cast<float>(sample_rate);
-	wave_format->sample_count = uicount;
+	wave_format->sample_count = static_cast<long>(ui_count);
 
 	//for (i = 0; i<wave_format->scan_count; i++)
 	//{
-	int i = 0;
+	constexpr int i = 0;
 	wavechan_array->chan_array_add();
-	auto pChan = wavechan_array->get_p_channel(i);
-	pChan->am_csComment = CString(" "); // channel annotation
-	pChan->am_adchannel = 0; // channel scan list
-	pChan->am_gainAD = 1; // channel gain list
-	pChan->am_csamplifier = CString("syntechAmplifier"); // amplifier type
-	pChan->am_csheadstage = CString("syntechProbe"); // headstage type
-	pChan->am_gainheadstage = 10; // assume headstage gain = 10
-	pChan->am_amplifierchan = 0; // assume 1 channel / amplifier
-	pChan->am_gainpre = gainpre; // assume gain -pre and -post set before
-	pChan->am_gainpost = gainpost;
-	pChan->am_notchfilt = 0; // assume no notch filter
-	pChan->am_lowpass = 0; // assume not low pass filtering
-	pChan->am_offset = 0.0f; // assume no offset compensation
-	pChan->am_csInputpos = "25";
-	pChan->am_csInputneg = "GND";
-	pChan->am_amplifiergain = static_cast<float>(rec_factor);
+	const auto p_chan = wavechan_array->get_p_channel(i);
+	p_chan->am_csComment = CString(" "); // channel annotation
+	p_chan->am_adchannel = 0; // channel scan list
+	p_chan->am_gainAD = 1; // channel gain list
+	p_chan->am_csamplifier = CString("syntechAmplifier"); // amplifier type
+	p_chan->am_csheadstage = CString("syntechProbe"); // headstage type
+	p_chan->am_gainheadstage = 10; // assume headstage gain = 10
+	p_chan->am_amplifierchan = 0; // assume 1 channel / amplifier
+	p_chan->am_gainpre = gain_pre; // assume gain -pre and -post set before
+	p_chan->am_gainpost = gain_post;
+	p_chan->am_notchfilt = 0; // assume no notch filter
+	p_chan->am_lowpass = 0; // assume not low pass filtering
+	p_chan->am_offset = 0.0f; // assume no offset compensation
+	p_chan->am_csInputpos = "25";
+	p_chan->am_csInputneg = "GND";
+	p_chan->am_amplifiergain = static_cast<float>(rec_factor);
 
-	pChan->am_gaintotal = pChan->am_amplifiergain * pChan->am_gainheadstage; // total gain
-	pChan->am_resolutionV = wave_format->full_scale_volts / pChan->am_gaintotal / wave_format->bin_span;
+	p_chan->am_gaintotal = p_chan->am_amplifiergain * p_chan->am_gainheadstage; // total gain
+	p_chan->am_resolutionV = wave_format->full_scale_volts / p_chan->am_gaintotal / wave_format->bin_span;
 
 	// ---------------- ASD -- capture date and time
 
 	const auto strlen = cs_comment.GetLength();
-	auto ichar1 = 12;
+	auto i_char1 = 12;
 
 	// month
-	auto dummy = cs_comment.Mid(ichar1, 3);
-	CString csmonth[] =
+	auto dummy = cs_comment.Mid(i_char1, 3);
+	const CString cs_month[] =
 	{
 		_T("Jan"), _T("Feb"), _T("Mar"), _T("Apr"), _T("May"), _T("Jun"),
 		_T("Jul"), _T("Aug"), _T("Sep"), _T("Oct"), _T("Nov"), _T("Dec")
 	};
 
-	int imonth;
-	for (imonth = 0; imonth < 12; imonth++)
+	int i_month;
+	for (i_month = 0; i_month < 12; i_month++)
 	{
-		if (dummy.CompareNoCase(csmonth[imonth]) == 0)
+		if (dummy.CompareNoCase(cs_month[i_month]) == 0)
 			break;
 	}
-	imonth++;
+	i_month++;
 
 	// day
-	ichar1 += 4;
-	dummy = cs_comment.Mid(ichar1, 2);
-	const auto iday = _ttoi(dummy);
+	i_char1 += 4;
+	dummy = cs_comment.Mid(i_char1, 2);
+	const auto i_day = _ttoi(dummy);
 
 	// time
-	ichar1 += 3;
-	const auto ihour = _ttoi(cs_comment.Mid(ichar1, 2));
-	ichar1 += 3;
-	const auto imin = _ttoi(cs_comment.Mid(ichar1, 2));
-	ichar1 += 3;
-	const auto isec = _ttoi(cs_comment.Mid(ichar1, 2));
-	ichar1 += 3;
-	const auto iyear = _ttoi(cs_comment.Mid(ichar1, 4));
+	i_char1 += 3;
+	const auto i_hour = _ttoi(cs_comment.Mid(i_char1, 2));
+	i_char1 += 3;
+	const auto i_min = _ttoi(cs_comment.Mid(i_char1, 2));
+	i_char1 += 3;
+	const auto i_sec = _ttoi(cs_comment.Mid(i_char1, 2));
+	i_char1 += 3;
+	const auto i_year = _ttoi(cs_comment.Mid(i_char1, 4));
 
-	wave_format->acquisition_time = CTime(iyear, imonth, iday, ihour, imin, isec);
+	wave_format->acquisition_time = CTime(i_year, i_month, i_day, i_hour, i_min, i_sec);
 
 	// Date  : Thu Nov 01 17:45:24 2001
 	// insect -> Jf#8
 	// type -> 5th 2
 	// stimulus -> Uma 0.05g, 10% EtOH, 20mM NaCl
 
-	const char od = 0xd;
-	ichar1 = cs_comment.Find(_T("Pretrigger"));
-	ichar1 = cs_comment.Find(od, ichar1) + 2;
-	short ichar2 = cs_comment.Find(od, ichar1) + 1;
-	wave_format->cs_insect_name = cs_comment.Mid(ichar1, ichar2 - ichar1 - 1);
+	constexpr char od = 0xd;
+	i_char1 = cs_comment.Find(_T("Pretrigger"));
+	i_char1 = cs_comment.Find(od, i_char1) + 2;
+	int i_char2 = cs_comment.Find(od, i_char1) + 1;
+	wave_format->cs_insect_name = cs_comment.Mid(i_char1, i_char2 - i_char1 - 1);
 
-	ichar1 = ichar2 + 1;
-	ichar2 = cs_comment.Find(od, ichar1) + 1;
-	wave_format->cs_sensillum = cs_comment.Mid(ichar1, ichar2 - ichar1 - 1);
+	i_char1 = i_char2 + 1;
+	i_char2 = cs_comment.Find(od, i_char1) + 1;
+	wave_format->cs_sensillum = cs_comment.Mid(i_char1, i_char2 - i_char1 - 1);
 
-	wave_format->cs_stimulus = cs_comment.Mid(ichar2 + 1, strlen - 1);
+	wave_format->cs_stimulus = cs_comment.Mid(i_char2 + 1, strlen - 1);
 
 	wave_format->cs_comment.Empty();
 	wave_format->cs_concentration.Empty();
@@ -218,14 +218,14 @@ int CDataFileASD::check_file_type(CString& cs_filename)
 	auto flag = DOCTYPE_UNKNOWN;
 	auto i_len = 32;
 	char buf[32];
-	auto pbuf = &buf[0];
+	auto p_buf = &buf[0];
 	do
 	{
-		Read(pbuf, sizeof(char));
-		pbuf++;
+		Read(p_buf, sizeof(char));
+		p_buf++;
 		i_len--;
 	}
-	while (*(pbuf - 1) != 0 && i_len > 0);
+	while (*(p_buf - 1) != 0 && i_len > 0);
 
 	// is it an ASD file?
 	if (buf != m_cs_old_string_id_ && buf != m_cs_string_id_)
@@ -242,11 +242,11 @@ int CDataFileASD::check_file_type(CString& cs_filename)
 	}
 
 	// browse file and get list of data type chunks
-	const auto filelength = GetLength() - 1;
+	const auto file_length = GetLength() - 1;
 	//auto offset = f->GetPosition();
 	DWORD dw;
 
-	while (GetPosition() < filelength)
+	while (GetPosition() < file_length)
 	{
 		// read tag / "new data block"
 		Read(&w, sizeof(WORD));
@@ -262,7 +262,7 @@ int CDataFileASD::check_file_type(CString& cs_filename)
 		case DT_WAVE:
 			{
 				flag = DOCTYPE_ASDSYNTECH;
-				m_ul_offset_header = GetPosition();
+				m_ul_offset_header = static_cast<LONGLONG>(GetPosition());
 
 				// (1) signal name
 				CString cs_name;
@@ -275,8 +275,8 @@ int CDataFileASD::check_file_type(CString& cs_filename)
 
 				Read(&dw, sizeof(DWORD));
 				const DWORD rec_factor = SWAPLONG(dw);
-				auto gainpost = static_cast<short>(rec_factor); // max is 32768
-				short gainpre = 1;
+				auto gain_post = static_cast<short>(rec_factor); // max is 32768
+				short gain_pre = 1;
 				ASSERT(rec_factor <= 32768);
 
 				Read(&dw, sizeof(DWORD));
@@ -293,13 +293,13 @@ int CDataFileASD::check_file_type(CString& cs_filename)
 					auto time = SWAPLONG(dw);
 				}
 
-				UINT uicount = 0; // (8) number of record samples
+				UINT ui_count = 0; // (8) number of record samples
 				Read(&dw, sizeof(DWORD));
-				uicount = SWAPLONG(dw);
+				ui_count = SWAPLONG(dw);
 
 				const auto l_offset1 = GetPosition(); // start of data area
 				m_ul_offset_data = l_offset1 + 1;
-				const auto l_offset2 = static_cast<ULONGLONG>(uicount) * 2; // length of data area (in bytes)
+				const auto l_offset2 = static_cast<LONGLONG>(ui_count) * 2; // length of data area (in bytes)
 				Seek(l_offset2, current); // position pointer
 
 				Read(&w, sizeof(WORD));
@@ -318,12 +318,12 @@ int CDataFileASD::check_file_type(CString& cs_filename)
 					Read(&w, sizeof(WORD));
 					WORD w_type = SWAPWORD(w);
 				}
-				while (w != m_w_id_ && GetPosition() < filelength);
+				while (w != m_w_id_ && GetPosition() < file_length);
 				// 0xAAAA
 				if (w == m_w_id_)
 				{
-					const LONGLONG lpos = GetPosition() - 2;
-					Seek(lpos, begin);
+					const LONGLONG l_pos = static_cast<LONGLONG>(GetPosition()) - 2;
+					Seek(l_pos, begin);
 				}
 			}
 			break;

@@ -202,7 +202,7 @@ void ViewSpikeTemplates::update_spike_file()
 		p_spk_list = p_spk_doc->set_spike_list_current_index(index_current_spike_list);
 
 		// update Tab at the bottom
-		spk_list_tab_ctrl.InitctrlTabFromSpikeDoc(p_spk_doc);
+		spk_list_tab_ctrl.init_ctrl_tab_from_spike_doc(p_spk_doc);
 		spk_list_tab_ctrl.SetCurSel(index_current_spike_list);
 	}
 }

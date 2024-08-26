@@ -621,7 +621,7 @@ void ViewSpikes::update_spike_file(BOOL b_update_interface)
 	{
 		p_spk_doc->SetModifiedFlag(FALSE);
 		p_spk_doc->SetPathName(GetDocument()->db_get_current_spk_file_name(), FALSE);
-		spk_list_tab_ctrl.InitctrlTabFromSpikeDoc(p_spk_doc);
+		spk_list_tab_ctrl.init_ctrl_tab_from_spike_doc(p_spk_doc);
 
 		const int current_index = GetDocument()->get_current_spike_file()->get_spike_list_current_index();
 		p_spk_list = p_spk_doc->set_spike_list_current_index(current_index);

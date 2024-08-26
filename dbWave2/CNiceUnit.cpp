@@ -43,7 +43,7 @@ float CNiceUnit::change_unit(float x_val, CString* x_unit, float* x_scale_factor
 	}
 	// get power of 10 of the value
 	const auto i_log10_upper = static_cast<short>(log10(x_val)); // log10 of value (upper limit)
-	if (i_log10_upper <= 0 && x_val < 1.) // perform extra checking if iprec <= 0
+	if (i_log10_upper <= 0 && x_val < 1.) // perform extra checking if ip_rec <= 0
 		i = 4 - i_log10_upper / 3; // change equation if Units values change
 	else
 		i = 3 - i_log10_upper / 3; // change equation if Units values change

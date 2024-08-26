@@ -8,7 +8,7 @@ public:
 	CSpkListTabCtrl();
 	~CSpkListTabCtrl() override;
 
-	void InitctrlTabFromSpikeDoc(CSpikeDoc* pSpkDoc);
+	void init_ctrl_tab_from_spike_doc(CSpikeDoc* p_spk_doc);
 
 
 protected:

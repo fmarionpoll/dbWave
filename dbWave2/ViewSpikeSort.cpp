@@ -339,7 +339,7 @@ void ViewSpikeSort::update_file_parameters()
 	const BOOL first_update = (p_spk_doc == nullptr);
 	load_current_spike_file();
 	// update Tab at the bottom
-	spk_list_tab_ctrl.InitctrlTabFromSpikeDoc(p_spk_doc);
+	spk_list_tab_ctrl.init_ctrl_tab_from_spike_doc(p_spk_doc);
 	spk_list_tab_ctrl.SetCurSel(GetDocument()->get_current_spike_file()->get_spike_list_current_index());
 
 	if (first_update || options_view_data_->b_complete_record)

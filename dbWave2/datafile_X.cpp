@@ -43,7 +43,7 @@ void CDataFileX::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-long CDataFileX::read_adc_data(long data_index, long nb_points, short* p_buffer, CWaveChanArray* p_array)
+long CDataFileX::read_adc_data(const long data_index, const long nb_points, short* p_buffer, CWaveChanArray* p_array)
 {
 	// seek and read CFile
 	const LONGLONG l_off = (static_cast<LONGLONG>(data_index) * sizeof(short)) + m_ul_offset_data;
@@ -109,11 +109,11 @@ BOOL CDataFileX::write_vt_tags(TagList* p_tags)
 	return FALSE;
 }
 
-int CDataFileX::is_pattern_present(char* buf_read, int len_read, const char* buf_pattern, int len_pattern)
+int CDataFileX::is_pattern_present(const char* buf_read, const int len_read, const char* buf_pattern, const int len_pattern)
 {
-	std::string needle(buf_pattern, len_pattern - 1);
+	const std::string needle(buf_pattern, len_pattern - 1);
 	std::string haystack(buf_read, len_read);
-	std::size_t n = haystack.find(needle);
+	const std::size_t n = haystack.find(needle);
 	int flag = DOCTYPE_UNKNOWN;
 	if (n != std::string::npos)
 	{
@@ -123,10 +123,10 @@ int CDataFileX::is_pattern_present(char* buf_read, int len_read, const char* buf
 	return flag;
 }
 
-bool CDataFileX::open_data_file(CString& sz_path_name, UINT u_open_flag)
+bool CDataFileX::open_data_file(CString& sz_path_name, const UINT u_open_flag)
 {
 	CFileException error{};
-	bool flag = Open(sz_path_name, u_open_flag, &error);
+	const bool flag = Open(sz_path_name, u_open_flag, &error);
 	if (flag == 0)
 		Abort();
 	return flag;

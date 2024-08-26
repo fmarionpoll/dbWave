@@ -31,7 +31,7 @@ using MCID_HEADER = struct
 {
 	char program_name[MAX_PROG_NAME]; // Zero-terminated
 	UINT program_version; // ((V1*10+V2)*10+V3)*10+V4
-	UINT mcid_version; // ((V1*10+V2)*10+V3)*10+V4
+	UINT mc_id_version; // ((V1*10+V2)*10+V3)*10+V4
 	double sample_interval; // In seconds
 	double sensitivity[MAX_MCID_CHANNELS];
 	UINT number_of_channels; // Number of channels recorded

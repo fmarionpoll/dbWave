@@ -6,7 +6,7 @@ class CDataFileAWAVE : public CDataFileX
 public:
 	// Construction / Destruction
 	CDataFileAWAVE();
-	CDataFileAWAVE(CFile* file);
+	CDataFileAWAVE(const CFile* p_file);
 	~CDataFileAWAVE() override;
 
 	int check_file_type(CString& cs_file_name) override;

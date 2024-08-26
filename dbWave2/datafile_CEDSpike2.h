@@ -89,8 +89,8 @@ protected:
 	CString read_channel_comment(int ced_chan);
 	CString read_channel_title(int ced_chan);
 	long read_channel_data(const CWaveChan* p_chan, short* p_data, long long ll_first, long long ll_n_values);
-	long relocate_channel_data(short* p_buffer, long long t_from, long long t_first, int n_values_read, long long ticks_per_sample);
-	CString get_error_message(int flag);
+	static long relocate_channel_data(short* p_buffer, long long t_from, long long t_first, int n_values_read, long long ticks_per_sample);
+	static CString get_error_message(int flag);
 	void read_event_fall(int ced_chan, CWaveBuf* p_buf);
 	void convert_vt_tags_ticks_to_ad_intervals(CWaveBuf* p_buf, int ced_chan);
 };

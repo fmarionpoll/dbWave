@@ -12,7 +12,7 @@ CScale::CScale()
 {
 }
 
-// create CScale with npoints
+// create CScale with n points
 CScale::CScale(const int n_pixels) : m_n_pixels_(n_pixels)
 {
 	m_intervals_.SetSize(n_pixels);
