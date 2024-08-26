@@ -83,6 +83,7 @@ void CWaveBuf::delete_buffers()
 		free(p_w_data_);
 		p_w_data_ = nullptr;
 	}
+
 	if (p_w_data_transformed_ != nullptr)
 	{
 		free(p_w_data_transformed_);
@@ -111,8 +112,8 @@ BOOL CWaveBuf::create_w_buffer(const int i_num_elements, const int n_channels)
 		// allocate transform heap if selected
 		if (is_transformed_)
 		{
-			const size_t dwBufferSize2 = i_num_elements * sizeof(short) + dw_safe_factor * 2 * 60;
-			p_w_data_transformed_ = static_cast<short*>(malloc(dwBufferSize2));
+			const size_t dw_buffer_size2 = i_num_elements * sizeof(short) + dw_safe_factor * 2 * 60;
+			p_w_data_transformed_ = static_cast<short*>(malloc(dw_buffer_size2));
 			ASSERT(p_w_data_transformed_ != NULL);
 			if (p_w_data_transformed_ == nullptr)
 				return FALSE;

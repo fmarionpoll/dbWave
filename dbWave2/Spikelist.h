@@ -38,11 +38,11 @@ public:
 
 	// Description
 protected:
-	// (0) ---------------infos about file version and ID
+	// (0) infos about file version and ID
 	WORD w_version_ {9};		// Aug 2024 save spike data into "spikes"
 	CString id_string_ {_T("Awave Spike file v")};
 
-	// (1) ---------------infos about data acquisition and spike detection
+	// (1)infos about data acquisition and spike detection
 	CWaveChan wave_channel_{};	
 	WORD data_encoding_mode_  {0};
 	long bin_zero_ {4096}; 
@@ -51,7 +51,7 @@ protected:
 	options_detect_spikes options_detect_spk_ {};
 	CString channel_description_ {};
 
-	// (2) -------------ordered spike list with class, time, etc
+	// (2) ordered spike list with class, time, etc
 	BOOL extrema_valid_ {false};
 	int minimum_over_all_spikes_ {0}; 
 	int maximum_over_all_spikes_ {0};
@@ -61,7 +61,7 @@ protected:
 
 	CArray<Spike*, Spike*> spikes_;
 
-	// (3) --------classes of spikes
+	// (3) classes of spikes
 	BOOL b_save_artefacts_ {false}; 
 	BOOL keep_only_valid_classes_ {false};
 	int n_classes_ {0};

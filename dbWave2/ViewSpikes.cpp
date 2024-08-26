@@ -65,11 +65,11 @@ BEGIN_MESSAGE_MAP(ViewSpikes, ViewDbTable)
 	ON_COMMAND(ID_FORMAT_CENTER_CURVE, &ViewSpikes::on_format_center_curve)
 	ON_COMMAND(ID_FORMAT_GAIN_ADJUST, &ViewSpikes::on_format_gain_adjust)
 	ON_COMMAND(ID_TOOLS_EDIT_SPIKES, &ViewSpikes::on_tools_edit_spikes)
-	ON_COMMAND(ID_EDIT_COPY, &ViewSpikes::OnEditCopy)
+	ON_COMMAND(ID_EDIT_COPY, &ViewSpikes::on_edit_copy)
 	ON_COMMAND(ID_FORMAT_PREVIOUS_FRAME, &ViewSpikes::on_format_previous_frame)
 	ON_COMMAND(ID_FORMAT_NEXT_FRAME, &ViewSpikes::on_format_next_frame)
-	ON_COMMAND(ID_RECORD_SHIFT_LEFT, &ViewSpikes::OnHScrollLeft)
-	ON_COMMAND(ID_RECORD_SHIFT_RIGHT, &ViewSpikes::OnHScrollRight)
+	ON_COMMAND(ID_RECORD_SHIFT_LEFT, &ViewSpikes::on_h_scroll_left)
+	ON_COMMAND(ID_RECORD_SHIFT_RIGHT, &ViewSpikes::on_h_scroll_right)
 	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
 
@@ -1574,7 +1574,7 @@ void ViewSpikes::update_file_scroll()
 	file_scrollbar_.SetScrollInfo(&file_scroll_infos_);
 }
 
-void ViewSpikes::OnEditCopy()
+void ViewSpikes::on_edit_copy()
 {
 	DlgCopyAs dlg;
 	dlg.m_nabscissa = options_view_data_->hz_resolution;
@@ -1916,12 +1916,12 @@ void ViewSpikes::on_artefact()
 	spike_class_listbox_.Invalidate();
 }
 
-void ViewSpikes::OnHScrollLeft()
+void ViewSpikes::on_h_scroll_left()
 {
 	OnHScroll(SB_PAGELEFT, NULL, static_cast<CScrollBar*>(GetDlgItem(IDC_FILESCROLL)));
 }
 
-void ViewSpikes::OnHScrollRight()
+void ViewSpikes::on_h_scroll_right()
 {
 	OnHScroll(SB_PAGERIGHT, NULL, static_cast<CScrollBar*>(GetDlgItem(IDC_FILESCROLL)));
 }

@@ -149,16 +149,16 @@ protected:
 	afx_msg void on_en_change_zoom();
 
 	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
-	afx_msg void OnEditCopy();
-	afx_msg void on_gain_button();
-	afx_msg void on_bias_button();
 	afx_msg void OnVScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
-	afx_msg void on_artefact();
 	afx_msg void OnMouseMove(UINT n_flags, CPoint point);
 	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
 	afx_msg void OnLButtonDown(UINT n_flags, CPoint point);
-	afx_msg void OnHScrollLeft();
-	afx_msg void OnHScrollRight();
+	afx_msg void on_edit_copy();
+	afx_msg void on_gain_button();
+	afx_msg void on_bias_button();
+	afx_msg void on_artefact();
+	afx_msg void on_h_scroll_left();
+	afx_msg void on_h_scroll_right();
 	afx_msg void on_bn_clicked_same_class();
 
 	DECLARE_MESSAGE_MAP()

@@ -39,7 +39,8 @@ Spike::Spike(const long time, const int channel, const int offset, const int cla
 
 Spike::~Spike()
 {
-	free(buffer_spike_data_);
+	if (buffer_spike_data_ != nullptr)
+		free(buffer_spike_data_);
 }
 
 IMPLEMENT_SERIAL(Spike, CObject, 0 /* schema number*/)
@@ -151,12 +152,21 @@ int* Spike::get_p_data(const int spike_length)
 {
 	constexpr int delta = 0;
 	const size_t spike_data_length = sizeof(int) * (spike_length + delta);
-	if (buffer_spike_data_ == nullptr || spike_length != buffer_spike_length_)
+	int* p_rw_buffer = buffer_spike_data_;
+	
+	if (buffer_spike_data_ == nullptr)
+		p_rw_buffer = static_cast<int*>(malloc(spike_data_length));
+	else if (spike_length != buffer_spike_length_)
+		p_rw_buffer = static_cast<int*>(realloc(buffer_spike_data_, spike_data_length));
+
+	buffer_spike_data_ = p_rw_buffer;
+	buffer_spike_length_ = spike_length;
+	if (buffer_spike_data_ == nullptr)
 	{
-		delete buffer_spike_data_;
-		buffer_spike_data_ = static_cast<int*>(malloc(spike_data_length));
-		buffer_spike_length_ = spike_length;
+		printf("Insufficient memory available\n");
+		buffer_spike_length_ = 0;
 	}
+
 	return buffer_spike_data_;
 }
 

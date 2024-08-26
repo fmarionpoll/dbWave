@@ -106,7 +106,7 @@ BOOL SpikeClass::size_n_classes(const int n_classes, const int spike_size)
 	}
 	else
 	{
-		p_rw_buffer = static_cast<short*>(realloc(m_class_buffer_, w_size));
+		p_rw_buffer = static_cast<short*>(realloc(m_class_buffer_, w_size)); 
 		p_e_array = static_cast<int*>(realloc(m_elements_array_, i_size));
 	}
 

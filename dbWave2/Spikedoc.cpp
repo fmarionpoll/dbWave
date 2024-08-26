@@ -1020,19 +1020,19 @@ void CSpikeDoc::export_headers_data(CSharedFile* shared_file, const options_view
 	auto t_start = options_view_spikes->timestart;
 	switch (options_view_spikes->exportdatatype)
 	{
-	case EXPORT_PSTH: // PSTH
+	case EXPORT_PSTH: 
 		n_bins = options_view_spikes->nbins;
 		t_span = options_view_spikes->timeend - options_view_spikes->timestart;
 		t_bin = t_span /static_cast<float>(n_bins);
 		break;
-	case EXPORT_ISI: // ISI
+	case EXPORT_ISI:
 		n_bins = options_view_spikes->nbinsISI;
 		t_bin = options_view_spikes->binISI;
 		t_start = 0;
 		cs_dummy = _T("\tN");
 		shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 		break;
-	case EXPORT_AUTOCORR: // Autocorrelation
+	case EXPORT_AUTOCORR:
 		n_bins = options_view_spikes->nbinsISI;
 		t_span = options_view_spikes->binISI *static_cast<float>(n_bins);
 		t_bin = options_view_spikes->binISI;
@@ -1239,7 +1239,7 @@ long CSpikeDoc::build_psth(const options_view_spikes* options_view_spikes, long*
 		}
 		const auto ii_time_start = static_cast<long>(options_view_spikes->timestart * rate) + ii_offset_0;
 		const auto ii_time_end = static_cast<long>(options_view_spikes->timeend * rate) + ii_offset_0;
-		auto ii_bin_size = static_cast<long>(options_view_spikes->timebin * rate); //(ii_time_end - ii_time_start) / options_view_spikes->n_bins;
+		auto ii_bin_size = static_cast<long>(options_view_spikes->timebin * rate);
 		if (ii_bin_size <= 0)
 			ii_bin_size = 1;
 		ASSERT(ii_bin_size > 0);
@@ -1316,11 +1316,10 @@ long CSpikeDoc::build_isi(const options_view_spikes* options_view_spikes, long* 
 
 	for (auto stimulus_index = stimulus_index_0; stimulus_index < stimulus_index_1; stimulus_index += increment, n++)
 	{
-		auto ii_start = static_cast<long>(options_view_spikes->timestart * sampling_rate); // boundaries
+		auto ii_start = static_cast<long>(options_view_spikes->timestart * sampling_rate); 
 		auto ii_end = static_cast<long>(options_view_spikes->timeend * sampling_rate);
-		if (!options_view_spikes->babsolutetime && m_stimulus_intervals.n_items > 0) // adjust boundaries if ref is made to
+		if (!options_view_spikes->babsolutetime && m_stimulus_intervals.n_items > 0) 
 		{
-			// a stimulus
 			ii_start += m_stimulus_intervals.get_at(stimulus_index);
 			ii_end += m_stimulus_intervals.get_at(stimulus_index);
 		}
@@ -1387,11 +1386,11 @@ long CSpikeDoc::build_autocorrelation(const options_view_spikes* options_view_sp
 {
 	long n = 0; // number of pivot spikes used to build autocorrelation
 	const auto spike_list = &spike_list_array_[current_spike_list_index_];
-	const auto spikes_count = spike_list->get_spikes_count(); // number of spikes in that file
-	if (spikes_count <= 0) // exit if no spikes
+	const auto spikes_count = spike_list->get_spikes_count();
+	if (spikes_count <= 0) 
 		return n;
 
-	const auto sampling_rate = spike_list->get_acq_sampling_rate(); // sampling rate
+	const auto sampling_rate = spike_list->get_acq_sampling_rate();
 	ASSERT(sampling_rate != 0.f);
 	const auto first_stimulus_index = options_view_spikes->istimulusindex;
 	auto next_stimulus_index = first_stimulus_index + 1;
@@ -1408,7 +1407,7 @@ long CSpikeDoc::build_autocorrelation(const options_view_spikes* options_view_sp
 	for (auto stimulus_index = first_stimulus_index; stimulus_index < next_stimulus_index; stimulus_index += increment, n++)
 	{
 		long initial_offset = 0; 
-		if (!options_view_spikes->babsolutetime) // if stimulus locking
+		if (!options_view_spikes->babsolutetime)
 		{
 			if (m_stimulus_intervals.n_items > 0)
 				initial_offset = m_stimulus_intervals.get_at(stimulus_index);
@@ -1436,11 +1435,13 @@ long CSpikeDoc::build_autocorrelation(const options_view_spikes* options_view_sp
 		// build histogram external loop search 'pivot spikes'
 		for (auto i = i0; i < spikes_count; i++)
 		{
-			const auto ii_time0 = spike_list->get_spike(i)->get_time(); // get spike time
-			if (ii_time0 > ii_end) // stop loop if out of range
+			const auto ii_time0 = spike_list->get_spike(i)->get_time(); 
+			if (ii_time0 > ii_end) 
 				break;
+
 			if (options_view_spikes->spikeclassoption && spike_list->get_spike(i)->get_class_id() != class_index)
-				continue; // discard if class not requested
+				continue;
+
 			n++; // update nb of pivot spikes
 			// search backwards first spike that is ok
 			auto i1 = i;
@@ -1493,12 +1494,12 @@ long CSpikeDoc::build_autocorrelation(const options_view_spikes* options_view_sp
 
 long CSpikeDoc::build_psth_autocorrelation(const options_view_spikes* options_view_spikes, long* sum0, const int class_index)
 {
-	long n = 0; // number of 'pivot spikes'
-	auto spike_list = &spike_list_array_[current_spike_list_index_];
+	long n_pivot_spikes = 0; // number of 'pivot spikes'
+	const auto spike_list = &spike_list_array_[current_spike_list_index_];
 
 	const auto spike_count = spike_list->get_spikes_count();
-	if (spike_count <= 0) // return if no spikes in that file
-		return n;
+	if (spike_count <= 0)
+		return n_pivot_spikes;
 
 	// lock PSTH to stimulus if requested
 	const auto sampling_rate = spike_list->get_acq_sampling_rate();
@@ -1516,7 +1517,7 @@ long CSpikeDoc::build_psth_autocorrelation(const options_view_spikes* options_vi
 		increment *= 2;
 	}
 
-	for (auto stimulus_index = stimulus_index_0; stimulus_index < stimulus_index_1; stimulus_index += increment, n++)
+	for (auto stimulus_index = stimulus_index_0; stimulus_index < stimulus_index_1; stimulus_index += increment, n_pivot_spikes++)
 	{
 		auto ii_offset_0 = 0;
 		if (!options_view_spikes->babsolutetime)
@@ -1540,7 +1541,7 @@ long CSpikeDoc::build_psth_autocorrelation(const options_view_spikes* options_vi
 		const auto ii_dummy = options_view_spikes->nbins * options_view_spikes->nbinsISI;
 
 		// build histogram
-		auto i0 = 0; // search first spike within interval
+		auto i0 = 0; 
 		while (spike_list->get_spike(i0)->get_time() < ii_start)
 		{
 			i0++; // loop until found
@@ -1559,7 +1560,7 @@ long CSpikeDoc::build_psth_autocorrelation(const options_view_spikes* options_vi
 				break;
 			if (options_view_spikes->spikeclassoption && spike->get_class_id() != class_index)
 				continue;
-			n++; // update nb of pivot spikes
+			n_pivot_spikes++; // update nb of pivot spikes
 			// compute base index (where to store autocorrelation for this pivot spike)
 			int psth_index = ((ii_time_0 - ii_start) * options_view_spikes->nbins) / ii_length;
 			ASSERT(psth_index >= 0);
@@ -1599,7 +1600,7 @@ long CSpikeDoc::build_psth_autocorrelation(const options_view_spikes* options_vi
 			}
 		}
 	}
-	return n;
+	return n_pivot_spikes;
 }
 
 void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, double* value, const int spike_list_index,
@@ -1607,7 +1608,6 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, const options_
 {
 	CString cs_dummy;
 	const auto spike_list = &spike_list_array_[spike_list_index];
-	// update offset
 	auto ii_offset_0 = 0;
 	if (!options_view_spikes->babsolutetime && m_stimulus_intervals.n_items > 0)
 		ii_offset_0 = m_stimulus_intervals.get_at(options_view_spikes->istimulusindex);
@@ -1635,16 +1635,18 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, const options_
 	for (auto j = i0; j < spike_count; j++)
 	{
 		const Spike* spike = spike_list->get_spike(j);
-		// skip intervals not requested
 		const auto ii_time = spike->get_time();
 		if (ii_time >= ii_time_end)
 			break;
+
 		// skip classes not requested
 		const auto cla = spike->get_class_id();
 		if (cla < 0 /*&& !options_view_spikes->b_artefacts*/)
 			continue;
+
 		if (options_view_spikes->spikeclassoption != 0 && cla != class_index)
 			continue;
+
 		// get value, compute statistics
 		auto spike_data = spike->get_p_data();
 		const auto p_n = value + 1;

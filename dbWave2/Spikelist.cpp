@@ -239,14 +239,14 @@ void SpikeList::serialize_spike_data_short(CArchive& ar)
 		if (n_bytes_short > 0)
 		{
 			const auto buffer = static_cast<short*>(malloc(n_bytes_short * n_spikes));
-			if (buffer)
+			if (buffer != nullptr)
 			{
 				short* p_buffer = buffer;
 				for (auto i = 0; i < n_spikes; i++)
 				{
 					Spike* spike = get_spike(i);
 					int* p_data = spike->get_p_data(spike_length);
-					
+
 					for (int j = 0; j < spike_length; j++, p_buffer++, p_data++)
 					{
 						const short val = static_cast<short>(*p_data);
@@ -256,6 +256,8 @@ void SpikeList::serialize_spike_data_short(CArchive& ar)
 				ar.Write(buffer, n_bytes_short * n_spikes);
 				free(buffer);
 			}
+			else
+				printf("Serialize SpikeList: not enough memory to write spike data\n");
 		}
 	}
 	else
@@ -285,6 +287,8 @@ void SpikeList::serialize_spike_data_short(CArchive& ar)
 			}
 			free(buffer);
 		}
+		else
+			printf("Serialize SpikeList: not enough memory to read spike data\n");
 	}
 }
 
@@ -500,7 +504,10 @@ void SpikeList::delete_arrays()
 	if (n_spikes > 0)
 	{
 		for (auto i = n_spikes - 1; i >= 0; i--)
-			delete spikes_.GetAt(i);
+		{
+			Spike* spike = spikes_.GetAt(i);
+			delete spike;
+		}
 		spikes_.RemoveAll();
 	}
 	class_descriptors_.RemoveAll();
