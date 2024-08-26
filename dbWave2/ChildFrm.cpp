@@ -692,11 +692,13 @@ void CChildFrame::on_record_goto()
 	if (IDOK == dlg.DoModal())
 	{
 		static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.b_goto_record_id = dlg.m_bGotoRecordID;
+		BOOL bSuccess = FALSE;
 		if (!dlg.m_bGotoRecordID)
-			p_db_wave_doc->db_set_current_record_position(dlg.m_recordPos);
+			bSuccess = p_db_wave_doc->db_set_current_record_position(dlg.m_recordPos);
 		else
-			p_db_wave_doc->db_move_to_id(dlg.m_recordID);
-		p_db_wave_doc->UpdateAllViews(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
+			bSuccess = p_db_wave_doc->db_move_to_id(dlg.m_recordID);
+		if (bSuccess)
+			p_db_wave_doc->UpdateAllViews(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 	}
 }
 

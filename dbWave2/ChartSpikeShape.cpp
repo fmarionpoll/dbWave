@@ -180,7 +180,7 @@ void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
 	prepare_dc(p_dc);
 	p_dc->SetViewportOrg(display_rect_.left, display_rect_.Height() / 2);
 	p_dc->SetViewportExt(display_rect_.right, -display_rect_.Height());
-	auto spike_sel = db_spike(dbwave_doc_->db_get_current_record_position(),
+	auto spike_sel = db_spike(dbwave_doc_->db_get_current_record_id(), //db_get_current_record_position(),
 		dbwave_doc_->m_p_spk_doc->get_spike_list_current_index(),
 		0);
 
