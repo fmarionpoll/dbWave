@@ -61,7 +61,7 @@ void ViewSpikeDetection::DoDataExchange(CDataExchange* p_dx)
 	DDX_Text(p_dx, IDC_SPIKEWINDOWLENGTH, m_spk_wnd_duration_);
 	DDX_Text(p_dx, IDC_CHANSELECTED, m_selected_channel);
 	DDX_Text(p_dx, IDC_CHANSELECTED2, m_selected_channel2);
-	DDX_Control(p_dx, IDC_XSCALE, m_x_spike_ruler);
+	DDX_Control(p_dx, IDC_XSCALE, m_ruler_bar_abscissa);
 	DDX_Control(p_dx, IDC_STATICDISPLAYDATA, m_bevel1);
 	DDX_Control(p_dx, IDC_STATICDISPLAYDETECT, m_bevel2);
 	DDX_Control(p_dx, IDC_STATICDISPLAYBARS, m_bevel3);
@@ -597,13 +597,19 @@ void ViewSpikeDetection::define_sub_classed_items()
 		reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_h_bias2_)));
 	GetDlgItem(IDC_GAIN2)->PostMessage(BM_SETIMAGE, static_cast<WPARAM>(IMAGE_ICON),
 		reinterpret_cast<LPARAM>(static_cast<HANDLE>(m_h_zoom2_)));
+
+	VERIFY(m_ruler_bar_abscissa.SubclassDlgItem(IDC_XSCALE, this));
 }
 
 void ViewSpikeDetection::OnInitialUpdate()
 {
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	spike_detection_array_ = &(p_app->spk_detect_array); 
-	options_view_data_ = &(p_app->options_view_data); 
+	options_view_data_ = &(p_app->options_view_data);
+
+	m_ruler_bar_abscissa.AttachScopeWnd(&chart_data_source_, TRUE);
+	chart_data_source_.attach_external_x_ruler(&m_ruler_bar_abscissa);
+	//chart_data_source_.b_nice_grid = TRUE;
 
 	define_stretch_parameters();
 	b_init_ = TRUE;
@@ -619,11 +625,15 @@ void ViewSpikeDetection::OnInitialUpdate()
 		chart_data_filtered_.hz_tags.add_tag(0, 0);
 
 	update_file_parameters(TRUE);
+
 	chart_data_filtered_.set_scope_parameters(&(options_view_data_->view_data));
 	chart_data_filtered_.Invalidate();
+
 	chart_data_source_.set_scope_parameters(&(options_view_data_->view_data));
 	chart_data_source_.Invalidate();
-	//on_format_split_curves();
+
+	on_format_split_curves();
+	
 }
 
 LRESULT ViewSpikeDetection::on_my_message(const WPARAM w_param, const LPARAM l_param)
@@ -932,13 +942,13 @@ void ViewSpikeDetection::on_format_y_scale_gain_adjust()
 
 void ViewSpikeDetection::on_format_split_curves()
 {
-	chart_data_filtered_.split_channels();
-	chart_data_filtered_.set_channel_list_volts_extent(-1, nullptr);
-	chart_data_filtered_.Invalidate();
-
 	chart_data_source_.split_channels();
 	chart_data_source_.set_channel_list_volts_extent(-1, nullptr);
 	chart_data_source_.Invalidate();
+
+	chart_data_filtered_.split_channels();
+	chart_data_filtered_.set_channel_list_volts_extent(-1, nullptr);
+	chart_data_filtered_.Invalidate();
 
 	// center curve and display bar & spikes
 	chart_spike_bar_.max_center();

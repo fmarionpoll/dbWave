@@ -321,6 +321,13 @@ void CEnvelope::fill_envelope_with_smooth_mx_mi(const int i_first, short* lp_dat
 
 void CEnvelope::get_envelope_max_min(int* max, int* min)
 {
+	if (m_envelope_.GetSize() < 3)
+	{
+		*max = 8192;
+		*min = -8192;
+		return;
+	}
+		
 	short max_val = m_envelope_[2];
 	short min_val = max_val;
 	const int n_pixels = m_envelope_.GetSize();

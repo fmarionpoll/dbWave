@@ -17,10 +17,9 @@ protected:
 	~ViewSpikeDetection() override;
 
 	// Form Data
-public:
 	enum { IDD = IDD_VIEWSPKDETECTION };
 
-	RulerBar m_x_spike_ruler;
+	RulerBar m_ruler_bar_abscissa;
 	CComboBox m_detect_what_combo;
 	CComboBox m_detect_channel_combo;
 	CComboBox m_transform_combo;
@@ -168,11 +167,10 @@ protected:
 public:
 	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
 	afx_msg void OnVScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
-
 	afx_msg LRESULT on_my_message(WPARAM w_param, LPARAM l_param);
+
 	afx_msg void on_first_frame();
 	afx_msg void on_last_frame();
-	
 	afx_msg void on_measure_all();
 	afx_msg void on_sel_change_detect_chan();
 	afx_msg void on_sel_change_transform();

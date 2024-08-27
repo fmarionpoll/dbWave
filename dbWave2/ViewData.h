@@ -13,6 +13,7 @@ class ViewData : public ViewDbTable
 protected:
 	DECLARE_DYNCREATE(ViewData)
 	ViewData();
+	~ViewData() override;
 
 	// Form Data
 	enum { IDD = IDD_VIEWDATA };
@@ -34,7 +35,7 @@ protected:
 	CEditCtrl mm_time_last_abscissa;
 	CComboBox m_combo_select_chan;
 	RulerBar m_adc_y_ruler_bar;
-	RulerBar m_adc_x_ruler_bar;
+	RulerBar m_ruler_bar_abscissa;
 
 protected:
 	// parameters related to data display and to document
@@ -91,9 +92,10 @@ protected:
 	void update_controls_according_to_cursor_selected();
 	void update_channel(int channel);
 	void measure_properties(int item);
+	void define_sub_classed_items();
+	void define_stretch_parameters();
 
 	// Overrides
-protected:
 	void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint) override;
 	void DoDataExchange(CDataExchange* p_dx) override;
 	void OnInitialUpdate() override;
@@ -102,16 +104,14 @@ protected:
 	void OnPrint(CDC* p_dc, CPrintInfo* p_info) override;
 	void OnEndPrinting(CDC* p_dc, CPrintInfo* p_info) override;
 
-	void define_sub_classed_items();
-	void define_stretch_parameters();
-
 	// Implementation
 public:
-	~ViewData() override;
+	afx_msg void OnVScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
+	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
+	afx_msg LRESULT on_my_message(WPARAM w_param, LPARAM l_param);
 
 	afx_msg void on_clicked_bias();
 	afx_msg void on_clicked_gain();
-	afx_msg void OnVScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
 	afx_msg void on_format_x_scale();
 	afx_msg void on_format_y_scale();
 	afx_msg void on_edit_copy();
@@ -124,7 +124,6 @@ public:
 	afx_msg void on_split_curves();
 	afx_msg void on_first_frame();
 	afx_msg void on_last_frame();
-	afx_msg LRESULT on_my_message(WPARAM w_param, LPARAM l_param);
 	afx_msg void on_view_all_data();
 	afx_msg void on_format_data_series_attributes();
 	afx_msg void on_tools_measure_mode();
@@ -133,7 +132,6 @@ public:
 	afx_msg void on_tools_horizontal_cursors();
 	afx_msg void on_update_tools_horizontal_cursors(CCmdUI* p_cmd_ui);
 	afx_msg void on_update_tools_vertical_tags(CCmdUI* p_cmd_ui);
-	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
 	afx_msg void adc_on_hardware_define_experiment();
 	afx_msg void on_en_change_time_first();
 	afx_msg void on_en_change_time_last();

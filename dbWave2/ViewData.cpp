@@ -106,7 +106,7 @@ void ViewData::define_sub_classed_items()
 	VERIFY(mm_time_first_abscissa.SubclassDlgItem(IDC_TIMEFIRST, this));
 	VERIFY(mm_time_last_abscissa.SubclassDlgItem(IDC_TIMELAST, this));
 	VERIFY(m_adc_y_ruler_bar.SubclassDlgItem(IDC_YSCALE, this));
-	VERIFY(m_adc_x_ruler_bar.SubclassDlgItem(IDC_XSCALE, this));
+	VERIFY(m_ruler_bar_abscissa.SubclassDlgItem(IDC_XSCALE, this));
 }
 
 void ViewData::define_stretch_parameters()
@@ -132,8 +132,8 @@ void ViewData::OnInitialUpdate()
 	define_sub_classed_items();
 
 	m_adc_y_ruler_bar.AttachScopeWnd(&chart_data, FALSE);
-	m_adc_x_ruler_bar.AttachScopeWnd(&chart_data, TRUE);
-	chart_data.attach_external_x_ruler(&m_adc_x_ruler_bar);
+	m_ruler_bar_abscissa.AttachScopeWnd(&chart_data, TRUE);
+	chart_data.attach_external_x_ruler(&m_ruler_bar_abscissa);
 	chart_data.attach_external_y_ruler(&m_adc_y_ruler_bar);
 	chart_data.b_nice_grid = TRUE;
 
