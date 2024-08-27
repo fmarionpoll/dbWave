@@ -36,33 +36,33 @@ END_MESSAGE_MAP()
 BOOL CMeasureProperties::OnInitDialog()
 {
 	// all
-	m_measure_hz_tags_page.m_pChartDataWnd = m_pChartDataWnd;
-	m_measure_vt_tags_page.m_pChartDataWnd = m_pChartDataWnd;
-	m_measure_options_page.m_pChartDataWnd = m_pChartDataWnd;
-	m_measure_results_page.m_pChartDataWnd = m_pChartDataWnd;
+	m_measure_hz_tags_page.m_p_chart_data_wnd = m_pChartDataWnd;
+	m_measure_vt_tags_page.m_p_chart_data_wnd = m_pChartDataWnd;
+	m_measure_options_page.m_p_chart_data_wnd = m_pChartDataWnd;
+	m_measure_results_page.m_p_chart_data_wnd = m_pChartDataWnd;
 
-	m_measure_hz_tags_page.m_pMO = m_pMO;
-	m_measure_vt_tags_page.m_pMO = m_pMO;
-	m_measure_options_page.m_pMO = m_pMO;
-	m_measure_results_page.m_pMO = m_pMO;
+	m_measure_hz_tags_page.m_p_options_measure = m_pMO;
+	m_measure_vt_tags_page.m_p_options_measure = m_pMO;
+	m_measure_options_page.m_p_options_measure = m_pMO;
+	m_measure_results_page.m_p_options_measure = m_pMO;
 
-	m_measure_hz_tags_page.m_pdatDoc = m_pdatDoc;
-	m_measure_vt_tags_page.m_pdatDoc = m_pdatDoc;
-	m_measure_options_page.m_pdatDoc = m_pdatDoc;
-	m_measure_results_page.m_pdatDoc = m_pdatDoc;
+	m_measure_hz_tags_page.m_p_dat_doc = m_pdatDoc;
+	m_measure_vt_tags_page.m_p_dat_doc = m_pdatDoc;
+	m_measure_options_page.m_p_dat_doc = m_pdatDoc;
+	m_measure_results_page.m_p_dat_doc = m_pdatDoc;
 
-	m_measure_hz_tags_page.m_pdbDoc = m_pdbDoc;
-	m_measure_vt_tags_page.m_pdbDoc = m_pdbDoc;
-	m_measure_options_page.m_pdbDoc = m_pdbDoc;
-	m_measure_results_page.m_pdbDoc = m_pdbDoc;
+	m_measure_hz_tags_page.m_pdb_doc = m_pdbDoc;
+	m_measure_vt_tags_page.m_pdb_doc = m_pdbDoc;
+	m_measure_options_page.m_pdb_doc = m_pdbDoc;
+	m_measure_results_page.m_pdb_doc = m_pdbDoc;
 
 	// measure options
 	// vertical tags
 
 	// HZ tags
-	m_measure_vt_tags_page.m_samplingrate = m_samplingrate;
+	m_measure_vt_tags_page.m_sampling_rate = m_samplingrate;
 
 	// measure
-	m_measure_results_page.m_currentchan = m_currentchan;
+	m_measure_results_page.m_current_chan = m_currentchan;
 	return CPropertySheet::OnInitDialog();
 }

@@ -620,10 +620,10 @@ void ViewSpikeDetection::OnInitialUpdate()
 
 	update_file_parameters(TRUE);
 	chart_data_filtered_.set_scope_parameters(&(options_view_data_->view_data));
-	//chart_data_filtered_.Invalidate();
+	chart_data_filtered_.Invalidate();
 	chart_data_source_.set_scope_parameters(&(options_view_data_->view_data));
-	//chart_data_source_.Invalidate();
-	on_format_split_curves();
+	chart_data_source_.Invalidate();
+	//on_format_split_curves();
 }
 
 LRESULT ViewSpikeDetection::on_my_message(const WPARAM w_param, const LPARAM l_param)

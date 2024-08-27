@@ -14,129 +14,111 @@
 
 IMPLEMENT_DYNCREATE(CMeasureOptionsPage, CPropertyPage)
 
-/////////////////////////////////////////////////////////////////////////////
-// CMeasureOptionsPage property page
 
-CMeasureOptionsPage::CMeasureOptionsPage() : CPropertyPage(IDD), m_wSourcechan(0), m_pMO(nullptr),
-                                             m_pdbDoc(nullptr), m_pdatDoc(nullptr), m_pChartDataWnd(nullptr)
+CMeasureOptionsPage::CMeasureOptionsPage() : CPropertyPage(IDD)
 {
-	m_bExtrema = FALSE;
-	m_bDiffExtrema = FALSE;
-	m_bDiffDatalimits = FALSE;
-	m_bHalfrisetime = FALSE;
-	m_bHalfrecovery = FALSE;
-	m_bDatalimits = FALSE;
-	m_wStimulusthresh = 0;
-	m_wStimuluschan = 0;
-	m_bAllFiles = FALSE;
-	m_uiSourceChan = 0;
-	m_fStimulusoffset = 0.0f;
-	m_uiStimulusThreshold = 0;
-	m_uiStimuluschan = 0;
-	m_bLimitsval = false;
 }
 
 CMeasureOptionsPage::~CMeasureOptionsPage()
-{
-}
+= default;
 
-void CMeasureOptionsPage::DoDataExchange(CDataExchange* pDX)
+void CMeasureOptionsPage::DoDataExchange(CDataExchange* p_dx)
 {
-	CPropertyPage::DoDataExchange(pDX);
-	DDX_Check(pDX, IDC_CHECKEXTREMA, m_bExtrema);
-	DDX_Check(pDX, IDC_CHECKDIFFERENCE, m_bDiffExtrema);
-	DDX_Check(pDX, IDC_CHECK2, m_bDiffDatalimits);
-	DDX_Check(pDX, IDC_CHECKRISETIME, m_bHalfrisetime);
-	DDX_Check(pDX, IDC_CHECKRECOVERYTIME, m_bHalfrecovery);
-	DDX_Check(pDX, IDC_CHECKATLIMITS, m_bDatalimits);
-	DDX_Check(pDX, IDC_APPLYTOALLFILES, m_bAllFiles);
-	DDX_Text(pDX, IDC_SOURCECHANNEL, m_uiSourceChan);
-	DDX_Text(pDX, IDC_TIMEOFFSET, m_fStimulusoffset);
-	DDX_Text(pDX, IDC_STIMULUSTHRESHOLD, m_uiStimulusThreshold);
-	DDX_Text(pDX, IDC_STIMULUSCHANNEL, m_uiStimuluschan);
+	CPropertyPage::DoDataExchange(p_dx);
+	DDX_Check(p_dx, IDC_CHECKEXTREMA, m_b_extrema);
+	DDX_Check(p_dx, IDC_CHECKDIFFERENCE, m_b_diff_extrema);
+	DDX_Check(p_dx, IDC_CHECK2, m_b_diff_data_limits);
+	DDX_Check(p_dx, IDC_CHECKRISETIME, m_b_half_rise_time);
+	DDX_Check(p_dx, IDC_CHECKRECOVERYTIME, m_b_half_recovery);
+	DDX_Check(p_dx, IDC_CHECKATLIMITS, m_b_data_limits);
+	DDX_Check(p_dx, IDC_APPLYTOALLFILES, m_b_all_files);
+	DDX_Text(p_dx, IDC_SOURCECHANNEL, m_ui_source_chan);
+	DDX_Text(p_dx, IDC_TIMEOFFSET, m_f_stimulus_offset);
+	DDX_Text(p_dx, IDC_STIMULUSTHRESHOLD, m_ui_stimulus_threshold);
+	DDX_Text(p_dx, IDC_STIMULUSCHANNEL, m_ui_stimulus_chan);
 }
 
 BEGIN_MESSAGE_MAP(CMeasureOptionsPage, CPropertyPage)
-	ON_BN_CLICKED(IDC_ALLCHANNELS, OnAllchannels)
-	ON_BN_CLICKED(IDC_SINGLECHANNEL, OnSinglechannel)
-	ON_BN_CLICKED(IDC_VERTICALTAGS, OnVerticaltags)
-	ON_BN_CLICKED(IDC_HORIZONTALTAGS, OnHorizontaltags)
-	ON_BN_CLICKED(IDC_STIMULUSTAG, OnStimulustag)
+	ON_BN_CLICKED(IDC_ALLCHANNELS, on_all_channels)
+	ON_BN_CLICKED(IDC_SINGLECHANNEL, on_single_channel)
+	ON_BN_CLICKED(IDC_VERTICALTAGS, on_vertical_tags)
+	ON_BN_CLICKED(IDC_HORIZONTALTAGS, on_horizontal_tags)
+	ON_BN_CLICKED(IDC_STIMULUSTAG, on_stimulus_tag)
 END_MESSAGE_MAP()
 
 // display groups of controls as visible or disabled
 
-void CMeasureOptionsPage::ShowLimitsParms(const BOOL b_show)
+void CMeasureOptionsPage::show_limits_parameters(const BOOL b_show) const
 {
 	GetDlgItem(IDC_STIMULUSCHANNEL)->EnableWindow(b_show);
 	GetDlgItem(IDC_STIMULUSTHRESHOLD)->EnableWindow(b_show);
 	GetDlgItem(IDC_TIMEOFFSET)->EnableWindow(b_show);
 }
 
-void CMeasureOptionsPage::ShowChanParm(const BOOL b_show)
+void CMeasureOptionsPage::show_chan_parameters(const BOOL b_show) const
 {
 	GetDlgItem(IDC_SOURCECHANNEL)->EnableWindow(b_show);
 }
 
-void CMeasureOptionsPage::OnAllchannels()
+void CMeasureOptionsPage::on_all_channels()
 {
-	ShowChanParm(FALSE);
+	show_chan_parameters(FALSE);
 }
 
-void CMeasureOptionsPage::OnSinglechannel()
+void CMeasureOptionsPage::on_single_channel()
 {
-	ShowChanParm(TRUE);
+	show_chan_parameters(TRUE);
 }
 
-void CMeasureOptionsPage::OnVerticaltags()
+void CMeasureOptionsPage::on_vertical_tags()
 {
-	m_pChartDataWnd->hz_tags.remove_all_tags();
-	m_pChartDataWnd->vt_tags.copy_tag_list(m_pdatDoc->get_vt_tags_list());
-	m_pChartDataWnd->Invalidate();
-	ShowLimitsParms(FALSE);
+	m_p_chart_data_wnd->hz_tags.remove_all_tags();
+	m_p_chart_data_wnd->vt_tags.copy_tag_list(m_p_dat_doc->get_vt_tags_list());
+	m_p_chart_data_wnd->Invalidate();
+	show_limits_parameters(FALSE);
 }
 
-void CMeasureOptionsPage::OnHorizontaltags()
+void CMeasureOptionsPage::on_horizontal_tags()
 {
-	m_pChartDataWnd->vt_tags.remove_all_tags();
-	m_pChartDataWnd->hz_tags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
-	m_pChartDataWnd->Invalidate();
-	ShowLimitsParms(FALSE);
+	m_p_chart_data_wnd->vt_tags.remove_all_tags();
+	m_p_chart_data_wnd->hz_tags.copy_tag_list(m_p_dat_doc->get_hz_tags_list());
+	m_p_chart_data_wnd->Invalidate();
+	show_limits_parameters(FALSE);
 }
 
-void CMeasureOptionsPage::OnStimulustag()
+void CMeasureOptionsPage::on_stimulus_tag()
 {
-	ShowLimitsParms(TRUE);
+	show_limits_parameters(TRUE);
 }
 
 // save options
-void CMeasureOptionsPage::SaveOptions()
+void CMeasureOptionsPage::save_options()
 {
-	m_pMO->b_extrema = m_bExtrema;
-	m_pMO->b_diff_extrema = m_bDiffExtrema;
-	m_pMO->b_diff_data_limits = m_bDiffDatalimits;
-	m_pMO->b_half_rise_time = m_bHalfrisetime;
-	m_pMO->b_half_recovery = m_bHalfrecovery;
-	m_pMO->b_data_limits = m_bDatalimits;
-	m_pMO->w_source_channel = m_uiSourceChan;
-	m_pMO->w_stimulus_threshold = m_uiStimulusThreshold;
-	m_pMO->w_stimulus_channel = m_uiStimuluschan;
-	m_pMO->f_stimulus_offset = m_fStimulusoffset;
-	m_pMO->b_all_files = m_bAllFiles;
-	m_pMO->b_time = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
+	m_p_options_measure->b_extrema = m_b_extrema;
+	m_p_options_measure->b_diff_extrema = m_b_diff_extrema;
+	m_p_options_measure->b_diff_data_limits = m_b_diff_data_limits;
+	m_p_options_measure->b_half_rise_time = m_b_half_rise_time;
+	m_p_options_measure->b_half_recovery = m_b_half_recovery;
+	m_p_options_measure->b_data_limits = m_b_data_limits;
+	m_p_options_measure->w_source_channel = static_cast<WORD>(m_ui_source_chan);
+	m_p_options_measure->w_stimulus_threshold = static_cast<WORD>(m_ui_stimulus_threshold);
+	m_p_options_measure->w_stimulus_channel = static_cast<WORD>(m_ui_stimulus_chan);
+	m_p_options_measure->f_stimulus_offset = m_f_stimulus_offset;
+	m_p_options_measure->b_all_files = m_b_all_files;
+	m_p_options_measure->b_time = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
 
 	auto i_id = GetCheckedRadioButton(IDC_VERTICALTAGS, IDC_STIMULUSTAG);
 	switch (i_id)
 	{
 	case IDC_VERTICALTAGS:
 		i_id = 0;
-		m_pChartDataWnd->hz_tags.remove_all_tags();
-		m_pChartDataWnd->vt_tags.copy_tag_list(m_pdatDoc->get_vt_tags_list());
+		m_p_chart_data_wnd->hz_tags.remove_all_tags();
+		m_p_chart_data_wnd->vt_tags.copy_tag_list(m_p_dat_doc->get_vt_tags_list());
 		break;
 	case IDC_HORIZONTALTAGS:
 		i_id = 1;
-		m_pChartDataWnd->vt_tags.remove_all_tags();
-		m_pChartDataWnd->hz_tags.copy_tag_list(m_pdatDoc->get_hz_tags_list());
+		m_p_chart_data_wnd->vt_tags.remove_all_tags();
+		m_p_chart_data_wnd->hz_tags.copy_tag_list(m_p_dat_doc->get_hz_tags_list());
 		break;
 	case IDC_RECTANGLETAG: i_id = 2;
 		break;
@@ -145,22 +127,22 @@ void CMeasureOptionsPage::SaveOptions()
 	default: i_id = 2;
 		break;
 	}
-	m_pMO->w_option = i_id;
-	m_pMO->b_all_channels = static_cast<CButton*>(GetDlgItem(IDC_ALLCHANNELS))->GetCheck();
-	m_pMO->b_changed = TRUE;
+	m_p_options_measure->w_option = i_id;
+	m_p_options_measure->b_all_channels = static_cast<CButton*>(GetDlgItem(IDC_ALLCHANNELS))->GetCheck();
+	m_p_options_measure->b_changed = TRUE;
 }
 
 BOOL CMeasureOptionsPage::OnKillActive()
 {
 	UpdateData(TRUE);
-	SaveOptions();
+	save_options();
 	return CPropertyPage::OnKillActive();
 }
 
 void CMeasureOptionsPage::OnOK()
 {
 	UpdateData(TRUE);
-	SaveOptions();
+	save_options();
 	CPropertyPage::OnOK();
 }
 
@@ -168,20 +150,20 @@ BOOL CMeasureOptionsPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	m_bExtrema = m_pMO->b_extrema;
-	m_bDiffExtrema = m_pMO->b_diff_extrema;
-	m_bDiffDatalimits = m_pMO->b_diff_data_limits;
-	m_bHalfrisetime = m_pMO->b_half_rise_time;
-	m_bHalfrecovery = m_pMO->b_half_recovery;
-	m_bDatalimits = m_pMO->b_data_limits;
-	m_uiSourceChan = m_pMO->w_source_channel;
-	m_uiStimulusThreshold = m_pMO->w_stimulus_threshold;
-	m_uiStimuluschan = m_pMO->w_stimulus_channel;
-	m_fStimulusoffset = m_pMO->f_stimulus_offset;
-	m_bAllFiles = m_pMO->b_all_files;
+	m_b_extrema = m_p_options_measure->b_extrema;
+	m_b_diff_extrema = m_p_options_measure->b_diff_extrema;
+	m_b_diff_data_limits = m_p_options_measure->b_diff_data_limits;
+	m_b_half_rise_time = m_p_options_measure->b_half_rise_time;
+	m_b_half_recovery = m_p_options_measure->b_half_recovery;
+	m_b_data_limits = m_p_options_measure->b_data_limits;
+	m_ui_source_chan = m_p_options_measure->w_source_channel;
+	m_ui_stimulus_threshold = m_p_options_measure->w_stimulus_threshold;
+	m_ui_stimulus_chan = m_p_options_measure->w_stimulus_channel;
+	m_f_stimulus_offset = m_p_options_measure->f_stimulus_offset;
+	m_b_all_files = m_p_options_measure->b_all_files;
 	int i_id;
 	auto flag = FALSE;
-	switch (m_pMO->w_option)
+	switch (m_p_options_measure->w_option)
 	{
 	case 0: i_id = IDC_VERTICALTAGS;
 		break;
@@ -195,23 +177,23 @@ BOOL CMeasureOptionsPage::OnInitDialog()
 	default: i_id = IDC_VERTICALTAGS;
 		break;
 	}
-	ShowLimitsParms(flag);
+	show_limits_parameters(flag);
 
 	auto i_id1 = IDC_ALLCHANNELS;
 	flag = FALSE;
-	if (!m_pMO->b_all_channels)
+	if (!m_p_options_measure->b_all_channels)
 	{
 		i_id1 = IDC_SINGLECHANNEL;
 		flag = TRUE;
 	}
-	ShowChanParm(flag);
+	show_chan_parameters(flag);
 
 	CheckRadioButton(IDC_ALLCHANNELS, IDC_SINGLECHANNEL, i_id1);
 	CheckRadioButton(IDC_VERTICALTAGS, IDC_STIMULUSTAG, i_id);
 
 	GetDlgItem(IDC_CHECKRISETIME)->EnableWindow(FALSE);
 	GetDlgItem(IDC_CHECKRECOVERYTIME)->EnableWindow(FALSE);
-	static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(m_pMO->b_time);
+	static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(m_p_options_measure->b_time);
 
 	UpdateData(FALSE);
 
