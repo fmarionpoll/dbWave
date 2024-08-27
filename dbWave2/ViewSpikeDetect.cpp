@@ -607,9 +607,9 @@ void ViewSpikeDetection::OnInitialUpdate()
 	spike_detection_array_ = &(p_app->spk_detect_array); 
 	options_view_data_ = &(p_app->options_view_data);
 
-	m_ruler_bar_abscissa.AttachScopeWnd(&chart_data_source_, TRUE);
-	chart_data_source_.attach_external_x_ruler(&m_ruler_bar_abscissa);
-	//chart_data_source_.b_nice_grid = TRUE;
+	m_ruler_bar_abscissa.AttachScopeWnd(&chart_data_filtered_, TRUE);
+	chart_data_filtered_.attach_external_x_ruler(&m_ruler_bar_abscissa);
+	//chart_data_filtered_.b_nice_grid = TRUE;
 
 	define_stretch_parameters();
 	b_init_ = TRUE;
