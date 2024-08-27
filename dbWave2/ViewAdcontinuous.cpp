@@ -32,7 +32,7 @@ ViewADcontinuous::ViewADcontinuous()
 	: ViewDbTable(IDD)
 {
 	m_bEnableActiveAccessibility = FALSE;
-	m_ad_y_ruler_bar.AttachScopeWnd(&m_chart_data_ad_, FALSE);
+	m_ad_y_ruler_bar.attach_scope_wnd(&m_chart_data_ad_, FALSE);
 }
 
 ViewADcontinuous::~ViewADcontinuous()
@@ -144,8 +144,8 @@ void ViewADcontinuous::attach_controls()
 	VERIFY(m_un_zoom_button.SubclassDlgItem(IDC_UNZOOM, this));
 	VERIFY(m_combo_start_output.SubclassDlgItem(IDC_COMBOSTARTOUTPUT, this));
 
-	m_ad_y_ruler_bar.AttachScopeWnd(&m_chart_data_ad_, FALSE);
-	m_ad_x_ruler_bar.AttachScopeWnd(&m_chart_data_ad_, TRUE);
+	m_ad_y_ruler_bar.attach_scope_wnd(&m_chart_data_ad_, FALSE);
+	m_ad_x_ruler_bar.attach_scope_wnd(&m_chart_data_ad_, TRUE);
 	m_chart_data_ad_.attach_external_x_ruler(&m_ad_x_ruler_bar);
 	m_chart_data_ad_.attach_external_y_ruler(&m_ad_y_ruler_bar);
 	m_chart_data_ad_.b_nice_grid = TRUE;
@@ -561,7 +561,7 @@ ECODE ViewADcontinuous::start_simultaneous_list()
 		return e_code;
 	}
 
-	// prestart
+	// pre-start
 	e_code = olDaSimultaneousPrestart(h_ss_list);
 	if (e_code != OLNOERROR)
 	{
@@ -946,7 +946,9 @@ short* ViewADcontinuous::adc_transfer(short* source_data, const CWaveFormat * p_
 		const auto bin_zero_value = static_cast<short>(options_input_data_->wave_format.bin_zero);
 		short* p_data_acquisition_value = source_data;
 		for (int j = 0; j < m_acq32_ad.Getbuflen(); j++, p_data_acquisition_value++)
-			*p_data_acquisition_value -= bin_zero_value;
+		{
+			*p_data_acquisition_value -= static_cast<short>(bin_zero_value);
+		}
 	}
 
 	if (options_input_data_->i_under_sample <= 1)

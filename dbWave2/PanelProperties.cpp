@@ -15,7 +15,7 @@
 IMPLEMENT_DYNAMIC(CPropertiesPanel, CDockablePane)
 
 // the numbers here are those of m_pszTableCol - they define the order of appearance of the different parameters
-int CPropertiesPanel::m_noCol[] = {
+int CPropertiesPanel::m_no_col_[] = {
 	// ------1
 	CH_ACQDATE_DAY,
 	CH_ACQDATE_TIME,
@@ -25,7 +25,7 @@ int CPropertiesPanel::m_noCol[] = {
 	CH_PATH2_ID,
 	CH_FILESPK,
 	CH_ACQ_COMMENTS,
-	-1, // 0-6 acquisition: acq_date, datalen, path_ID, filename, path2_ID, filespk, acq_comment
+	-1, // 0-6 acquisition: acq_date, data_len, path_ID, filename, path2_ID, file_spk, acq_comment
 	// ------2
 	CH_IDINSECT,
 	CH_IDSENSILLUM,
@@ -36,12 +36,12 @@ int CPropertiesPanel::m_noCol[] = {
 	CH_SEX_ID,
 	CH_OPERATOR_ID,
 	-1,
-	// 7-14 experiment: insectID, sensillumID, insectname_ID, sensillumname_ID, location_ID, strain_ID, sex_ID, operator_ID
+	// 7-14 experiment: insectID, sensillumID, insect_name_ID, sensillum_name_ID, location_ID, strain_ID, sex_ID, operator_ID
 	// ------3
 	CH_EXPT_ID,
 	CH_STIM_ID, CH_CONC_ID, CH_REPEAT,
 	CH_STIM2_ID, CH_CONC2_ID, CH_REPEAT2,
-	-1, // 15-21 stimulus: expt_ID, stim_ID, conc_ID, repeat, stim2_ID, conc2_ID, repeat2
+	-1, // 15-21 stimulus: experiment_ID, stimulus_ID, concentration_ID, repeat, stimulus2_ID, concentration2_ID, repeat2
 	// ------4
 	CH_NSPIKES,
 	CH_NSPIKECLASSES,
@@ -60,32 +60,32 @@ int CPropertiesPanel::m_prop_col_[] = {
 
 CPropertiesPanel::CPropertiesPanel()
 {
-	m_wndEditInfosHeight = 0;
-	m_pDoc = nullptr;
-	m_pDocOld = nullptr;
-	m_bUpdateCombos = FALSE;
-	m_bchangedProperty = FALSE;
+	m_wnd_edit_infos_height_ = 0;
+	m_p_doc_ = nullptr;
+	m_p_doc_old_ = nullptr;
+	m_b_update_combos_ = FALSE;
+	m_b_changed_property_ = FALSE;
 }
 
 CPropertiesPanel::~CPropertiesPanel()
-{
-}
+= default;
 
 BEGIN_MESSAGE_MAP(CPropertiesPanel, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
-	ON_COMMAND(ID_EXPAND_ALL, OnExpandAllProperties)
-	ON_UPDATE_COMMAND_UI(ID_EXPAND_ALL, OnUpdateExpandAllProperties)
-	ON_COMMAND(ID_SORT_PROPERTIES, OnSortProperties)
-	ON_UPDATE_COMMAND_UI(ID_SORT_PROPERTIES, OnUpdateSortProperties)
 	ON_WM_SETFOCUS()
 	ON_WM_SETTINGCHANGE()
-	ON_BN_CLICKED(IDC_EDIT_INFOS, OnBnClickedEditinfos)
-	ON_UPDATE_COMMAND_UI(IDC_EDIT_INFOS, OnUpdateBnEditinfos)
-	ON_BN_CLICKED(IDC_UPDATE_INFOS, OnBnClickedUpdateinfos)
-	ON_UPDATE_COMMAND_UI(IDC_UPDATE_INFOS, OnUpdateBnUpdateinfos)
-	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, OnPropertyChanged)
-	ON_MESSAGE(WM_MYMESSAGE, OnMyMessage)
+
+	ON_COMMAND(ID_EXPAND_ALL, on_expand_all_properties)
+	ON_UPDATE_COMMAND_UI(ID_EXPAND_ALL, on_update_expand_all_properties)
+	ON_COMMAND(ID_SORT_PROPERTIES, on_sort_properties)
+	ON_UPDATE_COMMAND_UI(ID_SORT_PROPERTIES, on_update_sort_properties)
+	ON_BN_CLICKED(IDC_EDIT_INFOS, on_bn_clicked_edit_infos)
+	ON_UPDATE_COMMAND_UI(IDC_EDIT_INFOS, on_update_bn_edit_infos)
+	ON_BN_CLICKED(IDC_UPDATE_INFOS, on_bn_clicked_update_infos)
+	ON_UPDATE_COMMAND_UI(IDC_UPDATE_INFOS, on_update_bn_update_infos)
+	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, on_property_changed)
+	ON_MESSAGE(WM_MYMESSAGE, on_my_message)
 END_MESSAGE_MAP()
 
 void CPropertiesPanel::AdjustLayout()
@@ -95,97 +95,97 @@ void CPropertiesPanel::AdjustLayout()
 
 	CRect rect_client;
 	GetClientRect(rect_client);
-	const int cy_tlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
+	const int cy_tlb = m_wnd_tool_bar_.CalcFixedLayout(FALSE, TRUE).cy;
 
-	m_wndToolBar.SetWindowPos(nullptr, rect_client.left,
-	                          rect_client.top + m_wndEditInfosHeight,
+	m_wnd_tool_bar_.SetWindowPos(nullptr, rect_client.left,
+	                          rect_client.top + m_wnd_edit_infos_height_,
 	                          rect_client.Width(),
 	                          cy_tlb, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndPropList.SetWindowPos(nullptr, rect_client.left,
-	                           rect_client.top + m_wndEditInfosHeight + cy_tlb,
+	m_wnd_prop_list_.SetWindowPos(nullptr, rect_client.left,
+	                           rect_client.top + m_wnd_edit_infos_height_ + cy_tlb,
 	                           rect_client.Width(),
-	                           rect_client.Height() - m_wndEditInfosHeight - cy_tlb,
+	                           rect_client.Height() - m_wnd_edit_infos_height_ - cy_tlb,
 	                           SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-int CPropertiesPanel::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CPropertiesPanel::OnCreate(LPCREATESTRUCT lp_create_struct)
 {
-	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
+	if (CDockablePane::OnCreate(lp_create_struct) == -1)
 		return -1;
 
 	const CRect rect_dummy(0, 0, 24, 24);
-	if (!m_wndPropList.Create(WS_VISIBLE | WS_CHILD, rect_dummy, this, 2))
+	if (!m_wnd_prop_list_.Create(WS_VISIBLE | WS_CHILD, rect_dummy, this, 2))
 		return -1; // fail to create
-	SetPropListFont();
-	InitPropList();
+	set_prop_list_font();
+	init_prop_list();
 
-	m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_PROPERTIES);
-	m_wndToolBar.LoadToolBar(IDR_PROPERTIES, 0, 0, TRUE /* Is locked */);
-	m_wndToolBar.CleanUpLockedImages();
-	m_wndToolBar.LoadBitmap(the_app.hi_color_icons ? IDB_PROPERTIES_HC : IDR_PROPERTIES, 0, 0, TRUE /* Locked */);
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
-	m_wndToolBar.SetPaneStyle(
-		m_wndToolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM |
+	m_wnd_tool_bar_.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_PROPERTIES);
+	m_wnd_tool_bar_.LoadToolBar(IDR_PROPERTIES, 0, 0, TRUE /* Is locked */);
+	m_wnd_tool_bar_.CleanUpLockedImages();
+	m_wnd_tool_bar_.LoadBitmap(the_app.hi_color_icons ? IDB_PROPERTIES_HC : IDR_PROPERTIES, 0, 0, TRUE /* Locked */);
+	m_wnd_tool_bar_.SetPaneStyle(m_wnd_tool_bar_.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
+	m_wnd_tool_bar_.SetPaneStyle(
+		m_wnd_tool_bar_.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM |
 			CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
-	m_wndToolBar.SetOwner(this);
+	m_wnd_tool_bar_.SetOwner(this);
 	// All commands will be routed via this control, not via the parent frame:
-	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
+	m_wnd_tool_bar_.SetRouteCommandsViaFrame(FALSE);
 
 	AdjustLayout();
 	return 0;
 }
 
-void CPropertiesPanel::OnSize(UINT nType, int cx, int cy)
+void CPropertiesPanel::OnSize(UINT n_type, int cx, int cy)
 {
-	CDockablePane::OnSize(nType, cx, cy);
+	CDockablePane::OnSize(n_type, cx, cy);
 	AdjustLayout();
 }
 
-void CPropertiesPanel::OnExpandAllProperties()
+void CPropertiesPanel::on_expand_all_properties()
 {
-	m_wndPropList.ExpandAll();
+	m_wnd_prop_list_.ExpandAll();
 }
 
-void CPropertiesPanel::OnUpdateExpandAllProperties(CCmdUI* /* pCmdUI */)
+void CPropertiesPanel::on_update_expand_all_properties(CCmdUI* /* pCmdUI */)
 {
 }
 
-void CPropertiesPanel::OnSortProperties()
+void CPropertiesPanel::on_sort_properties()
 {
-	m_wndPropList.SetAlphabeticMode(!m_wndPropList.IsAlphabeticMode());
+	m_wnd_prop_list_.SetAlphabeticMode(!m_wnd_prop_list_.IsAlphabeticMode());
 }
 
-void CPropertiesPanel::OnUpdateSortProperties(CCmdUI* pCmdUI)
+void CPropertiesPanel::on_update_sort_properties(CCmdUI* p_cmd_ui)
 {
-	pCmdUI->SetCheck(m_wndPropList.IsAlphabeticMode());
+	p_cmd_ui->SetCheck(m_wnd_prop_list_.IsAlphabeticMode());
 }
 
-void CPropertiesPanel::UpdatePropList()
+void CPropertiesPanel::update_prop_list()
 {
-	m_bchangedProperty = FALSE; // reset flag
+	m_b_changed_property_ = FALSE; // reset flag
 
 	// database general section
-	const int current_record_position = m_pDoc->db_get_current_record_position() + 1;
-	const int n_records = m_pDoc->db_get_records_count();
+	const int current_record_position = m_p_doc_->db_get_current_record_position() + 1;
+	const int n_records = m_p_doc_->db_get_records_count();
 	if (n_records == 0)
 		return;
 
-	const auto property_count = m_wndPropList.GetPropertyCount();
-	const auto p_group0 = m_wndPropList.GetProperty(0);
+	const auto property_count = m_wnd_prop_list_.GetPropertyCount();
+	const auto p_group0 = m_wnd_prop_list_.GetProperty(0);
 	(p_group0->GetSubItem(0)->SetValue(static_cast<_variant_t>(current_record_position)));
 	(p_group0->GetSubItem(1)->SetValue(static_cast<_variant_t>(n_records)));
 
 	for (auto i = 1; i < property_count; i++)
 	{
-		const auto p_group = m_wndPropList.GetProperty(i);
-		UpdateGroupPropFromTable(p_group);
+		const auto p_group = m_wnd_prop_list_.GetProperty(i);
+		update_group_prop_from_table(p_group);
 	}
-	m_bUpdateCombos = FALSE;
+	m_b_update_combos_ = FALSE;
 }
 
-void CPropertiesPanel::UpdateGroupPropFromTable(CMFCPropertyGridProperty* p_group) const
+void CPropertiesPanel::update_group_prop_from_table(CMFCPropertyGridProperty* p_group) const
 {
-	auto p_db = m_pDoc->db_table;
+	auto p_db = m_p_doc_->db_table;
 	DB_ITEMDESC desc;
 	const auto n_sub_items = p_group->GetSubItemsCount();
 	CdbTableAssociated* p2_linked_set;
@@ -203,7 +203,7 @@ void CPropertiesPanel::UpdateGroupPropFromTable(CMFCPropertyGridProperty* p_grou
 			p_prop->SetValue(desc.csVal);
 			p_prop->SetOriginalValue(desc.csVal);
 			p2_linked_set = p_db->m_main_table_set.m_desc[i_column].plinkedSet;
-			if (m_bUpdateCombos || (p_prop->GetOptionCount() != p2_linked_set->GetRecordCount()))
+			if (m_b_update_combos_ || (p_prop->GetOptionCount() != p2_linked_set->GetRecordCount()))
 			{
 				p_prop->RemoveAllOptions();
 				COleVariant var_value1;
@@ -246,25 +246,25 @@ void CPropertiesPanel::UpdateGroupPropFromTable(CMFCPropertyGridProperty* p_grou
 	}
 }
 
-void CPropertiesPanel::UpdateTableFromProp()
+void CPropertiesPanel::update_table_from_prop()
 {
-	const auto p_database = m_pDoc->db_table;
+	const auto p_database = m_p_doc_->db_table;
 	const auto p_main_table_set = &p_database->m_main_table_set;
-	m_bchangedProperty = FALSE; 
+	m_b_changed_property_ = FALSE; 
 	p_main_table_set->Edit();
 
-	const auto property_count = m_wndPropList.GetPropertyCount();
+	const auto property_count = m_wnd_prop_list_.GetPropertyCount();
 	for (auto i = 1; i < property_count; i++)
 	{
-		const auto p_group = m_wndPropList.GetProperty(i);
-		UpdateTableFromGroupProp(p_group);
+		const auto p_group = m_wnd_prop_list_.GetProperty(i);
+		update_table_from_group_prop(p_group);
 	}
 	p_main_table_set->Update();
 }
 
-void CPropertiesPanel::UpdateTableFromGroupProp(const CMFCPropertyGridProperty* p_group)
+void CPropertiesPanel::update_table_from_group_prop(const CMFCPropertyGridProperty* p_group)
 {
-	const auto p_database = m_pDoc->db_table;
+	const auto p_database = m_p_doc_->db_table;
 	const auto sub_items_count = p_group->GetSubItemsCount();
 
 	for (auto i = 0; i < sub_items_count; i++)
@@ -310,100 +310,100 @@ void CPropertiesPanel::UpdateTableFromGroupProp(const CMFCPropertyGridProperty* 
 
 #define ID_BASE	1000
 
-void CPropertiesPanel::InitPropList()
+void CPropertiesPanel::init_prop_list()
 {
 	// exit if doc is not defined
-	if (!m_pDoc || m_pDoc == nullptr)
+	if (!m_p_doc_ || m_p_doc_ == nullptr)
 		return;
 
-	if (m_pDocOld == m_pDoc) //NULL)
+	if (m_p_doc_old_ == m_p_doc_) //NULL)
 	{
-		UpdatePropList();
+		update_prop_list();
 		return;
 	}
 
 	// first time init
-	m_pDocOld = m_pDoc;
-	m_wndPropList.RemoveAll();
+	m_p_doc_old_ = m_p_doc_;
+	m_wnd_prop_list_.RemoveAll();
 
 	// housekeeping
-	m_wndPropList.EnableHeaderCtrl(FALSE);
-	m_wndPropList.EnableDescriptionArea(TRUE);
-	m_wndPropList.SetVSDotNetLook(TRUE);
-	m_wndPropList.SetGroupNameFullWidth(TRUE);
-	m_wndPropList.MarkModifiedProperties(TRUE, TRUE);
+	m_wnd_prop_list_.EnableHeaderCtrl(FALSE);
+	m_wnd_prop_list_.EnableDescriptionArea(TRUE);
+	m_wnd_prop_list_.SetVSDotNetLook(TRUE);
+	m_wnd_prop_list_.SetGroupNameFullWidth(TRUE);
+	m_wnd_prop_list_.MarkModifiedProperties(TRUE, TRUE);
 
-	// get pointer to database specific object which contains recordsets
-	const auto p_database = m_pDoc->db_table;
-	auto m__i_id = ID_BASE;
+	// get pointer to database specific object which contains record_sets
+	const auto p_database = m_p_doc_->db_table;
+	auto m_i_id = ID_BASE;
 
 	// ------------------------------------------------------
 	const auto p_group0 = new CMFCPropertyGridProperty(_T("Database"));
-	p_group0->SetData(m__i_id);
-	m__i_id++; // iID = 1000
+	p_group0->SetData(m_i_id);
+	m_i_id++; // iID = 1000
 	const int record_position = p_database->m_main_table_set.GetAbsolutePosition() + 1;
 	const int records_count = p_database->m_main_table_set.get_records_count();
 	auto p_prop = new CMFCPropertyGridProperty(_T("current record"), static_cast<_variant_t>(record_position),
 	                                           _T("current record in the database (soft index)"));
-	p_prop->SetData(m__i_id);
-	m__i_id++; // iID = 1001
+	p_prop->SetData(m_i_id);
+	m_i_id++; // iID = 1001
 	p_group0->AddSubItem(p_prop);
 	p_prop = new CMFCPropertyGridProperty(_T("total records"), static_cast<_variant_t>(records_count),
 	                                      _T("number of records in the database"));
-	p_prop->SetData(m__i_id);
-	m__i_id++; // iID = 1002
+	p_prop->SetData(m_i_id);
+	m_i_id++; // iID = 1002
 	p_group0->AddSubItem(p_prop);
-	m_wndPropList.AddProperty(p_group0);
+	m_wnd_prop_list_.AddProperty(p_group0);
 
 	// ------------------------------------------------------ database content
 	const auto p_group1 = new CMFCPropertyGridProperty(_T("Acquisition"));
-	p_prop->SetData(m__i_id);
-	m__i_id++; // iID = 1003
-	auto i_col0 = InitGroupFromTable(p_group1, 0);
-	m_wndPropList.AddProperty(p_group1);
+	p_prop->SetData(m_i_id);
+	m_i_id++; // iID = 1003
+	auto i_col0 = init_group_from_table(p_group1, 0);
+	m_wnd_prop_list_.AddProperty(p_group1);
 
 	const auto p_group2 = new CMFCPropertyGridProperty(_T("Experimental conditions"));
-	p_prop->SetData(m__i_id);
-	m__i_id++; // iID = 1004
-	i_col0 = InitGroupFromTable(p_group2, i_col0);
-	m_wndPropList.AddProperty(p_group2);
+	p_prop->SetData(m_i_id);
+	m_i_id++; // iID = 1004
+	i_col0 = init_group_from_table(p_group2, i_col0);
+	m_wnd_prop_list_.AddProperty(p_group2);
 
 	const auto p_group3 = new CMFCPropertyGridProperty(_T("Stimulus"));
-	p_prop->SetData(m__i_id);
-	m__i_id++; // iID = 1005
-	i_col0 = InitGroupFromTable(p_group3, i_col0);
-	m_wndPropList.AddProperty(p_group3);
+	p_prop->SetData(m_i_id);
+	m_i_id++; // iID = 1005
+	i_col0 = init_group_from_table(p_group3, i_col0);
+	m_wnd_prop_list_.AddProperty(p_group3);
 
 	const auto p_group4 = new CMFCPropertyGridProperty(_T("Measures"));
-	p_prop->SetData(m__i_id);
+	p_prop->SetData(m_i_id);
 	//m__i_id++;		// iID = 1005
 	/*i_col0 =*/
-	InitGroupFromTable(p_group4, i_col0);
-	m_wndPropList.AddProperty(p_group4);
+	init_group_from_table(p_group4, i_col0);
+	m_wnd_prop_list_.AddProperty(p_group4);
 
-	if (p_database && m_pDoc->db_get_records_count() > 0)
+	if (p_database && m_p_doc_->db_get_records_count() > 0)
 	{
-		m_bUpdateCombos = TRUE;
-		UpdatePropList();
+		m_b_update_combos_ = TRUE;
+		update_prop_list();
 	}
 }
 
 // look at elements indexes stored into m_nCol and create property grid
 // indexes are either positive or -1 (-1 is used as a stop tag)
-// init all elements pointed at within m_noCol table from element icol0 to element = -1 (stop value)
+// init all elements pointed at within m_noCol table from element i_col0 to element = -1 (stop value)
 // returns next position after the stop tag
 
-int CPropertiesPanel::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int icol0)
+int CPropertiesPanel::init_group_from_table(CMFCPropertyGridProperty* p_group, int i_col0)
 {
-	const auto p_database = m_pDoc->db_table;
+	const auto p_database = m_p_doc_->db_table;
 	p_database->m_main_table_set.get_records_count();
-	constexpr int i_col1 = sizeof(m_noCol) / sizeof(int);
-	if (icol0 > i_col1) icol0 = i_col1 - 1;
+	constexpr int i_col1 = sizeof(m_no_col_) / sizeof(int);
+	if (i_col0 > i_col1) i_col0 = i_col1 - 1;
 	int i;
 
-	for (i = icol0; i < i_col1; i++)
+	for (i = i_col0; i < i_col1; i++)
 	{
-		const auto i_desc_tab = m_noCol[i];
+		const auto i_desc_tab = m_no_col_[i];
 		if (i_desc_tab < 0)
 			break;
 
@@ -447,26 +447,26 @@ int CPropertiesPanel::InitGroupFromTable(CMFCPropertyGridProperty* pGroup, int i
 		// add a few infos
 		p_prop->AllowEdit(m_prop_col_[i_desc_tab]);
 		p_prop->SetData(i_desc_tab);
-		pGroup->AddSubItem(p_prop);
+		p_group->AddSubItem(p_prop);
 	}
 	return i + 1;
 }
 
-void CPropertiesPanel::OnSetFocus(CWnd* pOldWnd)
+void CPropertiesPanel::OnSetFocus(CWnd* p_old_wnd)
 {
-	CDockablePane::OnSetFocus(pOldWnd);
-	m_wndPropList.SetFocus();
+	CDockablePane::OnSetFocus(p_old_wnd);
+	m_wnd_prop_list_.SetFocus();
 }
 
-void CPropertiesPanel::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
+void CPropertiesPanel::OnSettingChange(UINT u_flags, LPCTSTR lpsz_section)
 {
-	CDockablePane::OnSettingChange(uFlags, lpszSection);
-	SetPropListFont();
+	CDockablePane::OnSettingChange(u_flags, lpsz_section);
+	set_prop_list_font();
 }
 
-void CPropertiesPanel::SetPropListFont()
+void CPropertiesPanel::set_prop_list_font()
 {
-	DeleteObject(m_fntPropList.Detach());
+	DeleteObject(m_fnt_prop_list_.Detach());
 
 	LOGFONT lf;
 	afxGlobalData.fontRegular.GetLogFont(&lf);
@@ -477,58 +477,58 @@ void CPropertiesPanel::SetPropListFont()
 	lf.lfHeight = info.lfMenuFont.lfHeight;
 	lf.lfWeight = info.lfMenuFont.lfWeight;
 	lf.lfItalic = info.lfMenuFont.lfItalic;
-	m_fntPropList.CreateFontIndirect(&lf);
-	m_wndPropList.SetFont(&m_fntPropList);
+	m_fnt_prop_list_.CreateFontIndirect(&lf);
+	m_wnd_prop_list_.SetFont(&m_fnt_prop_list_);
 }
 
-void CPropertiesPanel::OnUpdateBnEditinfos(CCmdUI* pCmdUI)
+void CPropertiesPanel::on_update_bn_edit_infos(CCmdUI* p_cmd_ui)
 {
 }
 
-void CPropertiesPanel::OnBnClickedEditinfos()
+void CPropertiesPanel::on_bn_clicked_edit_infos()
 {
-	m_pDoc->update_all_views_db_wave(nullptr, HINT_GET_SELECTED_RECORDS, nullptr);
+	m_p_doc_->update_all_views_db_wave(nullptr, HINT_GET_SELECTED_RECORDS, nullptr);
 	DlgdbEditRecord dlg;
-	dlg.m_pdbDoc = m_pDoc;
+	dlg.m_pdbDoc = m_p_doc_;
 	if (IDOK == dlg.DoModal())
 	{
-		m_pDoc->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
-		m_pDoc->update_all_views_db_wave(nullptr, HINT_DOC_HAS_CHANGED, nullptr);
+		m_p_doc_->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
+		m_p_doc_->update_all_views_db_wave(nullptr, HINT_DOC_HAS_CHANGED, nullptr);
 	}
 }
 
-void CPropertiesPanel::OnUpdateBnUpdateinfos(CCmdUI* pCmdUI)
+void CPropertiesPanel::on_update_bn_update_infos(CCmdUI* p_cmd_ui)
 {
-	pCmdUI->Enable(m_bchangedProperty);
+	p_cmd_ui->Enable(m_b_changed_property_);
 }
 
-void CPropertiesPanel::OnBnClickedUpdateinfos()
+void CPropertiesPanel::on_bn_clicked_update_infos()
 {
-	const auto l_index = m_pDoc->db_get_current_record_position();
-	UpdateTableFromProp();
-	m_pDoc->db_set_current_record_position(l_index);
-	m_pDoc->update_all_views_db_wave(nullptr, HINT_DOC_HAS_CHANGED, nullptr);
+	const auto l_index = m_p_doc_->db_get_current_record_position();
+	update_table_from_prop();
+	BOOL b_success = m_p_doc_->db_set_current_record_position(l_index);
+	m_p_doc_->update_all_views_db_wave(nullptr, HINT_DOC_HAS_CHANGED, nullptr);
 }
 
-LRESULT CPropertiesPanel::OnPropertyChanged(WPARAM, LPARAM lParam)
+LRESULT CPropertiesPanel::on_property_changed(WPARAM, LPARAM lParam)
 {
 	//auto p_prop = reinterpret_cast<CMFCPropertyGridProperty*>(lParam);
-	m_bchangedProperty = TRUE;
+	m_b_changed_property_ = TRUE;
 	return 0;
 }
 
-LRESULT CPropertiesPanel::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT CPropertiesPanel::on_my_message(WPARAM w_param, LPARAM l_param)
 {
 	//auto p_app = (CdbWaveApp*)AfxGetApp();
-	//short lowp = LOWORD(lParam);
-	//short highp = HIWORD(lParam);
+	//short low_p = LO_WORD(lParam);
+	//short high_p = HI_WORD(lParam);
 
-	switch (wParam)
+	switch (w_param)
 	{
 	case HINT_ACTIVATE_VIEW:
-		m_pDoc = reinterpret_cast<CdbWaveDoc*>(lParam);
-		if (m_pDoc != m_pDocOld)
-			InitPropList();
+		m_p_doc_ = reinterpret_cast<CdbWaveDoc*>(l_param);
+		if (m_p_doc_ != m_p_doc_old_)
+			init_prop_list();
 		break;
 
 	case HINT_MDI_ACTIVATE:
@@ -540,11 +540,11 @@ LRESULT CPropertiesPanel::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			const auto p_document = p_child->GetActiveDocument();
 			if (!p_document || !p_document->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
 				return NULL;
-			m_pDoc = static_cast<CdbWaveDoc*>(p_document);
-			if (m_pDoc != m_pDocOld)
+			m_p_doc_ = static_cast<CdbWaveDoc*>(p_document);
+			if (m_p_doc_ != m_p_doc_old_)
 			{
-				m_bUpdateCombos = TRUE;
-				InitPropList();
+				m_b_update_combos_ = TRUE;
+				init_prop_list();
 			}
 		}
 		break;
@@ -555,20 +555,20 @@ LRESULT CPropertiesPanel::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-void CPropertiesPanel::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void CPropertiesPanel::OnUpdate(CView* p_sender, const LPARAM l_hint, CObject* p_hint)
 {
-	m_pDoc = reinterpret_cast<CdbWaveDoc*>(pSender);
-	switch (LOWORD(lHint))
+	m_p_doc_ = reinterpret_cast<CdbWaveDoc*>(p_sender);
+	switch (LOWORD(l_hint))
 	{
 	case HINT_CLOSE_FILE_MODIFIED:
-		m_pDocOld = nullptr;
+		m_p_doc_old_ = nullptr;
 		break;
 	case HINT_REQUERY:
 	case HINT_DOC_HAS_CHANGED:
 	case HINT_DOC_MOVE_RECORD:
 	case HINT_REPLACE_VIEW:
 	default:
-		InitPropList();
+		init_prop_list();
 		break;
 	}
 }

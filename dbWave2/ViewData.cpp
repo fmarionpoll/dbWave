@@ -131,8 +131,8 @@ void ViewData::OnInitialUpdate()
 {
 	define_sub_classed_items();
 
-	m_adc_y_ruler_bar.AttachScopeWnd(&chart_data, FALSE);
-	m_ruler_bar_abscissa.AttachScopeWnd(&chart_data, TRUE);
+	m_adc_y_ruler_bar.attach_scope_wnd(&chart_data, FALSE);
+	m_ruler_bar_abscissa.attach_scope_wnd(&chart_data, TRUE);
 	chart_data.attach_external_x_ruler(&m_ruler_bar_abscissa);
 	chart_data.attach_external_y_ruler(&m_adc_y_ruler_bar);
 	chart_data.b_nice_grid = TRUE;
@@ -333,20 +333,20 @@ void ViewData::on_edit_copy()
 			comments += content;
 			m_dc.TextOut(x_column, y_pixels_row, comments);
 			y_pixels_row += line_height;
-			comments.Format(_T("Vertical bar (ch. 0) = %g mV"), chart_data.y_ruler.GetScaleIncrement());
+			comments.Format(_T("Vertical bar (ch. 0) = %g mV"), chart_data.y_ruler.get_scale_increment());
 			m_dc.TextOut(x_column, y_pixels_row, comments);
 			y_pixels_row += line_height;
-			comments.Format(_T("Horizontal bar = %g s"), chart_data.x_ruler.GetScaleIncrement());
+			comments.Format(_T("Horizontal bar = %g s"), chart_data.x_ruler.get_scale_increment());
 			m_dc.TextOut(x_column, y_pixels_row, comments);
 			y_pixels_row += line_height;
 
 			// bars
 			const auto p_old_brush = static_cast<CBrush*>(m_dc.SelectStockObject(BLACK_BRUSH));
 			m_dc.MoveTo(0, y_pixels_row);
-			const auto bottom = chart_data.y_ruler.GetScaleUnitPixels(rect.Height());
+			const auto bottom = chart_data.y_ruler.get_scale_unit_pixels(rect.Height());
 			m_dc.LineTo(0, y_pixels_row - bottom);
 			m_dc.MoveTo(0, y_pixels_row);
-			const auto left = chart_data.x_ruler.GetScaleUnitPixels(rect.Width());
+			const auto left = chart_data.x_ruler.get_scale_unit_pixels(rect.Width());
 			m_dc.LineTo(left, y_pixels_row);
 
 			m_dc.SelectObject(p_old_brush);
@@ -1307,9 +1307,9 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect) const
 	auto y_bar_end = bar_origin;
 
 	// same len ratio as displayed on view_data
-	const auto horizontal_bar = chart_data.x_ruler.GetScaleUnitPixels(chart_data.get_rect_width());
+	const auto horizontal_bar = chart_data.x_ruler.get_scale_unit_pixels(chart_data.get_rect_width());
 	ASSERT(horizontal_bar > 0);
-	const auto vert_bar = chart_data.y_ruler.GetScaleUnitPixels(chart_data.get_rect_height());
+	const auto vert_bar = chart_data.y_ruler.get_scale_unit_pixels(chart_data.get_rect_height());
 	ASSERT(vert_bar > 0);
 
 	auto cs_comment = convert_file_index(chart_data.get_data_first_index(), chart_data.get_data_last_index());
@@ -1322,7 +1322,7 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect) const
 
 		// read text from control edit
 		CString cs;
-		cs.Format(_T(" bar= %g"), chart_data.x_ruler.GetScaleIncrement());
+		cs.Format(_T(" bar= %g"), chart_data.x_ruler.get_scale_increment());
 		cs_comment += cs;
 		str_comment += cs_comment + rc;
 	}

@@ -468,8 +468,8 @@ void CMainFrame::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 LRESULT CMainFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	// pass message to PropertiesPane
-	panel_properties_.OnMyMessage(wParam, lParam);
-	panel_filter_.OnMyMessage(wParam, lParam);
+	panel_properties_.on_my_message(wParam, lParam);
+	panel_filter_.on_my_message(wParam, lParam);
 	return 0L;
 }
 

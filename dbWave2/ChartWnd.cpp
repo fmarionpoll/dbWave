@@ -61,7 +61,6 @@ ChartWnd::ChartWnd()
 		j++;
 		cursors_[j] = AfxGetApp()->LoadCursor(IDC_CCROSS);
 		cursors_drag_mode_[j] = 1;
-
 		j++;
 		cursors_[j] = AfxGetApp()->LoadCursor(IDC_SPLITHORIZONTAL);
 		cursors_drag_mode_[j] = 1;
@@ -463,10 +462,12 @@ void ChartWnd::draw_scale_from_ruler(CDC* p_dc, const Ruler* p_ruler)
 void ChartWnd::draw_grid_nicely_spaced(CDC* p_dc)
 {
 	if (x_ruler_bar == nullptr)
+	{
 		draw_scale_from_ruler(p_dc, &x_ruler);
+	}
 	else
 	{
-		x_ruler_bar->DrawScalefromRuler(&x_ruler);
+		x_ruler_bar->draw_scale_from_ruler(&x_ruler);
 		x_ruler_bar->Invalidate();
 		draw_grid_from_ruler(p_dc, &x_ruler);
 	}
@@ -475,7 +476,7 @@ void ChartWnd::draw_grid_nicely_spaced(CDC* p_dc)
 		draw_scale_from_ruler(p_dc, &y_ruler);
 	else
 	{
-		y_ruler_bar->DrawScalefromRuler(&y_ruler);
+		y_ruler_bar->draw_scale_from_ruler(&y_ruler);
 		y_ruler_bar->Invalidate();
 		draw_grid_from_ruler(p_dc, &y_ruler);
 	}

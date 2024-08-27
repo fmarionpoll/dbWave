@@ -32,20 +32,20 @@ BEGIN_MESSAGE_MAP(CFilterPanel, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_CONTEXTMENU()
-	ON_COMMAND(ID_UPDATE, OnUpdateTree)
-	ON_COMMAND(ID_APPLY_FILTER, OnApplyFilter)
+	ON_COMMAND(ID_UPDATE, on_update_tree)
+	ON_COMMAND(ID_APPLY_FILTER, on_apply_filter)
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
-	ON_MESSAGE(WM_MYMESSAGE, OnMyMessage)
-	ON_COMMAND(ID_RECORD_SORT, OnSortRecords)
-	ON_COMMAND(ID_EXPLORER_NEXT, OnSelectNext)
-	ON_COMMAND(ID_EXPLORER_PREVIOUS, OnSelectPrevious)
+	ON_MESSAGE(WM_MYMESSAGE, on_my_message)
+	ON_COMMAND(ID_RECORD_SORT, on_sort_records)
+	ON_COMMAND(ID_EXPLORER_NEXT, on_select_next)
+	ON_COMMAND(ID_EXPLORER_PREVIOUS, on_select_previous)
 
 END_MESSAGE_MAP()
 
-int CFilterPanel::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CFilterPanel::OnCreate(const LPCREATESTRUCT lp_create_struct)
 {
-	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
+	if (CDockablePane::OnCreate(lp_create_struct) == -1)
 		return -1;
 
 	CRect rect_dummy;
@@ -74,13 +74,13 @@ int CFilterPanel::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CFilterPanel::OnSize(UINT nType, int cx, int cy)
+void CFilterPanel::OnSize(const UINT n_type, const int cx, const int cy)
 {
-	CDockablePane::OnSize(nType, cx, cy);
+	CDockablePane::OnSize(n_type, cx, cy);
 	AdjustLayout();
 }
 
-void CFilterPanel::OnContextMenu(CWnd* p_wnd, CPoint point)
+void CFilterPanel::OnContextMenu(CWnd* p_wnd, const CPoint point)
 {
 	const auto p_wnd_tree = static_cast<CTreeCtrl*>(&m_wnd_filter_view_);
 	ASSERT_VALID(p_wnd_tree);
@@ -126,8 +126,7 @@ void CFilterPanel::AdjustLayout()
 
 void CFilterPanel::OnPaint()
 {
-	CPaintDC dc(this); // device context for painting
-
+	CPaintDC dc(this);
 	CRect rect_tree;
 	m_wnd_filter_view_.GetWindowRect(rect_tree);
 	ScreenToClient(rect_tree);
@@ -136,30 +135,30 @@ void CFilterPanel::OnPaint()
 	dc.Draw3dRect(rect_tree, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
 }
 
-void CFilterPanel::OnSetFocus(CWnd* pOldWnd)
+void CFilterPanel::OnSetFocus(CWnd* p_old_wnd)
 {
-	CDockablePane::OnSetFocus(pOldWnd);
+	CDockablePane::OnSetFocus(p_old_wnd);
 	m_wnd_filter_view_.SetFocus();
 }
 
-void CFilterPanel::OnUpdateTree()
+void CFilterPanel::on_update_tree()
 {
 	m_p_doc_old_ = nullptr;
-	InitFilterList();
+	init_filter_list();
 }
 
-LRESULT CFilterPanel::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT CFilterPanel::on_my_message(const WPARAM w_param, const LPARAM l_param)
 {
 	//auto p_app = (CdbWaveApp*)AfxGetApp();
 	//short low_p = LO_WORD(lParam);
 	//short high_p = HI_WORD(lParam);
 
-	switch (wParam)
+	switch (w_param)
 	{
 	case HINT_ACTIVATE_VIEW:
-		m_p_doc_ = reinterpret_cast<CdbWaveDoc*>(lParam);
+		m_p_doc_ = reinterpret_cast<CdbWaveDoc*>(l_param);
 		if (m_p_doc_ != m_p_doc_old_)
-			InitFilterList();
+			init_filter_list();
 		break;
 
 	case HINT_MDI_ACTIVATE:
@@ -173,7 +172,7 @@ LRESULT CFilterPanel::OnMyMessage(WPARAM wParam, LPARAM lParam)
 			if (!p_document || !p_document->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
 				return NULL;
 			m_p_doc_ = static_cast<CdbWaveDoc*>(p_document);
-			InitFilterList();
+			init_filter_list();
 		}
 		break;
 
@@ -183,13 +182,12 @@ LRESULT CFilterPanel::OnMyMessage(WPARAM wParam, LPARAM lParam)
 	return 0L;
 }
 
-void CFilterPanel::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void CFilterPanel::OnUpdate(CView* p_sender, const LPARAM l_hint, CObject* p_hint)
 {
-	m_p_doc_ = reinterpret_cast<CdbWaveDoc*>(pSender);
-	switch (LOWORD(lHint))
+	m_p_doc_ = reinterpret_cast<CdbWaveDoc*>(p_sender);
+	switch (LOWORD(l_hint))
 	{
-	case HINT_CLOSE_FILE_MODIFIED: // save current file parameters
-		//m_p_doc_old_ = NULL;
+	case HINT_CLOSE_FILE_MODIFIED:
 		break;
 
 	case HINT_REQUERY:
@@ -199,12 +197,12 @@ void CFilterPanel::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	case HINT_DOC_MOVE_RECORD:
 	case HINT_REPLACE_VIEW:
 	default:
-		InitFilterList();
+		init_filter_list();
 		break;
 	}
 }
 
-void CFilterPanel::InitFilterList()
+void CFilterPanel::init_filter_list()
 {
 	if (m_p_doc_old_ == m_p_doc_)
 		return;
@@ -258,13 +256,13 @@ void CFilterPanel::InitFilterList()
 		{
 		case FIELD_IND_TEXT:
 		case FIELD_IND_FILEPATH:
-			PopulateItemFromLinkedTable(p_desc);
+			populate_item_from_linked_table(p_desc);
 			break;
 		case FIELD_LONG:
-			PopulateItemFromTableLong(p_desc);
+			populate_item_from_table_long(p_desc);
 			break;
 		case FIELD_DATE_YMD:
-			PopulateItemFromTablewithDate(p_desc);
+			populate_item_from_table_with_date(p_desc);
 			break;
 		default:
 			break;
@@ -318,62 +316,62 @@ void CFilterPanel::InitFilterList()
 	m_wnd_filter_view_.UnlockWindowUpdate();
 }
 
-void CFilterPanel::PopulateItemFromTableLong(DB_ITEMDESC* pdesc)
+void CFilterPanel::populate_item_from_table_long(DB_ITEMDESC* p_desc) const
 {
 	const auto p_set = &m_p_doc_->db_table->m_main_table_set;
-	const auto cs_col_head = pdesc->header_name;
-	const auto array_size = pdesc->liArray.GetSize();
-	if (pdesc->b_array_filter)
+	const auto cs_col_head = p_desc->header_name;
+	const auto array_size = p_desc->liArray.GetSize();
+	if (p_desc->b_array_filter)
 	{
 		return;
 	}
-	if (pdesc->b_single_filter)
+	if (p_desc->b_single_filter)
 	{
-		pdesc->cs_param_single_filter.Format(_T("%i"), pdesc->l_param_single_filter);
+		p_desc->cs_param_single_filter.Format(_T("%i"), p_desc->l_param_single_filter);
 	}
 	else
 	{
 		CString str;
 		CString cs;
-		pdesc->csElementsArray.RemoveAll();
+		p_desc->csElementsArray.RemoveAll();
 		for (auto i = 0; i < array_size; i++)
 		{
-			const auto i_id = pdesc->liArray.GetAt(i);
+			const auto i_id = p_desc->liArray.GetAt(i);
 			// add string only if found into p_main_table_set...
 			str.Format(_T("%s=%li"), (LPCTSTR)cs_col_head, i_id);
 			const auto flag = p_set->FindFirst(str);
 			if (flag != 0)
 			{
 				cs.Format(_T("%i"), i_id);
-				pdesc->csElementsArray.Add(cs);
-				if (pdesc->b_single_filter && pdesc->l_param_single_filter != i_id)
+				p_desc->csElementsArray.Add(cs);
+				if (p_desc->b_single_filter && p_desc->l_param_single_filter != i_id)
 				{
-					pdesc->cs_param_single_filter.Format(_T("%i"), i_id);
+					p_desc->cs_param_single_filter.Format(_T("%i"), i_id);
 				}
 			}
 		}
 	}
 }
 
-void CFilterPanel::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
+void CFilterPanel::populate_item_from_linked_table(DB_ITEMDESC* p_desc) const
 {
-	auto str2 = pdesc->header_name;
+	auto str2 = p_desc->header_name;
 	ASSERT(!str2.IsEmpty());
 
-	auto p_linked_set = pdesc->plinkedSet;
+	auto p_linked_set = p_desc->plinkedSet;
 	auto p_set = &m_p_doc_->db_table->m_main_table_set;
-	if (pdesc->b_array_filter)
+	if (p_desc->b_array_filter)
 		return;
 
-	if (pdesc->b_single_filter)
+	if (p_desc->b_single_filter)
 	{
-		pdesc->cs_param_single_filter = p_linked_set->get_string_from_id(pdesc->l_param_single_filter);
+		p_desc->cs_param_single_filter = p_linked_set->get_string_from_id(p_desc->l_param_single_filter);
 	}
 	else
 	{
 		// loop over the whole content of the attached table
-		pdesc->csElementsArray.RemoveAll();
-		pdesc->liArray.RemoveAll();
+		p_desc->csElementsArray.RemoveAll();
+		p_desc->liArray.RemoveAll();
 		if (p_linked_set->IsOpen() && !p_linked_set->IsBOF())
 		{
 			CString cs;
@@ -385,12 +383,12 @@ void CFilterPanel::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 				p_linked_set->GetFieldValue(1, var_value1);
 				const auto i_id = var_value1.lVal;
 				// add string only if found into p_main_table_set...
-				cs.Format(_T("%s=%li"), (LPCTSTR)pdesc->header_name, i_id);
+				cs.Format(_T("%s=%li"), (LPCTSTR)p_desc->header_name, i_id);
 				const auto flag = p_set->FindFirst(cs);
 				if (flag != 0)
 				{
-					InsertAlphabetic(var_value0.bstrVal, pdesc->csElementsArray);
-					pdesc->liArray.Add(i_id);
+					insert_alphabetic(var_value0.bstrVal, p_desc->csElementsArray);
+					p_desc->liArray.Add(i_id);
 				}
 				p_linked_set->MoveNext();
 			}
@@ -398,26 +396,26 @@ void CFilterPanel::PopulateItemFromLinkedTable(DB_ITEMDESC* pdesc)
 	}
 }
 
-void CFilterPanel::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
+void CFilterPanel::populate_item_from_table_with_date(DB_ITEMDESC* p_desc) const
 {
 	CString cs; // to construct date
-	const auto cs_column_head = pdesc->header_name;
+	const auto cs_column_head = p_desc->header_name;
 	const auto p_main_table_set = &m_p_doc_->db_table->m_main_table_set;
 	const auto array_size = p_main_table_set->m_desc[CH_ACQDATE_DAY].tiArray.GetSize();
 
-	if (pdesc->b_array_filter)
+	if (p_desc->b_array_filter)
 	{
 		return;
 	}
-	if (pdesc->b_single_filter)
+	if (p_desc->b_single_filter)
 	{
-		cs = pdesc->date_time_param_single_filter.Format(VAR_DATEVALUEONLY);
-		pdesc->cs_param_single_filter = cs;
+		cs = p_desc->date_time_param_single_filter.Format(VAR_DATEVALUEONLY);
+		p_desc->cs_param_single_filter = cs;
 	}
 	else
 	{
 		CString str;
-		pdesc->csElementsArray.RemoveAll();
+		p_desc->csElementsArray.RemoveAll();
 		for (auto i = 0; i < array_size; i++)
 		{
 			auto o_time = p_main_table_set->m_desc[CH_ACQDATE_DAY].tiArray.GetAt(i);
@@ -427,42 +425,42 @@ void CFilterPanel::PopulateItemFromTablewithDate(DB_ITEMDESC* pdesc)
 			if (flag != 0) // add string only if found into p_main_table_set...
 			{
 				cs = o_time.Format(VAR_DATEVALUEONLY);
-				pdesc->csElementsArray.Add(cs);
+				p_desc->csElementsArray.Add(cs);
 			}
 		}
 	}
 }
 
-void CFilterPanel::InsertAlphabetic(const CString& cs, CStringArray& csArray)
+void CFilterPanel::insert_alphabetic(const CString& cs, CStringArray& cs_array)
 {
 	auto k = 0;
-	for (auto i = 0; i < csArray.GetSize(); i++, k++)
+	for (auto i = 0; i < cs_array.GetSize(); i++, k++)
 	{
-		const auto& cs_comp = csArray.GetAt(k);
+		const auto& cs_comp = cs_array.GetAt(k);
 		const auto j = cs.CompareNoCase(cs_comp);
 		if (j < 0)
 			break;
 	}
-	csArray.InsertAt(k, cs);
+	cs_array.InsertAt(k, cs);
 }
 
-void CFilterPanel::BuildFilterItemIndirectionFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
+void CFilterPanel::build_filter_item_indirection_from_tree(DB_ITEMDESC* p_desc, const HTREEITEM start_item) const
 {
 	auto i = 0;
-	for (auto item = startItem; item != nullptr; item = m_wnd_filter_view_.GetNextItem(item, TVGN_NEXT), i++)
+	for (auto item = start_item; item != nullptr; item = m_wnd_filter_view_.GetNextItem(item, TVGN_NEXT), i++)
 	{
 		const auto state = m_wnd_filter_view_.GetCheck(item);
 		if (state == TVCS_CHECKED)
 		{
 			auto cs = m_wnd_filter_view_.GetItemText(item);
-			for (auto j = 0; j < pdesc->liArray.GetSize(); j++)
+			for (auto j = 0; j < p_desc->liArray.GetSize(); j++)
 			{
-				const auto li = pdesc->liArray.GetAt(j);
-				auto str = pdesc->plinkedSet->get_string_from_id(li);
+				const auto li = p_desc->liArray.GetAt(j);
+				auto str = p_desc->plinkedSet->get_string_from_id(li);
 				if (str == cs)
 				{
-					pdesc->l_param_filter_array.Add(li);
-					pdesc->cs_array_filter.Add(cs);
+					p_desc->l_param_filter_array.Add(li);
+					p_desc->cs_array_filter.Add(cs);
 					break;
 				}
 			}
@@ -470,26 +468,26 @@ void CFilterPanel::BuildFilterItemIndirectionFromTree(DB_ITEMDESC* pdesc, HTREEI
 	}
 }
 
-void CFilterPanel::BuildFilterItemLongFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
+void CFilterPanel::build_filter_item_long_from_tree(DB_ITEMDESC* p_desc, const HTREEITEM start_item) const
 {
 	auto i = 0;
-	for (auto item = startItem; item != nullptr; item = m_wnd_filter_view_.GetNextItem(item, TVGN_NEXT), i++)
+	for (auto item = start_item; item != nullptr; item = m_wnd_filter_view_.GetNextItem(item, TVGN_NEXT), i++)
 	{
 		const auto state = m_wnd_filter_view_.GetCheck(item);
 		if (state == TVCS_CHECKED)
 		{
 			auto cs = m_wnd_filter_view_.GetItemText(item);
-			const auto li = pdesc->liArray.GetAt(i);
-			pdesc->l_param_filter_array.Add(li);
-			pdesc->cs_array_filter.Add(cs);
+			const auto li = p_desc->liArray.GetAt(i);
+			p_desc->l_param_filter_array.Add(li);
+			p_desc->cs_array_filter.Add(cs);
 		}
 	}
 }
 
-void CFilterPanel::BuildFilterItemDateFromTree(DB_ITEMDESC* pdesc, HTREEITEM startItem)
+void CFilterPanel::build_filter_item_date_from_tree(DB_ITEMDESC* p_desc, const HTREEITEM start_item) const
 {
 	auto i = 0;
-	for (auto item = startItem; item != nullptr; item = m_wnd_filter_view_.GetNextItem(item, TVGN_NEXT), i++)
+	for (auto item = start_item; item != nullptr; item = m_wnd_filter_view_.GetNextItem(item, TVGN_NEXT), i++)
 	{
 		const auto state = m_wnd_filter_view_.GetCheck(item);
 		if (state == TVCS_CHECKED)
@@ -497,13 +495,13 @@ void CFilterPanel::BuildFilterItemDateFromTree(DB_ITEMDESC* pdesc, HTREEITEM sta
 			auto cs_filter_checked = m_wnd_filter_view_.GetItemText(item);
 			COleDateTime o_time;
 			o_time.ParseDateTime(cs_filter_checked);
-			pdesc->data_time_array_filter.Add(o_time);
-			pdesc->cs_array_filter.Add(cs_filter_checked);
+			p_desc->data_time_array_filter.Add(o_time);
+			p_desc->cs_array_filter.Add(cs_filter_checked);
 		}
 	}
 }
 
-void CFilterPanel::OnApplyFilter()
+void CFilterPanel::on_apply_filter()
 {
 	if (!m_p_doc_)
 		return;
@@ -535,13 +533,13 @@ void CFilterPanel::OnApplyFilter()
 			{
 			case FIELD_IND_TEXT:
 			case FIELD_IND_FILEPATH:
-				BuildFilterItemIndirectionFromTree(p_desc, start_item);
+				build_filter_item_indirection_from_tree(p_desc, start_item);
 				break;
 			case FIELD_LONG:
-				BuildFilterItemLongFromTree(p_desc, start_item);
+				build_filter_item_long_from_tree(p_desc, start_item);
 				break;
 			case FIELD_DATE_YMD:
-				BuildFilterItemDateFromTree(p_desc, start_item);
+				build_filter_item_date_from_tree(p_desc, start_item);
 				break;
 			default:
 				ASSERT(false);
@@ -556,7 +554,7 @@ void CFilterPanel::OnApplyFilter()
 	m_p_doc_->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
 }
 
-void CFilterPanel::OnSortRecords()
+void CFilterPanel::on_sort_records()
 {
 	auto p_database = m_p_doc_->db_table;
 	ASSERT(p_database);
@@ -572,7 +570,7 @@ void CFilterPanel::OnSortRecords()
 	m_p_doc_->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
 }
 
-void CFilterPanel::SelectNext(BOOL bNext)
+void CFilterPanel::select_next(BOOL b_next)
 {
 	const auto p_tree = static_cast<CTreeCtrl*>(&m_wnd_filter_view_);
 	ASSERT_VALID(p_tree);
@@ -602,7 +600,7 @@ void CFilterPanel::SelectNext(BOOL bNext)
 	if (n_selected == 1)
 	{
 		HTREEITEM h_next;
-		if (bNext)
+		if (b_next)
 			h_next = p_tree->GetNextSiblingItem(h_last_selected);
 		else
 			h_next = p_tree->GetPrevSiblingItem(h_last_selected);
@@ -610,16 +608,16 @@ void CFilterPanel::SelectNext(BOOL bNext)
 			return;
 		static_cast<CQuadStateTree*>(p_tree)->SetCheck(h_next, TVCS_CHECKED);
 		static_cast<CQuadStateTree*>(p_tree)->SetCheck(h_last_selected, TVCS_UNCHECKED);
-		OnApplyFilter();
+		on_apply_filter();
 	}
 }
 
-void CFilterPanel::OnSelectNext()
+void CFilterPanel::on_select_next()
 {
-	SelectNext(TRUE);
+	select_next(TRUE);
 }
 
-void CFilterPanel::OnSelectPrevious()
+void CFilterPanel::on_select_previous()
 {
-	SelectNext(FALSE);
+	select_next(FALSE);
 }

@@ -42,7 +42,7 @@ protected:
 	CDWordArray dw_intervals_;
 
 	ChartData chart_data_filtered_;
-	ChartData chart_data_source_;
+	ChartData chart_data_;
 	ChartSpikeBar chart_spike_bar_;
 	ChartSpikeShape chart_spike_shape_;
 
@@ -94,7 +94,7 @@ public:
 		chart_spike_bar_.set_mouse_cursor_type(cursor_mode);
 		chart_spike_shape_.set_mouse_cursor_type(cursor_mode);
 		chart_data_filtered_.set_mouse_cursor_type(cursor_mode);
-		chart_data_source_.set_mouse_cursor_type(cursor_mode);
+		chart_data_.set_mouse_cursor_type(cursor_mode);
 	}
 
 	// Implementation

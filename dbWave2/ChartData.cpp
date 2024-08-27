@@ -771,9 +771,10 @@ void ChartData::zoom_data(CRect* previous_rect, CRect* new_rect)
 
 void ChartData::update_x_ruler()
 {
-	if (x_ruler_bar == nullptr) return;
+	if (x_ruler_bar == nullptr) 
+		return;
 
-	x_ruler.UpdateRange(static_cast<double>(m_lx_first_) / static_cast<double>(m_sampling_rate_), static_cast<double>(m_lx_last_) / static_cast<double>(m_sampling_rate_));
+	x_ruler.update_range(static_cast<double>(m_lx_first_) / static_cast<double>(m_sampling_rate_), static_cast<double>(m_lx_last_) / static_cast<double>(m_sampling_rate_));
 	x_ruler_bar->Invalidate();
 }
 
@@ -789,7 +790,7 @@ void ChartData::update_y_ruler()
 	const auto y_first = static_cast<double>(p_channel->convert_data_bins_to_volts(bin_low));
 	const auto y_last = static_cast<double>(p_channel->convert_data_bins_to_volts(bin_high));
 	
-	y_ruler.UpdateRange(y_first, y_last);
+	y_ruler.update_range(y_first, y_last);
 	y_ruler_bar->Invalidate();
 }
 
@@ -801,11 +802,11 @@ void ChartData::plot_data_to_dc(CDC* p_dc)
 	if (b_erase_background_)
 		erase_background(p_dc);
 
-	if (b_nice_grid) 
-	{
+	//if (b_nice_grid) 
+	//{
 		update_x_ruler();
 		update_y_ruler();
-	}
+	//}
 
 	auto rect = display_rect_;
 	rect.DeflateRect(1, 1);

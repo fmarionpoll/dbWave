@@ -178,15 +178,15 @@ void ViewSpikeDetection::OnActivateView(const BOOL activate, CView* activated_vi
 	{
 		serialize_windows_state(b_save);
 		const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-		p_app->options_view_data.view_data = *(chart_data_source_.get_scope_parameters());
+		p_app->options_view_data.view_data = *(chart_data_.get_scope_parameters());
 	}
 	ViewDbTable::OnActivateView(activate, activated_view, de_activated_view);
 }
 
 void ViewSpikeDetection::update_legends()
 {
-	const auto l_first = chart_data_source_.get_data_first_index();
-	const auto l_last = chart_data_source_.get_data_last_index();
+	const auto l_first = chart_data_.get_data_first_index();
+	const auto l_last = chart_data_.get_data_last_index();
 	chart_data_filtered_.get_data_from_doc(l_first, l_last);
 
 	// draw charts
@@ -220,7 +220,7 @@ void ViewSpikeDetection::update_legends()
 
 	chart_spike_bar_.Invalidate();
 	chart_data_filtered_.Invalidate();
-	chart_data_source_.Invalidate();
+	chart_data_.Invalidate();
 	chart_spike_shape_.Invalidate();
 	UpdateData(FALSE);
 }
@@ -321,8 +321,8 @@ void ViewSpikeDetection::highlight_spikes(BOOL flag)
 	// tell source_view to highlight spk
 	chart_data_filtered_.set_highlight_data(&dw_intervals_);
 	chart_data_filtered_.Invalidate();
-	chart_data_source_.set_highlight_data(&dw_intervals_);
-	chart_data_source_.Invalidate();
+	chart_data_.set_highlight_data(&dw_intervals_);
+	chart_data_.Invalidate();
 	
 }
 
@@ -405,7 +405,7 @@ boolean ViewSpikeDetection::update_data_file(BOOL b_update_interface)
 	}
 	// change doc attached to line view
 	chart_data_filtered_.attach_data_file(p_data_file);
-	chart_data_source_.attach_data_file(p_data_file);
+	chart_data_.attach_data_file(p_data_file);
 
 	// update source view display
 	if (chart_data_filtered_.get_channel_list_size() < 1)
@@ -420,7 +420,7 @@ boolean ViewSpikeDetection::update_data_file(BOOL b_update_interface)
 	}
 
 	//add all channels to detection window
-	auto channel_list_size = chart_data_source_.get_channel_list_size();
+	auto channel_list_size = chart_data_.get_channel_list_size();
 	const int n_document_channels = wave_format->scan_count;
 	for (auto i = 0; i < n_document_channels; i++)
 	{
@@ -429,7 +429,7 @@ boolean ViewSpikeDetection::update_data_file(BOOL b_update_interface)
 		for (auto j = channel_list_size - 1; j >= 0; j--)
 		{
 			// test if this data chan is present + no transformation
-			const CChanlistItem* channel_item = chart_data_source_.get_channel_list_item(j);
+			const CChanlistItem* channel_item = chart_data_.get_channel_list_item(j);
 			if (channel_item->get_source_chan() == i
 				&& channel_item->get_transform_mode() == 0)
 			{
@@ -439,10 +439,10 @@ boolean ViewSpikeDetection::update_data_file(BOOL b_update_interface)
 		}
 		if (b_present == FALSE) // no display chan contains that doc chan
 		{
-			chart_data_source_.add_channel_list_item(i, 0);
+			chart_data_.add_channel_list_item(i, 0);
 			channel_list_size++;
 		}
-		chart_data_source_.get_channel_list_item(i)->set_color(static_cast<WORD>(i));
+		chart_data_.get_channel_list_item(i)->set_color(static_cast<WORD>(i));
 	}
 
 	// if browse through another file ; keep previous display parameters & load data
@@ -454,12 +454,12 @@ boolean ViewSpikeDetection::update_data_file(BOOL b_update_interface)
 		l_last = p_data_file->get_doc_channel_length() - 1;
 	}
 	chart_data_filtered_.get_data_from_doc(l_first, l_last);
-	chart_data_source_.get_data_from_doc(l_first, l_last);
+	chart_data_.get_data_from_doc(l_first, l_last);
 
 	if (b_update_interface)
 	{
 		chart_data_filtered_.Invalidate();
-		chart_data_source_.Invalidate();
+		chart_data_.Invalidate();
 		// adjust scroll bar (size of button and left/right limits)
 		file_scrollbar_infos_.fMask = SIF_ALL;
 		file_scrollbar_infos_.nMin = 0;
@@ -578,7 +578,7 @@ void ViewSpikeDetection::define_sub_classed_items()
 	VERIFY(chart_spike_shape_.SubclassDlgItem(IDC_DISPLAY_SPIKES, this));
 	VERIFY(chart_spike_bar_.SubclassDlgItem(IDC_CHART_BARS, this));
 	VERIFY(chart_data_filtered_.SubclassDlgItem(IDC_DISPLAYDETECT, this));
-	VERIFY(chart_data_source_.SubclassDlgItem(IDC_DISPLAYDATA, this));
+	VERIFY(chart_data_.SubclassDlgItem(IDC_DISPLAYDATA, this));
 
 	// load left scrollbar and button
 	VERIFY(m_scroll_y_.SubclassDlgItem(IDC_SCROLLY, this));
@@ -607,9 +607,8 @@ void ViewSpikeDetection::OnInitialUpdate()
 	spike_detection_array_ = &(p_app->spk_detect_array); 
 	options_view_data_ = &(p_app->options_view_data);
 
-	m_ruler_bar_abscissa.AttachScopeWnd(&chart_data_filtered_, TRUE);
+	m_ruler_bar_abscissa.attach_scope_wnd(&chart_data_filtered_, TRUE);
 	chart_data_filtered_.attach_external_x_ruler(&m_ruler_bar_abscissa);
-	//chart_data_filtered_.b_nice_grid = TRUE;
 
 	define_stretch_parameters();
 	b_init_ = TRUE;
@@ -629,8 +628,8 @@ void ViewSpikeDetection::OnInitialUpdate()
 	chart_data_filtered_.set_scope_parameters(&(options_view_data_->view_data));
 	chart_data_filtered_.Invalidate();
 
-	chart_data_source_.set_scope_parameters(&(options_view_data_->view_data));
-	chart_data_source_.Invalidate();
+	chart_data_.set_scope_parameters(&(options_view_data_->view_data));
+	chart_data_.Invalidate();
 
 	on_format_split_curves();
 	
@@ -668,7 +667,7 @@ LRESULT ViewSpikeDetection::on_my_message(const WPARAM w_param, const LPARAM l_p
 		// ----------------------------- select bar/display bars or zoom
 	case HINT_CHANGE_HZ_LIMITS: 
 		chart_data_filtered_.get_data_from_doc(chart_spike_bar_.get_time_first(), chart_spike_bar_.get_time_last());
-		chart_data_source_.get_data_from_doc(chart_spike_bar_.get_time_first(), chart_spike_bar_.get_time_last());
+		chart_data_.get_data_from_doc(chart_spike_bar_.get_time_first(), chart_spike_bar_.get_time_last());
 		update_legends();
 		break;
 
@@ -693,10 +692,10 @@ LRESULT ViewSpikeDetection::on_my_message(const WPARAM w_param, const LPARAM l_p
 		break;
 
 	case HINT_VIEW_SIZE_CHANGED:
-		if (i_id == chart_data_source_.GetDlgCtrlID())
+		if (i_id == chart_data_.GetDlgCtrlID())
 		{
-			const auto l_first = chart_data_source_.get_data_first_index(); // get source data time range
-			const auto l_last = chart_data_source_.get_data_last_index();
+			const auto l_first = chart_data_.get_data_first_index(); // get source data time range
+			const auto l_last = chart_data_.get_data_last_index();
 			chart_data_filtered_.get_data_from_doc(l_first, l_last);
 		}
 		// else if(iID == m_displayDetect.GetDlgCtrlID())
@@ -706,7 +705,7 @@ LRESULT ViewSpikeDetection::on_my_message(const WPARAM w_param, const LPARAM l_p
 
 	case HINT_WINDOW_PROPS_CHANGED:
 		options_view_data_->view_spk_detect_filtered = *chart_data_filtered_.get_scope_parameters();
-		options_view_data_->view_spk_detect_data = *chart_data_source_.get_scope_parameters();
+		options_view_data_->view_spk_detect_data = *chart_data_.get_scope_parameters();
 		options_view_data_->view_spk_detect_spk = *chart_spike_bar_.get_scope_parameters();
 		options_view_data_->view_spk_detect_bars = *chart_spike_shape_.get_scope_parameters();
 		break;
@@ -731,7 +730,7 @@ LRESULT ViewSpikeDetection::on_my_message(const WPARAM w_param, const LPARAM l_p
 
 			chart_spike_bar_.Invalidate();
 			chart_data_filtered_.Invalidate();
-			chart_data_source_.Invalidate();
+			chart_data_.Invalidate();
 			p_spk_doc->SetModifiedFlag(TRUE);
 		}
 		break;
@@ -747,15 +746,15 @@ LRESULT ViewSpikeDetection::on_my_message(const WPARAM w_param, const LPARAM l_p
 			int lvalue = p_spk_doc->m_stimulus_intervals.get_at(threshold);
 			if (i_id == chart_data_filtered_.GetDlgCtrlID())
 				lvalue = chart_data_filtered_.vt_tags.get_tag_value_long(threshold);
-			else if (i_id == chart_data_source_.GetDlgCtrlID())
-				lvalue = chart_data_source_.vt_tags.get_tag_value_long(threshold);
+			else if (i_id == chart_data_.GetDlgCtrlID())
+				lvalue = chart_data_.vt_tags.get_tag_value_long(threshold);
 
 			p_spk_doc->m_stimulus_intervals.set_at(threshold, lvalue);
 			update_vt_tags();
 
 			chart_spike_bar_.Invalidate();
 			chart_data_filtered_.Invalidate();
-			chart_data_source_.Invalidate();
+			chart_data_.Invalidate();
 			p_spk_doc->SetModifiedFlag(TRUE);
 		}
 		break;
@@ -771,7 +770,7 @@ LRESULT ViewSpikeDetection::on_my_message(const WPARAM w_param, const LPARAM l_p
 
 			chart_spike_bar_.Invalidate();
 			chart_data_filtered_.Invalidate();
-			chart_data_source_.Invalidate();
+			chart_data_.Invalidate();
 			p_spk_doc->SetModifiedFlag(TRUE);
 		}
 		break;
@@ -809,7 +808,7 @@ LRESULT ViewSpikeDetection::on_my_message(const WPARAM w_param, const LPARAM l_p
 				SetDlgItemInt(IDC_CHANSELECTED, m_selected_channel);
 			}
 		}
-		else if (i_id == chart_data_source_.GetDlgCtrlID())
+		else if (i_id == chart_data_.GetDlgCtrlID())
 		{
 			if (m_selected_channel2 != threshold)
 			{
@@ -858,7 +857,7 @@ void ViewSpikeDetection::OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scr
 		l_first = file_scrollbar_infos_.nPos;
 		l_last = l_first + static_cast<long>(file_scrollbar_infos_.nPage) - 1;
 		chart_data_filtered_.get_data_from_doc(l_first, l_last);
-		chart_data_source_.get_data_from_doc(l_first, l_last);
+		chart_data_.get_data_from_doc(l_first, l_last);
 		update_legends();
 		break;
 
@@ -888,12 +887,12 @@ void ViewSpikeDetection::scroll_file(const UINT n_sb_code, const UINT n_pos)
 	case SB_PAGELEFT: 
 	case SB_PAGERIGHT: 
 	case SB_RIGHT: 
-		b_result = chart_data_source_.scroll_data_from_doc(n_sb_code);
+		b_result = chart_data_.scroll_data_from_doc(n_sb_code);
 		break;
 	case SB_THUMBPOSITION:
 	case SB_THUMBTRACK: 
-		b_result = chart_data_source_.get_data_from_doc(
-			static_cast<long>(n_pos) * (chart_data_source_.get_document_last()) / 100L);
+		b_result = chart_data_.get_data_from_doc(
+			static_cast<long>(n_pos) * (chart_data_.get_document_last()) / 100L);
 		break;
 	default: // NOP: set position only
 		break;
@@ -908,9 +907,9 @@ void ViewSpikeDetection::on_format_y_scale_center_curve()
 	chart_data_filtered_.center_chan(0);
 	chart_data_filtered_.Invalidate();
 
-	for (auto i = 0; i < chart_data_source_.get_channel_list_size(); i++)
-		chart_data_source_.center_chan(i);
-	chart_data_source_.Invalidate();
+	for (auto i = 0; i < chart_data_.get_channel_list_size(); i++)
+		chart_data_.center_chan(i);
+	chart_data_.Invalidate();
 
 	chart_spike_bar_.center_curve();
 	chart_spike_bar_.Invalidate();
@@ -926,10 +925,10 @@ void ViewSpikeDetection::on_format_y_scale_gain_adjust()
 	chart_data_filtered_.set_channel_list_volts_extent(-1, nullptr);
 	chart_data_filtered_.Invalidate();
 
-	for (int i = 0; i < chart_data_source_.get_channel_list_size(); i++)
-		chart_data_source_.max_gain_chan(i);
-	chart_data_source_.set_channel_list_volts_extent(-1, nullptr);
-	chart_data_source_.Invalidate();
+	for (int i = 0; i < chart_data_.get_channel_list_size(); i++)
+		chart_data_.max_gain_chan(i);
+	chart_data_.set_channel_list_volts_extent(-1, nullptr);
+	chart_data_.Invalidate();
 
 	chart_spike_bar_.max_center();
 	chart_spike_bar_.Invalidate();
@@ -942,9 +941,9 @@ void ViewSpikeDetection::on_format_y_scale_gain_adjust()
 
 void ViewSpikeDetection::on_format_split_curves()
 {
-	chart_data_source_.split_channels();
-	chart_data_source_.set_channel_list_volts_extent(-1, nullptr);
-	chart_data_source_.Invalidate();
+	chart_data_.split_channels();
+	chart_data_.set_channel_list_volts_extent(-1, nullptr);
+	chart_data_.Invalidate();
 
 	chart_data_filtered_.split_channels();
 	chart_data_filtered_.set_channel_list_volts_extent(-1, nullptr);
@@ -967,8 +966,8 @@ void ViewSpikeDetection::on_format_all_data()
 	chart_data_filtered_.resize_channels(0, l_last);
 	chart_data_filtered_.get_data_from_doc(0, l_last);
 
-	chart_data_source_.resize_channels(0, l_last);
-	chart_data_source_.get_data_from_doc(0, l_last);
+	chart_data_.resize_channels(0, l_last);
+	chart_data_.get_data_from_doc(0, l_last);
 
 	const auto x_we = p_spk_list->get_spike_length();
 	if (x_we != chart_spike_shape_.get_xw_extent() || 0 != chart_spike_shape_.get_xw_org())
@@ -1129,7 +1128,7 @@ void ViewSpikeDetection::detect_all(const BOOL b_all)
 			update_vt_tags(); 
 			chart_spike_bar_.Invalidate();
 			chart_data_filtered_.Invalidate();
-			chart_data_source_.Invalidate();
+			chart_data_.Invalidate();
 		}
 	}
 
@@ -1624,7 +1623,7 @@ void ViewSpikeDetection::align_display_to_current_spike()
 			l_first = l_last - l_size + 1;
 		}
 		chart_data_filtered_.get_data_from_doc(l_first, l_last);
-		chart_data_source_.get_data_from_doc(l_first, l_last);
+		chart_data_.get_data_from_doc(l_first, l_last);
 
 		update_legends();
 	}
@@ -1753,7 +1752,7 @@ void ViewSpikeDetection::on_en_change_time_first()
 		mm_time_first_.OnEnChange(this, m_time_first, 1.f, -1.f);
 		chart_data_filtered_.get_data_from_doc(static_cast<long>(m_time_first * m_sampling_rate_),
 			static_cast<long>(m_time_last * m_sampling_rate_));
-		chart_data_source_.get_data_from_doc(static_cast<long>(m_time_first * m_sampling_rate_),
+		chart_data_.get_data_from_doc(static_cast<long>(m_time_first * m_sampling_rate_),
 			static_cast<long>(m_time_last * m_sampling_rate_));
 		update_legends();
 	}
@@ -1767,7 +1766,7 @@ void ViewSpikeDetection::on_en_change_time_last()
 
 		chart_data_filtered_.get_data_from_doc(static_cast<long>(m_time_first * m_sampling_rate_),
 			static_cast<long>(m_time_last * m_sampling_rate_));
-		chart_data_source_.get_data_from_doc(static_cast<long>(m_time_first * m_sampling_rate_),
+		chart_data_.get_data_from_doc(static_cast<long>(m_time_first * m_sampling_rate_),
 			static_cast<long>(m_time_last * m_sampling_rate_));
 		update_legends();
 	}
@@ -1836,7 +1835,7 @@ void ViewSpikeDetection::on_edit_copy()
 			CRect old_rect1; // save size of line view windows
 			chart_data_filtered_.GetWindowRect(&old_rect1);
 			CRect old_rect2;
-			chart_data_source_.GetWindowRect(&old_rect2);
+			chart_data_.GetWindowRect(&old_rect2);
 
 			const CRect rect(0, 0, options_view_data_->hz_resolution, options_view_data_->vt_resolution);
 			pixels_count_0_ = chart_data_filtered_.get_rect_width();
@@ -1899,7 +1898,7 @@ void ViewSpikeDetection::on_edit_copy()
 			// display curves : data
 			data_rect.bottom = rect.top + rect_data_height - separator / 2;
 			data_rect.left = rect.left + rect_spike_width + separator;
-			print_data_cartridge(&m_dc, &chart_data_source_, &data_rect);
+			print_data_cartridge(&m_dc, &chart_data_, &data_rect);
 
 			// display curves: detect channel
 			data_rect.top = data_rect.bottom + separator;
@@ -1998,7 +1997,7 @@ void ViewSpikeDetection::update_vt_tags()
 {
 	chart_spike_bar_.vt_tags.remove_all_tags();
 	chart_data_filtered_.vt_tags.remove_all_tags();
-	chart_data_source_.vt_tags.remove_all_tags();
+	chart_data_.vt_tags.remove_all_tags();
 	if (p_spk_doc->m_stimulus_intervals.n_items == 0)
 		return;
 
@@ -2007,7 +2006,7 @@ void ViewSpikeDetection::update_vt_tags()
 		const int cx = p_spk_doc->m_stimulus_intervals.get_at(i);
 		chart_spike_bar_.vt_tags.add_l_tag(cx, 0);
 		chart_data_filtered_.vt_tags.add_l_tag(cx, 0);
-		chart_data_source_.vt_tags.add_l_tag(cx, 0);
+		chart_data_.vt_tags.add_l_tag(cx, 0);
 	}
 }
 
@@ -2351,7 +2350,7 @@ void ViewSpikeDetection::serialize_windows_state(const BOOL save, int tab_index)
 		// save data into archive
 		CArchive ar(p_mem_file, CArchive::store);
 		p_mem_file->SeekToBegin();
-		chart_data_source_.Serialize(ar);
+		chart_data_.Serialize(ar);
 		chart_data_filtered_.Serialize(ar);
 		chart_spike_bar_.Serialize(ar);
 		chart_spike_shape_.Serialize(ar);
@@ -2365,7 +2364,7 @@ void ViewSpikeDetection::serialize_windows_state(const BOOL save, int tab_index)
 		{
 			CArchive ar(p_mem_file, CArchive::load);
 			p_mem_file->SeekToBegin();
-			chart_data_source_.Serialize(ar);
+			chart_data_.Serialize(ar);
 			chart_data_filtered_.Serialize(ar);
 			chart_spike_bar_.Serialize(ar);
 			chart_spike_shape_.Serialize(ar);
@@ -2373,7 +2372,7 @@ void ViewSpikeDetection::serialize_windows_state(const BOOL save, int tab_index)
 		}
 		else
 		{
-			*chart_data_source_.get_scope_parameters() = options_view_data_->view_spk_detect_data;
+			*chart_data_.get_scope_parameters() = options_view_data_->view_spk_detect_data;
 			*chart_data_filtered_.get_scope_parameters() = options_view_data_->view_spk_detect_filtered;
 			*chart_spike_bar_.get_scope_parameters() = options_view_data_->view_spk_detect_spk;
 			*chart_spike_shape_.get_scope_parameters() = options_view_data_->view_spk_detect_bars;
@@ -2770,7 +2769,7 @@ void ViewSpikeDetection::on_gain_scroll(const UINT n_sb_code, const UINT n_pos, 
 	int selected_channel = m_selected_channel;
 	if (i_id == IDC_SCROLLY2)
 	{
-		p_view_data_filtered = &chart_data_source_;
+		p_view_data_filtered = &chart_data_;
 		selected_channel = m_selected_channel2;
 	}
 	int y_extent = p_view_data_filtered->get_channel_list_item(selected_channel)->get_y_extent();
@@ -2831,7 +2830,7 @@ void ViewSpikeDetection::on_bias_scroll(const UINT n_sb_code, const UINT n_pos, 
 	auto selected_channel_index = m_selected_channel;
 	if (i_id == IDC_SCROLLY2)
 	{
-		p_view = &chart_data_source_;
+		p_view = &chart_data_;
 		selected_channel_index = m_selected_channel2;
 	}
 
@@ -3047,7 +3046,7 @@ void ViewSpikeDetection::on_tools_edit_stimulus()
 		update_vt_tags();
 		chart_spike_bar_.Invalidate();
 		chart_data_filtered_.Invalidate();
-		chart_data_source_.Invalidate();
+		chart_data_.Invalidate();
 		p_spk_doc->SetModifiedFlag(TRUE);
 	}
 }

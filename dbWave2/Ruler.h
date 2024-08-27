@@ -6,12 +6,12 @@ public:
 	Ruler();
 	~Ruler() override;
 
-	void SetRange(double dfirst, double dlast);
-	int GetScaleUnitPixels(int cx) const
+	void set_range(double d_first, double d_last);
+	int get_scale_unit_pixels(const int cx) const
 		{ return static_cast<int>(m_length_major_scale * cx / (m_highest_value - m_lowest_value)); }
-	double GetScaleIncrement() const
+	double get_scale_increment() const
 		{ return m_length_major_scale; }
-	void UpdateRange(double dfirst, double dlast);
+	void update_range(double d_first, double d_last);
 
 	BOOL m_is_horizontal {true}; 
 	double m_lowest_value {0.}; 
@@ -21,5 +21,5 @@ public:
 	double m_last_major_scale {0.};
 
 protected:
-	BOOL AdjustScale();
+	BOOL adjust_scale();
 };

@@ -8,27 +8,27 @@ Ruler::Ruler()
 Ruler::~Ruler()
 = default;
 
-void Ruler::SetRange(double dfirst, double dlast)
+void Ruler::set_range(const double d_first, const double d_last)
 {
-	m_lowest_value = dfirst;
-	m_highest_value = dlast;
+	m_lowest_value = d_first;
+	m_highest_value = d_last;
 	if (m_lowest_value > m_highest_value)
 	{
 		const auto x = m_lowest_value;
 		m_lowest_value = m_highest_value;
 		m_highest_value = x;
 	}
-	AdjustScale();
+	adjust_scale();
 }
 
 
-void Ruler::UpdateRange(double dfirst, double dlast)
+void Ruler::update_range(const double d_first, const double d_last)
 {
-	if (dfirst != m_lowest_value || dlast != m_highest_value)
-		SetRange(dfirst, dlast);
+	if (d_first != m_lowest_value || d_last != m_highest_value)
+		set_range(d_first, d_last);
 }
 
-BOOL Ruler::AdjustScale()
+BOOL Ruler::adjust_scale()
 {
 	// cf Bramley M. (2000) Data-Based Axis Determination. C/C++ Users Journal 18(7) 20-24
 	// http://drdobbs.com/184401258
@@ -64,9 +64,9 @@ BOOL Ruler::AdjustScale()
 	}
 	while (m_last_major_scale < last);
 
-	// adjust for too few tickmarks
-	constexpr auto i_toofew = 5;
-	if (i < i_toofew)
+	// adjust for too few tick_marks
+	constexpr auto i_too_few = 5;
+	if (i < i_too_few)
 	{
 		m_length_major_scale /= 2;
 		if ((m_first_major_scale + m_length_major_scale) <= first)

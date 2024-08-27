@@ -173,7 +173,7 @@ public:
 	Ruler x_ruler {};
 	Ruler y_ruler {};
 	CFont h_font {};
-	BOOL b_nice_grid {false};
+	boolean b_nice_grid {false};
 	int abscissa_height {10};
 	int ordinates_width {25};
 	RulerBar* x_ruler_bar {nullptr};

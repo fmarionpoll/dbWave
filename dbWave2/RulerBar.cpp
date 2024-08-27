@@ -2,7 +2,7 @@
 #include "ChartData.h"
 #include "Ruler.h"
 #include "RulerBar.h"
-#include <math.h>
+#include <cmath>
 #include "resource.h"
 
 #ifdef _DEBUG
@@ -14,7 +14,7 @@ IMPLEMENT_DYNAMIC(RulerBar, CWnd)
 
 RulerBar::RulerBar()
 {
-	m_hFont.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY,
+	h_font_.CreateFont(12, 0, 000, 000, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_TT_ALWAYS, PROOF_QUALITY,
 	                   VARIABLE_PITCH | FF_ROMAN, _T("Arial"));
 }
 
@@ -34,133 +34,133 @@ END_MESSAGE_MAP()
 
 void RulerBar::OnPaint()
 {
-	DrawScalefromRuler(nullptr);
+	draw_scale_from_ruler(nullptr);
 }
 
-void RulerBar::DrawScalefromRuler(Ruler* pRuler)
+void RulerBar::draw_scale_from_ruler(const Ruler* p_ruler)
 {
 	CPaintDC dc(this);
 
 	// exit if the length is not properly defined
-	if (pRuler == nullptr)
+	if (p_ruler == nullptr)
 	{
-		if (m_pRuler != nullptr)
-			pRuler = m_pRuler;
-		else if (m_pChartDataWnd != nullptr)
+		if (p_ruler_ != nullptr)
+			p_ruler = p_ruler_;
+		else if (p_chart_data_wnd_ != nullptr)
 		{
-			if (m_rcClient.Height() > m_rcClient.Width())
-				m_pRuler = &m_pChartDataWnd->y_ruler;
+			if (rc_client_.Height() > rc_client_.Width())
+				p_ruler_ = &p_chart_data_wnd_->y_ruler;
 			else
-				m_pRuler = &m_pChartDataWnd->x_ruler;
-			pRuler = m_pRuler;
+				p_ruler_ = &p_chart_data_wnd_->x_ruler;
+			p_ruler = p_ruler_;
 		}
 		else
 			return;
 	}
-	if (pRuler->m_highest_value == pRuler->m_lowest_value)
-	{
+
+	if (!(p_ruler->m_highest_value > p_ruler->m_lowest_value) && !(p_ruler->m_highest_value < p_ruler->m_lowest_value))
 		return;
-	}
+	
 
 	CPen a_pen;
-	a_pen.CreatePen(PS_SOLID, 0, m_penColor);
+	a_pen.CreatePen(PS_SOLID, 0, m_pen_color_);
 	const auto p_old_pen = dc.SelectObject(&a_pen);
-	const auto p_old_font = dc.SelectObject(&m_hFont);
+	const auto p_old_font = dc.SelectObject(&h_font_);
 	CString str;
 
 	// draw ticks and legends
 	int tick_big_height;
-	if (!m_bHorizontal)
-		tick_big_height = m_rcClient.Width() / 2 - 2;
+	if (!b_horizontal_)
+		tick_big_height = rc_client_.Width() / 2 - 2;
 	else
-		tick_big_height = m_rcClient.Height() / 2 - 2;
+		tick_big_height = rc_client_.Height() / 2 - 2;
 	const int tick_small_height = tick_big_height / 2;
 
 	// draw solid background
-	dc.IntersectClipRect(m_rcClient);
-	dc.FillSolidRect(m_rcClient, GetSysColor(COLOR_3DFACE));
+	dc.IntersectClipRect(rc_client_);
+	dc.FillSolidRect(rc_client_, GetSysColor(COLOR_3DFACE));
 
 	// draw baseline on the right side
-	if (!m_bHorizontal)
+	if (!b_horizontal_)
 	{
-		dc.MoveTo(m_rcClient.right - 1, m_rcClient.top);
-		dc.LineTo(m_rcClient.right - 1, m_rcClient.bottom);
+		dc.MoveTo(rc_client_.right - 1, rc_client_.top);
+		dc.LineTo(rc_client_.right - 1, rc_client_.bottom);
 	}
 	else
 	{
-		dc.MoveTo(m_rcClient.left, m_rcClient.top);
-		dc.LineTo(m_rcClient.right, m_rcClient.top);
+		dc.MoveTo(rc_client_.left, rc_client_.top);
+		dc.LineTo(rc_client_.right, rc_client_.top);
 	}
 
 	// draw scale
-	auto dpos = floor(pRuler->m_first_major_scale);
-	const auto dlen = pRuler->m_highest_value - pRuler->m_lowest_value;
-	const auto smallscaleinc = pRuler->m_length_major_scale / 5.;
+	auto d_pos = floor(p_ruler->m_first_major_scale);
+	const auto d_len = p_ruler->m_highest_value - p_ruler->m_lowest_value;
+	const auto small_scale_inc = p_ruler->m_length_major_scale / 5.;
 	dc.SetBkMode(TRANSPARENT);
 
-	while (dpos <= pRuler->m_highest_value)
+	while (d_pos <= p_ruler->m_highest_value)
 	{
 		// display small ticks
-		auto dsmallpos = dpos;
+		auto d_small_pos = d_pos;
 		int tick_pos;
 		for (auto i = 0; i < 4; i++)
 		{
-			dsmallpos += smallscaleinc;
-			auto ratio = (pRuler->m_highest_value - dsmallpos) / dlen;
-			if (!m_bHorizontal)
+			d_small_pos += small_scale_inc;
+			auto ratio = (p_ruler->m_highest_value - d_small_pos) / d_len;
+			if (!b_horizontal_)
 			{
-				tick_pos = static_cast<int>(m_rcClient.Height() * (pRuler->m_highest_value - dsmallpos) / dlen);
-				dc.MoveTo(m_rcClient.right, tick_pos);
-				dc.LineTo(m_rcClient.right - tick_small_height, tick_pos);
+				tick_pos = static_cast<int>(rc_client_.Height() * (p_ruler->m_highest_value - d_small_pos) / d_len);
+				dc.MoveTo(rc_client_.right, tick_pos);
+				dc.LineTo(rc_client_.right - tick_small_height, tick_pos);
 			}
 			else
 			{
-				tick_pos = static_cast<int>(m_rcClient.Width() * (dsmallpos - pRuler->m_lowest_value) / dlen);
-				dc.MoveTo(tick_pos, m_rcClient.top);
-				dc.LineTo(tick_pos, m_rcClient.top + tick_small_height);
+				tick_pos = static_cast<int>(rc_client_.Width() * (d_small_pos - p_ruler->m_lowest_value) / d_len);
+				dc.MoveTo(tick_pos, rc_client_.top);
+				dc.LineTo(tick_pos, rc_client_.top + tick_small_height);
 			}
 		}
 
 		// display large ticks and text
-		if (!m_bHorizontal)
-			tick_pos = static_cast<int>(m_rcClient.Height() * (pRuler->m_highest_value - dpos) / dlen);
+		if (!b_horizontal_)
+			tick_pos = static_cast<int>(rc_client_.Height() * (p_ruler->m_highest_value - d_pos) / d_len);
 		else
-			tick_pos = static_cast<int>(m_rcClient.Width() * (dpos - pRuler->m_lowest_value) / dlen);
+			tick_pos = static_cast<int>(rc_client_.Width() * (d_pos - p_ruler->m_lowest_value) / d_len);
 
 		if (tick_pos >= 0)
 		{
-			str.Format(_T("%g"), dpos);
+			str.Format(_T("%g"), d_pos);
 			auto size = dc.GetTextExtent(str);
 			int x, y;
-			if (!m_bHorizontal)
+			if (!b_horizontal_)
 			{
 				// tick
-				dc.MoveTo(m_rcClient.right, tick_pos);
-				dc.LineTo(m_rcClient.right - tick_big_height, tick_pos);
+				dc.MoveTo(rc_client_.right, tick_pos);
+				dc.LineTo(rc_client_.right - tick_big_height, tick_pos);
 				// text
-				if (dpos != 0. && fabs(dpos) < 1E-10) // prevents "bad" zero 
+				if (d_pos != 0. && fabs(d_pos) < 1E-10) // prevents "bad" zero 
 				{
-					dpos = 0;
-					str.Format(_T("%g"), dpos);
+					d_pos = 0;
+					str.Format(_T("%g"), d_pos);
 					size = dc.GetTextExtent(str);
 				}
-				x = m_rcClient.right - tick_big_height - size.cx - 2;
+				x = rc_client_.right - tick_big_height - size.cx - 2;
 				y = tick_pos - (size.cy / 2);
 			}
 			else
 			{
-				dc.MoveTo(tick_pos, m_rcClient.top);
-				dc.LineTo(tick_pos, m_rcClient.top + tick_big_height);
+				dc.MoveTo(tick_pos, rc_client_.top);
+				dc.LineTo(tick_pos, rc_client_.top + tick_big_height);
 				x = tick_pos - (size.cx / 2);
 				if (x < 0)
 					x = 0;
-				if (x + size.cx > m_rcClient.right)
-					x = m_rcClient.right - size.cx;
-				y = m_rcClient.top + tick_big_height + 1;
+				if (x + size.cx > rc_client_.right)
+					x = rc_client_.right - size.cx;
+				y = rc_client_.top + tick_big_height + 1;
 			}
 			dc.TextOut(x, y, str);
 		}
-		dpos += pRuler->m_length_major_scale;
+		d_pos += p_ruler->m_length_major_scale;
 	}
 
 	// restore objects used in this routine
@@ -177,117 +177,117 @@ BOOL RulerBar::OnEraseBkgnd(CDC* p_dc)
 void RulerBar::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
-	GetClientRect(&m_rcClient);
+	GetClientRect(&rc_client_);
 }
 
 void RulerBar::PreSubclassWindow()
 {
 	if (IsWindow(m_hWnd))
 	{
-		GetClientRect(&m_rcClient);
-		if (m_rcClient.Width() < m_rcClient.Height())
-			m_bHorizontal = FALSE;
+		GetClientRect(&rc_client_);
+		if (rc_client_.Width() < rc_client_.Height())
+			b_horizontal_ = FALSE;
 	}
 	CWnd::PreSubclassWindow();
 }
 
-BOOL RulerBar::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dw_style, const RECT& rect,
-                       CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
+BOOL RulerBar::Create(LPCTSTR lpsz_class_name, LPCTSTR lpsz_window_name, const DWORD dw_style, const RECT& rect,
+                       CWnd* p_parent_wnd, const UINT n_id, CCreateContext* p_context)
 {
 	if ((rect.right - rect.left) < (rect.bottom - rect.top))
-		m_bHorizontal = FALSE;
-	return CWnd::Create(nullptr, _T("RulerBarWnd"), dw_style, rect, pParentWnd, nID);
+		b_horizontal_ = FALSE;
+	return CWnd::Create(nullptr, _T("RulerBarWnd"), dw_style, rect, p_parent_wnd, n_id);
 }
 
-BOOL RulerBar::Create(CWnd* pParentWnd, ChartData* pDataChartWnd, BOOL bAsXAxis, int dSize, UINT nID)
+BOOL RulerBar::Create(CWnd* p_parent_wnd, ChartData* p_data_chart_wnd, const BOOL b_as_x_axis, const int d_size, const UINT n_id)
 {
-	m_pChartDataWnd = pDataChartWnd;
+	p_chart_data_wnd_ = p_data_chart_wnd;
 	CRect rect;
-	pDataChartWnd->GetWindowRect(&rect);
-	auto rectthis = rect;
-	if (bAsXAxis)
+	p_data_chart_wnd->GetWindowRect(&rect);
+	auto rect_this = rect;
+	if (b_as_x_axis)
 	{
-		rectthis.top = rect.bottom - 1;
-		rectthis.bottom = rectthis.top + dSize;
-		m_bHorizontal = TRUE;
+		rect_this.top = rect.bottom - 1;
+		rect_this.bottom = rect_this.top + d_size;
+		b_horizontal_ = TRUE;
 	}
 	else
 	{
-		rectthis.right = rect.left - 1;
-		rectthis.left = rectthis.right - dSize;
-		m_bHorizontal = FALSE;
+		rect_this.right = rect.left - 1;
+		rect_this.left = rect_this.right - d_size;
+		b_horizontal_ = FALSE;
 	}
-	return CWnd::Create(_T("RulerBarWnd"), nullptr, WS_CHILD, rectthis, pParentWnd, nID);
+	return CWnd::Create(_T("RulerBarWnd"), nullptr, WS_CHILD, rect_this, p_parent_wnd, n_id);
 }
 
-#define MODEZOOM	0
-#define MODEBIAS	1
+#define MODE_ZOOM	0
+#define MODE_BIAS	1
 #define DELTA		10
 
-void RulerBar::OnMouseMove(UINT nFlags, CPoint point)
+void RulerBar::OnMouseMove(const UINT n_flags, const CPoint point)
 {
-	if (!m_bHorizontal && (point.y < DELTA || point.y > m_rcClient.Height() - DELTA))
+	if (!b_horizontal_ && (point.y < DELTA || point.y > rc_client_.Height() - DELTA))
 		SetCursor(AfxGetApp()->LoadCursor(IDC_SPLITVERTICAL));
-	else if (m_bHorizontal && (point.x < DELTA || point.x > m_rcClient.Width() - DELTA))
+	else if (b_horizontal_ && (point.x < DELTA || point.x > rc_client_.Width() - DELTA))
 		SetCursor(AfxGetApp()->LoadCursor(IDC_SPLITHORIZONTAL));
 
-	CWnd::OnMouseMove(nFlags, point);
+	CWnd::OnMouseMove(n_flags, point);
 }
 
-void RulerBar::OnLButtonDown(UINT nFlags, CPoint point)
+void RulerBar::OnLButtonDown(const UINT n_flags, const CPoint point)
 {
-	if (!m_bHorizontal && (point.y < DELTA || point.y > m_rcClient.Height() - DELTA))
+	if (!b_horizontal_ && (point.y < DELTA || point.y > rc_client_.Height() - DELTA))
 	{
-		m_captureMode = MODEZOOM;
+		capture_mode_ = MODE_ZOOM;
 		SetCapture();
-		m_bCaptured = TRUE;
-		oldpt = point;
-		m_bBottom = (point.y < DELTA);
+		b_captured_ = TRUE;
+		old_pt_ = point;
+		b_bottom_ = (point.y < DELTA);
 	}
-	else if (m_bHorizontal && (point.x < DELTA || point.x > m_rcClient.Width() - DELTA))
+	else if (b_horizontal_ && (point.x < DELTA || point.x > rc_client_.Width() - DELTA))
 	{
-		m_captureMode = MODEZOOM;
+		capture_mode_ = MODE_ZOOM;
 		SetCapture();
-		m_bCaptured = TRUE;
-		oldpt = point;
-		m_bBottom = (point.x < DELTA);
+		b_captured_ = TRUE;
+		old_pt_ = point;
+		b_bottom_ = (point.x < DELTA);
 	}
 	else
-		CWnd::OnLButtonDown(nFlags, point);
+		CWnd::OnLButtonDown(n_flags, point);
 }
 
-void RulerBar::OnLButtonUp(UINT nFlags, CPoint point)
+void RulerBar::OnLButtonUp(const UINT n_flags, const CPoint point)
 {
-	if (m_bCaptured)
+	if (b_captured_)
 	{
-		m_bCaptured = FALSE;
-		m_captureMode = 0;
+		b_captured_ = FALSE;
+		capture_mode_ = 0;
 		ReleaseCapture();
-		newpt = point;
-		const int delta = -(newpt.y - oldpt.y);
-		if (m_pChartDataWnd != nullptr)
+		new_pt_ = point;
+		const int delta = -(new_pt_.y - old_pt_.y);
+		if (p_chart_data_wnd_ != nullptr)
 		{
-			CRect prevrect;
-			m_pChartDataWnd->GetClientRect(prevrect);
-			auto newrect = prevrect;
-			if (!m_bHorizontal)
+			CRect prev_rect;
+			p_chart_data_wnd_->GetClientRect(prev_rect);
+			auto new_rect = prev_rect;
+			if (!b_horizontal_)
 			{
-				if (m_bBottom)
-					newrect.bottom -= delta;
+				if (b_bottom_)
+					new_rect.bottom -= delta;
 				else
-					newrect.top += delta;
-				m_pChartDataWnd->zoom_data(&prevrect, &newrect);
-				m_pChartDataWnd->Invalidate();
+					new_rect.top += delta;
+				p_chart_data_wnd_->zoom_data(&prev_rect, &new_rect);
+				p_chart_data_wnd_->Invalidate();
 			}
 			else
 			{
-				if (m_bBottom)
-					newrect.left -= delta;
+				if (b_bottom_)
+					new_rect.left -= delta;
 				else
-					newrect.right += delta;
+					new_rect.right += delta;
 			}
 		}
 	}
 	else
-		CWnd::OnLButtonUp(nFlags, point);
+		CWnd::OnLButtonUp(n_flags, point);
 }
