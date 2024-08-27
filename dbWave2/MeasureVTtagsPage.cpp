@@ -176,7 +176,7 @@ void CMeasureVTtagsPage::OnCheck1()
 
 void CMeasureVTtagsPage::OnEnChangeItem()
 {
-	if (mm_index.m_bEntryDone)
+	if (mm_index.m_b_entry_done)
 	{
 		mm_index.OnEnChange(this, m_index, 1, -1);
 		// update dependent parameters
@@ -191,7 +191,7 @@ void CMeasureVTtagsPage::OnEnChangeItem()
 
 void CMeasureVTtagsPage::OnEnChangeTimesec()
 {
-	if (mm_timesec.m_bEntryDone)
+	if (mm_timesec.m_b_entry_done)
 	{
 		mm_timesec.OnEnChange(this, m_timesec, 1.f, -1.f);
 		// update dependent parameters
@@ -214,7 +214,7 @@ void CMeasureVTtagsPage::OnEnChangeTimesec()
 // tag(n) and tag(n+1)
 void CMeasureVTtagsPage::OnEnChangeDuration()
 {
-	if (mm_duration.m_bEntryDone)
+	if (mm_duration.m_b_entry_done)
 	{
 		mm_duration.OnEnChange(this, m_duration, 1.f, -1.f);
 		// update dependent parameters
@@ -229,7 +229,7 @@ void CMeasureVTtagsPage::OnEnChangeDuration()
 
 void CMeasureVTtagsPage::OnEnChangePeriod()
 {
-	if (mm_period.m_bEntryDone)
+	if (mm_period.m_b_entry_done)
 	{
 		mm_period.OnEnChange(this, m_period, 1.f, -1.f);
 		// update dependent parameters
@@ -242,7 +242,7 @@ void CMeasureVTtagsPage::OnEnChangePeriod()
 
 void CMeasureVTtagsPage::OnEnChangeNperiodsedit()
 {
-	if (mm_nperiods.m_bEntryDone)
+	if (mm_nperiods.m_b_entry_done)
 	{
 		mm_nperiods.OnEnChange(this, m_nperiods, 1, -1);
 		// update dependent parameters
@@ -255,7 +255,7 @@ void CMeasureVTtagsPage::OnEnChangeNperiodsedit()
 
 void CMeasureVTtagsPage::OnEnChangeTimeshift()
 {
-	if (mm_timeshift.m_bEntryDone)
+	if (mm_timeshift.m_b_entry_done)
 	{
 		mm_timeshift.OnEnChange(this, m_timeshift, 1.f, -1.f);
 		// update dependent parameters

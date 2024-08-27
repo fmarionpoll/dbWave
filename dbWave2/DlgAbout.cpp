@@ -25,7 +25,7 @@ BOOL DlgAbout::OnInitDialog()
 	{
 		CDaoWorkspace dao_workspace;
 		dao_workspace.Create(_T("VersionWorkspace"), _T("Admin"), _T(""));
-		GetDlgItem(IDC_VERSION)->SetWindowText(dao_workspace.GetVersion());
+		GetDlgItem(IDC_VERSION)->SetWindowText(CDaoWorkspace::GetVersion());
 	}
 	catch (CDaoException* e)
 	{
@@ -35,9 +35,9 @@ BOOL DlgAbout::OnInitDialog()
 
 	CFileVersion c_fv;
 	const CString cs_app_name = _T("dbwave2.exe");
-	c_fv.Open(cs_app_name);
-	GetDlgItem(IDC_DBWAVEVERSION)->SetWindowText(c_fv.GetProductVersion());
-	GetDlgItem(IDC_STATIC7)->SetWindowText(c_fv.GetLegalCopyright());
+	c_fv.open(cs_app_name);
+	GetDlgItem(IDC_DBWAVEVERSION)->SetWindowText(c_fv.get_product_version());
+	GetDlgItem(IDC_STATIC7)->SetWindowText(c_fv.get_legal_copyright());
 
 	return TRUE;
 }

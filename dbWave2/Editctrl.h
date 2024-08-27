@@ -8,21 +8,21 @@ public:
 	CEditCtrl();
 	~CEditCtrl() override;
 
-	BOOL m_bEntryDone{ false };
-	UINT m_nChar{ 0 };
+	BOOL m_b_entry_done{ false };
+	UINT m_n_char{ 0 };
 	
-	BOOL ProcessKeys(UINT nChar);
+	BOOL ProcessKeys(UINT n_char);
 	void OnEnChange(CWnd* parent_wnd, float& parameter, float delta_up, float delta_down);
 	void OnEnChange(CWnd* parent_wnd, int& parameter, int delta_up, int delta_down);
 	void OnEnChange(CWnd* parent_wnd, UINT& parameter, UINT delta_up, UINT delta_down);
 
 protected:
 	afx_msg UINT OnGetDlgCode();
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnKillFocus(CWnd* pNewWnd);
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnKeyDown(UINT n_char, UINT n_rep_cnt, UINT n_flags);
+	afx_msg void OnChar(UINT n_char, UINT n_rep_cnt, UINT n_flags);
+	afx_msg void OnSetFocus(CWnd* p_old_wnd);
+	afx_msg void OnKillFocus(CWnd* p_new_wnd);
+	afx_msg void OnVScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
 
 	DECLARE_MESSAGE_MAP()
 };

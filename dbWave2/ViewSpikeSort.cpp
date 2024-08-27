@@ -588,14 +588,14 @@ void ViewSpikeSort::change_chart_shape_vt_tag(const int tag_index)
 	{
 		spike_classification_->shape_t1 = chart_shape_.vt_tags.get_value_int(shape_t1_);
 		shape_t1_ms_ = static_cast<float>(spike_classification_->shape_t1) * delta_ms_;
-		mm_shape_t1_ms_.m_bEntryDone = TRUE;
+		mm_shape_t1_ms_.m_b_entry_done = TRUE;
 		on_en_change_shape_t1();
 	}
 	else if (tag_index == shape_t2_)
 	{
 		spike_classification_->shape_t2 = chart_shape_.vt_tags.get_value_int(shape_t2_);
 		shape_t2_ms_ = static_cast<float>(spike_classification_->shape_t2) * delta_ms_;
-		mm_shape_t2_ms_.m_bEntryDone = TRUE;
+		mm_shape_t2_ms_.m_b_entry_done = TRUE;
 		on_en_change_shape_t2();
 	}
 }
@@ -606,14 +606,14 @@ void ViewSpikeSort::change_chart_measure_vt_tag(const int value)
 	{
 		spike_classification_->i_xy_right = chart_measures_.vt_tags.get_value_int(m_i_xy_right_);
 		t_xy_right_ = static_cast<float>(spike_classification_->i_xy_right) / delta_ms_;
-		mm_t_xy_right_.m_bEntryDone = TRUE;
+		mm_t_xy_right_.m_b_entry_done = TRUE;
 		on_en_change_edit_right2();
 	}
 	else if (value == m_i_xy_left_)
 	{
 		spike_classification_->i_xy_left = chart_measures_.vt_tags.get_value_int(m_i_xy_left_);
 		t_xy_left_ = static_cast<float>(spike_classification_->i_xy_left) / delta_ms_;
-		mm_t_xy_left_.m_bEntryDone = TRUE;
+		mm_t_xy_left_.m_b_entry_done = TRUE;
 		on_en_change_edit_left2();
 	}
 }
@@ -1355,7 +1355,7 @@ void ViewSpikeSort::select_spike_list(const int current_index)
 
 void ViewSpikeSort::on_en_change_edit_left2()
 {
-	if (mm_t_xy_left_.m_bEntryDone)
+	if (mm_t_xy_left_.m_b_entry_done)
 	{
 		mm_t_xy_left_.OnEnChange(this, t_xy_left_, delta_ms_, -delta_ms_);
 		// check boundaries
@@ -1376,7 +1376,7 @@ void ViewSpikeSort::on_en_change_edit_left2()
 
 void ViewSpikeSort::on_en_change_edit_right2()
 {
-	if (mm_t_xy_right_.m_bEntryDone)
+	if (mm_t_xy_right_.m_b_entry_done)
 	{
 		mm_t_xy_right_.OnEnChange(this, t_xy_right_, delta_ms_, -delta_ms_);
 
@@ -1414,7 +1414,7 @@ void  ViewSpikeSort::all_charts_set_spike_list(SpikeList* spk_list)
 
 void ViewSpikeSort::on_en_change_source_class()
 {
-	if (mm_source_class_.m_bEntryDone)
+	if (mm_source_class_.m_b_entry_done)
 	{
 		const auto source_class = sort_source_class_;
 		mm_source_class_.OnEnChange(this, sort_source_class_, 1, -1);
@@ -1435,7 +1435,7 @@ void ViewSpikeSort::on_en_change_source_class()
 
 void ViewSpikeSort::on_en_change_destination_class()
 {
-	if (mm_destination_class_.m_bEntryDone)
+	if (mm_destination_class_.m_b_entry_done)
 	{
 		mm_destination_class_.OnEnChange(this, sort_destination_class_, 1, -1);
 		auto db_sel = db_spike(-1, -1, -1);
@@ -1472,7 +1472,7 @@ void ViewSpikeSort::check_valid_threshold_limits()
 
 void ViewSpikeSort::on_en_change_lower_threshold()
 {
-	if (mm_lower_threshold_mv_.m_bEntryDone)
+	if (mm_lower_threshold_mv_.m_b_entry_done)
 	{
 		const auto old_threshold = lower_threshold_mv_;
 		mm_lower_threshold_mv_.OnEnChange(this, lower_threshold_mv_, delta_mv_, -delta_mv_);
@@ -1489,7 +1489,7 @@ void ViewSpikeSort::on_en_change_lower_threshold()
 
 void ViewSpikeSort::on_en_change_upper_threshold()
 {
-	if (mm_upper_threshold_mv_.m_bEntryDone)
+	if (mm_upper_threshold_mv_.m_b_entry_done)
 	{
 		const auto old_threshold = upper_threshold_mv_;
 		mm_upper_threshold_mv_.OnEnChange(this, upper_threshold_mv_, delta_mv_, -delta_mv_);
@@ -1505,7 +1505,7 @@ void ViewSpikeSort::on_en_change_upper_threshold()
 
 void ViewSpikeSort::on_en_change_shape_t1()
 {
-	if (mm_shape_t1_ms_.m_bEntryDone)
+	if (mm_shape_t1_ms_.m_b_entry_done)
 	{
 		mm_shape_t1_ms_.OnEnChange(this, shape_t1_ms_, delta_ms_, -delta_ms_);
 		// check boundaries
@@ -1527,7 +1527,7 @@ void ViewSpikeSort::on_en_change_shape_t1()
 
 void ViewSpikeSort::on_en_change_shape_t2()
 {
-	if (mm_shape_t2_ms_.m_bEntryDone)
+	if (mm_shape_t2_ms_.m_b_entry_done)
 	{
 		mm_shape_t2_ms_.OnEnChange(this, shape_t2_ms_, delta_ms_, -delta_ms_);
 
@@ -1551,7 +1551,7 @@ void ViewSpikeSort::on_en_change_shape_t2()
 
 void ViewSpikeSort::on_en_change_time_first()
 {
-	if (mm_time_first_s_.m_bEntryDone)
+	if (mm_time_first_s_.m_b_entry_done)
 	{
 		mm_time_first_s_.OnEnChange(this, time_first_s_, 1.f, -1.f);
 
@@ -1568,7 +1568,7 @@ void ViewSpikeSort::on_en_change_time_first()
 
 void ViewSpikeSort::on_en_change_time_last()
 {
-	if (mm_time_last_s_.m_bEntryDone)
+	if (mm_time_last_s_.m_b_entry_done)
 	{
 		mm_time_last_s_.OnEnChange(this, time_last_s_, 1.f, -1.f);
 
@@ -1583,7 +1583,7 @@ void ViewSpikeSort::on_en_change_time_last()
 
 void ViewSpikeSort::on_en_change_min_mv()
 {
-	if (mm_measure_min_mv_.m_bEntryDone)
+	if (mm_measure_min_mv_.m_b_entry_done)
 	{
 		mm_measure_min_mv_.OnEnChange(this, measure_min_mv_, 1.f, -1.f);
 
@@ -1599,7 +1599,7 @@ void ViewSpikeSort::on_en_change_min_mv()
 
 void ViewSpikeSort::on_en_change_max_mv()
 {
-	if (mm_measure_max_mv_.m_bEntryDone)
+	if (mm_measure_max_mv_.m_b_entry_done)
 	{
 		mm_measure_max_mv_.OnEnChange(this, measure_max_mv_, 1.f, -1.f);
 		if (measure_max_mv_ <= measure_min_mv_)
@@ -1612,7 +1612,7 @@ void ViewSpikeSort::on_en_change_max_mv()
 
 void ViewSpikeSort::on_en_change_file_index()
 {
-	if (mm_file_index_.m_bEntryDone)
+	if (mm_file_index_.m_b_entry_done)
 	{
 		const auto file_index = record_id_;
 		mm_file_index_.OnEnChange(this, record_id_, 1, -1);
@@ -1632,7 +1632,7 @@ void ViewSpikeSort::on_en_change_file_index()
 
 void ViewSpikeSort::on_en_change_list_index()
 {
-	if (mm_list_index_.m_bEntryDone)
+	if (mm_list_index_.m_b_entry_done)
 	{
 		const auto list_index = list_index_;
 		mm_file_index_.OnEnChange(this, list_index_, 1, -1);
@@ -1651,7 +1651,7 @@ void ViewSpikeSort::on_en_change_list_index()
 
 void ViewSpikeSort::on_en_change_spike_index()
 {
-	if (mm_spike_index_.m_bEntryDone)
+	if (mm_spike_index_.m_b_entry_done)
 	{
 		const int spike_index = spike_index_;
 		mm_spike_index_.OnEnChange(this, spike_index_, 1, -1);
@@ -1688,7 +1688,7 @@ void ViewSpikeSort::on_en_change_spike_index()
 
 void ViewSpikeSort::on_en_change_spike_class()
 {
-	if (mm_class_index_.m_bEntryDone)
+	if (mm_class_index_.m_b_entry_done)
 	{
 		const auto spike_index_class = class_index_;
 		mm_class_index_.OnEnChange(this, class_index_, 1, -1);
@@ -1706,7 +1706,7 @@ void ViewSpikeSort::on_en_change_spike_class()
 
 void ViewSpikeSort::on_en_change_hist_bin_ms()
 {
-	if (mm_histogram_bin_mv_.m_bEntryDone)
+	if (mm_histogram_bin_mv_.m_b_entry_done)
 	{
 		const auto old_histogram_bin_mv = histogram_bin_mv_;
 		const auto delta = (measure_max_mv_ - measure_min_mv_) / 10.f;

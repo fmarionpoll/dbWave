@@ -266,7 +266,7 @@ void ViewSpikeHist::Dump(CDumpContext& dc) const
 
 void ViewSpikeHist::on_en_change_time_first()
 {
-	if (mm_timefirst.m_bEntryDone)
+	if (mm_timefirst.m_b_entry_done)
 	{
 		const auto time_first = m_timefirst;
 		mm_timefirst.OnEnChange(this, m_timefirst, 1.f, -1.f);
@@ -285,7 +285,7 @@ void ViewSpikeHist::on_en_change_time_first()
 
 void ViewSpikeHist::on_en_change_time_last()
 {
-	if (mm_timelast.m_bEntryDone)
+	if (mm_timelast.m_b_entry_done)
 	{
 		const auto time_last = m_timelast;
 		mm_timelast.OnEnChange(this, m_timelast, 1.f, -1.f);
@@ -303,7 +303,7 @@ void ViewSpikeHist::on_en_change_time_last()
 
 void ViewSpikeHist::on_en_change_time_bin()
 {
-	if (mm_timebinms.m_bEntryDone)
+	if (mm_timebinms.m_b_entry_done)
 	{
 		const auto bin_ms = m_timebinms;
 		mm_timebinms.OnEnChange(this, m_timebinms, 1.f, -1.f);
@@ -316,7 +316,7 @@ void ViewSpikeHist::on_en_change_time_bin()
 
 void ViewSpikeHist::on_en_change_bin_isi()
 {
-	if (mm_binISIms.m_bEntryDone)
+	if (mm_binISIms.m_b_entry_done)
 	{
 		const auto bin_ms = m_binISIms;
 		mm_binISIms.OnEnChange(this, m_binISIms, 1.f, -1.f);
@@ -329,7 +329,7 @@ void ViewSpikeHist::on_en_change_bin_isi()
 
 void ViewSpikeHist::on_en_change_spike_class()
 {
-	if (mm_spikeclass.m_bEntryDone)
+	if (mm_spikeclass.m_b_entry_done)
 	{
 		const auto spike_class_option = m_spikeclass;
 		mm_spikeclass.OnEnChange(this, m_spikeclass, 1, -1);
@@ -591,7 +591,7 @@ void ViewSpikeHist::show_controls(const int i_select)
 
 void ViewSpikeHist::on_en_change_n_bins()
 {
-	if (mm_nbinsISI.m_bEntryDone)
+	if (mm_nbinsISI.m_b_entry_done)
 	{
 		const auto n_bins = m_nbinsISI;
 		mm_nbinsISI.OnEnChange(this, m_nbinsISI, 1, -1);
@@ -604,7 +604,7 @@ void ViewSpikeHist::on_en_change_n_bins()
 
 void ViewSpikeHist::on_en_change_row_height()
 {
-	if (mm_rowheight.m_bEntryDone)
+	if (mm_rowheight.m_b_entry_done)
 	{
 		const auto row_height = m_rowheight;
 		mm_rowheight.OnEnChange(this, m_rowheight, 1, -1);
@@ -617,7 +617,7 @@ void ViewSpikeHist::on_en_change_row_height()
 
 void ViewSpikeHist::on_en_change_dot_height()
 {
-	if (mm_dotheight.m_bEntryDone)
+	if (mm_dotheight.m_b_entry_done)
 	{
 		const auto dot_height = m_dotheight;
 		mm_dotheight.OnEnChange(this, m_dotheight, 1, -1);

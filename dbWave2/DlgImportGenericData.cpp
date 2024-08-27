@@ -317,7 +317,7 @@ void DlgImportGenericData::OnSinglerun()
 
 void DlgImportGenericData::OnEnChangeNumberofchannels()
 {
-	if (!mm_nb_AD_channels.m_bEntryDone)
+	if (!mm_nb_AD_channels.m_b_entry_done)
 		return;
 
 	const UINT nb_AD_channels = m_nb_AD_channels;
@@ -356,7 +356,7 @@ void DlgImportGenericData::OnEnChangeNumberofchannels()
 
 void DlgImportGenericData::OnEnChangeChannelno()
 {
-	if (!mm_adChannelChan.m_bEntryDone)
+	if (!mm_adChannelChan.m_b_entry_done)
 		return;
 
 	UINT previous_channel = m_adChannelChan;
@@ -394,7 +394,7 @@ void DlgImportGenericData::OnEnChangeChannelno()
 
 void DlgImportGenericData::OnEnChangeSkipnbytes()
 {
-	if (!mm_skipNbytes.m_bEntryDone)
+	if (!mm_skipNbytes.m_b_entry_done)
 		return;
 
 	UINT skipNbytes = m_skipNbytes;
@@ -420,10 +420,10 @@ void DlgImportGenericData::OnDeltaposSpinNbChannels(NMHDR* pNMHDR, LRESULT* pRes
 {
 	NM_UPDOWN* pNMUpDown = (NM_UPDOWN*)pNMHDR;
 	if (pNMUpDown->iDelta > 0)
-		mm_nb_AD_channels.m_nChar = VK_UP;
+		mm_nb_AD_channels.m_n_char = VK_UP;
 	else
-		mm_nb_AD_channels.m_nChar = VK_DOWN;
-	mm_nb_AD_channels.m_bEntryDone = TRUE;
+		mm_nb_AD_channels.m_n_char = VK_DOWN;
+	mm_nb_AD_channels.m_b_entry_done = TRUE;
 	*pResult = 0;
 }
 
@@ -434,10 +434,10 @@ void DlgImportGenericData::OnDeltaposSpinNoChan(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_UPDOWN* pNMUpDown = (NM_UPDOWN*)pNMHDR;
 	if (pNMUpDown->iDelta > 0)
-		mm_adChannelChan.m_nChar = VK_UP;
+		mm_adChannelChan.m_n_char = VK_UP;
 	else
-		mm_adChannelChan.m_nChar = VK_DOWN;
-	mm_adChannelChan.m_bEntryDone = TRUE;
+		mm_adChannelChan.m_n_char = VK_DOWN;
+	mm_adChannelChan.m_b_entry_done = TRUE;
 	*pResult = 0;
 }
 
@@ -445,10 +445,10 @@ void DlgImportGenericData::OnDeltaposSkipNbytes(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_UPDOWN* pNMUpDown = (NM_UPDOWN*)pNMHDR;
 	if (pNMUpDown->iDelta > 0)
-		mm_skipNbytes.m_nChar = VK_UP;
+		mm_skipNbytes.m_n_char = VK_UP;
 	else
-		mm_skipNbytes.m_nChar = VK_DOWN;
-	mm_skipNbytes.m_bEntryDone = TRUE;
+		mm_skipNbytes.m_n_char = VK_DOWN;
+	mm_skipNbytes.m_b_entry_done = TRUE;
 	*pResult = 0;
 }
 

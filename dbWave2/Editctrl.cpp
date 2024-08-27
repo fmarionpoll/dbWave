@@ -59,33 +59,30 @@ UINT CEditCtrl::OnGetDlgCode()
 	return CEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
 }
 
-void CEditCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void CEditCtrl::OnKeyDown(const UINT n_char, const UINT n_rep_cnt, const UINT n_flags)
 {
 	// VK_SPACE (20), _PRIOR, _NEXT, _END, _HOME, _LEFT, _UP, _RIGHT, _DOWN, _SELECT(28)
-	if (nChar > VK_SPACE && nChar < VK_SELECT)
-		ProcessKeys(nChar);
+	if (n_char > VK_SPACE && n_char < VK_SELECT)
+		ProcessKeys(n_char);
 	else
-		CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
+		CEdit::OnKeyDown(n_char, n_rep_cnt, n_flags);
 }
 
-void CEditCtrl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
+void CEditCtrl::OnChar(const UINT n_char, const UINT n_rep_cnt, const UINT n_flags)
 {
-	if (!ProcessKeys(nChar))
-		CEdit::OnChar(nChar, nRepCnt, nFlags);
+	if (!ProcessKeys(n_char))
+		CEdit::OnChar(n_char, n_rep_cnt, n_flags);
 }
 
 //--------------------------------------------------------------------------
 // ProcessKeys
-// envoie un message EN_CHANGE
-// quand le control est validé par CR
-// quand l'utilisateur appuie sur arrow & page UP/DOWN
-//
-// de-select et select le prochain control en réponse à TAB, arrow left/right
+// send EN_CHANGE when control receives CR or arrow & page UP/DOWN
+// TAB or lef/righ arrow de-select and select next control 
 //--------------------------------------------------------------------------
 
-BOOL CEditCtrl::ProcessKeys(UINT nChar)
+BOOL CEditCtrl::ProcessKeys(UINT n_char)
 {
-	switch (nChar)
+	switch (n_char)
 	{
 	case VK_TAB: 
 		{
@@ -100,8 +97,8 @@ BOOL CEditCtrl::ProcessKeys(UINT nChar)
 	case VK_DOWN: 
 	case VK_PRIOR:
 	case VK_NEXT: 
-		m_bEntryDone = TRUE;
-		m_nChar = nChar;
+		m_b_entry_done = TRUE;
+		m_n_char = n_char;
 		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), EN_CHANGE), reinterpret_cast<LPARAM>(m_hWnd));
 		break;
 
@@ -112,11 +109,11 @@ BOOL CEditCtrl::ProcessKeys(UINT nChar)
 	return TRUE;
 }
 
-void CEditCtrl::OnEnChange(CWnd* parent_wnd, float& parameter, float delta_up, float delta_down)
+void CEditCtrl::OnEnChange(CWnd* parent_wnd, float& parameter, const float delta_up, const float delta_down)
 {
 	
 	;
-	switch (m_nChar)
+	switch (m_n_char)
 	{
 	case VK_RETURN:
 		//parent_wnd->UpdateData(TRUE);
@@ -136,14 +133,14 @@ void CEditCtrl::OnEnChange(CWnd* parent_wnd, float& parameter, float delta_up, f
 		break;
 	default:;
 	}
-	m_bEntryDone = FALSE;
-	m_nChar = 0;
+	m_b_entry_done = FALSE;
+	m_n_char = 0;
 	SetSel(0, -1);
 }
 
-void CEditCtrl::OnEnChange(CWnd* parent_wnd, int& parameter, int delta_up, int delta_down)
+void CEditCtrl::OnEnChange(CWnd* parent_wnd, int& parameter, const int delta_up, const int delta_down)
 {
-	switch (m_nChar)
+	switch (m_n_char)
 	{
 	case VK_RETURN:
 		//parent_wnd->UpdateData(TRUE);
@@ -163,14 +160,14 @@ void CEditCtrl::OnEnChange(CWnd* parent_wnd, int& parameter, int delta_up, int d
 		break;
 	default:;
 	}
-	m_bEntryDone = FALSE;
-	m_nChar = 0;
+	m_b_entry_done = FALSE;
+	m_n_char = 0;
 	SetSel(0, -1);
 }
 
-void CEditCtrl::OnEnChange(CWnd* parent_wnd, UINT& parameter, UINT delta_up, UINT delta_down)
+void CEditCtrl::OnEnChange(CWnd* parent_wnd, UINT& parameter, const UINT delta_up, const UINT delta_down)
 {
-	switch (m_nChar)
+	switch (m_n_char)
 	{
 	case VK_RETURN:
 		//parent_wnd->UpdateData(TRUE);
@@ -190,46 +187,43 @@ void CEditCtrl::OnEnChange(CWnd* parent_wnd, UINT& parameter, UINT delta_up, UIN
 		break;
 	default:;
 	}
-	m_bEntryDone = FALSE;
-	m_nChar = 0;
+	m_b_entry_done = FALSE;
+	m_n_char = 0;
 	SetSel(0, -1);
 }
 
 //--------------------------------------------------------------------------
 // OnSetFocus()
-// quand le control est en mode "caret" (barre vertic clignotante)
-// Postmessage n'arrive pas au control!? (ex OnEnChangeChannel)
-// cela marche par contre quand tout le texte est selectionne
-//
-// OnSetFocus et le SetSel inclus dans OnEnChangeChannel permettent
-// d'éviter cela lorsque (1) le control obtient le focus et (2) quand
-// le contenu du control est validé par l'utilisateur
+// when control is in "caret" mode (flashing vertical bar)
+// Postmessage does not reach parent control!? (ex OnEnChangeChannel)
+// it works only when the whole text is selected
 //--------------------------------------------------------------------------
-void CEditCtrl::OnSetFocus(CWnd* pOldWnd)
+
+void CEditCtrl::OnSetFocus(CWnd* p_old_wnd)
 {
-	CWnd::OnSetFocus(pOldWnd);
+	CWnd::OnSetFocus(p_old_wnd);
 	SetSel(0, -1);
 }
 
-void CEditCtrl::OnKillFocus(CWnd* pNewWnd)
+void CEditCtrl::OnKillFocus(CWnd* p_new_wnd)
 {
-	if (!m_bEntryDone)
+	if (!m_b_entry_done)
 	{
-		m_bEntryDone = TRUE;
-		m_nChar = VK_RETURN;
+		m_b_entry_done = TRUE;
+		m_n_char = VK_RETURN;
 		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), EN_CHANGE), reinterpret_cast<LPARAM>(m_hWnd));
 	}
-	CWnd::OnKillFocus(pNewWnd);
+	CWnd::OnKillFocus(p_new_wnd);
 }
 
-void CEditCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void CEditCtrl::OnVScroll(const UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar)
 {
-	if (nSBCode == SB_LINEDOWN)
-		m_nChar = VK_DOWN;
-	else if (nSBCode == SB_LINEUP)
-		m_nChar = VK_UP;
+	if (n_sb_code == SB_LINEDOWN)
+		m_n_char = VK_DOWN;
+	else if (n_sb_code == SB_LINEUP)
+		m_n_char = VK_UP;
 	else
 		return; // nothing special
-	m_bEntryDone = TRUE;
+	m_b_entry_done = TRUE;
 	GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), EN_CHANGE), reinterpret_cast<LPARAM>(m_hWnd));
 }

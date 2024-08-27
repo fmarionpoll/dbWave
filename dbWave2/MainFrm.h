@@ -12,8 +12,8 @@ class CMainFrame : public CMDIFrameWndEx
 	// Attributes
 	UINT m_second_tool_bar_id;
 	CMFCToolBar* m_p_second_tool_bar;
-	void ActivatePropertyPane(BOOL bActivate);
-	void ActivateFilterPane(BOOL bActivate);
+	void ActivatePropertyPane(BOOL b_activate);
+	void ActivateFilterPane(BOOL b_activate);
 
 	// Overrides
 	BOOL PreCreateWindow(CREATESTRUCT& cs) override;

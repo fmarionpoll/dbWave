@@ -544,7 +544,7 @@ void ViewdbWave::on_bn_clicked_display_nothing()
 
 void ViewdbWave::on_en_change_time_first()
 {
-	if (!mm_time_first_.m_bEntryDone)
+	if (!mm_time_first_.m_b_entry_done)
 		return;
 	mm_time_first_.OnEnChange(this, m_time_first_, 1.f, -1.f);
 
@@ -557,7 +557,7 @@ void ViewdbWave::on_en_change_time_first()
 
 void ViewdbWave::on_en_change_time_last()
 {
-	if (!mm_time_last_.m_bEntryDone)
+	if (!mm_time_last_.m_b_entry_done)
 		return;
 
 	mm_time_last_.OnEnChange(this, m_time_last_, 1.f, -1.f);
@@ -568,7 +568,7 @@ void ViewdbWave::on_en_change_time_last()
 
 void ViewdbWave::on_en_change_amplitude_span()
 {
-	if (!mm_amplitude_span_.m_bEntryDone)
+	if (!mm_amplitude_span_.m_b_entry_done)
 		return;
 
 	mm_amplitude_span_.OnEnChange(this, m_amplitude_span_, 1.f, -1.f);
@@ -640,7 +640,7 @@ void ViewdbWave::on_bn_clicked_radio_one_class()
 
 void ViewdbWave::on_en_change_spike_class()
 {
-	if (!mm_spike_class_.m_bEntryDone)
+	if (!mm_spike_class_.m_b_entry_done)
 		return;
 
 	mm_spike_class_.OnEnChange(this, m_spike_class_, 1, -1);

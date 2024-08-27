@@ -67,7 +67,7 @@ BOOL DlgChartProps::OnInitDialog()
 
 void DlgChartProps::OnEnChangeXCells()
 {
-	if (mm_xcells.m_bEntryDone)
+	if (mm_xcells.m_b_entry_done)
 	{
 		auto x_cells = m_xcells;
 		mm_xcells.OnEnChange(this, m_xcells, 1, -1);
@@ -88,7 +88,7 @@ void DlgChartProps::OnEnChangeXCells()
 
 void DlgChartProps::OnEnChangeYCells()
 {
-	if (mm_ycells.m_bEntryDone)
+	if (mm_ycells.m_b_entry_done)
 	{
 		auto y_cells = m_ycells;
 		mm_ycells.OnEnChange(this, m_ycells, 1, -1);
@@ -107,7 +107,7 @@ void DlgChartProps::OnEnChangeYCells()
 
 void DlgChartProps::OnEnChangeXYTicks()
 {
-	if (mm_xyticks.m_bEntryDone)
+	if (mm_xyticks.m_b_entry_done)
 	{
 		const auto xy_ticks = m_xyticks;
 		mm_xyticks.OnEnChange(this, m_xyticks, 1, -1);
@@ -128,7 +128,7 @@ void DlgChartProps::OnEnChangeXYTicks()
 
 void DlgChartProps::OnEnChangeXYTicksLine()
 {
-	if (mm_xytickline.m_bEntryDone)
+	if (mm_xytickline.m_b_entry_done)
 	{
 		const auto xy_tick_line = m_xytickline;
 		mm_xytickline.OnEnChange(this, m_xytickline, 1, -1);

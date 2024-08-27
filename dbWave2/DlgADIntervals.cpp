@@ -154,7 +154,7 @@ BOOL DlgADIntervals::OnInitDialog()
 
 void DlgADIntervals::OnEnChangeAdratechan()
 {
-	if (mm_ad_rate_channel.m_bEntryDone)
+	if (mm_ad_rate_channel.m_b_entry_done)
 	{
 		mm_ad_rate_channel.OnEnChange(this, m_ad_rate_channel, 1.f, -1.f);
 
@@ -176,7 +176,7 @@ void DlgADIntervals::OnEnChangeAdratechan()
 
 void DlgADIntervals::OnEnChangeDuration()
 {
-	if (mm_sweep_duration.m_bEntryDone)
+	if (mm_sweep_duration.m_b_entry_done)
 	{
 		mm_sweep_duration.OnEnChange(this, m_sweep_duration, 1.f, -1.f);
 		// check value and modifies dependent parameters
@@ -214,7 +214,7 @@ void DlgADIntervals::OnEnChangeDuration()
 
 void DlgADIntervals::OnEnChangeBuffersize()
 {
-	if (mm_buffer_W_size.m_bEntryDone)
+	if (mm_buffer_W_size.m_b_entry_done)
 	{
 		mm_buffer_W_size.OnEnChange(this, m_buffer_W_size, 1, -1);
 
@@ -234,7 +234,7 @@ void DlgADIntervals::OnEnChangeBuffersize()
 
 void DlgADIntervals::OnEnChangeNbuffers()
 {
-	if (mm_buffer_N_items.m_bEntryDone)
+	if (mm_buffer_N_items.m_b_entry_done)
 	{
 		mm_buffer_N_items.OnEnChange(this, m_buffer_N_items, 1, -1);
 		// update dependent parameters
@@ -247,7 +247,7 @@ void DlgADIntervals::OnEnChangeNbuffers()
 
 void DlgADIntervals::OnEnChangeAcqduration()
 {
-	if (mm_acquisition_duration.m_bEntryDone)
+	if (mm_acquisition_duration.m_b_entry_done)
 	{
 		mm_acquisition_duration.OnEnChange(this, m_acquisition_duration, 1.f, -1.f);
 		const auto min_duration = static_cast<float>(m_buffer_W_size) / m_ad_rate_channel;

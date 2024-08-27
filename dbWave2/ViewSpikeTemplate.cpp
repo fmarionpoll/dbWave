@@ -353,14 +353,14 @@ LRESULT ViewSpikeTemplates::on_my_message(const WPARAM w_param, const LPARAM l_p
 		{
 			spike_classification_parameters_->k_left = m_chart_spk_wnd_shape_.vt_tags.get_value_int(spk_form_tag_left_);
 			m_t1 = convert_spike_index_to_time(spike_classification_parameters_->k_left);
-			mm_t1_.m_bEntryDone = TRUE;
+			mm_t1_.m_b_entry_done = TRUE;
 			on_en_change_t1();
 		}
 		else if (short_value == spk_form_tag_right_)
 		{
 			spike_classification_parameters_->k_right = m_chart_spk_wnd_shape_.vt_tags.get_value_int(spk_form_tag_right_);
 			m_t2 = convert_spike_index_to_time(spike_classification_parameters_->k_right);
-			mm_t2_.m_bEntryDone = TRUE;
+			mm_t2_.m_b_entry_done = TRUE;
 			on_en_change_t2();
 		}
 		m_template_list_.set_template_length(0, spike_classification_parameters_->k_left, spike_classification_parameters_->k_right);
@@ -388,7 +388,7 @@ LRESULT ViewSpikeTemplates::on_my_message(const WPARAM w_param, const LPARAM l_p
 
 void ViewSpikeTemplates::on_en_change_class()
 {
-	if (mm_spike_no_class_.m_bEntryDone)
+	if (mm_spike_no_class_.m_b_entry_done)
 	{
 		const auto spike_class = spike_no_class;
 		mm_spike_no_class_.OnEnChange(this, spike_no_class, 1, -1);
@@ -404,7 +404,7 @@ void ViewSpikeTemplates::on_en_change_class()
 
 void ViewSpikeTemplates::on_en_change_time_first()
 {
-	if (mm_time_first_.m_bEntryDone)
+	if (mm_time_first_.m_b_entry_done)
 	{
 		mm_time_first_.OnEnChange(this, time_first, 1.f, -1.f);
 
@@ -419,7 +419,7 @@ void ViewSpikeTemplates::on_en_change_time_first()
 
 void ViewSpikeTemplates::on_en_change_time_last()
 {
-	if (mm_time_last_.m_bEntryDone)
+	if (mm_time_last_.m_b_entry_done)
 	{
 		mm_time_last_.OnEnChange(this, time_last, 1.f, -1.f);
 
@@ -544,7 +544,7 @@ void ViewSpikeTemplates::set_extent_zero_all_display(const int extent, const int
 
 void ViewSpikeTemplates::on_en_change_hit_rate()
 {
-	if (mm_hit_rate_.m_bEntryDone)
+	if (mm_hit_rate_.m_b_entry_done)
 	{
 		mm_hit_rate_.OnEnChange(this, hit_rate, 1, -1);
 
@@ -556,7 +556,7 @@ void ViewSpikeTemplates::on_en_change_hit_rate()
 
 void ViewSpikeTemplates::on_en_change_hit_rate_sort()
 {
-	if (mm_hit_rate_sort_.m_bEntryDone)
+	if (mm_hit_rate_sort_.m_b_entry_done)
 	{
 		mm_hit_rate_sort_.OnEnChange(this, hit_rate_sort, 1, -1);
 
@@ -568,7 +568,7 @@ void ViewSpikeTemplates::on_en_change_hit_rate_sort()
 
 void ViewSpikeTemplates::on_en_change_tolerance()
 {
-	if (mm_k_tolerance_.m_bEntryDone)
+	if (mm_k_tolerance_.m_b_entry_done)
 	{
 		mm_k_tolerance_.OnEnChange(this, k_tolerance, 1.f, -1.f);
 		if (k_tolerance < 0)
@@ -1175,7 +1175,7 @@ void ViewSpikeTemplates::on_bn_clicked_display()
 
 void ViewSpikeTemplates::on_en_change_i_first_sorted_class()
 {
-	if (mm_i_first_sorted_class_.m_bEntryDone)
+	if (mm_i_first_sorted_class_.m_b_entry_done)
 	{
 		mm_i_first_sorted_class_.OnEnChange(this, i_first_sorted_class, 1, -1);
 
@@ -1220,7 +1220,7 @@ void ViewSpikeTemplates::on_en_change_t1()
 {
 	p_spk_list = p_spk_doc->get_spike_list_current();
 
-	if (mm_t1_.m_bEntryDone)
+	if (mm_t1_.m_b_entry_done)
 	{
 		const auto delta = t_unit / p_spk_list->get_acq_sampling_rate();
 		
@@ -1246,7 +1246,7 @@ void ViewSpikeTemplates::on_en_change_t2()
 {
 	p_spk_list = p_spk_doc->get_spike_list_current();
 
-	if (mm_t2_.m_bEntryDone)
+	if (mm_t2_.m_b_entry_done)
 	{
 		const auto delta = t_unit / p_spk_list->get_acq_sampling_rate();
 		mm_t2_.OnEnChange(this, m_t2, delta, -delta);

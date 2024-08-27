@@ -1,8 +1,3 @@
-/////////////////////////////////////////////////////////////////////////////
-// CMainFrame
-// MainFrm.cpp : implementation of the CMainFrame class
-//
-
 #include "StdAfx.h"
 #include "MainFrm.h"
 //#include "ChildFrm.h"
@@ -53,8 +48,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CMainFrame construction/destruction
 
 CMainFrame::CMainFrame()
 {
@@ -77,16 +70,16 @@ void CMainFrame::OnDestroy()
 	CMDIFrameWndEx::OnDestroy();
 }
 
-void CMainFrame::ActivatePropertyPane(BOOL bActivate)
+void CMainFrame::ActivatePropertyPane(const BOOL b_activate)
 {
-	if (bActivate != panel_properties_.IsVisible())
-		panel_properties_.ShowPane(bActivate, FALSE, FALSE);
+	if (b_activate != panel_properties_.IsVisible())
+		panel_properties_.ShowPane(b_activate, FALSE, FALSE);
 }
 
-void CMainFrame::ActivateFilterPane(BOOL bActivate)
+void CMainFrame::ActivateFilterPane(const BOOL b_activate)
 {
-	if (bActivate != panel_filter_.IsVisible())
-		panel_filter_.ShowPane(bActivate, FALSE, FALSE);
+	if (b_activate != panel_filter_.IsVisible())
+		panel_filter_.ShowPane(b_activate, FALSE, FALSE);
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)

@@ -7,31 +7,30 @@
 #define new DEBUG_NEW
 #endif
 
-////////////////////////////////////////////////////////////////////
-// class CSubfileItem
+
 
 IMPLEMENT_DYNCREATE(CSubfileItem, CObject);
 
 // Construction / Destruction
 CSubfileItem::CSubfileItem()
 {
-	m_rec.wCode = STRUCT_JUMP; // Subfile type identifier
-	SetLabel("JUMP");
-	m_rec.ucEncoding = UL_MODE; // Encoding mode of the subfile (offset=UL)
-	m_rec.itemnb = 0; // item number
-	m_rec.ulOffset = 0; // Pointer to the beginning of the subfile
-	m_rec.ulLength = 0; // Length of the subfile
+	m_rec_.w_code = STRUCT_JUMP; 	// Sub-file type identifier
+	set_label("JUMP");
+	m_rec_.uc_encoding = UL_MODE; 	// Encoding mode of the sub-file (offset=UL)
+	m_rec_.item_nb = 0; 			// item number
+	m_rec_.ul_offset = 0; 			// Pointer to the beginning of the sub-file
+	m_rec_.ul_length = 0; 			// Length of the sub-file
 }
 
-CSubfileItem::CSubfileItem(unsigned char ucCode, char* szLabel, ULONGLONG ulOffset, ULONGLONG ulLength,
-                           unsigned char ucEncoding, int itemnb)
+CSubfileItem::CSubfileItem(const unsigned char uc_code, char* sz_label, const ULONGLONG ul_offset, const ULONGLONG ul_length,
+                           const unsigned char uc_encoding, const int item_nb)
 {
-	m_rec.wCode = ucCode; // data, acqdef, acqchan, ..., zero if end
-	SetLabel(szLabel);
-	m_rec.ulOffset = ulOffset; // offset within file
-	m_rec.ulLength = ulLength; // length of the subfile
-	m_rec.ucEncoding = ucEncoding; // type: normal(default), compressed (future implement.)
-	m_rec.itemnb = itemnb;
+	m_rec_.w_code = uc_code; // data, acq_def, acq_chan, ..., zero if end
+	set_label(sz_label);
+	m_rec_.ul_offset = ul_offset; // offset within file
+	m_rec_.ul_length = ul_length; // length of the sub-file
+	m_rec_.uc_encoding = uc_encoding; // type: normal(default), compressed (future implement.)
+	m_rec_.item_nb = item_nb;
 }
 
 CSubfileItem::~CSubfileItem()
@@ -42,20 +41,20 @@ CSubfileItem::~CSubfileItem()
 // write the structure in the binary file datafile
 // assume that file pointer is correctly set
 
-ULONGLONG CSubfileItem::Write(CFile* pfile)
+ULONGLONG CSubfileItem::write(CFile* p_file)
 {
-	const auto l_first = pfile->GetPosition(); // current file position
+	const auto l_first = p_file->GetPosition(); // current file position
 
-	pfile->Write(&m_rec.szLabel, static_cast<UINT>(LABEL_LEN) + 1);
-	m_rec.ucEncoding = UL_MODE;
-	pfile->Write(&m_rec.ucEncoding, static_cast<UINT>(1));
+	p_file->Write(&m_rec_.sz_label, static_cast<UINT>(LABEL_LEN) + 1);
+	m_rec_.uc_encoding = UL_MODE;
+	p_file->Write(&m_rec_.uc_encoding, static_cast<UINT>(1));
 
-	pfile->Write(&m_rec.wCode, sizeof(WORD));
-	pfile->Write(&m_rec.ulOffset, sizeof(ULONGLONG));
-	pfile->Write(&m_rec.ulLength, sizeof(ULONGLONG));
-	pfile->Write(&m_rec.itemnb, sizeof(int));
+	p_file->Write(&m_rec_.w_code, sizeof(WORD));
+	p_file->Write(&m_rec_.ul_offset, sizeof(ULONGLONG));
+	p_file->Write(&m_rec_.ul_length, sizeof(ULONGLONG));
+	p_file->Write(&m_rec_.item_nb, sizeof(int));
 
-	const auto l_last = pfile->GetPosition(); // file position after writing
+	const auto l_last = p_file->GetPosition(); // file position after writing
 	return (l_last - l_first); // return length of data written
 }
 
@@ -63,44 +62,44 @@ ULONGLONG CSubfileItem::Write(CFile* pfile)
 // read the structure in the binary file datafile
 // assume file pointer correctly set
 
-void CSubfileItem::Read(CFile* pfile)
+void CSubfileItem::read(CFile* p_file)
 {
-	pfile->Read(&m_rec.szLabel, static_cast<UINT>(LABEL_LEN) + 1);
+	p_file->Read(&m_rec_.sz_label, static_cast<UINT>(LABEL_LEN) + 1);
 	UINT uc_encoding = 0;
-	pfile->Read(&uc_encoding, static_cast<UINT>(1));
+	p_file->Read(&uc_encoding, static_cast<UINT>(1));
 
 	if (UL_MODE == uc_encoding)
 	{
-		pfile->Read(&m_rec.wCode, sizeof(WORD));
-		pfile->Read(&m_rec.ulOffset, sizeof(ULONGLONG));
-		pfile->Read(&m_rec.ulLength, sizeof(ULONGLONG));
-		pfile->Read(&m_rec.itemnb, sizeof(int));
+		p_file->Read(&m_rec_.w_code, sizeof(WORD));
+		p_file->Read(&m_rec_.ul_offset, sizeof(ULONGLONG));
+		p_file->Read(&m_rec_.ul_length, sizeof(ULONGLONG));
+		p_file->Read(&m_rec_.item_nb, sizeof(int));
 	}
 	else
 	{
 		ASSERT(NORMAL_MODE == uc_encoding);
-		pfile->Read(&m_rec.wCode, sizeof(WORD));
+		p_file->Read(&m_rec_.w_code, sizeof(WORD));
 		long l_value;
-		pfile->Read(&l_value, sizeof(long));
-		m_rec.ulOffset = l_value;
-		pfile->Read(&l_value, sizeof(long));
-		m_rec.ulLength = l_value;
-		pfile->Read(&m_rec.itemnb, sizeof(int));
+		p_file->Read(&l_value, sizeof(long));
+		m_rec_.ul_offset = l_value;
+		p_file->Read(&l_value, sizeof(long));
+		m_rec_.ul_length = l_value;
+		p_file->Read(&m_rec_.item_nb, sizeof(int));
 	}
 }
 
-void CSubfileItem::SetLabel(char* pszLabel)
+void CSubfileItem::set_label(char* psz_label)
 {
-	auto plab = &m_rec.szLabel[0];
+	auto p_lab = &m_rec_.sz_label[0];
 	auto i = 0;
-	for (auto j = i; j < LABEL_LEN; j++, i++, plab++, pszLabel++)
+	for (auto j = i; j < LABEL_LEN; j++, i++, p_lab++, psz_label++)
 	{
-		if (*pszLabel == 0)
+		if (*psz_label == 0)
 			break;
-		*plab = *pszLabel;
+		*p_lab = *psz_label;
 	}
 
-	for (auto k = i; k < LABEL_LEN; k++, plab++)
-		*plab = ' ';
-	m_rec.szLabel[LABEL_LEN] = 0;
+	for (auto k = i; k < LABEL_LEN; k++, p_lab++)
+		*p_lab = ' ';
+	m_rec_.sz_label[LABEL_LEN] = 0;
 }

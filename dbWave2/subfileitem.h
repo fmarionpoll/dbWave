@@ -1,16 +1,10 @@
 #pragma once
-// subfileitem.h
 
-// Definition of Awave files and I/O functions
-
-///////////////////////////////////////////////////////////////////
-// Proprietary data file
-///////////////////////////////////////////////////////////////////
 
 // CSubfileItem
-// subfile description item: ID, label, subfile offset, length, encoding mode
+// sub-file description item: ID, label, sub-file offset, length, encoding mode
 //
-// Subfile identifiers
+// Sub-file identifiers
 #define	STRUCT_NOP			1	// empty descriptor
 #define	STRUCT_ACQCHAN		2	// data acq channels
 #define STRUCT_ACQDEF		3	// data acquisition parameters
@@ -19,28 +13,21 @@
 #define STRUCT_VTAGS		6	// vertical tags
 #define STRUCT_HZTAGS		7	// horizontal tags
 
-// add new subfiles identifiers here
-
-// ............
-// last subfile #ID
+// add new sub-files identifiers here
+// last sub-file #ID
 #define	STRUCT_END			0	// end of chain of descriptors
-
-// Encoding data mode (describe how data are encoded; provisional)
 #define NORMAL_MODE			0	// encoding mode of aWave files 1.0
 #define UL_MODE				1	// encoding with ULONGLONG
-
-// add new encoding mode here
-// ................
-#define LABEL_LEN 8
+#define LABEL_LEN 			8
 
 struct SUBF_DESCRIP
 {
-	WORD wCode; // Subfile type identifier
-	int itemnb; // index current item
-	unsigned char ucEncoding; // Encoding mode of the subfile
-	char szLabel[LABEL_LEN + 1]; // Subfile type label
-	ULONGLONG ulOffset; // pointer to the beginning of the subfile (long)
-	ULONGLONG ulLength; // length of the subfile
+	WORD w_code; 				// Sub-file type identifier
+	int item_nb; 				// index current item
+	unsigned char uc_encoding; 	// Encoding mode of the sub-file
+	char sz_label[LABEL_LEN + 1]; // Sub-file type label
+	ULONGLONG ul_offset; 		// pointer to the beginning of the su-file (long)
+	ULONGLONG ul_length; 		// length of the sub-file
 };
 
 class CSubfileItem : public CObject
@@ -49,30 +36,30 @@ class CSubfileItem : public CObject
 protected:
 	// Attributes
 
-	SUBF_DESCRIP m_rec;
+	SUBF_DESCRIP m_rec_;
 
 public:
 	CSubfileItem();
-	CSubfileItem(unsigned char ucCode, char* csLabel, ULONGLONG ulOffset,
-	             ULONGLONG ulLength, unsigned char ucEncoding, int itemnb = 0);
+	CSubfileItem(unsigned char uc_code, char* sz_label, ULONGLONG ul_offset,
+	             ULONGLONG ul_length, unsigned char uc_encoding, int item_nb = 0);
 	~CSubfileItem() override;
 
 	// Helpers
-	WORD GetCode() const { return m_rec.wCode; }
-	CStringA GetLabel() const { return m_rec.szLabel; }
-	unsigned char GetDataEncoding() const { return m_rec.ucEncoding; };
-	int GetItemnb() const { return m_rec.itemnb; }
-	ULONGLONG GetDataOffset() const { return m_rec.ulOffset; }
-	ULONGLONG GetDataLength() const { return m_rec.ulLength; }
+	WORD get_code() const { return m_rec_.w_code; }
+	CStringA get_label() const { return m_rec_.sz_label; }
+	unsigned char get_data_encoding() const { return m_rec_.uc_encoding; };
+	int get_item_nb() const { return m_rec_.item_nb; }
+	ULONGLONG get_data_offset() const { return m_rec_.ul_offset; }
+	ULONGLONG get_data_length() const { return m_rec_.ul_length; }
 
-	void SetCode(unsigned char ucCode) { m_rec.wCode = ucCode; }
-	void SetLabel(char* pszLabel);
-	void SetDataEncoding(unsigned char ucEncoding) { m_rec.ucEncoding = ucEncoding; }
-	void SetItemnb(int item) { m_rec.itemnb = item; }
-	void SetDataOffset(ULONGLONG ulOffset) { m_rec.ulOffset = ulOffset; }
-	void SetDataLength(ULONGLONG ulLength) { m_rec.ulLength = ulLength; }
+	void set_code(const unsigned char uc_code) { m_rec_.w_code = uc_code; }
+	void set_label(char* psz_label);
+	void set_data_encoding(const unsigned char uc_encoding) { m_rec_.uc_encoding = uc_encoding; }
+	void set_item_nb(const int item) { m_rec_.item_nb = item; }
+	void set_data_offset(const ULONGLONG ul_offset) { m_rec_.ul_offset = ul_offset; }
+	void set_data_length(const ULONGLONG ul_length) { m_rec_.ul_length = ul_length; }
 
 	// I/O Operations
-	void Read(CFile* pdatafile);
-	ULONGLONG Write(CFile* pdatafile);
+	void read(CFile* p_file);
+	ULONGLONG write(CFile* p_file);
 };

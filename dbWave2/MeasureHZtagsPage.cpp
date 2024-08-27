@@ -92,7 +92,7 @@ void CMeasureHZtagsPage::OnRemove()
 
 void CMeasureHZtagsPage::OnEnChangeDatachannel()
 {
-	if (mm_datachannel.m_bEntryDone)
+	if (mm_datachannel.m_b_entry_done)
 	{
 		mm_datachannel.OnEnChange(this, m_datachannel, 1, -1);
 
@@ -112,7 +112,7 @@ void CMeasureHZtagsPage::OnEnChangeDatachannel()
 
 void CMeasureHZtagsPage::OnEnChangeIndex()
 {
-	if (mm_index.m_bEntryDone)
+	if (mm_index.m_b_entry_done)
 	{
 		mm_index.OnEnChange(this, m_index, 1, -1);
 		// update dependent parameters
@@ -127,7 +127,7 @@ void CMeasureHZtagsPage::OnEnChangeIndex()
 
 void CMeasureHZtagsPage::OnEnChangeMvlevel()
 {
-	if (mm_mvlevel.m_bEntryDone)
+	if (mm_mvlevel.m_b_entry_done)
 	{
 		mm_mvlevel.OnEnChange(this, m_mvlevel, 1.f, -1.f);
 		UpdateData(FALSE);

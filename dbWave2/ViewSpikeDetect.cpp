@@ -620,9 +620,10 @@ void ViewSpikeDetection::OnInitialUpdate()
 
 	update_file_parameters(TRUE);
 	chart_data_filtered_.set_scope_parameters(&(options_view_data_->view_data));
-	chart_data_filtered_.Invalidate();
+	//chart_data_filtered_.Invalidate();
 	chart_data_source_.set_scope_parameters(&(options_view_data_->view_data));
-	chart_data_source_.Invalidate();
+	//chart_data_source_.Invalidate();
+	on_format_split_curves();
 }
 
 LRESULT ViewSpikeDetection::on_my_message(const WPARAM w_param, const LPARAM l_param)
@@ -650,7 +651,7 @@ LRESULT ViewSpikeDetection::on_my_message(const WPARAM w_param, const LPARAM l_p
 			->convert_data_bins_to_volts(
 				chart_data_filtered_.hz_tags.get_value_int(threshold)) * 1000.f;
 		m_p_detect_parameters_->detect_threshold_mv = m_threshold_val;
-		mm_threshold_val_.m_bEntryDone = TRUE;
+		mm_threshold_val_.m_b_entry_done = TRUE;
 		on_en_change_threshold();
 		break;
 
@@ -1531,7 +1532,7 @@ void ViewSpikeDetection::on_clear()
 
 void ViewSpikeDetection::on_en_change_spike_no()
 {
-	if (mm_spike_no_.m_bEntryDone)
+	if (mm_spike_no_.m_b_entry_done)
 	{
 		mm_spike_no_.OnEnChange(this, m_spike_index, 1, -1);
 		// check boundaries
@@ -1717,7 +1718,7 @@ void ViewSpikeDetection::update_spike_display()
 
 void ViewSpikeDetection::on_en_change_threshold()
 {
-	if (mm_threshold_val_.m_bEntryDone)
+	if (mm_threshold_val_.m_b_entry_done)
 	{
 		const auto threshold_value = m_threshold_val;
 		mm_threshold_val_.OnEnChange(this, m_threshold_val, 1.f, -1.f);
@@ -1737,7 +1738,7 @@ void ViewSpikeDetection::on_en_change_threshold()
 
 void ViewSpikeDetection::on_en_change_time_first()
 {
-	if (mm_time_first_.m_bEntryDone)
+	if (mm_time_first_.m_b_entry_done)
 	{
 		mm_time_first_.OnEnChange(this, m_time_first, 1.f, -1.f);
 		chart_data_filtered_.get_data_from_doc(static_cast<long>(m_time_first * m_sampling_rate_),
@@ -1750,7 +1751,7 @@ void ViewSpikeDetection::on_en_change_time_first()
 
 void ViewSpikeDetection::on_en_change_time_last()
 {
-	if (mm_time_last_.m_bEntryDone)
+	if (mm_time_last_.m_b_entry_done)
 	{
 		mm_time_last_.OnEnChange(this, m_time_last, 1.f, -1.f);
 
@@ -2863,7 +2864,7 @@ void ViewSpikeDetection::on_bias_scroll(const UINT n_sb_code, const UINT n_pos, 
 
 void ViewSpikeDetection::on_en_change_spk_wnd_amplitude()
 {
-	if (mm_spk_wnd_amplitude_.m_bEntryDone)
+	if (mm_spk_wnd_amplitude_.m_b_entry_done)
 	{
 		m_spk_wnd_amplitude_ = chart_spike_shape_.get_extent_mv();
 		const auto y_old = m_spk_wnd_amplitude_;
@@ -2890,7 +2891,7 @@ void ViewSpikeDetection::on_en_change_spk_wnd_amplitude()
 
 void ViewSpikeDetection::on_en_change_spk_wnd_length()
 {
-	if (mm_spk_wnd_duration_.m_bEntryDone)
+	if (mm_spk_wnd_duration_.m_b_entry_done)
 	{
 		m_spk_wnd_duration_ = chart_spike_shape_.get_extent_ms();
 		const auto x_old = m_spk_wnd_duration_;
@@ -3042,7 +3043,7 @@ void ViewSpikeDetection::on_tools_edit_stimulus()
 }
 void ViewSpikeDetection::on_en_change_chan_selected()
 {
-	if (mm_selected_channel_.m_bEntryDone)
+	if (mm_selected_channel_.m_b_entry_done)
 	{
 		mm_selected_channel_.OnEnChange(this, m_selected_channel, 1, -1);
 		SetDlgItemInt(IDC_CHANSELECTED, m_selected_channel);
@@ -3051,7 +3052,7 @@ void ViewSpikeDetection::on_en_change_chan_selected()
 
 void ViewSpikeDetection::on_en_change_chan_selected_2()
 {
-	if (mm_selected_channel2_.m_bEntryDone)
+	if (mm_selected_channel2_.m_b_entry_done)
 	{
 		mm_selected_channel2_.OnEnChange(this, m_selected_channel2, 1, -1);
 		SetDlgItemInt(IDC_CHANSELECTED2, m_selected_channel2);

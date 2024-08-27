@@ -25,21 +25,21 @@ public:
 	CComboBox m_detect_channel_combo;
 	CComboBox m_transform_combo;
 	CComboBox m_transform2_combo;
-	float m_time_first = 0.f;
-	float m_time_last = 0.f;
+	float m_time_first {0.f};
+	float m_time_last {0.f};
 	CString m_data_comments{};
-	int m_spike_index = -1;
-	BOOL m_b_artefact = false;
-	float m_threshold_val = 0.f;
-	int m_selected_channel = 0;
-	int m_selected_channel2 = 0;
+	int m_spike_index {-1};
+	BOOL m_b_artefact {false};
+	float m_threshold_val {0.f};
+	int m_selected_channel {0};
+	int m_selected_channel2 {0};
 	cdxCRotBevelLine m_bevel1;
 	cdxCRotBevelLine m_bevel2;
 	cdxCRotBevelLine m_bevel3;
 
 	// form variables
 protected:
-	int scan_count_ = -1;
+	int scan_count_ {-1};
 	CDWordArray dw_intervals_;
 
 	ChartData chart_data_filtered_;
@@ -59,35 +59,35 @@ protected:
 	CEditCtrl mm_selected_channel_;
 	CEditCtrl mm_selected_channel2_;
 
-	int zoom_integer_ = 0;
-	spike_detection_array* spike_detection_array_ = nullptr;
+	int zoom_integer_ {0};
+	spike_detection_array* spike_detection_array_ {nullptr};
 	SpikeDetectArray spk_detect_array_;
-	options_detect_spikes* m_p_detect_parameters_ = nullptr;
-	int m_i_detect_parameters_ = 0;
+	options_detect_spikes* m_p_detect_parameters_ {nullptr};
+	int m_i_detect_parameters_ {0};
 
-	options_view_data* options_view_data_ = nullptr;
-	options_measure* options_measure_ = nullptr;
+	options_view_data* options_view_data_{ nullptr };
+	options_measure* options_measure_{ nullptr };
 
-	float m_sampling_rate_ = 0.f;
-	float m_spk_wnd_amplitude_ = 1.f;
-	float m_spk_wnd_duration_ = 6.f;
-	BOOL m_b_valid_threshold_ = false;
-	BOOL m_b_detected_ = false;
+	float m_sampling_rate_ {0.f};
+	float m_spk_wnd_amplitude_ {1.f};
+	float m_spk_wnd_duration_ {6.f};
+	BOOL m_b_valid_threshold_ {false};
+	BOOL m_b_detected_ {false};
 
-	int m_cursor_state_ = 0;
+	int m_cursor_state_ {0};
 
 	// gain and bias setting: data
-	HICON m_h_bias_ = nullptr;
-	HICON m_h_zoom_ = nullptr;
+	HICON m_h_bias_{ nullptr };
+	HICON m_h_zoom_{ nullptr };
 	CScrollBar m_scroll_y_;
-	float m_y_scale_factor_ = 0.f;
-	int m_v_bar_mode_ = 0;
+	float m_y_scale_factor_ {0.f};
+	int m_v_bar_mode_ {0};
 
-	HICON m_h_bias2_ = nullptr;
-	HICON m_h_zoom2_ = nullptr;
+	HICON m_h_bias2_ { nullptr };
+	HICON m_h_zoom2_ { nullptr };
 	CScrollBar m_scroll_y2_;
-	float m_y_scale_factor2_ = 0.f;
-	int m_v_bar_mode2_ = 0;
+	float m_y_scale_factor2_ {0.f};
+	int m_v_bar_mode2_ {0};
 
 public:
 	void set_view_mouse_cursor(const int cursor_mode)

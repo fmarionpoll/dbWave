@@ -167,7 +167,7 @@ void DlgSpikeEdit::init_chart_data()
 
 void DlgSpikeEdit::on_en_change_spike_index()
 {
-	if (mm_dlg_spike_index.m_bEntryDone)
+	if (mm_dlg_spike_index.m_b_entry_done)
 	{
 		const auto i_spike_index = dlg_spike_index;
 		mm_dlg_spike_index.OnEnChange(this, dlg_spike_index, 1, -1);
@@ -191,7 +191,7 @@ void DlgSpikeEdit::on_en_change_spike_index()
 
 void DlgSpikeEdit::on_en_change_spike_class()
 {
-	if (mm_dlg_spike_class.m_bEntryDone)
+	if (mm_dlg_spike_class.m_b_entry_done)
 	{
 		mm_dlg_spike_class.OnEnChange(this, dlg_spike_class, 1, -1);
 		p_spk_list->get_spike(dlg_spike_index)->set_class_id(dlg_spike_class);
@@ -212,7 +212,7 @@ void DlgSpikeEdit::on_artefact()
 
 void DlgSpikeEdit::on_en_change_display_ratio()
 {
-	if (mm_dlg_display_ratio.m_bEntryDone)
+	if (mm_dlg_display_ratio.m_b_entry_done)
 	{
 		mm_dlg_display_ratio.OnEnChange(this, dlg_display_ratio, 1, -1);
 
@@ -227,7 +227,7 @@ void DlgSpikeEdit::on_en_change_display_ratio()
 
 void DlgSpikeEdit::on_en_change_y_extent()
 {
-	if (mm_dlg_yv_extent.m_bEntryDone)
+	if (mm_dlg_yv_extent.m_b_entry_done)
 	{
 		mm_dlg_yv_extent.OnEnChange(this, dlg_yv_extent, 1, -1);
 		UpdateData(FALSE);

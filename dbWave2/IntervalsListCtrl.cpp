@@ -9,7 +9,7 @@ BEGIN_MESSAGE_MAP(CIntervalsListCtrl, CListCtrl)
 	ON_WM_HSCROLL()
 	ON_WM_VSCROLL()
 	ON_WM_LBUTTONDOWN()
-	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_INPLACE_CONTROL, OnEndLabelEdit)
+	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_INPLACE_CONTROL, on_end_label_edit)
 END_MESSAGE_MAP()
 
 
@@ -18,12 +18,12 @@ CIntervalsListCtrl::~CIntervalsListCtrl()
 	SAFE_DELETE(m_image_list)
 }
 
-void CIntervalsListCtrl::init_listbox(const CString header1, int size1, const CString header2, int size2)
+void CIntervalsListCtrl::init_listbox(const CString& header1, const int size1, const CString& header2, const int size2)
 {
 	const DWORD dw_style = GetExtendedStyle();
 	SetExtendedStyle(dw_style | LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);
 
-	// Add bitmap to display stim on/off
+	// Add bitmap to display stimulus on/off
 	m_image_list = new CImageList;
 	m_image_list->Create(16, 16, ILC_COLOR, 2, 2);
 	CBitmap bm1, bm2;
@@ -51,7 +51,7 @@ void CIntervalsListCtrl::init_listbox(const CString header1, int size1, const CS
 	
 }
 
-void CIntervalsListCtrl::set_item(int index, float time_interval)
+void CIntervalsListCtrl::set_item(const int index, const float time_interval)
 {
 	LVITEM lvi{};
 	CString cs0, cs1;
@@ -60,7 +60,7 @@ void CIntervalsListCtrl::set_item(int index, float time_interval)
 	SetItem(&lvi);
 }
 
-void CIntervalsListCtrl::set_item_index(int index)
+void CIntervalsListCtrl::set_item_index(const int index)
 {
 	LVITEM lvi;
 	CString cs;
@@ -68,7 +68,7 @@ void CIntervalsListCtrl::set_item_index(int index)
 	SetItem(&lvi);
 }
 
-void CIntervalsListCtrl::set_item_value(int index, float time_interval)
+void CIntervalsListCtrl::set_item_value(const int index, const float time_interval)
 {
 	LVITEM lvi{};
 	CString cs;
@@ -76,7 +76,7 @@ void CIntervalsListCtrl::set_item_value(int index, float time_interval)
 	SetItem(&lvi);
 }
 
-void CIntervalsListCtrl::add_new_item(int index, float time_interval)
+void CIntervalsListCtrl::add_new_item(const int index, const float time_interval)
 {
 	LVITEM lvi{};
 	CString cs0, cs1;
@@ -110,16 +110,16 @@ int CIntervalsListCtrl::select_item(const int index)
 	return index;
 }
 
-float CIntervalsListCtrl::get_item_value(int item) const
+float CIntervalsListCtrl::get_item_value(const int item) const
 {
-	CString cs = GetItemText(item, 1);
+	const CString cs = GetItemText(item, 1);
 	const float value = static_cast<float>(_ttof(cs));
 	return value;
 }
 
-int CIntervalsListCtrl::get_item_index(int item) const
+int CIntervalsListCtrl::get_item_index(const int item) const
 {
-	CString cs = GetItemText(item, 0);
+	const CString cs = GetItemText(item, 0);
 	const int value = _ttoi(cs);
 	return value;
 }
@@ -134,9 +134,9 @@ void CIntervalsListCtrl::set_sub_item_0_value(LVITEM& lvi, const int item, CStri
 	lvi.iImage = item % 2;
 }
 
-void CIntervalsListCtrl::set_sub_item_1_value(LVITEM& lvi, int iItem, float time_interval, CString& cs)
+void CIntervalsListCtrl::set_sub_item_1_value(LVITEM& lvi, const int i_item, const float time_interval, CString& cs)
 {
-	lvi.iItem = iItem;
+	lvi.iItem = i_item;
 	lvi.iSubItem = 1;
 	lvi.mask = LVIF_TEXT;
 	cs.Format(_T("%10.3f"), time_interval);
@@ -145,15 +145,15 @@ void CIntervalsListCtrl::set_sub_item_1_value(LVITEM& lvi, int iItem, float time
 
 // ------------------------------------
 
-// from codeguru:
+// from code_guru:
 // https://www.codeguru.com/cplusplus/editable-subitems/
 
 // HitTestEx	- Determine the row index and column index for a point
-// Returns	- listctrl_row = row index (-1 if point is not over a row) + listctrl_column
+// Returns	- list ctrl_row = row index (-1 if point is not over a row) + list ctrl_column
 // point	- point to be tested.
 // col		- to hold the column index
 
-int CIntervalsListCtrl::HitTestEx(const CPoint& point_to_be_tested, int* column) const
+int CIntervalsListCtrl::hit_test_ex(const CPoint& point_to_be_tested, int* column) const
 {
 	int row = HitTest(point_to_be_tested, nullptr);
 	if (column) *column = 0;
@@ -193,23 +193,23 @@ int CIntervalsListCtrl::HitTestEx(const CPoint& point_to_be_tested, int* column)
 	return -1;
 }
 
-CEdit* CIntervalsListCtrl::EditSubLabel(int nItem, int nCol)
+CEdit* CIntervalsListCtrl::edit_sub_label(const int n_item, const int n_col)
 {
-	if (!EnsureVisible(nItem, TRUE)) 
+	if (!EnsureVisible(n_item, TRUE)) 
 		return nullptr;
 
-	const auto p_header = (CHeaderCtrl*)GetDlgItem(0);
+	const auto p_header = static_cast<CHeaderCtrl*>(GetDlgItem(0));
 	const int column_count = p_header->GetItemCount();
-	if (nCol >= column_count || GetColumnWidth(nCol) < 5) 
+	if (n_col >= column_count || GetColumnWidth(n_col) < 5) 
 		return nullptr;
 
 	// Get the column offset        
 	int column_left_offset = 0;
-	for (int i = 0; i < nCol; i++)
+	for (int i = 0; i < n_col; i++)
 		column_left_offset += GetColumnWidth(i);
 
 	CRect rect;
-	GetItemRect(nItem, &rect, LVIR_BOUNDS);
+	GetItemRect(n_item, &rect, LVIR_BOUNDS);
 
 	// Scroll horizontally if we need to expose the column  
 	CRect rc_client;
@@ -227,7 +227,7 @@ CEdit* CIntervalsListCtrl::EditSubLabel(int nItem, int nCol)
 	// Get Column alignment 
 	LV_COLUMN lv_column;
 	lv_column.mask = LVCF_FMT;
-	GetColumn(nCol, &lv_column);
+	GetColumn(n_col, &lv_column);
 	DWORD dw_style;
 
 	if ((lv_column.fmt & LVCFMT_JUSTIFYMASK) == LVCFMT_LEFT)
@@ -238,43 +238,43 @@ CEdit* CIntervalsListCtrl::EditSubLabel(int nItem, int nCol)
 		dw_style = ES_CENTER;
 
 	rect.left += column_left_offset + 4;
-	rect.right = rect.left + GetColumnWidth(nCol) - 3;
+	rect.right = rect.left + GetColumnWidth(n_col) - 3;
 
 	if (rect.right > rc_client.right)
 		rect.right = rc_client.right;
 
 	dw_style |= WS_BORDER | WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL;
 
-	const auto pEdit = new InPlaceEdit(this, nItem, nCol, GetItemText(nItem, nCol));
+	const auto pEdit = new InPlaceEdit(this, n_item, n_col, GetItemText(n_item, n_col));
 	pEdit->Create(dw_style, rect, this, IDC_INPLACE_CONTROL);
 
 	return pEdit;
 }
 
-void CIntervalsListCtrl::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
+void CIntervalsListCtrl::on_end_label_edit(NMHDR* p_nmhdr, LRESULT* p_result)
 {
-	const auto* p_lv_dispinfo = (LV_DISPINFO*)pNMHDR;
-	const LV_ITEM* p_lv_item = &p_lv_dispinfo->item;
+	const auto* p_lv_display_info = (LV_DISPINFO*)p_nmhdr;
+	const LV_ITEM* p_lv_item = &p_lv_display_info->item;
 
 	if (p_lv_item->pszText != nullptr)
 		SetItemText(p_lv_item->iItem, p_lv_item->iSubItem, p_lv_item->pszText);
 	
-	*pResult = FALSE;
+	*p_result = FALSE;
 }
 
-void CIntervalsListCtrl::OnLButtonDown(UINT nFlags, CPoint point)
+void CIntervalsListCtrl::OnLButtonDown(const UINT n_flags, const CPoint point)
 {
-	CListCtrl::OnLButtonDown(nFlags, point);
+	CListCtrl::OnLButtonDown(n_flags, point);
 
 	int column;
 	int row;
-	if ((row = HitTestEx(point, &column)) != -1)
+	if ((row = hit_test_ex(point, &column)) != -1)
 	{
 		constexpr UINT flag = LVIS_FOCUSED;
 		if ((GetItemState(row, flag) & flag) == flag && column > 0)
 		{
 			if (GetWindowLong(m_hWnd, GWL_STYLE) & LVS_EDITLABELS)
-				m_p_edit = EditSubLabel(row, column);
+				m_p_edit = edit_sub_label(row, column);
 		}
 		else
 			SetItemState(row, LVIS_SELECTED | LVIS_FOCUSED,
@@ -282,14 +282,14 @@ void CIntervalsListCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 }
 
-void CIntervalsListCtrl::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void CIntervalsListCtrl::OnHScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar* p_scroll_bar)
 {
 	if (GetFocus() != this) SetFocus();
-	CListCtrl::OnHScroll(nSBCode, nPos, pScrollBar);
+	CListCtrl::OnHScroll(n_sb_code, n_pos, p_scroll_bar);
 }
 
-void CIntervalsListCtrl::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void CIntervalsListCtrl::OnVScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar* p_scroll_bar)
 {
 	if (GetFocus() != this) SetFocus();
-	CListCtrl::OnVScroll(nSBCode, nPos, pScrollBar);
+	CListCtrl::OnVScroll(n_sb_code, n_pos, p_scroll_bar);
 }
