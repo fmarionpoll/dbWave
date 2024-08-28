@@ -31,25 +31,25 @@ void DlgDAChannels::DoDataExchange(CDataExchange* p_dx)
 {
 	CDialogEx::DoDataExchange(p_dx);
 
-	DDX_Check(p_dx, IDC_CHECKCHAN0, output_params_array[0].bON);
-	DDX_Check(p_dx, IDC_CHECKCHAN1, output_params_array[1].bON);
+	DDX_Check(p_dx, IDC_CHECKCHAN0, output_params_array[0].b_on);
+	DDX_Check(p_dx, IDC_CHECKCHAN1, output_params_array[1].b_on);
 	DDX_Check(p_dx, IDC_CHECKDIGITAL, m_bChannel2);
 
-	DDX_Text(p_dx, IDC_EDITAMPLITUDE0, output_params_array[0].dAmplitudeMaxV);
-	DDX_Text(p_dx, IDC_EDITAMPLITUDELOW0, output_params_array[0].dAmplitudeMinV);
-	DDX_Text(p_dx, IDC_EDITAMPLITUDE1, output_params_array[1].dAmplitudeMaxV);
-	DDX_Text(p_dx, IDC_EDITAMPLITUDELOW1, output_params_array[1].dAmplitudeMinV);
+	DDX_Text(p_dx, IDC_EDITAMPLITUDE0, output_params_array[0].d_amplitude_max_v);
+	DDX_Text(p_dx, IDC_EDITAMPLITUDELOW0, output_params_array[0].d_amplitude_min_v);
+	DDX_Text(p_dx, IDC_EDITAMPLITUDE1, output_params_array[1].d_amplitude_max_v);
+	DDX_Text(p_dx, IDC_EDITAMPLITUDELOW1, output_params_array[1].d_amplitude_min_v);
 
-	DDX_Text(p_dx, IDC_EDITFREQ0, output_params_array[0].dFrequency);
-	DDX_Text(p_dx, IDC_EDITFREQ1, output_params_array[1].dFrequency);
-	DDX_Text(p_dx, IDC_EDITFREQ2, output_params_array[2].dFrequency);
-	DDX_Text(p_dx, IDC_EDITFREQ3, output_params_array[3].dFrequency);
-	DDX_Text(p_dx, IDC_EDITFREQ4, output_params_array[4].dFrequency);
-	DDX_Text(p_dx, IDC_EDITFREQ5, output_params_array[5].dFrequency);
-	DDX_Text(p_dx, IDC_EDITFREQ6, output_params_array[6].dFrequency);
-	DDX_Text(p_dx, IDC_EDITFREQ7, output_params_array[7].dFrequency);
-	DDX_Text(p_dx, IDC_EDITFREQ8, output_params_array[8].dFrequency);
-	DDX_Text(p_dx, IDC_EDITFREQ9, output_params_array[9].dFrequency);
+	DDX_Text(p_dx, IDC_EDITFREQ0, output_params_array[0].d_frequency);
+	DDX_Text(p_dx, IDC_EDITFREQ1, output_params_array[1].d_frequency);
+	DDX_Text(p_dx, IDC_EDITFREQ2, output_params_array[2].d_frequency);
+	DDX_Text(p_dx, IDC_EDITFREQ3, output_params_array[3].d_frequency);
+	DDX_Text(p_dx, IDC_EDITFREQ4, output_params_array[4].d_frequency);
+	DDX_Text(p_dx, IDC_EDITFREQ5, output_params_array[5].d_frequency);
+	DDX_Text(p_dx, IDC_EDITFREQ6, output_params_array[6].d_frequency);
+	DDX_Text(p_dx, IDC_EDITFREQ7, output_params_array[7].d_frequency);
+	DDX_Text(p_dx, IDC_EDITFREQ8, output_params_array[8].d_frequency);
+	DDX_Text(p_dx, IDC_EDITFREQ9, output_params_array[9].d_frequency);
 
 	DDX_Control(p_dx, IDC_COMBOSOURCE0, *combobox_ptr_array[0]);
 	DDX_Control(p_dx, IDC_COMBOSOURCE1, *combobox_ptr_array[1]);
@@ -98,23 +98,23 @@ END_MESSAGE_MAP()
 void DlgDAChannels::on_bn_clicked_ok()
 {
 	auto channel = 0;
-	output_params_array[channel].iChan = channel;
-	output_params_array[channel].bDigital = FALSE;
-	output_params_array[channel].iWaveform = combobox_ptr_array[channel]->GetItemData(
+	output_params_array[channel].i_chan = channel;
+	output_params_array[channel].b_digital = FALSE;
+	output_params_array[channel].i_waveform = combobox_ptr_array[channel]->GetItemData(
 		combobox_ptr_array[channel]->GetCurSel());
 
 	channel = 1;
-	output_params_array[channel].iChan = channel;
-	output_params_array[channel].bDigital = FALSE;
-	output_params_array[channel].iWaveform = combobox_ptr_array[channel]->GetItemData(
+	output_params_array[channel].i_chan = channel;
+	output_params_array[channel].b_digital = FALSE;
+	output_params_array[channel].i_waveform = combobox_ptr_array[channel]->GetItemData(
 		combobox_ptr_array[channel]->GetCurSel());
 
 	for (int i_channel = 2; i_channel < 10; i_channel++)
 	{
-		output_params_array[i_channel].bDigital = TRUE;
-		output_params_array[i_channel].iChan = i_channel - 2;
-		output_params_array[i_channel].bON = m_bChannel2;
-		output_params_array[i_channel].iWaveform = combobox_ptr_array[i_channel]->GetItemData(
+		output_params_array[i_channel].b_digital = TRUE;
+		output_params_array[i_channel].i_chan = i_channel - 2;
+		output_params_array[i_channel].b_on = m_bChannel2;
+		output_params_array[i_channel].i_waveform = combobox_ptr_array[i_channel]->GetItemData(
 			combobox_ptr_array[i_channel]->GetCurSel());
 	}
 
@@ -169,7 +169,7 @@ void DlgDAChannels::fill_combo(int channel)
 void DlgDAChannels::select_combo_item_from_output_parameters_array(const int i_val)
 {
 	const auto p_combo = combobox_ptr_array[i_val];
-	const DWORD val = output_params_array[i_val].iWaveform;
+	const DWORD val = output_params_array[i_val].i_waveform;
 	auto i_sel = 0;
 	for (auto i = 0; i < p_combo->GetCount(); i++, i_sel++)
 	{
@@ -207,7 +207,7 @@ BOOL DlgDAChannels::OnInitDialog()
 
 	for (int i = 2; i < 10; i++)
 	{
-		if (output_params_array[i].bON)
+		if (output_params_array[i].b_on)
 		{
 			m_bChannel2 = TRUE;
 			break;
@@ -220,7 +220,7 @@ BOOL DlgDAChannels::OnInitDialog()
 void DlgDAChannels::on_bn_clicked_check_chan0()
 {
 	UpdateData(TRUE);
-	const auto b_chan = output_params_array[0].bON;
+	const auto b_chan = output_params_array[0].b_on;
 	GetDlgItem(IDC_COMBOSOURCE0)->EnableWindow(b_chan);
 	GetDlgItem(IDC_STATIC00)->EnableWindow(b_chan);
 	GetDlgItem(IDC_EDITAMPLITUDE0)->EnableWindow(b_chan);
@@ -234,7 +234,7 @@ void DlgDAChannels::on_bn_clicked_check_chan0()
 void DlgDAChannels::on_bn_clicked_check_chan1()
 {
 	UpdateData(TRUE);
-	const auto b_chan = output_params_array[1].bON;
+	const auto b_chan = output_params_array[1].b_on;
 	GetDlgItem(IDC_COMBOSOURCE1)->EnableWindow(b_chan);
 	GetDlgItem(IDC_STATIC10)->EnableWindow(b_chan);
 	GetDlgItem(IDC_EDITAMPLITUDE1)->EnableWindow(b_chan);
@@ -283,7 +283,7 @@ void DlgDAChannels::edit_sequence(const int i_id, const int channel)
 			{
 				const auto p_params = &output_params_array.GetAt(channel);
 				*p_params = dlg.m_outDParms;
-				p_params->sti.import_intervals_series(&p_params->stimulussequence);
+				p_params->sti.import_intervals_series(&p_params->stimulus_sequence);
 			}
 		}
 		break;
@@ -291,13 +291,13 @@ void DlgDAChannels::edit_sequence(const int i_id, const int channel)
 	case DA_SEQUENCEWAVE: // sequence
 		{
 			DlgEditStimArray dlg;
-			dlg.intervals = output_params_array.GetAt(channel).stimulussequence;
+			dlg.intervals = output_params_array.GetAt(channel).stimulus_sequence;
 			dlg.intervals_saved = m_stimulus_saved;
 			dlg.m_sampling_rate = m_sampling_rate;
 			if (IDOK == dlg.DoModal())
 			{
 				const auto p_params = &output_params_array.GetAt(channel);
-				p_params->sti.import_intervals_series(&p_params->stimulussequence);
+				p_params->sti.import_intervals_series(&p_params->stimulus_sequence);
 			}
 		}
 		break;

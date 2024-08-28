@@ -112,18 +112,18 @@ void ViewData::define_sub_classed_items()
 void ViewData::define_stretch_parameters()
 {
 	// save coordinates and properties of "always visible" controls
-	stretch_.AttachParent(this); // attach form_view pointer
-	stretch_.newProp(IDC_DISPLAY, XLEQ_XREQ, YTEQ_YBEQ);
-	stretch_.newProp(IDC_COMBOCHAN, SZEQ_XREQ, SZEQ_YTEQ);
-	stretch_.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
-	stretch_.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YTEQ);
-	stretch_.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, YTEQ_YBEQ);
-	stretch_.newProp(IDC_SOURCE, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_TIMEFIRST, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_TIMELAST, SZEQ_XREQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
-	stretch_.newProp(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
+	stretch_.attach_parent(this); // attach form_view pointer
+	stretch_.new_prop(IDC_DISPLAY, XLEQ_XREQ, YTEQ_YBEQ);
+	stretch_.new_prop(IDC_COMBOCHAN, SZEQ_XREQ, SZEQ_YTEQ);
+	stretch_.new_prop(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
+	stretch_.new_prop(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YTEQ);
+	stretch_.new_prop(IDC_SCROLLY_scrollbar, SZEQ_XREQ, YTEQ_YBEQ);
+	stretch_.new_prop(IDC_SOURCE, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_TIMEFIRST, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_TIMELAST, SZEQ_XREQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
+	stretch_.new_prop(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
 	b_init_ = TRUE;
 }
 

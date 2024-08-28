@@ -134,11 +134,11 @@ void ViewSpikeTemplates::define_sub_classed_items()
 
 void ViewSpikeTemplates::define_stretch_parameters()
 {
-	stretch_.AttachParent(this); // attach form_view pointer
-	stretch_.newProp(IDC_LIST1, SZEQ_XLEQ, YTEQ_YBEQ);
-	stretch_.newProp(IDC_LIST2, XLEQ_XREQ, YTEQ_YBEQ);
-	stretch_.newProp(IDC_LIST3, XLEQ_XREQ, YTEQ_YBEQ);
-	stretch_.newProp(IDC_TAB2, XLEQ_XREQ, SZEQ_YBEQ);
+	stretch_.attach_parent(this); // attach form_view pointer
+	stretch_.new_prop(IDC_LIST1, SZEQ_XLEQ, YTEQ_YBEQ);
+	stretch_.new_prop(IDC_LIST2, XLEQ_XREQ, YTEQ_YBEQ);
+	stretch_.new_prop(IDC_LIST3, XLEQ_XREQ, YTEQ_YBEQ);
+	stretch_.new_prop(IDC_TAB2, XLEQ_XREQ, SZEQ_YBEQ);
 }
 
 void ViewSpikeTemplates::OnInitialUpdate()

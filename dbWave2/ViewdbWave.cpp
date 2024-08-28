@@ -162,9 +162,9 @@ void ViewdbWave::subclass_dialog_controls()
 
 void ViewdbWave::make_controls_stretchable()
 {
-	stretch_.AttachParent(this);
-	stretch_.newProp(IDC_LISTCTRL, XLEQ_XREQ, YTEQ_YBEQ);
-	stretch_.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
+	stretch_.attach_parent(this);
+	stretch_.new_prop(IDC_LISTCTRL, XLEQ_XREQ, YTEQ_YBEQ);
+	stretch_.new_prop(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
 	b_init_ = TRUE;
 }
 

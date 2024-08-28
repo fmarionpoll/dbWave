@@ -279,10 +279,10 @@ void CChildFrame::export_ascii(const int option)
 	case 1:
 	{
 		auto flag = FALSE;
-		if (p_app->options_view_spikes.bexporttoExcel)
+		if (p_app->options_view_spikes.b_export_to_excel)
 			flag = export_to_excel_and_build_pivot(option);
 
-		if (!p_app->options_view_spikes.bexporttoExcel || !flag)
+		if (!p_app->options_view_spikes.b_export_to_excel || !flag)
 		{
 			CMultiDocTemplate* note_view_template = p_app->m_NoteView_Template;
 			const auto p_dbWave_doc_export = note_view_template->OpenDocumentFile(nullptr);
@@ -907,7 +907,7 @@ BOOL CChildFrame::export_to_excel_and_build_pivot(int option)
 		cs1 = cs2 + _T("!") + cs1;
 
 		auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-		if (p_app->options_view_spikes.bexportPivot)
+		if (p_app->options_view_spikes.b_export_pivot)
 		{
 			CString cs_bin;
 			build_excel_pivot(&o_app, &odata_sheet, cs1, _T("pivot_cnt"), static_cast<short>(-4112), col2);
@@ -962,7 +962,7 @@ void CChildFrame::build_excel_pivot(void* po_app, void* p_odata_sheet, CString c
 	const auto option_view_spikes = &(p_app->options_view_spikes);
 
 	// add fields to pivot table
-	if (option_view_spikes->bacqcomments)
+	if (option_view_spikes->b_acq_comments)
 	{
 		auto row_field = COleVariant(_T("type"));
 		o_pivot1.AddFields(row_field, v_opt, v_opt, cov_false);
@@ -982,7 +982,7 @@ void CChildFrame::build_excel_pivot(void* po_app, void* p_odata_sheet, CString c
 	// loop over the bins
 	CString cs_bin;
 	auto bin = 0;
-	const auto col1 = option_view_spikes->ncommentcolumns + 1;
+	const auto col1 = option_view_spikes->n_comment_columns + 1;
 	for (auto i = col1; i <= col2; i++, bin++)
 	{
 		cs_bin.Format(_T("bin_%i"), bin);

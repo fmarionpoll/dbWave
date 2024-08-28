@@ -182,8 +182,8 @@ BOOL CdbWaveApp::InitInstance()
 	CCommandLineInfo cmd_info;
 	ParseCommandLine(cmd_info);
 
-	CSplashWnd::EnableSplashScreen(cmd_info.m_bShowSplash);
-	CSplashWnd::ShowSplashScreen();
+	CSplashWnd::enable_splash_screen(cmd_info.m_bShowSplash);
+	CSplashWnd::show_splash_screen();
 
 	if (cmd_info.m_nShellCommand == CCommandLineInfo::FileNew) // actually none
 		cmd_info.m_nShellCommand = CCommandLineInfo::FileNothing;

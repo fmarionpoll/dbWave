@@ -15,7 +15,7 @@ public:
 	int			m_width_bars {-1};
 	int			m_top_index {-1};
 	COLORREF	m_color_text {col_black};
-	COLORREF	m_color_background = GetSysColor(COLOR_SCROLLBAR);;
+	COLORREF	m_color_background {GetSysColor(COLOR_SCROLLBAR)};;
 	CBrush		m_brush_background;
 };
 

@@ -23,10 +23,10 @@ options_output& options_output::operator =(const options_output& arg)
 		da_trigger_mode = arg.da_trigger_mode;
 		da_frequency_per_channel = arg.da_frequency_per_channel;
 
-		const int n_channels = arg.output_parms_array.GetSize();
-		output_parms_array.SetSize(n_channels);
+		const int n_channels = arg.output_parameters_array.GetSize();
+		output_parameters_array.SetSize(n_channels);
 		for (int i = 0; i < n_channels; i++)
-			output_parms_array[i] = arg.output_parms_array[i];
+			output_parameters_array[i] = arg.output_parameters_array[i];
 	}
 	return *this;
 }
@@ -52,10 +52,10 @@ void options_output::Serialize(CArchive& ar)
 		ar << static_cast<WORD>(1); // double
 		ar << da_frequency_per_channel;
 
-		const int n_channels = output_parms_array.GetSize();
+		const int n_channels = output_parameters_array.GetSize();
 		ar << static_cast<WORD>(n_channels);
 		for (int i = 0; i < n_channels; i++)
-			output_parms_array.GetAt(i).Serialize(ar);
+			output_parameters_array.GetAt(i).Serialize(ar);
 
 		ar << static_cast<WORD>(0); // no more ...
 	}
@@ -122,10 +122,10 @@ void options_output::Serialize(CArchive& ar)
 		// output_parms
 		ar >> wn;
 		n = wn;
-		if (n > output_parms_array.GetSize())
-			output_parms_array.SetSize(n);
+		if (n > output_parameters_array.GetSize())
+			output_parameters_array.SetSize(n);
 		for (int i = 0; i < n; i++)
-			output_parms_array.GetAt(i).Serialize(ar);
+			output_parameters_array.GetAt(i).Serialize(ar);
 
 		// other?
 		ar >> wn;

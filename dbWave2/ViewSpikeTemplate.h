@@ -16,20 +16,20 @@ protected:
 public:
 	enum { IDD = IDD_VIEWSPKTEMPLATES };
 
-	float m_t1 = 0.f;
-	float m_t2 = 6.f;
-	float t_unit = 1000.f; // 1=s, 1000f=ms, 1e6=us
-	float time_first = 0.;
-	float time_last = 0.;
-	int hit_rate = 0;
-	float k_tolerance = 0.;
-	int spike_no_class = 0;
-	int hit_rate_sort = 0;
-	int i_first_sorted_class = 0;
-	BOOL m_b_all_files = false;
-	BOOL b_all_templates = false;
-	BOOL b_all_sort = false;
-	BOOL b_display_single_class = false;
+	float m_t1 { 0.f};
+	float m_t2  {6.f};
+	float t_unit  {1000.f}; // 1:s, 1000f:ms, 1e6:us
+	float time_first  {0.};
+	float time_last  {0.};
+	int hit_rate  {0};
+	float k_tolerance  {0.};
+	int spike_no_class  {0};
+	int hit_rate_sort  {0};
+	int i_first_sorted_class  {0};
+	BOOL m_b_all_files  {false};
+	BOOL b_all_templates  {false};
+	BOOL b_all_sort  {false};
+	BOOL b_display_single_class  {false};
 	CTabCtrl m_tab1_ctrl{};
 
 protected:
@@ -49,15 +49,15 @@ protected:
 
 	ChartSpikeShape m_chart_spk_wnd_shape_;
 
-	options_view_data* options_view_data_ = nullptr; 
-	options_measure* options_view_data_measure_ = nullptr; 
-	options_spk_classification* spike_classification_parameters_ = nullptr; 
+	options_view_data* options_view_data_  {nullptr}; 
+	options_measure* options_view_data_measure_  {nullptr}; 
+	options_spk_classification* spike_classification_parameters_  {nullptr}; 
 	SCROLLINFO scroll_file_pos_infos_{};
-	long l_first_ = 0;
-	long l_last_ = 0;
-	int spk_form_tag_left_ = 0;
-	int spk_form_tag_right_ = 0;
-	int spike_no_ = -1;
+	long l_first_  {0};
+	long l_last_  {0};
+	int spk_form_tag_left_  {0};
+	int spk_form_tag_right_  {0};
+	int spike_no_  {-1};
 
 public:
 	void set_view_mouse_cursor(const int cursor_mode) { m_chart_spk_wnd_shape_.set_mouse_cursor_type(cursor_mode); }

@@ -507,51 +507,51 @@ void ViewSpikeDetection::update_combos_detect_and_transforms()
 
 void ViewSpikeDetection::define_stretch_parameters()
 {
-	stretch_.AttachParent(this);
+	stretch_.attach_parent(this);
 
 	// top right ----------------------------------------
-	stretch_.newProp(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YBEQ);
 
-	stretch_.newProp(IDC_EMPTYPICTURE, XLEQ_XREQ, YTEQ_YBEQ);
-	stretch_.newSlaveProp(IDC_DISPLAYDATA, XLEQ_XREQ, SZPR_YTEQ, IDC_EMPTYPICTURE);
-	stretch_.newSlaveProp(IDC_DISPLAYDETECT, XLEQ_XREQ, SZPR_YBEQ, IDC_EMPTYPICTURE);
+	stretch_.new_prop(IDC_EMPTYPICTURE, XLEQ_XREQ, YTEQ_YBEQ);
+	stretch_.new_slave_prop(IDC_DISPLAYDATA, XLEQ_XREQ, SZPR_YTEQ, IDC_EMPTYPICTURE);
+	stretch_.new_slave_prop(IDC_DISPLAYDETECT, XLEQ_XREQ, SZPR_YBEQ, IDC_EMPTYPICTURE);
 
-	stretch_.newSlaveProp(IDC_CHANSELECTED2, SZEQ_XREQ, SZEQ_YTEQ, IDC_DISPLAYDATA);
-	stretch_.newSlaveProp(IDC_GAIN2, SZEQ_XREQ, SZEQ_YTEQ, IDC_DISPLAYDATA);
-	stretch_.newSlaveProp(IDC_BIAS2, SZEQ_XREQ, SZEQ_YTEQ, IDC_DISPLAYDATA);
-	stretch_.newSlaveProp(IDC_SCROLLY2, SZEQ_XREQ, YTEQ_YBEQ, IDC_DISPLAYDATA);
-	stretch_.newSlaveProp(IDC_STATICDISPLAYDATA, SZEQ_XLEQ, YTEQ_YBEQ, IDC_DISPLAYDATA);
+	stretch_.new_slave_prop(IDC_CHANSELECTED2, SZEQ_XREQ, SZEQ_YTEQ, IDC_DISPLAYDATA);
+	stretch_.new_slave_prop(IDC_GAIN2, SZEQ_XREQ, SZEQ_YTEQ, IDC_DISPLAYDATA);
+	stretch_.new_slave_prop(IDC_BIAS2, SZEQ_XREQ, SZEQ_YTEQ, IDC_DISPLAYDATA);
+	stretch_.new_slave_prop(IDC_SCROLLY2, SZEQ_XREQ, YTEQ_YBEQ, IDC_DISPLAYDATA);
+	stretch_.new_slave_prop(IDC_STATICDISPLAYDATA, SZEQ_XLEQ, YTEQ_YBEQ, IDC_DISPLAYDATA);
 
-	stretch_.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
 
-	stretch_.newSlaveProp(IDC_CHANSELECTED, SZEQ_XREQ, SZEQ_YTEQ, IDC_DISPLAYDETECT);
-	stretch_.newSlaveProp(IDC_GAIN, SZEQ_XREQ, SZEQ_YTEQ, IDC_DISPLAYDETECT);
-	stretch_.newSlaveProp(IDC_BIAS, SZEQ_XREQ, SZEQ_YTEQ, IDC_DISPLAYDETECT);
-	stretch_.newSlaveProp(IDC_SCROLLY, SZEQ_XREQ, YTEQ_YBEQ, IDC_DISPLAYDETECT);
-	stretch_.newSlaveProp(IDC_STATICDISPLAYDETECT, SZEQ_XLEQ, YTEQ_YBEQ, IDC_DISPLAYDETECT);
+	stretch_.new_slave_prop(IDC_CHANSELECTED, SZEQ_XREQ, SZEQ_YTEQ, IDC_DISPLAYDETECT);
+	stretch_.new_slave_prop(IDC_GAIN, SZEQ_XREQ, SZEQ_YTEQ, IDC_DISPLAYDETECT);
+	stretch_.new_slave_prop(IDC_BIAS, SZEQ_XREQ, SZEQ_YTEQ, IDC_DISPLAYDETECT);
+	stretch_.new_slave_prop(IDC_SCROLLY, SZEQ_XREQ, YTEQ_YBEQ, IDC_DISPLAYDETECT);
+	stretch_.new_slave_prop(IDC_STATICDISPLAYDETECT, SZEQ_XLEQ, YTEQ_YBEQ, IDC_DISPLAYDETECT);
 
 	// bottom right  ------------------------------------
-	stretch_.newProp(IDC_CHART_BARS, XLEQ_XREQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_STATICDISPLAYBARS, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_CHART_BARS, XLEQ_XREQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_STATICDISPLAYBARS, SZEQ_XLEQ, SZEQ_YBEQ);
 
-	stretch_.newProp(IDC_DURATIONTEXT, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_SPIKEWINDOWLENGTH, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_MINTEXT, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_SPIKEWINDOWAMPLITUDE, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_NBSPIKES_NB, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_NBSPIKES_TEXT, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_TRANSFORM2, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_DURATIONTEXT, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_SPIKEWINDOWLENGTH, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_MINTEXT, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_SPIKEWINDOWAMPLITUDE, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_NBSPIKES_NB, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_NBSPIKES_TEXT, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_TRANSFORM2, SZEQ_XLEQ, SZEQ_YBEQ);
 
-	stretch_.newProp(IDC_STATIC3, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_SPIKENO, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_ARTEFACT, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_DISPLAY_SPIKES, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_STATIC3, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_SPIKENO, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_ARTEFACT, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_DISPLAY_SPIKES, SZEQ_XLEQ, SZEQ_YBEQ);
 
-	stretch_.newProp(IDC_TIMEFIRST, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_TIMELAST, SZEQ_XREQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_SOURCE, SZEQ_XREQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_TIMEFIRST, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_TIMELAST, SZEQ_XREQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_SOURCE, SZEQ_XREQ, SZEQ_YBEQ);
 
-	stretch_.newProp(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
 }
 
 void ViewSpikeDetection::define_sub_classed_items()

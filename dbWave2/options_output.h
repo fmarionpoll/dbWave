@@ -17,7 +17,7 @@ public:
 	BOOL b_preset_wave{true}; // 0=preset, 1=from file
 	CString cs_output_file{}; // output file
 
-	CArray<output_parameters, output_parameters> output_parms_array{};
+	CArray<output_parameters, output_parameters> output_parameters_array{};
 
 	double da_frequency_per_channel{1000.f}; // output frequency (per chan)
 	int da_trigger_mode{0}; // 0=synchronous{}; 1=soft on start{}; 2=external trigger

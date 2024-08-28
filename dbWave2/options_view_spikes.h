@@ -23,66 +23,66 @@ class options_view_spikes final : public CObject
 
 public:
 	BOOL b_changed{false}; // flag set TRUE if contents has changed
-	WORD wversion{3}; // version number
-	int ichan{0}; // data channel from which we have detected spikes
+	WORD w_version{3}; // version number
+	int i_chan{0}; // data channel from which we have detected spikes
 
-	float timestart{0.f}; // interval definition
-	float timeend{2.f}; //
-	float timebin{.1f}; // bin size (sec)
-	float histampl_vmax{1.f};
-	float histampl_vmin{0.f};
+	float time_start{0.f}; // interval definition
+	float time_end{2.f}; //
+	float time_bin{.1f}; // bin size (sec)
+	float hist_ampl_v_max{1.f};
+	float hist_ampl_v_min{0.f};
 
-	int histampl_nbins{20};
-	int nbins{20}; // number of bins
-	int classnb{0}; // class nb
-	int classnb2{1};
-	int istimulusindex{0};
-	int exportdatatype{0}; // export 0=psth, 1=isi, 2=autocorr, 3=intervals, 4=extrema, 5=max-min, 6=hist ampl
-	int spikeclassoption{0}; // spike class: -1(one:selected){}; 0(all){}; 1(all:splitted)
+	int hist_ampl_n_bins{20};
+	int n_bins{20}; // number of bins
+	int class_nb{0}; // class nb
+	int class_nb_2{1};
+	int i_stimulus_index{0};
+	int export_data_type{0}; // export 0=psth, 1=isi, 2=auto_corr, 3=intervals, 4=extrema, 5=max-min, 6=hist ampl
+	int spike_class_option{0}; // spike class: -1(one:selected){}; 0(all){}; 1(all:split)
 
-	BOOL bacqcomments{true}; // source data comments
-	BOOL bacqdate{true}; // source data time and date
-	BOOL bacqchsettings{false}; // source data acq chan settings
-	BOOL bspkcomments{false}; // spike file comments
-	BOOL ballfiles{false}; // export number of spikes / interval
-	BOOL bexportzero{false}; // when exporting histogram, export zero (true) or empty cell (false)
-	BOOL bexportPivot{false}; // when exporting to excel, export pivot or not
-	BOOL bexporttoExcel{false}; // export to Excel (1/0)
-	BOOL bartefacts{true}; // eliminate artefacts (class < 0)
-	BOOL bcolumnheader{true}; // column headers ON/OFF
-	BOOL btotalspikes{true}; // total nb of spikes
-	BOOL babsolutetime{true}; // TRUE= absolute spk time, FALSE=relative to first stim
-	BOOL bincrflagonsave{false}; // increment database flag when spike file is saved
-	BOOL bSpikeDetectThreshold{true}; // spike detection threshold
+	BOOL b_acq_comments{true}; // source data comments
+	BOOL b_acq_date{true}; // source data time and date
+	BOOL b_acq_ch_settings{false}; // source data acq chan settings
+	BOOL b_spk_comments{false}; // spike file comments
+	BOOL b_all_files{false}; // export number of spikes / interval
+	BOOL b_export_zero{false}; // when exporting histogram, export zero (true) or empty cell (false)
+	BOOL b_export_pivot{false}; // when exporting to excel, export pivot or not
+	BOOL b_export_to_excel{false}; // export to Excel (1/0)
+	BOOL b_artefacts{true}; // eliminate artefacts (class < 0)
+	BOOL b_column_header{true}; // column headers ON/OFF
+	BOOL b_total_spikes{true}; // total nb of spikes
+	BOOL b_absolute_time{true}; // TRUE= absolute spk time, FALSE=relative to first stimulus
+	BOOL b_incr_flag_on_save{false}; // increment database flag when spike file is saved
+	BOOL b_spike_detect_threshold{true}; // spike detection threshold
 
-	int ncommentcolumns{1}; // number of comment columns in the table exported to excel
+	int n_comment_columns{1}; // number of comment columns in the table exported to excel
 
 	// print parameters
-	int heightLine{130}; // height of one line
-	int heightSeparator{20}; // separator height betw classes
-	BOOL bdisplayBars{true}; // default(TRUE)
-	BOOL bdisplayShapes{true}; // default(TRUE)
-	BOOL bsplitClasses{true}; // separate classes
-	BOOL ballChannels{true}; // all spike channels (FALSE: only current)
+	int height_line{130}; 
+	int height_separator{20}; // separator height between classes
+	BOOL b_display_bars{true};
+	BOOL b_display_shapes{true}; 
+	BOOL b_split_classes{true};
+	BOOL b_all_channels{true}; // all spike channels (FALSE: only current)
 
 	// histogram and dot display
-	int dotheight{3};
-	int dotlineheight{5};
-	BOOL bdotunderline{false};
-	int nbinsISI{100};
-	float binISI{2.f};
-	BOOL bYmaxAuto{true};
-	float Ymax{1.f};
+	int dot_height{3};
+	int dot_line_height{5};
+	BOOL b_dot_underline{false};
+	int n_bins_isi{100};
+	float bin_isi{2.f};
+	BOOL b_y_max_auto{true};
+	float y_max{1.f};
 
-	COLORREF crHistFill{col_black};
-	COLORREF crHistBorder{col_black};
-	COLORREF crStimFill{col_blue};
-	COLORREF crStimBorder{col_blue};
-	COLORREF crChartArea{col_white};
-	COLORREF crScale[18]{};
+	COLORREF cr_hist_fill{col_black};
+	COLORREF cr_hist_border{col_black};
+	COLORREF cr_stimulus_fill{col_blue};
+	COLORREF cr_stimulus_border{col_blue};
+	COLORREF cr_chart_area{col_white};
+	COLORREF cr_scale[18]{};
 
-	float fScalemax{100.f};
-	int bhistType{0}; // type of histogram requested (PSTH, ISI, ...)
-	BOOL bCycleHist{false}; // cycle histogram (TRUE/FALSE), default=FALSE
-	int nstipercycle{1}; // n stimuli per cycle
+	float f_scale_max{100.f};
+	int b_hist_type{0}; // type of histogram requested (PSTH, ISI, ...)
+	BOOL b_cycle_hist{false}; // cycle histogram (TRUE/FALSE), default=FALSE
+	int n_stimuli_per_cycle{1}; 
 };

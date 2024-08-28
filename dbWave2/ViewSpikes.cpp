@@ -458,19 +458,19 @@ void ViewSpikes::define_sub_classed_items()
 
 void ViewSpikes::define_stretch_parameters()
 {
-	stretch_.AttachParent(this);
-	stretch_.newProp(IDC_LISTCLASSES, XLEQ_XREQ, YTEQ_YBEQ);
-	stretch_.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
+	stretch_.attach_parent(this);
+	stretch_.new_prop(IDC_LISTCLASSES, XLEQ_XREQ, YTEQ_YBEQ);
+	stretch_.new_prop(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
 
-	stretch_.newProp(IDC_DISPLAY_DAT, XLEQ_XREQ, SZEQ_YTEQ);
-	stretch_.newProp(IDC_TIMEINTERVALS, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_TIMEFIRST, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_TIMELAST, SZEQ_XREQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_DISPLAY_DAT, XLEQ_XREQ, SZEQ_YTEQ);
+	stretch_.new_prop(IDC_TIMEINTERVALS, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_TIMEFIRST, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_TIMELAST, SZEQ_XREQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YBEQ);
 
-	stretch_.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
-	stretch_.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YTEQ);
-	stretch_.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, SZEQ_YTEQ);
+	stretch_.new_prop(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
+	stretch_.new_prop(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YTEQ);
+	stretch_.new_prop(IDC_SCROLLY_scrollbar, SZEQ_XREQ, SZEQ_YTEQ);
 }
 
 void ViewSpikes::OnInitialUpdate()

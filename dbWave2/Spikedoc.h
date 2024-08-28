@@ -19,15 +19,15 @@ class CSpikeDoc : public CDocument
 protected:
 	CArray<SpikeList, SpikeList> spike_list_array_{};
 	CTime detection_date_{};
-	WORD w_version_ = 7;
-	CString comment_ = _T("");
-	CString new_path_ = _T("");
-	CString acquisition_file_name_ = _T("");
-	CString acquisition_comment_ = _T("");
+	WORD w_version_  {7};
+	CString comment_  {_T("")};
+	CString new_path_  {_T("")};
+	CString acquisition_file_name_  {_T("")};
+	CString acquisition_comment_  {_T("")};
 	CTime acquisition_time_{};
-	float acquisition_rate_ = 1.f;
-	long acquisition_size_ = 0;
-	int current_spike_list_index_ = 0;
+	float acquisition_rate_  {1.f};
+	long acquisition_size_  {0};
+	int current_spike_list_index_  {0};
 
 	// Operations
 public:

@@ -20,17 +20,17 @@ protected:
 	CEditCtrl mm_time_first_; 
 	CEditCtrl mm_time_last_; 
 	CEditCtrl mm_amplitude_span_;
-	options_view_data* m_options_view_data_ = nullptr;
+	options_view_data* m_options_view_data_  {nullptr};
 
-	BOOL b_valid_data_ = false;
-	BOOL b_valid_spike_ = false;
-	BOOL b_add_mode_ = false;
-	BOOL b_filter_on_ = true;
-	int m_data_transform_ = 0;
-	float m_time_first_ = 0.;
-	float m_time_last_ = 0.;
-	float m_amplitude_span_ = 0.;
-	int m_spike_class_ = 0;
+	boolean b_valid_data_  {false};
+	boolean b_valid_spike_  {false};
+	boolean b_add_mode_  {false};
+	boolean b_filter_on_  {true};
+	int m_data_transform_  {0};
+	float m_time_first_  {0.};
+	float m_time_last_  {0.};
+	float m_amplitude_span_  {0.};
+	int m_spike_class_  {0};
 
 	void DoDataExchange(CDataExchange* p_dx) override;
 	void OnInitialUpdate() override;

@@ -11,18 +11,18 @@ public:
 	~SpikeClassListBox() override;
 
 protected:
-	BOOL m_b_text_ = true;
-	BOOL m_b_spikes_ = true;
-	BOOL m_b_bars_ = true;
+	BOOL m_b_text_  {true};
+	BOOL m_b_spikes_  {true};
+	BOOL m_b_bars_  {true};
 	SpikeClassListBoxContext context_;
-	int m_cursor_index_max_ = 3;
+	int m_cursor_index_max_  {3};
 
-	long m_l_first_ = 0;
-	long m_l_last_ = 0;
-	SpikeList* m_spike_list_ = nullptr;
-	CSpikeDoc* m_spike_doc_ = nullptr;
-	CdbWaveDoc* m_dbwave_doc_ = nullptr;
-	HWND h_wnd_bars_reflect_ = nullptr;
+	long m_l_first_  {0};
+	long m_l_last_  {0};
+	SpikeList* m_spike_list_  {nullptr};
+	CSpikeDoc* m_spike_doc_  {nullptr};
+	CdbWaveDoc* m_dbwave_doc_  {nullptr};
+	HWND h_wnd_bars_reflect_  {nullptr};
 
 public:
 	void set_source_data(SpikeList* p_s_list, CdbWaveDoc* pdb_doc);

@@ -14,26 +14,26 @@ output_parameters& output_parameters::operator =(const output_parameters& arg)
 {
 	if (this != &arg)
 	{
-		wversion = arg.wversion;
+		w_version = arg.w_version;
 		csFilename = arg.csFilename;
-		noise_bExternal = arg.noise_bExternal;
-		bON = arg.bON;
-		bDigital = arg.bDigital;
-		iChan = arg.iChan;
-		iWaveform = arg.iWaveform;
-		mseq_iRatio = arg.mseq_iRatio;
-		mseq_iDelay = arg.mseq_iDelay;
-		mseq_iSeed = arg.mseq_iSeed;
-		noise_iDelay = arg.noise_iDelay;
-		dAmplitudeMaxV = arg.dAmplitudeMaxV;
-		dAmplitudeMinV = arg.dAmplitudeMinV;
-		dFrequency = arg.dFrequency;
+		noise_b_external = arg.noise_b_external;
+		b_on = arg.b_on;
+		b_digital = arg.b_digital;
+		i_chan = arg.i_chan;
+		i_waveform = arg.i_waveform;
+		m_seq_i_ratio = arg.m_seq_i_ratio;
+		m_seq_i_delay = arg.m_seq_i_delay;
+		m_seq_i_seed = arg.m_seq_i_seed;
+		noise_i_delay = arg.noise_i_delay;
+		d_amplitude_max_v = arg.d_amplitude_max_v;
+		d_amplitude_min_v = arg.d_amplitude_min_v;
+		d_frequency = arg.d_frequency;
 		dummy1 = arg.dummy1;
 		dummy2 = arg.dummy2;
-		noise_dAmplitV = arg.noise_dAmplitV;
-		noise_dFactor = arg.noise_dFactor;
-		noise_dOffsetV = arg.noise_dOffsetV;
-		stimulussequence = arg.stimulussequence;
+		noise_d_amplitude_v = arg.noise_d_amplitude_v;
+		noise_d_factor = arg.noise_d_factor;
+		noise_d_offset_v = arg.noise_d_offset_v;
+		stimulus_sequence = arg.stimulus_sequence;
 		value = arg.value;
 		sti = arg.sti;
 	}
@@ -44,37 +44,37 @@ void output_parameters::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		ar << wversion;
+		ar << w_version;
 
 		ar << static_cast<WORD>(1); // CString
 		ar << csFilename;
 
 		ar << static_cast<WORD>(3); // BOOL
-		ar << noise_bExternal;
-		ar << bON;
-		ar << bDigital;
+		ar << noise_b_external;
+		ar << b_on;
+		ar << b_digital;
 
 		ar << static_cast<WORD>(6); // int
-		ar << iChan;
-		ar << iWaveform;
-		ar << mseq_iRatio;
-		ar << mseq_iDelay;
-		ar << mseq_iSeed;
-		ar << noise_iDelay;
+		ar << i_chan;
+		ar << i_waveform;
+		ar << m_seq_i_ratio;
+		ar << m_seq_i_delay;
+		ar << m_seq_i_seed;
+		ar << noise_i_delay;
 
 		ar << static_cast<WORD>(9); // double
-		ar << dAmplitudeMaxV;
-		ar << dAmplitudeMinV;
-		ar << dFrequency;
+		ar << d_amplitude_max_v;
+		ar << d_amplitude_min_v;
+		ar << d_frequency;
 		ar << dummy1;
 		ar << dummy2;
-		ar << noise_dAmplitV;
-		ar << noise_dFactor;
-		ar << noise_dOffsetV;
+		ar << noise_d_amplitude_v;
+		ar << noise_d_factor;
+		ar << noise_d_offset_v;
 		ar << value;
 
 		ar << static_cast<WORD>(2); // 1 more object
-		stimulussequence.Serialize(ar);
+		stimulus_sequence.Serialize(ar);
 		sti.Serialize(ar);
 	}
 	else
@@ -98,11 +98,11 @@ void output_parameters::Serialize(CArchive& ar)
 		// BOOL parameters
 		ar >> wn;
 		n = wn;
-		if (n > 0) ar >> noise_bExternal;
+		if (n > 0) ar >> noise_b_external;
 		n--;
-		if (n > 0) ar >> bON;
+		if (n > 0) ar >> b_on;
 		n--;
-		if (n > 0) ar >> bDigital;
+		if (n > 0) ar >> b_digital;
 		n--;
 		BOOL bdummy;
 		while (n > 0)
@@ -114,17 +114,17 @@ void output_parameters::Serialize(CArchive& ar)
 		// int parameters
 		ar >> wn;
 		n = wn;
-		if (n > 0) ar >> iChan;
+		if (n > 0) ar >> i_chan;
 		n--;
-		if (n > 0) ar >> iWaveform;
+		if (n > 0) ar >> i_waveform;
 		n--;
-		if (n > 0) ar >> mseq_iRatio;
+		if (n > 0) ar >> m_seq_i_ratio;
 		n--;
-		if (n > 0) ar >> mseq_iDelay;
+		if (n > 0) ar >> m_seq_i_delay;
 		n--;
-		if (n > 0) ar >> mseq_iSeed;
+		if (n > 0) ar >> m_seq_i_seed;
 		n--;
-		if (n > 0) ar >> noise_iDelay;
+		if (n > 0) ar >> noise_i_delay;
 		n--;
 		int idummy;
 		while (n > 0)
@@ -136,21 +136,21 @@ void output_parameters::Serialize(CArchive& ar)
 		// double parameters
 		ar >> wn;
 		n = wn;
-		if (n > 0) ar >> dAmplitudeMaxV;
+		if (n > 0) ar >> d_amplitude_max_v;
 		n--;
-		if (n > 0) ar >> dAmplitudeMinV;
+		if (n > 0) ar >> d_amplitude_min_v;
 		n--;
-		if (n > 0) ar >> dFrequency;
+		if (n > 0) ar >> d_frequency;
 		n--;
 		if (n > 0) ar >> dummy1;
 		n--;
 		if (n > 0) ar >> dummy2;
 		n--;
-		if (n > 0) ar >> noise_dAmplitV;
+		if (n > 0) ar >> noise_d_amplitude_v;
 		n--;
-		if (n > 0) ar >> noise_dFactor;
+		if (n > 0) ar >> noise_d_factor;
 		n--;
-		if (n > 0) ar >> noise_dOffsetV;
+		if (n > 0) ar >> noise_d_offset_v;
 		n--;
 		if (n > 0) ar >> value;
 		n--;
@@ -166,7 +166,7 @@ void output_parameters::Serialize(CArchive& ar)
 		n = wn;
 		if (n > 0)
 		{
-			stimulussequence.Serialize(ar);
+			stimulus_sequence.Serialize(ar);
 			n--;
 		}
 		if (n > 0)

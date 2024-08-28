@@ -48,7 +48,7 @@ int CPropertiesPanel::m_no_col_[] = {
 	CH_FLAG,
 	CH_MORE,
 	-1
-}; // 22-25 measures: n spikes, spikeclasses, flag, more
+}; // 22-25 measures: n spikes, spike_classes, flag, more
 
 int CPropertiesPanel::m_prop_col_[] = {
 	// TRUE = allow edit; list all possible columns
@@ -59,13 +59,7 @@ int CPropertiesPanel::m_prop_col_[] = {
 };
 
 CPropertiesPanel::CPropertiesPanel()
-{
-	m_wnd_edit_infos_height_ = 0;
-	m_p_doc_ = nullptr;
-	m_p_doc_old_ = nullptr;
-	m_b_update_combos_ = FALSE;
-	m_b_changed_property_ = FALSE;
-}
+= default;
 
 CPropertiesPanel::~CPropertiesPanel()
 = default;

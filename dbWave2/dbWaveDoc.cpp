@@ -1716,7 +1716,7 @@ void CdbWaveDoc::export_spk_descriptors(CSharedFile * p_sf, SpikeList * p_spike_
 	p_sf->Write(cs_file_comment, cs_file_comment.GetLength() * sizeof(TCHAR));
 
 	// spike file additional comments
-	if (options_view_spikes->bspkcomments)
+	if (options_view_spikes->b_spk_comments)
 	{
 		p_sf->Write(cs_tab, cs_tab.GetLength() * sizeof(TCHAR));
 		const auto cs_temp = m_p_spk_doc->get_comment();
@@ -1724,7 +1724,7 @@ void CdbWaveDoc::export_spk_descriptors(CSharedFile * p_sf, SpikeList * p_spike_
 	}
 
 	// number of spikes
-	if (options_view_spikes->btotalspikes)
+	if (options_view_spikes->b_total_spikes)
 	{
 		cs_dummy.Format(_T("%s%f"), (LPCTSTR)cs_tab, p_spike_list->get_detection_parameters()->detect_threshold_mv);
 		p_sf->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
@@ -1739,12 +1739,12 @@ void CdbWaveDoc::export_spk_descriptors(CSharedFile * p_sf, SpikeList * p_spike_
 	}
 
 	// spike list iColumn, spike class
-	if (options_view_spikes->spikeclassoption != 0)
-		cs_dummy.Format(_T("%s%i %s%s %s%i"), (LPCTSTR)cs_tab, options_view_spikes->ichan,
+	if (options_view_spikes->spike_class_option != 0)
+		cs_dummy.Format(_T("%s%i %s%s %s%i"), (LPCTSTR)cs_tab, options_view_spikes->i_chan,
 			(LPCTSTR)cs_tab, (LPCTSTR)p_spike_list->get_detection_parameters()->comment,
 			(LPCTSTR)cs_tab, k_class);
 	else
-		cs_dummy.Format(_T("%s%i %s%s \t(all)"), (LPCTSTR)cs_tab, options_view_spikes->ichan,
+		cs_dummy.Format(_T("%s%i %s%s \t(all)"), (LPCTSTR)cs_tab, options_view_spikes->i_chan,
 			(LPCTSTR)cs_tab, (LPCTSTR)p_spike_list->get_detection_parameters()->comment);
 	p_sf->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 }
@@ -1769,7 +1769,7 @@ CString CdbWaveDoc::export_database_data(const int option) const
 	cs_file_comment.Format(_T("%i%s%s"), db_table->m_main_table_set.m_id, (LPCTSTR)separator, (LPCTSTR)filename);
 
 	// source data file items
-	if (options_view_spikes->bacqdate) // source data time and date
+	if (options_view_spikes->b_acq_date) // source data time and date
 	{
 		cs_dummy = separator + db_table->m_main_table_set.m_table_acq_date.Format(VAR_DATEVALUEONLY);
 		cs_file_comment += cs_dummy;
@@ -1777,7 +1777,7 @@ CString CdbWaveDoc::export_database_data(const int option) const
 		cs_file_comment += cs_dummy;
 	}
 	// source data comments
-	if (options_view_spikes->bacqcomments)
+	if (options_view_spikes->b_acq_comments)
 	{
 		db_table->get_record_item_value(CH_EXPT_ID, &desc);
 		cs_file_comment += separator + desc.csVal;
@@ -1855,12 +1855,12 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 
 	// single file export operation: EXTREMA, amplitude, SPIKE_POINTS
 	transpose_ = FALSE;
-	if (options_view_spikes->exportdatatype == EXPORT_INTERV)
+	if (options_view_spikes->export_data_type == EXPORT_INTERV)
 		transpose_ = TRUE;
 
-	if (options_view_spikes->exportdatatype == EXPORT_EXTREMA
-		|| options_view_spikes->exportdatatype == EXPORT_AMPLIT
-		|| options_view_spikes->exportdatatype == EXPORT_SPIKEPOINTS) 
+	if (options_view_spikes->export_data_type == EXPORT_EXTREMA
+		|| options_view_spikes->export_data_type == EXPORT_AMPLIT
+		|| options_view_spikes->export_data_type == EXPORT_SPIKEPOINTS) 
 	{
 		const CString cs_file_desc;
 		m_p_spk_doc->export_spk_file_comment(p_sf, options_view_spikes, 0, cs_file_desc);
@@ -1873,14 +1873,14 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 		CString cs_comment;
 		auto n_bins = 0;
 		double* p_double = nullptr;
-		switch (options_view_spikes->exportdatatype)
+		switch (options_view_spikes->export_data_type)
 		{
 		case EXPORT_ISI: // ISI
 		case EXPORT_AUTOCORR: // Autocorrelation
-			n_bins = options_view_spikes->nbinsISI;
+			n_bins = options_view_spikes->n_bins_isi;
 			break;
 		case EXPORT_HISTAMPL: // spike amplitude histogram
-			n_bins = options_view_spikes->histampl_nbins + 2;
+			n_bins = options_view_spikes->hist_ampl_n_bins + 2;
 			break;
 		case EXPORT_AVERAGE: // assume that all spikes have the same length
 			p_double = new double[m_p_spk_doc->get_spike_list_current()->get_spike_length() * 2 + 1 + 2];
@@ -1890,7 +1890,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 			break;
 		case EXPORT_PSTH: // PSTH
 		default:
-			n_bins = options_view_spikes->nbins;
+			n_bins = options_view_spikes->n_bins;
 			break;
 		}
 		const auto p_hist0 = new long[n_bins + 2]; // create array (dimension = n_bins) to store results
@@ -1900,9 +1900,9 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 		cs_file_comment.Empty();
 
 		// in each spike list, loop over spike classes as defined in the options
-		auto class1 = options_view_spikes->classnb;
-		auto class2 = options_view_spikes->classnb2;
-		if (options_view_spikes->spikeclassoption == 0)
+		auto class1 = options_view_spikes->class_nb;
+		auto class2 = options_view_spikes->class_nb_2;
+		if (options_view_spikes->spike_class_option == 0)
 			class2 = class1;
 		else
 		{
@@ -1944,7 +1944,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 			// loop over the spike lists stored in that file
 			auto i_chan1 = 0;
 			auto i_chan2 = m_p_spk_doc->get_spike_list_size();
-			if (!options_view_spikes->ballChannels)
+			if (!options_view_spikes->b_all_channels)
 			{
 				i_chan1 = i_old_list;
 				i_chan2 = i_chan1 + 1;
@@ -1954,12 +1954,12 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 			for (auto i_spike_list = i_chan1; i_spike_list < i_chan2; i_spike_list++)
 			{
 				const auto p_spike_list = m_p_spk_doc->set_spike_list_current_index(i_spike_list);
-				options_view_spikes->ichan = i_spike_list;
+				options_view_spikes->i_chan = i_spike_list;
 				for (auto k_class = class1; k_class <= class2; k_class++)
 				{
 					export_spk_descriptors(p_sf, p_spike_list, k_class);
 					// export data
-					switch (options_view_spikes->exportdatatype)
+					switch (options_view_spikes->export_data_type)
 					{
 					case EXPORT_HISTAMPL: // spike amplitude histogram
 						m_p_spk_doc->export_spk_amplitude_histogram(p_sf, options_view_spikes, p_hist0, i_spike_list, k_class);
@@ -1979,7 +1979,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 						m_p_spk_doc->export_spk_psth(p_sf, options_view_spikes, p_hist0, i_spike_list, k_class);
 						break;
 					default:
-						ATLTRACE2(_T("option selected not implemented: %i /n"), options_view_spikes->exportdatatype);
+						ATLTRACE2(_T("option selected not implemented: %i /n"), options_view_spikes->export_data_type);
 						break;
 					}
 				} // end of for: k_class

@@ -73,7 +73,7 @@ void ViewDbTable::OnSize(UINT n_type, int cx, int cy)
 		case SIZE_RESTORED:
 			if (cx <= 0 || cy <= 0)
 				break;
-			stretch_.ResizeControls(n_type, cx, cy);
+			stretch_.resize_controls(n_type, cx, cy);
 			break;
 		default:
 			break;

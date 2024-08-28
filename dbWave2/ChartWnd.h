@@ -43,7 +43,7 @@ public:
 protected:
 	static int cursors_count_;
 	static HCURSOR cursors_[NB_CURSORS];
-	static int cursors_drag_mode_[NB_CURSORS]; // cursor mode: 0=invert rect; 1=catch object
+	static int cursors_drag_mode_[NB_CURSORS]; // cursor mode: 0invert rect; 1catch object
 	int cursor_index_max_{ NB_CURSORS };
 	int cursor_type_{ 0 };
 	int old_cursor_type_{ 0 };
@@ -52,7 +52,7 @@ protected:
 	static COLORREF color_table_[NB_COLORS]; // array with color ref
 
 	CPen pen_table_[NB_COLORS]; // table with CPen objects (same colors as color table)
-	BOOL b_left_mouse_button_down_ = false;
+	BOOL b_left_mouse_button_down_ {false};
 	BOOL b_use_dib_{ false };
 	CDC plot_dc_{};
 	int saved_dc_;
@@ -64,13 +64,13 @@ protected:
 	CString cs_empty_;
 	options_scope_struct scope_structure_{};
 
-	int plot_mode_ = 0;
-	int index_color_background_ = SILVER_COLOR;
-	int index_color_selected_ = BLACK_COLOR;
-	BOOL b_erase_background_ = TRUE; // erase background (flag)
-	BOOL b_vertical_tags_as_long_ = FALSE; // flag: TRUE if VT tags are defined as long
-	long file_position_first_left_pixel_ = 0; // file position of first left pixel
-	long file_position_last_right_pixel_ = 0; // file position of last right pixel
+	int plot_mode_ {0};
+	int index_color_background_ {SILVER_COLOR};
+	int index_color_selected_  {BLACK_COLOR};
+	BOOL b_erase_background_  {TRUE}; // erase background (flag)
+	BOOL b_vertical_tags_as_long_  {FALSE}; // flag: TRUE if VT tags are defined as long
+	long file_position_first_left_pixel_  {0}; // file position of first left pixel
+	long file_position_last_right_pixel_  {0}; // file position of last right pixel
 	long file_position_equivalent_to_mouse_jitter_{}; // file position range corresponding mouse jitter
 
 	// plotting options - parameters for PLOT_WITHIN_BOUNDS
@@ -82,17 +82,17 @@ protected:
 
 	// mouse tracking modes
 	int hc_trapped_{}; // cursor index trapped by the mouse
-	int track_mode_ = TRACK_OFF;
+	int track_mode_  {TRACK_OFF};
 
-	int x_wo_ = 0;
-	int x_we_ = 1;
-	int x_viewport_origin_ = 0;
-	int x_viewport_extent_ = 1;
+	int x_wo_  {0};
+	int x_we_  {1};
+	int x_viewport_origin_  {0};
+	int x_viewport_extent_  {1};
 
-	int y_wo_ = 0;
-	int y_we_ = 1;
-	int y_vo_ = 0;
-	int y_ve_ = 1;
+	int y_wo_  {0};
+	int y_we_  {1};
+	int y_vo_  {0};
+	int y_ve_  {1};
 
 	int cur_track_{}; // threshold  tracked
 	CPoint pt_first_{};
@@ -105,11 +105,11 @@ protected:
 	int cy_mouse_jitter_;
 	CRect rect_zoom_from_;
 	CRect rect_zoom_to_;
-	int i_undo_zoom_ = 0; // 1: rect+ ; -1: rect- ; 0: none stored (not implemented)
+	int i_undo_zoom_  {0}; // 1: rect+ ; -1: rect- ; 0: none stored (not implemented)
 
-	BOOL b_allow_props_ = true;
-	HWND h_wnd_reflect_ = nullptr;
-	Tag* temp_vertical_tag_ = nullptr;
+	BOOL b_allow_props_  {true};
+	HWND h_wnd_reflect_  {nullptr};
+	Tag* temp_vertical_tag_  {nullptr};
 
 public:
 	virtual void plot_data_to_dc(CDC* p_dc);

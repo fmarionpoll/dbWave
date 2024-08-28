@@ -109,19 +109,9 @@ BEGIN_MESSAGE_MAP(CTemplateWnd, ChartWnd)
 	ON_WM_SETCURSOR()
 END_MESSAGE_MAP()
 
-CTemplateWnd::CTemplateWnd() : m_power(0), m_p_max0_(nullptr), m_p_min0_(nullptr)
+CTemplateWnd::CTemplateWnd()
 {
-	m_p_sum_array_ = nullptr;
-	m_p_sum0_ = nullptr;
-	m_p_sum20_ = nullptr;
-	m_n_items_ = 0;
-	m_tpl_len_ = 0;
-	m_p_avg_ = nullptr;
-	m_b_valid_ = FALSE;
-	m_k_tolerance = 1.96f;
-	m_global_std = 0.f;
 	b_use_dib_ = TRUE;
-	m_class_id = 0;
 }
 
 CTemplateWnd::~CTemplateWnd()

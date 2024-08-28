@@ -19,17 +19,17 @@ protected:
 	// Form Data
 	enum { IDD = IDD_VIEWSPIKES };
 
-	float m_time_first = 0.f;
-	float m_time_last = 0.f;
-	int m_spike_index = -1;
-	int m_spike_class = 0;
-	float m_zoom = .2f;
-	int m_class_source = 0;
-	int m_class_destination = 1;
-	BOOL m_b_reset_zoom = true;
-	BOOL m_b_artefact = false;
-	BOOL m_b_keep_same_class = false;
-	float m_jitter_ms = 1.f;
+	float m_time_first  {0.f};
+	float m_time_last  {0.f};
+	int m_spike_index  {-1};
+	int m_spike_class  {0};
+	float m_zoom  {.2f};
+	int m_class_source  {0};
+	int m_class_destination  {1};
+	BOOL m_b_reset_zoom { true};
+	BOOL m_b_artefact { false};
+	BOOL m_b_keep_same_class  {false};
+	float m_jitter_ms  {1.f};
 
 	CButton set_zoom;
 
@@ -37,7 +37,7 @@ protected:
 protected:
 	ChartData chart_data_wnd_;
 	SpikeClassListBox spike_class_listbox_;
-	int max_classes_ = 1;
+	int max_classes_  {1};
 
 	CEditCtrl mm_spike_index_;
 	CEditCtrl mm_spike_class_;
@@ -51,28 +51,28 @@ protected:
 	ScrollBarEx file_scrollbar_; 
 	SCROLLINFO file_scroll_infos_{}; 
 
-	int zoom_factor_ = 1; 
-	HICON h_bias_ = nullptr;
-	HICON h_zoom_ = nullptr;
-	float y_scale_factor_ = 0.f; 
-	int v_bar_mode_ = 0; 
+	int zoom_factor_  {1}; 
+	HICON h_bias_ { nullptr};
+	HICON h_zoom_  {nullptr};
+	float y_scale_factor_  {0.f}; 
+	int v_bar_mode_  {0}; 
 	CScrollBar scrollbar_y_; 
 
-	AcqDataDoc* p_data_doc_ = nullptr; 
+	AcqDataDoc* p_data_doc_  {nullptr}; 
 
-	BOOL b_init_source_view_ = true;
-	int l_first_ = 0;
-	int l_last_ = -1;
+	BOOL b_init_source_view_  {true};
+	int l_first_  {0};
+	int l_last_  {-1};
 
 	CDWordArray highlighted_intervals_;
-	boolean b_add_spike_mode_ = false;
+	boolean b_add_spike_mode_  {false};
 
-	int y_we_ = 1;
-	int y_wo_ = 0;
-	int pt_vt_ = -1;
-	CRect rect_vt_track_ = CRect(0, 0, 0, 0);
-	float jitter_ = 0.f;
-	boolean b_dummy_ = true;
+	int y_we_  {1};
+	int y_wo_  {0};
+	int pt_vt_  {-1};
+	CRect rect_vt_track_  {CRect(0, 0, 0, 0)};
+	float jitter_ { 0.f};
+	boolean b_dummy_  {true};
 
 	// Implementation
 	void update_file_parameters(BOOL b_update_interface = TRUE);

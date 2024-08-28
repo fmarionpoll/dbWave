@@ -65,6 +65,7 @@ protected:
 	float histogram_bin_mv_{ 0.1f };
 	int tag_index_hist_low_{};
 	int tag_index_hist_up_{};
+
 	void build_histogram();
 	void change_chart_histogram_vt_tag(int tag_index);
 	void update_cursors_from_lower_threshold_mv();
@@ -80,6 +81,7 @@ protected:
 	int m_i_xy_left_{};
 	int tag_index_measures_low_{};
 	int tag_index_measures_up_{};
+
 	void change_chart_measure_hz_tag(int value);
 	void activate_mode4();
 	void show_controls_for_mode4(int n_cmd_show) const;

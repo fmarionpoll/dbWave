@@ -17,11 +17,11 @@ public:
 	void Serialize(CArchive& ar) override;
 
 	// user defined parameters
-	CString m_cs_id;
-	int m_class_id;
-	float m_k_tolerance; // user defined value
-	double m_global_std; // parameter to be set by parent
-	double m_power; // power of the signal
+	CString m_cs_id {};
+	int m_class_id {0};
+	float m_k_tolerance {1.96f}; // user defined value
+	double m_global_std {0.f}; // parameter to be set by parent
+	double m_power {0}; // power of the signal
 
 	int get_n_items() const { return m_n_items_; }
 
@@ -38,22 +38,22 @@ public:
 	}
 
 protected:
-	BOOL m_b_valid_; // tell if pMean data are valid
-	int m_tpl_len_; // length of templates array
+	BOOL m_b_valid_ {FALSE}; // tell if pMean data are valid
+	int m_tpl_len_ {0}; // length of templates array
 	// template array - intermediary results : sum, sum2
-	// length = total spike length (defined by m_tpllen)
-	mytype* m_p_sum_array_; // array declared for longs
-	mytype* m_p_sum0_; // array with sum (X)
-	mytype* m_p_sum20_; // array with sum (X * X)
-	long m_n_items_; // n elements
+	// length = total spike length (defined by m_tpl_len)
+	mytype* m_p_sum_array_ {nullptr}; // array declared for longs
+	mytype* m_p_sum0_{ nullptr }; // array with sum (X)
+	mytype* m_p_sum20_{ nullptr }; // array with sum (X * X)
+	long m_n_items_ {0}; // n elements
 
 	// template array - results and envelope
 	// length = total spike length
 	// mean, sup value, low value (as computed by tSetdisplayData())
 	// combined arrays
-	int* m_p_avg_; // first point of the array
-	int* m_p_max0_; // upper limit
-	int* m_p_min0_; // lower limit
+	int* m_p_avg_ {nullptr}; // first point of the array
+	int* m_p_max0_ {nullptr}; // upper limit
+	int* m_p_min0_ {nullptr}; // lower limit
 
 	// Operations
 public:

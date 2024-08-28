@@ -12,63 +12,63 @@ protected:
 public:
 	enum { IDD = IDD_VIEWSPKTIMESERIES };
 
-	CComboBox m_cbHistType;
-	float m_timefirst{0.f};
-	float m_timelast{2.5f};
-	int m_spikeclass{0};
-	int m_dotheight{0};
-	int m_rowheight{0};
-	float m_binISIms{0.f};
-	int m_nbinsISI{0};
-	float m_timebinms{0.f};
+	CComboBox m_cb_hist_type;
+	float m_time_first{0.f};
+	float m_time_last{2.5f};
+	int m_spike_class{0};
+	int m_dot_height{0};
+	int m_row_height{0};
+	float m_bin_isi_ms{0.f};
+	int m_n_bins_isi{0};
+	float m_time_bin_ms{0.f};
 
-	CSpikeDoc* p_spike_doc_{nullptr};
+	CSpikeDoc* p_spike_doc{nullptr};
 
 	// Attributes
 protected:
-	CStretchControl m_stretch;
-	BOOL m_binit{false};
-	CEditCtrl mm_timebinms; // bin size (ms)
-	CEditCtrl mm_binISIms; // bin size (ms)
-	CEditCtrl mm_nbinsISI; // nbins ISI
+	CStretchControl m_stretch_;
+	
+	CEditCtrl mm_time_bin_ms_; 
+	CEditCtrl mm_bin_isi_ms_; 
+	CEditCtrl mm_n_bins_isi_; 
 
-	CEditCtrl mm_timefirst; // first abscissa value
-	CEditCtrl mm_timelast; // last abscissa value
-	CEditCtrl mm_spikeclass; // selected spike class
-	CEditCtrl mm_dotheight; // dot height
-	CEditCtrl mm_rowheight; // row height
-	int m_bhistType{0};
-	SCROLLINFO m_scrollFilePos_infos{};
-	options_view_spikes* m_pvdS{nullptr};
-	options_view_data* mdPM{nullptr};
+	CEditCtrl mm_time_first_;
+	CEditCtrl mm_time_last_; 
+	CEditCtrl mm_spike_class_;
+	CEditCtrl mm_dot_height_; 
+	CEditCtrl mm_row_height_; 
+	int m_b_hist_type_{0};
+	SCROLLINFO m_scroll_file_pos_infos_{};
+	options_view_spikes* options_view_spikes_{nullptr};
+	options_view_data* options_view_data_{nullptr};
 
-	long* m_pPSTH{nullptr}; // histogram data (pointer to array)
-	int m_sizepPSTH{0}; // nbins within histogram
-	long m_nPSTH{0};
-	long* m_pISI{nullptr};
-	int m_sizepISI{0};
-	long m_nISI{0};
-	long* m_parrayISI{nullptr};
-	int m_sizeparrayISI{0};
+	long* m_p_psth_{nullptr}; // histogram data (pointer to array)
+	int m_size_psth_{0}; // n_bins within histogram
+	long m_n_psth_{0};
+	long* m_p_isi_{nullptr};
+	int m_size_isi_{0};
+	long m_n_isi_{0};
+	long* m_p_array_isi_{nullptr};
+	int m_size_array_isi_{0};
 
-	CRect m_displayRect{CRect(0, 0, 0, 0)};
-	CPoint m_topleft; // top position of display area
-	BOOL m_initiated{false}; // flag / initial settings
-	BOOL m_bmodified{true}; // flag ON-> compute data
-	CBitmap* m_pbitmap{nullptr}; // temp bitmap used to improve display speed
-	int m_nfiles{1}; // nb of files used to build histogram
-	const float t1000{1000.f};
-	BOOL m_bPrint{false};
-	CRect m_commentRect;
+	CRect m_display_rect_{CRect(0, 0, 0, 0)};
+	CPoint m_top_left_; // top position of display area
+	BOOL m_initiated_{false}; // flag / initial settings
+	BOOL m_b_modified_{true}; // flag ON-> compute data
+	CBitmap* m_p_bitmap_{nullptr}; // temp bitmap used to improve display speed
+	int m_n_files_{1}; // nb of files used to build histogram
+	const float t1000_{1000.f};
+	BOOL m_b_print_{false};
+	CRect m_comment_rect_;
 
-	LOGFONT m_logFont{}; // onbegin/onendPrinting
-	CFont m_fontPrint;
-	int m_rectratio{100};
-	float m_xfirst{0.f};
-	float m_xlast{0.f};
+	LOGFONT m_log_font_{}; 
+	CFont m_font_print_;
+	int m_rect_ratio_{100};
+	float m_x_first_{0.f};
+	float m_x_last_{0.f};
 
-	LOGFONT m_logFontDisp{}; // onbegin/onendPrinting
-	CFont m_fontDisp{}; // display font
+	LOGFONT m_log_font_display_{}; 
+	CFont m_font_display_{}; 
 
 	// Overrides
 public:

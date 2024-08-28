@@ -9,7 +9,7 @@ class ViewNoteDoc : public CRichEditView
 protected:
 	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 	void OnInitialUpdate() override;
-	BOOL OnPreparePrinting(CPrintInfo* pInfo) override;
+	BOOL OnPreparePrinting(CPrintInfo* p_info) override;
 
 	// Implementation
 public:

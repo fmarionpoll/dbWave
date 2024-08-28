@@ -9,7 +9,7 @@ constexpr auto MOVAVG30 = 13;
 
 class CWaveBuf : public CObject
 {
-	DECLARE_SERIAL(CWaveBuf);
+	DECLARE_SERIAL(CWaveBuf)
 	friend class AcqDataDoc;
 
 	// Attributes
@@ -87,13 +87,13 @@ protected:
 	static int b_variable_span_[];				// flag to tell if the sliding window size can be changed
 
 private:
-	short* p_w_data_ = nullptr; // Pointer to the origin of the primary data array
-	short* p_w_data_transformed_ = nullptr; // primary transform buffer
-	BOOL is_transformed_ = FALSE;
-	WORD w_version_ = 0;
-	int num_elements_ = 0; // n elements within buffer
-	size_t dw_buffer_size_ = 0;
-	short* p_array_sorted_ = nullptr; // array used by BMedian to store a sorted array of data
-	short* p_array_circular_ = nullptr; // array used by BMedian to store a sliding window array of data
-	int p_array_size_ = 0;
+	short* p_w_data_  {nullptr}; // Pointer to the origin of the primary data array
+	short* p_w_data_transformed_  {nullptr}; // primary transform buffer
+	BOOL is_transformed_  {FALSE};
+	WORD w_version_  {0};
+	int num_elements_  {0}; // n elements within buffer
+	size_t dw_buffer_size_  {0};
+	short* p_array_sorted_  {nullptr}; // array used by BMedian to store a sorted array of data
+	short* p_array_circular_  {nullptr}; // array used by BMedian to store a sliding window array of data
+	int p_array_size_  {0};
 };

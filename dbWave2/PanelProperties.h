@@ -28,8 +28,8 @@ protected:
 	// Implementation
 public:
 protected:
-	CdbWaveDoc* m_p_doc_;
-	CdbWaveDoc* m_p_doc_old_;
+	CdbWaveDoc* m_p_doc_ {nullptr};
+	CdbWaveDoc* m_p_doc_old_ {nullptr};
 	CFont m_fnt_prop_list_;
 
 	static int m_no_col_[]; // [26] succession of fields
@@ -37,9 +37,9 @@ protected:
 	CUIntArray m_type_props_;
 	CUIntArray m_i_id_props_;
 	CUIntArray m_group_props_;
-	int m_wnd_edit_infos_height_;
-	BOOL m_b_update_combos_;
-	BOOL m_b_changed_property_;
+	int m_wnd_edit_infos_height_ {0};
+	BOOL m_b_update_combos_ {FALSE};
+	BOOL m_b_changed_property_ {FALSE};
 
 	int init_group_from_table(CMFCPropertyGridProperty* p_group, int i_col0);
 	void update_group_prop_from_table(CMFCPropertyGridProperty* p_group) const;

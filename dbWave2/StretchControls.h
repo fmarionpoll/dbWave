@@ -40,43 +40,43 @@ class CCtrlProp : public CObject
 protected:
 public:
 	CCtrlProp();
-	CCtrlProp(int iID, HWND hC, int xSizeHow, int ySizeHow, CRect* rect);
+	CCtrlProp(int i_id, HWND h_c, int x_size_how, int y_size_how, const CRect* rect);
 	DECLARE_DYNCREATE(CCtrlProp)
 
 	// Attributes
 public:
-	int m_ctrlID; // id of the control
-	int m_xSizeHow; // flag: how window x position is affected by wm_size
-	int m_ySizeHow; // flag: how window y position is affected by wm_size
-	HWND m_hWnd; // handle of window
-	BOOL m_bVisible; // state of the window
-	int m_slaveorder; // 0: no master, 1: 1 master; 2: 2 cascaded masters, etc.
-	int m_master; // ID master from which it is slave; else -1
-	CRect m_rect; // distances from initial dlg borders
-	CRect m_rmaster; // master rect dialog client coords
+	int m_ctrl_id {0}; // id of the control
+	int m_x_size_how { SZEQ_XLEQ }; // flag: how window x position is affected by wm_size
+	int m_y_size_how { SZEQ_XLEQ }; // flag: how window y position is affected by wm_size
+	HWND m_h_wnd {nullptr}; // handle of window
+	BOOL m_b_visible {TRUE}; // state of the window
+	int m_slave_order {0}; // 0: no master, 1: 1 master; 2: 2 cascaded masters, etc.
+	int m_master {-1}; // ID master from which it is slave; else -1
+	CRect m_rect { CRect(0, 0, 0, 0) }; // distances from initial dlg borders
+	CRect m_r_master; // master rect dialog client coords
 	CRect m_rect0;
-	CRect m_rmaster0;
+	CRect m_r_master0;
 
 	// Operations
 public:
 	// Helper functions
 public:
-	int GetID() const { return m_ctrlID; }
-	HWND GetHWnd() const { return m_hWnd; }
-	int GetxSizeHow() const { return m_xSizeHow; }
-	int GetySizeHow() const { return m_ySizeHow; }
-	BOOL IsVisible() const { return m_bVisible; }
-	int GetMaster() const { return m_master; }
-	CRect GetMasterRect() const { return m_rmaster; }
+	int get_id() const { return m_ctrl_id; }
+	HWND get_h_wnd() const { return m_h_wnd; }
+	int get_x_size_how() const { return m_x_size_how; }
+	int get_y_size_how() const { return m_y_size_how; }
+	BOOL is_visible() const { return m_b_visible; }
+	int get_master() const { return m_master; }
+	CRect get_master_rect() const { return m_r_master; }
 
-	void SetID(int ID) { m_ctrlID = ID; }
-	void SetHWnd(HWND hC) { m_hWnd = hC; }
-	void SetxSizeHow(int xSizeHow) { m_xSizeHow = xSizeHow; }
-	void SetySizeHow(int ySizeHow) { m_ySizeHow = ySizeHow; }
-	void SetRectLimits(CRect* rect) { m_rect = *rect; }
-	void SetVisible(BOOL bVisible) { m_bVisible = bVisible; }
-	void SetMaster(int index) { m_master = index; }
-	void SetMasterRect(CRect rmaster) { m_rmaster = rmaster; }
+	void set_id(const int id) { m_ctrl_id = id; }
+	void set_h_wnd(const HWND h_c) { m_h_wnd = h_c; }
+	void set_x_size_how(const int x_size_how) { m_x_size_how = x_size_how; }
+	void set_y_size_how(const int y_size_how) { m_y_size_how = y_size_how; }
+	void set_rect_limits(const CRect* rect) { m_rect = *rect; }
+	void set_visible(const BOOL b_visible) { m_b_visible = b_visible; }
+	void set_master(int index) { m_master = index; }
+	void set_master_rect(const CRect& r_master) { m_r_master = r_master; }
 };
 
 
@@ -89,41 +89,41 @@ public:
 
 	// Attributes
 protected:
-	CWnd* m_parent; // handle to window parent
-	CArray<CCtrlProp*, CCtrlProp*> ctrlprop_ptr_array; // CCtrlProps props relative to resizable controls
-	SIZE m_DialogSize; // current dialog size
-	SIZE m_DlgMinSize; // minimal dialog size
-	int m_BOTTOMBARHeight; // height of system scrollbars
-	int m_RIGHTBARWidth; // width of system scrollbars
-	BOOL m_bHBAR; // true: horizontal bar and associated controls
-	BOOL m_bVBAR; // true: vertical bar and associated controls
-	int m_slavemax;
+	CWnd* m_parent_ {nullptr}; // handle to window parent
+	CArray<CCtrlProp*, CCtrlProp*> ctrl_prop_ptr_array_; // CCtrlProps props relative to resizable controls
+	SIZE m_dialog_size_ {}; // current dialog size
+	SIZE m_dlg_min_size_ {}; // minimal dialog size
+	int m_bottom_bar_height_ {0}; // height of system scrollbars
+	int m_right_bar_width_ {0}; // width of system scrollbars
+	BOOL b_horizontal_bar_ {false}; // true: horizontal bar and associated controls
+	BOOL b_vertical_bar_ {false}; // true: vertical bar and associated controls
+	int m_slave_max_ {0};
 
 public:
-	void AttachParent(CFormView* pF);
-	void AttachDialogParent(CDialog* p_wnd);
-	BOOL newProp(int iID, int xsizeMode, int ysizeMode);
-	BOOL newProp(CWnd* p_wnd, int iID, int xsizeMode, int ysizeMode);
+	void attach_parent(CFormView* p_f);
+	void attach_dialog_parent(CDialog* p_wnd);
+	BOOL new_prop(int i_id, int x_size_mode, int y_size_mode);
+	BOOL new_prop(const CWnd* p_wnd, int i_id, int x_size_mode, int y_size_mode);
 
-	BOOL newSlaveProp(int iID, int xsizeSlave, int ysizeSlave, int iMASTER);
-	BOOL GetbVBarControls() const { return m_bVBAR; }
-	BOOL GetbHBarControls() const { return m_bHBAR; }
-	BOOL DisplayVBarControls(BOOL bVisible);
-	BOOL DisplayHBarControls(BOOL bVisible);
-	void ChangeBarSizes(int RIGHTwidth, int BOTTOMheight);
-	void UpdateClientControls();
-	void ResizeControls(UINT nType, int cx, int cy);
+	BOOL new_slave_prop(int i_id, int x_size_slave, int y_size_slave, int iMASTER);
+	BOOL GetbVBarControls() const { return b_vertical_bar_; }
+	BOOL GetbHBarControls() const { return b_horizontal_bar_; }
+	BOOL display_v_bar_controls(BOOL b_visible);
+	BOOL display_h_bar_controls(BOOL b_visible);
+	void change_bar_sizes(int right_width, int bottom_height);
+	void update_client_controls() const;
+	void resize_controls(UINT n_type, int cx, int cy);
 
 	// Attributes
 public:
-	CSize GetDlgMinSize() const { return m_DlgMinSize; }
-	CSize GetDialogSize() const { return m_DialogSize; }
-	int GetBOTTOMBARHeight() const { return m_BOTTOMBARHeight; }
-	int GetRIGHTBARWidth() const { return m_RIGHTBARWidth; }
+	CSize GetDlgMinSize() const { return m_dlg_min_size_; }
+	CSize GetDialogSize() const { return m_dialog_size_; }
+	int GetBOTTOMBARHeight() const { return m_bottom_bar_height_; }
+	int GetRIGHTBARWidth() const { return m_right_bar_width_; }
 	// Implementation
 protected:
-	CRect AlignControl(CCtrlProp* pa, int cx, int cy);
-	void AreaLeftbyControls(int* cx, int* cy);
+	CRect align_control(const CCtrlProp* pa, int cx, int cy);
+	void area_left_by_controls(int* cx, int* cy) const;
 };
 
 #endif // _CONTROLP_H_

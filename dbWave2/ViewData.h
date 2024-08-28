@@ -18,14 +18,14 @@ protected:
 	// Form Data
 	enum { IDD = IDD_VIEWDATA };
 
-	int m_channel_selected = 0;
-	float m_first_hz_cursor = 0.;
-	float m_second_hz_cursor = 0.;
-	float m_difference_second_minus_first = 0.;
-	float m_time_first_abscissa = 0.;
-	float m_time_last_abscissa = 0.;
-	float m_float_n_digits = 1000.; // 10(000) -> n digits displayed
-	BOOL m_b_init_comment = true;
+	int m_channel_selected  {0};
+	float m_first_hz_cursor  {0.};
+	float m_second_hz_cursor  {0.};
+	float m_difference_second_minus_first  {0.};
+	float m_time_first_abscissa  {0.};
+	float m_time_last_abscissa  {0.};
+	float m_float_n_digits  {1000.}; // 10(000) -> n digits displayed
+	boolean m_b_init_comment  {true};
 
 	ChartData chart_data{}; 
 	CEditCtrl mm_first_hz_cursor; 
@@ -39,21 +39,28 @@ protected:
 
 protected:
 	// parameters related to data display and to document
-	AcqDataDoc* m_p_dat_ = nullptr;
-	BOOL m_b_valid_doc_ = false;
-	float m_sampling_rate_ = 1.;
-	int m_cursor_state_ = 0;
-	int m_v_bar_pixel_ratio_ = 30; 
-	int m_h_bar_pixel_ratio_ = 10; 
-	int m_current_file_index_ = 0;
+	AcqDataDoc* m_p_dat_  {nullptr};
+	boolean m_b_valid_doc_  {false};
+	float m_sampling_rate_  {1.};
+	int m_cursor_state_  {0};
+	int m_v_bar_pixel_ratio_  {30}; 
+	int m_h_bar_pixel_ratio_  {10}; 
+	int m_current_file_index_  {0};
 
-	HICON m_h_bias_ = nullptr;
-	HICON m_h_zoom_ = nullptr;
-	int scan_count_ = 0;
-	float channel_rate_ = 0.;
+	HICON m_h_bias_  {nullptr};
+	HICON m_h_zoom_  {nullptr};
+	int scan_count_  {0};
+	float channel_rate_  {0.};
 
-	options_view_data* options_view_data_ = nullptr;
-	options_measure* options_data_measures_ = nullptr;
+	BOOL b_common_scale_ {false};
+
+	ScrollBarEx file_scroll_bar_;
+	SCROLLINFO file_scroll_bar_infos_{};
+	int m_v_bar_mode_ {0};
+	CScrollBar scroll_y_;
+
+	options_view_data* options_view_data_  {nullptr};
+	options_measure* options_data_measures_  {nullptr};
 
 	void print_file_bottom_page(CDC* p_dc, const CPrintInfo* p_info);
 	CString convert_file_index(long l_first, long l_last) const;
@@ -67,13 +74,6 @@ protected:
 	void update_channels_display_parameters();
 	void chain_dialog(WORD i_id);
 	int print_get_n_pages();
-
-	BOOL b_common_scale_ = false;
-
-	ScrollBarEx file_scroll_bar_; 
-	SCROLLINFO file_scroll_bar_infos_{}; 
-	int m_v_bar_mode_ = 0; 
-	CScrollBar scroll_y_; 
 
 	void on_file_scroll(UINT n_sb_code, UINT n_pos);
 	void on_gain_scroll(UINT n_sb_code, UINT n_pos);

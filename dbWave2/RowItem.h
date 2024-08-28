@@ -39,14 +39,14 @@ public:
 	ChartSpikeBar* get_chart_bars() const { return chart_spike_bar_; }
 
 protected:
-	CString* row_comment_ = nullptr;
-	ChartSpikeShape* chart_spike_shape_ = nullptr;
-	ChartSpikeBar* chart_spike_bar_ = nullptr;
-	SpikeList* spike_list_ = nullptr;
+	CString* row_comment_  {nullptr};
+	ChartSpikeShape* chart_spike_shape_  {nullptr};
+	ChartSpikeBar* chart_spike_bar_  {nullptr};
+	SpikeList* spike_list_  {nullptr};
 
 	// TODO replace with spike class descriptor?
-	int class_id_ = 0;
-	int row_id_ = 0;
-	SpikeClassListBoxContext* parent_context_ = nullptr;
+	int class_id_  {0};
+	int row_id_  {0};
+	SpikeClassListBoxContext* parent_context_  {nullptr};
 };
 

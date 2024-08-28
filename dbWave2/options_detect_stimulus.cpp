@@ -21,12 +21,12 @@ options_detect_stimulus& options_detect_stimulus::operator =(const options_detec
 	if (this != &arg)
 	{
 		//comment=arg.comment;	// CArchive
-		nItems = arg.nItems;
-		SourceChan = arg.SourceChan;
-		TransformMethod = arg.TransformMethod;
-		DetectMethod = arg.DetectMethod;
-		Threshold1 = arg.Threshold1;
-		bMode = arg.bMode;
+		n_items = arg.n_items;
+		source_chan = arg.source_chan;
+		transform_method = arg.transform_method;
+		detect_method = arg.detect_method;
+		threshold1 = arg.threshold1;
+		b_mode = arg.b_mode;
 	}
 	return *this;
 }
@@ -35,13 +35,13 @@ void options_detect_stimulus::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		ar << wversion;
-		ar << nItems;
-		ar << SourceChan;
-		ar << TransformMethod;
-		ar << DetectMethod;
-		ar << Threshold1;
-		ar << bMode;
+		ar << w_version;
+		ar << n_items;
+		ar << source_chan;
+		ar << transform_method;
+		ar << detect_method;
+		ar << threshold1;
+		ar << b_mode;
 	}
 	else
 	{
@@ -52,24 +52,24 @@ void options_detect_stimulus::Serialize(CArchive& ar)
 		{
 			WORD w1;
 			ar >> w1;
-			nItems = w1;
+			n_items = w1;
 			ar >> w1;
-			SourceChan = w1;
+			source_chan = w1;
 			ar >> w1;
-			TransformMethod = w1;
+			transform_method = w1;
 			ar >> w1;
-			DetectMethod = w1;
+			detect_method = w1;
 			ar >> w1;
-			Threshold1 = w1;
+			threshold1 = w1;
 		}
 		else if (version > 1)
 		{
-			ar >> nItems;
-			ar >> SourceChan;
-			ar >> TransformMethod;
-			ar >> DetectMethod;
-			ar >> Threshold1;
-			ar >> bMode;
+			ar >> n_items;
+			ar >> source_chan;
+			ar >> transform_method;
+			ar >> detect_method;
+			ar >> threshold1;
+			ar >> b_mode;
 		}
 	}
 }

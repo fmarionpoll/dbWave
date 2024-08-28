@@ -20,9 +20,9 @@ public:
 
 	// Operations
 public:
-	static void EnableSplashScreen(BOOL bEnable = TRUE);
-	static void ShowSplashScreen(CWnd* pParentWnd = nullptr);
-	static BOOL PreTranslateAppMessage(MSG* pMsg);
+	static void enable_splash_screen(BOOL b_enable = TRUE);
+	static void show_splash_screen(CWnd* p_parent_wnd = nullptr);
+	static BOOL PreTranslateAppMessage(MSG* p_msg);
 
 	// Overrides
 
@@ -32,11 +32,11 @@ public:
 	void PostNcDestroy() override;
 
 protected:
-	BOOL Create(CWnd* pParentWnd = nullptr);
-	void HideSplashScreen();
+	BOOL Create(CWnd* p_parent_wnd = nullptr);
+	void hide_splash_screen();
 
-	static BOOL m_bShowSplashWnd;
-	static CSplashWnd* m_pSplashWnd;
+	static BOOL m_b_show_splash_wnd_;
+	static CSplashWnd* m_p_splash_wnd_;
 
 	// Generated message map functions
 protected:

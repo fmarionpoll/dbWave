@@ -37,9 +37,9 @@ void ViewNoteDoc::OnInitialUpdate()
 	SetMargins(CRect(720, 720, 720, 720));
 }
 
-BOOL ViewNoteDoc::OnPreparePrinting(CPrintInfo* pInfo)
+BOOL ViewNoteDoc::OnPreparePrinting(CPrintInfo* p_info)
 {
-	return DoPreparePrinting(pInfo);
+	return DoPreparePrinting(p_info);
 }
 
 void ViewNoteDoc::OnDestroy()

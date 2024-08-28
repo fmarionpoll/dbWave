@@ -40,9 +40,9 @@ BOOL DlgEditDAMseq::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	m_mSeqRatio = m_outDParms.mseq_iRatio;
-	m_mSeqDelay = m_outDParms.mseq_iDelay;
-	m_mSeqSeed = m_outDParms.mseq_iSeed;
+	m_mSeqRatio = m_outDParms.m_seq_i_ratio;
+	m_mSeqDelay = m_outDParms.m_seq_i_delay;
+	m_mSeqSeed = m_outDParms.m_seq_i_seed;
 
 	UpdateData(FALSE);
 	return TRUE; // return TRUE unless you set the focus to a control
@@ -53,9 +53,9 @@ void DlgEditDAMseq::OnOK()
 {
 	UpdateData(TRUE);
 
-	m_outDParms.mseq_iRatio = m_mSeqRatio;
-	m_outDParms.mseq_iDelay = m_mSeqDelay;
-	m_outDParms.mseq_iSeed = m_mSeqSeed;
+	m_outDParms.m_seq_i_ratio = m_mSeqRatio;
+	m_outDParms.m_seq_i_delay = m_mSeqDelay;
+	m_outDParms.m_seq_i_seed = m_mSeqSeed;
 
 	CDialogEx::OnOK();
 }

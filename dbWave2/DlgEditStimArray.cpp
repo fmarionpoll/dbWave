@@ -41,18 +41,18 @@ END_MESSAGE_MAP()
 void DlgEditStimArray::make_dialog_stretchable()
 {
 	// init dialog size
-	m_stretch.AttachDialogParent(this); // attach dialog pointer
-	m_stretch.newProp(IDC_LISTSTIM, XLEQ_XREQ, YTEQ_YBEQ);
-	m_stretch.newProp(IDOK, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDCANCEL, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_INSERT, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_DELETE, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_DELETE3, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_COPY, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_PASTE, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_REORDER, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_EXPORT, SZEQ_XREQ, SZEQ_YTEQ);
-	m_stretch.newProp(IDC_SIZEBOX, SZEQ_XREQ, SZEQ_YBEQ);
+	m_stretch.attach_dialog_parent(this); // attach dialog pointer
+	m_stretch.new_prop(IDC_LISTSTIM, XLEQ_XREQ, YTEQ_YBEQ);
+	m_stretch.new_prop(IDOK, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.new_prop(IDCANCEL, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.new_prop(IDC_INSERT, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.new_prop(IDC_DELETE, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.new_prop(IDC_DELETE3, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.new_prop(IDC_COPY, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.new_prop(IDC_PASTE, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.new_prop(IDC_REORDER, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.new_prop(IDC_EXPORT, SZEQ_XREQ, SZEQ_YTEQ);
+	m_stretch.new_prop(IDC_SIZEBOX, SZEQ_XREQ, SZEQ_YBEQ);
 }
 
 BOOL DlgEditStimArray::OnInitDialog()
@@ -103,7 +103,7 @@ void DlgEditStimArray::transfer_control_list_to_intervals_array()
 void DlgEditStimArray::OnSize(UINT nType, int cx, int cy)
 {
 	if (cx > 1 || cy > 1)
-		m_stretch.ResizeControls(nType, cx, cy);
+		m_stretch.resize_controls(nType, cx, cy);
 	CDialog::OnSize(nType, cx, cy);
 }
 

@@ -140,20 +140,20 @@ void ViewSpikeSort::define_sub_classed_items()
 
 void ViewSpikeSort::define_stretch_parameters()
 {
-	stretch_.AttachParent(this);
+	stretch_.attach_parent(this);
 
-	stretch_.newProp(IDC_MEASURE_MIN_MV, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_CHART_MEASURE, XLEQ_XREQ, YTEQ_YBEQ);
-	stretch_.newProp(IDC_CHART_BARS, XLEQ_XREQ, SZEQ_YTEQ);
-	stretch_.newProp(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YTEQ);
-	stretch_.newProp(IDC_TIME_LAST, SZEQ_XREQ, SZEQ_YTEQ);
-	stretch_.newProp(IDC_STATICRIGHT, SZEQ_XREQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_MEASURE_MIN_MV, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_TAB1, XLEQ_XREQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_CHART_MEASURE, XLEQ_XREQ, YTEQ_YBEQ);
+	stretch_.new_prop(IDC_CHART_BARS, XLEQ_XREQ, SZEQ_YTEQ);
+	stretch_.new_prop(IDC_FILESCROLL, XLEQ_XREQ, SZEQ_YTEQ);
+	stretch_.new_prop(IDC_TIME_LAST, SZEQ_XREQ, SZEQ_YTEQ);
+	stretch_.new_prop(IDC_STATICRIGHT, SZEQ_XREQ, SZEQ_YBEQ);
 
-	stretch_.newProp(IDC_STATICLEFT, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_STATIC12, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_EDIT_LEFT, SZEQ_XLEQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_EDIT_RIGHT, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_STATICLEFT, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_STATIC12, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_EDIT_LEFT, SZEQ_XLEQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_EDIT_RIGHT, SZEQ_XLEQ, SZEQ_YBEQ);
 }
 
 void ViewSpikeSort::init_charts_from_saved_parameters()

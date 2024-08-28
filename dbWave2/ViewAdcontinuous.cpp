@@ -150,14 +150,14 @@ void ViewADcontinuous::attach_controls()
 	m_chart_data_ad_.attach_external_y_ruler(&m_ad_y_ruler_bar);
 	m_chart_data_ad_.b_nice_grid = TRUE;
 
-	stretch_.AttachParent(this);
-	stretch_.newProp(IDC_DISPLAYDATA, XLEQ_XREQ, YTEQ_YBEQ);
-	stretch_.newProp(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
-	stretch_.newProp(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
-	stretch_.newProp(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YBEQ);
-	stretch_.newProp(IDC_SCROLLY_scrollbar, SZEQ_XREQ, YTEQ_YBEQ);
-	stretch_.newProp(IDC_UNZOOM, SZEQ_XREQ, SZEQ_YTEQ);
+	stretch_.attach_parent(this);
+	stretch_.new_prop(IDC_DISPLAYDATA, XLEQ_XREQ, YTEQ_YBEQ);
+	stretch_.new_prop(IDC_XSCALE, XLEQ_XREQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_YSCALE, SZEQ_XLEQ, YTEQ_YBEQ);
+	stretch_.new_prop(IDC_GAIN_button, SZEQ_XREQ, SZEQ_YTEQ);
+	stretch_.new_prop(IDC_BIAS_button, SZEQ_XREQ, SZEQ_YBEQ);
+	stretch_.new_prop(IDC_SCROLLY_scrollbar, SZEQ_XREQ, YTEQ_YBEQ);
+	stretch_.new_prop(IDC_UNZOOM, SZEQ_XREQ, SZEQ_YTEQ);
 
 	// bitmap buttons: load icons & set buttons
 	m_h_bias_ = AfxGetApp()->LoadIcon(IDI_BIAS);
@@ -643,7 +643,7 @@ void ViewADcontinuous::OnSize(const UINT n_type, const int cx, const int cy)
 
 		if (cx <= 0 || cy <= 0)
 			break;
-		stretch_.ResizeControls(n_type, cx, cy);
+		stretch_.resize_controls(n_type, cx, cy);
 		break;
 	default:
 		break;
@@ -1238,19 +1238,19 @@ void ViewADcontinuous::set_combo_start_output(int option)
 void ViewADcontinuous::on_bn_clicked_da_parameters2()
 {
 	DlgDAChannels dlg;
-	const auto i_size = options_output_data_->output_parms_array.GetSize();
+	const auto i_size = options_output_data_->output_parameters_array.GetSize();
 	if (i_size < 10)
-		options_output_data_->output_parms_array.SetSize(10);
+		options_output_data_->output_parameters_array.SetSize(10);
 	dlg.output_params_array.SetSize(10);
 	for (auto i = 0; i < 10; i++)
-		dlg.output_params_array[i] = options_output_data_->output_parms_array[i];
+		dlg.output_params_array[i] = options_output_data_->output_parameters_array[i];
 	const CWaveFormat* wave_format = &(options_input_data_->wave_format);
 	dlg.m_sampling_rate = wave_format->sampling_rate_per_channel;
 
 	if (IDOK == dlg.DoModal())
 	{
 		for (int i = 0; i < 10; i++)
-			options_output_data_->output_parms_array[i] = dlg.output_params_array[i];
+			options_output_data_->output_parameters_array[i] = dlg.output_params_array[i];
 		m_acq32_da.SetChannelList();
 		m_button_start_stop_da.EnableWindow(m_acq32_da.GetDigitalChannel() > 0);
 	}

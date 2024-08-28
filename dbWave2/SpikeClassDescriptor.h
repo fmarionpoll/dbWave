@@ -3,8 +3,8 @@ class SpikeClassDescriptor : public CObject
 {
 	DECLARE_SERIAL(SpikeClassDescriptor)
 protected:
-	int class_id_ = 0;
-	int n_items_ = 0;
+	int class_id_  {0};
+	int n_items_  {0};
 
 public:
 	SpikeClassDescriptor(); 
