@@ -13,11 +13,11 @@ class Tag : public CObject
 	~Tag();
 
 	//data
-	int ref_channel = -1;		// channel associated (-1) if none
-	int pixel = -1;
-	int value_int = 0;			// line value (for horizontal bar)
-	long value_long = -1;		// assoc long value (for vertical bar)
-	long long l_ticks = 0;		// length in ticks
+	int ref_channel{ -1 };		// channel associated (-1) if none
+	int pixel {-1};
+	int value_int{ 0 };			// line value (for horizontal bar)
+	long value_long{ -1 };		// assoc long value (for vertical bar)
+	long long l_ticks{ 0 };		// length in ticks
 	CString m_cs_comment{};		// comment
 
 	Tag& operator =(const Tag& arg);
