@@ -833,7 +833,7 @@ void ViewADcontinuous::on_sampling_mode()
 	dlg.m_p_wave_format = p_w_format;
 	dlg.m_rate_minimum = 1.0f;
 	dlg.m_rate_maximum = static_cast<float>(m_acq32_ad.GetMaximumFrequency() / p_w_format->scan_count);
-	dlg.m_buffer_W_size_maximum = static_cast<UINT>(65536) * 4;
+	dlg.m_buffer_w_size_maximum = static_cast<UINT>(65536) * 4;
 	dlg.m_under_sample_factor = options_input_data_->i_under_sample;
 	dlg.m_b_audible_sound = options_input_data_->b_audible_sound;
 	dlg.m_acquisition_duration = options_input_data_->duration_to_acquire;

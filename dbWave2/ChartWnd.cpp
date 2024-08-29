@@ -842,7 +842,7 @@ void ChartWnd::OnRButtonUp(const UINT n_flags, const CPoint point)
 			const auto params_old = new options_scope_struct();
 			*params_old = scope_structure_;
 			DlgChartProps dlg;
-			dlg.m_pscope = this;
+			dlg.m_p_scope = this;
 			b_allow_props_ = FALSE; // inhibit properties
 
 			// if Cancel or Escape or anything else: restore previous values

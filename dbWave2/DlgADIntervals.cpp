@@ -9,42 +9,42 @@
 #endif
 
 
-DlgADIntervals::DlgADIntervals(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgADIntervals::DlgADIntervals(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
-void DlgADIntervals::DoDataExchange(CDataExchange* pDX)
+void DlgADIntervals::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialog::DoDataExchange(pDX);
+	CDialog::DoDataExchange(p_dx);
 
-	DDX_Text(pDX, IDC_NBUFFERS, m_buffer_N_items);
-	DDX_Text(pDX, IDC_ADRATECHAN, m_ad_rate_channel);
-	DDX_Text(pDX, IDC_ACQDURATION, m_acquisition_duration);
-	DDX_Text(pDX, IDC_SWEEPDURATION, m_sweep_duration);
-	DDX_Text(pDX, IDC_BUFFERSIZE, m_buffer_W_size);
-	DDX_Text(pDX, IDC_EDIT1, m_under_sample_factor);
-	DDV_MinMaxUInt(pDX, m_under_sample_factor, 1, 20000);
-	DDX_Check(pDX, IDC_CHECK1, m_b_audible_sound);
-	DDX_Text(pDX, IDC_THRESHOLDCHAN, m_threshold_channel);
-	DDX_Text(pDX, IDC_THRESHOLDVAL, m_threshold_value);
+	DDX_Text(p_dx, IDC_NBUFFERS, m_buffer_n_items);
+	DDX_Text(p_dx, IDC_ADRATECHAN, m_ad_rate_channel);
+	DDX_Text(p_dx, IDC_ACQDURATION, m_acquisition_duration);
+	DDX_Text(p_dx, IDC_SWEEPDURATION, m_sweep_duration);
+	DDX_Text(p_dx, IDC_BUFFERSIZE, m_buffer_w_size);
+	DDX_Text(p_dx, IDC_EDIT1, m_under_sample_factor);
+	DDV_MinMaxUInt(p_dx, m_under_sample_factor, 1, 20000);
+	DDX_Check(p_dx, IDC_CHECK1, m_b_audible_sound);
+	DDX_Text(p_dx, IDC_THRESHOLDCHAN, m_threshold_channel);
+	DDX_Text(p_dx, IDC_THRESHOLDVAL, m_threshold_value);
 }
 
 BEGIN_MESSAGE_MAP(DlgADIntervals, CDialog)
-	ON_BN_CLICKED(IDC_ADCHANNELS, OnAdchannels)
-	ON_EN_CHANGE(IDC_ADRATECHAN, OnEnChangeAdratechan)
-	ON_EN_CHANGE(IDC_SWEEPDURATION, OnEnChangeDuration)
-	ON_EN_CHANGE(IDC_BUFFERSIZE, OnEnChangeBuffersize)
-	ON_EN_CHANGE(IDC_NBUFFERS, OnEnChangeNbuffers)
-	ON_EN_CHANGE(IDC_ACQDURATION, OnEnChangeAcqduration)
-	ON_BN_CLICKED(IDC_TRIGSOFT, OnTrigthresholdOFF)
-	ON_BN_CLICKED(IDC_TRIGSUPTHRESHOLD, OnTrigthresholdON)
-	ON_BN_CLICKED(IDC_TRIGKEYBOARD, OnTrigthresholdOFF)
-	ON_BN_CLICKED(IDC_TRIGEXTERNAL, OnTrigthresholdOFF)
-	ON_BN_CLICKED(IDC_TRIGINFTHRESHOLD, OnTrigthresholdON)
+	ON_BN_CLICKED(IDC_ADCHANNELS, on_ad_channels)
+	ON_EN_CHANGE(IDC_ADRATECHAN, on_en_change_ad_rate_per_channel)
+	ON_EN_CHANGE(IDC_SWEEPDURATION, on_en_change_duration)
+	ON_EN_CHANGE(IDC_BUFFERSIZE, on_en_change_buffer_size)
+	ON_EN_CHANGE(IDC_NBUFFERS, on_en_change_n_buffers)
+	ON_EN_CHANGE(IDC_ACQDURATION, on_en_change_acquisition_duration)
+	ON_BN_CLICKED(IDC_TRIGSOFT, on_trigger_threshold_off)
+	ON_BN_CLICKED(IDC_TRIGSUPTHRESHOLD, on_trigger_threshold_on)
+	ON_BN_CLICKED(IDC_TRIGKEYBOARD, on_trigger_threshold_off)
+	ON_BN_CLICKED(IDC_TRIGEXTERNAL, on_trigger_threshold_off)
+	ON_BN_CLICKED(IDC_TRIGINFTHRESHOLD, on_trigger_threshold_on)
 END_MESSAGE_MAP()
 
-void DlgADIntervals::OnAdchannels()
+void DlgADIntervals::on_ad_channels()
 {
 	m_postmessage = IDC_ADCHANNELS;
 	OnOK();
@@ -53,18 +53,18 @@ void DlgADIntervals::OnAdchannels()
 void DlgADIntervals::OnOK()
 {
 	UpdateData(TRUE);
-	m_acqdef.sampling_rate_per_channel = m_ad_rate_channel;
-	m_acqdef.buffer_size = WORD(m_buffer_W_size * UINT(m_acqdef.scan_count));
-	m_acqdef.buffer_n_items = short(m_buffer_N_items);
-	m_acqdef.sample_count = static_cast<long>(m_acquisition_duration * float(m_acqdef.scan_count) * m_ad_rate_channel);
-	m_acqdef.b_online_display = static_cast<CButton*>(GetDlgItem(IDC_ONLINEDISPLAY))->GetCheck();
-	m_acqdef.b_ad_write_to_file = static_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->GetCheck();
-	m_acqdef.data_flow = (GetCheckedRadioButton(IDC_CONTINUOUS, IDC_BURST) == IDC_CONTINUOUS) ? 0 : 1;
-	m_acqdef.duration = m_acquisition_duration;
+	wave_format_.sampling_rate_per_channel = m_ad_rate_channel;
+	wave_format_.buffer_size = static_cast<WORD>(m_buffer_w_size * static_cast<UINT>(wave_format_.scan_count));
+	wave_format_.buffer_n_items = static_cast<short>(m_buffer_n_items);
+	wave_format_.sample_count = static_cast<long>(m_acquisition_duration * static_cast<float>(wave_format_.scan_count) * m_ad_rate_channel);
+	wave_format_.b_online_display = static_cast<CButton*>(GetDlgItem(IDC_ONLINEDISPLAY))->GetCheck();
+	wave_format_.b_ad_write_to_file = static_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->GetCheck();
+	wave_format_.data_flow = (GetCheckedRadioButton(IDC_CONTINUOUS, IDC_BURST) == IDC_CONTINUOUS) ? 0 : 1;
+	wave_format_.duration = m_acquisition_duration;
 
-	m_acqdef.trig_chan = short(m_threshold_channel);
-	m_acqdef.trig_threshold = short(m_threshold_value);
-	auto i_id = short(GetCheckedRadioButton(IDC_TRIGSOFT, IDC_TRIGINFTHRESHOLD));
+	wave_format_.trig_chan = static_cast<short>(m_threshold_channel);
+	wave_format_.trig_threshold = static_cast<short>(m_threshold_value);
+	auto i_id = static_cast<short>(GetCheckedRadioButton(IDC_TRIGSOFT, IDC_TRIGINFTHRESHOLD));
 	switch (i_id)
 	{
 	case IDC_TRIGSOFT: i_id = OLx_TRG_SOFT;
@@ -80,9 +80,9 @@ void DlgADIntervals::OnOK()
 	default: i_id = OLx_TRG_SOFT;
 		break;
 	}
-	m_acqdef.trig_mode = i_id;
+	wave_format_.trig_mode = i_id;
 
-	m_p_wave_format->copy(&m_acqdef);
+	m_p_wave_format->copy(&wave_format_);
 	CDialog::OnOK();
 }
 
@@ -101,27 +101,27 @@ BOOL DlgADIntervals::OnInitDialog()
 	VERIFY(mm_ad_rate_channel.SubclassDlgItem(IDC_ADRATECHAN, this));
 	VERIFY(mm_sweep_duration.SubclassDlgItem(IDC_SWEEPDURATION, this));
 	VERIFY(mm_acquisition_duration.SubclassDlgItem(IDC_ACQDURATION, this));
-	VERIFY(mm_buffer_W_size.SubclassDlgItem(IDC_BUFFERSIZE, this));
-	VERIFY(mm_buffer_N_items.SubclassDlgItem(IDC_NBUFFERS, this));
+	VERIFY(mm_buffer_w_size.SubclassDlgItem(IDC_BUFFERSIZE, this));
+	VERIFY(mm_buffer_n_items.SubclassDlgItem(IDC_NBUFFERS, this));
 
 	// load data from document
-	m_acqdef.copy(m_p_wave_format);
-	m_ad_rate_channel = m_acqdef.sampling_rate_per_channel;
-	m_buffer_N_items = m_acqdef.buffer_n_items;
-	m_buffer_W_size = static_cast<UINT>(m_sweep_duration * m_ad_rate_channel / float(m_buffer_N_items));
+	wave_format_.copy(m_p_wave_format);
+	m_ad_rate_channel = wave_format_.sampling_rate_per_channel;
+	m_buffer_n_items = wave_format_.buffer_n_items;
+	m_buffer_w_size = static_cast<UINT>(m_sweep_duration * m_ad_rate_channel / static_cast<float>(m_buffer_n_items));
 
 	// init parameters manually if there is no driver
 	if (0.0f == m_rate_minimum) m_rate_minimum = 0.1f;
 	if (0.0f == m_rate_maximum) m_rate_maximum = 50000.f;
 
-	static_cast<CButton*>(GetDlgItem(IDC_ONLINEDISPLAY))->SetCheck(m_acqdef.b_online_display);
-	static_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->SetCheck(m_acqdef.b_ad_write_to_file);
-	auto i_id = (m_acqdef.data_flow == 0) ? IDC_CONTINUOUS : IDC_BURST;
+	static_cast<CButton*>(GetDlgItem(IDC_ONLINEDISPLAY))->SetCheck(wave_format_.b_online_display);
+	static_cast<CButton*>(GetDlgItem(IDC_WRITETODISK))->SetCheck(wave_format_.b_ad_write_to_file);
+	auto i_id = (wave_format_.data_flow == 0) ? IDC_CONTINUOUS : IDC_BURST;
 	CheckRadioButton(IDC_CONTINUOUS, IDC_BURST, i_id);
 
 	// trigger section
 	auto flag = FALSE;
-	switch (m_acqdef.trig_mode)
+	switch (wave_format_.trig_mode)
 	{
 	case OLx_TRG_SOFT: i_id = IDC_TRIGSOFT;
 		break;
@@ -141,10 +141,10 @@ BOOL DlgADIntervals::OnInitDialog()
 	CheckRadioButton(IDC_TRIGSOFT, IDC_TRIGINFTHRESHOLD, i_id);
 	GetDlgItem(IDC_THRESHOLDCHAN)->EnableWindow(flag);
 	GetDlgItem(IDC_THRESHOLDVAL)->EnableWindow(flag);
-	m_threshold_channel = m_acqdef.trig_chan;
+	m_threshold_channel = wave_format_.trig_chan;
 	if (m_threshold_channel < 0 || m_threshold_channel > 7)
 		m_threshold_channel = 0;
-	m_threshold_value = m_acqdef.trig_threshold;
+	m_threshold_value = wave_format_.trig_threshold;
 	if (m_threshold_value < 0 || m_threshold_value > 4095)
 		m_threshold_value = 2048;
 
@@ -152,7 +152,7 @@ BOOL DlgADIntervals::OnInitDialog()
 	return TRUE; // return TRUE  unless you set the focus to a control
 }
 
-void DlgADIntervals::OnEnChangeAdratechan()
+void DlgADIntervals::on_en_change_ad_rate_per_channel()
 {
 	if (mm_ad_rate_channel.m_b_entry_done)
 	{
@@ -169,25 +169,25 @@ void DlgADIntervals::OnEnChangeAdratechan()
 			m_ad_rate_channel = m_rate_maximum;
 			MessageBeep(MB_ICONEXCLAMATION);
 		}
-		m_sweep_duration = static_cast<float>(m_buffer_W_size) * static_cast<float>(m_buffer_N_items) / m_ad_rate_channel;
+		m_sweep_duration = static_cast<float>(m_buffer_w_size) * static_cast<float>(m_buffer_n_items) / m_ad_rate_channel;
 		UpdateData(FALSE);
 	}
 }
 
-void DlgADIntervals::OnEnChangeDuration()
+void DlgADIntervals::on_en_change_duration()
 {
 	if (mm_sweep_duration.m_b_entry_done)
 	{
 		mm_sweep_duration.OnEnChange(this, m_sweep_duration, 1.f, -1.f);
 		// check value and modifies dependent parameters
-		// leave adratechan constant, modifies m_bufferWsize & m_bufferNitems ...?
-		// first: try to adjust buffersize
+		// leave ad_rate_chan constant, modifies m_buffer_W_size & m_buffer_N_items ...?
+		// first: try to adjust buffer_size
 		const auto l_total_points = static_cast<long>(m_sweep_duration * m_ad_rate_channel);
-		long n_buffers = m_buffer_N_items;
+		long n_buffers = m_buffer_n_items;
 		auto l_w_size = l_total_points / n_buffers;
 		const auto l_w_size_min = static_cast<long>(m_ad_rate_channel * 0.05f); // minimum buffer size = 50 ms (!?)
 		// corresponding buffer size is too much: add one buffer and decrease buffer size
-		if (l_w_size > static_cast<long>(m_buffer_W_size_maximum))
+		if (l_w_size > static_cast<long>(m_buffer_w_size_maximum))
 		{
 			n_buffers++;
 			l_w_size = l_total_points / n_buffers;
@@ -205,65 +205,65 @@ void DlgADIntervals::OnEnChangeDuration()
 				l_w_size = l_total_points / n_buffers;
 			}
 		}
-		m_buffer_W_size = static_cast<WORD>(l_w_size);
-		m_buffer_N_items = static_cast<int>(n_buffers);
-		m_sweep_duration = float(l_w_size) * float(n_buffers) / m_ad_rate_channel;
+		m_buffer_w_size = static_cast<WORD>(l_w_size);
+		m_buffer_n_items = static_cast<int>(n_buffers);
+		m_sweep_duration = static_cast<float>(l_w_size) * static_cast<float>(n_buffers) / m_ad_rate_channel;
 		UpdateData(FALSE);
 	}
 }
 
-void DlgADIntervals::OnEnChangeBuffersize()
+void DlgADIntervals::on_en_change_buffer_size()
 {
-	if (mm_buffer_W_size.m_b_entry_done)
+	if (mm_buffer_w_size.m_b_entry_done)
 	{
-		mm_buffer_W_size.OnEnChange(this, m_buffer_W_size, 1, -1);
+		mm_buffer_w_size.OnEnChange(this, m_buffer_w_size, 1, -1);
 
 		// check value and update dependent parameter
 		const auto ui_w_size_min = static_cast<WORD>(m_ad_rate_channel * 0.05f); // minimum buffer size = 50 ms (!?)
-		if (m_buffer_W_size > m_buffer_W_size_maximum)
-			m_buffer_W_size = m_buffer_W_size_maximum;
-		else if (m_buffer_W_size < ui_w_size_min)
-			m_buffer_W_size = ui_w_size_min;
-		m_buffer_W_size = (m_buffer_W_size / m_under_sample_factor) * m_under_sample_factor;
-		if (m_buffer_W_size == 0)
-			m_buffer_W_size = m_under_sample_factor;
-		m_sweep_duration = float(m_buffer_W_size * m_buffer_N_items) / m_ad_rate_channel;
+		if (m_buffer_w_size > m_buffer_w_size_maximum)
+			m_buffer_w_size = m_buffer_w_size_maximum;
+		else if (m_buffer_w_size < ui_w_size_min)
+			m_buffer_w_size = ui_w_size_min;
+		m_buffer_w_size = (m_buffer_w_size / m_under_sample_factor) * m_under_sample_factor;
+		if (m_buffer_w_size == 0)
+			m_buffer_w_size = m_under_sample_factor;
+		m_sweep_duration = float(m_buffer_w_size * m_buffer_n_items) / m_ad_rate_channel;
 		UpdateData(FALSE);
 	}
 }
 
-void DlgADIntervals::OnEnChangeNbuffers()
+void DlgADIntervals::on_en_change_n_buffers()
 {
-	if (mm_buffer_N_items.m_b_entry_done)
+	if (mm_buffer_n_items.m_b_entry_done)
 	{
-		mm_buffer_N_items.OnEnChange(this, m_buffer_N_items, 1, -1);
+		mm_buffer_n_items.OnEnChange(this, m_buffer_n_items, 1, -1);
 		// update dependent parameters
-		if (m_buffer_N_items < 1)
-			m_buffer_N_items = 1;
-		m_sweep_duration = float(m_buffer_W_size * m_buffer_N_items) / m_ad_rate_channel;
+		if (m_buffer_n_items < 1)
+			m_buffer_n_items = 1;
+		m_sweep_duration = float(m_buffer_w_size * m_buffer_n_items) / m_ad_rate_channel;
 		UpdateData(FALSE);
 	}
 }
 
-void DlgADIntervals::OnEnChangeAcqduration()
+void DlgADIntervals::on_en_change_acquisition_duration()
 {
 	if (mm_acquisition_duration.m_b_entry_done)
 	{
 		mm_acquisition_duration.OnEnChange(this, m_acquisition_duration, 1.f, -1.f);
-		const auto min_duration = static_cast<float>(m_buffer_W_size) / m_ad_rate_channel;
+		const auto min_duration = static_cast<float>(m_buffer_w_size) / m_ad_rate_channel;
 		if (m_acquisition_duration < min_duration)
 			m_acquisition_duration = min_duration;
 		UpdateData(FALSE);
 	}
 }
 
-void DlgADIntervals::OnTrigthresholdOFF()
+void DlgADIntervals::on_trigger_threshold_off()
 {
 	GetDlgItem(IDC_THRESHOLDCHAN)->EnableWindow(FALSE);
 	GetDlgItem(IDC_THRESHOLDVAL)->EnableWindow(FALSE);
 }
 
-void DlgADIntervals::OnTrigthresholdON()
+void DlgADIntervals::on_trigger_threshold_on()
 {
 	GetDlgItem(IDC_THRESHOLDCHAN)->EnableWindow(TRUE);
 	GetDlgItem(IDC_THRESHOLDVAL)->EnableWindow(TRUE);

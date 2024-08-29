@@ -10,18 +10,18 @@ public:
 	// Dialog Data
 	enum { IDD = IDD_BROWSEFILE };
 
-	BOOL m_allchannels { false };
-	BOOL m_centercurves{ false };
-	BOOL m_completefile{ false };
-	BOOL m_maximizegain{ false };
-	BOOL m_splitcurves{ false };
-	BOOL m_multirowdisplay{ false };
-	BOOL m_keepforeachfile{ false };
-	options_view_data* mfBR{ nullptr };
+	BOOL m_all_channels { false };
+	BOOL m_center_curves{ false };
+	BOOL m_complete_file{ false };
+	BOOL m_maximize_gain{ false };
+	BOOL m_split_curves{ false };
+	BOOL m_multi_row_display{ false };
+	BOOL m_keep_for_each_file{ false };
+	options_view_data* p_options_view_data{ nullptr };
 
 	// Implementation
 protected:
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	void DoDataExchange(CDataExchange* p_dx) override; // DDX/DDV support
 
 	// Generated message map functions
 	BOOL OnInitDialog() override;

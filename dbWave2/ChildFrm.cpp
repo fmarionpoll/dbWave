@@ -164,7 +164,7 @@ void CChildFrame::on_update_view_cursor_mode_zoom_in(CCmdUI * p_cmd_ui)
 void CChildFrame::on_options_browse_mode()
 {
 	DlgBrowseFile dlg;
-	dlg.mfBR = &(static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data);
+	dlg.p_options_view_data = &(static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data);
 	dlg.DoModal();
 }
 
