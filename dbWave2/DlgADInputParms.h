@@ -31,12 +31,12 @@ public:
 	GridCtrl m_grid;
 
 	// parameters passed:
-	CWaveFormat* m_pw_format  {nullptr};		// acquisition parameters
+	CWaveFormat* m_pw_format  {nullptr};	// acquisition parameters
 	CWaveChanArray* m_pch_array  {nullptr};	// acquisition channels
 	BOOL b_chain_dialog  {false};			// chain dialog (no FALSE)
-	WORD m_postmessage  {0};					// launch assoc dialog
+	WORD m_postmessage  {0};				// launch assoc dialog
 
-	BOOL channel_type { OLx_CHNT_SINGLEENDED}; // flag TRUEsingle ended; falsedifferential - default: false
+	BOOL channel_type { OLx_CHNT_SINGLEENDED}; // flag TRUE single ended; false differential - default: false
 	int n_channels_max_di  {8};				//  m_Analog.GetSSCaps(OLSSC_MAXDICHANS); default  8
 	int n_channels_max_se  {16};				//  m_Analog.GetSSCaps(OLSSC_MAXSECHANS); default  16
 	BOOL b_command_amplifier  {false};		// change ampli settings on the fly (if present); default  none

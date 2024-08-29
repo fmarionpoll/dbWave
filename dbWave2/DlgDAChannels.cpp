@@ -121,11 +121,11 @@ void DlgDAChannels::on_bn_clicked_ok()
 	CDialogEx::OnOK();
 }
 
-CString DlgDAChannels::comboText[] = {
+CString DlgDAChannels::combo_text_[] = {
 	_T("Stored sequence"), _T("Sinusoid"), _T("Square"), _T("Triangle"), _T("M-sequence"), _T("Noise"), _T("Data File"),
 	_T("Constant"), _T("OFF"), _T("ON")
 };
-DWORD DlgDAChannels::comboVal[] = {
+DWORD DlgDAChannels::combo_val_[] = {
 	DA_SEQUENCEWAVE, DA_SINEWAVE, DA_SQUAREWAVE, DA_TRIANGLEWAVE, DA_MSEQWAVE, DA_NOISEWAVE, DA_FILEWAVE, DA_CONSTANT,
 	DA_ZERO, DA_ONE
 };
@@ -140,27 +140,27 @@ void DlgDAChannels::fill_combo(int channel)
 	case 1:
 		for (auto i = 0; i < 8; i++)
 		{
-			const auto j = p_combo->AddString(comboText[i]);
-			p_combo->SetItemData(j, comboVal[i]);
+			const auto j = p_combo->AddString(combo_text_[i]);
+			p_combo->SetItemData(j, combo_val_[i]);
 		}
 		break;
 	default:
 		{
 			auto i = 0;
-			auto j = p_combo->AddString(comboText[i]);
-			p_combo->SetItemData(j, comboVal[i]);
+			auto j = p_combo->AddString(combo_text_[i]);
+			p_combo->SetItemData(j, combo_val_[i]);
 			i = 2;
-			j = p_combo->AddString(comboText[i]);
-			p_combo->SetItemData(j, comboVal[i]);
+			j = p_combo->AddString(combo_text_[i]);
+			p_combo->SetItemData(j, combo_val_[i]);
 			i = 4;
-			j = p_combo->AddString(comboText[i]);
-			p_combo->SetItemData(j, comboVal[i]);
+			j = p_combo->AddString(combo_text_[i]);
+			p_combo->SetItemData(j, combo_val_[i]);
 			i = 8;
-			j = p_combo->AddString(comboText[i]);
-			p_combo->SetItemData(j, comboVal[i]);
+			j = p_combo->AddString(combo_text_[i]);
+			p_combo->SetItemData(j, combo_val_[i]);
 			i = 9;
-			j = p_combo->AddString(comboText[i]);
-			p_combo->SetItemData(j, comboVal[i]);
+			j = p_combo->AddString(combo_text_[i]);
+			p_combo->SetItemData(j, combo_val_[i]);
 		}
 		break;
 	}

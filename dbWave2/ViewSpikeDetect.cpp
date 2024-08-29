@@ -1776,9 +1776,9 @@ void ViewSpikeDetection::on_tools_data_series()
 {
 	// init dialog data
 	DlgDataSeries dlg;
-	dlg.m_pChartDataWnd = &chart_data_filtered_;
-	dlg.m_pdbDoc = GetDocument()->m_p_data_doc;
-	dlg.m_listindex = 0;
+	dlg.m_p_chart_data_wnd = &chart_data_filtered_;
+	dlg.m_pdb_doc = GetDocument()->m_p_data_doc;
+	dlg.m_list_index = 0;
 
 	// invoke dialog box
 	dlg.DoModal();
@@ -1811,23 +1811,23 @@ void ViewSpikeDetection::print_data_cartridge(CDC* p_dc, ChartData* p_data_chart
 void ViewSpikeDetection::on_edit_copy()
 {
 	DlgCopyAs dlg;
-	dlg.m_nabscissa = options_view_data_->hz_resolution;
-	dlg.m_nordinates = options_view_data_->vt_resolution;
-	dlg.m_bgraphics = options_view_data_->b_graphics;
-	dlg.m_ioption = options_view_data_->b_contours;
-	dlg.m_iunit = options_view_data_->b_units;
+	dlg.m_n_abscissa = options_view_data_->hz_resolution;
+	dlg.m_n_ordinates = options_view_data_->vt_resolution;
+	dlg.b_graphics = options_view_data_->b_graphics;
+	dlg.m_i_option = options_view_data_->b_contours;
+	dlg.m_i_unit = options_view_data_->b_units;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
-		options_view_data_->b_graphics = dlg.m_bgraphics;
-		options_view_data_->b_contours = dlg.m_ioption;
-		options_view_data_->b_units = dlg.m_iunit;
-		options_view_data_->hz_resolution = dlg.m_nabscissa;
-		options_view_data_->vt_resolution = dlg.m_nordinates;
+		options_view_data_->b_graphics = dlg.b_graphics;
+		options_view_data_->b_contours = dlg.m_i_option;
+		options_view_data_->b_units = dlg.m_i_unit;
+		options_view_data_->hz_resolution = dlg.m_n_abscissa;
+		options_view_data_->vt_resolution = dlg.m_n_ordinates;
 
-		if (!dlg.m_bgraphics)
-			chart_data_filtered_.copy_as_text(dlg.m_ioption, dlg.m_iunit, dlg.m_nabscissa);
+		if (!dlg.b_graphics)
+			chart_data_filtered_.copy_as_text(dlg.m_i_option, dlg.m_i_unit, dlg.m_n_abscissa);
 		else
 		{
 			serialize_windows_state(b_save);

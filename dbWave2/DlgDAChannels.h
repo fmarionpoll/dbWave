@@ -20,7 +20,7 @@ class DlgDAChannels : public CDialogEx
 	DECLARE_DYNAMIC(DlgDAChannels)
 
 public:
-	DlgDAChannels(CWnd* p_parent = nullptr); // standard constructor
+	DlgDAChannels(CWnd* p_parent = nullptr); 
 	~DlgDAChannels() override;
 
 	// Dialog Data
@@ -31,15 +31,15 @@ public:
 	BOOL m_bChannel2;
 
 protected:
-	void DoDataExchange(CDataExchange* p_dx) override; // DDX/DDV support
+	void DoDataExchange(CDataExchange* p_dx) override; 
 	void edit_sequence(int i_id, int channel);
 	void fill_combo(int channel);
 	void select_combo_item_from_output_parameters_array(int i_val);
 	void on_bn_clicked_button_source(int channel);
 	void on_cbn_sel_change_combo_source(int i_val);
 
-	static CString comboText[];
-	static DWORD comboVal[];
+	static CString combo_text_[];
+	static DWORD combo_val_[];
 
 public:
 	CIntervals m_stimulus_saved;

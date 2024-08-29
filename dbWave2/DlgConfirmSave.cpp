@@ -9,10 +9,10 @@
 
 IMPLEMENT_DYNAMIC(DlgConfirmSave, CDialog)
 
-DlgConfirmSave::DlgConfirmSave(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgConfirmSave::DlgConfirmSave(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
-	m_timeleft = 5;
+	m_time_left_ = 5;
 }
 
 DlgConfirmSave::~DlgConfirmSave()
@@ -27,23 +27,23 @@ END_MESSAGE_MAP()
 BOOL DlgConfirmSave::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	m_timeleft = 5; // number of seconds during which the routine will wait
-	m_cstimeleft.Format(_T("(in %i seconds)"), m_timeleft);
-	SetDlgItemText(IDC_STATIC2, m_cstimeleft);
-	SetDlgItemText(IDC_FILENAME, m_csfilename);
+	m_time_left_ = 5; // number of seconds during which the routine will wait
+	m_cs_time_left.Format(_T("(in %i seconds)"), m_time_left_);
+	SetDlgItemText(IDC_STATIC2, m_cs_time_left);
+	SetDlgItemText(IDC_FILENAME, m_cs_file_name);
 	SetTimer(1, 1000, nullptr);
 	return TRUE;
 }
 
-void DlgConfirmSave::OnTimer(UINT nIDEvent)
+void DlgConfirmSave::OnTimer(UINT n_id_event)
 {
 	// update variables
-	m_timeleft--;
-	m_cstimeleft.Format(_T("(in %i seconds)"), m_timeleft);
-	SetDlgItemText(IDC_STATIC2, m_cstimeleft);
+	m_time_left_--;
+	m_cs_time_left.Format(_T("(in %i seconds)"), m_time_left_);
+	SetDlgItemText(IDC_STATIC2, m_cs_time_left);
 	// pass info to parent and take appropriate action
-	CDialog::OnTimer(nIDEvent);
-	if (m_timeleft > 0)
+	CDialog::OnTimer(n_id_event);
+	if (m_time_left_ > 0)
 		SetTimer(1, 1000, nullptr); // one more tick
 	else
 		EndDialog(IDOK); // end of the game

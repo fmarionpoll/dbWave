@@ -9,15 +9,15 @@ public:
 	// Dialog Data
 	enum { IDD = IDD_DATACOMMENTS };
 
-	BOOL m_bacqchans{ false };
-	BOOL m_bacqcomments{ false };
-	BOOL m_bacqdate{ false };
-	BOOL m_bacqtime{ false };
-	BOOL m_bfilesize{ false };
-	BOOL m_bacqchsetting{ false };
-	BOOL m_bdatabasecols{ false };
-	BOOL m_btoExcel{ false };
-	options_view_data* m_pvO{ nullptr };
+	BOOL b_acq_channels{ false };
+	BOOL b_acq_comments{ false };
+	BOOL b_acq_date{ false };
+	BOOL b_acq_time{ false };
+	BOOL b_file_size{ false };
+	BOOL b_acq_channel_setting{ false };
+	BOOL b_data_base_cols{ false };
+	BOOL b_to_excel{ false };
+	options_view_data* p_options_view_data{ nullptr };
 
 protected:
 	void DoDataExchange(CDataExchange* pDX) override; 

@@ -193,7 +193,7 @@ void CChildFrame::on_tools_export_data_comments()
 {
 	DlgDataComments dlg;
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	dlg.m_pvO = &(p_app->options_view_data);
+	dlg.p_options_view_data = &(p_app->options_view_data);
 	if (IDOK == dlg.DoModal())
 	{
 		UpdateWindow();

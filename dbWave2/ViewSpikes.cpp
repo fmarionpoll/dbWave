@@ -1576,20 +1576,20 @@ void ViewSpikes::update_file_scroll()
 void ViewSpikes::on_edit_copy()
 {
 	DlgCopyAs dlg;
-	dlg.m_nabscissa = options_view_data_->hz_resolution;
-	dlg.m_nordinates = options_view_data_->vt_resolution;
-	dlg.m_bgraphics = options_view_data_->b_graphics;
-	dlg.m_ioption = options_view_data_->b_contours;
-	dlg.m_iunit = options_view_data_->b_units;
+	dlg.m_n_abscissa = options_view_data_->hz_resolution;
+	dlg.m_n_ordinates = options_view_data_->vt_resolution;
+	dlg.b_graphics = options_view_data_->b_graphics;
+	dlg.m_i_option = options_view_data_->b_contours;
+	dlg.m_i_unit = options_view_data_->b_units;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
-		options_view_data_->b_graphics = dlg.m_bgraphics;
-		options_view_data_->b_contours = dlg.m_ioption;
-		options_view_data_->b_units = dlg.m_iunit;
-		options_view_data_->hz_resolution = dlg.m_nabscissa;
-		options_view_data_->vt_resolution = dlg.m_nordinates;
+		options_view_data_->b_graphics = dlg.b_graphics;
+		options_view_data_->b_contours = dlg.m_i_option;
+		options_view_data_->b_units = dlg.m_i_unit;
+		options_view_data_->hz_resolution = dlg.m_n_abscissa;
+		options_view_data_->vt_resolution = dlg.m_n_ordinates;
 
 		// output rectangle requested by user
 		CRect rect(0, 0, options_view_data_->hz_resolution, options_view_data_->vt_resolution);

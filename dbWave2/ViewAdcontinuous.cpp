@@ -363,7 +363,7 @@ void ViewADcontinuous::save_and_close_file()
 		if (pWFormat->sample_count > 1) // make sure real data have been acquired
 		{
 			DlgConfirmSave dlg;
-			dlg.m_csfilename = sz_file_name_;
+			dlg.m_cs_file_name = sz_file_name_;
 			result = dlg.DoModal();
 		}
 		// if no data or user answered no, erase the data

@@ -14,8 +14,8 @@
 
 IMPLEMENT_DYNAMIC(DlgDAOutputParameters, CDialogEx)
 
-DlgDAOutputParameters::DlgDAOutputParameters(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD, pParent)
+DlgDAOutputParameters::DlgDAOutputParameters(CWnd* p_parent /*=NULL*/)
+	: CDialogEx(IDD, p_parent)
 {
 }
 
@@ -23,9 +23,9 @@ DlgDAOutputParameters::~DlgDAOutputParameters()
 {
 }
 
-void DlgDAOutputParameters::DoDataExchange(CDataExchange* pDX)
+void DlgDAOutputParameters::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialogEx::DoDataExchange(pDX);
+	CDialogEx::DoDataExchange(p_dx);
 }
 
 BEGIN_MESSAGE_MAP(DlgDAOutputParameters, CDialogEx)
