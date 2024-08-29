@@ -111,7 +111,7 @@ BOOL CNoteDoc::open_file_list(CString& cs_path_name, CStringArray& cs_array_file
                               const int n_columns) const
 {
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	const auto p_dbwave_doc = static_cast<CdbWaveDoc*>((p_app->m_dbWaveView_Template)->CreateNewDocument());
+	const auto p_dbwave_doc = static_cast<CdbWaveDoc*>((p_app->m_db_wave_view_template)->CreateNewDocument());
 	BOOL flag = FALSE;
 	if (p_dbwave_doc != nullptr)
 	{
@@ -133,9 +133,9 @@ BOOL CNoteDoc::open_file_list(CString& cs_path_name, CStringArray& cs_array_file
 				p_dbwave_doc->import_file_list(cs_descriptions_array, n_columns, p_app->options_import.header_present);
 			else
 				p_dbwave_doc->import_file_list(cs_array_files);
-			const auto p_wave_format = (p_app->m_dbWaveView_Template)->CreateNewFrame(p_dbwave_doc, nullptr);
+			const auto p_wave_format = (p_app->m_db_wave_view_template)->CreateNewFrame(p_dbwave_doc, nullptr);
 			ASSERT(p_wave_format != NULL);
-			p_app->m_dbWaveView_Template->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
+			p_app->m_db_wave_view_template->InitialUpdateFrame(p_wave_format, p_dbwave_doc, TRUE);
 		}
 	}
 	return flag;

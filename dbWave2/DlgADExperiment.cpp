@@ -431,6 +431,6 @@ void DlgADExperiment::OnBnClickedButtonNextid()
 {
 	const auto p_database = m_pdbDoc->db_table;
 	p_database->m_main_table_set.get_max_id();
-	m_insectnumber = p_database->m_main_table_set.max_insectID + 1;
+	m_insectnumber = p_database->m_main_table_set.max_insect_id + 1;
 	UpdateData(FALSE);
 }

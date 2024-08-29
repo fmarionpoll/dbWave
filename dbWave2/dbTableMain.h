@@ -77,46 +77,46 @@ public:
 
 	// Field/Param Data - these parameters are equivalent to column headers in a table, where each row is a record
 
-	long m_id = 0;					// 1
-	CString m_FileDat = _T("");		// 2
-	CString m_FileSpk = _T("");		// 3
-	COleDateTime m_table_acq_date = static_cast<DATE>(0); // 4
-	CString m_acq_comment = _T(""); // 5
-	long m_id_insect = 0;			// 6
-	long m_id_sensillum = 0;		// 7
-	CString m_more = _T("");		// 8
-	long m_insect_ID = 0;			// 9
-	long m_location_ID = 0;			// 10
-	long m_operator_ID = 0;			// 11
-	long m_sensillum_ID = 0;		// 12
-	long m_path_ID = 0;				// 13
-	long m_path2_ID = 0;			// 14 unused 
-	long m_dataLen = 0;				// 15
-	long m_nSpikes = 0;				// 16
-	long m_nSpikeClasses = 0;		// 17
-	long m_stim_ID = 0;				// 18
-	long m_conc_ID = 0;				// 19
-	long m_stim2_ID = 0;			// 20
-	long m_conc2_ID = 0;			// 21
-	long m_flag = 0;				// 22
-	long m_strain_ID = 0;			// 23
-	long m_sex_ID = 0;				// 24
-	long m_repeat = 0;				// 25
-	long m_repeat2 = 0;				// 26
-	COleDateTime m_acqDate_day = static_cast<DATE>(0); // 27
-	COleDateTime m_acqDate_time = static_cast<DATE>(0); // 28 xxxxxxx suppress this parameter, leave dummy ?
-	long m_experiment_ID = 0;				// 29
+	long m_id  {0};					// 1
+	CString m_file_dat  {_T("")};		// 2
+	CString m_file_spk  {_T("")};		// 3
+	COleDateTime m_table_acq_date  {static_cast<DATE>(0)}; // 4
+	CString m_acq_comment  {_T("")}; // 5
+	long m_id_insect  {0};			// 6
+	long m_id_sensillum  {0};		// 7
+	CString m_more  {_T("")};	// 8
+	long m_insect_id  {0};			// 9
+	long m_location_id  {0};		// 10
+	long m_operator_id  {0};		// 11
+	long m_sensillum_id  {0};		// 12
+	long m_path_id {0};				// 13
+	long m_path2_id  {0};			// 14 unused 
+	long m_data_len  {0};			// 15
+	long m_n_spikes  {0};			// 16
+	long m_n_spike_classes  {0};	// 17
+	long m_stimulus_id  {0};		// 18
+	long m_concentration_id  {0};	// 19
+	long m_stimulus2_id  {0};		// 20
+	long m_concentration2_id  {0};	// 21
+	long m_flag  {0};				// 22
+	long m_strain_id  {0};			// 23
+	long m_sex_id  {0};				// 24
+	long m_repeat  {0};				// 25
+	long m_repeat2  {0};			// 26
+	COleDateTime m_acq_date_day  {static_cast<DATE>(0)}; // 27
+	COleDateTime m_acq_date_time  {static_cast<DATE>(0)}; // 28 xxxxxxx suppress this parameter, leave dummy ?
+	long m_experiment_id  {0};		// 29
 
 	// filter parameters
-	BOOL m_b_filter_on = false;
+	BOOL m_b_filter_on  {false};
 	DB_ITEMDESC m_desc[NCOLUMNS];
-	CString m_cs_default_sql = _T("[table]");
+	CString m_cs_default_sql  {_T("[table]")};
 
 	// temp values
-	long max_insectID = 0;
-	long max_sensillumID = 0;
-	long max_ID = 0;
-	CString m_default_name = _T("");
+	long max_insect_id  { 0};
+	long max_sensillum_id  {0};
+	long max_id  {0};
+	CString m_default_name  {_T("")};
 
 	void build_and_sort_id_arrays();
 	void copy_path_to_path2();

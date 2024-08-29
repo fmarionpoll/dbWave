@@ -325,9 +325,9 @@ CString CdbWaveDoc::db_set_current_spike_file_name()
 	try
 	{
 		db_table->m_main_table_set.Edit();
-		db_table->m_main_table_set.SetFieldNull(&(db_table->m_main_table_set.m_FileSpk), TRUE);
-		db_table->m_main_table_set.m_FileSpk = cs_name;
-		db_table->m_main_table_set.m_path2_ID = db_table->m_main_table_set.m_path_ID;
+		db_table->m_main_table_set.SetFieldNull(&(db_table->m_main_table_set.m_file_spk), TRUE);
+		db_table->m_main_table_set.m_file_spk = cs_name;
+		db_table->m_main_table_set.m_path2_id = db_table->m_main_table_set.m_path_id;
 		db_table->m_main_table_set.Update();
 	}
 	catch (CDaoException* e)
@@ -359,7 +359,7 @@ CString CdbWaveDoc::db_get_current_spk_file_name(const BOOL b_test)
 long CdbWaveDoc::db_get_data_len() const
 {
 	long data_length = 0;
-	try { data_length = db_table->m_main_table_set.m_dataLen; }
+	try { data_length = db_table->m_main_table_set.m_data_len; }
 	catch (CDaoException* e)
 	{
 		DisplayDaoException(e, 11);
@@ -623,7 +623,7 @@ void CdbWaveDoc::set_db_n_spikes(const long n_spikes) const
 	try
 	{
 		db_table->m_main_table_set.Edit();
-		db_table->m_main_table_set.m_nSpikes = n_spikes;
+		db_table->m_main_table_set.m_n_spikes = n_spikes;
 		db_table->m_main_table_set.Update();
 	}
 	catch (CDaoException* e)
@@ -635,12 +635,12 @@ void CdbWaveDoc::set_db_n_spikes(const long n_spikes) const
 
 long CdbWaveDoc::get_db_n_spikes() const
 {
-	return db_table->m_main_table_set.m_nSpikes;
+	return db_table->m_main_table_set.m_n_spikes;
 }
 
 long CdbWaveDoc::get_db_n_spike_classes() const
 {
-	return db_table->m_main_table_set.m_nSpikeClasses;
+	return db_table->m_main_table_set.m_n_spike_classes;
 }
 
 void CdbWaveDoc::set_db_n_spike_classes(const long n_classes) const
@@ -648,7 +648,7 @@ void CdbWaveDoc::set_db_n_spike_classes(const long n_classes) const
 	try
 	{
 		db_table->m_main_table_set.Edit();
-		db_table->m_main_table_set.m_nSpikeClasses = n_classes;
+		db_table->m_main_table_set.m_n_spike_classes = n_classes;
 		db_table->m_main_table_set.Update();
 	}
 	catch (CDaoException* e)
@@ -890,25 +890,25 @@ BOOL CdbWaveDoc::copy_files_to_directory(const CString & path)
 			{
 				old_names_array.Add(current_datafile_name_);
 
-				const UINT uid = db_table->m_main_table_set.m_path_ID;
+				const UINT uid = db_table->m_main_table_set.m_path_id;
 				auto j = 0;
 				for (auto i = 0; i < ui_id_array.GetSize(); i++, j++)
 					if (ui_id_array.GetAt(i) == uid)
 						break;
 				ui_id_new_path_array.Add(j);
-				new_names_array.Add(db_table->m_main_table_set.m_FileDat);
+				new_names_array.Add(db_table->m_main_table_set.m_file_dat);
 			}
 			// spike file
 			if (!current_spike_file_name_.IsEmpty())
 			{
 				old_names_array.Add(current_spike_file_name_);
-				const UINT uid = db_table->m_main_table_set.m_path2_ID;
+				const UINT uid = db_table->m_main_table_set.m_path2_id;
 				auto j = 0;
 				for (auto i = 0; i < ui_id_array.GetSize(); i++, j++)
 					if (ui_id_array.GetAt(i) == uid)
 						break;
 				ui_id_new_path_array.Add(j);
-				new_names_array.Add(db_table->m_main_table_set.m_FileSpk);
+				new_names_array.Add(db_table->m_main_table_set.m_file_spk);
 			}
 			// move to next pRecord
 			db_table->m_main_table_set.MoveNext();
@@ -1237,18 +1237,18 @@ void CdbWaveDoc::set_record_file_names(const source_data * record) const
 	// save file names
 	if (record->data_file_present)
 	{
-		db_table->m_main_table_set.m_path_ID = db_table->m_path_set.get_string_in_linked_table(record->cs_path);
-		db_table->m_main_table_set.SetFieldNull(&(db_table->m_main_table_set.m_FileDat), FALSE);
-		db_table->m_main_table_set.m_FileDat = record->cs_dat_file.Right(
+		db_table->m_main_table_set.m_path_id = db_table->m_path_set.get_string_in_linked_table(record->cs_path);
+		db_table->m_main_table_set.SetFieldNull(&(db_table->m_main_table_set.m_file_dat), FALSE);
+		db_table->m_main_table_set.m_file_dat = record->cs_dat_file.Right(
 			record->cs_dat_file.GetLength() - record->i_last_backslash_position - 1);
-		db_table->m_main_table_set.m_dataLen = m_p_data_doc->get_doc_channel_length();
+		db_table->m_main_table_set.m_data_len = m_p_data_doc->get_doc_channel_length();
 	}
 
 	if (record->spike_file_present)
 	{
-		db_table->m_main_table_set.m_path2_ID = db_table->m_path_set.get_string_in_linked_table(record->cs_path);
-		db_table->m_main_table_set.SetFieldNull(&(db_table->m_main_table_set.m_FileSpk), FALSE);
-		db_table->m_main_table_set.m_FileSpk = record->cs_spk_file.Right(
+		db_table->m_main_table_set.m_path2_id = db_table->m_path_set.get_string_in_linked_table(record->cs_path);
+		db_table->m_main_table_set.SetFieldNull(&(db_table->m_main_table_set.m_file_spk), FALSE);
+		db_table->m_main_table_set.m_file_spk = record->cs_spk_file.Right(
 			record->cs_spk_file.GetLength() - record->i_last_backslash_position - 1);
 	}
 }
@@ -1258,11 +1258,11 @@ boolean CdbWaveDoc::set_record_spk_classes(const source_data * record) const
 	const boolean flag = static_cast<boolean>(m_p_spk_doc->OnOpenDocument(record->cs_spk_file));
 	if (flag)
 	{
-		db_table->m_main_table_set.m_nSpikes = m_p_spk_doc->get_spike_list_current()->get_spikes_count();
+		db_table->m_main_table_set.m_n_spikes = m_p_spk_doc->get_spike_list_current()->get_spikes_count();
 		if (m_p_spk_doc->get_spike_list_current()->get_classes_count() <= 0)
 			m_p_spk_doc->get_spike_list_current()->update_class_list();
-		db_table->m_main_table_set.m_nSpikeClasses = m_p_spk_doc->get_spike_list_current()->get_classes_count();
-		db_table->m_main_table_set.m_dataLen = m_p_spk_doc->m_wave_format.get_nb_points_sampled_per_channel();
+		db_table->m_main_table_set.m_n_spike_classes = m_p_spk_doc->get_spike_list_current()->get_classes_count();
+		db_table->m_main_table_set.m_data_len = m_p_spk_doc->m_wave_format.get_nb_points_sampled_per_channel();
 	}
 	return flag;
 }
@@ -1295,7 +1295,7 @@ void CdbWaveDoc::import_file_list(CStringArray& cs_descriptors_array, const int 
 
 	// browse existing database array - collect data file acquisition time and IDs already used
 	db_table->m_main_table_set.get_max_id();
-	long m_id = db_table->m_main_table_set.max_ID;
+	long m_id = db_table->m_main_table_set.max_id;
 	const auto n_files_ok = check_files_can_be_opened(cs_descriptors_array, shared_file, n_columns, b_header);
 
 	// ---------------------------------------------file loop: read infos --------------------------------
@@ -1763,9 +1763,9 @@ CString CdbWaveDoc::export_database_data(const int option) const
 
 	DB_ITEMDESC desc;
 	db_table->get_record_item_value(CH_PATH2_ID, &desc);
-	auto filename = desc.csVal;
+	auto filename = desc.cs_val;
 	db_table->get_record_item_value(CH_FILESPK, &desc);
-	filename = filename + _T('\\') + desc.csVal;
+	filename = filename + _T('\\') + desc.cs_val;
 	cs_file_comment.Format(_T("%i%s%s"), db_table->m_main_table_set.m_id, (LPCTSTR)separator, (LPCTSTR)filename);
 
 	// source data file items
@@ -1780,49 +1780,49 @@ CString CdbWaveDoc::export_database_data(const int option) const
 	if (options_view_spikes->b_acq_comments)
 	{
 		db_table->get_record_item_value(CH_EXPT_ID, &desc);
-		cs_file_comment += separator + desc.csVal;
+		cs_file_comment += separator + desc.cs_val;
 
 		db_table->get_record_item_value(CH_IDINSECT, &desc);
-		cs_dummy.Format(_T("%i"), desc.lVal);
+		cs_dummy.Format(_T("%i"), desc.l_val);
 		cs_file_comment += separator + cs_dummy;
 		db_table->get_record_item_value(CH_IDSENSILLUM, &desc);
-		cs_dummy.Format(_T("%i"), desc.lVal);
+		cs_dummy.Format(_T("%i"), desc.l_val);
 		cs_file_comment += separator + cs_dummy;
 
 		db_table->get_record_item_value(CH_INSECT_ID, &desc);
-		cs_file_comment += separator + desc.csVal;
+		cs_file_comment += separator + desc.cs_val;
 		db_table->get_record_item_value(CH_STRAIN_ID, &desc);
-		cs_file_comment += separator + desc.csVal;
+		cs_file_comment += separator + desc.cs_val;
 		db_table->get_record_item_value(CH_SEX_ID, &desc);
-		cs_file_comment += separator + desc.csVal;
+		cs_file_comment += separator + desc.cs_val;
 		db_table->get_record_item_value(CH_LOCATION_ID, &desc);
-		cs_file_comment += separator + desc.csVal;
+		cs_file_comment += separator + desc.cs_val;
 
 		db_table->get_record_item_value(CH_OPERATOR_ID, &desc);
-		cs_file_comment += separator + desc.csVal;
+		cs_file_comment += separator + desc.cs_val;
 		db_table->get_record_item_value(CH_MORE, &desc);
-		cs_file_comment += separator + desc.csVal;
+		cs_file_comment += separator + desc.cs_val;
 
 		db_table->get_record_item_value(CH_STIM_ID, &desc);
-		cs_file_comment += separator + desc.csVal;
+		cs_file_comment += separator + desc.cs_val;
 		db_table->get_record_item_value(CH_CONC_ID, &desc);
-		cs_file_comment += separator + desc.csVal;
+		cs_file_comment += separator + desc.cs_val;
 		db_table->get_record_item_value(CH_REPEAT, &desc);
-		cs_dummy.Format(_T("%i"), desc.lVal);
+		cs_dummy.Format(_T("%i"), desc.l_val);
 		cs_file_comment += separator + cs_dummy;
 
 		db_table->get_record_item_value(CH_STIM2_ID, &desc);
-		cs_file_comment += separator + desc.csVal;
+		cs_file_comment += separator + desc.cs_val;
 		db_table->get_record_item_value(CH_CONC2_ID, &desc);
-		cs_file_comment += separator + desc.csVal;
+		cs_file_comment += separator + desc.cs_val;
 		db_table->get_record_item_value(CH_REPEAT2, &desc);
-		cs_dummy.Format(_T("%i"), desc.lVal);
+		cs_dummy.Format(_T("%i"), desc.l_val);
 		cs_file_comment += separator + cs_dummy;
 
 		db_table->get_record_item_value(CH_SENSILLUM_ID, &desc);
-		cs_file_comment += separator + desc.csVal;
+		cs_file_comment += separator + desc.cs_val;
 		db_table->get_record_item_value(CH_FLAG, &desc);
-		cs_dummy.Format(_T("%i"), desc.lVal);
+		cs_dummy.Format(_T("%i"), desc.l_val);
 		cs_file_comment += separator + cs_dummy;
 	}
 	return cs_file_comment;
@@ -2348,16 +2348,16 @@ void CdbWaveDoc::delete_erased_files()
 void CdbWaveDoc::db_delete_current_record()
 {
 	// save data & spike file names, together with their full access path
-	db_table->m_path_set.seek_id(db_table->m_main_table_set.m_path_ID);
+	db_table->m_path_set.seek_id(db_table->m_main_table_set.m_path_id);
 	CString cs;
-	if (!db_table->m_main_table_set.m_FileDat.IsEmpty())
+	if (!db_table->m_main_table_set.m_file_dat.IsEmpty())
 	{
-		cs = db_table->m_path_set.m_cs + _T('\\') + db_table->m_main_table_set.m_FileDat;
+		cs = db_table->m_path_set.m_cs + _T('\\') + db_table->m_main_table_set.m_file_dat;
 		names_of_files_to_delete_.Add(cs);
 	}
-	if (!db_table->m_main_table_set.m_FileSpk.IsEmpty())
+	if (!db_table->m_main_table_set.m_file_spk.IsEmpty())
 	{
-		cs = db_table->m_path_set.m_cs + _T('\\') + db_table->m_main_table_set.m_FileSpk;
+		cs = db_table->m_path_set.m_cs + _T('\\') + db_table->m_main_table_set.m_file_spk;
 		names_of_files_to_delete_.Add(cs);
 	}
 	db_table->m_main_table_set.Delete();
@@ -2505,7 +2505,7 @@ void CdbWaveDoc::remove_duplicate_files()
 		p_source->CacheGlobalData(CF_TEXT, h_mem);
 		p_source->SetClipboard();
 		auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-		CMultiDocTemplate* p_note_view_template = p_app->m_NoteView_Template;
+		CMultiDocTemplate* p_note_view_template = p_app->m_note_view_template;
 		const auto pdb_doc_export = p_note_view_template->OpenDocumentFile(nullptr);
 		auto pos = pdb_doc_export->GetFirstViewPosition();
 		auto* p_view = static_cast<ViewNoteDoc*>(pdb_doc_export->GetNextView(pos));
@@ -2655,7 +2655,7 @@ void CdbWaveDoc::remove_false_spk_files() const
 			// if spk file not found in the same directory, remove pRecord
 			if (!b_spk_file)
 			{
-				db_table->m_main_table_set.SetFieldNull(&(db_table->m_main_table_set.m_FileSpk), TRUE);
+				db_table->m_main_table_set.SetFieldNull(&(db_table->m_main_table_set.m_file_spk), TRUE);
 				i_files_removed++;
 			}
 			else
@@ -2663,9 +2663,9 @@ void CdbWaveDoc::remove_false_spk_files() const
 				// compare the 2 file names - if different, copy data name & directory index into spike name & directory fields
 				if (cs_spike_file_name.CompareNoCase(current_spike_file_name_) != 0)
 				{
-					cs_spike_file_name = db_table->m_main_table_set.m_FileDat.Left(
-						db_table->m_main_table_set.m_FileDat.ReverseFind('.') + 1) + _T("spk");
-					db_table->m_main_table_set.m_FileSpk = cs_spike_file_name;
+					cs_spike_file_name = db_table->m_main_table_set.m_file_dat.Left(
+						db_table->m_main_table_set.m_file_dat.ReverseFind('.') + 1) + _T("spk");
+					db_table->m_main_table_set.m_file_spk = cs_spike_file_name;
 					i_errors_corrected++;
 				}
 			}

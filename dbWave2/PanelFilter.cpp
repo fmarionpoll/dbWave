@@ -273,14 +273,14 @@ void CFilterPanel::init_filter_list()
 		HTREEITEM h_tree_item = nullptr;
 		TVCS_CHECKSTATE b_check = TVCS_UNCHECKED;
 		auto n_items = 0;
-		for (auto j = 0; j < p_desc->csElementsArray.GetSize(); j++)
+		for (auto j = 0; j < p_desc->cs_elements_array.GetSize(); j++)
 		{
 			cs_comment.Format(_T("Create subitem %i"), j);
 			dlg.SetStatus(cs_comment);
 
-			h_tree_item = m_wnd_filter_view_.InsertItem(p_desc->csElementsArray.GetAt(j), m_h_tree_item_[i]);
+			h_tree_item = m_wnd_filter_view_.InsertItem(p_desc->cs_elements_array.GetAt(j), m_h_tree_item_[i]);
 			b_check = TVCS_CHECKED;
-			auto cs_element_j = p_desc->csElementsArray.GetAt(j);
+			auto cs_element_j = p_desc->cs_elements_array.GetAt(j);
 			if (p_desc->b_array_filter)
 			{
 				b_check = TVCS_UNCHECKED;
@@ -320,7 +320,7 @@ void CFilterPanel::populate_item_from_table_long(DB_ITEMDESC* p_desc) const
 {
 	const auto p_set = &m_p_doc_->db_table->m_main_table_set;
 	const auto cs_col_head = p_desc->header_name;
-	const auto array_size = p_desc->liArray.GetSize();
+	const auto array_size = p_desc->li_array.GetSize();
 	if (p_desc->b_array_filter)
 	{
 		return;
@@ -333,17 +333,17 @@ void CFilterPanel::populate_item_from_table_long(DB_ITEMDESC* p_desc) const
 	{
 		CString str;
 		CString cs;
-		p_desc->csElementsArray.RemoveAll();
+		p_desc->cs_elements_array.RemoveAll();
 		for (auto i = 0; i < array_size; i++)
 		{
-			const auto i_id = p_desc->liArray.GetAt(i);
+			const auto i_id = p_desc->li_array.GetAt(i);
 			// add string only if found into p_main_table_set...
 			str.Format(_T("%s=%li"), (LPCTSTR)cs_col_head, i_id);
 			const auto flag = p_set->FindFirst(str);
 			if (flag != 0)
 			{
 				cs.Format(_T("%i"), i_id);
-				p_desc->csElementsArray.Add(cs);
+				p_desc->cs_elements_array.Add(cs);
 				if (p_desc->b_single_filter && p_desc->l_param_single_filter != i_id)
 				{
 					p_desc->cs_param_single_filter.Format(_T("%i"), i_id);
@@ -358,7 +358,7 @@ void CFilterPanel::populate_item_from_linked_table(DB_ITEMDESC* p_desc) const
 	auto str2 = p_desc->header_name;
 	ASSERT(!str2.IsEmpty());
 
-	auto p_linked_set = p_desc->plinkedSet;
+	auto p_linked_set = p_desc->p_linked_set;
 	auto p_set = &m_p_doc_->db_table->m_main_table_set;
 	if (p_desc->b_array_filter)
 		return;
@@ -370,8 +370,8 @@ void CFilterPanel::populate_item_from_linked_table(DB_ITEMDESC* p_desc) const
 	else
 	{
 		// loop over the whole content of the attached table
-		p_desc->csElementsArray.RemoveAll();
-		p_desc->liArray.RemoveAll();
+		p_desc->cs_elements_array.RemoveAll();
+		p_desc->li_array.RemoveAll();
 		if (p_linked_set->IsOpen() && !p_linked_set->IsBOF())
 		{
 			CString cs;
@@ -387,8 +387,8 @@ void CFilterPanel::populate_item_from_linked_table(DB_ITEMDESC* p_desc) const
 				const auto flag = p_set->FindFirst(cs);
 				if (flag != 0)
 				{
-					insert_alphabetic(var_value0.bstrVal, p_desc->csElementsArray);
-					p_desc->liArray.Add(i_id);
+					insert_alphabetic(var_value0.bstrVal, p_desc->cs_elements_array);
+					p_desc->li_array.Add(i_id);
 				}
 				p_linked_set->MoveNext();
 			}
@@ -401,7 +401,7 @@ void CFilterPanel::populate_item_from_table_with_date(DB_ITEMDESC* p_desc) const
 	CString cs; // to construct date
 	const auto cs_column_head = p_desc->header_name;
 	const auto p_main_table_set = &m_p_doc_->db_table->m_main_table_set;
-	const auto array_size = p_main_table_set->m_desc[CH_ACQDATE_DAY].tiArray.GetSize();
+	const auto array_size = p_main_table_set->m_desc[CH_ACQDATE_DAY].ti_array.GetSize();
 
 	if (p_desc->b_array_filter)
 	{
@@ -415,17 +415,17 @@ void CFilterPanel::populate_item_from_table_with_date(DB_ITEMDESC* p_desc) const
 	else
 	{
 		CString str;
-		p_desc->csElementsArray.RemoveAll();
+		p_desc->cs_elements_array.RemoveAll();
 		for (auto i = 0; i < array_size; i++)
 		{
-			auto o_time = p_main_table_set->m_desc[CH_ACQDATE_DAY].tiArray.GetAt(i);
+			auto o_time = p_main_table_set->m_desc[CH_ACQDATE_DAY].ti_array.GetAt(i);
 			cs = o_time.Format(_T("%m/%d/%y")); // filter needs to be constructed as month-day-year
 			str.Format(_T("%s=#%s#"), (LPCTSTR)cs_column_head, (LPCTSTR)cs);
 			const auto flag = p_main_table_set->FindFirst(str);
 			if (flag != 0) // add string only if found into p_main_table_set...
 			{
 				cs = o_time.Format(VAR_DATEVALUEONLY);
-				p_desc->csElementsArray.Add(cs);
+				p_desc->cs_elements_array.Add(cs);
 			}
 		}
 	}
@@ -453,10 +453,10 @@ void CFilterPanel::build_filter_item_indirection_from_tree(DB_ITEMDESC* p_desc, 
 		if (state == TVCS_CHECKED)
 		{
 			auto cs = m_wnd_filter_view_.GetItemText(item);
-			for (auto j = 0; j < p_desc->liArray.GetSize(); j++)
+			for (auto j = 0; j < p_desc->li_array.GetSize(); j++)
 			{
-				const auto li = p_desc->liArray.GetAt(j);
-				auto str = p_desc->plinkedSet->get_string_from_id(li);
+				const auto li = p_desc->li_array.GetAt(j);
+				auto str = p_desc->p_linked_set->get_string_from_id(li);
 				if (str == cs)
 				{
 					p_desc->l_param_filter_array.Add(li);
@@ -477,7 +477,7 @@ void CFilterPanel::build_filter_item_long_from_tree(DB_ITEMDESC* p_desc, const H
 		if (state == TVCS_CHECKED)
 		{
 			auto cs = m_wnd_filter_view_.GetItemText(item);
-			const auto li = p_desc->liArray.GetAt(i);
+			const auto li = p_desc->li_array.GetAt(i);
 			p_desc->l_param_filter_array.Add(li);
 			p_desc->cs_array_filter.Add(cs);
 		}

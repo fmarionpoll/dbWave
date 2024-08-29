@@ -194,9 +194,9 @@ void CPropertiesPanel::update_group_prop_from_table(CMFCPropertyGridProperty* p_
 		{
 		case FIELD_IND_TEXT:
 		case FIELD_IND_FILEPATH:
-			p_prop->SetValue(desc.csVal);
-			p_prop->SetOriginalValue(desc.csVal);
-			p2_linked_set = p_db->m_main_table_set.m_desc[i_column].plinkedSet;
+			p_prop->SetValue(desc.cs_val);
+			p_prop->SetOriginalValue(desc.cs_val);
+			p2_linked_set = p_db->m_main_table_set.m_desc[i_column].p_linked_set;
 			if (m_b_update_combos_ || (p_prop->GetOptionCount() != p2_linked_set->GetRecordCount()))
 			{
 				p_prop->RemoveAllOptions();
@@ -217,22 +217,22 @@ void CPropertiesPanel::update_group_prop_from_table(CMFCPropertyGridProperty* p_
 			}
 			break;
 		case FIELD_LONG:
-			p_prop->SetValue(desc.lVal);
-			p_prop->SetOriginalValue(desc.lVal);
+			p_prop->SetValue(desc.l_val);
+			p_prop->SetOriginalValue(desc.l_val);
 			break;
 		case FIELD_TEXT:
-			p_prop->SetValue(desc.csVal);
-			p_prop->SetOriginalValue(desc.csVal);
+			p_prop->SetValue(desc.cs_val);
+			p_prop->SetOriginalValue(desc.cs_val);
 			break;
 		case FIELD_DATE_HMS:
-			desc.csVal = desc.oVal.Format(VAR_TIMEVALUEONLY);
-			p_prop->SetValue(desc.csVal);
-			p_prop->SetOriginalValue(desc.csVal);
+			desc.cs_val = desc.o_val.Format(VAR_TIMEVALUEONLY);
+			p_prop->SetValue(desc.cs_val);
+			p_prop->SetOriginalValue(desc.cs_val);
 			break;
 		case FIELD_DATE_YMD:
-			desc.csVal = desc.oVal.Format(VAR_DATEVALUEONLY);
-			p_prop->SetValue(desc.csVal);
-			p_prop->SetOriginalValue(desc.csVal);
+			desc.cs_val = desc.o_val.Format(VAR_DATEVALUEONLY);
+			p_prop->SetValue(desc.cs_val);
+			p_prop->SetOriginalValue(desc.cs_val);
 			break;
 		default:
 			break;
@@ -277,19 +277,19 @@ void CPropertiesPanel::update_table_from_group_prop(const CMFCPropertyGridProper
 		{
 		case FIELD_IND_TEXT:
 		case FIELD_IND_FILEPATH:
-			record_item_descriptor->csVal = prop_val.bstrVal;
+			record_item_descriptor->cs_val = prop_val.bstrVal;
 			p_prop->ResetOriginalValue();
-			p_prop->SetOriginalValue(record_item_descriptor->csVal);
-			p_prop->SetValue(record_item_descriptor->csVal);
+			p_prop->SetOriginalValue(record_item_descriptor->cs_val);
+			p_prop->SetValue(record_item_descriptor->cs_val);
 			break;
 		case FIELD_TEXT:
-			record_item_descriptor->csVal = prop_val.bstrVal;
+			record_item_descriptor->cs_val = prop_val.bstrVal;
 			p_prop->ResetOriginalValue();
-			p_prop->SetOriginalValue(record_item_descriptor->csVal);
-			p_prop->SetValue(record_item_descriptor->csVal);
+			p_prop->SetOriginalValue(record_item_descriptor->cs_val);
+			p_prop->SetValue(record_item_descriptor->cs_val);
 			break;
 		case FIELD_LONG:
-			record_item_descriptor->lVal = prop_val.lVal;
+			record_item_descriptor->l_val = prop_val.lVal;
 			p_prop->ResetOriginalValue();
 			p_prop->SetOriginalValue(prop_val.lVal);
 			p_prop->SetValue(prop_val.lVal);
@@ -402,8 +402,8 @@ int CPropertiesPanel::init_group_from_table(CMFCPropertyGridProperty* p_group, i
 			break;
 
 		DB_ITEMDESC desc;
-		desc.csVal = _T("undefined");
-		desc.lVal = 0;
+		desc.cs_val = _T("undefined");
+		desc.l_val = 0;
 		desc.data_code_number = p_database->m_main_table_set.m_desc[i_desc_tab].data_code_number;
 
 		CMFCPropertyGridProperty* p_prop = nullptr;
@@ -415,21 +415,21 @@ int CPropertiesPanel::init_group_from_table(CMFCPropertyGridProperty* p_group, i
 		case FIELD_IND_TEXT:
 		case FIELD_IND_FILEPATH:
 			cs_comment = _T("Field indirect text");
-			p_prop = new CMFCPropertyGridProperty(cs_title, desc.csVal, cs_comment, i_desc_tab);
+			p_prop = new CMFCPropertyGridProperty(cs_title, desc.cs_val, cs_comment, i_desc_tab);
 			break;
 		case FIELD_LONG:
 			cs_comment = _T("Field long");
-			p_prop = new CMFCPropertyGridProperty(cs_title, desc.lVal, cs_comment, i_desc_tab);
+			p_prop = new CMFCPropertyGridProperty(cs_title, desc.l_val, cs_comment, i_desc_tab);
 			break;
 		case FIELD_TEXT:
 			cs_comment = _T("Field text");
-			p_prop = new CMFCPropertyGridProperty(cs_title, desc.csVal, cs_comment, i_desc_tab);
+			p_prop = new CMFCPropertyGridProperty(cs_title, desc.cs_val, cs_comment, i_desc_tab);
 			break;
 		case FIELD_DATE:
 		case FIELD_DATE_HMS:
 		case FIELD_DATE_YMD:
 			cs_comment = _T("Field date");
-			p_prop = new CMFCPropertyGridProperty(cs_title, desc.csVal, cs_comment, i_desc_tab);
+			p_prop = new CMFCPropertyGridProperty(cs_title, desc.cs_val, cs_comment, i_desc_tab);
 			break;
 		default:
 			cs_comment = _T("Field type unknown");

@@ -267,7 +267,7 @@ void CChildFrame::export_ascii(const int option)
 			flag = export_to_excel();
 		if (!p_app->options_view_data.b_to_excel || !flag)
 		{
-			CMultiDocTemplate* note_view_template = p_app->m_NoteView_Template;
+			CMultiDocTemplate* note_view_template = p_app->m_note_view_template;
 			const auto p_dbWave_doc_export = note_view_template->OpenDocumentFile(nullptr);
 			auto pos = p_dbWave_doc_export->GetFirstViewPosition();
 			const auto p_view = static_cast<ViewNoteDoc*>(p_dbWave_doc_export->GetNextView(pos));
@@ -284,7 +284,7 @@ void CChildFrame::export_ascii(const int option)
 
 		if (!p_app->options_view_spikes.b_export_to_excel || !flag)
 		{
-			CMultiDocTemplate* note_view_template = p_app->m_NoteView_Template;
+			CMultiDocTemplate* note_view_template = p_app->m_note_view_template;
 			const auto p_dbWave_doc_export = note_view_template->OpenDocumentFile(nullptr);
 			auto pos = p_dbWave_doc_export->GetFirstViewPosition();
 			const auto p_view = static_cast<ViewNoteDoc*>(p_dbWave_doc_export->GetNextView(pos));
@@ -321,7 +321,7 @@ LRESULT CChildFrame::on_my_message(WPARAM w_param, LPARAM l_param)
 		const auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		if (p_app->m_psf != nullptr)
 		{
-			CMultiDocTemplate* note_view_template = p_app->m_NoteView_Template;
+			CMultiDocTemplate* note_view_template = p_app->m_note_view_template;
 			const auto p_doc_export = note_view_template->OpenDocumentFile(nullptr);
 			auto pos = p_doc_export->GetFirstViewPosition();
 			const auto* p_view = static_cast<ViewNoteDoc*>(p_doc_export->GetNextView(pos));
@@ -352,40 +352,40 @@ void CChildFrame::replace_view_index(UINT n_id)
 	switch (n_id)
 	{
 	case ID_VIEW_DATABASE:
-		replace_view(RUNTIME_CLASS(ViewdbWave), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDBView);
+		replace_view(RUNTIME_CLASS(ViewdbWave), static_cast<CdbWaveApp*>(AfxGetApp())->h_menu_db_view);
 		break;
 	case ID_VIEW_DATA_FILE:
 		if (!p_db_wave_doc->db_get_current_dat_file_name(TRUE).IsEmpty())
-			replace_view(RUNTIME_CLASS(ViewData), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
+			replace_view(RUNTIME_CLASS(ViewData), static_cast<CdbWaveApp*>(AfxGetApp())->h_menu_data_view);
 		break;
 	case ID_VIEW_SPIKE_DETECTION:
 		if (!p_db_wave_doc->db_get_current_dat_file_name(TRUE).IsEmpty())
-			replace_view(RUNTIME_CLASS(ViewSpikeDetection), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
+			replace_view(RUNTIME_CLASS(ViewSpikeDetection), static_cast<CdbWaveApp*>(AfxGetApp())->h_menu_data_view);
 		break;
 	case ID_VIEW_SPIKE_DISPLAY:
 		if (!p_db_wave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
-			replace_view(RUNTIME_CLASS(ViewSpikes), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
+			replace_view(RUNTIME_CLASS(ViewSpikes), static_cast<CdbWaveApp*>(AfxGetApp())->h_menu_spike_view);
 		break;
 	case ID_VIEW_SPIKE_SORTING_AMPLITUDE:
 		if (!p_db_wave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
-			replace_view(RUNTIME_CLASS(ViewSpikeSort), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
+			replace_view(RUNTIME_CLASS(ViewSpikeSort), static_cast<CdbWaveApp*>(AfxGetApp())->h_menu_spike_view);
 		break;
 	case ID_VIEW_SPIKE_SORTING_TEMPLATES:
 		if (!p_db_wave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
-			replace_view(RUNTIME_CLASS(ViewSpikeTemplates), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
+			replace_view(RUNTIME_CLASS(ViewSpikeTemplates), static_cast<CdbWaveApp*>(AfxGetApp())->h_menu_spike_view);
 		break;
 	case ID_VIEW_SPIKE_TIME_SERIES:
 		if (!p_db_wave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
-			replace_view(RUNTIME_CLASS(ViewSpikeHist), static_cast<CdbWaveApp*>(AfxGetApp())->m_hSpikeView);
+			replace_view(RUNTIME_CLASS(ViewSpikeHist), static_cast<CdbWaveApp*>(AfxGetApp())->h_menu_spike_view);
 		break;
 	case ID_VIEW_ACQUIRE_DATA:
-		replace_view(RUNTIME_CLASS(ViewADcontinuous), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
+		replace_view(RUNTIME_CLASS(ViewADcontinuous), static_cast<CdbWaveApp*>(AfxGetApp())->h_menu_data_view);
 		b_active_panes = FALSE;
 		break;
 
 	default:
 		n_id = 0;
-		replace_view(RUNTIME_CLASS(ViewdbWave), static_cast<CdbWaveApp*>(AfxGetApp())->m_hDataView);
+		replace_view(RUNTIME_CLASS(ViewdbWave), static_cast<CdbWaveApp*>(AfxGetApp())->h_menu_data_view);
 		break;
 	}
 	p_mainframe->ActivatePropertyPane(b_active_panes);

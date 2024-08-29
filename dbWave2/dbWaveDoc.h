@@ -13,10 +13,10 @@ struct source_data
 	CString cs_dat_file{};
 	CString cs_spk_file{};
 	CString cs_path{};
-	int i_last_backslash_position = -1;
-	boolean data_file_present = false;
-	boolean spike_file_present = false;
-	CWaveFormat* p_wave_format = nullptr;
+	int i_last_backslash_position  {-1};
+	boolean data_file_present  {false};
+	boolean spike_file_present  {false};
+	CWaveFormat* p_wave_format  {nullptr};
 };
 
 class CdbWaveDoc : public COleDocument
@@ -29,20 +29,20 @@ protected:
 	CString		current_datafile_name_;
 	CString		current_spike_file_name_;
 
-	BOOL		b_call_new_ = true;
+	BOOL		b_call_new_  {true};
 	CStringArray names_of_files_to_delete_;
-	BOOL		clean_database_on_exit_ = false;
-	BOOL		transpose_ = false;
+	BOOL		clean_database_on_exit_  {false};
+	BOOL		transpose_  {false};
 	db_spike	spike_hit_{};
 
 public:
-	AcqDataDoc* m_p_data_doc = nullptr;
-	CSpikeDoc*	m_p_spk_doc = nullptr;
-	HMENU		h_my_menu = nullptr;
+	AcqDataDoc* m_p_data_doc  {nullptr};
+	CSpikeDoc*	m_p_spk_doc  {nullptr};
+	HMENU		h_my_menu  {nullptr};
 	CIntervals	stimulus_saved;
 
-	CdbTable*	db_table = nullptr;
-	BOOL		valid_tables = false;
+	CdbTable*	db_table  {nullptr};
+	BOOL		valid_tables  {false};
 	CDWordArray selected_records;
 	CString		db_filename;
 	CString		proposed_data_path_name;

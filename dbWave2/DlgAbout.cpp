@@ -8,9 +8,9 @@ DlgAbout::DlgAbout() : CDialogEx(IDD)
 {
 }
 
-void DlgAbout::DoDataExchange(CDataExchange* pDX)
+void DlgAbout::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialogEx::DoDataExchange(pDX);
+	CDialogEx::DoDataExchange(p_dx);
 }
 
 BEGIN_MESSAGE_MAP(DlgAbout, CDialogEx)

@@ -152,21 +152,21 @@ void DataListCtrl_Row::attach_database_record(CdbWaveDoc* db_wave_doc)
 
 	DB_ITEMDESC desc;
 	database->get_record_item_value(CH_ID, &desc);
-	record_id = desc.lVal;
+	record_id = desc.l_val;
 	database->get_record_item_value(CH_IDINSECT, &desc);
-	insect_id = desc.lVal;
+	insect_id = desc.l_val;
 	database->get_record_item_value(CH_STIM_ID, &desc);
-	cs_stimulus1 = desc.csVal;
+	cs_stimulus1 = desc.cs_val;
 	database->get_record_item_value(CH_CONC_ID, &desc);
-	cs_concentration1 = desc.csVal;
+	cs_concentration1 = desc.cs_val;
 	database->get_record_item_value(CH_STIM2_ID, &desc);
-	cs_stimulus2 = desc.csVal;
+	cs_stimulus2 = desc.cs_val;
 	database->get_record_item_value(CH_CONC2_ID, &desc);
-	cs_concentration2 = desc.csVal;
+	cs_concentration2 = desc.cs_val;
 	database->get_record_item_value(CH_SENSILLUM_ID, &desc);
-	cs_sensillum_name = desc.csVal;
+	cs_sensillum_name = desc.cs_val;
 	database->get_record_item_value(CH_FLAG, &desc);
-	cs_flag.Format(_T("%i"), desc.lVal);
+	cs_flag.Format(_T("%i"), desc.l_val);
 
 	// column: number of spikes = verify that spike file is defined, if yes, load nb spikes
 	if (db_wave_doc->db_get_current_spk_file_name(TRUE).IsEmpty())
@@ -174,9 +174,9 @@ void DataListCtrl_Row::attach_database_record(CdbWaveDoc* db_wave_doc)
 	else
 	{
 		database->get_record_item_value(CH_NSPIKES, &desc);
-		const int n_spikes = desc.lVal;
+		const int n_spikes = desc.l_val;
 		database->get_record_item_value(CH_NSPIKECLASSES, &desc);
-		cs_n_spikes.Format(_T("%i (%i classes)"), n_spikes, desc.lVal);
+		cs_n_spikes.Format(_T("%i (%i classes)"), n_spikes, desc.l_val);
 	}
 }
 

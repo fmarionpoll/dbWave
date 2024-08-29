@@ -52,8 +52,8 @@ CdbTable::CdbTable()
 		CString dummy = m_column_properties[i].header_name;
 		m_main_table_set.m_desc[i].header_name = dummy;
 		m_main_table_set.m_desc[i].dfx_name_with_brackets = _T("[") + dummy + _T("]");
-		m_main_table_set.m_desc[i].csColParam = dummy + _T("Param");
-		m_main_table_set.m_desc[i].csEQUcondition = dummy + _T("=") + m_main_table_set.m_desc[i].csColParam;
+		m_main_table_set.m_desc[i].cs_col_param = dummy + _T("Param");
+		m_main_table_set.m_desc[i].cs_equ_condition = dummy + _T("=") + m_main_table_set.m_desc[i].cs_col_param;
 		m_main_table_set.m_desc[i].data_code_number = m_column_properties[i].format_code_number;
 	}
 
@@ -208,10 +208,10 @@ BOOL CdbTable::create_relation_between_associated_table_and_2_columns(const LPCT
 		rl_info.m_nFields = 2;
 		CreateRelation(rl_info);
 
-		m_main_table_set.m_desc[column_index_1].plinkedSet = &m_path_set;
+		m_main_table_set.m_desc[column_index_1].p_linked_set = &m_path_set;
 		m_main_table_set.m_desc[column_index_1].associated_table_name = r_field[0].m_strName;
 
-		m_main_table_set.m_desc[column_index_2].plinkedSet = &m_path_set;
+		m_main_table_set.m_desc[column_index_2].p_linked_set = &m_path_set;
 		m_main_table_set.m_desc[column_index_2].associated_table_name = r_field[0].m_strName;
 	}
 	catch (CDaoException* e)
@@ -237,7 +237,7 @@ BOOL CdbTable::create_relation_between_associated_table_and_1_column(const LPCTS
 		sz_field += _T("ID");
 		CreateRelation(cs_rel, lpsz_table, lpsz_foreign_table, l_attributes, sz_field,
 			m_main_table_set.m_desc[column_index].header_name);
-		m_main_table_set.m_desc[column_index].plinkedSet = p_to_associated_table;
+		m_main_table_set.m_desc[column_index].p_linked_set = p_to_associated_table;
 	}
 	catch (CDaoException* e)
 	{
@@ -709,9 +709,9 @@ CString CdbTable::get_current_record_data_file_name()
 {
 	CString filename;
 	filename.Empty();
-	if (!m_main_table_set.IsFieldNull(&m_main_table_set.m_FileDat) && !m_main_table_set.m_FileDat.IsEmpty())
+	if (!m_main_table_set.IsFieldNull(&m_main_table_set.m_file_dat) && !m_main_table_set.m_file_dat.IsEmpty())
 	{
-		filename = get_file_path(m_main_table_set.m_path_ID) + '\\' + m_main_table_set.m_FileDat;
+		filename = get_file_path(m_main_table_set.m_path_id) + '\\' + m_main_table_set.m_file_dat;
 	}
 	return filename;
 }
@@ -722,15 +722,15 @@ CString CdbTable::get_current_record_spike_file_name()
 	filename.Empty();
 
 	// set current spk document
-	if (!m_main_table_set.IsFieldNull(&m_main_table_set.m_FileSpk) && !m_main_table_set.m_FileSpk.IsEmpty())
+	if (!m_main_table_set.IsFieldNull(&m_main_table_set.m_file_spk) && !m_main_table_set.m_file_spk.IsEmpty())
 	{
-		if (m_main_table_set.IsFieldNull(&m_main_table_set.m_path2_ID))
+		if (m_main_table_set.IsFieldNull(&m_main_table_set.m_path2_id))
 		{
 			m_main_table_set.Edit();
-			m_main_table_set.m_path2_ID = m_main_table_set.m_path_ID;
+			m_main_table_set.m_path2_id = m_main_table_set.m_path_id;
 			m_main_table_set.Update();
 		}
-		filename = get_file_path(m_main_table_set.m_path2_ID) + '\\' + m_main_table_set.m_FileSpk;
+		filename = get_file_path(m_main_table_set.m_path2_id) + '\\' + m_main_table_set.m_file_spk;
 	}
 	return filename;
 }
@@ -832,123 +832,123 @@ DB_ITEMDESC* CdbTable::get_record_item_descriptor(const int column_index)
 	switch (column_index)
 	{
 	case CH_ID:
-		p_desc->pdataItem = &m_main_table_set.m_id;
+		p_desc->pdata_item = &m_main_table_set.m_id;
 		ASSERT(p_desc->data_code_number == FIELD_LONG);
 		break;
 	case CH_ACQDATE:
-		p_desc->pdataItem = nullptr;
+		p_desc->pdata_item = nullptr;
 		ASSERT(p_desc->data_code_number == FIELD_DATE);
 		break;
 	case CH_FILENAME:
 	case CH_FILESPK:
 	case CH_ACQ_COMMENTS:
 	case CH_MORE:
-		p_desc->pdataItem = nullptr;
+		p_desc->pdata_item = nullptr;
 		ASSERT(p_desc->data_code_number == FIELD_TEXT);
 		break;
 	case CH_IDINSECT:
-		p_desc->pdataItem = &m_main_table_set.m_id_insect;
+		p_desc->pdata_item = &m_main_table_set.m_id_insect;
 		ASSERT(p_desc->data_code_number == FIELD_LONG);
 		break;
 	case CH_IDSENSILLUM:
-		p_desc->pdataItem = &m_main_table_set.m_id_sensillum;
+		p_desc->pdata_item = &m_main_table_set.m_id_sensillum;
 		ASSERT(p_desc->data_code_number == FIELD_LONG);
 		break;
 	case CH_DATALEN:
-		p_desc->pdataItem = &m_main_table_set.m_dataLen;
+		p_desc->pdata_item = &m_main_table_set.m_data_len;
 		ASSERT(p_desc->data_code_number == FIELD_LONG);
 		break;
 	case CH_NSPIKES:
-		p_desc->pdataItem = &m_main_table_set.m_nSpikes;
+		p_desc->pdata_item = &m_main_table_set.m_n_spikes;
 		ASSERT(p_desc->data_code_number == FIELD_LONG);
 		break;
 	case CH_NSPIKECLASSES:
-		p_desc->pdataItem = &m_main_table_set.m_nSpikeClasses;
+		p_desc->pdata_item = &m_main_table_set.m_n_spike_classes;
 		ASSERT(p_desc->data_code_number == FIELD_LONG);
 		break;
 	case CH_FLAG:
-		p_desc->pdataItem = &m_main_table_set.m_flag;
+		p_desc->pdata_item = &m_main_table_set.m_flag;
 		ASSERT(p_desc->data_code_number == FIELD_LONG);
 		break;
 	case CH_INSECT_ID:
-		p_desc->pdataItem = &m_main_table_set.m_insect_ID;
-		p_desc->plinkedSet = &m_insect_set;
+		p_desc->pdata_item = &m_main_table_set.m_insect_id;
+		p_desc->p_linked_set = &m_insect_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 	case CH_SENSILLUM_ID:
-		p_desc->pdataItem = &m_main_table_set.m_sensillum_ID;
-		p_desc->plinkedSet = &m_sensillum_set;
+		p_desc->pdata_item = &m_main_table_set.m_sensillum_id;
+		p_desc->p_linked_set = &m_sensillum_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 	case CH_OPERATOR_ID:
-		p_desc->pdataItem = &m_main_table_set.m_operator_ID;
-		p_desc->plinkedSet = &m_operator_set;
+		p_desc->pdata_item = &m_main_table_set.m_operator_id;
+		p_desc->p_linked_set = &m_operator_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 	case CH_STIM_ID:
-		p_desc->pdataItem = &m_main_table_set.m_stim_ID;
-		p_desc->plinkedSet = &m_stimulus_set;
+		p_desc->pdata_item = &m_main_table_set.m_stimulus_id;
+		p_desc->p_linked_set = &m_stimulus_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 	case CH_CONC_ID:
-		p_desc->pdataItem = &m_main_table_set.m_conc_ID;
-		p_desc->plinkedSet = &m_concentration_set;
+		p_desc->pdata_item = &m_main_table_set.m_concentration_id;
+		p_desc->p_linked_set = &m_concentration_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 	case CH_LOCATION_ID:
-		p_desc->pdataItem = &m_main_table_set.m_location_ID;
-		p_desc->plinkedSet = &m_location_set;
+		p_desc->pdata_item = &m_main_table_set.m_location_id;
+		p_desc->p_linked_set = &m_location_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 	case CH_PATH_ID:
-		p_desc->pdataItem = &m_main_table_set.m_path_ID;
-		p_desc->plinkedSet = &m_path_set;
+		p_desc->pdata_item = &m_main_table_set.m_path_id;
+		p_desc->p_linked_set = &m_path_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_FILEPATH);
 		break;
 	case CH_PATH2_ID:
-		p_desc->pdataItem = &m_main_table_set.m_path2_ID;
-		p_desc->plinkedSet = &m_path_set;
+		p_desc->pdata_item = &m_main_table_set.m_path2_id;
+		p_desc->p_linked_set = &m_path_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_FILEPATH);
 		break;
 	case CH_STIM2_ID:
-		p_desc->pdataItem = &m_main_table_set.m_stim2_ID;
-		p_desc->plinkedSet = &m_stimulus_set;
+		p_desc->pdata_item = &m_main_table_set.m_stimulus2_id;
+		p_desc->p_linked_set = &m_stimulus_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 	case CH_CONC2_ID:
-		p_desc->pdataItem = &m_main_table_set.m_conc2_ID;
-		p_desc->plinkedSet = &m_concentration_set;
+		p_desc->pdata_item = &m_main_table_set.m_concentration2_id;
+		p_desc->p_linked_set = &m_concentration_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 	case CH_STRAIN_ID:
-		p_desc->pdataItem = &m_main_table_set.m_strain_ID;
-		p_desc->plinkedSet = &m_strain_set;
+		p_desc->pdata_item = &m_main_table_set.m_strain_id;
+		p_desc->p_linked_set = &m_strain_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 	case CH_SEX_ID:
-		p_desc->pdataItem = &m_main_table_set.m_sex_ID;
-		p_desc->plinkedSet = &m_sex_set;
+		p_desc->pdata_item = &m_main_table_set.m_sex_id;
+		p_desc->p_linked_set = &m_sex_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 	case CH_REPEAT:
-		p_desc->pdataItem = &m_main_table_set.m_repeat;
+		p_desc->pdata_item = &m_main_table_set.m_repeat;
 		ASSERT(p_desc->data_code_number == FIELD_LONG);
 		break;
 	case CH_REPEAT2:
-		p_desc->pdataItem = &m_main_table_set.m_repeat2;
+		p_desc->pdata_item = &m_main_table_set.m_repeat2;
 		ASSERT(p_desc->data_code_number == FIELD_LONG);
 		break;
 	case CH_ACQDATE_DAY:
-		p_desc->pdataItem = nullptr;
+		p_desc->pdata_item = nullptr;
 		ASSERT(p_desc->data_code_number == FIELD_DATE_YMD);
 		break;
 	case CH_ACQDATE_TIME:
-		p_desc->pdataItem = nullptr;
+		p_desc->pdata_item = nullptr;
 		ASSERT(p_desc->data_code_number == FIELD_DATE_HMS);
 		break;
 	case CH_EXPT_ID:
-		p_desc->pdataItem = &m_main_table_set.m_experiment_ID;
-		p_desc->plinkedSet = &m_experiment_set;
+		p_desc->pdata_item = &m_main_table_set.m_experiment_id;
+		p_desc->p_linked_set = &m_experiment_set;
 		ASSERT(p_desc->data_code_number == FIELD_IND_TEXT);
 		break;
 
@@ -979,29 +979,29 @@ BOOL CdbTable::get_record_item_value(const int i_column, DB_ITEMDESC* db_item_de
 	{
 	case FIELD_IND_TEXT:
 	case FIELD_IND_FILEPATH:
-		db_item_descriptor->lVal = var_value.lVal;
-		db_item_descriptor->csVal = m_main_table_set.m_desc[i_column].plinkedSet->get_string_from_id(var_value.lVal);
-		if (i_column == CH_EXPT_ID && db_item_descriptor->csVal.IsEmpty())
+		db_item_descriptor->l_val = var_value.lVal;
+		db_item_descriptor->cs_val = m_main_table_set.m_desc[i_column].p_linked_set->get_string_from_id(var_value.lVal);
+		if (i_column == CH_EXPT_ID && db_item_descriptor->cs_val.IsEmpty())
 		{
-			const auto cs = db_item_descriptor->csVal = GetName();
+			const auto cs = db_item_descriptor->cs_val = GetName();
 			const auto left = cs.ReverseFind(_T('\\'));
 			const auto right = cs.ReverseFind(_T('.'));
-			db_item_descriptor->csVal = cs.Mid(left + 1, right - left - 1);
+			db_item_descriptor->cs_val = cs.Mid(left + 1, right - left - 1);
 		}
 		break;
 	case FIELD_LONG:
-		db_item_descriptor->lVal = var_value.lVal;
+		db_item_descriptor->l_val = var_value.lVal;
 		if (var_value.vt == VT_NULL)
-			db_item_descriptor->lVal = 0;
+			db_item_descriptor->l_val = 0;
 		break;
 	case FIELD_TEXT:
 		m_main_table_set.GetFieldValue(m_main_table_set.m_desc[i_column].header_name, var_value);
-		db_item_descriptor->csVal = V_BSTRT(&var_value);
+		db_item_descriptor->cs_val = V_BSTRT(&var_value);
 		break;
 	case FIELD_DATE:
 	case FIELD_DATE_HMS:
 	case FIELD_DATE_YMD:
-		db_item_descriptor->oVal = var_value.date;
+		db_item_descriptor->o_val = var_value.date;
 		break;
 	default:
 		flag = FALSE;
@@ -1019,7 +1019,7 @@ BOOL CdbTable::set_record_item_value(const int column_index, DB_ITEMDESC* db_ite
 	case FIELD_IND_TEXT:
 	case FIELD_IND_FILEPATH:
 	{
-		long dummy_id = m_main_table_set.m_desc[column_index].plinkedSet->get_string_in_linked_table(db_item_descriptor->csVal);
+		long dummy_id = m_main_table_set.m_desc[column_index].p_linked_set->get_string_in_linked_table(db_item_descriptor->cs_val);
 		if (dummy_id >= 0)
 		{
 			COleVariant var_value;
@@ -1029,18 +1029,18 @@ BOOL CdbTable::set_record_item_value(const int column_index, DB_ITEMDESC* db_ite
 	}
 	break;
 	case FIELD_LONG:
-		m_main_table_set.SetFieldValue(m_main_table_set.m_desc[column_index].header_name, db_item_descriptor->lVal);
+		m_main_table_set.SetFieldValue(m_main_table_set.m_desc[column_index].header_name, db_item_descriptor->l_val);
 		break;
 	case FIELD_TEXT:
 	{
-		COleVariant var_value = db_item_descriptor->csVal;
+		COleVariant var_value = db_item_descriptor->cs_val;
 		m_main_table_set.SetFieldValue(m_main_table_set.m_desc[column_index].header_name, var_value);
 	}
 	break;
 	case FIELD_DATE:
 	case FIELD_DATE_HMS:
 	case FIELD_DATE_YMD:
-		m_main_table_set.SetFieldValue(m_main_table_set.m_desc[column_index].header_name, db_item_descriptor->oVal);
+		m_main_table_set.SetFieldValue(m_main_table_set.m_desc[column_index].header_name, db_item_descriptor->o_val);
 		break;
 	default:
 		flag = FALSE;
@@ -1076,9 +1076,9 @@ void CdbTable::transfer_wave_format_data_to_record(const CWaveFormat* p_wave_for
 	o_time.SetDateTime(t.GetYear(), t.GetMonth(), t.GetDay(), t.GetHour(), t.GetMinute(), t.GetSecond());
 	m_main_table_set.SetFieldNull(&(m_main_table_set.m_table_acq_date), FALSE);
 	m_main_table_set.m_table_acq_date = o_time;
-	m_main_table_set.m_acqDate_time = o_time;
+	m_main_table_set.m_acq_date_time = o_time;
 	o_time.SetDateTime(t.GetYear(), t.GetMonth(), t.GetDay(), 0, 0, 0);
-	m_main_table_set.m_acqDate_day = o_time;
+	m_main_table_set.m_acq_date_day = o_time;
 
 	// set insect ID, sensillumID, repeat and repeat2, moreComment
 	m_main_table_set.SetFieldNull(&(m_main_table_set.m_id_insect), FALSE);
@@ -1093,18 +1093,18 @@ void CdbTable::transfer_wave_format_data_to_record(const CWaveFormat* p_wave_for
 	m_main_table_set.m_more = p_wave_format->cs_more_comment;
 
 	// set type, stimulus and concentrations
-	m_main_table_set.m_operator_ID = m_operator_set.get_string_in_linked_table(p_wave_format->cs_operator);
-	m_main_table_set.m_insect_ID = m_insect_set.get_string_in_linked_table(p_wave_format->cs_insect_name);
-	m_main_table_set.m_location_ID = m_location_set.get_string_in_linked_table(p_wave_format->cs_location);
-	m_main_table_set.m_experiment_ID = m_experiment_set.get_string_in_linked_table(p_wave_format->cs_comment);
-	m_main_table_set.m_sensillum_ID = m_sensillum_set.get_string_in_linked_table(p_wave_format->cs_sensillum);
-	m_main_table_set.m_stim_ID = m_stimulus_set.get_string_in_linked_table(p_wave_format->cs_stimulus);
-	m_main_table_set.m_conc_ID = m_concentration_set.get_string_in_linked_table(p_wave_format->cs_concentration);
-	m_main_table_set.m_stim2_ID = m_stimulus_set.get_string_in_linked_table(p_wave_format->cs_stimulus2);
-	m_main_table_set.m_conc2_ID = m_concentration_set.get_string_in_linked_table(p_wave_format->cs_concentration2);
-	m_main_table_set.m_sex_ID = m_sex_set.get_string_in_linked_table(p_wave_format->cs_sex);
-	m_main_table_set.m_strain_ID = m_strain_set.get_string_in_linked_table(p_wave_format->cs_strain);
-	m_main_table_set.m_experiment_ID = m_experiment_set.get_string_in_linked_table(p_wave_format->cs_comment);
+	m_main_table_set.m_operator_id = m_operator_set.get_string_in_linked_table(p_wave_format->cs_operator);
+	m_main_table_set.m_insect_id = m_insect_set.get_string_in_linked_table(p_wave_format->cs_insect_name);
+	m_main_table_set.m_location_id = m_location_set.get_string_in_linked_table(p_wave_format->cs_location);
+	m_main_table_set.m_experiment_id = m_experiment_set.get_string_in_linked_table(p_wave_format->cs_comment);
+	m_main_table_set.m_sensillum_id = m_sensillum_set.get_string_in_linked_table(p_wave_format->cs_sensillum);
+	m_main_table_set.m_stimulus_id = m_stimulus_set.get_string_in_linked_table(p_wave_format->cs_stimulus);
+	m_main_table_set.m_concentration_id = m_concentration_set.get_string_in_linked_table(p_wave_format->cs_concentration);
+	m_main_table_set.m_stimulus2_id = m_stimulus_set.get_string_in_linked_table(p_wave_format->cs_stimulus2);
+	m_main_table_set.m_concentration2_id = m_concentration_set.get_string_in_linked_table(p_wave_format->cs_concentration2);
+	m_main_table_set.m_sex_id = m_sex_set.get_string_in_linked_table(p_wave_format->cs_sex);
+	m_main_table_set.m_strain_id = m_strain_set.get_string_in_linked_table(p_wave_format->cs_strain);
+	m_main_table_set.m_experiment_id = m_experiment_set.get_string_in_linked_table(p_wave_format->cs_comment);
 	m_main_table_set.m_flag = p_wave_format->flag;
 }
 
@@ -1189,8 +1189,8 @@ boolean CdbTable::get_record_value_string(int column_index, CString& output_stri
 	DB_ITEMDESC desc;
 	if (get_record_item_value(column_index, &desc))
 	{
-		b_changed = (output_string.Compare(desc.csVal) != 0);
-		output_string = desc.csVal;
+		b_changed = (output_string.Compare(desc.cs_val) != 0);
+		output_string = desc.cs_val;
 	}
 	return b_changed;
 }
@@ -1199,7 +1199,7 @@ boolean CdbTable::get_record_value_long(int column_index, long& value)
 {
 	DB_ITEMDESC desc;
 	get_record_item_value(column_index, &desc);
-	const boolean b_changed = value != desc.lVal;
-	value = desc.lVal;
+	const boolean b_changed = value != desc.l_val;
+	value = desc.l_val;
 	return b_changed;
 }

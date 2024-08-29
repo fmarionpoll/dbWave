@@ -9,7 +9,7 @@ public:
 	enum { IDD = IDD_ABOUTBOX };
 
 protected:
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	void DoDataExchange(CDataExchange* p_dx) override; // DDX/DDV support
 
 	// Implementation
 protected:

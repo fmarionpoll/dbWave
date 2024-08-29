@@ -12,40 +12,40 @@ IMPLEMENT_DYNAMIC(CdbTableMain, CDaoRecordset)
 CdbTableMain::CdbTableMain(CDaoDatabase* pdb)
 	: CDaoRecordset(pdb)
 {
-	m_desc[CH_ID].pdataItem					= &m_id;
-	m_desc[CH_IDINSECT].pdataItem			= &m_id_insect;
-	m_desc[CH_IDSENSILLUM].pdataItem		= &m_id_sensillum;
-	m_desc[CH_DATALEN].pdataItem			= &m_dataLen;
-	m_desc[CH_NSPIKES].pdataItem			= &m_nSpikes;
+	m_desc[CH_ID].pdata_item					= &m_id;
+	m_desc[CH_IDINSECT].pdata_item			= &m_id_insect;
+	m_desc[CH_IDSENSILLUM].pdata_item		= &m_id_sensillum;
+	m_desc[CH_DATALEN].pdata_item			= &m_data_len;
+	m_desc[CH_NSPIKES].pdata_item			= &m_n_spikes;
 
-	m_desc[CH_NSPIKECLASSES].pdataItem		= &m_nSpikeClasses;
-	m_desc[CH_FLAG].pdataItem				= &m_flag;
-	m_desc[CH_INSECT_ID].pdataItem			= &m_insect_ID;
-	m_desc[CH_SENSILLUM_ID].pdataItem		= &m_sensillum_ID;
-	m_desc[CH_OPERATOR_ID].pdataItem		= &m_operator_ID;
+	m_desc[CH_NSPIKECLASSES].pdata_item		= &m_n_spike_classes;
+	m_desc[CH_FLAG].pdata_item				= &m_flag;
+	m_desc[CH_INSECT_ID].pdata_item			= &m_insect_id;
+	m_desc[CH_SENSILLUM_ID].pdata_item		= &m_sensillum_id;
+	m_desc[CH_OPERATOR_ID].pdata_item		= &m_operator_id;
 
-	m_desc[CH_STIM_ID].pdataItem			= &m_stim_ID;
-	m_desc[CH_CONC_ID].pdataItem			= &m_conc_ID;
-	m_desc[CH_LOCATION_ID].pdataItem		= &m_location_ID;
-	m_desc[CH_PATH_ID].pdataItem			= &m_path_ID;
-	m_desc[CH_PATH2_ID].pdataItem			= &m_path2_ID;
+	m_desc[CH_STIM_ID].pdata_item			= &m_stimulus_id;
+	m_desc[CH_CONC_ID].pdata_item			= &m_concentration_id;
+	m_desc[CH_LOCATION_ID].pdata_item		= &m_location_id;
+	m_desc[CH_PATH_ID].pdata_item			= &m_path_id;
+	m_desc[CH_PATH2_ID].pdata_item			= &m_path2_id;
 
-	m_desc[CH_STIM2_ID].pdataItem			= &m_stim2_ID;
-	m_desc[CH_CONC2_ID].pdataItem			= &m_conc2_ID;
-	m_desc[CH_STRAIN_ID].pdataItem			= &m_strain_ID;
-	m_desc[CH_SEX_ID].pdataItem				= &m_sex_ID;
-	m_desc[CH_REPEAT].pdataItem				= &m_repeat;
+	m_desc[CH_STIM2_ID].pdata_item			= &m_stimulus2_id;
+	m_desc[CH_CONC2_ID].pdata_item			= &m_concentration2_id;
+	m_desc[CH_STRAIN_ID].pdata_item			= &m_strain_id;
+	m_desc[CH_SEX_ID].pdata_item				= &m_sex_id;
+	m_desc[CH_REPEAT].pdata_item				= &m_repeat;
 
-	m_desc[CH_REPEAT2].pdataItem			= &m_repeat2;
-	m_desc[CH_EXPT_ID].pdataItem			= &m_experiment_ID;
+	m_desc[CH_REPEAT2].pdata_item			= &m_repeat2;
+	m_desc[CH_EXPT_ID].pdata_item			= &m_experiment_id;
 
-	m_desc[CH_ACQDATE].pdataItem			= nullptr; 
-	m_desc[CH_FILENAME].pdataItem			= nullptr; 
-	m_desc[CH_FILESPK].pdataItem			= nullptr; 
-	m_desc[CH_ACQ_COMMENTS].pdataItem		= nullptr;
-	m_desc[CH_MORE].pdataItem				= nullptr;
-	m_desc[CH_ACQDATE_DAY].pdataItem		= nullptr;
-	m_desc[CH_ACQDATE_TIME].pdataItem		= nullptr;
+	m_desc[CH_ACQDATE].pdata_item			= nullptr; 
+	m_desc[CH_FILENAME].pdata_item			= nullptr; 
+	m_desc[CH_FILESPK].pdata_item			= nullptr; 
+	m_desc[CH_ACQ_COMMENTS].pdata_item		= nullptr;
+	m_desc[CH_MORE].pdata_item				= nullptr;
+	m_desc[CH_ACQDATE_DAY].pdata_item		= nullptr;
+	m_desc[CH_ACQDATE_TIME].pdata_item		= nullptr;
 	m_desc[CH_ACQDATE_DAY].date_time_param_single_filter	= static_cast<DATE>(0); 
 	m_desc[CH_ACQDATE_TIME].date_time_param_single_filter	= static_cast<DATE>(0);
 
@@ -55,17 +55,17 @@ CdbTableMain::CdbTableMain(CDaoDatabase* pdb)
 		m_desc[i].b_single_filter = FALSE;
 		m_desc[i].l_param_single_filter = 0;
 		m_desc[i].b_array_filter = FALSE;
-		m_desc[i].pdataItem = nullptr;
+		m_desc[i].pdata_item = nullptr;
 		m_desc[i].index = i;
-		m_desc[i].pComboBox = nullptr;
-		m_desc[i].csColParam.Empty();
+		m_desc[i].p_combo_box = nullptr;
+		m_desc[i].cs_col_param.Empty();
 		m_desc[i].cs_param_single_filter.Empty();
 		m_desc[i].l_param_filter_array.RemoveAll();
 		m_desc[i].data_time_array_filter.RemoveAll();
 		m_desc[i].cs_array_filter.RemoveAll();
-		m_desc[i].liArray.RemoveAll();
-		m_desc[i].tiArray.RemoveAll();
-		m_desc[i].csElementsArray.RemoveAll();
+		m_desc[i].li_array.RemoveAll();
+		m_desc[i].ti_array.RemoveAll();
+		m_desc[i].cs_elements_array.RemoveAll();
 	}
 
 	m_nFields = 29;
@@ -111,16 +111,16 @@ CString CdbTableMain::GetDefaultSQL()
 void CdbTableMain::DoFieldExchange(CDaoFieldExchange* p_fx)
 {
 	p_fx->SetFieldType(CDaoFieldExchange::outputColumn);
-	DFX_Text(p_fx, m_desc[CH_FILENAME].dfx_name_with_brackets, m_FileDat);
-	DFX_Text(p_fx, m_desc[CH_FILESPK].dfx_name_with_brackets, m_FileSpk);
+	DFX_Text(p_fx, m_desc[CH_FILENAME].dfx_name_with_brackets, m_file_dat);
+	DFX_Text(p_fx, m_desc[CH_FILESPK].dfx_name_with_brackets, m_file_spk);
 	DFX_Text(p_fx, m_desc[CH_ACQ_COMMENTS].dfx_name_with_brackets, m_acq_comment);
 	DFX_Text(p_fx, m_desc[CH_MORE].dfx_name_with_brackets, m_more);
 	DFX_Long(p_fx, m_desc[CH_ID].dfx_name_with_brackets, m_id);
-	DFX_Long(p_fx, m_desc[CH_DATALEN].dfx_name_with_brackets, m_dataLen);
-	DFX_Long(p_fx, m_desc[CH_NSPIKES].dfx_name_with_brackets, m_nSpikes);
-	DFX_Long(p_fx, m_desc[CH_NSPIKECLASSES].dfx_name_with_brackets, m_nSpikeClasses);
-	DFX_Long(p_fx, m_desc[CH_PATH_ID].dfx_name_with_brackets, m_path_ID);
-	DFX_Long(p_fx, m_desc[CH_PATH2_ID].dfx_name_with_brackets, m_path2_ID);
+	DFX_Long(p_fx, m_desc[CH_DATALEN].dfx_name_with_brackets, m_data_len);
+	DFX_Long(p_fx, m_desc[CH_NSPIKES].dfx_name_with_brackets, m_n_spikes);
+	DFX_Long(p_fx, m_desc[CH_NSPIKECLASSES].dfx_name_with_brackets, m_n_spike_classes);
+	DFX_Long(p_fx, m_desc[CH_PATH_ID].dfx_name_with_brackets, m_path_id);
+	DFX_Long(p_fx, m_desc[CH_PATH2_ID].dfx_name_with_brackets, m_path2_id);
 	DFX_DateTime(p_fx, m_desc[CH_ACQDATE].dfx_name_with_brackets, m_table_acq_date);
 
 	int i = CH_IDINSECT;
@@ -128,25 +128,25 @@ void CdbTableMain::DoFieldExchange(CDaoFieldExchange* p_fx)
 	i = CH_IDSENSILLUM;
 	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_id_sensillum);
 	i = CH_LOCATION_ID;
-	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_location_ID);
+	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_location_id);
 	i = CH_STIM_ID;
-	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_stim_ID);
+	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_stimulus_id);
 	i = CH_CONC_ID;
-	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_conc_ID);
+	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_concentration_id);
 	i = CH_STIM2_ID;
-	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_stim2_ID);
+	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_stimulus2_id);
 	i = CH_CONC2_ID;
-	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_conc2_ID);
+	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_concentration2_id);
 	i = CH_OPERATOR_ID;
-	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_operator_ID);
+	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_operator_id);
 	i = CH_INSECT_ID;
-	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_insect_ID);
+	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_insect_id);
 	i = CH_SENSILLUM_ID;
-	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_sensillum_ID);
+	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_sensillum_id);
 	i = CH_STRAIN_ID;
-	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_strain_ID);
+	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_strain_id);
 	i = CH_SEX_ID;
-	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_sex_ID);
+	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_sex_id);
 	i = CH_FLAG;
 	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_flag);
 	i = CH_REPEAT;
@@ -154,49 +154,49 @@ void CdbTableMain::DoFieldExchange(CDaoFieldExchange* p_fx)
 	i = CH_REPEAT2;
 	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_repeat2);
 	i = CH_ACQDATE_DAY;
-	DFX_DateTime(p_fx, m_desc[i].dfx_name_with_brackets, m_acqDate_day);
+	DFX_DateTime(p_fx, m_desc[i].dfx_name_with_brackets, m_acq_date_day);
 	i = CH_ACQDATE_TIME;
-	DFX_DateTime(p_fx, m_desc[i].dfx_name_with_brackets, m_acqDate_time);
+	DFX_DateTime(p_fx, m_desc[i].dfx_name_with_brackets, m_acq_date_time);
 	i = CH_EXPT_ID;
-	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_experiment_ID);
+	DFX_Long(p_fx, m_desc[i].dfx_name_with_brackets, m_experiment_id);
 	
 	p_fx->SetFieldType(CDaoFieldExchange::param);
 	i = CH_IDINSECT;
-	DFX_Long(p_fx, m_desc[i].csColParam, m_desc[i].l_param_single_filter); // 1
+	DFX_Long(p_fx, m_desc[i].cs_col_param, m_desc[i].l_param_single_filter); // 1
 	i = CH_IDSENSILLUM;
-	DFX_Long(p_fx, m_desc[i].csColParam, m_desc[i].l_param_single_filter); //
+	DFX_Long(p_fx, m_desc[i].cs_col_param, m_desc[i].l_param_single_filter); //
 	i = CH_LOCATION_ID;
-	DFX_Long(p_fx, m_desc[i].csColParam, m_desc[i].l_param_single_filter); //
+	DFX_Long(p_fx, m_desc[i].cs_col_param, m_desc[i].l_param_single_filter); //
 	i = CH_STIM_ID;
-	DFX_Long(p_fx, m_desc[i].csColParam, m_desc[i].l_param_single_filter); //
+	DFX_Long(p_fx, m_desc[i].cs_col_param, m_desc[i].l_param_single_filter); //
 	i = CH_CONC_ID;
-	DFX_Long(p_fx, m_desc[i].csColParam, m_desc[i].l_param_single_filter); // 5
+	DFX_Long(p_fx, m_desc[i].cs_col_param, m_desc[i].l_param_single_filter); // 5
 	i = CH_STIM2_ID;
-	DFX_Long(p_fx, m_desc[i].csColParam, m_desc[i].l_param_single_filter); //
+	DFX_Long(p_fx, m_desc[i].cs_col_param, m_desc[i].l_param_single_filter); //
 	i = CH_CONC2_ID;
-	DFX_Long(p_fx, m_desc[i].csColParam, m_desc[i].l_param_single_filter); //
+	DFX_Long(p_fx, m_desc[i].cs_col_param, m_desc[i].l_param_single_filter); //
 	i = CH_OPERATOR_ID;
-	DFX_Long(p_fx, m_desc[i].csColParam, m_desc[i].l_param_single_filter); //
+	DFX_Long(p_fx, m_desc[i].cs_col_param, m_desc[i].l_param_single_filter); //
 	i = CH_INSECT_ID;
-	DFX_Long(p_fx, m_desc[i].csColParam, m_desc[i].l_param_single_filter); //
+	DFX_Long(p_fx, m_desc[i].cs_col_param, m_desc[i].l_param_single_filter); //
 	i = CH_SENSILLUM_ID;
-	DFX_Long(p_fx, m_desc[i].csColParam, m_desc[i].l_param_single_filter); // 10
+	DFX_Long(p_fx, m_desc[i].cs_col_param, m_desc[i].l_param_single_filter); // 10
 	i = CH_STRAIN_ID;
-	DFX_Long(p_fx, m_desc[i].csColParam, m_desc[i].l_param_single_filter); //
+	DFX_Long(p_fx, m_desc[i].cs_col_param, m_desc[i].l_param_single_filter); //
 	i = CH_SEX_ID;
-	DFX_Long(p_fx, m_desc[i].csColParam, m_desc[i].l_param_single_filter); //
+	DFX_Long(p_fx, m_desc[i].cs_col_param, m_desc[i].l_param_single_filter); //
 	i = CH_FLAG;
-	DFX_Long(p_fx, m_desc[i].csColParam, m_desc[i].l_param_single_filter); //
+	DFX_Long(p_fx, m_desc[i].cs_col_param, m_desc[i].l_param_single_filter); //
 	i = CH_REPEAT;
-	DFX_Long(p_fx, m_desc[i].csColParam, m_desc[i].l_param_single_filter); //
+	DFX_Long(p_fx, m_desc[i].cs_col_param, m_desc[i].l_param_single_filter); //
 	i = CH_REPEAT2;
-	DFX_Long(p_fx, m_desc[i].csColParam, m_desc[i].l_param_single_filter); // 15
+	DFX_Long(p_fx, m_desc[i].cs_col_param, m_desc[i].l_param_single_filter); // 15
 	i = CH_ACQDATE_DAY;
-	DFX_DateTime(p_fx, m_desc[i].csColParam, m_desc[i].date_time_param_single_filter); // 16
+	DFX_DateTime(p_fx, m_desc[i].cs_col_param, m_desc[i].date_time_param_single_filter); // 16
 	i = CH_ACQDATE_TIME;
-	DFX_DateTime(p_fx, m_desc[i].csColParam, m_desc[i].date_time_param_single_filter); // 17
+	DFX_DateTime(p_fx, m_desc[i].cs_col_param, m_desc[i].date_time_param_single_filter); // 17
 	i = CH_EXPT_ID;
-	DFX_Long(p_fx, m_desc[i].csColParam, m_desc[i].l_param_single_filter); // 18
+	DFX_Long(p_fx, m_desc[i].cs_col_param, m_desc[i].l_param_single_filter); // 18
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -283,9 +283,9 @@ BOOL CdbTableMain::check_if_acq_date_time_is_unique(const COleDateTime* p_time)
 
 void CdbTableMain::get_max_id()
 {
-	max_insectID = -1;
-	max_sensillumID = -1;
-	max_ID = -1;
+	max_insect_id = -1;
+	max_sensillum_id = -1;
+	max_id = -1;
 	const auto n_records = get_records_count();
 	if (0 == n_records)
 		return;
@@ -293,14 +293,14 @@ void CdbTableMain::get_max_id()
 	MoveFirst();
 	while (!IsEOF())
 	{
-		if (m_id_insect > max_insectID)
-			max_insectID = m_id_insect;
+		if (m_id_insect > max_insect_id)
+			max_insect_id = m_id_insect;
 
-		if (m_id > max_ID)
-			max_ID = m_id;
+		if (m_id > max_id)
+			max_id = m_id;
 
-		if (m_id_sensillum > max_sensillumID)
-			max_sensillumID = m_id_sensillum;
+		if (m_id_sensillum > max_sensillum_id)
+			max_sensillum_id = m_id_sensillum;
 
 		MoveNext();
 	}
@@ -403,7 +403,7 @@ void CdbTableMain::build_filters()
 		{
 			if (!m_strFilter.IsEmpty())
 				m_strFilter += " AND ";
-			m_strFilter += m_desc[i_field].csEQUcondition;
+			m_strFilter += m_desc[i_field].cs_equ_condition;
 		}
 	}
 	m_b_filter_on = !m_strFilter.IsEmpty();
@@ -422,7 +422,7 @@ void CdbTableMain::set_data_len(const long data_len)
 	try
 	{
 		Edit();
-		m_dataLen = data_len;
+		m_data_len = data_len;
 		Update();
 	}
 	catch (CDaoException* e)
@@ -463,9 +463,9 @@ void CdbTableMain::add_day_to_date_array(const COleDateTime& o_time)
 	COleDateTime day_time;
 	day_time.SetDateTime(o_time.GetYear(), o_time.GetMonth(), o_time.GetDay(), 0, 0, 0);
 
-	for (auto i = 0; i < m_desc[CH_ACQDATE_DAY].tiArray.GetSize(); i++)
+	for (auto i = 0; i < m_desc[CH_ACQDATE_DAY].ti_array.GetSize(); i++)
 	{
-		auto io_time = m_desc[CH_ACQDATE_DAY].tiArray.GetAt(i);
+		auto io_time = m_desc[CH_ACQDATE_DAY].ti_array.GetAt(i);
 		// element already exist? -- assume this is the most frequent case
 		if (day_time == io_time)
 		{
@@ -475,7 +475,7 @@ void CdbTableMain::add_day_to_date_array(const COleDateTime& o_time)
 		// insert element before current?
 		if (day_time < io_time)
 		{
-			m_desc[CH_ACQDATE_DAY].tiArray.InsertAt(i, day_time);
+			m_desc[CH_ACQDATE_DAY].ti_array.InsertAt(i, day_time);
 			b_flag = TRUE;
 			break;
 		}
@@ -485,7 +485,7 @@ void CdbTableMain::add_day_to_date_array(const COleDateTime& o_time)
 	// no element found, add one at the end of the array
 	if (!b_flag)
 	{
-		m_desc[CH_ACQDATE_DAY].tiArray.Add(day_time);
+		m_desc[CH_ACQDATE_DAY].ti_array.Add(day_time);
 	}
 }
 
@@ -498,7 +498,7 @@ void CdbTableMain::add_to_li_array(const int i_col)
 	if (var_value.vt == VT_NULL)
 		l_val = 0;
 
-	auto pli_array = &m_desc[i_col].liArray;
+	auto pli_array = &m_desc[i_col].li_array;
 	auto b_flag = FALSE;
 	// value is greater than current value -> loop forwards
 
@@ -594,8 +594,8 @@ void CdbTableMain::add_current_record_to_id_arrays()
 
 void CdbTableMain::delete_date_array()
 {
-	if (m_desc[CH_ACQDATE_DAY].tiArray.GetSize() > 0)
-		m_desc[CH_ACQDATE_DAY].tiArray.RemoveAll();
+	if (m_desc[CH_ACQDATE_DAY].ti_array.GetSize() > 0)
+		m_desc[CH_ACQDATE_DAY].ti_array.RemoveAll();
 }
 
 // loop over the entire database and save descriptors
@@ -608,15 +608,15 @@ void CdbTableMain::build_and_sort_id_arrays()
 	// ID arrays will be ordered incrementally
 	const int n_records = get_records_count();
 	if (!m_desc[CH_IDINSECT].b_single_filter && !m_desc[CH_IDINSECT].b_array_filter)
-		m_desc[CH_IDINSECT].liArray.SetSize(0, n_records); // resize array to the max possible
+		m_desc[CH_IDINSECT].li_array.SetSize(0, n_records); // resize array to the max possible
 	if (!m_desc[CH_IDSENSILLUM].b_single_filter && !m_desc[CH_IDSENSILLUM].b_array_filter)
-		m_desc[CH_IDSENSILLUM].liArray.SetSize(0, n_records); // size of the array not known beforehand
+		m_desc[CH_IDSENSILLUM].li_array.SetSize(0, n_records); // size of the array not known beforehand
 	if (!m_desc[CH_REPEAT].b_single_filter && !m_desc[CH_REPEAT].b_array_filter)
-		m_desc[CH_REPEAT].liArray.SetSize(0, n_records);
+		m_desc[CH_REPEAT].li_array.SetSize(0, n_records);
 	if (!m_desc[CH_REPEAT2].b_single_filter && !m_desc[CH_REPEAT2].b_array_filter)
-		m_desc[CH_REPEAT2].liArray.SetSize(0, n_records);
+		m_desc[CH_REPEAT2].li_array.SetSize(0, n_records);
 	if (!m_desc[CH_FLAG].b_single_filter && !m_desc[CH_FLAG].b_array_filter)
-		m_desc[CH_FLAG].liArray.SetSize(0, n_records);
+		m_desc[CH_FLAG].li_array.SetSize(0, n_records);
 	if (n_records == 0)
 		return;
 
@@ -634,11 +634,11 @@ void CdbTableMain::build_and_sort_id_arrays()
 	}
 
 	// resize arrays
-	m_desc[CH_IDINSECT].liArray.FreeExtra();
-	m_desc[CH_IDSENSILLUM].liArray.FreeExtra();
-	m_desc[CH_REPEAT].liArray.FreeExtra();
-	m_desc[CH_REPEAT2].liArray.FreeExtra();
-	m_desc[CH_FLAG].liArray.FreeExtra();
+	m_desc[CH_IDINSECT].li_array.FreeExtra();
+	m_desc[CH_IDSENSILLUM].li_array.FreeExtra();
+	m_desc[CH_REPEAT].li_array.FreeExtra();
+	m_desc[CH_REPEAT2].li_array.FreeExtra();
+	m_desc[CH_FLAG].li_array.FreeExtra();
 
 	// restore current record
 	SetBookmark(bookmark_current);
@@ -657,7 +657,7 @@ void CdbTableMain::copy_path_to_path2()
 	while (!IsEOF())
 	{
 		Edit();
-		m_path2_ID = m_path_ID;
+		m_path2_id = m_path_id;
 		Update();
 		MoveNext();
 		i++;
