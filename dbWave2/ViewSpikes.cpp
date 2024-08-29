@@ -208,7 +208,7 @@ void ViewSpikes::OnMouseMove(UINT n_flags, CPoint point)
 	ViewDbTable::OnMouseMove(n_flags, point);
 }
 
-void ViewSpikes::OnLButtonUp(UINT n_flags, CPoint point)
+void ViewSpikes::OnLButtonUp(const UINT n_flags, const CPoint point)
 {
 	if (rect_vt_track_.PtInRect(point))
 	{
@@ -224,7 +224,7 @@ void ViewSpikes::OnLButtonUp(UINT n_flags, CPoint point)
 	ViewDbTable::OnLButtonUp(n_flags, point);
 }
 
-void ViewSpikes::OnLButtonDown(UINT n_flags, CPoint point)
+void ViewSpikes::OnLButtonDown(const UINT n_flags, const CPoint point)
 {
 	if (rect_vt_track_.PtInRect(point))
 		SetCapture();
@@ -256,7 +256,7 @@ void ViewSpikes::change_zoom(LPARAM l_param)
 	update_legends(TRUE);
 }
 
-LRESULT ViewSpikes::on_my_message(WPARAM w_param, LPARAM l_param)
+LRESULT ViewSpikes::on_my_message(const WPARAM w_param, const LPARAM l_param)
 {
 	short param_value = LOWORD(l_param);
 	switch (w_param)
@@ -964,15 +964,14 @@ CString ViewSpikes::print_bars(CDC* p_dc, const CRect* rect) const
 	{
 		/*
 				int imax = m_sourceView.get_channel_list_size();	// number of data channels
-				for (int ichan=0; ichan< imax; ichan++)		// loop
+				for (int i_chan=0; i_chan< imax; i_chan++)		// loop
 				{
-					// boucler sur les commentaires de chan n a chan 0...
-					wsprintf(lpszVal, "chan#%i ", ichan);	// channel number
+					wsprintf(lpszVal, "chan#%i ", i_chan);	// channel number
 					cs_comment = lpszVal;
 					if (mdPM->bVoltageScaleBar)				// bar scale value
 					{
 						csUnit = " V";						// provisional unit
-						float z= 	(float) m_yscalebar.GetRectHeight()* m_sourceView.GetChanlistVoltsperPixel(ichan);
+						float z= 	(float) m_y_scale_bar.GetRectHeight()* m_sourceView.Get_Chan_list_Volts_per_Pixel(i_chan);
 						float x = PrintChangeUnit(z, &csUnit, &x_scale_factor); // convert
 
 						// approximate
@@ -995,10 +994,10 @@ CString ViewSpikes::print_bars(CDC* p_dc, const CRect* rect) const
 					str_comment += cs_comment;
 
 					// print chan comment
-					if (mdPM->bChansComment)
+					if (mdPM->b_Chans_Comment)
 					{
 						str_comment += tab;
-						str_comment += m_sourceView.GetChanlistComment(ichan);
+						str_comment += m_sourceView.Get_Chan_list_Comment(i_chan);
 					}
 					str_comment += rc;
 
@@ -1006,18 +1005,18 @@ CString ViewSpikes::print_bars(CDC* p_dc, const CRect* rect) const
 					if (mdPM->bChanSettings)
 					{
 						CString cs;
-						WORD channb = m_sourceView.GetChanlistSourceChan(ichan);
-						CWaveChan* pChan = m_pDataDoc->m_pDataFile->GetpWavechanArray()->get_p_channel(channb);
-						wsprintf(lpszVal, "headstage=%s", pChan->headstage);
+						WORD chan_nb = m_sourceView.Get_Chan_list_Source_Chan(i_chan);
+						CWaveChan* pChan = m_pDataDoc->m_pDataFile->Get_p_Wave_chan_Array()->get_p_channel(chan_nb);
+						wsprintf(lpszVal, "headstage=%s", pChan->head_stage);
 						cs += lpszVal;
-						wsprintf(lpszVal, " g=%li", (long) (pChan->xgain));
+						wsprintf(lpszVal, " g=%li", (long) (pChan->x_gain));
 						cs += lpszVal;
-						wsprintf(lpszVal, " LP=%i", pChan->am_lowpass);
+						wsprintf(lpszVal, " LP=%i", pChan->am_low_pass);
 						cs += lpszVal;
 						cs += " IN+=";
-						cs += pChan->am_csInputpos;
+						cs += pChan->am_cs_Input_pos;
 						cs += " IN-=";
-						cs += pChan->am_csInputneg;
+						cs += pChan->am_cs_Input_neg;
 						str_comment += cs;
 						str_comment += rc;
 					}
@@ -1096,10 +1095,10 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 			{
 				p_spk_doc = p_dbwave_doc->open_current_spike_file();
 				p_spk_list = p_spk_doc->get_spike_list_current();
-				if (!p_spk_list->is_class_list_valid()) // if class list not valid:
+				if (!p_spk_list->is_class_list_valid()) 
 				{
-					p_spk_list->update_class_list(); // rebuild list of classes
-					p_spk_doc->SetModifiedFlag(); // and set modified flag
+					p_spk_list->update_class_list();
+					p_spk_doc->SetModifiedFlag(); 
 				}
 
 				int n_classes = 1;
@@ -1115,11 +1114,11 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 
 			if (options_view_data_->b_multiple_rows)
 			{
-				const auto len = p_dbwave_doc->db_get_data_len() - l_print_first_; // file length
-				auto n_rows = len / l_print_len_; // how many rows for this file?
-				if (len > n_rows * l_print_len_) // remainder?
+				const auto len = p_dbwave_doc->db_get_data_len() - l_print_first_;
+				auto n_rows = len / l_print_len_; 
+				if (len > n_rows * l_print_len_) 
 					n_rows++;
-				nb_rect += static_cast<int>(n_rows); // update nb of rows
+				nb_rect += static_cast<int>(n_rows); 
 			}
 		}
 	}
@@ -1134,12 +1133,12 @@ BOOL ViewSpikes::OnPreparePrinting(CPrintInfo* p_info)
 		n_pages++;
 
 	//------------------------------------------------------
-	p_info->SetMaxPage(n_pages); //one-page printing/preview
-	p_info->m_nNumPreviewPages = 1; // preview 1 pages at a time
-	p_info->m_pPD->m_pd.Flags &= ~PD_NOSELECTION; // allow print only selection
+	p_info->SetMaxPage(n_pages); 
+	p_info->m_nNumPreviewPages = 1; 
+	p_info->m_pPD->m_pd.Flags &= ~PD_NOSELECTION; 
 
 	if (options_view_data_->b_print_selection)
-		p_info->m_pPD->m_pd.Flags |= PD_SELECTION; // set button to selection
+		p_info->m_pPD->m_pd.Flags |= PD_SELECTION; 
 
 	// call dialog box
 	const auto flag = DoPreparePrinting(p_info);
@@ -1218,16 +1217,16 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 
 		// set first rectangle where data will be printed
 
-		auto comment_rect = r_where; // save RWhere for comments
-		p_dc->SetMapMode(MM_TEXT); // 1 pixel = 1 logical unit
-		p_dc->SetTextAlign(TA_LEFT); // set text align mode
-		if (options_view_data_->b_frame_rect) // print rectangle if necessary
+		auto comment_rect = r_where;
+		p_dc->SetMapMode(MM_TEXT);
+		p_dc->SetTextAlign(TA_LEFT); 
+		if (options_view_data_->b_frame_rect) 
 		{
 			p_dc->MoveTo(r_where.left, r_where.top);
-			p_dc->LineTo(r_where.right, r_where.top); // top hz
-			p_dc->LineTo(r_where.right, r_where.bottom); // right vert
-			p_dc->LineTo(r_where.left, r_where.bottom); // bottom hz
-			p_dc->LineTo(r_where.left, r_where.top); // left vert
+			p_dc->LineTo(r_where.right, r_where.top); 
+			p_dc->LineTo(r_where.right, r_where.bottom); 
+			p_dc->LineTo(r_where.left, r_where.bottom); 
+			p_dc->LineTo(r_where.left, r_where.top); 
 		}
 		p_dc->SetViewportOrg(r_where.left, r_where.top);
 
@@ -1260,10 +1259,10 @@ void ViewSpikes::OnPrint(CDC* p_dc, CPrintInfo* p_info)
 
 		// bottom of the first rectangle
 		rw_bars.bottom = rw2.top + r_height;
-		auto l_last = l_first + l_print_len_; // compute last pt to load
-		if (l_last > very_last) // check end across file length
+		auto l_last = l_first + l_print_len_; 
+		if (l_last > very_last) 
 			l_last = very_last;
-		if ((l_last - l_first + 1) < l_print_len_) // adjust rect to length of data
+		if ((l_last - l_first + 1) < l_print_len_) 
 		{
 			rw_bars.right = MulDiv(rw_bars.Width(), l_last - l_first, l_print_len_)
 				+ rw_bars.left;
@@ -1779,29 +1778,28 @@ void ViewSpikes::scroll_gain(const UINT n_sb_code, const UINT n_pos)
 	// get corresponding data
 	switch (n_sb_code)
 	{
-	// .................scroll to the start
-	case SB_LEFT: l_size = Y_EXTENT_MIN;
+	case SB_LEFT: 
+		l_size = Y_EXTENT_MIN;
 		break;
-	// .................scroll one line left
-	case SB_LINELEFT: l_size -= l_size / 10 + 1;
+	case SB_LINELEFT: 
+		l_size -= l_size / 10 + 1;
 		break;
-	// .................scroll one line right
-	case SB_LINERIGHT: l_size += l_size / 10 + 1;
+	case SB_LINERIGHT: 
+		l_size += l_size / 10 + 1;
 		break;
-	// .................scroll one page left
-	case SB_PAGELEFT: l_size -= l_size / 2 + 1;
+	case SB_PAGELEFT: 
+		l_size -= l_size / 2 + 1;
 		break;
-	// .................scroll one page right
-	case SB_PAGERIGHT: l_size += l_size + 1;
+	case SB_PAGERIGHT: 
+		l_size += l_size + 1;
 		break;
-	// .................scroll to end right
-	case SB_RIGHT: l_size = Y_EXTENT_MAX;
+	case SB_RIGHT: 
+		l_size = Y_EXTENT_MAX;
 		break;
-	// .................scroll to pos = nPos or drag scroll box -- pos = nPos
 	case SB_THUMBPOSITION:
-	case SB_THUMBTRACK: l_size = MulDiv(static_cast<int>(n_pos) - 50, Y_EXTENT_MAX, 100);
+	case SB_THUMBTRACK:
+		l_size = MulDiv(static_cast<int>(n_pos) - 50, Y_EXTENT_MAX, 100);
 		break;
-	// .................NOP: set position only
 	default: break;
 	}
 
@@ -1834,29 +1832,29 @@ void ViewSpikes::scroll_bias(const UINT n_sb_code, const UINT n_pos)
 	// get corresponding data
 	switch (n_sb_code)
 	{
-	case SB_LEFT: // scroll to the start
+	case SB_LEFT: 
 		l_size = Y_ZERO_MIN;
 		break;
-	case SB_LINELEFT: // scroll one line left
+	case SB_LINELEFT: 
 		l_size -= y_extent / 100 + 1;
 		break;
-	case SB_LINERIGHT: // scroll one line right
+	case SB_LINERIGHT:
 		l_size += y_extent / 100 + 1;
 		break;
-	case SB_PAGELEFT: // scroll one page left
+	case SB_PAGELEFT: 
 		l_size -= y_extent / 10 + 1;
 		break;
-	case SB_PAGERIGHT: // scroll one page right
+	case SB_PAGERIGHT: 
 		l_size += y_extent / 10 + 1;
 		break;
-	case SB_RIGHT: // scroll to end right
+	case SB_RIGHT:
 		l_size = Y_ZERO_MAX;
 		break;
-	case SB_THUMBPOSITION: // scroll to pos = nPos
-	case SB_THUMBTRACK: // drag scroll box -- pos = nPos
+	case SB_THUMBPOSITION: 
+	case SB_THUMBTRACK: 
 		l_size = MulDiv(static_cast<int>(n_pos) - 50, Y_ZERO_SPAN, 100);
 		break;
-	default: // NOP: set position only
+	default: 
 		break;
 	}
 
@@ -1902,12 +1900,6 @@ void ViewSpikes::on_artefact()
 		const auto spike = p_spk_list->get_spike(m_spike_index);
 		auto spk_class = spike->get_class_id();
 		spk_class = -(spk_class + 1);
-		//// if artefact: set class to negative value
-		//if (m_b_artefact) 
-		//	spk_class = -(spk_class + 1);
-		//// if not artefact: if spike has negative class, set to positive value
-		//else if (spk_class < 0)
-		//	spk_class = -(spk_class + 1);
 		spike_class_listbox_.change_spike_class(m_spike_index, spk_class);
 	}
 	CheckDlgButton(IDC_ARTEFACT, m_b_artefact);
@@ -1936,7 +1928,7 @@ void ViewSpikes::on_format_all_data()
 {
 	l_first_ = 0;
 	l_last_ = p_spk_doc->get_acq_size() - 1;
-	// spikes: center spikes horizontally and adjust hz size of display
+
 	constexpr int x_wo = 0;
 	const auto x_we = p_spk_list->get_spike_length();
 	spike_class_listbox_.set_x_zoom(x_we, x_wo);
@@ -1949,8 +1941,6 @@ void ViewSpikes::on_format_all_data()
 
 void ViewSpikes::on_format_center_curve()
 {
-	// TODO 
-
 	// loop over all spikes of the list
 	const int n_spikes = p_spk_list->get_spikes_count();
 	const auto i_t1 = spk_classification_parameters_->shape_t1;
