@@ -8,60 +8,60 @@
 #endif
 
 
-DlgDataSeriesFormat::DlgDataSeriesFormat(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgDataSeriesFormat::DlgDataSeriesFormat(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
-void DlgDataSeriesFormat::DoDataExchange(CDataExchange* pDX)
+void DlgDataSeriesFormat::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_LISTSERIES, m_listseries);
-	DDX_Text(pDX, IDC_MAXMV, m_maxmv);
-	DDX_Text(pDX, IDC_MINMV, m_minmv);
-	DDX_Control(pDX, IDC_MFCCOLORBUTTON1, m_colorbutton);
+	CDialog::DoDataExchange(p_dx);
+	DDX_Control(p_dx, IDC_LISTSERIES, m_list_series);
+	DDX_Text(p_dx, IDC_MAXMV, m_max_mv);
+	DDX_Text(p_dx, IDC_MINMV, m_min_mv);
+	DDX_Control(p_dx, IDC_MFCCOLORBUTTON1, m_color_button);
 }
 
 BEGIN_MESSAGE_MAP(DlgDataSeriesFormat, CDialog)
-	ON_LBN_DBLCLK(IDC_LISTSERIES, OnSelchangeListseries)
-	ON_LBN_SELCHANGE(IDC_LISTSERIES, OnSelchangeListseries)
+	ON_LBN_DBLCLK(IDC_LISTSERIES, on_sel_change_list_series)
+	ON_LBN_SELCHANGE(IDC_LISTSERIES, on_sel_change_list_series)
 END_MESSAGE_MAP()
 
 void DlgDataSeriesFormat::OnOK()
 {
 	UpdateData(TRUE);
-	SetParams(m_listseries.GetCurSel());
+	set_params(m_list_series.GetCurSel());
 	CDialog::OnOK();
 }
 
-void DlgDataSeriesFormat::GetParams(int index)
+void DlgDataSeriesFormat::get_params(int index)
 {
-	CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(index);
-	m_yzero = chan->get_y_zero();
-	m_yextent = chan->get_y_extent();
+	CChanlistItem* chan = m_p_chart_data_wnd->get_channel_list_item(index);
+	m_y_zero = chan->get_y_zero();
+	m_y_extent = chan->get_y_extent();
 	const auto color = chan->get_color_index();
-	m_colorbutton.SetColor(color);
-	m_mVperbin = chan->get_volts_per_bin() * 1000.0f;
-	m_binzero = 0; // m_dbDoc->m_pDataFile->GetpWaveFormat()->binzero;
-	m_maxmv = (m_yextent / 2.f + m_yzero - m_binzero) * m_mVperbin;
-	m_minmv = (-m_yextent / 2.f + m_yzero - m_binzero) * m_mVperbin;
+	m_color_button.SetColor(color);
+	m_mv_per_bin = chan->get_volts_per_bin() * 1000.0f;
+	m_bin_zero = 0;
+	m_max_mv = (m_y_extent / 2.f + m_y_zero - m_bin_zero) * m_mv_per_bin;
+	m_min_mv = (-m_y_extent / 2.f + m_y_zero - m_bin_zero) * m_mv_per_bin;
 }
 
-void DlgDataSeriesFormat::SetParams(const int index)
+void DlgDataSeriesFormat::set_params(const int index)
 {
-	CChanlistItem* chan = m_pChartDataWnd->get_channel_list_item(index);
-	m_yzero = static_cast<int>((m_maxmv + m_minmv) / (m_mVperbin * 2.0f)) + m_binzero;
-	m_yextent = static_cast<int>((m_maxmv - m_minmv) / m_mVperbin);
-	chan->set_y_zero(m_yzero);
-	chan->set_y_extent(m_yextent);
-	const auto ccolor = m_colorbutton.GetColor();
-	auto icolor = m_pChartDataWnd->find_color_index(ccolor);
-	if (icolor < 0)
+	CChanlistItem* chan = m_p_chart_data_wnd->get_channel_list_item(index);
+	m_y_zero = static_cast<int>((m_max_mv + m_min_mv) / (m_mv_per_bin * 2.0f)) + m_bin_zero;
+	m_y_extent = static_cast<int>((m_max_mv - m_min_mv) / m_mv_per_bin);
+	chan->set_y_zero(m_y_zero);
+	chan->set_y_extent(m_y_extent);
+	const auto c_color = m_color_button.GetColor();
+	auto i_color = ChartData::find_color_index(c_color);
+	if (i_color < 0)
 	{
-		icolor = NB_COLORS - 1;
-		m_pChartDataWnd->set_color_table_at(icolor, ccolor);
+		i_color = NB_COLORS - 1;
+		ChartData::set_color_table_at(i_color, c_color);
 	}
-	chan->set_color(icolor);
+	chan->set_color(i_color);
 }
 
 void DlgDataSeriesFormat::OnCancel()
@@ -74,31 +74,25 @@ BOOL DlgDataSeriesFormat::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	/*
-
-	for (int i=0; i<NB_COLORS; i++)
-		m_colors.AddColorItem( m_plineview->GetColorIndex(i));
-	*/
-
 	// load channel description CComboBox
-	const auto chanmax = m_pChartDataWnd->get_channel_list_size();
-	for (auto i = 0; i < chanmax; i++)
-		m_listseries.AddString(m_pChartDataWnd->get_channel_list_item(i)->get_comment());
+	const auto chan_max = m_p_chart_data_wnd->get_channel_list_size();
+	for (auto i = 0; i < chan_max; i++)
+		m_list_series.AddString(m_p_chart_data_wnd->get_channel_list_item(i)->get_comment());
 
 	// select...
-	GetParams(m_listindex);
+	get_params(m_list_index);
 	UpdateData(FALSE);
-	m_listseries.SetCurSel(m_listindex);
+	m_list_series.SetCurSel(m_list_index);
 	return TRUE; // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void DlgDataSeriesFormat::OnSelchangeListseries()
+void DlgDataSeriesFormat::on_sel_change_list_series()
 {
 	UpdateData(TRUE); // transfer data to controls
-	const auto listindex = m_listseries.GetCurSel();
-	SetParams(m_listindex);
-	m_listindex = listindex;
-	GetParams(listindex);
+	const auto list_index = m_list_series.GetCurSel();
+	set_params(m_list_index);
+	m_list_index = list_index;
+	get_params(list_index);
 	UpdateData(FALSE); // transfer data to controls
 }

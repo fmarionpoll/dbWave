@@ -1282,8 +1282,8 @@ void ViewADcontinuous::update_radio_buttons()
 void ViewADcontinuous::on_bn_clicked_card_features()
 {
 	DlgDataTranslationBoard dlg;
-	dlg.m_pAnalogIN = &m_acq32_ad;
-	dlg.m_pAnalogOUT = &m_acq32_da;
+	dlg.m_p_analog_in = &m_acq32_ad;
+	dlg.m_p_analog_out = &m_acq32_da;
 	dlg.DoModal();
 }
 

@@ -5,43 +5,43 @@
 class DlgDataViewOrdinates : public CDialog
 {
 public:
-	DlgDataViewOrdinates(CWnd* pParent = nullptr); 
+	DlgDataViewOrdinates(CWnd* p_parent = nullptr); 
 
 	// Dialog Data
 	enum { IDD = IDD_ORDINATES };
 
-	CComboBox m_chanSelect;
-	int m_iUnit{ -1 };
-	float m_xcenter{ 0.f };
-	float m_xmax{ 0.f };
-	float m_xmin{ 0.f };
+	CComboBox m_chan_select;
+	int m_i_unit{ -1 };
+	float m_x_center{ 0.f };
+	float m_x_max{ 0.f };
+	float m_x_min{ 0.f };
 
-	ChartData* m_pChartDataWnd{ nullptr }; 
-	int m_nChanmax{ 0 };
-	int m_Channel{ 0 }; 
-	BOOL m_bChanged{ false }; 
+	ChartData* m_p_chart_data_wnd{ nullptr }; 
+	int m_n_chan_max{ 0 };
+	int m_channel{ 0 }; 
+	BOOL m_b_changed{ false }; 
 
 protected:
-	float m_p10{ 0.f }; // power of ten (multiplication factor to all parms)
-	float m_voltsperpixel{ 0.f }; // nb of volts per pixels, given current gain
-	float m_VoltsperBin{ 0.f }; // scale factor associated with current chan
-	CWordArray m_settings; // storage for original values
+	float m_p10_{ 0.f }; 
+	float m_volts_per_pixel_{ 0.f }; 
+	float m_volts_per_bin_{ 0.f }; 
+	CWordArray m_settings_; 
 
 	// Implementation
 protected:
-	void LoadChanlistData(int ilist); // load data from m_plinev
-	void SaveChanlistData(int ilist); // change data to m_plinev
-	void ChangeUnits(int newScale, BOOL bNew); // change power of ten
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	void load_chan_list_data(int i_list); 
+	void save_chan_list_data(int index_list) const; 
+	void change_units(int new_scale, BOOL b_new); 
+	void DoDataExchange(CDataExchange* p_dx) override;
 
 	// Generated message map functions
 	void OnOK() override;
 	BOOL OnInitDialog() override;
-	afx_msg void OnSelchangeVertunits();
-	afx_msg void OnSelchangeChanselect();
-	afx_msg void OnKillfocusVertMxMi();
+	afx_msg void on_sel_change_vert_units();
+	afx_msg void on_sel_change_chan_select();
+	afx_msg void on_kill_focus_vert_mx_mi();
 	void OnCancel() override;
-	afx_msg void OnKillfocusVertcenter();
+	afx_msg void on_kill_focus_vert_center();
 
 	DECLARE_MESSAGE_MAP()
 };

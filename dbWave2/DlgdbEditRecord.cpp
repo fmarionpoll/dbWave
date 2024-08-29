@@ -16,66 +16,66 @@
 
 IMPLEMENT_DYNAMIC(DlgdbEditRecord, CDialog)
 
-DlgdbEditRecord::DlgdbEditRecord(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgdbEditRecord::DlgdbEditRecord(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
 DlgdbEditRecord::~DlgdbEditRecord()
 {
-	m_pdbDoc = nullptr;
+	m_pdb_doc = nullptr;
 }
 
-void DlgdbEditRecord::DoDataExchange(CDataExchange* pDX)
+void DlgdbEditRecord::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_COMBO_EXPT2, m_ctlexpt);
-	DDX_Control(pDX, IDC_COMBO_INSECTID, m_ctlinsectID);
-	DDX_Control(pDX, IDC_COMBO_SENSILLUMID, m_ctlSensillumID);
-	DDX_Control(pDX, IDC_COMBO_REPEATT, m_ctlrepeat);
-	DDX_Control(pDX, IDC_COMBO_REPEATT2, m_ctlrepeat2);
-	DDX_Control(pDX, IDC_COMBO_STIMULUS, m_ctlstim);
-	DDX_Control(pDX, IDC_COMBO_CONCENTRATION, m_ctlconc);
-	DDX_Control(pDX, IDC_COMBO_STIMULUS2, m_ctlstim2);
-	DDX_Control(pDX, IDC_COMBO_CONCENTRATION2, m_ctlconc2);
-	DDX_Control(pDX, IDC_COMBO_INSECTNAME, m_ctlinsect);
-	DDX_Control(pDX, IDC_COMBO_SENSILLUMNAME, m_ctlsensillum);
-	DDX_Control(pDX, IDC_COMBO_LOCATION, m_ctllocation);
-	DDX_Control(pDX, IDC_COMBO_OPERATOR, m_ctlOperator);
-	DDX_Control(pDX, IDC_COMBO_STRAIN, m_ctlstrain);
-	DDX_Control(pDX, IDC_COMBO_SEX, m_ctlsex);
-	DDX_Control(pDX, IDC_COMBO_PATHDAT, m_ctlpathdat);
-	DDX_Control(pDX, IDC_COMBO_PATHSPK, m_ctlpathspk);
-	DDX_Control(pDX, IDC_COMBO_FLAG, m_ctlflag);
+	CDialog::DoDataExchange(p_dx);
+	DDX_Control(p_dx, IDC_COMBO_EXPT2, m_ctl_experiment);
+	DDX_Control(p_dx, IDC_COMBO_INSECTID, m_ctl_insect_id);
+	DDX_Control(p_dx, IDC_COMBO_SENSILLUMID, m_ctl_sensillum_id);
+	DDX_Control(p_dx, IDC_COMBO_REPEATT, m_ctl_repeat);
+	DDX_Control(p_dx, IDC_COMBO_REPEATT2, m_ctl_repeat2);
+	DDX_Control(p_dx, IDC_COMBO_STIMULUS, m_ctl_stimulus);
+	DDX_Control(p_dx, IDC_COMBO_CONCENTRATION, m_ctl_concentration);
+	DDX_Control(p_dx, IDC_COMBO_STIMULUS2, m_ctl_stimulus2);
+	DDX_Control(p_dx, IDC_COMBO_CONCENTRATION2, m_ctl_concentration2);
+	DDX_Control(p_dx, IDC_COMBO_INSECTNAME, m_ctl_insect);
+	DDX_Control(p_dx, IDC_COMBO_SENSILLUMNAME, m_ctl_sensillum);
+	DDX_Control(p_dx, IDC_COMBO_LOCATION, m_ctl_location);
+	DDX_Control(p_dx, IDC_COMBO_OPERATOR, m_ctl_operator);
+	DDX_Control(p_dx, IDC_COMBO_STRAIN, m_ctl_strain);
+	DDX_Control(p_dx, IDC_COMBO_SEX, m_ctl_sex);
+	DDX_Control(p_dx, IDC_COMBO_PATHDAT, m_ctl_path_dat);
+	DDX_Control(p_dx, IDC_COMBO_PATHSPK, m_ctl_path_spk);
+	DDX_Control(p_dx, IDC_COMBO_FLAG, m_ctl_flag);
 
-	DDX_Text(pDX, IDC_EDIT_COMMENT, m_cs_more);
-	DDX_Text(pDX, IDC_EDIT_NAMEDAT, m_csnameDat);
-	DDX_Text(pDX, IDC_EDIT_NAMESPK, m_csnameSpk);
+	DDX_Text(p_dx, IDC_EDIT_COMMENT, m_cs_more);
+	DDX_Text(p_dx, IDC_EDIT_NAMEDAT, m_cs_name_dat);
+	DDX_Text(p_dx, IDC_EDIT_NAMESPK, m_cs_name_spk);
 }
 
 BEGIN_MESSAGE_MAP(DlgdbEditRecord, CDialog)
-	ON_BN_CLICKED(IDC_BUTTONINSECTID, &DlgdbEditRecord::OnBnClickedButtoninsectid)
-	ON_BN_CLICKED(IDC_BUTTONSENSILLUMID, &DlgdbEditRecord::OnBnClickedButtonsensillumid)
-	ON_BN_CLICKED(IDC_BUTTONSTIMULUS, &DlgdbEditRecord::OnBnClickedButtonstimulus)
-	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION, &DlgdbEditRecord::OnBnClickedButtonconcentration)
-	ON_BN_CLICKED(IDC_BUTTONSTIMULUS2, &DlgdbEditRecord::OnBnClickedButtonstimulus2)
-	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION2, &DlgdbEditRecord::OnBnClickedButtonconcentration2)
-	ON_BN_CLICKED(IDC_BUTTONINSECTNAME, &DlgdbEditRecord::OnBnClickedButtoninsectname)
-	ON_BN_CLICKED(IDC_BUTTONSTRAIN, &DlgdbEditRecord::OnBnClickedButtonstrain)
-	ON_BN_CLICKED(IDC_BUTTONSEX, &DlgdbEditRecord::OnBnClickedButtonsex)
-	ON_BN_CLICKED(IDC_BUTTONSENSILLUM, &DlgdbEditRecord::OnBnClickedButtonsensillum)
-	ON_BN_CLICKED(IDC_BUTTONLOCATION, &DlgdbEditRecord::OnBnClickedButtonlocation)
-	ON_BN_CLICKED(IDC_BUTTONOPERATOR, &DlgdbEditRecord::OnBnClickedButtonoperator)
-	ON_BN_CLICKED(IDC_BUTTON5, &DlgdbEditRecord::OnBnClickedButton5)
-	ON_BN_CLICKED(IDC_BUTTON1, &DlgdbEditRecord::OnBnClickedButton1)
-	ON_BN_CLICKED(IDC_SYNCHROSINGLE, &DlgdbEditRecord::OnBnClickedSynchrosingle)
-	ON_BN_CLICKED(IDC_SYNCHROALL, &DlgdbEditRecord::OnBnClickedSynchroall)
-	ON_BN_CLICKED(IDC_PREVIOUS, &DlgdbEditRecord::OnBnClickedPrevious)
-	ON_BN_CLICKED(IDC_NEXT, &DlgdbEditRecord::OnBnClickedNext)
-	ON_BN_CLICKED(IDC_BUTTONREPEAT, &DlgdbEditRecord::OnBnClickedButtonrepeat)
-	ON_BN_CLICKED(IDC_BUTTONREPEAT2, &DlgdbEditRecord::OnBnClickedButtonrepeat2)
-	ON_BN_CLICKED(IDC_BUTTONFLAG, &DlgdbEditRecord::OnBnClickedButtonflag)
-	ON_BN_CLICKED(IDC_BUTTONEXPT2, &DlgdbEditRecord::OnBnClickedButtonexpt2)
+	ON_BN_CLICKED(IDC_BUTTONINSECTID, &DlgdbEditRecord::on_bn_clicked_button_insect_id)
+	ON_BN_CLICKED(IDC_BUTTONSENSILLUMID, &DlgdbEditRecord::on_bn_clicked_button_sensillum_id)
+	ON_BN_CLICKED(IDC_BUTTONSTIMULUS, &DlgdbEditRecord::on_bn_clicked_button_stimulus)
+	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION, &DlgdbEditRecord::on_bn_clicked_button_concentration)
+	ON_BN_CLICKED(IDC_BUTTONSTIMULUS2, &DlgdbEditRecord::on_bn_clicked_button_stimulus2)
+	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION2, &DlgdbEditRecord::on_bn_clicked_button_concentration2)
+	ON_BN_CLICKED(IDC_BUTTONINSECTNAME, &DlgdbEditRecord::on_bn_clicked_button_insect_name)
+	ON_BN_CLICKED(IDC_BUTTONSTRAIN, &DlgdbEditRecord::on_bn_clicked_button_strain)
+	ON_BN_CLICKED(IDC_BUTTONSEX, &DlgdbEditRecord::on_bn_clicked_button_sex)
+	ON_BN_CLICKED(IDC_BUTTONSENSILLUM, &DlgdbEditRecord::on_bn_clicked_button_sensillum)
+	ON_BN_CLICKED(IDC_BUTTONLOCATION, &DlgdbEditRecord::on_bn_clicked_button_location)
+	ON_BN_CLICKED(IDC_BUTTONOPERATOR, &DlgdbEditRecord::on_bn_clicked_button_operator)
+	ON_BN_CLICKED(IDC_BUTTON5, &DlgdbEditRecord::on_bn_clicked_button5)
+	ON_BN_CLICKED(IDC_BUTTON1, &DlgdbEditRecord::on_bn_clicked_button1)
+	ON_BN_CLICKED(IDC_SYNCHROSINGLE, &DlgdbEditRecord::on_bn_clicked_synchro_single)
+	ON_BN_CLICKED(IDC_SYNCHROALL, &DlgdbEditRecord::on_bn_clicked_synchro_all)
+	ON_BN_CLICKED(IDC_PREVIOUS, &DlgdbEditRecord::on_bn_clicked_previous)
+	ON_BN_CLICKED(IDC_NEXT, &DlgdbEditRecord::on_bn_clicked_next)
+	ON_BN_CLICKED(IDC_BUTTONREPEAT, &DlgdbEditRecord::on_bn_clicked_button_repeat)
+	ON_BN_CLICKED(IDC_BUTTONREPEAT2, &DlgdbEditRecord::on_bn_clicked_button_repeat2)
+	ON_BN_CLICKED(IDC_BUTTONFLAG, &DlgdbEditRecord::on_bn_clicked_button_flag)
+	ON_BN_CLICKED(IDC_BUTTONEXPT2, &DlgdbEditRecord::on_bn_clicked_button_expt2)
 END_MESSAGE_MAP()
 
 // CdbEditRecordDlg message handlers
@@ -83,81 +83,81 @@ END_MESSAGE_MAP()
 BOOL DlgdbEditRecord::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	m_pSet = &m_pdbDoc->db_table->m_main_table_set;
-	PopulateControls();
+	m_p_set = &m_pdb_doc->db_table->m_main_table_set;
+	populate_controls();
 	// TODO? disable controls corresponding to a filtered field
 	UpdateData(FALSE);
 	return TRUE; // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void DlgdbEditRecord::PopulateControls()
+void DlgdbEditRecord::populate_controls()
 {
-	auto p_db = m_pdbDoc->db_table;
+	auto p_db = m_pdb_doc->db_table;
 	// fill combo boxes associated with a secondary table
-	PopulateCombo_WithText(p_db->m_stimulus_set, m_ctlstim, m_pSet->m_stimulus_id);
-	PopulateCombo_WithText(p_db->m_concentration_set, m_ctlconc, m_pSet->m_concentration_id);
-	PopulateCombo_WithText(p_db->m_stimulus_set, m_ctlstim2, m_pSet->m_stimulus2_id);
-	PopulateCombo_WithText(p_db->m_concentration_set, m_ctlconc2, m_pSet->m_concentration2_id);
-	PopulateCombo_WithText(p_db->m_insect_set, m_ctlinsect, m_pSet->m_insect_id);
-	PopulateCombo_WithText(p_db->m_strain_set, m_ctlstrain, m_pSet->m_strain_id);
-	PopulateCombo_WithText(p_db->m_sex_set, m_ctlsex, m_pSet->m_sex_id);
-	PopulateCombo_WithText(p_db->m_sensillum_set, m_ctlsensillum, m_pSet->m_sensillum_id);
-	PopulateCombo_WithText(p_db->m_location_set, m_ctllocation, m_pSet->m_location_id);
-	PopulateCombo_WithText(p_db->m_operator_set, m_ctlOperator, m_pSet->m_operator_id);
-	PopulateCombo_WithText(p_db->m_path_set, m_ctlpathdat, m_pSet->m_path_id);
-	PopulateCombo_WithText(p_db->m_path_set, m_ctlpathspk, m_pSet->m_path2_id);
-	PopulateCombo_WithText(p_db->m_experiment_set, m_ctlexpt, m_pSet->m_experiment_id);
+	populate_combo_with_text(p_db->m_stimulus_set, m_ctl_stimulus, m_p_set->m_stimulus_id);
+	populate_combo_with_text(p_db->m_concentration_set, m_ctl_concentration, m_p_set->m_concentration_id);
+	populate_combo_with_text(p_db->m_stimulus_set, m_ctl_stimulus2, m_p_set->m_stimulus2_id);
+	populate_combo_with_text(p_db->m_concentration_set, m_ctl_concentration2, m_p_set->m_concentration2_id);
+	populate_combo_with_text(p_db->m_insect_set, m_ctl_insect, m_p_set->m_insect_id);
+	populate_combo_with_text(p_db->m_strain_set, m_ctl_strain, m_p_set->m_strain_id);
+	populate_combo_with_text(p_db->m_sex_set, m_ctl_sex, m_p_set->m_sex_id);
+	populate_combo_with_text(p_db->m_sensillum_set, m_ctl_sensillum, m_p_set->m_sensillum_id);
+	populate_combo_with_text(p_db->m_location_set, m_ctl_location, m_p_set->m_location_id);
+	populate_combo_with_text(p_db->m_operator_set, m_ctl_operator, m_p_set->m_operator_id);
+	populate_combo_with_text(p_db->m_path_set, m_ctl_path_dat, m_p_set->m_path_id);
+	populate_combo_with_text(p_db->m_path_set, m_ctl_path_spk, m_p_set->m_path2_id);
+	populate_combo_with_text(p_db->m_experiment_set, m_ctl_experiment, m_p_set->m_experiment_id);
 	// ID combos
-	PopulateCombo_WithNumbers(m_ctlinsectID, &m_pSet->m_desc[CH_IDINSECT].li_array, m_pSet->m_id_insect);
-	PopulateCombo_WithNumbers(m_ctlSensillumID, &m_pSet->m_desc[CH_IDSENSILLUM].li_array, m_pSet->m_id_sensillum);
-	PopulateCombo_WithNumbers(m_ctlrepeat, &m_pSet->m_desc[CH_REPEAT].li_array, m_pSet->m_repeat);
-	PopulateCombo_WithNumbers(m_ctlrepeat2, &m_pSet->m_desc[CH_REPEAT2].li_array, m_pSet->m_repeat2);
-	PopulateCombo_WithNumbers(m_ctlflag, &m_pSet->m_desc[CH_FLAG].li_array, m_pSet->m_flag);
+	populate_combo_with_numbers(m_ctl_insect_id, &m_p_set->m_desc[CH_IDINSECT].li_array, m_p_set->m_id_insect);
+	populate_combo_with_numbers(m_ctl_sensillum_id, &m_p_set->m_desc[CH_IDSENSILLUM].li_array, m_p_set->m_id_sensillum);
+	populate_combo_with_numbers(m_ctl_repeat, &m_p_set->m_desc[CH_REPEAT].li_array, m_p_set->m_repeat);
+	populate_combo_with_numbers(m_ctl_repeat2, &m_p_set->m_desc[CH_REPEAT2].li_array, m_p_set->m_repeat2);
+	populate_combo_with_numbers(m_ctl_flag, &m_p_set->m_desc[CH_FLAG].li_array, m_p_set->m_flag);
 
 	// fixed parameters
-	m_cs_more = m_pSet->m_more;
-	m_csnameDat = m_pSet->m_file_dat;
-	m_csnameSpk = m_pSet->m_file_spk;
+	m_cs_more = m_p_set->m_more;
+	m_cs_name_dat = m_p_set->m_file_dat;
+	m_cs_name_spk = m_p_set->m_file_spk;
 
 	// update IDC_NEXT IDC_PREVIOUS
-	if (m_bshowIDC_NEXT != GetDlgItem(IDC_NEXT)->IsWindowEnabled())
-		GetDlgItem(IDC_NEXT)->EnableWindow(m_bshowIDC_NEXT);
-	if (m_bshowIDC_PREVIOUS != GetDlgItem(IDC_PREVIOUS)->IsWindowEnabled())
-		GetDlgItem(IDC_PREVIOUS)->EnableWindow(m_bshowIDC_PREVIOUS);
+	if (show_idc_next != GetDlgItem(IDC_NEXT)->IsWindowEnabled())
+		GetDlgItem(IDC_NEXT)->EnableWindow(show_idc_next);
+	if (show_idc_previous != GetDlgItem(IDC_PREVIOUS)->IsWindowEnabled())
+		GetDlgItem(IDC_PREVIOUS)->EnableWindow(show_idc_previous);
 }
 
-void DlgdbEditRecord::PopulateCombo_WithNumbers(CComboBox& combo, CArray<long, long>* pIDarray, long& lvar)
+void DlgdbEditRecord::populate_combo_with_numbers(CComboBox& combo, CArray<long, long>* p_id_array, const long& l_var)
 {
 	combo.ResetContent();
 	CString cs;
 
-	const auto array_size = pIDarray->GetSize();
-	auto isel = 0;
+	const auto array_size = p_id_array->GetSize();
+	auto i_sel = 0;
 	for (auto i = 0; i < array_size; i++)
 	{
-		const auto i_id = pIDarray->GetAt(i);
+		const auto i_id = p_id_array->GetAt(i);
 		cs.Format(_T("%i"), i_id);
 		combo.AddString(cs);
 		combo.SetItemData(i, i_id);
-		if (i_id == lvar)
-			isel = i;
+		if (i_id == l_var)
+			i_sel = i;
 	}
-	combo.SetCurSel(isel);
+	combo.SetCurSel(i_sel);
 }
 
-void DlgdbEditRecord::PopulateCombo_WithText(CDaoRecordset& linkedtableSet, CComboBox& combo, int iID)
+void DlgdbEditRecord::populate_combo_with_text(CDaoRecordset& linked_table_set, CComboBox& combo, int i_id)
 {
 	combo.ResetContent();
 	// fill combo box
-	if (linkedtableSet.IsOpen() && !linkedtableSet.IsBOF())
+	if (linked_table_set.IsOpen() && !linked_table_set.IsBOF())
 	{
 		COleVariant var_value0, var_value1;
-		linkedtableSet.MoveFirst();
-		while (!linkedtableSet.IsEOF())
+		linked_table_set.MoveFirst();
+		while (!linked_table_set.IsEOF())
 		{
-			linkedtableSet.GetFieldValue(0, var_value0);
-			linkedtableSet.GetFieldValue(1, var_value1);
+			linked_table_set.GetFieldValue(0, var_value0);
+			linked_table_set.GetFieldValue(1, var_value1);
 			const auto id = var_value1.lVal;
 			CString cs = var_value0.bstrVal;
 			if (!cs.IsEmpty())
@@ -165,7 +165,7 @@ void DlgdbEditRecord::PopulateCombo_WithText(CDaoRecordset& linkedtableSet, CCom
 				const auto i = combo.AddString(cs);
 				combo.SetItemData(i, id);
 			}
-			linkedtableSet.MoveNext();
+			linked_table_set.MoveNext();
 		}
 	}
 
@@ -173,7 +173,7 @@ void DlgdbEditRecord::PopulateCombo_WithText(CDaoRecordset& linkedtableSet, CCom
 	auto i_sel = -1;
 	for (auto i = 0; i < combo.GetCount(); i++)
 	{
-		if (iID == static_cast<int>(combo.GetItemData(i)))
+		if (i_id == static_cast<int>(combo.GetItemData(i)))
 		{
 			i_sel = i;
 			break;
@@ -182,51 +182,51 @@ void DlgdbEditRecord::PopulateCombo_WithText(CDaoRecordset& linkedtableSet, CCom
 	combo.SetCurSel(i_sel);
 }
 
-void DlgdbEditRecord::UpdateDatabaseFromDialog()
+void DlgdbEditRecord::update_database_from_dialog()
 {
 	UpdateData(TRUE); // transfer data from dlg to variables
 
 	// update combo boxes associated with a secondary table
-	m_pSet->Edit();
+	m_p_set->Edit();
 
-	CdbTable* p_database = m_pdbDoc->db_table;
-	UpdateSetFromCombo(p_database->m_stimulus_set, m_ctlstim, m_pSet->m_stimulus_id);
-	UpdateSetFromCombo(p_database->m_concentration_set, m_ctlconc, m_pSet->m_concentration_id);
-	UpdateSetFromCombo(p_database->m_stimulus_set, m_ctlstim2, m_pSet->m_stimulus2_id);
-	UpdateSetFromCombo(p_database->m_concentration_set, m_ctlconc2, m_pSet->m_concentration2_id);
-	UpdateSetFromCombo(p_database->m_insect_set, m_ctlinsect, m_pSet->m_insect_id);
-	UpdateSetFromCombo(p_database->m_strain_set, m_ctlstrain, m_pSet->m_strain_id);
-	UpdateSetFromCombo(p_database->m_sex_set, m_ctlsex, m_pSet->m_sex_id);
-	UpdateSetFromCombo(p_database->m_sensillum_set, m_ctlsensillum, m_pSet->m_sensillum_id);
-	UpdateSetFromCombo(p_database->m_location_set, m_ctllocation, m_pSet->m_location_id);
-	UpdateSetFromCombo(p_database->m_operator_set, m_ctlOperator, m_pSet->m_operator_id);
-	UpdateSetFromCombo(p_database->m_experiment_set, m_ctlexpt, m_pSet->m_experiment_id);
+	CdbTable* p_database = m_pdb_doc->db_table;
+	update_set_from_combo(p_database->m_stimulus_set, m_ctl_stimulus, m_p_set->m_stimulus_id);
+	update_set_from_combo(p_database->m_concentration_set, m_ctl_concentration, m_p_set->m_concentration_id);
+	update_set_from_combo(p_database->m_stimulus_set, m_ctl_stimulus2, m_p_set->m_stimulus2_id);
+	update_set_from_combo(p_database->m_concentration_set, m_ctl_concentration2, m_p_set->m_concentration2_id);
+	update_set_from_combo(p_database->m_insect_set, m_ctl_insect, m_p_set->m_insect_id);
+	update_set_from_combo(p_database->m_strain_set, m_ctl_strain, m_p_set->m_strain_id);
+	update_set_from_combo(p_database->m_sex_set, m_ctl_sex, m_p_set->m_sex_id);
+	update_set_from_combo(p_database->m_sensillum_set, m_ctl_sensillum, m_p_set->m_sensillum_id);
+	update_set_from_combo(p_database->m_location_set, m_ctl_location, m_p_set->m_location_id);
+	update_set_from_combo(p_database->m_operator_set, m_ctl_operator, m_p_set->m_operator_id);
+	update_set_from_combo(p_database->m_experiment_set, m_ctl_experiment, m_p_set->m_experiment_id);
 
 	//// save fixed parameters
 	CString cs;
-	m_ctlinsectID.GetWindowText(cs);
-	m_pSet->m_id_insect = _ttoi(cs);
-	m_ctlSensillumID.GetWindowText(cs);
-	m_pSet->m_id_sensillum = _ttoi(cs);
-	m_ctlrepeat.GetWindowText(cs);
-	m_pSet->m_repeat = _ttoi(cs);
-	m_ctlrepeat2.GetWindowText(cs);
-	m_pSet->m_repeat2 = _ttoi(cs);
-	m_ctlflag.GetWindowText(cs);
-	m_pSet->m_flag = _ttoi(cs);
-	m_pSet->m_more = m_cs_more;
-	m_pSet->m_file_dat = m_csnameDat;
-	m_pSet->m_file_spk = m_csnameSpk;
-	m_pSet->Update();
+	m_ctl_insect_id.GetWindowText(cs);
+	m_p_set->m_id_insect = _ttoi(cs);
+	m_ctl_sensillum_id.GetWindowText(cs);
+	m_p_set->m_id_sensillum = _ttoi(cs);
+	m_ctl_repeat.GetWindowText(cs);
+	m_p_set->m_repeat = _ttoi(cs);
+	m_ctl_repeat2.GetWindowText(cs);
+	m_p_set->m_repeat2 = _ttoi(cs);
+	m_ctl_flag.GetWindowText(cs);
+	m_p_set->m_flag = _ttoi(cs);
+	m_p_set->m_more = m_cs_more;
+	m_p_set->m_file_dat = m_cs_name_dat;
+	m_p_set->m_file_spk = m_cs_name_spk;
+	m_p_set->Update();
 }
 
 void DlgdbEditRecord::OnOK()
 {
-	UpdateDatabaseFromDialog();
+	update_database_from_dialog();
 	CDialog::OnOK();
 }
 
-void DlgdbEditRecord::UpdateSetFromCombo(CDaoRecordset& linkedtableSet, CComboBox& combo, long& iIDset)
+void DlgdbEditRecord::update_set_from_combo(CDaoRecordset& linked_table_set, CComboBox& combo, long& id_set) const
 {
 	// search if content of edit window is listed in the combo
 	CString cs_combo;
@@ -237,9 +237,9 @@ void DlgdbEditRecord::UpdateSetFromCombo(CDaoRecordset& linkedtableSet, CComboBo
 		// if new value, add a record in the linked table
 		if (!cs_combo.IsEmpty())
 		{
-			linkedtableSet.AddNew();
-			linkedtableSet.SetFieldValue(0, COleVariant(cs_combo, VT_BSTRT));
-			try { linkedtableSet.Update(); }
+			linked_table_set.AddNew();
+			linked_table_set.SetFieldValue(0, COleVariant(cs_combo, VT_BSTRT));
+			try { linked_table_set.Update(); }
 			catch (CDaoException* e)
 			{
 				DisplayDaoException(e, 24);
@@ -247,22 +247,22 @@ void DlgdbEditRecord::UpdateSetFromCombo(CDaoRecordset& linkedtableSet, CComboBo
 			}
 
 			// get value and set the ID number in the main table
-			linkedtableSet.MoveLast();
+			linked_table_set.MoveLast();
 			COleVariant var_value0, var_value1;
-			linkedtableSet.GetFieldValue(0, var_value0);
-			linkedtableSet.GetFieldValue(1, var_value1);
+			linked_table_set.GetFieldValue(0, var_value0);
+			linked_table_set.GetFieldValue(1, var_value1);
 			const CString cs = var_value0.bstrVal;
 			ASSERT(cs_combo == cs);
-			iIDset = var_value1.lVal;
+			id_set = var_value1.lVal;
 		}
 		// if empty string, set field to null in the main table
 		else
-			m_pSet->SetFieldNull(&iIDset, TRUE);
+			m_p_set->SetFieldNull(&id_set, TRUE);
 	}
 	else
 	{
 		int i_id = combo.GetItemData(n_index);
-		iIDset = i_id;
+		id_set = i_id;
 	}
 }
 
@@ -270,166 +270,166 @@ void DlgdbEditRecord::UpdateSetFromCombo(CDaoRecordset& linkedtableSet, CComboBo
 // if new item, update the corresponding array in document...
 // update
 
-void DlgdbEditRecord::OnBnClickedButtoninsectid()
+void DlgdbEditRecord::on_bn_clicked_button_insect_id()
 {
-	EditChangeItem_MainField(IDC_COMBO_INSECTID);
+	edit_change_item_main_field(IDC_COMBO_INSECTID);
 }
 
-void DlgdbEditRecord::OnBnClickedButtonsensillumid()
+void DlgdbEditRecord::on_bn_clicked_button_sensillum_id()
 {
-	EditChangeItem_MainField(IDC_COMBO_SENSILLUMID);
+	edit_change_item_main_field(IDC_COMBO_SENSILLUMID);
 }
 
-void DlgdbEditRecord::OnBnClickedButtonflag()
+void DlgdbEditRecord::on_bn_clicked_button_flag()
 {
-	EditChangeItem_MainField(IDC_COMBO_FLAG);
+	edit_change_item_main_field(IDC_COMBO_FLAG);
 }
 
-void DlgdbEditRecord::OnBnClickedButtonrepeat()
+void DlgdbEditRecord::on_bn_clicked_button_repeat()
 {
-	EditChangeItem_MainField(IDC_COMBO_REPEATT);
+	edit_change_item_main_field(IDC_COMBO_REPEATT);
 }
 
-void DlgdbEditRecord::OnBnClickedButtonrepeat2()
+void DlgdbEditRecord::on_bn_clicked_button_repeat2()
 {
-	EditChangeItem_MainField(IDC_COMBO_REPEATT2);
+	edit_change_item_main_field(IDC_COMBO_REPEATT2);
 }
 
 // Edit item / linked lists
 // IDC = ID descriptor for combo box
 
-void DlgdbEditRecord::EditChangeItem_IndirectField(int IDC)
+void DlgdbEditRecord::edit_change_item_indirect_field(const int idc)
 {
-	const DB_ITEMDESC* item_descriptor = GetItemDescriptors(IDC);
+	const DB_ITEMDESC* item_descriptor = get_item_descriptors(idc);
 	if (item_descriptor->p_combo_box == nullptr)
 		return;
 
 	DlgdbEditField dlg;
-	dlg.m_pMainTable = m_pSet;
-	dlg.m_csColName = item_descriptor->header_name; 
-	dlg.m_pIndexTable = item_descriptor->p_linked_set; 
-	dlg.m_pliIDArray = nullptr; 
-	dlg.m_pdbDoc = m_pdbDoc;
+	dlg.m_p_main_table = m_p_set;
+	dlg.m_cs_col_name = item_descriptor->header_name; 
+	dlg.m_p_index_table = item_descriptor->p_linked_set; 
+	dlg.m_pli_id_array = nullptr; 
+	dlg.m_pdb_doc = m_pdb_doc;
 	if (dlg.DoModal() == IDOK)
-		PopulateCombo_WithText(*item_descriptor->p_linked_set, *item_descriptor->p_combo_box, *item_descriptor->pdata_item);
+		populate_combo_with_text(*item_descriptor->p_linked_set, *item_descriptor->p_combo_box, *item_descriptor->pdata_item);
 }
 
-void DlgdbEditRecord::EditChangeItem_MainField(int IDC)
+void DlgdbEditRecord::edit_change_item_main_field(const int idc)
 {
-	const auto p_desc = GetItemDescriptors(IDC);
+	const auto p_desc = get_item_descriptors(idc);
 	if (p_desc->p_combo_box == nullptr)
 		return;
 
 	DlgdbEditField dlg;
-	dlg.m_pMainTable = m_pSet; 
-	dlg.m_csColName = p_desc->header_name;
-	dlg.m_pliIDArray = &p_desc->li_array; 
-	dlg.m_pIndexTable = nullptr;
-	dlg.m_pdbDoc = m_pdbDoc;
+	dlg.m_p_main_table = m_p_set; 
+	dlg.m_cs_col_name = p_desc->header_name;
+	dlg.m_pli_id_array = &p_desc->li_array; 
+	dlg.m_p_index_table = nullptr;
+	dlg.m_pdb_doc = m_pdb_doc;
 	if (dlg.DoModal() == IDOK)
 	{
 		// update array
-		m_pSet->build_and_sort_id_arrays();
-		PopulateCombo_WithNumbers(*p_desc->p_combo_box, &p_desc->li_array, *p_desc->pdata_item);
+		m_p_set->build_and_sort_id_arrays();
+		populate_combo_with_numbers(*p_desc->p_combo_box, &p_desc->li_array, *p_desc->pdata_item);
 
 		// find current selection and set combo to this position
 		const auto i_id = *p_desc->pdata_item;
-		auto i_cursel = 0;
+		auto i_cur_sel = 0;
 		for (auto i = p_desc->li_array.GetUpperBound(); i >= 0; i--)
 		{
 			if (i_id == p_desc->li_array.GetAt(i))
 			{
-				i_cursel = i;
+				i_cur_sel = i;
 				break;
 			}
 		}
-		p_desc->p_combo_box->SetCurSel(i_cursel);
+		p_desc->p_combo_box->SetCurSel(i_cur_sel);
 	}
 }
 
 // return pointers to parameters useful to change/edit item
 // IDC = ID descriptor for check box
 
-DB_ITEMDESC* DlgdbEditRecord::GetItemDescriptors(int IDC)
+DB_ITEMDESC* DlgdbEditRecord::get_item_descriptors(const int idc)
 {
 	DB_ITEMDESC* p_desc = nullptr;
-	const auto p_dbwave_doc = m_pdbDoc;
+	const auto p_dbwave_doc = m_pdb_doc;
 	auto p_db = p_dbwave_doc->db_table;
 	int ich;
-	switch (IDC)
+	switch (idc)
 	{
 	case IDC_COMBO_EXPT2:
 		ich = CH_EXPT_ID;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlexpt;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_experiment;
 		break;
 	case IDC_COMBO_INSECTNAME:
 		ich = CH_INSECT_ID;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlinsect;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_insect;
 		break;
 	case IDC_COMBO_LOCATION:
 		ich = CH_LOCATION_ID;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctllocation;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_location;
 		break;
 	case IDC_COMBO_SENSILLUMNAME:
 		ich = CH_SENSILLUM_ID;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlsensillum;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_sensillum;
 		break;
 	case IDC_COMBO_STIMULUS:
 		ich = CH_STIM_ID;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlstim;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_stimulus;
 		break;
 	case IDC_COMBO_CONCENTRATION:
 		ich = CH_CONC_ID;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlconc;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_concentration;
 		break;
 	case IDC_COMBO_OPERATOR:
 		ich = CH_OPERATOR_ID;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlOperator;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_operator;
 		break;
 	case IDC_COMBO_STRAIN:
 		ich = CH_STRAIN_ID;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlstrain;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_strain;
 		break;
 	case IDC_COMBO_SEX:
 		ich = CH_SEX_ID;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlsex;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_sex;
 		break;
 	case IDC_COMBO_STIMULUS2:
 		ich = CH_STIM2_ID;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlstim2;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_stimulus2;
 		break;
 	case IDC_COMBO_CONCENTRATION2:
 		ich = CH_CONC2_ID;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlconc2;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_concentration2;
 		break;
 	case IDC_COMBO_PATHDAT:
 		ich = CH_PATH_ID;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlpathdat;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_path_dat;
 		break;
 	case IDC_COMBO_PATHSPK:
 		ich = CH_PATH2_ID;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlpathspk;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_path_spk;
 		break;
 
 	case IDC_COMBO_INSECTID:
 		ich = CH_IDINSECT;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlinsectID;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_insect_id;
 		break;
 	case IDC_COMBO_SENSILLUMID:
 		ich = CH_IDSENSILLUM;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlSensillumID;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_sensillum_id;
 		break;
 	case IDC_COMBO_FLAG:
 		ich = CH_FLAG;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlflag;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_flag;
 		break;
 	case IDC_COMBO_REPEATT:
 		ich = CH_REPEAT;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlrepeat;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_repeat;
 		break;
 	case IDC_COMBO_REPEATT2:
 		ich = CH_REPEAT2;
-		m_pSet->m_desc[ich].p_combo_box = &m_ctlrepeat2;
+		m_p_set->m_desc[ich].p_combo_box = &m_ctl_repeat2;
 		break;
 
 	default:
@@ -438,112 +438,112 @@ DB_ITEMDESC* DlgdbEditRecord::GetItemDescriptors(int IDC)
 	}
 	if (ich >= 0) 
 	{
-		p_desc = &m_pSet->m_desc[ich];
+		p_desc = &m_p_set->m_desc[ich];
 		p_db->get_record_item_value(ich, p_desc);
 	}
 
 	return p_desc;
 }
 
-void DlgdbEditRecord::OnBnClickedButtonstimulus()
+void DlgdbEditRecord::on_bn_clicked_button_stimulus()
 {
-	EditChangeItem_IndirectField(IDC_COMBO_STIMULUS);
+	edit_change_item_indirect_field(IDC_COMBO_STIMULUS);
 }
 
-void DlgdbEditRecord::OnBnClickedButtonconcentration()
+void DlgdbEditRecord::on_bn_clicked_button_concentration()
 {
-	EditChangeItem_IndirectField(IDC_COMBO_CONCENTRATION);
+	edit_change_item_indirect_field(IDC_COMBO_CONCENTRATION);
 }
 
-void DlgdbEditRecord::OnBnClickedButtonstimulus2()
+void DlgdbEditRecord::on_bn_clicked_button_stimulus2()
 {
-	EditChangeItem_IndirectField(IDC_COMBO_STIMULUS2);
+	edit_change_item_indirect_field(IDC_COMBO_STIMULUS2);
 }
 
-void DlgdbEditRecord::OnBnClickedButtonconcentration2()
+void DlgdbEditRecord::on_bn_clicked_button_concentration2()
 {
-	EditChangeItem_IndirectField(IDC_COMBO_CONCENTRATION2);
+	edit_change_item_indirect_field(IDC_COMBO_CONCENTRATION2);
 }
 
-void DlgdbEditRecord::OnBnClickedButtoninsectname()
+void DlgdbEditRecord::on_bn_clicked_button_insect_name()
 {
-	EditChangeItem_IndirectField(IDC_COMBO_INSECTNAME);
+	edit_change_item_indirect_field(IDC_COMBO_INSECTNAME);
 }
 
-void DlgdbEditRecord::OnBnClickedButtonsensillum()
+void DlgdbEditRecord::on_bn_clicked_button_sensillum()
 {
-	EditChangeItem_IndirectField(IDC_COMBO_SENSILLUMNAME);
+	edit_change_item_indirect_field(IDC_COMBO_SENSILLUMNAME);
 }
 
-void DlgdbEditRecord::OnBnClickedButtonlocation()
+void DlgdbEditRecord::on_bn_clicked_button_location()
 {
-	EditChangeItem_IndirectField(IDC_COMBO_LOCATION);
+	edit_change_item_indirect_field(IDC_COMBO_LOCATION);
 }
 
-void DlgdbEditRecord::OnBnClickedButtonoperator()
+void DlgdbEditRecord::on_bn_clicked_button_operator()
 {
-	EditChangeItem_IndirectField(IDC_COMBO_OPERATOR);
+	edit_change_item_indirect_field(IDC_COMBO_OPERATOR);
 }
 
-void DlgdbEditRecord::OnBnClickedButton5()
+void DlgdbEditRecord::on_bn_clicked_button5()
 {
-	EditChangeItem_IndirectField(IDC_COMBO_PATHDAT);
+	edit_change_item_indirect_field(IDC_COMBO_PATHDAT);
 }
 
-void DlgdbEditRecord::OnBnClickedButton1()
+void DlgdbEditRecord::on_bn_clicked_button1()
 {
 	if (AfxMessageBox(_T("Are spike files in the same directory as dat files?"), MB_YESNO, -1) != IDYES)
-		EditChangeItem_IndirectField(IDC_COMBO_PATHSPK);
+		edit_change_item_indirect_field(IDC_COMBO_PATHSPK);
 	else
 	{
-		m_pdbDoc->db_transfer_dat_path_to_spk_path();
+		m_pdb_doc->db_transfer_dat_path_to_spk_path();
 	}
 }
 
-void DlgdbEditRecord::OnBnClickedButtonstrain()
+void DlgdbEditRecord::on_bn_clicked_button_strain()
 {
-	EditChangeItem_IndirectField(IDC_COMBO_STRAIN);
+	edit_change_item_indirect_field(IDC_COMBO_STRAIN);
 }
 
-void DlgdbEditRecord::OnBnClickedButtonsex()
+void DlgdbEditRecord::on_bn_clicked_button_sex()
 {
-	EditChangeItem_IndirectField(IDC_COMBO_SEX);
+	edit_change_item_indirect_field(IDC_COMBO_SEX);
 }
 
-void DlgdbEditRecord::OnBnClickedButtonexpt2()
+void DlgdbEditRecord::on_bn_clicked_button_expt2()
 {
-	EditChangeItem_IndirectField(IDC_COMBO_EXPT2);
+	edit_change_item_indirect_field(IDC_COMBO_EXPT2);
 }
 
-void DlgdbEditRecord::OnBnClickedSynchrosingle()
+void DlgdbEditRecord::on_bn_clicked_synchro_single()
 {
-	UpdateDatabaseFromDialog();
-	m_pdbDoc->synchronize_source_infos(FALSE);
+	update_database_from_dialog();
+	m_pdb_doc->synchronize_source_infos(FALSE);
 }
 
-void DlgdbEditRecord::OnBnClickedSynchroall()
+void DlgdbEditRecord::on_bn_clicked_synchro_all()
 {
-	UpdateDatabaseFromDialog();
-	m_pdbDoc->synchronize_source_infos(TRUE);
+	update_database_from_dialog();
+	m_pdb_doc->synchronize_source_infos(TRUE);
 }
 
-void DlgdbEditRecord::OnBnClickedPrevious()
+void DlgdbEditRecord::on_bn_clicked_previous()
 {
-	UpdateDatabaseFromDialog();
-	m_pdbDoc->db_move_prev();
+	update_database_from_dialog();
+	m_pdb_doc->db_move_prev();
 
-	m_pdbDoc->update_all_views_db_wave(nullptr, 0L, nullptr);
-	PopulateControls();
+	m_pdb_doc->update_all_views_db_wave(nullptr, 0L, nullptr);
+	populate_controls();
 	UpdateData(FALSE);
 }
 
-void DlgdbEditRecord::OnBnClickedNext()
+void DlgdbEditRecord::on_bn_clicked_next()
 {
-	UpdateDatabaseFromDialog();
-	m_pdbDoc->db_move_next();
+	update_database_from_dialog();
+	m_pdb_doc->db_move_next();
 
-	m_pdbDoc->update_all_views_db_wave(nullptr, 0L, nullptr);
+	m_pdb_doc->update_all_views_db_wave(nullptr, 0L, nullptr);
 
-	PopulateControls();
+	populate_controls();
 	UpdateData(FALSE);
 }

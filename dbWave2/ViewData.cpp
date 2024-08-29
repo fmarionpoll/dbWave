@@ -246,8 +246,8 @@ void ViewData::update_channel(const int channel)
 void ViewData::on_format_y_scale()
 {
 	DlgDataViewOrdinates dlg;
-	dlg.m_pChartDataWnd = &chart_data;
-	dlg.m_Channel = m_channel_selected;
+	dlg.m_p_chart_data_wnd = &chart_data;
+	dlg.m_channel = m_channel_selected;
 	if (IDOK == dlg.DoModal())
 		update_legends(UPD_ORDINATES | UPD_Y_SCALE | CHG_Y_BAR);
 
@@ -801,14 +801,14 @@ void ViewData::on_view_all_data()
 void ViewData::on_format_data_series_attributes()
 {
 	DlgDataSeriesFormat dlg;
-	dlg.m_pChartDataWnd = &chart_data;
-	dlg.m_pdbDoc = m_p_dat_;
-	dlg.m_listindex = m_channel_selected;
+	dlg.m_p_chart_data_wnd = &chart_data;
+	dlg.m_pdb_doc = m_p_dat_;
+	dlg.m_list_index = m_channel_selected;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
-		m_channel_selected = dlg.m_listindex;
+		m_channel_selected = dlg.m_list_index;
 	}
 	update_legends(UPD_Y_SCALE);
 	chart_data.Invalidate();
@@ -1147,7 +1147,7 @@ void ViewData::save_modified_file()
 void ViewData::adc_on_hardware_define_experiment()
 {
 	DlgdbEditRecord dlg;
-	dlg.m_pdbDoc = GetDocument();
+	dlg.m_pdb_doc = GetDocument();
 
 	if (IDOK == dlg.DoModal())
 	{
@@ -1163,15 +1163,15 @@ void ViewData::on_format_x_scale()
 {
 	// init dialog data
 	DlgDataViewAbscissa dlg;
-	dlg.m_firstAbscissa = m_time_first_abscissa;
-	dlg.m_lastAbscissa = m_time_last_abscissa;
-	dlg.m_veryLastAbscissa = static_cast<float>(chart_data.get_document_last()) / m_sampling_rate_;
+	dlg.m_first_abscissa = m_time_first_abscissa;
+	dlg.m_last_abscissa = m_time_last_abscissa;
+	dlg.m_very_last_abscissa = static_cast<float>(chart_data.get_document_last()) / m_sampling_rate_;
 
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
-		m_time_first_abscissa = dlg.m_firstAbscissa * dlg.m_abscissaScale;
-		m_time_last_abscissa = dlg.m_lastAbscissa * dlg.m_abscissaScale;
+		m_time_first_abscissa = dlg.m_first_abscissa * dlg.m_abscissa_scale;
+		m_time_last_abscissa = dlg.m_last_abscissa * dlg.m_abscissa_scale;
 		chart_data.get_data_from_doc(static_cast<long>(m_time_first_abscissa * m_sampling_rate_),
 		                              static_cast<long>(m_time_last_abscissa * m_sampling_rate_));
 		update_legends(UPD_ABSCISSA | UPD_X_SCALE | CHG_X_BAR);

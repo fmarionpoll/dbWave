@@ -9,65 +9,65 @@
 
 IMPLEMENT_DYNAMIC(DlgDataTranslationBoard, CDialog)
 
-DlgDataTranslationBoard::DlgDataTranslationBoard(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgDataTranslationBoard::DlgDataTranslationBoard(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
 DlgDataTranslationBoard::~DlgDataTranslationBoard()
 {
-	const UINT ui_num_boards = m_pDTAcq32->GetNumBoards();
+	const UINT ui_num_boards = m_p_dt_acq32->GetNumBoards();
 	if (ui_num_boards > 0)
 	{
-		m_pAnalogIN->SetSubSysType(m_subssystemIN);
+		m_p_analog_in->SetSubSysType(m_subsystem_in);
 	}
 }
 
 void DlgDataTranslationBoard::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_BOARD, m_cbBoard);
-	DDX_Control(pDX, IDC_LIST_BOARDCAPS, m_listBoardCaps);
-	DDX_Control(pDX, IDC_LIST_SSNUM, m_listSSNumCaps);
-	DDX_Control(pDX, IDC_LIST_SSCAPS, m_listSSYNCaps);
+	DDX_Control(pDX, IDC_BOARD, m_cb_board);
+	DDX_Control(pDX, IDC_LIST_BOARDCAPS, m_list_board_caps);
+	DDX_Control(pDX, IDC_LIST_SSNUM, m_list_ss_num_caps);
+	DDX_Control(pDX, IDC_LIST_SSCAPS, m_list_ss_caps);
 }
 
 BEGIN_MESSAGE_MAP(DlgDataTranslationBoard, CDialog)
-	ON_CBN_SELCHANGE(IDC_BOARD, &DlgDataTranslationBoard::OnSelchangeBoard)
-	ON_LBN_SELCHANGE(IDC_LIST_BOARDCAPS, &DlgDataTranslationBoard::OnLbnSelchangeListBoardcaps)
+	ON_CBN_SELCHANGE(IDC_BOARD, &DlgDataTranslationBoard::on_sel_change_board)
+	ON_LBN_SELCHANGE(IDC_LIST_BOARDCAPS, &DlgDataTranslationBoard::on_lbn_sel_change_list_board_caps)
 END_MESSAGE_MAP()
 
 BOOL DlgDataTranslationBoard::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	m_subssystemIN = m_pAnalogIN->GetSubSysType();
-	m_pDTAcq32 = m_pAnalogIN;
-	FindDTOpenLayersBoards();
-	OnSelchangeBoard();
+	m_subsystem_in = m_p_analog_in->GetSubSysType();
+	m_p_dt_acq32 = m_p_analog_in;
+	find_dt_open_layers_boards();
+	on_sel_change_board();
 	return TRUE;
 }
 
-BOOL DlgDataTranslationBoard::FindDTOpenLayersBoards()
+BOOL DlgDataTranslationBoard::find_dt_open_layers_boards()
 {
-	m_cbBoard.ResetContent();
-	const UINT ui_num_boards = m_pDTAcq32->GetNumBoards();
+	m_cb_board.ResetContent();
+	const UINT ui_num_boards = m_p_dt_acq32->GetNumBoards();
 	const auto flag = (ui_num_boards > 0 ? TRUE : FALSE);
 	if (ui_num_boards == 0)
-		m_cbBoard.AddString(_T("No Board"));
+		m_cb_board.AddString(_T("No Board"));
 	else
 	{
 		for (short i = 0; i < static_cast<short>(ui_num_boards); i++)
-			m_cbBoard.AddString(m_pDTAcq32->GetBoardList(i));
+			m_cb_board.AddString(m_p_dt_acq32->GetBoardList(i));
 	}
-	m_cbBoard.SetCurSel(0);
+	m_cb_board.SetCurSel(0);
 	return flag;
 }
 
-void DlgDataTranslationBoard::OnSelchangeBoard()
+void DlgDataTranslationBoard::on_sel_change_board()
 {
-	const auto isel = m_cbBoard.GetCurSel();
-	m_cbBoard.GetLBText(isel, m_boardName);
-	m_nsubsystems = GetBoardCapabilities();
+	const auto i_sel = m_cb_board.GetCurSel();
+	m_cb_board.GetLBText(i_sel, m_board_name_);
+	m_n_subsystems_ = get_board_capabilities();
 }
 
 #define SS_LIST_SIZE 6
@@ -75,103 +75,103 @@ void DlgDataTranslationBoard::OnSelchangeBoard()
 #define	SS_LIST	 {OLDC_ADELEMENTS, OLDC_DAELEMENTS, OLDC_DINELEMENTS,OLDC_DOUTELEMENTS, OLDC_CTELEMENTS, OLDC_SRLELEMENTS}
 #define SS_TEXT	 {_T("Analog Inputs"), _T("Analog outputs"), _T("Digital Inputs"),_T("Digital Outputs"),	_T("Counter/Trigger"), _T("Serial Port")}
 
-int DlgDataTranslationBoard::GetBoardCapabilities()
+int DlgDataTranslationBoard::get_board_capabilities()
 {
-	int nsubsystems = 0;
+	int n_sub_systems = 0;
 
 	try
 	{
-		m_pDTAcq32->SetBoard(m_boardName);
-		m_listBoardCaps.ResetContent();
+		m_p_dt_acq32->SetBoard(m_board_name_);
+		m_list_board_caps.ResetContent();
 
-		nsubsystems = m_pDTAcq32->GetNumSubSystems();
+		n_sub_systems = m_p_dt_acq32->GetNumSubSystems();
 
 		const CString subsystem_text[SS_LIST_SIZE] = SS_TEXT;
-		const short ss_list[SS_LIST_SIZE] = SS_LIST;
+		constexpr short ss_list[SS_LIST_SIZE] = SS_LIST;
 
 		for (auto i = 0; i < SS_LIST_SIZE; i++)
 		{
-			const int number = m_pDTAcq32->GetDevCaps(ss_list[i]);
+			const int number = m_p_dt_acq32->GetDevCaps(ss_list[i]);
 			CString cs;
 			cs.Format(_T("\n  %i: "), number);
 			auto board_text = cs + subsystem_text[i];
-			m_listBoardCaps.AddString(board_text);
-			m_listBoardCaps.SetItemData(i, number);
+			m_list_board_caps.AddString(board_text);
+			m_list_board_caps.SetItemData(i, number);
 		}
 	}
 	catch (COleDispatchException* e)
 	{
 		DispatchException(e);
-		return nsubsystems;
+		return n_sub_systems;
 	}
-	return nsubsystems;
+	return n_sub_systems;
 }
 
-void DlgDataTranslationBoard::ChangeSubsystem(int index)
+void DlgDataTranslationBoard::change_subsystem(int index)
 {
-	const int ss_codes[SS_LIST_SIZE] = SS_CODES;
+	constexpr int ss_codes[SS_LIST_SIZE] = SS_CODES;
 	const DWORD ss_info = ss_codes[index];
-	const int numitems = m_listBoardCaps.GetItemData(index);
+	const int num_items = m_list_board_caps.GetItemData(index);
 	const auto ol_ss = (ss_info & 0xffff);
 	//UINT ui_element = (ss_info >> 16) & 0xff;
-	if (numitems > 0 && static_cast<unsigned long>(m_pDTAcq32->GetSubSysType()) != ol_ss)
+	if (num_items > 0 && static_cast<unsigned long>(m_p_dt_acq32->GetSubSysType()) != ol_ss)
 	{
 		try
 		{
-			if (ol_ss == static_cast<unsigned long>(m_pAnalogOUT->GetSubSysType()))
-				m_pDTAcq32 = m_pAnalogOUT;
+			if (ol_ss == static_cast<unsigned long>(m_p_analog_out->GetSubSysType()))
+				m_p_dt_acq32 = m_p_analog_out;
 			else
-				m_pDTAcq32 = m_pAnalogIN;
-			m_pDTAcq32->SetSubSysType(static_cast<short>(ol_ss));
-			m_pDTAcq32->SetSubSysElement(0);
+				m_p_dt_acq32 = m_p_analog_in;
+			m_p_dt_acq32->SetSubSysType(static_cast<short>(ol_ss));
+			m_p_dt_acq32->SetSubSysElement(0);
 		}
 		catch (COleDispatchException* e)
 		{
 			DispatchException(e);
 		}
 	}
-	GetSubsystemYNCapabilities(numitems);
-	GetSubsystemNumericalCapabilities(numitems);
+	get_subsystem_yn_capabilities(num_items);
+	get_subsystem_numerical_capabilities(num_items);
 }
 
-void DlgDataTranslationBoard::GetSubsystemYNCapabilities(int numitems)
+void DlgDataTranslationBoard::get_subsystem_yn_capabilities(int num_items)
 {
-	m_listSSYNCaps.ResetContent();
-	if (numitems > 0)
+	m_list_ss_caps.ResetContent();
+	if (num_items > 0)
 	{
-		const OLSSC olssc[SUB_COUNT] = SUB_CAP;
+		constexpr OLSSC ol_ssc[SUB_COUNT] = SUB_CAP;
 		const CString cap_text[SUB_COUNT] = SUB_TEXT;
 		try
 		{
 			for (UINT i = 0; i < SUB_COUNT; i++)
-				if (m_pDTAcq32->GetSSCaps(olssc[i]) != 0)
-					m_listSSYNCaps.AddString(cap_text[i]);
+				if (m_p_dt_acq32->GetSSCaps(ol_ssc[i]) != 0)
+					m_list_ss_caps.AddString(cap_text[i]);
 		}
 		catch (COleDispatchException* e)
 		{
 			DispatchException(e);
 		}
 	}
-	m_listSSYNCaps.Invalidate();
+	m_list_ss_caps.Invalidate();
 }
 
-void DlgDataTranslationBoard::GetSubsystemNumericalCapabilities(int numitems)
+void DlgDataTranslationBoard::get_subsystem_numerical_capabilities(int num_items)
 {
-	m_listSSNumCaps.ResetContent();
-	if (numitems > 0)
+	m_list_ss_num_caps.ResetContent();
+	if (num_items > 0)
 	{
-		const OLSSC olssc_num[SS_NUM_COUNT] = SS_NUM_CAP;
+		constexpr OLSSC ol_ssc_num[SS_NUM_COUNT] = SS_NUM_CAP;
 		const CString num_text[SS_NUM_COUNT] = SS_NUM_TEXT;
 		try
 		{
 			for (UINT i = 0; i < SS_NUM_COUNT; i++)
 			{
-				const UINT capability = m_pDTAcq32->GetSSCaps(olssc_num[i]);
+				const UINT capability = m_p_dt_acq32->GetSSCaps(ol_ssc_num[i]);
 				if (capability != 0)
 				{
 					CString cs;
 					cs.Format(_T(": %d"), capability);
-					m_listSSNumCaps.AddString(num_text[i] + cs);
+					m_list_ss_num_caps.AddString(num_text[i] + cs);
 				}
 			}
 		}
@@ -180,15 +180,15 @@ void DlgDataTranslationBoard::GetSubsystemNumericalCapabilities(int numitems)
 			DispatchException(e);
 		}
 	}
-	m_listSSNumCaps.Invalidate();
+	m_list_ss_num_caps.Invalidate();
 }
 
-void DlgDataTranslationBoard::OnLbnSelchangeListBoardcaps()
+void DlgDataTranslationBoard::on_lbn_sel_change_list_board_caps()
 {
-	const auto isel = m_listBoardCaps.GetCurSel();
-	if (isel >= 0)
+	const auto i_sel = m_list_board_caps.GetCurSel();
+	if (i_sel >= 0)
 	{
-		ChangeSubsystem(isel);
+		change_subsystem(i_sel);
 	}
 }
 

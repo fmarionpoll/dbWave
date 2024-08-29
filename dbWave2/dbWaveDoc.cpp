@@ -107,7 +107,7 @@ BOOL CdbWaveDoc::open_new_document(LPCTSTR lpsz_path_name)
 	while (b_exist)
 	{
 		DlgdbNewFileDuplicate dlg;
-		dlg.m_pfilein = cs_name;
+		dlg.m_p_file_in = cs_name;
 		if (IDOK == dlg.DoModal())
 		{
 			switch (dlg.m_option)
@@ -122,7 +122,7 @@ BOOL CdbWaveDoc::open_new_document(LPCTSTR lpsz_path_name)
 				b_exist = FALSE;
 				break;
 			case 2: // try another name
-				cs_name = dlg.m_fileout;
+				cs_name = dlg.m_file_out;
 				b_exist = CFile::GetStatus(cs_name, status);
 				break;
 			case 3: // abort process

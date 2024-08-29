@@ -483,7 +483,7 @@ void CPropertiesPanel::on_bn_clicked_edit_infos()
 {
 	m_p_doc_->update_all_views_db_wave(nullptr, HINT_GET_SELECTED_RECORDS, nullptr);
 	DlgdbEditRecord dlg;
-	dlg.m_pdbDoc = m_p_doc_;
+	dlg.m_pdb_doc = m_p_doc_;
 	if (IDOK == dlg.DoModal())
 	{
 		m_p_doc_->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);

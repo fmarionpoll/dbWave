@@ -20,34 +20,34 @@ class DlgdbEditField : public CDialogEx
 	DECLARE_DYNAMIC(DlgdbEditField)
 
 public:
-	DlgdbEditField(CWnd* pParent = nullptr);
+	DlgdbEditField(CWnd* p_parent = nullptr);
 	~DlgdbEditField() override;
 
 	enum { IDD = IDD_DBEDITRECORDFIELD };
 
 protected:
-	void DoDataExchange(CDataExchange* pDX) override;
+	void DoDataExchange(CDataExchange* p_dx) override;
 	void display_elements() const;
 	void modify_current();
 	void modify_all();
 	void modify_selected()
 	{
-		const auto i_edit = m_pMainTable->GetEditMode();
+		const auto i_edit = m_p_main_table->GetEditMode();
 		if (i_edit != dbEditNone)
-			m_pMainTable->Update();
+			m_p_main_table->Update();
 
-		const auto bookmark_current = m_pMainTable->GetBookmark();
+		const auto bookmark_current = m_p_main_table->GetBookmark();
 
-		const auto u_selected_count = m_pdbDoc->selected_records.GetSize();
+		const auto u_selected_count = m_pdb_doc->selected_records.GetSize();
 		ASSERT(u_selected_count > 0);
 
 		for (auto i = 0; i < u_selected_count; i++)
 		{
-			const long n_item = m_pdbDoc->selected_records.GetAt(i);
-			m_pMainTable->SetAbsolutePosition(n_item);
+			const long n_item = static_cast<long>(m_pdb_doc->selected_records.GetAt(i));
+			m_p_main_table->SetAbsolutePosition(n_item);
 			modify_current();
 		}
-		m_pMainTable->SetBookmark(bookmark_current);
+		m_p_main_table->SetBookmark(bookmark_current);
 	}
 
 	long m_source_id_{ 0 };
@@ -68,24 +68,24 @@ public:
 	CComboBox m_co_source;
 	int m_first{ -1 };
 
-	CdbTableMain* m_pMainTable{ nullptr }; 
-	CString m_csColName; 
-	CdbTableAssociated* m_pIndexTable{ nullptr }; 
-	CArray<long, long>* m_pliIDArray{ nullptr }; 
-	BOOL m_bIndexTable{ true }; // TRUE=linked field, FALSE=main field (m_pIndexTable=NULL)
-	CdbWaveDoc* m_pdbDoc {nullptr};
+	CdbTableMain* m_p_main_table{ nullptr }; 
+	CString m_cs_col_name; 
+	CdbTableAssociated* m_p_index_table{ nullptr }; 
+	CArray<long, long>* m_pli_id_array{ nullptr }; 
+	BOOL m_b_index_table{ true }; // TRUE=linked field, FALSE=main field (m_pIndexTable=NULL)
+	CdbWaveDoc* m_pdb_doc {nullptr};
 
 	BOOL OnInitDialog() override;
-	afx_msg void OnBnClickedRadio1();
-	afx_msg void OnBnClickedRadio2();
-	afx_msg void OnBnClickedRadio3();
-	afx_msg void OnBnClickedRadio4();
-	afx_msg void OnBnClickedRadio5();
-	afx_msg void OnBnClickedRadio6();
-	afx_msg void OnBnClickedButton1();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnBnClickedOk();
-	afx_msg void OnCbnSelchangeCombo3();
+	afx_msg void on_bn_clicked_radio1();
+	afx_msg void on_bn_clicked_radio2();
+	afx_msg void on_bn_clicked_radio3();
+	afx_msg void on_bn_clicked_radio4();
+	afx_msg void on_bn_clicked_radio5();
+	afx_msg void on_bn_clicked_radio6();
+	afx_msg void on_bn_clicked_button1();
+	afx_msg void OnSize(UINT n_type, int cx, int cy);
+	afx_msg void on_bn_clicked_ok();
+	afx_msg void on_cbn_sel_change_combo3();
 
 	DECLARE_MESSAGE_MAP()
 };

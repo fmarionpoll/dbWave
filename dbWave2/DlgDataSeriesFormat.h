@@ -9,29 +9,29 @@ class DlgDataSeriesFormat : public CDialog
 {
 	// Construction
 public:
-	DlgDataSeriesFormat(CWnd* pParent = nullptr); // standard constructor
+	DlgDataSeriesFormat(CWnd* p_parent = nullptr); // standard constructor
 
 	// Dialog Data
 	enum { IDD = IDD_DATASERIESFORMAT };
 
-	CListBox m_listseries;
-	float m_maxmv { 0.f };
-	float m_minmv { 0.f };
-	ChartData* m_pChartDataWnd{ nullptr };
-	AcqDataDoc* m_pdbDoc{nullptr }; 
-	int m_listindex {0};
-	int m_yzero{ 0 };
-	int m_yextent{ 0 };
-	float m_mVperbin{ 0.f };
-	int m_binzero{ 2048 };
-	CMFCColorButton m_colorbutton;
+	CListBox m_list_series;
+	float m_max_mv { 0.f };
+	float m_min_mv { 0.f };
+	ChartData* m_p_chart_data_wnd{ nullptr };
+	AcqDataDoc* m_pdb_doc{nullptr }; 
+	int m_list_index {0};
+	int m_y_zero{ 0 };
+	int m_y_extent{ 0 };
+	float m_mv_per_bin{ 0.f };
+	int m_bin_zero{ 2048 };
+	CMFCColorButton m_color_button;
 
 	// Overrides
 public:
 protected:
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
-	void GetParams(int index);
-	void SetParams(int index);
+	void DoDataExchange(CDataExchange* p_dx) override; 
+	void get_params(int index);
+	void set_params(int index);
 
 	// Implementation
 protected:
@@ -39,7 +39,7 @@ protected:
 	void OnOK() override;
 	void OnCancel() override;
 	BOOL OnInitDialog() override;
-	afx_msg void OnSelchangeListseries();
+	afx_msg void on_sel_change_list_series();
 
 	DECLARE_MESSAGE_MAP()
 };

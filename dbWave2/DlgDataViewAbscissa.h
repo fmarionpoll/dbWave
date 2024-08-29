@@ -5,32 +5,32 @@ class DlgDataViewAbscissa : public CDialog
 {
 	// Construction
 public:
-	DlgDataViewAbscissa(CWnd* pParent = nullptr); // standard constructor
+	DlgDataViewAbscissa(CWnd* p_parent = nullptr); // standard constructor
 
 	// Dialog Data
 	enum { IDD = IDD_ABCISSA };
 
-	float m_firstAbscissa{ 0.f };
-	float m_frameDuration{ 0.f };
-	float m_lastAbscissa{ 0.f };
-	int m_abscissaUnitIndex{ -1 };
-	float m_centerAbscissa{ 0.f };
-	float m_abscissaScale{ 1.f };
-	float m_veryLastAbscissa{ 1.f };
-	int m_previousIndex{ 1 };
+	float m_first_abscissa{ 0.f };
+	float m_frame_duration{ 0.f };
+	float m_last_abscissa{ 0.f };
+	int m_abscissa_unit_index{ -1 };
+	float m_center_abscissa{ 0.f };
+	float m_abscissa_scale{ 1.f };
+	float m_very_last_abscissa{ 1.f };
+	int m_previous_index{ 1 };
 
 	// Implementation
 protected:
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	void DoDataExchange(CDataExchange* p_dx) override; 
 	BOOL OnInitDialog() override;
-	void CheckLimits();
+	void check_limits();
 
 	// Generated message map functions
-	afx_msg void OnSelchangeAbscissaunits();
+	afx_msg void on_sel_change_abscissa_units();
 	void OnOK() override;
-	afx_msg void OnKillfocusAbscissa();
-	afx_msg void OnKillfocusDuration();
-	afx_msg void OnKillfocusCenter();
+	afx_msg void on_kill_focus_abscissa();
+	afx_msg void on_kill_focus_duration();
+	afx_msg void on_kill_focus_center();
 
 	DECLARE_MESSAGE_MAP()
 };
