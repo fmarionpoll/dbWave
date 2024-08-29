@@ -388,8 +388,8 @@ void ViewData::on_update_edit_copy(CCmdUI* p_cmd_ui)
 void ViewData::adc_on_hardware_channels_dlg() 
 {
 	DlgADInputs dlg;
-	dlg.m_pwFormat = m_p_dat_->get_wave_format();
-	dlg.m_pchArray = m_p_dat_->get_wave_channels_array();
+	dlg.m_pw_format = m_p_dat_->get_wave_format();
+	dlg.m_pch_array = m_p_dat_->get_wave_channels_array();
 	if (IDOK == dlg.DoModal())
 	{
 		if(m_p_dat_->acq_save_data_descriptors())

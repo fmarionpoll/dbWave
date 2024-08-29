@@ -739,14 +739,14 @@ BOOL ViewADcontinuous::define_experiment()
 	if (!m_b_hide_subsequent_)
 	{
 		DlgADExperiment dlg;
-		dlg.m_bFilename = true;
-		dlg.options_inputdata_ = options_input_data_;
-		dlg.m_pdbDoc = GetDocument();
-		dlg.m_bhidesubsequent = m_b_hide_subsequent_;
+		dlg.m_b_filename = true;
+		dlg.options_input = options_input_data_;
+		dlg.p_db_doc = GetDocument();
+		dlg.m_b_hide_subsequent = m_b_hide_subsequent_;
 		if (IDOK != dlg.DoModal())
 			return FALSE;
-		m_b_hide_subsequent_ = dlg.m_bhidesubsequent;
-		file_name = dlg.m_szFileName;
+		m_b_hide_subsequent_ = dlg.m_b_hide_subsequent;
+		file_name = dlg.m_sz_file_name;
 	}
 
 	// hide define experiment dialog
@@ -793,13 +793,13 @@ void ViewADcontinuous::on_input_channels()
 	UpdateData(TRUE);
 
 	DlgADInputs dlg;
-	dlg.m_pwFormat = &(options_input_data_->wave_format);
-	dlg.m_pchArray = &(options_input_data_->chan_array);
-	dlg.m_numchansMAXDI = m_acq32_ad.GetSSCaps(OLSSC_MAXDICHANS);
-	dlg.m_numchansMAXSE = m_acq32_ad.GetSSCaps(OLSSC_MAXSECHANS);
-	dlg.m_bchantype = options_input_data_->b_channel_type;
-	dlg.m_bchainDialog = TRUE;
-	dlg.m_bcommandAmplifier = TRUE;
+	dlg.m_pw_format = &(options_input_data_->wave_format);
+	dlg.m_pch_array = &(options_input_data_->chan_array);
+	dlg.n_channels_max_di = m_acq32_ad.GetSSCaps(OLSSC_MAXDICHANS);
+	dlg.n_channels_max_se = m_acq32_ad.GetSSCaps(OLSSC_MAXSECHANS);
+	dlg.channel_type = options_input_data_->b_channel_type;
+	dlg.b_chain_dialog = TRUE;
+	dlg.b_command_amplifier = TRUE;
 
 	const auto p_alligator = new CUSBPxxS1();
 	dlg.m_alligator_amplifier = p_alligator;
@@ -807,9 +807,9 @@ void ViewADcontinuous::on_input_channels()
 	// invoke dialog box
 	if (IDOK == dlg.DoModal())
 	{
-		options_input_data_->b_channel_type = dlg.m_bchantype;
+		options_input_data_->b_channel_type = dlg.channel_type;
 		const boolean is_acquisition_running = m_acq32_ad.IsInProgress();
-		if (dlg.is_AD_changed) 
+		if (dlg.is_ad_changed) 
 		{
 			if (is_acquisition_running)
 				stop_acquisition();
@@ -817,7 +817,7 @@ void ViewADcontinuous::on_input_channels()
 		}
 		UpdateData(FALSE);
 		update_gain_scroll();
-		if (is_acquisition_running && dlg.is_AD_changed)
+		if (is_acquisition_running && dlg.is_ad_changed)
 			start_acquisition();
 	}
 	delete p_alligator;

@@ -10,69 +10,69 @@
 
 
 
-DlgADExperiment::DlgADExperiment(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgADExperiment::DlgADExperiment(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
-void DlgADExperiment::DoDataExchange(CDataExchange* pDX)
+void DlgADExperiment::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialog::DoDataExchange(pDX);
+	CDialog::DoDataExchange(p_dx);
 
-	DDX_Text(pDX, IDC_EDIT_NAME, m_csBasename);
-	DDX_Text(pDX, IDC_EDIT_COMMENT, m_csMoreComment);
-	DDX_Text(pDX, IDC_EDIT_NUMNAME, m_exptnumber);
-	DDX_Text(pDX, IDC_INSECTID, m_insectnumber);
+	DDX_Text(p_dx, IDC_EDIT_NAME, m_cs_basename);
+	DDX_Text(p_dx, IDC_EDIT_COMMENT, m_cs_more_comment);
+	DDX_Text(p_dx, IDC_EDIT_NUMNAME, m_experiment_number);
+	DDX_Text(p_dx, IDC_INSECTID, m_insect_number);
 
-	DDX_Control(pDX, IDC_COMBO_STRAIN, m_coStrain);
-	DDX_Control(pDX, IDC_COMBO_SEX, m_coSex);
-	DDX_Control(pDX, IDC_COMBO_SENSILLUMNAME, m_coSensillum);
-	DDX_Control(pDX, IDC_COMBO_LOCATION, m_coLocation);
-	DDX_Control(pDX, IDC_COMBO_OPERATOR, m_coOperator);
-	DDX_Control(pDX, IDC_COMBO_INSECTNAME, m_coInsect);
-	DDX_Control(pDX, IDC_COMBO_STIMULUS, m_coStimulus);
-	DDX_Control(pDX, IDC_COMBO_CONCENTRATION, m_coConcentration);
-	DDX_Control(pDX, IDC_COMBO_STIMULUS2, m_coStimulus2);
-	DDX_Control(pDX, IDC_COMBO_CONCENTRATION2, m_coConcentration2);
-	DDX_Control(pDX, IDC_COMBO1_REPEAT, m_coRepeat);
-	DDX_Control(pDX, IDC_COMBO1_REPEAT2, m_coRepeat2);
-	DDX_Control(pDX, IDC_COMBO_EXPT3, m_coExpt);
+	DDX_Control(p_dx, IDC_COMBO_STRAIN, m_co_strain);
+	DDX_Control(p_dx, IDC_COMBO_SEX, m_co_sex);
+	DDX_Control(p_dx, IDC_COMBO_SENSILLUMNAME, m_co_sensillum);
+	DDX_Control(p_dx, IDC_COMBO_LOCATION, m_co_location);
+	DDX_Control(p_dx, IDC_COMBO_OPERATOR, m_co_operator);
+	DDX_Control(p_dx, IDC_COMBO_INSECTNAME, m_co_insect);
+	DDX_Control(p_dx, IDC_COMBO_STIMULUS, m_co_stimulus);
+	DDX_Control(p_dx, IDC_COMBO_CONCENTRATION, m_co_concentration);
+	DDX_Control(p_dx, IDC_COMBO_STIMULUS2, m_co_stimulus2);
+	DDX_Control(p_dx, IDC_COMBO_CONCENTRATION2, m_co_concentration2);
+	DDX_Control(p_dx, IDC_COMBO1_REPEAT, m_co_repeat);
+	DDX_Control(p_dx, IDC_COMBO1_REPEAT2, m_co_repeat2);
+	DDX_Control(p_dx, IDC_COMBO_EXPT3, m_co_experiment);
 
-	DDX_Check(pDX, IDC_CHECK2, m_bhidesubsequent);
-	DDX_Control(pDX, IDC_MFCEDITBROWSE1, m_mfcBrowsePath);
+	DDX_Check(p_dx, IDC_CHECK2, m_b_hide_subsequent);
+	DDX_Control(p_dx, IDC_MFCEDITBROWSE1, m_mfc_browse_path);
 }
 
 BEGIN_MESSAGE_MAP(DlgADExperiment, CDialog)
 
-	ON_BN_CLICKED(IDC_BUTTONINSECTNAME, &DlgADExperiment::OnBnClickedButtoninsectname)
-	ON_BN_CLICKED(IDC_BUTTONSTRAIN, &DlgADExperiment::OnBnClickedButtonstrain)
-	ON_BN_CLICKED(IDC_BUTTONSEX, &DlgADExperiment::OnBnClickedButtonsex)
-	ON_BN_CLICKED(IDC_BUTTONSENSILLUM, &DlgADExperiment::OnBnClickedButtonsensillum)
-	ON_BN_CLICKED(IDC_BUTTONLOCATION, &DlgADExperiment::OnBnClickedButtonlocation)
-	ON_BN_CLICKED(IDC_BUTTONOPERATOR, &DlgADExperiment::OnBnClickedButtonoperator)
-	ON_BN_CLICKED(IDC_BUTTONSTIMULUS, &DlgADExperiment::OnBnClickedButtonstimulus)
-	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION, &DlgADExperiment::OnBnClickedButtonconcentration)
-	ON_BN_CLICKED(IDC_BUTTONSTIMULUS2, &DlgADExperiment::OnBnClickedButtonstimulus2)
-	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION2, &DlgADExperiment::OnBnClickedButtonconcentration2)
-	ON_BN_CLICKED(IDC_BUTTONREPEAT, &DlgADExperiment::OnBnClickedButtonrepeat)
-	ON_BN_CLICKED(IDC_BUTTONREPEAT2, &DlgADExperiment::OnBnClickedButtonrepeat2)
-	ON_BN_CLICKED(IDC_BUTTONEXPT3, &DlgADExperiment::OnBnClickedButtonexpt)
+	ON_BN_CLICKED(IDC_BUTTONINSECTNAME, &DlgADExperiment::on_bn_clicked_button_insect_name)
+	ON_BN_CLICKED(IDC_BUTTONSTRAIN, &DlgADExperiment::on_bn_clicked_button_strain)
+	ON_BN_CLICKED(IDC_BUTTONSEX, &DlgADExperiment::on_bn_clicked_button_sex)
+	ON_BN_CLICKED(IDC_BUTTONSENSILLUM, &DlgADExperiment::on_bn_clicked_button_sensillum)
+	ON_BN_CLICKED(IDC_BUTTONLOCATION, &DlgADExperiment::on_bn_clicked_button_location)
+	ON_BN_CLICKED(IDC_BUTTONOPERATOR, &DlgADExperiment::on_bn_clicked_button_operator)
+	ON_BN_CLICKED(IDC_BUTTONSTIMULUS, &DlgADExperiment::on_bn_clicked_button_stimulus)
+	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION, &DlgADExperiment::on_bn_clicked_button_concentration)
+	ON_BN_CLICKED(IDC_BUTTONSTIMULUS2, &DlgADExperiment::on_bn_clicked_button_stimulus2)
+	ON_BN_CLICKED(IDC_BUTTONCONCENTRATION2, &DlgADExperiment::on_bn_clicked_button_concentration2)
+	ON_BN_CLICKED(IDC_BUTTONREPEAT, &DlgADExperiment::on_bn_clicked_button_repeat)
+	ON_BN_CLICKED(IDC_BUTTONREPEAT2, &DlgADExperiment::on_bn_clicked_button_repeat2)
+	ON_BN_CLICKED(IDC_BUTTONEXPT3, &DlgADExperiment::on_bn_clicked_button_experiment)
 
-	ON_EN_KILLFOCUS(IDC_MFCEDITBROWSE1, &DlgADExperiment::OnEnKillfocusMfceditbrowse1)
-	ON_BN_CLICKED(IDC_BUTTON_NEXTID, &DlgADExperiment::OnBnClickedButtonNextid)
+	ON_EN_KILLFOCUS(IDC_MFCEDITBROWSE1, &DlgADExperiment::on_en_kill_focus_mfc_edit_browse1)
+	ON_BN_CLICKED(IDC_BUTTON_NEXTID, &DlgADExperiment::on_bn_clicked_button_next_id)
 END_MESSAGE_MAP()
 
 void DlgADExperiment::OnOK()
 {
 	UpdateData(TRUE);
 
-	m_mfcBrowsePath.GetWindowTextW(m_csPathname);
-	if (m_csPathname.GetLength() > 2
-		&& m_csPathname.Right(1) != _T("\\"))
-		m_csPathname += _T("\\");
+	m_mfc_browse_path.GetWindowTextW(m_cs_pathname);
+	if (m_cs_pathname.GetLength() > 2
+		&& m_cs_pathname.Right(1) != _T("\\"))
+		m_cs_pathname += _T("\\");
 
 	// check that directory is present - otherwise create...
-	auto cs_path = m_csPathname.Left(m_csPathname.GetLength() - 1);
+	const auto cs_path = m_cs_pathname.Left(m_cs_pathname.GetLength() - 1);
 
 	// create directory if necessary
 	CFileFind cf;
@@ -83,17 +83,17 @@ void DlgADExperiment::OnOK()
 	}
 
 	// build file name
-	int i_experiment_number = int(m_exptnumber);
+	int i_experiment_number = static_cast<int>(m_experiment_number);
 	CString cs_buf_temp;
 	cs_buf_temp.Format(_T("%06.6lu"), i_experiment_number);
-	m_szFileName = m_csPathname + m_csBasename + cs_buf_temp + _T(".dat");
+	m_sz_file_name = m_cs_pathname + m_cs_basename + cs_buf_temp + _T(".dat");
 
 	// check if this file is already present, exit if not...
 	CFileStatus status;
 	auto i_id_response = IDYES; // default: go on if file not found
-	if (CFile::GetStatus(m_szFileName, status))
+	if (CFile::GetStatus(m_sz_file_name, status))
 		i_id_response = AfxMessageBox(IDS_FILEOVERWRITE, MB_YESNO | MB_ICONWARNING);
-	// no .. find first available number
+	// no? find first available number
 	if (IDNO == i_id_response)
 	{
 		BOOL flag = TRUE;
@@ -101,57 +101,57 @@ void DlgADExperiment::OnOK()
 		{
 			i_experiment_number++;
 			cs_buf_temp.Format(_T("%06.6lu"), i_experiment_number);
-			m_szFileName = m_csPathname + m_csBasename + cs_buf_temp + _T(".dat");
-			flag = CFile::GetStatus(m_szFileName, status);
+			m_sz_file_name = m_cs_pathname + m_cs_basename + cs_buf_temp + _T(".dat");
+			flag = CFile::GetStatus(m_sz_file_name, status);
 		}
-		const auto cs = _T("Next available file name is: ") + m_szFileName;
+		const auto cs = _T("Next available file name is: ") + m_sz_file_name;
 		i_id_response = AfxMessageBox(cs, MB_YESNO | MB_ICONWARNING);
 	}
 
-	// OK .. pass parameters
+	// OK  pass parameters
 	if (IDYES == i_id_response)
 	{
-		// update expt number
-		m_exptnumber = i_experiment_number;
+		// update experiment number
+		m_experiment_number = i_experiment_number;
 
 		// update file descriptors
-		options_inputdata_->cs_pathname = m_csPathname;
-		options_inputdata_->cs_basename = m_csBasename;
-		options_inputdata_->experiment_number = int(m_exptnumber) + 1;
-		options_inputdata_->insect_number = int(m_insectnumber);
+		options_input->cs_pathname = m_cs_pathname;
+		options_input->cs_basename = m_cs_basename;
+		options_input->experiment_number = static_cast<int>(m_experiment_number) + 1;
+		options_input->insect_number = static_cast<int>(m_insect_number);
 
-		m_pwaveFormat->insect_id = long(m_insectnumber);
-		m_pwaveFormat->repeat = options_inputdata_->ics_a_repeat;
-		m_pwaveFormat->repeat2 = options_inputdata_->ics_a_repeat2;
-		m_pwaveFormat->cs_more_comment = m_csMoreComment;
+		p_wave_format->insect_id = static_cast<long>(m_insect_number);
+		p_wave_format->repeat = options_input->ics_a_repeat;
+		p_wave_format->repeat2 = options_input->ics_a_repeat2;
+		p_wave_format->cs_more_comment = m_cs_more_comment;
 
 		// save descriptors into waveFormat (data acq file descriptor) and update database
-		m_coStimulus.GetWindowText(m_pwaveFormat->cs_stimulus);
-		m_coConcentration.GetWindowText(m_pwaveFormat->cs_concentration);
-		m_coStimulus2.GetWindowText(m_pwaveFormat->cs_stimulus2);
-		m_coConcentration2.GetWindowText(m_pwaveFormat->cs_concentration2);
-		m_coLocation.GetWindowText(m_pwaveFormat->cs_location);
-		m_coSensillum.GetWindowText(m_pwaveFormat->cs_sensillum);
-		m_coStrain.GetWindowText(m_pwaveFormat->cs_strain);
-		m_coSex.GetWindowText(m_pwaveFormat->cs_sex);
-		m_coOperator.GetWindowText(m_pwaveFormat->cs_operator);
-		m_coInsect.GetWindowText(m_pwaveFormat->cs_insect_name);
-		m_coExpt.GetWindowText(m_pwaveFormat->cs_comment);
+		m_co_stimulus.GetWindowText(p_wave_format->cs_stimulus);
+		m_co_concentration.GetWindowText(p_wave_format->cs_concentration);
+		m_co_stimulus2.GetWindowText(p_wave_format->cs_stimulus2);
+		m_co_concentration2.GetWindowText(p_wave_format->cs_concentration2);
+		m_co_location.GetWindowText(p_wave_format->cs_location);
+		m_co_sensillum.GetWindowText(p_wave_format->cs_sensillum);
+		m_co_strain.GetWindowText(p_wave_format->cs_strain);
+		m_co_sex.GetWindowText(p_wave_format->cs_sex);
+		m_co_operator.GetWindowText(p_wave_format->cs_operator);
+		m_co_insect.GetWindowText(p_wave_format->cs_insect_name);
+		m_co_experiment.GetWindowText(p_wave_format->cs_comment);
 
 		// save data into commons
-		options_inputdata_->ics_a_concentration = SaveList(&m_coConcentration, &(options_inputdata_->cs_a_concentration));
-		options_inputdata_->ics_a_stimulus = SaveList(&m_coStimulus, &(options_inputdata_->cs_a_stimulus));
-		options_inputdata_->ics_a_insect = SaveList(&m_coInsect, &(options_inputdata_->cs_a_insect));
-		options_inputdata_->ics_a_location = SaveList(&m_coLocation, &(options_inputdata_->cs_a_location));
-		options_inputdata_->ics_a_sensillum = SaveList(&m_coSensillum, &(options_inputdata_->cs_a_sensillum));
-		options_inputdata_->ics_a_strain = SaveList(&m_coStrain, &(options_inputdata_->cs_a_strain));
-		options_inputdata_->ics_a_sex = SaveList(&m_coSex, &(options_inputdata_->cs_a_sex));
-		options_inputdata_->ics_a_operator_name = SaveList(&m_coOperator, &(options_inputdata_->cs_a_operator_name));
-		options_inputdata_->ics_a_concentration2 = SaveList(&m_coConcentration2, &(options_inputdata_->cs_a_concentration2));
-		options_inputdata_->ics_a_stimulus2 = SaveList(&m_coStimulus2, &(options_inputdata_->cs_a_stimulus2));
-		options_inputdata_->ics_a_repeat = SaveList(&m_coRepeat, nullptr);
-		options_inputdata_->ics_a_repeat2 = SaveList(&m_coRepeat2, nullptr);
-		options_inputdata_->ics_a_experiment = SaveList(&m_coExpt, &(options_inputdata_->cs_a_experiment));
+		options_input->ics_a_concentration = save_list(&m_co_concentration, &(options_input->cs_a_concentration));
+		options_input->ics_a_stimulus = save_list(&m_co_stimulus, &(options_input->cs_a_stimulus));
+		options_input->ics_a_insect = save_list(&m_co_insect, &(options_input->cs_a_insect));
+		options_input->ics_a_location = save_list(&m_co_location, &(options_input->cs_a_location));
+		options_input->ics_a_sensillum = save_list(&m_co_sensillum, &(options_input->cs_a_sensillum));
+		options_input->ics_a_strain = save_list(&m_co_strain, &(options_input->cs_a_strain));
+		options_input->ics_a_sex = save_list(&m_co_sex, &(options_input->cs_a_sex));
+		options_input->ics_a_operator_name = save_list(&m_co_operator, &(options_input->cs_a_operator_name));
+		options_input->ics_a_concentration2 = save_list(&m_co_concentration2, &(options_input->cs_a_concentration2));
+		options_input->ics_a_stimulus2 = save_list(&m_co_stimulus2, &(options_input->cs_a_stimulus2));
+		options_input->ics_a_repeat = save_list(&m_co_repeat, nullptr);
+		options_input->ics_a_repeat2 = save_list(&m_co_repeat2, nullptr);
+		options_input->ics_a_experiment = save_list(&m_co_experiment, &(options_input->cs_a_experiment));
 
 		CDialog::OnOK();
 	}
@@ -166,7 +166,7 @@ BOOL DlgADExperiment::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	if (!m_bFilename)
+	if (!m_b_filename)
 	{
 		GetDlgItem(IDC_STATIC1)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_STATIC2)->ShowWindow(SW_HIDE);
@@ -175,60 +175,60 @@ BOOL DlgADExperiment::OnInitDialog()
 		GetDlgItem(IDC_SPIN1)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_STATIC3)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_CHECK2)->ShowWindow(SW_HIDE);
-		m_mfcBrowsePath.ShowWindow(SW_HIDE);
-		m_bhidesubsequent = FALSE;
+		m_mfc_browse_path.ShowWindow(SW_HIDE);
+		m_b_hide_subsequent = FALSE;
 	}
 
-	// load address of items defined for this dialog and load corresp data
-	if (m_bADexpt)
-		m_pwaveFormat = &(options_inputdata_->wave_format);
+	// load address of items defined for this dialog and load corresponding data
+	if (b_ad_experiment)
+		p_wave_format = &(options_input->wave_format);
 
-	m_exptnumber = options_inputdata_->experiment_number;
-	m_insectnumber = options_inputdata_->insect_number;
-	m_csBasename = options_inputdata_->cs_basename;
-	if (m_csBasename.IsEmpty())
-		m_csBasename = _T("data");
-	m_csPathname = m_pdbDoc->proposed_data_path_name;
-	m_mfcBrowsePath.SetWindowTextW(m_csPathname);
+	m_experiment_number = options_input->experiment_number;
+	m_insect_number = options_input->insect_number;
+	m_cs_basename = options_input->cs_basename;
+	if (m_cs_basename.IsEmpty())
+		m_cs_basename = _T("data");
+	m_cs_pathname = p_db_doc->proposed_data_path_name;
+	m_mfc_browse_path.SetWindowTextW(m_cs_pathname);
 
-	m_csMoreComment = m_pwaveFormat->cs_more_comment;
-	LoadList(&m_coConcentration, &(options_inputdata_->cs_a_concentration), options_inputdata_->ics_a_concentration,
-		&(m_pdbDoc->db_table->m_concentration_set));
-	LoadList(&m_coStimulus, &(options_inputdata_->cs_a_stimulus), options_inputdata_->ics_a_stimulus,
-		&(m_pdbDoc->db_table->m_stimulus_set));
-	LoadList(&m_coConcentration2, &(options_inputdata_->cs_a_concentration2), options_inputdata_->ics_a_concentration2,
-		&(m_pdbDoc->db_table->m_concentration_set));
-	LoadList(&m_coStimulus2, &(options_inputdata_->cs_a_stimulus2), options_inputdata_->ics_a_stimulus2,
-		&(m_pdbDoc->db_table->m_stimulus_set));
-	LoadList(&m_coInsect, &(options_inputdata_->cs_a_insect), options_inputdata_->ics_a_insect, &(m_pdbDoc->db_table->m_insect_set));
-	LoadList(&m_coLocation, &(options_inputdata_->cs_a_location), options_inputdata_->ics_a_location,
-		&(m_pdbDoc->db_table->m_location_set));
-	LoadList(&m_coSensillum, &(options_inputdata_->cs_a_sensillum), options_inputdata_->ics_a_sensillum,
-		&(m_pdbDoc->db_table->m_sensillum_set));
-	LoadList(&m_coStrain, &(options_inputdata_->cs_a_strain), options_inputdata_->ics_a_strain, &(m_pdbDoc->db_table->m_strain_set));
-	LoadList(&m_coSex, &(options_inputdata_->cs_a_sex), options_inputdata_->ics_a_sex, &(m_pdbDoc->db_table->m_sex_set));
-	LoadList(&m_coOperator, &(options_inputdata_->cs_a_operator_name), options_inputdata_->ics_a_operator_name,
-		&(m_pdbDoc->db_table->m_operator_set));
-	LoadList(&m_coExpt, &(options_inputdata_->cs_a_experiment), options_inputdata_->ics_a_experiment, &(m_pdbDoc->db_table->m_experiment_set));
-	LoadList(&m_coRepeat, nullptr, options_inputdata_->ics_a_repeat, nullptr);
-	LoadList(&m_coRepeat2, nullptr, options_inputdata_->ics_a_repeat2, nullptr);
+	m_cs_more_comment = p_wave_format->cs_more_comment;
+	load_list(&m_co_concentration, &(options_input->cs_a_concentration), options_input->ics_a_concentration,
+		&(p_db_doc->db_table->m_concentration_set));
+	load_list(&m_co_stimulus, &(options_input->cs_a_stimulus), options_input->ics_a_stimulus,
+		&(p_db_doc->db_table->m_stimulus_set));
+	load_list(&m_co_concentration2, &(options_input->cs_a_concentration2), options_input->ics_a_concentration2,
+		&(p_db_doc->db_table->m_concentration_set));
+	load_list(&m_co_stimulus2, &(options_input->cs_a_stimulus2), options_input->ics_a_stimulus2,
+		&(p_db_doc->db_table->m_stimulus_set));
+	load_list(&m_co_insect, &(options_input->cs_a_insect), options_input->ics_a_insect, &(p_db_doc->db_table->m_insect_set));
+	load_list(&m_co_location, &(options_input->cs_a_location), options_input->ics_a_location,
+		&(p_db_doc->db_table->m_location_set));
+	load_list(&m_co_sensillum, &(options_input->cs_a_sensillum), options_input->ics_a_sensillum,
+		&(p_db_doc->db_table->m_sensillum_set));
+	load_list(&m_co_strain, &(options_input->cs_a_strain), options_input->ics_a_strain, &(p_db_doc->db_table->m_strain_set));
+	load_list(&m_co_sex, &(options_input->cs_a_sex), options_input->ics_a_sex, &(p_db_doc->db_table->m_sex_set));
+	load_list(&m_co_operator, &(options_input->cs_a_operator_name), options_input->ics_a_operator_name,
+		&(p_db_doc->db_table->m_operator_set));
+	load_list(&m_co_experiment, &(options_input->cs_a_experiment), options_input->ics_a_experiment, &(p_db_doc->db_table->m_experiment_set));
+	load_list(&m_co_repeat, nullptr, options_input->ics_a_repeat, nullptr);
+	load_list(&m_co_repeat2, nullptr, options_input->ics_a_repeat2, nullptr);
 
 	static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN1))->SetRange32(0, 99999);
 	static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN2))->SetRange32(0, 99999);
 
-	if (!m_bADexpt)
+	if (!b_ad_experiment)
 	{
-		m_coStimulus.SetWindowText(m_pwaveFormat->cs_stimulus);
-		m_coConcentration.SetWindowText(m_pwaveFormat->cs_concentration);
-		m_coStimulus2.SetWindowText(m_pwaveFormat->cs_stimulus2);
-		m_coConcentration2.SetWindowText(m_pwaveFormat->cs_concentration2);
-		m_coLocation.SetWindowText(m_pwaveFormat->cs_location);
-		m_coSensillum.SetWindowText(m_pwaveFormat->cs_sensillum);
-		m_coStrain.SetWindowText(m_pwaveFormat->cs_strain);
-		m_coSex.SetWindowText(m_pwaveFormat->cs_sex);
-		m_coOperator.SetWindowText(m_pwaveFormat->cs_operator);
-		m_coInsect.SetWindowText(m_pwaveFormat->cs_insect_name);
-		m_coExpt.SetWindowText(m_pwaveFormat->cs_comment);
+		m_co_stimulus.SetWindowText(p_wave_format->cs_stimulus);
+		m_co_concentration.SetWindowText(p_wave_format->cs_concentration);
+		m_co_stimulus2.SetWindowText(p_wave_format->cs_stimulus2);
+		m_co_concentration2.SetWindowText(p_wave_format->cs_concentration2);
+		m_co_location.SetWindowText(p_wave_format->cs_location);
+		m_co_sensillum.SetWindowText(p_wave_format->cs_sensillum);
+		m_co_strain.SetWindowText(p_wave_format->cs_strain);
+		m_co_sex.SetWindowText(p_wave_format->cs_sex);
+		m_co_operator.SetWindowText(p_wave_format->cs_operator);
+		m_co_insect.SetWindowText(p_wave_format->cs_insect_name);
+		m_co_experiment.SetWindowText(p_wave_format->cs_comment);
 
 		GetDlgItem(IDC_STATIC1)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_STATIC2)->ShowWindow(SW_HIDE);
@@ -236,7 +236,7 @@ BOOL DlgADExperiment::OnInitDialog()
 		GetDlgItem(IDC_EDIT_NAME)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_EDIT_NUMNAME)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_SPIN1)->ShowWindow(SW_HIDE);
-		m_mfcBrowsePath.ShowWindow(SW_HIDE);
+		m_mfc_browse_path.ShowWindow(SW_HIDE);
 	}
 	UpdateData(FALSE);
 
@@ -245,7 +245,7 @@ BOOL DlgADExperiment::OnInitDialog()
 }
 
 // save content of the list
-int DlgADExperiment::SaveList(CComboBox* p_combo, CStringArray* p_s)
+int DlgADExperiment::save_list(CComboBox* p_combo, CStringArray* p_s)
 {
 	int exists = -1;
 	if (p_s != nullptr)
@@ -273,19 +273,19 @@ int DlgADExperiment::SaveList(CComboBox* p_combo, CStringArray* p_s)
 	return exists;
 }
 
-// load content of the list and of the corresponding DAOrecordset
-void DlgADExperiment::LoadList(CComboBox* p_combo, CStringArray* p_s, int i_sel, CdbTableAssociated* pm_set)
+// load content of the list and of the corresponding DAO_recordset
+void DlgADExperiment::load_list(CComboBox* p_co, const CStringArray* p_spike_element, int i_sel, CdbTableAssociated* pm_set)
 {
 	// add string from the string array
-	p_combo->ResetContent();
+	p_co->ResetContent();
 
 	// associated list available? yes
-	if (p_s != nullptr)
+	if (p_spike_element != nullptr)
 	{
-		for (auto i = 0; i < p_s->GetSize(); i++) {
-			const CString& descriptor = p_s->GetAt(i);
+		for (auto i = 0; i < p_spike_element->GetSize(); i++) {
+			const CString& descriptor = p_spike_element->GetAt(i);
 			if (!descriptor.IsEmpty())
-				p_combo->AddString(descriptor);
+				p_co->AddString(descriptor);
 		}
 	}
 	// no associated list -  insert provisional values in the table
@@ -296,13 +296,13 @@ void DlgADExperiment::LoadList(CComboBox* p_combo, CStringArray* p_s, int i_sel,
 		for (auto i = 0; i < imax; i++)
 		{
 			cs.Format(_T("%i"), i);
-			const auto j = p_combo->AddString(cs);
-			p_combo->SetItemData(j, i);
+			const auto j = p_co->AddString(cs);
+			p_co->SetItemData(j, i);
 		}
 	}
 
 	// scan table and add missing strings
-	p_combo->SetCurSel(i_sel);
+	p_co->SetCurSel(i_sel);
 	if (pm_set == nullptr)
 		return;
 
@@ -314,109 +314,109 @@ void DlgADExperiment::LoadList(CComboBox* p_combo, CStringArray* p_s, int i_sel,
 		{
 			pm_set->GetFieldValue(0, var_value1);
 			CString cs_field = var_value1.bstrVal;
-			if (!cs_field.IsEmpty() && p_combo->FindStringExact(0, cs_field) == CB_ERR)
+			if (!cs_field.IsEmpty() && p_co->FindStringExact(0, cs_field) == CB_ERR)
 			{
-				p_combo->AddString(cs_field);
+				p_co->AddString(cs_field);
 				i_sel = 0; // reset selection if a chain is added
 			}
 			pm_set->MoveNext();
 		}
 	}
-	p_combo->SetCurSel(i_sel);
+	p_co->SetCurSel(i_sel);
 }
 
-void DlgADExperiment::EditComboBox(CComboBox* pCo)
+void DlgADExperiment::edit_combo_box(CComboBox* p_co)
 {
 	DlgEditList dlg;
-	dlg.pCo = pCo;
+	dlg.pCo = p_co;
 	if (IDOK == dlg.DoModal())
 	{
-		pCo->ResetContent();
+		p_co->ResetContent();
 		const auto n_items = dlg.m_csArray.GetCount();
 		for (auto i = 0; i < n_items; i++)
 		{
-			pCo->AddString(dlg.m_csArray.GetAt(i));
+			p_co->AddString(dlg.m_csArray.GetAt(i));
 		}
-		pCo->SetCurSel(dlg.m_selected);
+		p_co->SetCurSel(dlg.m_selected);
 	}
 	UpdateData(FALSE);
 }
 
-void DlgADExperiment::OnBnClickedButtoninsectname()
+void DlgADExperiment::on_bn_clicked_button_insect_name()
 {
-	EditComboBox(&m_coInsect);
+	edit_combo_box(&m_co_insect);
 }
 
-void DlgADExperiment::OnBnClickedButtonstrain()
+void DlgADExperiment::on_bn_clicked_button_strain()
 {
-	EditComboBox(&m_coStrain);
+	edit_combo_box(&m_co_strain);
 }
 
-void DlgADExperiment::OnBnClickedButtonsex()
+void DlgADExperiment::on_bn_clicked_button_sex()
 {
-	EditComboBox(&m_coSex);
+	edit_combo_box(&m_co_sex);
 }
 
-void DlgADExperiment::OnBnClickedButtonsensillum()
+void DlgADExperiment::on_bn_clicked_button_sensillum()
 {
-	EditComboBox(&m_coSensillum);
+	edit_combo_box(&m_co_sensillum);
 }
 
-void DlgADExperiment::OnBnClickedButtonlocation()
+void DlgADExperiment::on_bn_clicked_button_location()
 {
-	EditComboBox(&m_coLocation);
+	edit_combo_box(&m_co_location);
 }
 
-void DlgADExperiment::OnBnClickedButtonoperator()
+void DlgADExperiment::on_bn_clicked_button_operator()
 {
-	EditComboBox(&m_coOperator);
+	edit_combo_box(&m_co_operator);
 }
 
-void DlgADExperiment::OnBnClickedButtonstimulus()
+void DlgADExperiment::on_bn_clicked_button_stimulus()
 {
-	EditComboBox(&m_coStimulus);
+	edit_combo_box(&m_co_stimulus);
 }
 
-void DlgADExperiment::OnBnClickedButtonconcentration()
+void DlgADExperiment::on_bn_clicked_button_concentration()
 {
-	EditComboBox(&m_coConcentration);
+	edit_combo_box(&m_co_concentration);
 }
 
-void DlgADExperiment::OnBnClickedButtonstimulus2()
+void DlgADExperiment::on_bn_clicked_button_stimulus2()
 {
-	EditComboBox(&m_coStimulus2);
+	edit_combo_box(&m_co_stimulus2);
 }
 
-void DlgADExperiment::OnBnClickedButtonconcentration2()
+void DlgADExperiment::on_bn_clicked_button_concentration2()
 {
-	EditComboBox(&m_coConcentration2);
+	edit_combo_box(&m_co_concentration2);
 }
 
-void DlgADExperiment::OnBnClickedButtonrepeat()
+void DlgADExperiment::on_bn_clicked_button_repeat()
 {
-	EditComboBox(&m_coRepeat);
+	edit_combo_box(&m_co_repeat);
 }
 
-void DlgADExperiment::OnBnClickedButtonrepeat2()
+void DlgADExperiment::on_bn_clicked_button_repeat2()
 {
-	EditComboBox(&m_coRepeat2);
+	edit_combo_box(&m_co_repeat2);
 }
 
-void DlgADExperiment::OnBnClickedButtonexpt()
+void DlgADExperiment::on_bn_clicked_button_experiment()
 {
-	EditComboBox(&m_coExpt);
+	edit_combo_box(&m_co_experiment);
 }
 
-void DlgADExperiment::OnEnKillfocusMfceditbrowse1()
+void DlgADExperiment::on_en_kill_focus_mfc_edit_browse1()
 {
 	UpdateData(TRUE);
-	m_mfcBrowsePath.GetWindowTextW(m_csPathname);
-	if (m_csPathname.GetLength() > 2
-		&& m_csPathname.Right(1) != _T("\\"))
-		m_csPathname += _T("\\");
+	m_mfc_browse_path.GetWindowTextW(m_cs_pathname);
+	if (m_cs_pathname.GetLength() > 2
+		&& m_cs_pathname.Right(1) != _T("\\"))
+		m_cs_pathname += _T("\\");
 
 	// check that directory is present - otherwise create...
-	auto cs_path = m_csPathname.Left(m_csPathname.GetLength() - 1);
+	auto cs_path = m_cs_pathname.Left(m_cs_pathname.GetLength() - 1);
 
 	// create directory if necessary
 	CFileFind cf;
@@ -427,10 +427,10 @@ void DlgADExperiment::OnEnKillfocusMfceditbrowse1()
 	}
 }
 
-void DlgADExperiment::OnBnClickedButtonNextid()
+void DlgADExperiment::on_bn_clicked_button_next_id()
 {
-	const auto p_database = m_pdbDoc->db_table;
+	const auto p_database = p_db_doc->db_table;
 	p_database->m_main_table_set.get_max_id();
-	m_insectnumber = p_database->m_main_table_set.max_insect_id + 1;
+	m_insect_number = p_database->m_main_table_set.max_insect_id + 1;
 	UpdateData(FALSE);
 }

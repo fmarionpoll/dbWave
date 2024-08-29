@@ -413,11 +413,11 @@ Emergency_exit:
 BOOL DlgImportFiles::GetExperimentParameters(const AcqDataDoc* pTo) const
 {
 	DlgADExperiment dlg; 
-	dlg.m_bFilename = FALSE; 
+	dlg.m_b_filename = FALSE; 
 	auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	options_input* pacqD = &(p_app->options_acq_data);
-	dlg.options_inputdata_ = pacqD;
-	dlg.m_pdbDoc = m_pdbDoc;
+	dlg.options_input = pacqD;
+	dlg.p_db_doc = m_pdbDoc;
 	const BOOL flag = dlg.DoModal();
 	if (IDOK == flag)
 	{
@@ -447,8 +447,8 @@ BOOL DlgImportFiles::GetExperimentParameters(const AcqDataDoc* pTo) const
 BOOL DlgImportFiles::GetAcquisitionParameters(AcqDataDoc* pTo)
 {
 	DlgADInputs dlg2;
-	dlg2.m_pwFormat = pTo->get_wave_format();
-	dlg2.m_pchArray = pTo->get_wave_channels_array();
+	dlg2.m_pw_format = pTo->get_wave_format();
+	dlg2.m_pch_array = pTo->get_wave_channels_array();
 
 	// invoke dialog box
 	const BOOL flag = dlg2.DoModal();
