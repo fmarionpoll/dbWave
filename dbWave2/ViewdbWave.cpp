@@ -61,11 +61,6 @@ ViewdbWave::ViewdbWave() : ViewDbTable(IDD)
 ViewdbWave::~ViewdbWave()
 = default;
 
-//void ViewdbWave::OnDestroy()
-//{
-//	dbTableView::OnDestroy();
-//}
-
 void ViewdbWave::DoDataExchange(CDataExchange * p_dx)
 {
 	ViewDbTable::DoDataExchange(p_dx);
