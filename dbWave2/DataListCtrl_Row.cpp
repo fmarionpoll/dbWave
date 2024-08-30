@@ -203,10 +203,11 @@ void DataListCtrl_Row::display_data_wnd(DataListCtrlInfos* infos, const int i_im
 	{
 		p_data_chart_wnd = new ChartData;
 		ASSERT(p_data_chart_wnd != NULL);
-		p_data_chart_wnd->Create(_T("DATAWND"), WS_CHILD, CRect(0, 0, infos->image_width, infos->image_height), infos->parent, i_image * 100);
+		p_data_chart_wnd->Create(_T("DATAWND"), WS_CHILD, 
+			CRect(0, 0, infos->image_width, infos->image_height), 
+			infos->parent, i_image * 100);
 		p_data_chart_wnd->set_b_use_dib(FALSE);
 	}
-
 	p_data_chart_wnd->set_string(cs_comment);
 
 	// open data document
@@ -260,11 +261,6 @@ void DataListCtrl_Row::plot_data(DataListCtrlInfos* infos, const int i_image) co
 	mem_dc.SetMapMode(p_dc->GetMapMode());
 
 	p_data_chart_wnd->plot_data_to_dc(&mem_dc);
-
-	CPen pen;
-	pen.CreatePen(PS_SOLID, 1, col_black); // col_red);
-	mem_dc.MoveTo(1, 0);
-	mem_dc.LineTo(1, client_rect.bottom);
 
 	infos->image_list.Replace(i_image, &bitmap_plot, nullptr);
 }
@@ -349,11 +345,6 @@ void DataListCtrl_Row::plot_spikes(DataListCtrlInfos* infos, const int i_image) 
 	mem_dc.SetMapMode(p_dc->GetMapMode());
 
 	p_spike_chart_wnd->plot_data_to_dc(&mem_dc);
-
-	CPen pen;
-	pen.CreatePen(PS_SOLID, 1, col_red);
-	mem_dc.MoveTo(1, 0);
-	mem_dc.LineTo(1, client_rect.bottom);
 
 	infos->image_list.Replace(i_image, &bitmap_plot, nullptr);
 }

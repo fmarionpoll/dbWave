@@ -45,7 +45,7 @@ BEGIN_MESSAGE_MAP(DataListCtrl, CListCtrl)
 	ON_WM_KEYUP()
 	ON_WM_CHAR()
 	ON_WM_KEYDOWN()
-	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, OnGetDisplayInfo)
+	ON_NOTIFY_REFLECT(LVN_GETDISPINFO, on_get_display_info)
 	ON_WM_DESTROY()
 
 END_MESSAGE_MAP()
@@ -92,32 +92,21 @@ void DataListCtrl::delete_ptr_array()
 boolean DataListCtrl::rows_array_set_size(const int rows_count)
 {
 	auto b_forced_update = false;
-	if (rows_count != rows_.GetSize())
-	{
-		// if cache size increases, erase old information (set flag)
-		if (rows_count > rows_.GetSize())
-			b_forced_update = true;
-		// if cache size decreases, just delete extra rows
-	}
-	else
-		return b_forced_update;
-
 	if (rows_count == rows_.GetSize())
 		return b_forced_update;
 
-	// Resize m_image_list CImageList
+	// if cache size decreases, just delete extra rows
 	infos.image_list.SetImageCount(rows_count);
-
-	// reduce size
 	if (rows_.GetSize() > rows_count)
 	{
 		for (auto i = rows_.GetSize() - 1; i >= rows_count; i--)
 			delete rows_.GetAt(i);
 		rows_.SetSize(rows_count);
 	}
-	// grow size
+	// if cache size increases, erase old information (set flag)
 	else
 	{
+		b_forced_update = true;
 		const auto size_before_change = rows_.GetSize();
 		rows_.SetSize(rows_count);
 		auto index = 0;
@@ -158,7 +147,7 @@ void DataListCtrl::init_columns(CUIntArray* width_columns)
 	SetImageList(&infos.image_list, LVSIL_SMALL);
 }
 
-void DataListCtrl::OnGetDisplayInfo(NMHDR* p_nmhdr, LRESULT* p_result)
+void DataListCtrl::on_get_display_info(NMHDR* p_nmhdr, LRESULT* p_result)
 {
 	auto first_array = 0;
 	auto last_array = 0;
@@ -239,12 +228,11 @@ void DataListCtrl::OnGetDisplayInfo(NMHDR* p_nmhdr, LRESULT* p_result)
 	}
 
 	// display images
-	if (item->mask & LVIF_IMAGE
-		&& item->iSubItem == CTRL_COL_CURVE)
+	if (item->mask & LVIF_IMAGE && item->iSubItem == CTRL_COL_CURVE)
 		item->iImage = i_cache_index;
 }
 
-void DataListCtrl::set_cur_sel(const int record_position)
+void DataListCtrl::set_current_selection(const int record_position)
 {
 	// get current item which has the focus
 	constexpr auto flag = LVNI_FOCUSED | LVNI_ALL;
@@ -377,7 +365,7 @@ void DataListCtrl::update_cache(int index_first, int index_last)
 	// restore document conditions
 	if (index_current_file >= 0) 
 	{
-		if (db_wave_doc->db_set_current_record_position(index_current_file))
+		BOOL b_success = db_wave_doc->db_set_current_record_position(index_current_file);
 		{
 			//db_wave_doc->open_current_data_file();
 			//db_wave_doc->open_current_spike_file();
@@ -391,11 +379,12 @@ void DataListCtrl::build_empty_bitmap(const boolean b_forced_update)
 		return;
 
 	SAFE_DELETE(infos.p_empty_bitmap)
-		infos.p_empty_bitmap = new CBitmap;
 
+	infos.p_empty_bitmap = new CBitmap;
 	CWindowDC dc(this);
 	CDC mem_dc;
 	VERIFY(mem_dc.CreateCompatibleDC(&dc));
+
 	infos.p_empty_bitmap->CreateBitmap(infos.image_width, infos.image_height,
 		dc.GetDeviceCaps(PLANES), 
 		dc.GetDeviceCaps(BITSPIXEL), nullptr);
@@ -418,7 +407,7 @@ void DataListCtrl::refresh_display()
 
 	const int first_row = rows_.GetAt(0)->index;
 	const int last_row = rows_.GetAt(rows_.GetUpperBound())->index;
-	build_empty_bitmap();
+	build_empty_bitmap(true);
 
 	const auto n_rows = rows_.GetSize();
 	infos.parent = this;
@@ -495,7 +484,7 @@ void DataListCtrl::resize_signal_column(const int n_pixels)
 {
 	m_column_width_[CTRL_COL_CURVE] = n_pixels;
 	infos.image_list.DeleteImageList();
-	infos.image_width = m_column_width_[CTRL_COL_CURVE];
+	infos.image_width = n_pixels;
 	infos.image_list.Create(infos.image_width, infos.image_height, ILC_COLOR4, 10, 10);
 	SetImageList(&infos.image_list, LVSIL_SMALL);
 	infos.image_list.SetImageCount(rows_.GetSize());

@@ -40,7 +40,7 @@ public:
 		infos.selected_class = i_class;
 	}
 	void fit_columns_to_size(int n_pixels);
-	void set_cur_sel(int record_position);
+	void set_current_selection(int record_position);
 	void refresh_display();
 	ChartData* get_chart_data_of_current_record();
 	void resize_signal_column(int n_pixels);
@@ -79,7 +79,7 @@ protected:
 	void build_empty_bitmap(boolean b_forced_update = false);
 
 	// Generated message map functions
-	afx_msg void OnGetDisplayInfo(NMHDR* p_nmhdr, LRESULT* p_result);
+	afx_msg void on_get_display_info(NMHDR* p_nmhdr, LRESULT* p_result);
 	afx_msg void OnVScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
 	afx_msg void OnKeyUp(UINT n_char, UINT n_rep_cnt, UINT n_flags);
 	afx_msg void OnDestroy();

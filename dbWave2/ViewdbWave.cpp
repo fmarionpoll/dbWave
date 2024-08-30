@@ -109,7 +109,7 @@ void ViewdbWave::OnInitialUpdate()
 	m_data_list_ctrl.SetExtendedStyle
 	(m_data_list_ctrl.GetExtendedStyle()
 		| LVS_EX_FULLROWSELECT
-		| LVS_EX_GRIDLINES
+		//| LVS_EX_GRIDLINES
 		| LVS_EX_ONECLICKACTIVATE
 		| LVS_EX_SUBITEMIMAGES);
 
@@ -249,7 +249,7 @@ void ViewdbWave::update_controls()
 
 	const int i_file = db_wave_doc->db_get_current_record_position();
 
-	m_data_list_ctrl.set_cur_sel(i_file);
+	m_data_list_ctrl.set_current_selection(i_file);
 	m_data_list_ctrl.EnsureVisible(i_file, FALSE);
 
 	if (m_options_view_data_->display_mode == 2)
