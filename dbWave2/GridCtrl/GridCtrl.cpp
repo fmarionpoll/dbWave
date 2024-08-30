@@ -351,9 +351,9 @@ BOOL GridCtrl::Initialize()
 	//// This is so horrible it makes my eyes water.
 	//CRect rect;
 	//GetWindowRect(rect);
-	//CWnd* pParent = GetParent();
-	//if (pParent != NULL)
-	//	pParent->ScreenToClient(rect);
+	//CWnd* p_parent = GetParent();
+	//if (p_parent != NULL)
+	//	p_parent->ScreenToClient(rect);
 	//rect.InflateRect(1,1);	MoveWindow(rect);
 	//rect.DeflateRect(1,1);  MoveWindow(rect);
 	// SetWindowPos(...) needs at least Windows 2000.

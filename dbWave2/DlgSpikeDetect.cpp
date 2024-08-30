@@ -93,43 +93,43 @@ BOOL DlgSpikeDetect::OnInitDialog()
 
 void DlgSpikeDetect::save_chan_parameters(const int chan)
 {
-	m_pspkD = m_p_detect_settings_array->get_item(chan);
-	GetDlgItem(IDC_COMMENT)->GetWindowText(m_pspkD->comment);
+	options_detect_spikes_ = m_p_detect_settings_array->get_item(chan);
+	GetDlgItem(IDC_COMMENT)->GetWindowText(options_detect_spikes_->comment);
 	md_pm->b_detect_while_browse = static_cast<CButton*>(GetDlgItem(IDC_DETECTBROWSE))->GetCheck();
 
 	// spikes detection parameters
 	const auto flag2 = static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMCHAN))->GetCheck();
-	m_pspkD->detect_from = flag2 ? 0 : 1;
-	m_pspkD->detect_channel = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->GetCurSel();
-	m_pspkD->detect_transform = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->GetCurSel();
-	m_pspkD->detect_threshold_bin = GetDlgItemInt(IDC_DETECTTHRESHOLD);
+	options_detect_spikes_->detect_from = flag2 ? 0 : 1;
+	options_detect_spikes_->detect_channel = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->GetCurSel();
+	options_detect_spikes_->detect_transform = static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->GetCurSel();
+	options_detect_spikes_->detect_threshold_bin = GetDlgItemInt(IDC_DETECTTHRESHOLD);
 
 	// detect spikes
 	if (static_cast<CButton*>(GetDlgItem(IDC_SPIKESRADIO))->GetCheck() == BST_CHECKED)
 	{
-		m_pspkD->detect_what = DETECT_SPIKES;
-		m_pspkD->extract_channel = static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->GetCurSel();
-		m_pspkD->extract_transform = static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTTRANSFORM))->GetCurSel();
-		m_pspkD->extract_n_points = static_cast<int>(GetDlgItemInt(IDC_SPIKENPOINTS));
-		m_pspkD->detect_pre_threshold = static_cast<int>(GetDlgItemInt(IDC_PRETHRESHOLD));
-		m_pspkD->detect_refractory_period = static_cast<int>(GetDlgItemInt(IDC_REFRACTORY));
+		options_detect_spikes_->detect_what = DETECT_SPIKES;
+		options_detect_spikes_->extract_channel = static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->GetCurSel();
+		options_detect_spikes_->extract_transform = static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTTRANSFORM))->GetCurSel();
+		options_detect_spikes_->extract_n_points = static_cast<int>(GetDlgItemInt(IDC_SPIKENPOINTS));
+		options_detect_spikes_->detect_pre_threshold = static_cast<int>(GetDlgItemInt(IDC_PRETHRESHOLD));
+		options_detect_spikes_->detect_refractory_period = static_cast<int>(GetDlgItemInt(IDC_REFRACTORY));
 	}
 	// detect stimulus
 	else
 	{
-		m_pspkD->detect_what = DETECT_STIMULUS;
-		m_pspkD->detect_mode = static_cast<CComboBox*>(GetDlgItem(IDC_STIMDETECTMODE))->GetCurSel();
-		m_pspkD->extract_channel = m_pspkD->detect_channel;
+		options_detect_spikes_->detect_what = DETECT_STIMULUS;
+		options_detect_spikes_->detect_mode = static_cast<CComboBox*>(GetDlgItem(IDC_STIMDETECTMODE))->GetCurSel();
+		options_detect_spikes_->extract_channel = options_detect_spikes_->detect_channel;
 	}
 }
 
 void DlgSpikeDetect::load_chan_parameters(const int chan)
 {
 	m_i_detect_parameters_dlg = chan;
-	m_pspkD = m_p_detect_settings_array->get_item(chan);
-	GetDlgItem(IDC_COMMENT)->SetWindowText(m_pspkD->comment);
+	options_detect_spikes_ = m_p_detect_settings_array->get_item(chan);
+	GetDlgItem(IDC_COMMENT)->SetWindowText(options_detect_spikes_->comment);
 
-	if (m_pspkD->detect_what == DETECT_SPIKES)
+	if (options_detect_spikes_->detect_what == DETECT_SPIKES)
 	{
 		static_cast<CButton*>(GetDlgItem(IDC_SPIKESRADIO))->SetCheck(BST_CHECKED);
 		static_cast<CButton*>(GetDlgItem(IDC_STIMRADIO))->SetCheck(BST_UNCHECKED);
@@ -139,26 +139,26 @@ void DlgSpikeDetect::load_chan_parameters(const int chan)
 		static_cast<CButton*>(GetDlgItem(IDC_SPIKESRADIO))->SetCheck(BST_UNCHECKED);
 		static_cast<CButton*>(GetDlgItem(IDC_STIMRADIO))->SetCheck(BST_CHECKED);
 	}
-	set_dlg_interface_state(m_pspkD->detect_what);
+	set_dlg_interface_state(options_detect_spikes_->detect_what);
 
 	// spikes detection parameters
-	const BOOL flag = (m_pspkD->detect_from == 0);
+	const BOOL flag = (options_detect_spikes_->detect_from == 0);
 	static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMCHAN))->SetCheck(flag);
 	static_cast<CButton*>(GetDlgItem(IDC_DETECTFROMTAG))->SetCheck(!flag);
 	display_detect_from_chan();
-	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->SetCurSel(m_pspkD->detect_channel);
-	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->SetCurSel(m_pspkD->detect_transform);
-	SetDlgItemInt(IDC_DETECTTHRESHOLD, m_pspkD->detect_threshold_bin);
+	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTCHAN))->SetCurSel(options_detect_spikes_->detect_channel);
+	static_cast<CComboBox*>(GetDlgItem(IDC_DETECTTRANSFORM))->SetCurSel(options_detect_spikes_->detect_transform);
+	SetDlgItemInt(IDC_DETECTTHRESHOLD, options_detect_spikes_->detect_threshold_bin);
 
-	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->SetCurSel(m_pspkD->extract_channel);
-	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTTRANSFORM))->SetCurSel(m_pspkD->extract_transform);
-	SetDlgItemInt(IDC_SPIKENPOINTS, m_pspkD->extract_n_points);
-	SetDlgItemInt(IDC_PRETHRESHOLD, m_pspkD->detect_pre_threshold);
-	SetDlgItemInt(IDC_REFRACTORY, m_pspkD->detect_refractory_period);
+	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTCHAN))->SetCurSel(options_detect_spikes_->extract_channel);
+	static_cast<CComboBox*>(GetDlgItem(IDC_EXTRACTTRANSFORM))->SetCurSel(options_detect_spikes_->extract_transform);
+	SetDlgItemInt(IDC_SPIKENPOINTS, options_detect_spikes_->extract_n_points);
+	SetDlgItemInt(IDC_PRETHRESHOLD, options_detect_spikes_->detect_pre_threshold);
+	SetDlgItemInt(IDC_REFRACTORY, options_detect_spikes_->detect_refractory_period);
 	static_cast<CButton*>(GetDlgItem(IDC_DETECTBROWSE))->SetCheck(md_pm->b_detect_while_browse);
 
 	// stimulus detection parameters
-	static_cast<CComboBox*>(GetDlgItem(IDC_STIMDETECTMODE))->SetCurSel(m_pspkD->detect_mode);
+	static_cast<CComboBox*>(GetDlgItem(IDC_STIMDETECTMODE))->SetCurSel(options_detect_spikes_->detect_mode);
 
 	// select proper tab
 	m_c_parameter_tab_ctrl.SetCurSel(chan);
@@ -224,14 +224,14 @@ void DlgSpikeDetect::set_dlg_interface_state(const int detect_what) const
 
 void DlgSpikeDetect::on_bn_clicked_spikes_radio() 
 {
-	m_pspkD->detect_what = DETECT_SPIKES;
-	set_dlg_interface_state(m_pspkD->detect_what);
+	options_detect_spikes_->detect_what = DETECT_SPIKES;
+	set_dlg_interface_state(options_detect_spikes_->detect_what);
 }
 
 void DlgSpikeDetect::on_bn_clicked_stimulus_radio()
 {
-	m_pspkD->detect_what = DETECT_STIMULUS;
-	set_dlg_interface_state(m_pspkD->detect_what);
+	options_detect_spikes_->detect_what = DETECT_STIMULUS;
+	set_dlg_interface_state(options_detect_spikes_->detect_what);
 }
 
 void DlgSpikeDetect::on_bn_clicked_add_parameters_button()

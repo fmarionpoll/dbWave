@@ -4,7 +4,7 @@
 #include "GridInPlaceList.h"
 
 
-GridInPlaceList::GridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
+GridInPlaceList::GridInPlaceList(CWnd* p_parent, CRect& rect, DWORD dw_style, UINT nID,
                                    int nRow, int nColumn,
                                    COLORREF crFore, COLORREF crBack,
                                    CStringArray& Items, CString sInitText,
@@ -24,14 +24,14 @@ GridInPlaceList::GridInPlaceList(CWnd* pParent, CRect& rect, DWORD dw_style, UIN
 		CBS_AUTOHSCROLL | dw_style;
 	const int nHeight = rect.Height();
 	rect.bottom = rect.bottom + m_nNumLines * nHeight + GetSystemMetrics(SM_CYHSCROLL);
-	if (!Create(dwComboStyle, rect, pParent, nID)) 
+	if (!Create(dwComboStyle, rect, p_parent, nID)) 
 		return;
 
 	// Add the strings
 	for (int i = 0; i < Items.GetSize(); i++)
 		AddString(Items[i]);
 
-	SetFont(pParent->GetFont());
+	SetFont(p_parent->GetFont());
 	SetItemHeight(-1, nHeight);
 
 	const int nMaxLength = GetCorrectDropWidth();

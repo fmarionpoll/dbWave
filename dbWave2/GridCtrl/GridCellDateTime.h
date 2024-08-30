@@ -41,7 +41,7 @@ class InPlaceDateTime : public CDateTimeCtrl
 {
 	// Construction
 public:
-	InPlaceDateTime(CWnd* pParent, // parent
+	InPlaceDateTime(CWnd* p_parent, // parent
 	                 CRect& rect, // dimensions & location
 	                 DWORD dw_style, // window/combobox style
 	                 UINT nID, // control ID

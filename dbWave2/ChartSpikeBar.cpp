@@ -31,6 +31,7 @@ void ChartSpikeBar::plot_data_to_dc_prepare_dc(CDC* p_dc)
 {
 	if (b_erase_background_)
 		erase_background(p_dc);
+
 	p_dc->SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 	saved_dc_ = p_dc->SaveDC();
 	saved_background_color_ = p_dc->GetBkColor();

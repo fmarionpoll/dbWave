@@ -87,7 +87,7 @@ void CMeasureHZtagsPage::on_en_change_data_channel()
 {
 	if (mm_data_channel.m_b_entry_done)
 	{
-		mm_data_channel.OnEnChange(this, m_data_channel, 1, -1);
+		mm_data_channel.on_en_change(this, m_data_channel, 1, -1);
 
 		// update dependent parameters
 		if (m_data_channel < 0)
@@ -107,7 +107,7 @@ void CMeasureHZtagsPage::on_en_change_index()
 {
 	if (mm_index.m_b_entry_done)
 	{
-		mm_index.OnEnChange(this, m_index, 1, -1);
+		mm_index.on_en_change(this, m_index, 1, -1);
 		// update dependent parameters
 		if (m_index >= m_nb_cursors)
 			m_index = m_nb_cursors - 1;
@@ -122,7 +122,7 @@ void CMeasureHZtagsPage::on_en_change_mv_level()
 {
 	if (mm_mv_level.m_b_entry_done)
 	{
-		mm_mv_level.OnEnChange(this, m_mv_level, 1.f, -1.f);
+		mm_mv_level.on_en_change(this, m_mv_level, 1.f, -1.f);
 		UpdateData(FALSE);
 		if (m_nb_cursors > 0 && m_index >= 0 && m_index < m_nb_cursors)
 		{

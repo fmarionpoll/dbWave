@@ -391,7 +391,7 @@ void ViewSpikeTemplates::on_en_change_class()
 	if (mm_spike_no_class_.m_b_entry_done)
 	{
 		const auto spike_class = spike_no_class;
-		mm_spike_no_class_.OnEnChange(this, spike_no_class, 1, -1);
+		mm_spike_no_class_.on_en_change(this, spike_no_class, 1, -1);
 
 		if (spike_no_class != spike_class) // change display if necessary
 		{
@@ -406,7 +406,7 @@ void ViewSpikeTemplates::on_en_change_time_first()
 {
 	if (mm_time_first_.m_b_entry_done)
 	{
-		mm_time_first_.OnEnChange(this, time_first, 1.f, -1.f);
+		mm_time_first_.on_en_change(this, time_first, 1.f, -1.f);
 
 		const auto l_first = static_cast<long>(time_first * p_spk_doc->get_acq_rate());
 		if (l_first != l_first_)
@@ -421,7 +421,7 @@ void ViewSpikeTemplates::on_en_change_time_last()
 {
 	if (mm_time_last_.m_b_entry_done)
 	{
-		mm_time_last_.OnEnChange(this, time_last, 1.f, -1.f);
+		mm_time_last_.on_en_change(this, time_last, 1.f, -1.f);
 
 		const auto l_last = static_cast<long>(time_last * p_spk_doc->get_acq_rate());
 		if (l_last != l_last_)
@@ -546,7 +546,7 @@ void ViewSpikeTemplates::on_en_change_hit_rate()
 {
 	if (mm_hit_rate_.m_b_entry_done)
 	{
-		mm_hit_rate_.OnEnChange(this, hit_rate, 1, -1);
+		mm_hit_rate_.on_en_change(this, hit_rate, 1, -1);
 
 		if (spike_classification_parameters_->hit_rate != hit_rate)
 			spike_classification_parameters_->hit_rate = hit_rate;
@@ -558,7 +558,7 @@ void ViewSpikeTemplates::on_en_change_hit_rate_sort()
 {
 	if (mm_hit_rate_sort_.m_b_entry_done)
 	{
-		mm_hit_rate_sort_.OnEnChange(this, hit_rate_sort, 1, -1);
+		mm_hit_rate_sort_.on_en_change(this, hit_rate_sort, 1, -1);
 
 		if (spike_classification_parameters_->hit_rate_sort != hit_rate_sort)
 			spike_classification_parameters_->hit_rate_sort = hit_rate_sort;
@@ -570,7 +570,7 @@ void ViewSpikeTemplates::on_en_change_tolerance()
 {
 	if (mm_k_tolerance_.m_b_entry_done)
 	{
-		mm_k_tolerance_.OnEnChange(this, k_tolerance, 1.f, -1.f);
+		mm_k_tolerance_.on_en_change(this, k_tolerance, 1.f, -1.f);
 		if (k_tolerance < 0)
 			k_tolerance = -k_tolerance;
 		if (spike_classification_parameters_->k_tolerance != k_tolerance)
@@ -1039,16 +1039,16 @@ void ViewSpikeTemplates::edit_spike_class(const int control_id, const int contro
 
 	// launch edit dlg
 	DlgEditSpikeClass dlg;
-	dlg.m_iClass = old_class;
-	if (IDOK == dlg.DoModal() && old_class != dlg.m_iClass)
+	dlg.m_i_class = old_class;
+	if (IDOK == dlg.DoModal() && old_class != dlg.m_i_class)
 	{
 		// templates
 		if (!b_spikes)
-			p_list->set_template_class_id(control_item, _T("t"), dlg.m_iClass);
+			p_list->set_template_class_id(control_item, _T("t"), dlg.m_i_class);
 		// spikes
 		else
 		{
-			p_list->set_template_class_id(control_item, _T("c"), dlg.m_iClass);
+			p_list->set_template_class_id(control_item, _T("c"), dlg.m_i_class);
 
 			// set file indexes - assume only one file selected
 			const auto dbwave_doc = GetDocument();
@@ -1086,7 +1086,7 @@ void ViewSpikeTemplates::edit_spike_class(const int control_id, const int contro
 
 				// TODO: this should not work - changing SpikeClassID does not change the spike class because UpdateClassList reset classes array to zero
 				p_spk_list->update_class_list(); // rebuild list of classes
-				p_spk_list->change_all_spike_from_class_id_to_new_class_id(old_class, dlg.m_iClass);
+				p_spk_list->change_all_spike_from_class_id_to_new_class_id(old_class, dlg.m_i_class);
 				p_spk_list->update_class_list(); // rebuild list of classes
 				p_spk_doc->SetModifiedFlag(TRUE);
 
@@ -1177,7 +1177,7 @@ void ViewSpikeTemplates::on_en_change_i_first_sorted_class()
 {
 	if (mm_i_first_sorted_class_.m_b_entry_done)
 	{
-		mm_i_first_sorted_class_.OnEnChange(this, i_first_sorted_class, 1, -1);
+		mm_i_first_sorted_class_.on_en_change(this, i_first_sorted_class, 1, -1);
 
 		// change class of all templates
 		//SetTemplateclassID(int item, LPCSTR pszType, int classID)
@@ -1224,7 +1224,7 @@ void ViewSpikeTemplates::on_en_change_t1()
 	{
 		const auto delta = t_unit / p_spk_list->get_acq_sampling_rate();
 		
-		mm_t1_.OnEnChange(this, m_t1, delta, -delta);
+		mm_t1_.on_en_change(this, m_t1, delta, -delta);
 		// check boundaries
 		if (m_t1 < 0)
 			m_t1 = 0.0f;
@@ -1249,7 +1249,7 @@ void ViewSpikeTemplates::on_en_change_t2()
 	if (mm_t2_.m_b_entry_done)
 	{
 		const auto delta = t_unit / p_spk_list->get_acq_sampling_rate();
-		mm_t2_.OnEnChange(this, m_t2, delta, -delta);
+		mm_t2_.on_en_change(this, m_t2, delta, -delta);
 
 		// check boundaries
 		if (m_t2 < m_t1)

@@ -104,11 +104,11 @@ void options_input::Serialize(CArchive& ar)
 		n--;
 		if (n > 0) ar >> cs_pathname;
 		n--;
-		CString csdummy;
+		CString cs_dummy;
 		while (n > 0)
 		{
 			n--;
-			ar >> csdummy;
+			ar >> cs_dummy;
 		}
 
 		// int parameters

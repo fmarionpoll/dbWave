@@ -17,28 +17,28 @@
 
 IMPLEMENT_DYNAMIC(DlgImportFiles, CDialog)
 
-DlgImportFiles::DlgImportFiles(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgImportFiles::DlgImportFiles(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
 DlgImportFiles::~DlgImportFiles()
 = default;
 
-void DlgImportFiles::DoDataExchange(CDataExchange* pDX)
+void DlgImportFiles::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT1, m_ncurrent);
-	DDX_Text(pDX, IDC_EDIT12, m_nfiles);
-	DDX_Text(pDX, IDC_EDIT3, m_filefrom);
-	DDX_Text(pDX, IDC_EDIT4, m_fileto);
-	DDX_Check(pDX, IDC_CHECK1, m_bReadHeader);
+	CDialog::DoDataExchange(p_dx);
+	DDX_Text(p_dx, IDC_EDIT1, m_n_current_);
+	DDX_Text(p_dx, IDC_EDIT12, m_n_files_);
+	DDX_Text(p_dx, IDC_EDIT3, m_file_from_);
+	DDX_Text(p_dx, IDC_EDIT4, m_file_to_);
+	DDX_Check(p_dx, IDC_CHECK1, m_b_read_header);
 }
 
 BEGIN_MESSAGE_MAP(DlgImportFiles, CDialog)
 	ON_WM_DESTROY()
-	ON_BN_CLICKED(IDCANCEL, &DlgImportFiles::OnBnClickedCancel)
-	ON_BN_CLICKED(ID_START_STOP, &DlgImportFiles::ADC_OnBnClickedStartstop)
+	ON_BN_CLICKED(IDCANCEL, &DlgImportFiles::on_bn_clicked_cancel)
+	ON_BN_CLICKED(ID_START_STOP, &DlgImportFiles::adc_on_bn_clicked_start_stop)
 END_MESSAGE_MAP()
 
 // CImportFilesDlg message handlers
@@ -46,31 +46,31 @@ BOOL DlgImportFiles::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_nfiles = m_pfilenameArray->GetSize(); // get nb of files
-	m_ncurrent = 1;
-	// outut file extension
+	m_n_files_ = m_p_file_name_array->GetSize(); // get nb of files
+	m_n_current_ = 1;
+	// output file extension
 	switch (m_option)
 	{
-	case GERT: // option non implemented
-		m_ext = ".spk";
+	case GERT: // option noi implemented
+		m_ext_ = ".spk";
 		break;
 	case ATFFILE:
-	case ASCIISYNTECH: // option non implemented
+	case ASCIISYNTECH: // option not implemented
 	default:
-		m_ext = ".dat";
+		m_ext_ = ".dat";
 		break;
 	}
 
-	UpdateDlgItems();
+	update_dlg_items();
 	return TRUE; // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void DlgImportFiles::UpdateDlgItems()
+void DlgImportFiles::update_dlg_items()
 {
-	int j = m_ncurrent - 1;
-	m_filefrom = m_pfilenameArray->GetAt(j);
-	m_fileto = m_filefrom + m_ext;
+	int j = m_n_current_ - 1;
+	m_file_from_ = m_p_file_name_array->GetAt(j);
+	m_file_to_ = m_file_from_ + m_ext_;
 	UpdateData(FALSE);
 }
 
@@ -78,160 +78,157 @@ void DlgImportFiles::OnDestroy()
 {
 	CDialog::OnDestroy();
 
-	int ilast = m_ncurrent + 1; // index last data file to open
+	const int i_last = m_n_current_ + 1; // index last data file to open
 	// adjust size of the file array
-	if (m_pfilenameArray->GetSize() > ilast)
-		m_pfilenameArray->SetSize(ilast);
+	if (m_p_file_name_array->GetSize() > i_last)
+		m_p_file_name_array->SetSize(i_last);
 }
 
-void DlgImportFiles::OnBnClickedCancel()
+void DlgImportFiles::on_bn_clicked_cancel()
 {
 	// TODO: Add your control notification handler code here
 	CDialog::OnCancel();
 }
 
-void DlgImportFiles::ADC_OnBnClickedStartstop()
+void DlgImportFiles::adc_on_bn_clicked_start_stop()
 {
-	m_pconvertedFiles->RemoveAll();
+	m_p_converted_files->RemoveAll();
 
 	// loop over the array of files
-	for (int i = 0; i < m_nfiles; i++)
+	for (int i = 0; i < m_n_files_; i++)
 	{
-		m_filefrom = m_pfilenameArray->GetAt(i);
-		m_fileto = m_filefrom + m_ext;
+		m_file_from_ = m_p_file_name_array->GetAt(i);
+		m_file_to_ = m_file_from_ + m_ext_;
 		BOOL flag = TRUE;
 		UpdateData(FALSE);
 
 		switch (m_option)
 		{
 		case ATFFILE:
-			flag = ImportATFFile();
+			flag = import_atf_file();
 			break;
 
-		case GERT: // option non implemented
-		case ASCIISYNTECH: // option non implemented
+		case GERT: // option not implemented
+		case ASCIISYNTECH: // option not implemented
 		default:
 			flag = FALSE;
 			break;
 		}
 		// if the conversion went well, add file to database and ask for further info from user
 		if (flag)
-			m_pconvertedFiles->Add(m_fileto);
-		m_ncurrent++;
+			m_p_converted_files->Add(m_file_to_);
+		m_n_current_++;
 	}
 	CDialog::OnOK();
 }
 
-BOOL DlgImportFiles::ImportATFFile()
+BOOL DlgImportFiles::import_atf_file()
 {
 	// load parameters
-	BOOL flag = TRUE;
+	const BOOL flag = TRUE;
 
 	// get infos from the source file
 	CFileStatus status;
-	BOOL b_flag_exists = CFile::GetStatus(m_filefrom, status);
+	BOOL b_flag_exists = CFile::GetStatus(m_file_from_, status);
 	if (!b_flag_exists || (status.m_attribute & CFile::readOnly))
 	{
-		UpdateDlgItems();
+		update_dlg_items();
 		return FALSE;
 	}
 
 	// open source file; exit if a problem arises
-	auto pFrom = new CStdioFile;
-	ASSERT(pFrom != NULL);
-	CFileException fe; // exception if somethg get wrong
-	if (!pFrom->Open(m_filefrom, CFile::modeRead | CFile::shareDenyNone | CFile::typeText, &fe))
+	const auto p_from = new CStdioFile;
+	ASSERT(p_from != NULL);
+	CFileException fe; // exception if something get wrong
+	if (!p_from->Open(m_file_from_, CFile::modeRead | CFile::shareDenyNone | CFile::typeText, &fe))
 	{
-		pFrom->Abort(); // abort process
-		delete pFrom; // delete object and exit
-		UpdateDlgItems();
+		p_from->Abort(); // abort process
+		delete p_from; // delete object and exit
+		update_dlg_items();
 		return FALSE;
 	}
 
 	// read infos; exit if file does not have the requested buzzword
-	CString csdummy;
-	CString csdummy2;
-	CString csLine;
+	CString cs_dummy;
+	CString cs_dummy2;
+	CString cs_line;
 
 	// read first line
-	pFrom->ReadString(csLine);
-	int i = 0; // substring index to extract
-	// parsing string can also be done with strtok (which allows multiple separators)
-	AfxExtractSubString(csdummy, csLine, i, '\t');
+	p_from->ReadString(cs_line);
+	int i = 0;
+	AfxExtractSubString(cs_dummy, cs_line, i, '\t');
 	i++;
-	AfxExtractSubString(csdummy2, csLine, i, '\t');
-	i++;
-	// check it is the correct data file version
-	if (csdummy.Compare(_T("ATF")) != 0 || csdummy2.Compare(_T("1.0")))
+	AfxExtractSubString(cs_dummy2, cs_line, i, '\t');
+	if (cs_dummy.Compare(_T("ATF")) != 0 || cs_dummy2.Compare(_T("1.0")))
 	{
-		pFrom->Abort(); // abort process
-		delete pFrom; // delete object and exit
-		UpdateDlgItems();
+		p_from->Abort(); 
+		delete p_from;
+		update_dlg_items();
 		return FALSE;
 	}
 
 	// create data file object
 	// save data
-	b_flag_exists = CFile::GetStatus(m_fileto, status);
+	b_flag_exists = CFile::GetStatus(m_file_to_, status);
 	if (b_flag_exists || (status.m_attribute & CFile::readOnly))
 	{
-		UpdateDlgItems();
-		delete pFrom;
+		update_dlg_items();
+		delete p_from;
 		return FALSE;
 	}
 
 	auto pTo = new ADAcqDataDoc;
 	ASSERT(pTo != NULL);
-	if (!pTo->acq_create_file(m_fileto))
+	if (!pTo->acq_create_file(m_file_to_))
 	{
-		UpdateDlgItems();
+		update_dlg_items();
 		delete pTo;
-		delete pFrom;
+		delete p_from;
 		return FALSE;
 	}
 
 	// read first line i.e. length of the data header
-	pFrom->ReadString(csLine); // 1
+	p_from->ReadString(cs_line); // 1
 	i = 0;
-	AfxExtractSubString(csdummy, csLine, i, '\t');
+	AfxExtractSubString(cs_dummy, cs_line, i, '\t');
 	i++;
-	AfxExtractSubString(csdummy2, csLine, i, '\t');
+	AfxExtractSubString(cs_dummy2, cs_line, i, '\t');
 	i++;
-	int nlines_in_header = _ttoi(csdummy);
-	int ncolumns = _ttoi(csdummy2);
+	const int n_lines_in_header = _ttoi(cs_dummy);
+	int n_columns = _ttoi(cs_dummy2);
 
-	m_scan_count = ncolumns - 1;
-	ASSERT(m_scan_count > 0);
-	ASSERT(m_scan_count <= 16);
+	m_scan_count_ = n_columns - 1;
+	ASSERT(m_scan_count_ > 0);
+	ASSERT(m_scan_count_ <= 16);
 
 	// describe data
-	m_xinstgain = 100.; // tentative value (top to min=2000 mV)
-	m_xrate = 10000.0f; // tentative value
-	CWaveFormat* pwF = pTo->get_wave_format();
-	pwF->full_scale_volts = 20.0f; // 20 V full scale
-	pwF->bin_span = 65536; // 16 bits resolution
-	pwF->bin_zero = 0; // ?
+	m_x_inst_gain_ = 100.; // tentative value (top to min=2000 mV)
+	m_x_rate_ = 10000.0f; // tentative value
+	CWaveFormat* pw_f = pTo->get_wave_format();
+	pw_f->full_scale_volts = 20.0f; // 20 V full scale
+	pw_f->bin_span = 65536; // 16 bits resolution
+	pw_f->bin_zero = 0; // ?
 
-	pwF->mode_encoding = OLx_ENC_2SCOMP;
-	pwF->mode_clock = INTERNAL_CLOCK;
-	pwF->mode_trigger = INTERNAL_TRIGGER;
-	pwF->scan_count = m_scan_count; // number of channels in scan list
-	pwF->sampling_rate_per_channel = static_cast<float>(m_xrate); // channel sampling rate (Hz)
-	pwF->cs_ad_card_name = "Digidata Axon";
+	pw_f->mode_encoding = OLx_ENC_2SCOMP;
+	pw_f->mode_clock = INTERNAL_CLOCK;
+	pw_f->mode_trigger = INTERNAL_TRIGGER;
+	pw_f->scan_count = static_cast<short>(m_scan_count_); 
+	pw_f->sampling_rate_per_channel = static_cast<float>(m_x_rate_); 
+	pw_f->cs_ad_card_name = "Digidata Axon";
 
-	for (int i = 0; i < m_scan_count; i++)
+	for (int i1 = 0; i1 < m_scan_count_; i1++)
 	{
-		int ichan = (pTo->get_wave_channels_array())->chan_array_add();
-		CWaveChan* pChannel = (pTo->get_wave_channels_array())->get_p_channel(ichan);
-		pChannel->am_gaintotal = static_cast<float>(m_xinstgain);
-		m_dspan[i] = 20000. / m_xinstgain; // span= 20 V max to min
-		m_dbinval[i] = m_dspan[i] / 65536.; // divide voltage span into 2exp16 bins
-		pChannel->am_amplifiergain = pChannel->am_gaintotal;
-		pChannel->am_gainAD = 1;
-		pChannel->am_gainpre = 1;
-		pChannel->am_gainpost = 1;
-		pChannel->am_gainheadstage = 1;
-		pChannel->am_adchannel = i; // channel A/D
+		const int i_chan = (pTo->get_wave_channels_array())->chan_array_add();
+		CWaveChan* p_channel = (pTo->get_wave_channels_array())->get_p_channel(i_chan);
+		p_channel->am_gaintotal = static_cast<float>(m_x_inst_gain_);
+		m_d_span_[i1] = 20000. / m_x_inst_gain_; // span= 20 V max to min
+		m_d_bin_val_[i1] = m_d_span_[i1] / 65536.; // divide voltage span into 2exp16 bins
+		p_channel->am_amplifiergain = p_channel->am_gaintotal;
+		p_channel->am_gainAD = 1;
+		p_channel->am_gainpre = 1;
+		p_channel->am_gainpost = 1;
+		p_channel->am_gainheadstage = 1;
+		p_channel->am_adchannel = i1; // channel A/D
 	}
 
 	/*
@@ -248,154 +245,153 @@ line 10- "Time (s)"	"Trace #1 (mV)"	"Trace #1 (Au)"
 line 11-	0	141.144	0.0317383
 	*/
 	// read dummy lines if user requests it or if number of lines != 7
-	if (m_bReadHeader == FALSE || nlines_in_header != 7)
+	if (m_b_read_header == FALSE || n_lines_in_header != 7)
 	{
-		for (i = 0; i <= nlines_in_header; i++)
-			pFrom->ReadString(csLine); // 1
+		for (i = 0; i <= n_lines_in_header; i++)
+			p_from->ReadString(cs_line); // 1
 	}
 	else
 	{
 		// 1 acquisition mode "AcquisitionMode=Gap Free"
-		pFrom->ReadString(csLine);
+		p_from->ReadString(cs_line);
 
 		// 2 dummy "comments"
-		pFrom->ReadString(csLine);
+		p_from->ReadString(cs_line);
 
 		// 3 & 4 max & min values "YTop=200,10"
-		pFrom->ReadString(csLine);
-		csLine.Replace('=', ',');
+		p_from->ReadString(cs_line);
+		cs_line.Replace('=', ',');
 		int i = 0;
-		CString csLine2;
-		pFrom->ReadString(csLine2);
-		csLine2.Replace('=', ',');
+		CString cs_line2;
+		p_from->ReadString(cs_line2);
+		cs_line2.Replace('=', ',');
 
-		for (int ichan = 0; ichan < m_scan_count; ichan++)
+		for (int i_chan = 0; i_chan < m_scan_count_; i_chan++)
 		{
 			i++;
-			AfxExtractSubString(csdummy, csLine, i, ',');
-			float xmax = static_cast<float>(_ttof(csdummy));
-			AfxExtractSubString(csdummy2, csLine2, i, ',');
-			float xmin = static_cast<float>(_ttof(csdummy2));
+			AfxExtractSubString(cs_dummy, cs_line, i, ',');
+			float x_max = static_cast<float>(_ttof(cs_dummy));
+			AfxExtractSubString(cs_dummy2, cs_line2, i, ',');
+			float x_min = static_cast<float>(_ttof(cs_dummy2));
 			// take the max absolute value
-			xmin = abs(xmin);
-			xmax = abs(xmax);
-			if (xmin > xmax)
-				xmax = xmin;
-			float xtotal = static_cast<float>(xmax * 2.);
-			CWaveChan* pChannel = (pTo->get_wave_channels_array())->get_p_channel(ichan);
-			pChannel->am_gaintotal = 20000. / xtotal;
+			x_min = abs(x_min);
+			x_max = abs(x_max);
+			if (x_min > x_max)
+				x_max = x_min;
+			float x_total = static_cast<float>(x_max * 2.);
+			CWaveChan* p_channel = (pTo->get_wave_channels_array())->get_p_channel(i_chan);
+			p_channel->am_gaintotal = 20000. / x_total;
 		}
 
 		// 5 start time
-		pFrom->ReadString(csLine);
+		p_from->ReadString(cs_line);
 		// 6 columns names "SignalsExported=Scaled V,Odour Cmd"
-		pFrom->ReadString(csLine);
-		csLine.Replace('=', ',');
+		p_from->ReadString(cs_line);
+		cs_line.Replace('=', ',');
 		i = 0;
-		for (int ichan = 0; ichan < m_scan_count; ichan++)
+		for (int i_chan = 0; i_chan < m_scan_count_; i_chan++)
 		{
 			i++;
-			AfxExtractSubString(csdummy2, csLine, i, ',');
-			csdummy2.Replace('"', ' ');
-			CWaveChan* pChannel = (pTo->get_wave_channels_array())->get_p_channel(ichan);
-			pChannel->am_csComment = csdummy2;
+			AfxExtractSubString(cs_dummy2, cs_line, i, ',');
+			cs_dummy2.Replace('"', ' ');
+			CWaveChan* p_channel = (pTo->get_wave_channels_array())->get_p_channel(i_chan);
+			p_channel->am_csComment = cs_dummy2;
 		}
 
-		pFrom->ReadString(csLine);
+		p_from->ReadString(cs_line);
 		// 7 columns scale
-		pFrom->ReadString(csLine);
+		p_from->ReadString(cs_line);
 		// (8) title of the line
-		pFrom->ReadString(csLine);
+		p_from->ReadString(cs_line);
 	}
 
 	// change acq params & ask for proper descriptors
-	if (!GetAcquisitionParameters(pTo)
-		|| !GetExperimentParameters(pTo))
+	if (!get_acquisition_parameters(pTo)
+		|| !get_experiment_parameters(pTo))
 	{
 		pTo->AcqDoc_DataAppendStop();
 		pTo->acq_delete_file();
 		goto Emergency_exit;
 	}
 
-	pwF->bin_span = 65536; // 16 bits resolution
-	pwF->bin_zero = 0;
-	pwF->mode_encoding = OLx_ENC_BINARY;
+	pw_f->bin_span = 65536; // 16 bits resolution
+	pw_f->bin_zero = 0;
+	pw_f->mode_encoding = OLx_ENC_BINARY;
 
 	// start conversion
-	int bufLen = 32768;
-	pTo->adjust_buffer(bufLen);
-	ULONGLONG compteur = pTo->get_buffer_channel_length();
-	int compteur2 = 0;
+	constexpr int buf_len = 32768;
+	pTo->adjust_buffer(buf_len);
+	ULONGLONG counter1 = pTo->get_buffer_channel_length();
+	int counter2 = 0;
 	pTo->AcqDoc_DataAppendStart();
-	ULONGLONG compteurtotal = 0;
-	double dtime_start = 0;
-	double dtime_end = 0;
-	short* pdataBUF0 = pTo->get_raw_data_buffer();
+	short* pdata_buf0 = pTo->get_raw_data_buffer();
 
 	TRY
 		{
-			while (compteur > 0)
+			double d_time_end = 0;
+			double d_time_start = 0;
+			ULONGLONG global_counter = 0;
+			while (counter1 > 0)
 			{
-				double dvalue, dvalue2;
-				short* pdataBUF = pdataBUF0;
-				CString csLinetab;
-				compteur2 = 0;
+				short* pdata_buf = pdata_buf0;
+				CString cs_line_tab;
+				counter2 = 0;
 
-				for (int ii = 0; ii < bufLen; ii++)
+				for (int ii = 0; ii < buf_len; ii++)
 				{
-					pFrom->ReadString(csLinetab); // ; Wave data Signal
+					p_from->ReadString(cs_line_tab); // ; Wave data Signal
 					// trap end-of-file condition - this is the only way we get out of this while loop
-					if (csLinetab.IsEmpty())
+					if (cs_line_tab.IsEmpty())
 					{
-						dtime_end = _ttof(csdummy2);
-						compteur = 0;
+						d_time_end = _ttof(cs_dummy2);
+						counter1 = 0;
 						break;
 					}
 
 					// extract time
 					int i = 0; // substring index to extract
-					AfxExtractSubString(csdummy2, csLinetab, i, '\t');
-					if (compteurtotal == 0)
-						dtime_start = _ttof(csdummy2);
+					AfxExtractSubString(cs_dummy2, cs_line_tab, i, '\t');
+					if (global_counter == 0)
+						d_time_start = _ttof(cs_dummy2);
 
-					compteurtotal++;
+					global_counter++;
 
 					// extract channels
-					for (int ichan = 0; ichan < m_scan_count; ichan++)
+					for (int i_chan = 0; i_chan < m_scan_count_; i_chan++)
 					{
 						i++;
-						AfxExtractSubString(csdummy, csLinetab, i, '\t');
-						dvalue = _ttof(csdummy);
-						dvalue2 = dvalue / m_dbinval[ichan];
-						if ((dvalue2 > 32768.) || (dvalue2 < -32767.))
+						AfxExtractSubString(cs_dummy, cs_line_tab, i, '\t');
+						const double d_value1 = _ttof(cs_dummy);
+						const double d_value2 = d_value1 / m_d_bin_val_[i_chan];
+						if ((d_value2 > 32768.) || (d_value2 < -32767.))
 						{
 							MessageBox(_T("Overflow error : decrease the amplifier gain"));
 							pTo->AcqDoc_DataAppendStop();
 							pTo->acq_delete_file();
 							goto Emergency_exit;
 						}
-						*pdataBUF = static_cast<short>(dvalue2);
-						pdataBUF++;
-						compteur2++;
+						*pdata_buf = static_cast<short>(d_value2);
+						pdata_buf++;
+						counter2++;
 					}
 				}
 
 				// save data and update display
 				CWnd* p_wnd = GetDlgItem(IDC_STATIC6);
-				p_wnd->SetWindowText(csdummy2);
-				pTo->AcqDoc_DataAppend(pdataBUF0, compteur2 * sizeof(short));
+				p_wnd->SetWindowText(cs_dummy2);
+				pTo->AcqDoc_DataAppend(pdata_buf0, counter2 * sizeof(short));
 			}
 
 			// update rate
-			CWaveFormat* pwF = pTo->get_wave_format();
-			float xxrate = static_cast<float>(compteurtotal / (dtime_end - dtime_start));
-			pwF->sampling_rate_per_channel = xxrate;
+			CWaveFormat* pw_f = pTo->get_wave_format();
+			const float xx_rate = static_cast<float>(global_counter) / static_cast<float>(d_time_end - d_time_start);
+			pw_f->sampling_rate_per_channel = xx_rate;
 		}
 
 		// useless but ...
 	CATCH(CFileException, fe)
 		{
-			pTo->AcqDoc_DataAppend(pdataBUF0, compteur2 * sizeof(short));
+			pTo->AcqDoc_DataAppend(pdata_buf0, counter2 * sizeof(short));
 		}
 	END_CATCH
 
@@ -406,22 +402,22 @@ line 11-	0	141.144	0.0317383
 	// exit: delete objects
 Emergency_exit:
 	delete pTo;
-	delete pFrom;
+	delete p_from;
 	return flag;
 }
 
-BOOL DlgImportFiles::GetExperimentParameters(const AcqDataDoc* pTo) const
+BOOL DlgImportFiles::get_experiment_parameters(const AcqDataDoc* p_to) const
 {
 	DlgADExperiment dlg; 
 	dlg.m_b_filename = FALSE; 
 	auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	options_input* pacqD = &(p_app->options_acq_data);
 	dlg.options_input = pacqD;
-	dlg.p_db_doc = m_pdbDoc;
+	dlg.p_db_doc = m_pdb_doc;
 	const BOOL flag = dlg.DoModal();
 	if (IDOK == flag)
 	{
-		CWaveFormat* pwFTo = pTo->get_wave_format();
+		CWaveFormat* pwFTo = p_to->get_wave_format();
 		const CWaveFormat* pwFDlg = &pacqD->wave_format;
 
 		pwFTo->cs_ad_card_name = pwFDlg->cs_ad_card_name;
@@ -444,22 +440,22 @@ BOOL DlgImportFiles::GetExperimentParameters(const AcqDataDoc* pTo) const
 	return FALSE;
 }
 
-BOOL DlgImportFiles::GetAcquisitionParameters(AcqDataDoc* pTo)
+BOOL DlgImportFiles::get_acquisition_parameters(const AcqDataDoc* p_to)
 {
 	DlgADInputs dlg2;
-	dlg2.m_pw_format = pTo->get_wave_format();
-	dlg2.m_pch_array = pTo->get_wave_channels_array();
+	dlg2.m_pw_format = p_to->get_wave_format();
+	dlg2.m_pch_array = p_to->get_wave_channels_array();
 
 	// invoke dialog box
 	const BOOL flag = dlg2.DoModal();
 	if (IDOK == flag)
 	{
-		for (int i = 0; i < m_scan_count; i++)
+		for (int i = 0; i < m_scan_count_; i++)
 		{
-			CWaveChan* pChannel = (pTo->get_wave_channels_array())->get_p_channel(i);
-			m_xinstgain = pChannel->am_gaintotal;
-			m_dspan[i] = 20000. / m_xinstgain; // span= 20 V max to min
-			m_dbinval[i] = m_dspan[i] / 65536.; // divide voltage span into 2exp16 bins
+			const CWaveChan* p_channel = (p_to->get_wave_channels_array())->get_p_channel(i);
+			m_x_inst_gain_ = p_channel->am_gaintotal;
+			m_d_span_[i] = 20000. / m_x_inst_gain_; // span= 20 V max to min
+			m_d_bin_val_[i] = m_d_span_[i] / 65536.; // divide voltage span into 2exp16 bins
 		}
 		return TRUE;
 	}

@@ -57,7 +57,7 @@ static char THIS_FILE[] = __FILE__;
 
 
 
-GridInPlaceEdit::GridInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
+GridInPlaceEdit::GridInPlaceEdit(CWnd* p_parent, CRect& rect, DWORD dw_style, UINT nID,
                            int nRow, int nColumn, CString sInitText,
                            UINT nFirstChar)
 {
@@ -72,9 +72,9 @@ GridInPlaceEdit::GridInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UIN
 
 	const DWORD dwEditStyle = WS_BORDER | WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL //|ES_MULTILINE
 		| dw_style;
-	if (!Create(dwEditStyle, rect, pParent, nID)) return;
+	if (!Create(dwEditStyle, rect, p_parent, nID)) return;
 
-	SetFont(pParent->GetFont());
+	SetFont(p_parent->GetFont());
 
 	SetWindowText(sInitText);
 	SetFocus();

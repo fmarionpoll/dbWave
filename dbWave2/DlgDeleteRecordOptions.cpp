@@ -8,19 +8,19 @@
 
 IMPLEMENT_DYNAMIC(DlgDeleteRecordOptions, CDialog)
 
-DlgDeleteRecordOptions::DlgDeleteRecordOptions(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgDeleteRecordOptions::DlgDeleteRecordOptions(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
 DlgDeleteRecordOptions::~DlgDeleteRecordOptions()
 = default;
 
-void DlgDeleteRecordOptions::DoDataExchange(CDataExchange* pDX)
+void DlgDeleteRecordOptions::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Check(pDX, IDC_CHECK3, m_bKeepChoice);
-	DDX_Check(pDX, IDC_CHECK2, m_bDeleteFile);
+	CDialog::DoDataExchange(p_dx);
+	DDX_Check(p_dx, IDC_CHECK3, m_b_keep_choice);
+	DDX_Check(p_dx, IDC_CHECK2, m_b_delete_file);
 }
 
 BEGIN_MESSAGE_MAP(DlgDeleteRecordOptions, CDialog)

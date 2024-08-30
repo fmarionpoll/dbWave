@@ -194,15 +194,15 @@ void DlgdbEditField::on_bn_clicked_radio6()
 void DlgdbEditField::on_bn_clicked_button1()
 {
 	DlgEditList dlg;
-	dlg.pCo = &m_co_dictionary;
+	dlg.p_co = &m_co_dictionary;
 	const auto i_result = dlg.DoModal();
 	if (IDOK == i_result)
 	{
 		m_co_dictionary.ResetContent();
-		const auto n_items = dlg.m_csArray.GetCount();
+		const auto n_items = dlg.m_cs_array.GetCount();
 		for (auto i = 0; i < n_items; i++)
 		{
-			auto cs = dlg.m_csArray.GetAt(i);
+			auto cs = dlg.m_cs_array.GetAt(i);
 			m_co_dictionary.AddString(cs);
 		}
 		m_co_dictionary.SetCurSel(dlg.m_selected);

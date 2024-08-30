@@ -1664,7 +1664,7 @@ void ViewData::on_en_change_time_first()
 {
 	if (mm_time_first_abscissa.m_b_entry_done)
 	{
-		mm_time_first_abscissa.OnEnChange(this, m_time_first_abscissa, 1.f, -1.f);
+		mm_time_first_abscissa.on_en_change(this, m_time_first_abscissa, 1.f, -1.f);
 		chart_data.get_data_from_doc(static_cast<long>(m_time_first_abscissa * m_sampling_rate_),
 		                              static_cast<long>(m_time_last_abscissa * m_sampling_rate_));
 		update_legends(UPD_ABSCISSA | CHG_X_SCALE);
@@ -1676,7 +1676,7 @@ void ViewData::on_en_change_time_last()
 {
 	if (mm_time_last_abscissa.m_b_entry_done)
 	{
-		mm_time_last_abscissa.OnEnChange(this, m_time_last_abscissa, 1.f, -1.f);
+		mm_time_last_abscissa.on_en_change(this, m_time_last_abscissa, 1.f, -1.f);
 		chart_data.get_data_from_doc(static_cast<long>(m_time_first_abscissa * m_sampling_rate_),
 		                              static_cast<long>(m_time_last_abscissa * m_sampling_rate_));
 		update_legends(UPD_ABSCISSA | CHG_X_SCALE);

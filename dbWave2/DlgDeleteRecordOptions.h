@@ -6,18 +6,18 @@ class DlgDeleteRecordOptions final : public CDialog
 	DECLARE_DYNAMIC(DlgDeleteRecordOptions)
 
 public:
-	DlgDeleteRecordOptions(CWnd* pParent = nullptr); // standard constructor
+	DlgDeleteRecordOptions(CWnd* p_parent = nullptr); // standard constructor
 	~DlgDeleteRecordOptions() override;
 
 	// Dialog Data
 	enum { IDD = IDD_OPTIONSDELETEDATFILE };
 
 public:
-	BOOL m_bKeepChoice{ true };
-	BOOL m_bDeleteFile{ false };
+	BOOL m_b_keep_choice{ true };
+	BOOL m_b_delete_file{ false };
 
 protected:
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	void DoDataExchange(CDataExchange* p_dx) override; // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
 };

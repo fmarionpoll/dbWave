@@ -5,20 +5,20 @@ class DlgListBClaSize : public CDialog
 {
 	// Construction
 public:
-	DlgListBClaSize(CWnd* pParent = nullptr); // standard constructor
+	DlgListBClaSize(CWnd* p_parent = nullptr); // standard constructor
 
 	// Dialog Data
 	enum { IDD = IDD_LISTBCLAPARAMETERS };
 
-	int m_rowheight{ 0 };
-	int m_superpcol{ 0 };
-	int m_textcol{ 0 };
-	int m_intercolspace{ 0 };
+	int m_row_height{ 0 };
+	int m_super_p_col{ 0 };
+	int m_text_col{ 0 };
+	int m_inter_col_space{ 0 };
 
 	// Overrides
 public:
 protected:
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	void DoDataExchange(CDataExchange* p_dx) override; // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
 };

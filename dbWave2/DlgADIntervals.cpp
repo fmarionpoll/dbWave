@@ -156,7 +156,7 @@ void DlgADIntervals::on_en_change_ad_rate_per_channel()
 {
 	if (mm_ad_rate_channel.m_b_entry_done)
 	{
-		mm_ad_rate_channel.OnEnChange(this, m_ad_rate_channel, 1.f, -1.f);
+		mm_ad_rate_channel.on_en_change(this, m_ad_rate_channel, 1.f, -1.f);
 
 		// check value and modifies dependent parameters
 		if (m_ad_rate_channel < m_rate_minimum)
@@ -178,7 +178,7 @@ void DlgADIntervals::on_en_change_duration()
 {
 	if (mm_sweep_duration.m_b_entry_done)
 	{
-		mm_sweep_duration.OnEnChange(this, m_sweep_duration, 1.f, -1.f);
+		mm_sweep_duration.on_en_change(this, m_sweep_duration, 1.f, -1.f);
 		// check value and modifies dependent parameters
 		// leave ad_rate_chan constant, modifies m_buffer_W_size & m_buffer_N_items ...?
 		// first: try to adjust buffer_size
@@ -216,7 +216,7 @@ void DlgADIntervals::on_en_change_buffer_size()
 {
 	if (mm_buffer_w_size.m_b_entry_done)
 	{
-		mm_buffer_w_size.OnEnChange(this, m_buffer_w_size, 1, -1);
+		mm_buffer_w_size.on_en_change(this, m_buffer_w_size, 1, -1);
 
 		// check value and update dependent parameter
 		const auto ui_w_size_min = static_cast<WORD>(m_ad_rate_channel * 0.05f); // minimum buffer size = 50 ms (!?)
@@ -236,7 +236,7 @@ void DlgADIntervals::on_en_change_n_buffers()
 {
 	if (mm_buffer_n_items.m_b_entry_done)
 	{
-		mm_buffer_n_items.OnEnChange(this, m_buffer_n_items, 1, -1);
+		mm_buffer_n_items.on_en_change(this, m_buffer_n_items, 1, -1);
 		// update dependent parameters
 		if (m_buffer_n_items < 1)
 			m_buffer_n_items = 1;
@@ -249,7 +249,7 @@ void DlgADIntervals::on_en_change_acquisition_duration()
 {
 	if (mm_acquisition_duration.m_b_entry_done)
 	{
-		mm_acquisition_duration.OnEnChange(this, m_acquisition_duration, 1.f, -1.f);
+		mm_acquisition_duration.on_en_change(this, m_acquisition_duration, 1.f, -1.f);
 		const auto min_duration = static_cast<float>(m_buffer_w_size) / m_ad_rate_channel;
 		if (m_acquisition_duration < min_duration)
 			m_acquisition_duration = min_duration;

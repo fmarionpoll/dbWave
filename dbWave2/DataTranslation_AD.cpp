@@ -97,18 +97,18 @@ BOOL DataTranslation_AD::InitSubSystem(options_input* pADC_options)
 		for (int i = 0; i < pWFormat->scan_count; i++)
 		{
 			// transfer data from CWaveChan to chanlist of the A/D subsystem
-			CWaveChan* pChannel = (m_pOptions->chan_array).get_p_channel(i);
-			if (pChannel->am_adchannel > m_numchansMAX - 1 && pChannel->am_adchannel != 16)
-				pChannel->am_adchannel = m_numchansMAX - 1;
-			SetChannelList(i, pChannel->am_adchannel);
-			SetGainList(i, pChannel->am_gainAD);
+			CWaveChan* p_channel = (m_pOptions->chan_array).get_p_channel(i);
+			if (p_channel->am_adchannel > m_numchansMAX - 1 && p_channel->am_adchannel != 16)
+				p_channel->am_adchannel = m_numchansMAX - 1;
+			SetChannelList(i, p_channel->am_adchannel);
+			SetGainList(i, p_channel->am_gainAD);
 			const double dGain = GetGainList(i);
-			pChannel->am_gainAD = static_cast<short>(dGain);
+			p_channel->am_gainAD = static_cast<short>(dGain);
 			// compute dependent parameters
-			pChannel->am_amplifiergain = static_cast<double>(pChannel->am_gainheadstage) * static_cast<double>(pChannel
-				->am_gainpre) * static_cast<double>(pChannel->am_gainpost);
-			pChannel->am_gaintotal = pChannel->am_amplifiergain * static_cast<double>(pChannel->am_gainAD);
-			pChannel->am_resolutionV = static_cast<double>(pWFormat->full_scale_volts) / pChannel->am_gaintotal /
+			p_channel->am_amplifiergain = static_cast<double>(p_channel->am_gainheadstage) * static_cast<double>(p_channel
+				->am_gainpre) * static_cast<double>(p_channel->am_gainpost);
+			p_channel->am_gaintotal = p_channel->am_amplifiergain * static_cast<double>(p_channel->am_gainAD);
+			p_channel->am_resolutionV = static_cast<double>(pWFormat->full_scale_volts) / p_channel->am_gaintotal /
 				static_cast<double>(pWFormat->bin_span);
 		}
 

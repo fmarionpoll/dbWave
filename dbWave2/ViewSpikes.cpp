@@ -1998,7 +1998,7 @@ void ViewSpikes::on_en_change_spike_class()
 	if (!mm_spike_class_.m_b_entry_done)
 		return;
 	const auto spike_class_old = m_spike_class;
-	mm_spike_class_.OnEnChange(this, m_spike_class, 1, -1);
+	mm_spike_class_.on_en_change(this, m_spike_class, 1, -1);
 
 	if (m_spike_class != spike_class_old)
 	{
@@ -2014,7 +2014,7 @@ void ViewSpikes::on_en_change_time_first()
 {
 	if (mm_time_first_.m_b_entry_done)
 	{
-		mm_time_first_.OnEnChange(this, m_time_first, 1.f, -1.f);
+		mm_time_first_.on_en_change(this, m_time_first, 1.f, -1.f);
 		const auto l_first = static_cast<long>(m_time_first * p_spk_doc->get_acq_rate());
 		if (l_first != l_first_)
 		{
@@ -2030,7 +2030,7 @@ void ViewSpikes::on_en_change_time_last()
 {
 	if (mm_time_last_.m_b_entry_done)
 	{
-		mm_time_last_.OnEnChange(this, m_time_last, 1.f, -1.f);
+		mm_time_last_.on_en_change(this, m_time_last, 1.f, -1.f);
 		const auto l_last = static_cast<long>(m_time_last * p_spk_doc->get_acq_rate());
 		if (l_last != l_last_)
 		{
@@ -2047,7 +2047,7 @@ void ViewSpikes::on_en_change_zoom()
 	if (mm_zoom_.m_b_entry_done)
 	{
 		const auto zoom = m_zoom;
-		mm_zoom_.OnEnChange(this, m_zoom, 1.f, -1.f);
+		mm_zoom_.on_en_change(this, m_zoom, 1.f, -1.f);
 
 		// check boundaries
 		if (m_zoom < 0.0f)
@@ -2064,7 +2064,7 @@ void ViewSpikes::on_en_change_source_class()
 {
 	if (mm_class_source_.m_b_entry_done)
 	{
-		mm_class_source_.OnEnChange(this, m_class_source, 1, -1);
+		mm_class_source_.on_en_change(this, m_class_source, 1, -1);
 		UpdateData(FALSE);
 	}
 }
@@ -2073,7 +2073,7 @@ void ViewSpikes::on_en_change_dest_class()
 {
 	if (mm_class_destination_.m_b_entry_done)
 	{
-		mm_class_destination_.OnEnChange(this, m_class_destination, 1, -1);
+		mm_class_destination_.on_en_change(this, m_class_destination, 1, -1);
 		UpdateData(FALSE);
 	}
 }
@@ -2082,7 +2082,7 @@ void ViewSpikes::on_en_change_jitter()
 {
 	if (mm_jitter_ms_.m_b_entry_done)
 	{
-		mm_jitter_ms_.OnEnChange(this, m_jitter_ms, 1.f, -1.f);
+		mm_jitter_ms_.on_en_change(this, m_jitter_ms, 1.f, -1.f);
 		UpdateData(FALSE);
 	}
 }
@@ -2094,7 +2094,7 @@ void ViewSpikes::on_en_change_no_spike()
 		const auto spike_no = m_spike_index;
 		const int delta_up = p_spk_list->get_next_spike(spike_no, 1, m_b_keep_same_class) - m_spike_index;
 		const int delta_down = m_spike_index - p_spk_list->get_next_spike(spike_no, -1, m_b_keep_same_class);
-		mm_spike_index_.OnEnChange(this, m_spike_index, delta_up, -delta_down);
+		mm_spike_index_.on_en_change(this, m_spike_index, delta_up, -delta_down);
 
 		m_spike_index = p_spk_list->get_valid_spike_number(m_spike_index);
 		if (m_spike_index != spike_no)

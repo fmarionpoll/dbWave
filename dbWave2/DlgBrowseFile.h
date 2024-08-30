@@ -5,7 +5,7 @@ class DlgBrowseFile : public CDialog
 {
 	// Construction
 public:
-	DlgBrowseFile(CWnd* pParent = nullptr); // standard constructor
+	DlgBrowseFile(CWnd* p_parent = nullptr); // standard constructor
 
 	// Dialog Data
 	enum { IDD = IDD_BROWSEFILE };

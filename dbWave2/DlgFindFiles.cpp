@@ -7,33 +7,33 @@
 #define new DEBUG_NEW
 #endif
 
-DlgFindFiles::DlgFindFiles(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgFindFiles::DlgFindFiles(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
-void DlgFindFiles::DoDataExchange(CDataExchange* pDX)
+void DlgFindFiles::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_COMBO1, m_fileext);
-	DDX_Check(pDX, IDC_CHECKOTHERFORMATS, m_banyformat);
-	DDX_Control(pDX, IDC_MFCEDITBROWSE1, m_mfcbrowsecontrol);
+	CDialog::DoDataExchange(p_dx);
+	DDX_Control(p_dx, IDC_COMBO1, m_file_ext);
+	DDX_Check(p_dx, IDC_CHECKOTHERFORMATS, m_b_any_format);
+	DDX_Control(p_dx, IDC_MFCEDITBROWSE1, m_mfc_browse_control);
 }
 
 BEGIN_MESSAGE_MAP(DlgFindFiles, CDialog)
 
-	ON_BN_CLICKED(IDC_BUTTON2, OnSearch)
+	ON_BN_CLICKED(IDC_BUTTON2, on_search)
 
 END_MESSAGE_MAP()
 
 BOOL DlgFindFiles::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	m_pfilenames->RemoveAll();
+	m_p_file_names->RemoveAll();
 	m_path = static_cast<CdbWaveApp*>(AfxGetApp())->options_import.path;
 	if (m_pdbDoc)
 		m_path = m_pdbDoc->proposed_data_path_name;
-	m_mfcbrowsecontrol.SetWindowTextW(m_path);
+	m_mfc_browse_control.SetWindowTextW(m_path);
 
 	// hide yet undefined infos
 	static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(1);
@@ -41,15 +41,15 @@ BOOL DlgFindFiles::OnInitDialog()
 	GetDlgItem(IDC_STATIC3)->ShowWindow(SW_HIDE);
 
 	// if option set to 1
-	if (1 == m_ioption)
+	if (1 == m_i_option)
 	{
 		//  hide three other controls
 		GetDlgItem(IDC_CHECKDISCARD)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_STATICIMPORTOPTIONS)->ShowWindow(SW_HIDE);
 		// delete items within IDC_COMBO1 and add 2 new items
-		m_fileext.ResetContent();
-		m_fileext.AddString(_T("*.datdel"));
-		m_fileext.AddString(_T("*.spkdel"));
+		m_file_ext.ResetContent();
+		m_file_ext.AddString(_T("*.datdel"));
+		m_file_ext.AddString(_T("*.spkdel"));
 	}
 	else
 	{
@@ -57,17 +57,17 @@ BOOL DlgFindFiles::OnInitDialog()
 		static_cast<CButton*>(GetDlgItem(IDC_CHECKDISCARD))->SetCheck(p_app->options_import.discard_duplicate_files);
 	}
 	UpdateData(FALSE);
-	m_fileext.SetCurSel(m_selinit); // select first item / file extensions
+	m_file_ext.SetCurSel(m_sel_init); // select first item / file extensions
 
 	return TRUE;
 }
 
 void DlgFindFiles::OnOK()
 {
-	if (m_pfilenames->GetSize() == 0)
-		OnSearch();
+	if (m_p_file_names->GetSize() == 0)
+		on_search();
 
-	m_mfcbrowsecontrol.GetWindowTextW(m_path);
+	m_mfc_browse_control.GetWindowTextW(m_path);
 	auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	p_app->options_import.path = m_path;
 	p_app->options_import.discard_duplicate_files = static_cast<CButton*>(GetDlgItem(IDC_CHECKDISCARD))->GetCheck();
@@ -75,46 +75,46 @@ void DlgFindFiles::OnOK()
 	CDialog::OnOK();
 }
 
-void DlgFindFiles::OnSearch()
+void DlgFindFiles::on_search()
 {
 	UpdateData(TRUE);
 
-	m_ppath.RemoveAll(); // clean list of paths
-	m_pfilenames->RemoveAll(); // remove all file names
-	m_nfound = 0; // reset nb of files found
-	m_fileext.GetWindowText(m_searchString); // get search string (filter)
+	m_p_path_.RemoveAll(); 
+	m_p_file_names->RemoveAll(); 
+	m_n_found = 0; 
+	m_file_ext.GetWindowText(m_search_string_); 
 
-	m_bSubtreeSearch = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
+	m_b_subtree_search_ = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
 	GetDlgItem(IDC_STATIC3)->ShowWindow(SW_SHOW);
 	GetDlgItem(IDC_STATIC1)->ShowWindow(SW_HIDE);
-	m_mfcbrowsecontrol.GetWindowTextW(m_path);
-	m_ppath.Add(m_path); // add at least one path (root)
+	m_mfc_browse_control.GetWindowTextW(m_path);
+	m_p_path_.Add(m_path); // add at least one path (root)
 
 	// scan subdirectories
-	if (m_bSubtreeSearch)
-		TraverseDirectory(m_path);
+	if (m_b_subtree_search_)
+		traverse_directory(m_path);
 
 	// scan for files within the directories
 	GetDlgItem(IDC_STATIC1)->ShowWindow(SW_SHOW);
-	for (auto i = 0; i <= m_ppath.GetUpperBound(); i++)
+	for (auto i = 0; i <= m_p_path_.GetUpperBound(); i++)
 	{
-		CString cs_dir = m_ppath.GetAt(i);
+		CString cs_dir = m_p_path_.GetAt(i);
 		GetDlgItem(IDC_STATIC3)->SetWindowText(cs_dir);
-		FindFiles(cs_dir);
-		DisplaynFound();
+		find_files(cs_dir);
+		display_n_found();
 	}
 
 	GetDlgItem(IDC_STATIC3)->ShowWindow(SW_HIDE);
 }
 
-void DlgFindFiles::DisplaynFound()
+void DlgFindFiles::display_n_found() const
 {
 	TCHAR sz[50];
-	wsprintf(sz, _T("n found = %i"), m_nfound);
+	wsprintf(sz, _T("n found = %i"), m_n_found);
 	GetDlgItem(IDC_STATIC1)->SetWindowText(sz);
 }
 
-void DlgFindFiles::TraverseDirectory(CString path)
+void DlgFindFiles::traverse_directory(const CString& path)
 {
 	CFileFind finder;
 	CString str_wildcard = path;
@@ -132,24 +132,24 @@ void DlgFindFiles::TraverseDirectory(CString path)
 		if (finder.IsDirectory())
 		{
 			auto str = finder.GetFilePath();
-			m_ppath.Add(str);
-			TraverseDirectory(str);
+			m_p_path_.Add(str);
+			traverse_directory(str);
 		}
 	}
 }
 
-void DlgFindFiles::FindFiles(CString path)
+void DlgFindFiles::find_files(const CString& path)
 {
 	CFileFind finder;
-	const auto str_wildcard = path + _T("\\") + m_searchString;
+	const auto str_wildcard = path + _T("\\") + m_search_string_;
 	auto b_working = finder.FindFile(str_wildcard);
 	while (b_working)
 	{
 		b_working = finder.FindNextFile();
 		auto cs_dummy = finder.GetFilePath();
-		if (1 != m_ioption && 0 == (cs_dummy.Right(3)).CompareNoCase(_T("del")))
+		if (1 != m_i_option && 0 == (cs_dummy.Right(3)).CompareNoCase(_T("del")))
 			continue;
-		m_pfilenames->Add(cs_dummy);
-		m_nfound++;
+		m_p_file_names->Add(cs_dummy);
+		m_n_found++;
 	}
 }

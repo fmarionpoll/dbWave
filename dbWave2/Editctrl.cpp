@@ -63,14 +63,14 @@ void CEditCtrl::OnKeyDown(const UINT n_char, const UINT n_rep_cnt, const UINT n_
 {
 	// VK_SPACE (20), _PRIOR, _NEXT, _END, _HOME, _LEFT, _UP, _RIGHT, _DOWN, _SELECT(28)
 	if (n_char > VK_SPACE && n_char < VK_SELECT)
-		ProcessKeys(n_char);
+		process_keys(n_char);
 	else
 		CEdit::OnKeyDown(n_char, n_rep_cnt, n_flags);
 }
 
 void CEditCtrl::OnChar(const UINT n_char, const UINT n_rep_cnt, const UINT n_flags)
 {
-	if (!ProcessKeys(n_char))
+	if (!process_keys(n_char))
 		CEdit::OnChar(n_char, n_rep_cnt, n_flags);
 }
 
@@ -80,7 +80,7 @@ void CEditCtrl::OnChar(const UINT n_char, const UINT n_rep_cnt, const UINT n_fla
 // TAB or lef/righ arrow de-select and select next control 
 //--------------------------------------------------------------------------
 
-BOOL CEditCtrl::ProcessKeys(UINT n_char)
+BOOL CEditCtrl::process_keys(UINT n_char)
 {
 	switch (n_char)
 	{
@@ -109,7 +109,7 @@ BOOL CEditCtrl::ProcessKeys(UINT n_char)
 	return TRUE;
 }
 
-void CEditCtrl::OnEnChange(CWnd* parent_wnd, float& parameter, const float delta_up, const float delta_down)
+void CEditCtrl::on_en_change(CWnd* parent_wnd, float& parameter, const float delta_up, const float delta_down)
 {
 	
 	;
@@ -138,7 +138,7 @@ void CEditCtrl::OnEnChange(CWnd* parent_wnd, float& parameter, const float delta
 	SetSel(0, -1);
 }
 
-void CEditCtrl::OnEnChange(CWnd* parent_wnd, int& parameter, const int delta_up, const int delta_down)
+void CEditCtrl::on_en_change(CWnd* parent_wnd, int& parameter, const int delta_up, const int delta_down)
 {
 	switch (m_n_char)
 	{
@@ -165,7 +165,7 @@ void CEditCtrl::OnEnChange(CWnd* parent_wnd, int& parameter, const int delta_up,
 	SetSel(0, -1);
 }
 
-void CEditCtrl::OnEnChange(CWnd* parent_wnd, UINT& parameter, const UINT delta_up, const UINT delta_down)
+void CEditCtrl::on_en_change(CWnd* parent_wnd, UINT& parameter, const UINT delta_up, const UINT delta_down)
 {
 	switch (m_n_char)
 	{

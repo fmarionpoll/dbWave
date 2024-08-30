@@ -76,6 +76,8 @@ public:
 	CdbWaveDoc* m_pdb_doc {nullptr};
 
 	BOOL OnInitDialog() override;
+	afx_msg void OnSize(UINT n_type, int cx, int cy);
+
 	afx_msg void on_bn_clicked_radio1();
 	afx_msg void on_bn_clicked_radio2();
 	afx_msg void on_bn_clicked_radio3();
@@ -83,7 +85,6 @@ public:
 	afx_msg void on_bn_clicked_radio5();
 	afx_msg void on_bn_clicked_radio6();
 	afx_msg void on_bn_clicked_button1();
-	afx_msg void OnSize(UINT n_type, int cx, int cy);
 	afx_msg void on_bn_clicked_ok();
 	afx_msg void on_cbn_sel_change_combo3();
 

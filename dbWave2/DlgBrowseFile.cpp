@@ -6,8 +6,8 @@
 #define new DEBUG_NEW
 #endif
 
-DlgBrowseFile::DlgBrowseFile(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgBrowseFile::DlgBrowseFile(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 

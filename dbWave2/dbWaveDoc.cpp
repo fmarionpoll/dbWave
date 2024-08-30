@@ -663,7 +663,7 @@ void CdbWaveDoc::export_data_ascii_comments(CSharedFile * p_shared_file)
 	DlgProgress dlg;
 	dlg.Create();
 	int i_step = 0;
-	dlg.SetStep(1);
+	dlg.set_step(1);
 	CString cs_comment;
 	CString cs_file_comment = _T("Analyze file: ");
 	CString cs_dummy;
@@ -686,11 +686,11 @@ void CdbWaveDoc::export_data_ascii_comments(CSharedFile * p_shared_file)
 		p_shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 
 		// check if user wants to stop
-		if (dlg.CheckCancelButton())
+		if (dlg.check_cancel_button())
 			if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 				break;
 		cs_comment.Format(_T("Processing file [%i / %i] %s"), i_file + 1, n_files, (LPCTSTR)current_datafile_name_);
-		dlg.SetStatus(cs_comment);
+		dlg.set_status(cs_comment);
 
 		cs_dummy.Empty();
 		if (open_current_data_file() != nullptr)
@@ -707,7 +707,7 @@ void CdbWaveDoc::export_data_ascii_comments(CSharedFile * p_shared_file)
 
 		if (MulDiv(i_file, 100, n_files) > i_step)
 		{
-			dlg.StepIt();
+			dlg.step_it();
 			i_step = MulDiv(i_file, 100, n_files);
 		}
 	}
@@ -761,13 +761,13 @@ BOOL CdbWaveDoc::copy_files_to_directory(const CString & path)
 	DlgProgress dlg;
 	dlg.Create();
 	auto i_step = 0;
-	dlg.SetStep(1);
+	dlg.set_step(1);
 	CString cs_comment;
 	CString cs_file_comment = _T("Copy files");
 	CString cs_dummy;
 
 	// read all data paths and create new array --------------------------
-	dlg.SetStatus(_T("Create destination directories..."));
+	dlg.set_status(_T("Create destination directories..."));
 	CStringArray cs_source_path_array;
 	CStringArray cs_dest_path_array;
 	CUIntArray ui_id_array;
@@ -841,7 +841,7 @@ BOOL CdbWaveDoc::copy_files_to_directory(const CString & path)
 	}
 
 	// copy database into new database ------------------------------------
-	dlg.SetStatus(_T("Copy database ..."));
+	dlg.set_status(_T("Copy database ..."));
 	auto old_database = GetPathName();
 	const auto i_count = old_database.ReverseFind(_T('\\')) + 1;
 	auto new_path = path;
@@ -873,7 +873,7 @@ BOOL CdbWaveDoc::copy_files_to_directory(const CString & path)
 	}
 
 	// read fileList & copy records into target tableSet
-	dlg.SetStatus(_T("Build a list of files to copy..."));
+	dlg.set_status(_T("Build a list of files to copy..."));
 
 	CStringArray old_names_array;
 	CStringArray new_names_array;
@@ -921,7 +921,7 @@ BOOL CdbWaveDoc::copy_files_to_directory(const CString & path)
 	}
 
 	// replace the destination paths
-	dlg.SetStatus(_T("Update directories in the destination database..."));
+	dlg.set_status(_T("Update directories in the destination database..."));
 
 	// change paths
 	try
@@ -964,13 +964,13 @@ BOOL CdbWaveDoc::copy_files_to_directory(const CString & path)
 	for (auto i_file = 0; i_file < n_files; i_file++)
 	{
 		// set message for dialog box and check if user wants to stop
-		if (dlg.CheckCancelButton())
+		if (dlg.check_cancel_button())
 			if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 				break;
 		// get source name
 		const auto& source_file = old_names_array.GetAt(i_file);
 		cs_comment.Format(_T("Processing file [%i / %i] %s"), i_file + 1, n_files, (LPCTSTR)source_file);
-		dlg.SetStatus(cs_comment);
+		dlg.set_status(cs_comment);
 
 		// get destination directory
 		const int i_path = static_cast<int>(ui_id_new_path_array.GetAt(i_file));
@@ -986,7 +986,7 @@ BOOL CdbWaveDoc::copy_files_to_directory(const CString & path)
 			// update count
 			if (MulDiv(i_file, 100, n_files) > i_step)
 			{
-				dlg.StepIt();
+				dlg.step_it();
 					i_step = MulDiv(i_file, 100, n_files);
 			}
 		}
@@ -1301,14 +1301,14 @@ void CdbWaveDoc::import_file_list(CStringArray& cs_descriptors_array, const int 
 	// ---------------------------------------------file loop: read infos --------------------------------
 	DlgProgress dlg;
 	dlg.Create();
-	dlg.SetStep(1);
-	dlg.SetPos(0);
-	dlg.SetRange(0, n_files_ok);
+	dlg.set_step(1);
+	dlg.set_pos(0);
+	dlg.set_range(0, n_files_ok);
 
 	for (auto i_record = 0; i_record < n_files_ok; i_record++)
 	{
 		// check if user wants to stop and update progression bar
-		if (dlg.CheckCancelButton())
+		if (dlg.check_cancel_button())
 			if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 				break;
 		// get file name
@@ -1316,8 +1316,8 @@ void CdbWaveDoc::import_file_list(CStringArray& cs_descriptors_array, const int 
 		auto cs_filename = CString(cs_descriptors_array[index]);
 		CString cs_comment;
 		cs_comment.Format(_T("Import file [%i / %i] %s"), i_record + 1, n_files_ok, (LPCTSTR)cs_filename);
-		dlg.SetStatus(cs_comment);
-		dlg.StepIt();
+		dlg.set_status(cs_comment);
+		dlg.step_it();
 
 		if (!import_file_single(cs_filename, m_id, i_record, cs_descriptors_array, n_columns, b_header))
 			shared_file = file_discarded_message(shared_file, cs_filename, i_record);
@@ -1616,7 +1616,7 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 	// prepare progress dialog box
 	DlgProgress dlg;
 	dlg.Create();
-	dlg.SetStep(1);
+	dlg.set_step(1);
 	auto i_step = 0;
 	CString cs_comment;
 	const auto n_files = db_get_records_count();
@@ -1624,17 +1624,17 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 
 	// got to the first pRecord
 	db_table->m_main_table_set.MoveFirst();
-	dlg.SetPos(0);
+	dlg.set_pos(0);
 
 	while (!db_table->m_main_table_set.IsEOF())
 	{
 		db_table->get_current_record_file_names();
 		// check if user wants to stop
-		if (dlg.CheckCancelButton())
+		if (dlg.check_cancel_button())
 			if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 				break;
 		cs_comment.Format(_T("Processing file [%i / %i]"), i_file, n_files);
-		dlg.SetStatus(cs_comment);
+		dlg.set_status(cs_comment);
 
 		CWaveFormat* p_wave_format;
 		// process data file
@@ -1663,7 +1663,7 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 		i_file++;
 		if (MulDiv(i_file, 100, n_files) > i_step)
 		{
-			dlg.StepIt();
+			dlg.step_it();
 			i_step = MulDiv(i_file, 100, n_files);
 		}
 	}
@@ -1832,7 +1832,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 {
 	DlgProgress dlg;
 	dlg.Create();
-	dlg.SetStep(1);
+	dlg.set_step(1);
 	CString file_comment = _T("Analyze file: ");
 
 	// save current selection and export header of the table
@@ -1918,11 +1918,11 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 		for (auto i_file = 0; i_file < n_files; i_file++)
 		{
 			// check if user wants to stop
-			if (dlg.CheckCancelButton())
+			if (dlg.check_cancel_button())
 				if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 					break;
 			cs_comment.Format(_T("Processing file [%i / %i]"), i_file + 1, n_files);
-			dlg.SetStatus(cs_comment);
+			dlg.set_status(cs_comment);
 
 			// open document
 			const BOOL flag0 = db_set_current_record_position(i_file);
@@ -1988,7 +1988,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 			// update progress bar
 			if (MulDiv(i_file, 100, n_files) > i_step)
 			{
-				dlg.StepIt();
+				dlg.step_it();
 				i_step = MulDiv(i_file, 100, n_files);
 			}
 		}
@@ -2189,8 +2189,8 @@ int CdbWaveDoc::check_files_can_be_opened(CStringArray & file_names_array, CShar
 	const int n_files = get_size_2d_array(file_names_array, n_columns, b_header);
 	DlgProgress dlg;
 	dlg.Create();
-	dlg.SetStep(1);
-	dlg.SetRange(0, n_files);
+	dlg.set_step(1);
+	dlg.set_range(0, n_files);
 
 	for (auto record_item = n_files - 1; record_item >= 0; record_item--)
 	{
@@ -2204,8 +2204,8 @@ int CdbWaveDoc::check_files_can_be_opened(CStringArray & file_names_array, CShar
 
 		CString comment;
 		comment.Format(_T("Checking file type and status on disk [%i / %i] %s"), n_files - record_item, n_files, (LPCTSTR)cs_filename);
-		dlg.SetStatus(comment);
-		dlg.StepIt();
+		dlg.set_status(comment);
+		dlg.step_it();
 
 		// check if file of correct type
 		CString cs_ext;
@@ -2374,8 +2374,8 @@ void CdbWaveDoc::remove_duplicate_files()
 	dlg.SetWindowText(_T("Scan database to discard duplicate (or missing) data files..."));
 
 	const int n_files = db_get_records_count();
-	dlg.SetRange(0, n_files);
-	dlg.SetStep(1);
+	dlg.set_range(0, n_files);
+	dlg.set_step(1);
 
 	CStringArray deleted_dat_names;
 	CStringArray deleted_spk_names;
@@ -2394,7 +2394,7 @@ void CdbWaveDoc::remove_duplicate_files()
 		return;
 
 	// scan database to collect all file names
-	dlg.SetStatus(_T("Collect names from database and read data acquisition times..."));
+	dlg.set_status(_T("Collect names from database and read data acquisition times..."));
 
 	auto nb_records_to_suppress = 0;
 
@@ -2413,8 +2413,8 @@ void CdbWaveDoc::remove_duplicate_files()
 			// process file
 			CString comment;
 			comment.Format(_T("Processing file [%i / %i] %s"), index_valid_records, n_files, (LPCTSTR)current_datafile_name_);
-			dlg.SetStatus(comment);
-			if (dlg.CheckCancelButton())
+			dlg.set_status(comment);
+			if (dlg.check_cancel_button())
 				if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 					break;
 
@@ -2461,7 +2461,7 @@ void CdbWaveDoc::remove_duplicate_files()
 			// move to next pRecord & update dialog box
 			db_table->m_main_table_set.MoveNext();
 			index_file++;
-			dlg.StepIt();
+			dlg.step_it();
 		}
 		db_table->m_main_table_set.MoveFirst();
 	}
@@ -2546,7 +2546,7 @@ void CdbWaveDoc::remove_missing_files() const
 {
 	DlgProgress dlg;
 	dlg.Create();
-	dlg.SetStep(1);
+	dlg.set_step(1);
 	CString file_comment = _T("Checking database consistency - find and remove missing files: ");
 
 	const int n_files = db_get_records_count();
@@ -2574,13 +2574,13 @@ void CdbWaveDoc::remove_missing_files() const
 		while (!db_table->m_main_table_set.IsEOF())
 		{
 			cs_dummy.Format(_T("%i\t"), i_file);
-			if (dlg.CheckCancelButton())
+			if (dlg.check_cancel_button())
 				if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 					break;
 
 			db_table->get_current_record_file_names();
 			cs_comment.Format(_T("Processing file [%i / %i] %s"), i_file, n_files, (LPCTSTR)current_datafile_name_);
-			dlg.SetStatus(cs_comment);
+			dlg.set_status(cs_comment);
 
 			const auto b_dat_file = CFile::GetStatus(current_datafile_name_, status);
 			const auto b_spk_file = CFile::GetStatus(current_spike_file_name_, status);
@@ -2592,7 +2592,7 @@ void CdbWaveDoc::remove_missing_files() const
 			i_file++;
 			if (MulDiv(i_file, 100, n_files) > i_step)
 			{
-				dlg.StepIt();
+				dlg.step_it();
 				i_step = MulDiv(i_file, 100, n_files);
 			}
 		}
@@ -2610,7 +2610,7 @@ void CdbWaveDoc::remove_false_spk_files() const
 {
 	DlgProgress dlg;
 	dlg.Create();
-	dlg.SetStep(1);
+	dlg.set_step(1);
 	CString file_comment = _T("Checking database consistency - find and remove missing files: ");
 
 	const int n_files = db_get_records_count();
@@ -2641,12 +2641,12 @@ void CdbWaveDoc::remove_false_spk_files() const
 		{
 			cs_dummy.Format(_T("%i\t"), i_file);
 			// check if user wants to stop
-			if (dlg.CheckCancelButton())
+			if (dlg.check_cancel_button())
 				if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 					break;
 			db_table->get_current_record_file_names();
 			cs_comment.Format(_T("Processing file [%i / %i] %s"), i_file, n_files, (LPCTSTR)current_datafile_name_);
-			dlg.SetStatus(cs_comment);
+			dlg.set_status(cs_comment);
 
 			// check if spike file is present
 			auto cs_spike_file_name = current_datafile_name_.Left(current_datafile_name_.ReverseFind('.') + 1) + _T("spk");
@@ -2674,7 +2674,7 @@ void CdbWaveDoc::remove_false_spk_files() const
 			i_file++;
 			if (MulDiv(i_file, 100, n_files) > i_step)
 			{
-				dlg.StepIt();
+				dlg.step_it();
 				i_step = MulDiv(i_file, 100, n_files);
 			}
 		}
@@ -2725,22 +2725,22 @@ void CdbWaveDoc::export_datafiles_as_text_files()
 	CString cs_comment;
 	const auto n_database_records = db_get_records_count();
 	auto i_file = 1;
-	dlg.SetRange(0, n_database_records);
+	dlg.set_range(0, n_database_records);
 	CString cs_filename;
 
 	// got to the first pRecord
 	db_table->m_main_table_set.MoveFirst();
-	dlg.SetPos(0);
+	dlg.set_pos(0);
 
 	while (!db_table->m_main_table_set.IsEOF())
 	{
 		db_table->get_current_record_file_names();
 		// check if user wants to stop
-		if (dlg.CheckCancelButton())
+		if (dlg.check_cancel_button())
 			if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 				break;
 		cs_comment.Format(_T("Processing file [%i / %i]"), i_file, n_database_records);
-		dlg.SetStatus(cs_comment);
+		dlg.set_status(cs_comment);
 
 		// process data file
 		if (!current_datafile_name_.IsEmpty())
@@ -2770,7 +2770,7 @@ void CdbWaveDoc::export_datafiles_as_text_files()
 		// move to next pRecord
 		db_table->m_main_table_set.MoveNext();
 		i_file++;
-		dlg.SetPos(i_file);
+		dlg.set_pos(i_file);
 	}
 	db_table->m_main_table_set.MoveFirst();
 	db_table->get_current_record_file_names();

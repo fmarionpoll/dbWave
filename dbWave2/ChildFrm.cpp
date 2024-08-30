@@ -172,7 +172,7 @@ void CChildFrame::on_options_print_margins()
 {
 	DlgPrintMargins dlg;
 	const auto p_source = &(static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data);
-	dlg.mdPM = p_source;
+	dlg.options_view_data = p_source;
 	dlg.DoModal();
 }
 
@@ -184,8 +184,8 @@ void CChildFrame::on_options_load_save_options()
 		const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 		const auto p_param_files = &(p_app->m_cs_parameter_files);
 		p_param_files->RemoveAll();
-		for (auto i = 0; i < dlg.pFiles.GetSize(); i++)
-			p_param_files->Add(dlg.pFiles.GetAt(i));
+		for (auto i = 0; i < dlg.p_files.GetSize(); i++)
+			p_param_files->Add(dlg.p_files.GetAt(i));
 	}
 }
 
@@ -206,7 +206,7 @@ void CChildFrame::on_tools_export_number_of_spikes()
 {
 	DlgExportSpikeInfos dlg;
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	dlg.m_pvdS = &p_app->options_view_spikes;
+	dlg.options_view_spikes = &p_app->options_view_spikes;
 	if (IDOK == dlg.DoModal())
 	{
 		UpdateWindow();
@@ -514,9 +514,9 @@ void CChildFrame::on_tools_restore_deleted_files()
 	// scan directories and rename files *.datdel into *.dat and *.spkdel into *.spk
 	CStringArray file_names;
 	DlgFindFiles dlg;
-	dlg.m_pfilenames = &file_names;
-	dlg.m_selinit = 0;
-	dlg.m_ioption = 1;
+	dlg.m_p_file_names = &file_names;
+	dlg.m_sel_init = 0;
+	dlg.m_i_option = 1;
 	CdbWaveDoc* p_db_wave_doc = CdbWaveDoc::get_active_mdi_document();
 	if (p_db_wave_doc == nullptr)
 		return;
@@ -529,7 +529,7 @@ void CChildFrame::on_tools_restore_deleted_files()
 	{
 		DlgProgress dlg_progress;
 		dlg_progress.Create();
-		dlg_progress.SetStep(1);
+		dlg_progress.set_step(1);
 		auto i_step = 0;
 		CString cs_comment;
 
@@ -540,10 +540,10 @@ void CChildFrame::on_tools_restore_deleted_files()
 			auto cs_new_name = cs_old_name.Left(cs_old_name.GetLength() - 3);
 			cs_comment.Format(_T("Rename file [%i / %i] "), i + 1, n_files);
 			cs_comment += cs_old_name;
-			dlg_progress.SetStatus(cs_comment);
+			dlg_progress.set_status(cs_comment);
 			if (MulDiv(i, 100, n_files) > i_step)
 			{
-				dlg_progress.StepIt();
+				dlg_progress.step_it();
 				i_step = MulDiv(i, 100, n_files);
 			}
 			CFile::Rename(cs_old_name, cs_new_name);
@@ -582,12 +582,12 @@ void CChildFrame::on_tools_remove_artefact_files()
 	short jitter = 4;
 	BOOL flag_rejected_file_as;
 
-	dlg1.m_bconsecutivepoints = TRUE;
-	dlg1.m_Nconsecutivepoints = n_consecutive_points;
+	dlg1.m_b_consecutive_points = TRUE;
+	dlg1.m_n_consecutive_points = n_consecutive_points;
 	dlg1.m_jitter = jitter;
 	if (IDOK == dlg1.DoModal())
 	{
-		n_consecutive_points = dlg1.m_Nconsecutivepoints;
+		n_consecutive_points = dlg1.m_n_consecutive_points;
 		jitter = static_cast<short>(dlg1.m_jitter);
 		flag_rejected_file_as = dlg1.m_flag;
 	}
@@ -597,7 +597,7 @@ void CChildFrame::on_tools_remove_artefact_files()
 	// search
 	DlgProgress dlg;
 	dlg.Create();
-	dlg.SetStep(1);
+	dlg.set_step(1);
 	auto i_step = 0;
 	CString cs_comment;
 	CdbWaveDoc* p_db_wave_doc = CdbWaveDoc::get_active_mdi_document();
@@ -608,13 +608,13 @@ void CChildFrame::on_tools_remove_artefact_files()
 	for (int i_file = 0; i_file < n_files; i_file++)
 	{
 		// check if user wants to stop
-		if (dlg.CheckCancelButton())
+		if (dlg.check_cancel_button())
 			if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 				break;
 
 		cs_comment.Format(_T("Processing file [%i / %i] "), i_file + 1, n_files);
 		cs_comment += p_db_wave_doc->db_get_current_dat_file_name();
-		dlg.SetStatus(cs_comment);
+		dlg.set_status(cs_comment);
 
 		// load file
 
@@ -671,7 +671,7 @@ void CChildFrame::on_tools_remove_artefact_files()
 		// update interface
 		if (MulDiv(i_file, 100, n_files) > i_step)
 		{
-			dlg.StepIt();
+			dlg.step_it();
 			i_step = MulDiv(i_file, 100, n_files);
 		}
 	}
@@ -685,18 +685,18 @@ void CChildFrame::on_record_goto()
 	CdbWaveDoc* p_db_wave_doc = CdbWaveDoc::get_active_mdi_document();
 	if (p_db_wave_doc == nullptr)
 		return;
-	dlg.m_recordPos = p_db_wave_doc->db_get_current_record_position();
-	dlg.m_recordID = p_db_wave_doc->db_get_current_record_id();
-	dlg.m_bGotoRecordID = static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.b_goto_record_id;
+	dlg.m_record_pos = p_db_wave_doc->db_get_current_record_position();
+	dlg.m_record_id = p_db_wave_doc->db_get_current_record_id();
+	dlg.m_b_goto_record_id = static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.b_goto_record_id;
 
 	if (IDOK == dlg.DoModal())
 	{
-		static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.b_goto_record_id = dlg.m_bGotoRecordID;
+		static_cast<CdbWaveApp*>(AfxGetApp())->options_view_data.b_goto_record_id = dlg.m_b_goto_record_id;
 		BOOL bSuccess = FALSE;
-		if (!dlg.m_bGotoRecordID)
-			bSuccess = p_db_wave_doc->db_set_current_record_position(dlg.m_recordPos);
+		if (!dlg.m_b_goto_record_id)
+			bSuccess = p_db_wave_doc->db_set_current_record_position(dlg.m_record_pos);
 		else
-			bSuccess = p_db_wave_doc->db_move_to_id(dlg.m_recordID);
+			bSuccess = p_db_wave_doc->db_move_to_id(dlg.m_record_id);
 		if (bSuccess)
 			p_db_wave_doc->UpdateAllViews(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 	}
@@ -706,8 +706,8 @@ void CChildFrame::on_tools_import_files(int i_filter)
 {
 	DlgFindFiles dlg;
 	CStringArray file_names;
-	dlg.m_pfilenames = &file_names;
-	dlg.m_selinit = i_filter;
+	dlg.m_p_file_names = &file_names;
+	dlg.m_sel_init = i_filter;
 	CdbWaveDoc* p_db_wave_doc = CdbWaveDoc::get_active_mdi_document();
 	if (p_db_wave_doc == nullptr)
 		return;
@@ -728,8 +728,8 @@ void CChildFrame::on_tools_import_atl_files()
 {
 	DlgFindFiles dlg;
 	CStringArray file_names;
-	dlg.m_pfilenames = &file_names;
-	dlg.m_selinit = 6;
+	dlg.m_p_file_names = &file_names;
+	dlg.m_sel_init = 6;
 	CdbWaveDoc* p_db_wave_doc = CdbWaveDoc::get_active_mdi_document();
 	if (p_db_wave_doc == nullptr)
 		return;
@@ -739,14 +739,14 @@ void CChildFrame::on_tools_import_atl_files()
 	{
 		DlgImportFiles dlg2;
 		CStringArray converted_files;
-		dlg2.m_pconvertedFiles = &converted_files;
-		dlg2.m_pfilenameArray = &file_names;
+		dlg2.m_p_converted_files = &converted_files;
+		dlg2.m_p_file_name_array = &file_names;
 		dlg2.m_option = ATFFILE;
 		CdbWaveDoc* p_db_wave_doc1 = CdbWaveDoc::get_active_mdi_document();
 		if (p_db_wave_doc1 == nullptr)
 			return;
 
-		dlg2.m_pdbDoc = p_db_wave_doc1;
+		dlg2.m_pdb_doc = p_db_wave_doc1;
 		if (IDOK == dlg2.DoModal())
 		{
 			CdbWaveDoc* p_db_wave_doc2 = CdbWaveDoc::get_active_mdi_document();
@@ -778,13 +778,13 @@ void CChildFrame::on_record_delete()
 	{
 		b_delete = FALSE;
 		DlgDeleteRecordOptions dlg;
-		dlg.m_bDeleteFile = m_b_delete_file_;
-		dlg.m_bKeepChoice = m_b_keep_choice_;
+		dlg.m_b_delete_file = m_b_delete_file_;
+		dlg.m_b_keep_choice = m_b_keep_choice_;
 
 		if (IDOK == dlg.DoModal())
 		{
-			m_b_delete_file_ = dlg.m_bDeleteFile;
-			m_b_keep_choice_ = dlg.m_bKeepChoice;
+			m_b_delete_file_ = dlg.m_b_delete_file;
+			m_b_keep_choice_ = dlg.m_b_keep_choice;
 			b_delete = TRUE;
 		}
 	}
@@ -1065,7 +1065,7 @@ void CChildFrame::on_tools_export_data_file()
 	CdbWaveDoc* p_dbWave_doc = CdbWaveDoc::get_active_mdi_document();
 	if (p_dbWave_doc == nullptr)
 		return;
-	dlg.m_dbDoc = p_dbWave_doc;
+	dlg.m_db_doc = p_dbWave_doc;
 	dlg.DoModal();
 }
 

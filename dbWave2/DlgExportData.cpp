@@ -14,55 +14,55 @@
 #define EXPORT_TEXT		2
 #define EXPORT_EXCEL	3
 
-DlgExportData::DlgExportData(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgExportData::DlgExportData(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
 void DlgExportData::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_EXPORTAS, m_ComboExportas);
-	DDX_Control(pDX, IDC_SOURCEFILES, m_filedroplist);
-	DDX_Text(pDX, IDC_TIMEFIRST, m_timefirst);
-	DDX_Text(pDX, IDC_TIMELAST, m_timelast);
-	DDX_Text(pDX, IDC_CHANNELNUMBER, m_channelnumber);
-	DDX_Text(pDX, IDC_RATIO, m_iundersample);
-	DDV_MinMaxInt(pDX, m_iundersample, 1, 20000);
+	DDX_Control(pDX, IDC_EXPORTAS, m_combo_export_as);
+	DDX_Control(pDX, IDC_SOURCEFILES, m_file_drop_list);
+	DDX_Text(pDX, IDC_TIMEFIRST, m_time_first);
+	DDX_Text(pDX, IDC_TIMELAST, m_time_last);
+	DDX_Text(pDX, IDC_CHANNELNUMBER, m_channel_number);
+	DDX_Text(pDX, IDC_RATIO, m_i_under_sample);
+	DDV_MinMaxInt(pDX, m_i_under_sample, 1, 20000);
 }
 
 BEGIN_MESSAGE_MAP(DlgExportData, CDialog)
-	ON_BN_CLICKED(IDC_SINGLECHANNEL, OnSinglechannel)
-	ON_BN_CLICKED(IDC_ALLCHANNELS, OnAllchannels)
-	ON_BN_CLICKED(IDC_ENTIREFILE, OnEntirefile)
-	ON_CBN_SELCHANGE(IDC_EXPORTAS, OnSelchangeExportas)
-	ON_BN_CLICKED(IDC_EXPORT, OnExport)
-	ON_BN_CLICKED(IDC_EXPORTALL, OnExportall)
+	ON_BN_CLICKED(IDC_SINGLECHANNEL, on_single_channel)
+	ON_BN_CLICKED(IDC_ALLCHANNELS, on_all_channels)
+	ON_BN_CLICKED(IDC_ENTIREFILE, on_entire_file)
+	ON_CBN_SELCHANGE(IDC_EXPORTAS, on_sel_change_export_as)
+	ON_BN_CLICKED(IDC_EXPORT, on_export)
+	ON_BN_CLICKED(IDC_EXPORTALL, on_export_all)
 END_MESSAGE_MAP()
 
-void DlgExportData::UpdateStructFromControls()
+void DlgExportData::update_struct_from_controls()
 {
 	UpdateData(TRUE);
 
-	iivO.export_type = m_ComboExportas.GetCurSel();
-	iivO.all_channels = static_cast<CButton*>(GetDlgItem(IDC_ALLCHANNELS))->GetCheck();
-	iivO.separate_comments = static_cast<CButton*>(GetDlgItem(IDC_SAVECOMMENTS))->GetCheck();
-	iivO.entire_file = static_cast<CButton*>(GetDlgItem(IDC_ENTIREFILE))->GetCheck();
-	iivO.include_time = static_cast<CButton*>(GetDlgItem(IDC_BTIMESTEPS))->GetCheck();
-	iivO.selected_channel = m_channelnumber;
-	iivO.time_first = m_timefirst;
-	iivO.time_last = m_timelast;
+	iiv_o.export_type = m_combo_export_as.GetCurSel();
+	iiv_o.all_channels =static_cast<boolean>(static_cast<CButton*>(GetDlgItem(IDC_ALLCHANNELS))->GetCheck());
+	iiv_o.separate_comments = static_cast<boolean>(static_cast<CButton*>(GetDlgItem(IDC_SAVECOMMENTS))->GetCheck());
+	iiv_o.entire_file =static_cast<boolean>(static_cast<CButton*>(GetDlgItem(IDC_ENTIREFILE))->GetCheck());
+	iiv_o.include_time =  static_cast<boolean>(static_cast<CButton*>(GetDlgItem(IDC_BTIMESTEPS))->GetCheck());
+	iiv_o.selected_channel = m_channel_number;
+	iiv_o.time_first = m_time_first;
+	iiv_o.time_last = m_time_last;
 }
 
 BOOL DlgExportData::DestroyWindow()
 {
 	// restore initial conditions
-	if (m_icurrentfile >= 0)
+	if (m_i_current_file >= 0)
 	{
 		try
 		{
-			m_dbDoc->db_set_current_record_position(m_icurrentfile);
-			m_dbDoc->open_current_data_file();
+			m_db_doc->db_set_current_record_position(m_i_current_file);
+			m_db_doc->open_current_data_file();
 		}
 		catch (CDaoException* e)
 		{
@@ -78,71 +78,71 @@ BOOL DlgExportData::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// extra initialization
-	CdbWaveApp* p_app; // handle to the instance
-	p_app = static_cast<CdbWaveApp*>(AfxGetApp()); // pointer to application
-	iivO = p_app->options_import; // copy structure / options
+	// handle to the instance
+	const CdbWaveApp* p_app = static_cast<CdbWaveApp*>(AfxGetApp()); // pointer to application
+	iiv_o = p_app->options_import; // copy structure / options
 
 	// update dependent controls
-	m_ComboExportas.SetCurSel(iivO.export_type); // combo-box
-	if (iivO.export_type != 0) // hide if not sapid
+	m_combo_export_as.SetCurSel(iiv_o.export_type); // combo-box
+	if (iiv_o.export_type != 0) // hide if not sapid
 	{
 		GetDlgItem(IDC_SAVECOMMENTS)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_BTIMESTEPS)->ShowWindow(SW_SHOW);
 	}
-	static_cast<CButton*>(GetDlgItem(IDC_SAVECOMMENTS))->SetCheck(iivO.separate_comments);
-	static_cast<CButton*>(GetDlgItem(IDC_BTIMESTEPS))->SetCheck(iivO.include_time);
+	static_cast<CButton*>(GetDlgItem(IDC_SAVECOMMENTS))->SetCheck(iiv_o.separate_comments);
+	static_cast<CButton*>(GetDlgItem(IDC_BTIMESTEPS))->SetCheck(iiv_o.include_time);
 
-	static_cast<CButton*>(GetDlgItem(IDC_ENTIREFILE))->SetCheck(iivO.entire_file);
-	GetDlgItem(IDC_TIMEFIRST)->EnableWindow(!iivO.entire_file);
-	GetDlgItem(IDC_TIMELAST)->EnableWindow(!iivO.entire_file);
+	static_cast<CButton*>(GetDlgItem(IDC_ENTIREFILE))->SetCheck(iiv_o.entire_file);
+	GetDlgItem(IDC_TIMEFIRST)->EnableWindow(!iiv_o.entire_file);
+	GetDlgItem(IDC_TIMELAST)->EnableWindow(!iiv_o.entire_file);
 
-	if (m_dbDoc->m_p_data_doc->get_vt_tags_list()->get_tag_list_size() < 1)
+	if (m_db_doc->m_p_data_doc->get_vt_tags_list()->get_tag_list_size() < 1)
 	{
-		m_timefirst = iivO.time_first;
-		m_timelast = iivO.time_last;
+		m_time_first = iiv_o.time_first;
+		m_time_last = iiv_o.time_last;
 	}
 	else
 	{
-		AcqDataDoc* pDat = m_dbDoc->m_p_data_doc;
-		m_timefirst = static_cast<float>(pDat->get_vt_tags_list()->get_tag_value_long(0));
+		AcqDataDoc* pDat = m_db_doc->m_p_data_doc;
+		m_time_first = static_cast<float>(pDat->get_vt_tags_list()->get_tag_value_long(0));
 		if (pDat->get_vt_tags_list()->get_tag_list_size() > 1)
-			m_timelast = static_cast<float>(pDat->get_vt_tags_list()->get_tag_value_long(1));
+			m_time_last = static_cast<float>(pDat->get_vt_tags_list()->get_tag_value_long(1));
 		else
-			m_timelast = static_cast<float>(pDat->get_doc_channel_length());
-		float chrate = pDat->get_wave_format()->sampling_rate_per_channel;
-		m_timefirst /= chrate;
-		m_timelast /= chrate;
+			m_time_last = static_cast<float>(pDat->get_doc_channel_length());
+		const float ch_rate = pDat->get_wave_format()->sampling_rate_per_channel;
+		m_time_first /= ch_rate;
+		m_time_last /= ch_rate;
 	}
 
-	static_cast<CButton*>(GetDlgItem(IDC_ALLCHANNELS))->SetCheck(iivO.all_channels);
-	static_cast<CButton*>(GetDlgItem(IDC_SINGLECHANNEL))->SetCheck(!iivO.all_channels);
+	static_cast<CButton*>(GetDlgItem(IDC_ALLCHANNELS))->SetCheck(iiv_o.all_channels);
+	static_cast<CButton*>(GetDlgItem(IDC_SINGLECHANNEL))->SetCheck(!iiv_o.all_channels);
 
-	GetDlgItem(IDC_CHANNELNUMBER)->EnableWindow(!iivO.all_channels);
-	m_channelnumber = iivO.selected_channel; //  one channel
+	GetDlgItem(IDC_CHANNELNUMBER)->EnableWindow(!iiv_o.all_channels);
+	m_channel_number = iiv_o.selected_channel; //  one channel
 
 	// get filename(s) and select first in the list
-	m_icurrentfile = m_dbDoc->db_get_current_record_position();
-	if (m_bAllFiles)
+	m_i_current_file = m_db_doc->db_get_current_record_position();
+	if (m_b_all_files)
 	{
-		int nfiles = m_dbDoc->db_get_records_count();
-		for (int i = 0; i < nfiles; i++)
+		const int n_files = m_db_doc->db_get_records_count();
+		for (int i = 0; i < n_files; i++)
 		{
-			m_dbDoc->db_set_current_record_position(i);
-			CString filename = m_dbDoc->db_get_current_dat_file_name();
-			int icount = filename.GetLength() - filename.ReverseFind('\\') - 1;
-			m_filedroplist.AddString(filename.Right(icount));
-			m_filedroplist.SetItemData(i, i);
+			m_db_doc->db_set_current_record_position(i);
+			CString filename = m_db_doc->db_get_current_dat_file_name();
+			const int i_count = filename.GetLength() - filename.ReverseFind('\\') - 1;
+			m_file_drop_list.AddString(filename.Right(i_count));
+			m_file_drop_list.SetItemData(i, i);
 		}
-		m_dbDoc->db_set_current_record_position(m_icurrentfile);
-		m_filedroplist.SetCurSel(m_icurrentfile);
+		m_db_doc->db_set_current_record_position(m_i_current_file);
+		m_file_drop_list.SetCurSel(m_i_current_file);
 	}
 	else
 	{
-		CString filename = m_dbDoc->db_get_current_dat_file_name();
-		int icount = filename.GetLength() - filename.ReverseFind('\\') - 1;
-		int i = m_filedroplist.AddString(filename.Right(icount));
-		m_filedroplist.SetItemData(i, m_icurrentfile);
-		m_filedroplist.SetCurSel(0);
+		CString filename = m_db_doc->db_get_current_dat_file_name();
+		const int i_count = filename.GetLength() - filename.ReverseFind('\\') - 1;
+		int i = m_file_drop_list.AddString(filename.Right(i_count));
+		m_file_drop_list.SetItemData(i, m_i_current_file);
+		m_file_drop_list.SetCurSel(0);
 	}
 	UpdateData(FALSE);
 
@@ -152,331 +152,319 @@ BOOL DlgExportData::OnInitDialog()
 
 void DlgExportData::OnOK()
 {
-	UpdateStructFromControls();
-	// copy data into awave structure
-	CdbWaveApp* p_app; // handle to the instance
-	p_app = static_cast<CdbWaveApp*>(AfxGetApp()); // pointer to application
-	p_app->options_import = iivO; // copy structure / options
+	update_struct_from_controls();
+
+	// handle to the instance
+	auto p_app = static_cast<CdbWaveApp*>(AfxGetApp()); 
+	p_app->options_import = iiv_o; 
 
 	CDialog::OnOK();
 }
 
-void DlgExportData::OnSinglechannel()
+void DlgExportData::on_single_channel()
 {
-	iivO.all_channels = FALSE;
+	iiv_o.all_channels = FALSE;
 	GetDlgItem(IDC_CHANNELNUMBER)->EnableWindow(TRUE);
 }
 
-void DlgExportData::OnAllchannels()
+void DlgExportData::on_all_channels()
 {
-	iivO.all_channels = FALSE;
+	iiv_o.all_channels = FALSE;
 	GetDlgItem(IDC_CHANNELNUMBER)->EnableWindow(FALSE);
 }
 
-void DlgExportData::OnEntirefile()
+void DlgExportData::on_entire_file()
 {
-	iivO.entire_file = !iivO.entire_file;
-	GetDlgItem(IDC_TIMEFIRST)->EnableWindow(!iivO.entire_file);
-	GetDlgItem(IDC_TIMELAST)->EnableWindow(!iivO.entire_file);
+	iiv_o.entire_file = !iiv_o.entire_file;
+	GetDlgItem(IDC_TIMEFIRST)->EnableWindow(!iiv_o.entire_file);
+	GetDlgItem(IDC_TIMELAST)->EnableWindow(!iiv_o.entire_file);
 }
 
-void DlgExportData::OnSelchangeExportas()
+void DlgExportData::on_sel_change_export_as()
 {
-	UpdateData(TRUE); // convert result
-	iivO.export_type = m_ComboExportas.GetCurSel();
-	int bShow = SW_HIDE;
-	if (iivO.export_type == 0)
-		bShow = SW_SHOW;
-	GetDlgItem(IDC_SAVECOMMENTS)->ShowWindow(bShow);
-	GetDlgItem(IDC_BTIMESTEPS)->ShowWindow(!bShow);
+	UpdateData(TRUE); 
+	iiv_o.export_type =static_cast<WORD>(m_combo_export_as.GetCurSel());
+	int b_show = SW_HIDE;
+	if (iiv_o.export_type == 0)
+		b_show = SW_SHOW;
+	GetDlgItem(IDC_SAVECOMMENTS)->ShowWindow(b_show);
+	GetDlgItem(IDC_BTIMESTEPS)->ShowWindow(!b_show);
 }
 
-//////////////////////////////////////////////////////////////
-// export files
-
-void DlgExportData::OnExportall()
+void DlgExportData::on_export_all()
 {
-	int nbitems = m_filedroplist.GetCount();
+	const int nb_items = m_file_drop_list.GetCount();
 	CWaitCursor wait;
 
-	for (int i = 0; i < nbitems; i++)
+	for (int i = 0; i < nb_items; i++)
 	{
-		m_filedroplist.SetCurSel(i);
+		m_file_drop_list.SetCurSel(i);
 		UpdateData(FALSE);
-		m_filedroplist.UpdateWindow();
-		OnExport();
+		m_file_drop_list.UpdateWindow();
+		on_export();
 	}
 
-	CString csdummy = _T("Done: \nAll file were exported");
-	MessageBox(csdummy, _T("Export file"));
+	const CString cs_dummy = _T("Done: \nAll file were exported");
+	MessageBox(cs_dummy, _T("Export file"));
 }
 
-void DlgExportData::OnExport()
+void DlgExportData::on_export()
 {
 	Export();
-	/*CString csdummy = "Done: \nFile exported as \n";
-	csdummy += m_filedest;
-	MessageBoxA(csdummy,"Export file");*/
 }
 
 void DlgExportData::Export()
 {
-	UpdateStructFromControls();
+	update_struct_from_controls();
 
 	// extract source file name and build destination file name
-	int cursel = m_filedroplist.GetCurSel(); // get file name index
-	int index = m_filedroplist.GetItemData(cursel); // get multidoc corresp index
+	const int cur_sel = m_file_drop_list.GetCurSel(); 
+	const int index = static_cast<int>(m_file_drop_list.GetItemData(cur_sel)); 
+	m_db_doc->db_set_current_record_position(index);
+	m_db_doc->open_current_data_file();
+	m_file_source = m_db_doc->db_get_current_dat_file_name(); // now, extract path to source file
 
-	m_dbDoc->db_set_current_record_position(index);
-	m_dbDoc->open_current_data_file();
-	m_filesource = m_dbDoc->db_get_current_dat_file_name(); // now, extract path to source file
+	const int i_count1 = m_file_source.ReverseFind('\\') + 1; // and extract that chain of chars
+	const CString cs_path = m_file_source.Left(i_count1); // store it into cs_path
+	const int i_count2 = m_file_source.ReverseFind('.'); // extract file name
+	m_file_dest = m_file_source.Mid(i_count1, i_count2 - i_count1); // without file extension
 
-	int icount1 = m_filesource.ReverseFind('\\') + 1; // and extract that chain of chars
-	CString csPath = m_filesource.Left(icount1); // store it into csPath
-	int icount2 = m_filesource.ReverseFind('.'); // extract file name
-	m_filedest = m_filesource.Mid(icount1, icount2 - icount1); // without file extension
+	CString cs_description; // find file prefix and extension
+	m_combo_export_as.GetWindowText(cs_description); // within drop down list
+	int index1 = cs_description.Find('(') + 1; // first, get prefix
+	int index2 = cs_description.Find('*'); // that is between "(" and "*"
+	const CString csPrefix = cs_description.Mid(index1, index2 - index1);
+	index1 = cs_description.ReverseFind('.'); // then get new file extension
+	index2 = cs_description.ReverseFind(')');
+	const CString csExt = cs_description.Mid(index1, index2 - index1);
 
-	CString csDescript; // find file prefix and extension
-	m_ComboExportas.GetWindowText(csDescript); // within drop down list
-	int index1 = csDescript.Find('(') + 1; // first, get prefix
-	int index2 = csDescript.Find('*'); // that is between "(" and "*"
-	CString csPrefix = csDescript.Mid(index1, index2 - index1);
-	index1 = csDescript.ReverseFind('.'); // then get new file extension
-	index2 = csDescript.ReverseFind(')');
-	CString csExt = csDescript.Mid(index1, index2 - index1);
-
-	m_filedest = csPrefix + m_filedest + csExt; // lastly build, the new name
-	m_filedest = csPath + m_filedest; // and add path
+	m_file_dest = csPrefix + m_file_dest + csExt; // lastly build, the new name
+	m_file_dest = cs_path + m_file_dest; // and add path
 
 	// compute some parameters
-	m_pDat = m_dbDoc->m_p_data_doc; // pointer to data document
-	CWaveFormat* pwaveFormat = m_pDat->get_wave_format();
-	if (iivO.entire_file) // if all data, load
+	m_p_dat = m_db_doc->m_p_data_doc; // pointer to data document
+	const CWaveFormat* p_wave_format = m_p_dat->get_wave_format();
+	if (iiv_o.entire_file) // if all data, load
 	{
 		// intervals from data file
-		mm_timefirst = 0.f;
-		mm_timelast = pwaveFormat->duration;
-		mm_lFirst = 0;
-		mm_lLast = m_pDat->get_doc_channel_length();
+		mm_time_first = 0.f;
+		mm_time_last = p_wave_format->duration;
+		mm_l_first = 0;
+		mm_l_last = m_p_dat->get_doc_channel_length();
 	}
 	else // else, convert time into
 	{
 		// file indexes
-		mm_timefirst = m_timefirst;
-		mm_timelast = m_timelast;
-		if (mm_timelast < mm_timefirst)
-			mm_timelast = pwaveFormat->duration;
-		mm_lFirst = static_cast<long>(mm_timefirst * pwaveFormat->sampling_rate_per_channel);
-		mm_lLast = static_cast<long>(mm_timelast * pwaveFormat->sampling_rate_per_channel);
+		mm_time_first = m_time_first;
+		mm_time_last = m_time_last;
+		if (mm_time_last < mm_time_first)
+			mm_time_last = p_wave_format->duration;
+		mm_l_first = static_cast<long>(mm_time_first * p_wave_format->sampling_rate_per_channel);
+		mm_l_last = static_cast<long>(mm_time_last * p_wave_format->sampling_rate_per_channel);
 	}
 
-	mm_firstchan = 0; // loop through all chans
-	mm_lastchan = pwaveFormat->scan_count - 1; // or only one
-	if (!iivO.all_channels) // depending on this flag
+	mm_first_chan = 0; // loop through all chans
+	mm_last_chan = p_wave_format->scan_count - 1; // or only one
+	if (!iiv_o.all_channels) // depending on this flag
 	{
-		mm_firstchan = iivO.selected_channel; // flag set: change limits
-		mm_lastchan = mm_firstchan;
+		mm_first_chan = iiv_o.selected_channel; // flag set: change limits
+		mm_last_chan = mm_first_chan;
 	}
 
-	mm_binzero = 0;
+	mm_bin_zero = 0;
 
 	// now that filenames are built, export the files
-	switch (m_ComboExportas.GetCurSel())
+	switch (m_combo_export_as.GetCurSel())
 	{
 	case 0:
-		ExportDataAsdbWaveFile();
+		export_data_as_db_wave_file();
 		break;
 	case 1: // sapid file
-		ExportDataAsSapidFile();
+		export_data_as_sapid_file();
 		break;
 	case 2: // txt file
-		ExportDataAsTextFile();
+		export_data_as_text_file();
 		break;
 	case 3: // excel file
-		ExportDataAsExcelFile();
+		export_data_as_excel_file();
 		break;
 	default:
 		break;
 	}
 
 	// delete current file and select next (eventually; if not possible, exit)
-	m_filedroplist.DeleteString(cursel); // remove file name
-	if (m_filedroplist.GetCount() > 0)
-		m_filedroplist.SetCurSel(0); // select next file
+	m_file_drop_list.DeleteString(cur_sel); 
+	if (m_file_drop_list.GetCount() > 0)
+		m_file_drop_list.SetCurSel(0); 
 	else
 		OnOK(); // exit dialog box
 }
 
 // export data into a text file
 
-BOOL DlgExportData::ExportDataAsTextFile()
+BOOL DlgExportData::export_data_as_text_file()
 {
 	// open destination file
-	CStdioFile dataDest; // destination file object
-	CFileException fe; // trap exceptions
-	if (!dataDest.Open(m_filedest, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone | CFile::typeText,
+	CStdioFile data_dest; 
+	CFileException fe;
+	if (!data_dest.Open(m_file_dest, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone | CFile::typeText,
 	                   &fe))
 	{
-		dataDest.Abort(); // file not found
-		return FALSE; // and return
+		data_dest.Abort(); 
+		return FALSE; 
 	}
 
-	///////////////////////////////////
-	// convert
-	CString csCharBuf;
+	CString cs_char_buf;
 	CString cs_dummy;
 
 	// LINE 1.......... data file name
 	// LINE 2.......... date
 	// LINE 3.......... file comment
 
-	csCharBuf.Format(_T("file :\t%s\r\n"), (LPCTSTR)m_filesource);
-	CWaveChanArray* pChanArray = m_pDat->get_wave_channels_array();
-	CWaveFormat* pwaveFormat = m_pDat->get_wave_format();
+	cs_char_buf.Format(_T("file :\t%s\r\n"), (LPCTSTR)m_file_source);
+	const CWaveChanArray* p_chan_array = m_p_dat->get_wave_channels_array();
+	const CWaveFormat* p_wave_format = m_p_dat->get_wave_format();
 
-	CString csdate = (pwaveFormat->acquisition_time).Format("%#d %B %Y %X");
-	cs_dummy.Format(_T("date :\t%s\r\n"), (LPCTSTR)csdate);
-	csCharBuf += cs_dummy;
-	cs_dummy.Format(_T("comment :\t%s\r\n"), (LPCTSTR)pwaveFormat->get_comments(_T("\t")));
-	csCharBuf += cs_dummy;
-	dataDest.Write(csCharBuf, csCharBuf.GetLength() * sizeof(TCHAR)); // write data
-	csCharBuf.Empty();
+	const CString cs_date = (p_wave_format->acquisition_time).Format("%#d %B %Y %X");
+	cs_dummy.Format(_T("date :\t%s\r\n"), (LPCTSTR)cs_date);
+	cs_char_buf += cs_dummy;
+	cs_dummy.Format(_T("comment :\t%s\r\n"), (LPCTSTR)p_wave_format->get_comments(_T("\t")));
+	cs_char_buf += cs_dummy;
+	data_dest.Write(cs_char_buf, cs_char_buf.GetLength() * sizeof(TCHAR)); // write data
+	cs_char_buf.Empty();
 
 	// LINE 4.......... start (s)
 	// LINE 5.......... end   (s)
 
 	// first interval (sec)
-	csCharBuf.Format(_T("start (s):\t%f\r\nend   (s):\t%f\r\n"), mm_timefirst, mm_timelast);
-	dataDest.Write(csCharBuf, csCharBuf.GetLength() * sizeof(TCHAR)); // write data
-	csCharBuf.Empty();
+	cs_char_buf.Format(_T("start (s):\t%f\r\nend   (s):\t%f\r\n"), mm_time_first, mm_time_last);
+	data_dest.Write(cs_char_buf, cs_char_buf.GetLength() * sizeof(TCHAR)); 
+	cs_char_buf.Empty();
 
 	// LINE 6.......... Sampling rate (Hz)
 	// LINE 7.......... A/D channels:
 	// LINE 8.......... mV per bin for each channel
 
-	csCharBuf.Format(_T("Sampling rate (Hz):\t%f\r\n"), pwaveFormat->sampling_rate_per_channel);
-	cs_dummy.Format(_T("A/D channels :\r\n")); // header for chans
-	csCharBuf += cs_dummy;
+	cs_char_buf.Format(_T("Sampling rate (Hz):\t%f\r\n"), p_wave_format->sampling_rate_per_channel);
+	cs_dummy.Format(_T("A/D channels :\r\n")); 
+	cs_char_buf += cs_dummy;
 	cs_dummy.Format(_T("mV per bin:")); // line title
-	csCharBuf += cs_dummy;
+	cs_char_buf += cs_dummy;
 
 	int i;
-	for (i = mm_firstchan; i <= mm_lastchan; i++) // loop through all chans
+	for (i = mm_first_chan; i <= mm_last_chan; i++) 
 	{
-		float VoltsperBin; // declare float
-		m_pDat->get_volts_per_bin(i, &VoltsperBin, 0); // get value
-		cs_dummy.Format(_T("\t%f"), static_cast<double>(VoltsperBin) * 1000.f); // copy to buffer
-		csCharBuf += cs_dummy;
+		float volts_per_bin; 
+		m_p_dat->get_volts_per_bin(i, &volts_per_bin, 0); 
+		cs_dummy.Format(_T("\t%f"), static_cast<double>(volts_per_bin) * 1000.f); 
+		cs_char_buf += cs_dummy;
 	}
 
 	// LINE 9.......... comment for each channel
 
 	cs_dummy.Format(_T("\r\ncomments"));
-	csCharBuf += cs_dummy;
-	dataDest.Write(csCharBuf, csCharBuf.GetLength() * sizeof(TCHAR)); // write data
-	csCharBuf.Empty();
+	cs_char_buf += cs_dummy;
+	data_dest.Write(cs_char_buf, cs_char_buf.GetLength() * sizeof(TCHAR)); 
+	cs_char_buf.Empty();
 
-	for (i = mm_firstchan; i <= mm_lastchan; i++)
+	for (i = mm_first_chan; i <= mm_last_chan; i++)
 	{
-		cs_dummy.Format(_T("\t%s"), (LPCTSTR)pChanArray->get_p_channel(i)->am_csComment);
-		csCharBuf += cs_dummy;
+		cs_dummy.Format(_T("\t%s"), (LPCTSTR)p_chan_array->get_p_channel(i)->am_csComment);
+		cs_char_buf += cs_dummy;
 	}
 
 	cs_dummy.Format(_T("\r\n")); // add CRLF
-	csCharBuf += cs_dummy;
-	dataDest.Write(csCharBuf, csCharBuf.GetLength() * sizeof(TCHAR)); // write data
-	csCharBuf.Empty();
+	cs_char_buf += cs_dummy;
+	data_dest.Write(cs_char_buf, cs_char_buf.GetLength() * sizeof(TCHAR)); 
+	cs_char_buf.Empty();
 
 	// export data only if text
-	if (iivO.export_type == EXPORT_TEXT)
+	if (iiv_o.export_type == EXPORT_TEXT)
 	{
 		// LINE 10.......... header for each channel
 
-		if (iivO.include_time)
+		if (iiv_o.include_time)
 		{
 			cs_dummy.Format(_T("time (s)\t"));
-			csCharBuf += cs_dummy;
+			cs_char_buf += cs_dummy;
 		}
-		for (i = mm_firstchan; i <= mm_lastchan; i++)
+		for (i = mm_first_chan; i <= mm_last_chan; i++)
 		{
 			cs_dummy.Format(_T("chan_%i\t"), i);
-			csCharBuf += cs_dummy;
+			cs_char_buf += cs_dummy;
 		}
-		csCharBuf = csCharBuf.Left(csCharBuf.GetLength() - 1);
-		cs_dummy.Format(_T("\r\n")); // add CRLF
-		csCharBuf += cs_dummy;
-		dataDest.Write(csCharBuf, csCharBuf.GetLength() * sizeof(TCHAR)); // write data
-		csCharBuf.Empty();
+		cs_char_buf = cs_char_buf.Left(cs_char_buf.GetLength() - 1);
+		cs_dummy.Format(_T("\r\n"));
+		cs_char_buf += cs_dummy;
+		data_dest.Write(cs_char_buf, cs_char_buf.GetLength() * sizeof(TCHAR)); 
+		cs_char_buf.Empty();
 
 		// LINE .......... values
 
-		short value;
-		m_pDat->get_value_from_buffer(0, -1); // force reading buffer anew
+		m_p_dat->get_value_from_buffer(0, -1);
 		// loop over all values
-		for (int ii_time = mm_lFirst; ii_time < mm_lLast; ii_time++)
+		for (int ii_time = mm_l_first; ii_time < mm_l_last; ii_time++)
 		{
-			if (iivO.include_time) // add time stamp
+			if (iiv_o.include_time) // add time stamp
 			{
 				cs_dummy.Format(_T("%li"), ii_time);
-				csCharBuf += cs_dummy;
+				cs_char_buf += cs_dummy;
 			}
-			for (i = mm_firstchan; i <= mm_lastchan; i++) // loop through all chans
+			for (i = mm_first_chan; i <= mm_last_chan; i++) 
 			{
 				// get value and convert into ascii
-				value = m_pDat->get_value_from_buffer(i, ii_time) - mm_binzero;
+				const short value = m_p_dat->get_value_from_buffer(i, ii_time) - mm_bin_zero;
 				cs_dummy.Format(_T("\t%i"), value);
-				csCharBuf += cs_dummy;
+				cs_char_buf += cs_dummy;
 			}
-			csCharBuf += cs_dummy;
-			dataDest.Write(csCharBuf, csCharBuf.GetLength() * sizeof(TCHAR)); // write data
-			csCharBuf.Empty();
+			cs_char_buf += cs_dummy;
+			data_dest.Write(cs_char_buf, cs_char_buf.GetLength() * sizeof(TCHAR)); 
+			cs_char_buf.Empty();
 		}
 	}
 
-	///////////// close file
-	dataDest.Close(); // close file
+	data_dest.Close();
 	return TRUE;
 }
 
-BOOL DlgExportData::ExportDataAsSapidFile()
+BOOL DlgExportData::export_data_as_sapid_file()
 {
 	// open destination file
-	CFile dataDest; // destination file object
-	CFileException fe; // trap exceptions
-	if (!dataDest.Open(m_filedest, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone | CFile::typeBinary,
+	CFile data_dest;
+	CFileException fe; 
+	if (!data_dest.Open(m_file_dest, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone | CFile::typeBinary,
 	                   &fe))
 	{
-		dataDest.Abort(); // file not found
-		return FALSE; // and return
+		data_dest.Abort(); 
+		return FALSE; 
 	}
 
-	char* pdummy[] = {"awave32"}; // dummy data
-	dataDest.Write(pdummy, 7); // write dummy data
+	char* p_dummy[] = {"awave32"}; 
+	data_dest.Write(p_dummy, 7); 
 
 	short value;
-	//int dummy = m_pDat->get_value_from_buffer(0, -1);		// init reading data
-	for (int ii_time = mm_lFirst; ii_time < mm_lLast; ii_time++)
+	for (int ii_time = mm_l_first; ii_time < mm_l_last; ii_time++)
 	{
-		for (auto i = mm_firstchan; i <= mm_lastchan; i++) // loop through all chans
+		for (auto i = mm_first_chan; i <= mm_last_chan; i++) 
 		{
 			// get value and convert into ascii
-			value = m_pDat->get_value_from_buffer(i, ii_time) - mm_binzero;
-			dataDest.Write(&value, sizeof(short));
+			value =  m_p_dat->get_value_from_buffer(i, ii_time) - static_cast<short>(mm_bin_zero);
+			data_dest.Write(&value, sizeof(short));
 		}
 	}
 	// last value is sampling rate
-	value = static_cast<short>(m_pDat->get_wave_format()->sampling_rate_per_channel);
-	dataDest.Write(&value, sizeof(short));
-	dataDest.Flush();
-	dataDest.Close(); // close file
+	value = static_cast<short>(m_p_dat->get_wave_format()->sampling_rate_per_channel);
+	data_dest.Write(&value, sizeof(short));
+	data_dest.Flush();
+	data_dest.Close(); // close file
 
 	// export file description in a separate text file
-	if (iivO.separate_comments)
+	if (iiv_o.separate_comments)
 	{
-		const auto filedest = m_filedest;
-		m_filedest = m_filedest.Left(m_filedest.GetLength() - 3) + _T("TXT");
-		ExportDataAsTextFile();
-		m_filedest = filedest;
+		const auto file_dest = m_file_dest;
+		m_file_dest = m_file_dest.Left(m_file_dest.GetLength() - 3) + _T("TXT");
+		export_data_as_text_file();
+		m_file_dest = file_dest;
 	}
 
 	return TRUE;
@@ -491,18 +479,18 @@ BOOL DlgExportData::ExportDataAsSapidFile()
 #define	BIFF_CHARS		8
 #define	BIFF_BOOL		16
 
-BOOL DlgExportData::ExportDataAsExcelFile()
+BOOL DlgExportData::export_data_as_excel_file()
 {
 	// variables to receive data & or text
 
-	double fdouble;
+	double f_double;
 	auto row = 0;
 	auto col = 0;
 
 	// open data file and create BOF record
 	CFile data_dest; // destination file object
 	CFileException fe; // trap exceptions
-	if (!data_dest.Open(m_filedest, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone | CFile::typeBinary,
+	if (!data_dest.Open(m_file_dest, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone | CFile::typeBinary,
 	                    &fe))
 	{
 		data_dest.Abort(); // file not found
@@ -518,11 +506,11 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 	wi = 2;
 	data_dest.Write(&wi, sizeof(WORD)); //
 	wi = 0x10;
-	data_dest.Write(&wi, sizeof(WORD)); // worksheet identifer
+	data_dest.Write(&wi, sizeof(WORD)); // worksheet identifier
 
 	// write dimension record of the worksheet
-	const WORD lastrow = 16384;
-	const WORD lastcol = 4096;
+	constexpr WORD last_row = 16384;
+	constexpr WORD last_col = 4096;
 
 	wi = 0;
 	data_dest.Write(&wi, sizeof(WORD));
@@ -530,11 +518,11 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 	data_dest.Write(&wi, sizeof(WORD));
 	wi = 0;
 	data_dest.Write(&wi, sizeof(WORD)); // first row
-	wi = lastrow;
+	wi = last_row;
 	data_dest.Write(&wi, sizeof(WORD)); // last row
 	wi = 0;
 	data_dest.Write(&wi, sizeof(WORD)); // first column
-	wi = lastcol;
+	wi = last_col;
 	data_dest.Write(&wi, sizeof(WORD)); // last column
 
 	// LINE 1.......... data file name
@@ -542,43 +530,43 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 	// LINE 3.......... file comment
 
 	// file name
-	save_BIFF(&data_dest, BIFF_CHARS, row, col, "file");
+	save_biff(&data_dest, BIFF_CHARS, row, col, "file");
 	col++;
-	saveCString_BIFF(&data_dest, row, col, m_filesource);
+	save_c_string_biff(&data_dest, row, col, m_file_source);
 	col--;
 	row++;
 	// date
-	const auto pwaveFormat = m_pDat->get_wave_format();
-	const auto pchanArray = m_pDat->get_wave_channels_array();
+	const auto p_wave_format = m_p_dat->get_wave_format();
+	const auto p_chan_array = m_p_dat->get_wave_channels_array();
 
-	auto date = (pwaveFormat->acquisition_time).Format(_T("%#d %B %Y %X")); //("%c");
-	save_BIFF(&data_dest, BIFF_CHARS, row, col, "date");
+	auto date = (p_wave_format->acquisition_time).Format(_T("%#d %B %Y %X")); 
+	save_biff(&data_dest, BIFF_CHARS, row, col, "date");
 	col++;
-	saveCString_BIFF(&data_dest, row, col, date);
+	save_c_string_biff(&data_dest, row, col, date);
 	col--;
 	row++;
 	// comments
-	save_BIFF(&data_dest, BIFF_CHARS, row, col, "comments");
+	save_biff(&data_dest, BIFF_CHARS, row, col, "comments");
 	col++;
-	date = pwaveFormat->get_comments(_T("\t"));
-	saveCString_BIFF(&data_dest, row, col, date);
+	date = p_wave_format->get_comments(_T("\t"));
+	save_c_string_biff(&data_dest, row, col, date);
 	col--;
 	row++;
 
 	// LINE 4.......... start (s)
 	// LINE 5.......... end   (s)
 
-	save_BIFF(&data_dest, BIFF_CHARS, row, col, "start (s)");
+	save_biff(&data_dest, BIFF_CHARS, row, col, "start (s)");
 	col++;
-	fdouble = mm_timefirst;
-	save_BIFF(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&fdouble));
+	f_double = mm_time_first;
+	save_biff(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&f_double));
 	col--;
 	row++;
 
-	save_BIFF(&data_dest, BIFF_CHARS, row, col, "end (s)");
+	save_biff(&data_dest, BIFF_CHARS, row, col, "end (s)");
 	col++;
-	fdouble = mm_timelast;
-	save_BIFF(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&fdouble));
+	f_double = mm_time_last;
+	save_biff(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&f_double));
 	col--;
 	row++;
 
@@ -586,37 +574,37 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 	// LINE 7.......... A/D channels:
 	// LINE 8.......... mV per bin for each channel
 
-	save_BIFF(&data_dest, BIFF_CHARS, row, col, "Sampling rate (Hz)");
+	save_biff(&data_dest, BIFF_CHARS, row, col, "Sampling rate (Hz)");
 	col++;
-	fdouble = pwaveFormat->sampling_rate_per_channel;
-	save_BIFF(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&fdouble));
+	f_double = p_wave_format->sampling_rate_per_channel;
+	save_biff(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&f_double));
 	col--;
 	row++;
 
-	save_BIFF(&data_dest, BIFF_CHARS, row, col, "A/D channels :");
+	save_biff(&data_dest, BIFF_CHARS, row, col, "A/D channels :");
 	row++;
-	save_BIFF(&data_dest, BIFF_CHARS, row, col, "mV per bin:");
+	save_biff(&data_dest, BIFF_CHARS, row, col, "mV per bin:");
 	col++;
 
-	for (auto i = mm_firstchan; i <= mm_lastchan; i++) // loop through all chans
+	for (auto i = mm_first_chan; i <= mm_last_chan; i++) // loop through all chans
 	{
-		float voltsper_bin; // declare float
-		m_pDat->get_volts_per_bin(i, &voltsper_bin, 0); // get value
-		fdouble = voltsper_bin;
-		save_BIFF(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&fdouble));
+		float volts_per_bin; // declare float
+		m_p_dat->get_volts_per_bin(i, &volts_per_bin, 0); // get value
+		f_double = volts_per_bin;
+		save_biff(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&f_double));
 		col++;
 	}
 	row++;
 	col = 0;
 
 	// LINE 9.......... comment for each channel
-	save_BIFF(&data_dest, BIFF_CHARS, row, col, "comments");
+	save_biff(&data_dest, BIFF_CHARS, row, col, "comments");
 	col++;
-	for (int i = mm_firstchan; i <= mm_lastchan; i++)
+	for (int i = mm_first_chan; i <= mm_last_chan; i++)
 	{
-		CWaveChan* pchan = pchanArray->get_p_channel(i);
-		CString comment = pchan->am_csComment;
-		saveCString_BIFF(&data_dest, row, col, comment);
+		CWaveChan* p_chan = p_chan_array->get_p_channel(i);
+		CString comment = p_chan->am_csComment;
+		save_c_string_biff(&data_dest, row, col, comment);
 		col++;
 	}
 	col = 0;
@@ -625,80 +613,79 @@ BOOL DlgExportData::ExportDataAsExcelFile()
 
 	// loop to write data: write columns header, split cols if too much data
 
-	auto ncolsperbout = mm_lastchan - mm_firstchan + 1; // nb column within 1 bout
-	if (iivO.include_time) // one more if time
-		ncolsperbout++;
-	const auto maxrow = 16383; // last row MAX
-	const auto doclength = mm_lLast - mm_lFirst + 1; // compute how many rows are necess
-	const long boutlength = maxrow - row; // nb data per bout
-	int nbouts = doclength / boutlength; // nb bouts
-	if (boutlength * nbouts < doclength) // take into account uneven division
-		nbouts++;
-	if (nbouts * ncolsperbout > 256) // clip if too much
+	auto n_cols_per_bout = mm_last_chan - mm_first_chan + 1; // nb column within 1 bout
+	if (iiv_o.include_time) 
+		n_cols_per_bout++;
+	constexpr auto max_row = 16383; 
+	const auto doc_length = mm_l_last - mm_l_first + 1; 
+	const long bout_length = max_row - row;
+	int n_bouts = doc_length / bout_length; 
+	if (bout_length * n_bouts < doc_length) 
+		n_bouts++;
+	if (n_bouts * n_cols_per_bout > 256)
 	{
 		AfxMessageBox(_T("Too much data: export file clipped"));
-		nbouts = 256 / ncolsperbout;
-		mm_lLast = nbouts * boutlength;
+		n_bouts = 256 / n_cols_per_bout;
+		mm_l_last = n_bouts * bout_length;
 	}
 	auto j0 = 0;
-	if (iivO.include_time)
+	if (iiv_o.include_time)
 		j0++;
-	for (auto i = 0; i < nbouts; i++)
+	for (auto i = 0; i < n_bouts; i++)
 	{
-		CString iterat;
-		iterat.Format(_T("[%i]"), i);
+		CString iteration;
+		iteration.Format(_T("[%i]"), i);
 		CString comment;
-		if (iivO.include_time)
+		if (iiv_o.include_time)
 		{
-			comment = _T("time") + iterat;
-			saveCString_BIFF(&data_dest, row, col, comment);
+			comment = _T("time") + iteration;
+			save_c_string_biff(&data_dest, row, col, comment);
 			col++;
 		}
-		for (auto j = j0; j < ncolsperbout; j++)
+		for (auto j = j0; j < n_cols_per_bout; j++)
 		{
 			comment.Format(_T("chan_%i"), j - j0);
-			comment += iterat;
+			comment += iteration;
 		}
 		col = 0;
 		row++;
 
 		// iterate to read data and export to Excel file
 		auto ii_time = 0;
-		float voltsper_bin;
-		const double rate = pwaveFormat->sampling_rate_per_channel;
-		auto dummy = m_pDat->get_value_from_buffer(0, -1); // init reading data
+		float volts_per_bin;
+		const double rate = p_wave_format->sampling_rate_per_channel;
+		auto dummy = m_p_dat->get_value_from_buffer(0, -1); 
 
-		for (int k = mm_lFirst; k < boutlength; k++)
+		for (int k = mm_l_first; k < bout_length; k++)
 		{
 			ii_time = k;
-			saveCString_BIFF(&data_dest, row, col, comment);
+			save_c_string_biff(&data_dest, row, col, comment);
 			col++;
 		}
-		for (auto i = 0; i < nbouts; i++)
+		for (auto i = 0; i < n_bouts; i++)
 		{
-			if (ii_time >= mm_lLast)
+			if (ii_time >= mm_l_last)
 				continue;
-			if (iivO.include_time)
+			if (iiv_o.include_time)
 			{
-				fdouble = ii_time / rate;
-				save_BIFF(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&fdouble));
+				f_double = ii_time / rate;
+				save_biff(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&f_double));
 				col++;
 			}
 
-			for (auto j = j0; j < ncolsperbout; j++)
+			for (auto j = j0; j < n_cols_per_bout; j++)
 			{
-				m_pDat->get_volts_per_bin(j - j0, &voltsper_bin, 0);
-				fdouble = (static_cast<double>(m_pDat->get_value_from_buffer(j - j0, ii_time)) - static_cast<double>(mm_binzero)) *
-					static_cast<double>(voltsper_bin);
-				save_BIFF(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&fdouble));
+				m_p_dat->get_volts_per_bin(j - j0, &volts_per_bin, 0);
+				f_double = (static_cast<double>(m_p_dat->get_value_from_buffer(j - j0, ii_time)) - static_cast<double>(mm_bin_zero)) *
+					static_cast<double>(volts_per_bin);
+				save_biff(&data_dest, BIFF_FLOAT, row, col, reinterpret_cast<char*>(&f_double));
 				col++;
 			}
-			ii_time += boutlength;
+			ii_time += bout_length;
 		}
 		row++;
 		col = 0;
 	}
-	// Write EOF record, and closes the file
 
 	unsigned long int wwi = 0x000000a;
 	data_dest.Write(&wwi, sizeof(unsigned long int));
@@ -714,10 +701,10 @@ using ATTR = struct
 	unsigned long a : 24;
 };
 
-void DlgExportData::save_BIFF(CFile* fp, int type, int row, int col, char* data)
+void DlgExportData::save_biff(CFile* fp, const int type, const int row, const int col, const char* data)
 {
-	ATTR attribute = {0x000000};
-	WORD w1, w2, wrow, wcol;
+	constexpr ATTR attribute = {0x000000};
+	WORD w1, w2, w_row, w_col;
 	switch (type)
 	{
 	case BIFF_BLANK: w1 = 1;
@@ -740,14 +727,14 @@ void DlgExportData::save_BIFF(CFile* fp, int type, int row, int col, char* data)
 	// write record header
 	fp->Write(&w1, sizeof(WORD));
 	fp->Write(&w2, sizeof(WORD));
-	wrow = row;
-	fp->Write(&wrow, sizeof(WORD));
-	wcol = col;
-	fp->Write(&wcol, sizeof(WORD));
+	w_row = static_cast<WORD>(row);
+	fp->Write(&w_row, sizeof(WORD));
+	w_col = static_cast<WORD>(col);
+	fp->Write(&w_col, sizeof(WORD));
 	fp->Write(&attribute, 3);
 
 	// write data
-	char ichar;
+	char i_char;
 	switch (type)
 	{
 	case BIFF_BLANK:
@@ -759,94 +746,94 @@ void DlgExportData::save_BIFF(CFile* fp, int type, int row, int col, char* data)
 		fp->Write(data, 8);
 		break; // number (IEEE floating type)
 	case BIFF_CHARS:
-		ichar = static_cast<char>(strlen(data));
-		fp->Write(&ichar, 1);
-		fp->Write(data, ichar);
+		i_char = static_cast<char>(strlen(data));
+		fp->Write(&i_char, 1);
+		fp->Write(data, i_char);
 		break;
 	case BIFF_BOOL:
-		ichar = *data ? 1 : 0;
-		fp->Write(&ichar, 1);
-		ichar = 0;
-		fp->Write(&ichar, 1);
+		i_char = *data ? 1 : 0;
+		fp->Write(&i_char, 1);
+		i_char = 0;
+		fp->Write(&i_char, 1);
 		break;
 	default: ;
 	}
 }
 
-void DlgExportData::saveCString_BIFF(CFile* fp, int row, int col, CString& data)
+void DlgExportData::save_c_string_biff(CFile* fp, const int row, const int col, const CString& data)
 {
-	ATTR attribute = {0x000000};
-	WORD wi, wrow, wcol;
+	constexpr ATTR attribute = {0x000000};
+	WORD wi, w_row, w_col;
 
 	// write record header
 	wi = 4;
 	fp->Write(&wi, sizeof(WORD));
 	wi = 8 + data.GetLength();
 	fp->Write(&wi, sizeof(WORD));
-	wrow = row;
-	fp->Write(&wrow, sizeof(WORD));
-	wcol = col;
-	fp->Write(&wcol, sizeof(WORD));
+	w_row =static_cast<WORD>(row);
+	fp->Write(&w_row, sizeof(WORD));
+	w_col = static_cast<WORD>(col);
+	fp->Write(&w_col, sizeof(WORD));
 	fp->Write(&attribute, 3);
-	char ichar = data.GetLength();
-	fp->Write(&ichar, 1);
-	fp->Write(data, ichar);
+	const char i_char = data.GetLength();
+	fp->Write(&i_char, 1);
+	fp->Write(data, i_char);
 }
 
-BOOL DlgExportData::ExportDataAsdbWaveFile()
+BOOL DlgExportData::export_data_as_db_wave_file()
 {
 	// create new file
-	auto pDatDest = new ADAcqDataDoc;
-	pDatDest->acq_create_file(m_filedest);
+	const auto pDatDest = new ADAcqDataDoc;
+	pDatDest->acq_create_file(m_file_dest);
 
 	// load data header and save it into dest file
 	const auto pw_f_dest = pDatDest->get_wave_format();
-	auto pw_c_dest = pDatDest->get_wave_channels_array();
-	const auto pw_f_source = m_pDat->get_wave_format();
-	const auto pw_c_source = m_pDat->get_wave_channels_array();
+	const auto pw_c_dest = pDatDest->get_wave_channels_array();
+	const auto pw_f_source = m_p_dat->get_wave_format();
+	const auto pw_c_source = m_p_dat->get_wave_channels_array();
 	pw_f_dest->copy(pw_f_source);
 	pw_c_dest->Copy(pw_c_source);
 
-	const auto nchans = mm_lastchan - mm_firstchan + 1;
-	if (pw_f_dest->scan_count != nchans)
+	const auto n_channels = mm_last_chan - mm_first_chan + 1;
+	if (pw_f_dest->scan_count != n_channels)
 	{
-		const auto lastchannel = pw_f_dest->scan_count - 1;
-		for (auto i = lastchannel; i > 0; i--)
+		const auto last_channel = pw_f_dest->scan_count - 1;
+		for (auto i = last_channel; i > 0; i--)
 		{
-			if (i > mm_lastchan || i < mm_firstchan)
+			if (i > mm_last_chan || i < mm_first_chan)
 				pw_c_dest->chan_array_remove_at(i);
 		}
-		ASSERT(nchans == pw_c_dest->chan_array_get_size());
-		pw_f_dest->scan_count = nchans;
+		ASSERT(n_channels == pw_c_dest->chan_array_get_size());
+		pw_f_dest->scan_count = n_channels;
 	}
 
 #define LEN 16384
 	auto* p_data = new short[LEN];
 	ASSERT(p_data != NULL);
-	auto pdat = p_data;
+	auto p_dat = p_data;
 
-	auto datlen = 0;
+	auto dat_len = 0;
 	pw_f_dest->sample_count = 0;
 	pDatDest->AcqDoc_DataAppendStart();
-	auto dummy = m_pDat->get_value_from_buffer(0, -1); // init reading data
+	auto dummy = m_p_dat->get_value_from_buffer(0, -1); 
 
-	for (int ii_time = mm_lFirst; ii_time < mm_lLast; ii_time++)
+	for (int ii_time = mm_l_first; ii_time < mm_l_last; ii_time++)
 	{
-		for (auto i = mm_firstchan; i <= mm_lastchan; i++) // loop through all chans
+		for (auto i = mm_first_chan; i <= mm_last_chan; i++) 
 		{
-			*pdat = m_pDat->get_value_from_buffer(i, ii_time) - mm_binzero;
-			datlen++;
-			pdat++;
-			if (datlen >= LEN)
+			*p_dat = m_p_dat->get_value_from_buffer(i, ii_time) - mm_bin_zero;
+			dat_len++;
+			p_dat++;
+			if (dat_len >= LEN)
 			{
-				pDatDest->AcqDoc_DataAppend(p_data, datlen * 2);
-				datlen = 0;
-				pdat = p_data;
+				pDatDest->AcqDoc_DataAppend(p_data, dat_len * 2);
+				dat_len = 0;
+				p_dat = p_data;
 			}
 		}
 	}
-	if (datlen > 0) // save incomplete buffer
-		pDatDest->AcqDoc_DataAppend(p_data, datlen * 2);
+	if (dat_len > 0) // save incomplete buffer
+		pDatDest->AcqDoc_DataAppend(p_data, dat_len * 2);
 
 	// stop appending data, update dependent struct
 	pDatDest->AcqDoc_DataAppendStop();
@@ -858,12 +845,12 @@ BOOL DlgExportData::ExportDataAsdbWaveFile()
 	delete[] p_data;
 
 	// export file description in a separate text file
-	if (iivO.separate_comments)
+	if (iiv_o.separate_comments)
 	{
-		const auto filedest = m_filedest;
-		m_filedest = m_filedest.Left(m_filedest.GetLength() - 3) + _T("TXT");
-		ExportDataAsTextFile();
-		m_filedest = filedest;
+		const auto file_dest = m_file_dest;
+		m_file_dest = m_file_dest.Left(m_file_dest.GetLength() - 3) + _T("TXT");
+		export_data_as_text_file();
+		m_file_dest = file_dest;
 	}
 
 	return TRUE;

@@ -120,9 +120,9 @@ bool AcqDataDoc::dlg_import_data_file(CString& sz_path_name)
 	cs_array->Add(sz_path_name);
 
 	const auto p_dlg = new DlgImportGenericData;
-	p_dlg->m_pfilenameArray = cs_array;
-	p_dlg->bConvert = TRUE; 
-	p_dlg->piivO = &(static_cast<CdbWaveApp*>(AfxGetApp())->options_import);
+	p_dlg->m_p_file_name_array = cs_array;
+	p_dlg->b_convert = TRUE; 
+	p_dlg->options_import = &(static_cast<CdbWaveApp*>(AfxGetApp())->options_import);
 	if (IDOK != p_dlg->DoModal() || 0 == cs_array->GetSize())
 		return false;
 

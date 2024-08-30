@@ -87,14 +87,14 @@ BOOL CNoteDoc::open_project_files(CString& cs_path_name)
 	// make sure the correct import options are selected
 	DlgImportOptions dlg;
 	const auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	dlg.m_bAllowDuplicateFiles = p_app->options_import.discard_duplicate_files;
-	dlg.m_bHeader = p_app->options_import.header_present;
-	dlg.m_bReadColumns = p_app->options_import.read_columns;
+	dlg.m_b_allow_duplicate_files = p_app->options_import.discard_duplicate_files;
+	dlg.m_b_header = p_app->options_import.header_present;
+	dlg.m_b_read_columns = p_app->options_import.read_columns;
 	if (IDOK == dlg.DoModal())
 	{
-		p_app->options_import.discard_duplicate_files =  static_cast<boolean>(dlg.m_bAllowDuplicateFiles);
-		p_app->options_import.header_present = static_cast<boolean>(dlg.m_bHeader);
-		p_app->options_import.read_columns = static_cast<boolean>(dlg.m_bReadColumns);
+		p_app->options_import.discard_duplicate_files =  static_cast<boolean>(dlg.m_b_allow_duplicate_files);
+		p_app->options_import.header_present = static_cast<boolean>(dlg.m_b_header);
+		p_app->options_import.read_columns = static_cast<boolean>(dlg.m_b_read_columns);
 	}
 
 	// open data files

@@ -6,7 +6,7 @@ class DlgTransferFiles : public CDialogEx
 	DECLARE_DYNAMIC(DlgTransferFiles)
 
 public:
-	DlgTransferFiles(CWnd* pParent = nullptr); // standard constructor
+	DlgTransferFiles(CWnd* p_parent = nullptr); // standard constructor
 	~DlgTransferFiles() override;
 
 	// Dialog Data
@@ -15,10 +15,10 @@ public:
 	CString m_csPathname{ _T("")};
 
 protected:
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	void DoDataExchange(CDataExchange* p_dx) override; // DDX/DDV support
 
 public:
-	afx_msg void OnBnClickedButtonpath();
+	afx_msg void on_bn_clicked_button_path();
 
 	DECLARE_MESSAGE_MAP()
 };

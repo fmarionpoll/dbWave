@@ -88,11 +88,11 @@ void output_parameters::Serialize(CArchive& ar)
 		int n = wn;
 		if (n > 0) ar >> csFilename;
 		n--;
-		CString csdummy;
+		CString cs_dummy;
 		while (n > 0)
 		{
 			n--;
-			ar >> csdummy;
+			ar >> cs_dummy;
 		}
 
 		// BOOL parameters

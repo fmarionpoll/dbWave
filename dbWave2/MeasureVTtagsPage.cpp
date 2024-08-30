@@ -166,7 +166,7 @@ void CMeasureVTtagsPage::on_en_change_item()
 {
 	if (mm_index.m_b_entry_done)
 	{
-		mm_index.OnEnChange(this, m_index, 1, -1);
+		mm_index.on_en_change(this, m_index, 1, -1);
 		// update dependent parameters
 		if (m_index >= m_nb_tags)
 			m_index = m_nb_tags - 1;
@@ -181,7 +181,7 @@ void CMeasureVTtagsPage::on_en_change_time_sec()
 {
 	if (mm_time_sec.m_b_entry_done)
 	{
-		mm_time_sec.OnEnChange(this, m_time_sec, 1.f, -1.f);
+		mm_time_sec.on_en_change(this, m_time_sec, 1.f, -1.f);
 		// update dependent parameters
 		if (m_time_sec < 0)
 			m_time_sec = 0.0f;
@@ -204,7 +204,7 @@ void CMeasureVTtagsPage::on_en_change_duration()
 {
 	if (mm_duration.m_b_entry_done)
 	{
-		mm_duration.OnEnChange(this, m_duration, 1.f, -1.f);
+		mm_duration.on_en_change(this, m_duration, 1.f, -1.f);
 		// update dependent parameters
 		if (m_duration < 0.)
 			m_duration = 0.0f;
@@ -219,7 +219,7 @@ void CMeasureVTtagsPage::on_en_change_period()
 {
 	if (mm_period.m_b_entry_done)
 	{
-		mm_period.OnEnChange(this, m_period, 1.f, -1.f);
+		mm_period.on_en_change(this, m_period, 1.f, -1.f);
 		// update dependent parameters
 		if (m_period < m_duration)
 			m_period = m_duration;
@@ -232,7 +232,7 @@ void CMeasureVTtagsPage::on_en_change_n_periods_edit()
 {
 	if (mm_n_periods.m_b_entry_done)
 	{
-		mm_n_periods.OnEnChange(this, m_n_periods, 1, -1);
+		mm_n_periods.on_en_change(this, m_n_periods, 1, -1);
 		// update dependent parameters
 		if (m_n_periods < 1)
 			m_n_periods = 1;
@@ -245,7 +245,7 @@ void CMeasureVTtagsPage::on_en_change_time_shift()
 {
 	if (mm_time_shift.m_b_entry_done)
 	{
-		mm_time_shift.OnEnChange(this, m_time_shift, 1.f, -1.f);
+		mm_time_shift.on_en_change(this, m_time_shift, 1.f, -1.f);
 		// update dependent parameters
 		m_p_options_measure->time_shift = m_time_shift;
 		UpdateData(FALSE);

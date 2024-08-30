@@ -1190,7 +1190,7 @@ int ViewSpikeDetection::detect_stimulus_1(const int channel_index)
 	// plot progress dialog box
 	DlgProgress dlg;
 	dlg.Create();
-	dlg.SetRange(0, 100);
+	dlg.set_range(0, 100);
 	const auto l_data_len = l_data_last - l_data_first;
 	const auto l_data_first0 = l_data_first;
 	dlg.SetWindowText(_T("Detect trigger events..."));
@@ -1241,12 +1241,12 @@ int ViewSpikeDetection::detect_stimulus_1(const int channel_index)
 			}
 
 			const int pct_achieved = MulDiv(cx - l_data_first0, 100, l_data_len);
-			dlg.SetPos(pct_achieved);
+			dlg.set_pos(pct_achieved);
 			CString comment;
 			comment.Format(_T("Processing stimulus event: %i"), p_spk_doc->m_stimulus_intervals.n_items + 1);
-			dlg.SetStatus(comment);
+			dlg.set_status(comment);
 
-			if (dlg.CheckCancelButton())
+			if (dlg.check_cancel_button())
 				if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 				{
 					l_last = l_data_last;
@@ -1445,46 +1445,46 @@ void ViewSpikeDetection::on_format_x_scale()
 
 	if (pFocus != nullptr && chart_data_filtered_.m_hWnd == pFocus->m_hWnd)
 	{
-		dlg.m_xparam = FALSE;
+		dlg.m_x_param = FALSE;
 		const CChanlistItem* p_chan = chart_data_filtered_.get_channel_list_item(m_p_detect_parameters_->detect_channel);
-		dlg.m_yzero = p_chan->get_y_zero();
-		dlg.m_yextent = p_chan->get_y_extent();
-		dlg.m_bDisplaysource = TRUE;
+		dlg.m_y_zero = p_chan->get_y_zero();
+		dlg.m_y_extent = p_chan->get_y_extent();
+		dlg.m_b_display_source = TRUE;
 	}
 	else if (pFocus != nullptr && chart_spike_bar_.m_hWnd == pFocus->m_hWnd)
 	{
-		dlg.m_xparam = FALSE;
-		dlg.m_yzero = chart_spike_bar_.get_yw_org();
-		dlg.m_yextent = chart_spike_bar_.get_yw_extent();
-		dlg.m_bDisplaybars = TRUE;
+		dlg.m_x_param = FALSE;
+		dlg.m_y_zero = chart_spike_bar_.get_yw_org();
+		dlg.m_y_extent = chart_spike_bar_.get_yw_extent();
+		dlg.m_b_display_bars = TRUE;
 	}
 	else
 	{
-		dlg.m_xzero = chart_spike_shape_.get_xw_org();
-		dlg.m_xextent = chart_spike_shape_.get_xw_extent();
-		dlg.m_yzero = chart_spike_shape_.get_yw_org();
-		dlg.m_yextent = chart_spike_shape_.get_yw_extent();
-		dlg.m_bDisplayspikes = TRUE;
+		dlg.m_x_zero = chart_spike_shape_.get_xw_org();
+		dlg.m_x_extent = chart_spike_shape_.get_xw_extent();
+		dlg.m_y_zero = chart_spike_shape_.get_yw_org();
+		dlg.m_y_extent = chart_spike_shape_.get_yw_extent();
+		dlg.b_display_spikes = TRUE;
 	}
 
 	if (IDOK == dlg.DoModal())
 	{
-		if (dlg.m_bDisplaysource)
+		if (dlg.m_b_display_source)
 		{
 			CChanlistItem* chan = chart_data_filtered_.get_channel_list_item(0);
-			chan->set_y_zero(dlg.m_yzero);
-			chan->set_y_extent(dlg.m_yextent);
+			chan->set_y_zero(dlg.m_y_zero);
+			chan->set_y_extent(dlg.m_y_extent);
 			chart_data_filtered_.Invalidate();
 		}
-		if (dlg.m_bDisplaybars)
+		if (dlg.m_b_display_bars)
 		{
-			chart_spike_bar_.set_yw_ext_org(dlg.m_yextent, dlg.m_yzero);
+			chart_spike_bar_.set_yw_ext_org(dlg.m_y_extent, dlg.m_y_zero);
 			chart_spike_bar_.Invalidate();
 		}
-		if (dlg.m_bDisplayspikes)
+		if (dlg.b_display_spikes)
 		{
-			chart_spike_shape_.set_yw_ext_org(dlg.m_yextent, dlg.m_yzero);
-			chart_spike_shape_.set_xw_ext_org(dlg.m_xextent, dlg.m_xzero);
+			chart_spike_shape_.set_yw_ext_org(dlg.m_y_extent, dlg.m_y_zero);
+			chart_spike_shape_.set_xw_ext_org(dlg.m_x_extent, dlg.m_x_zero);
 			chart_spike_shape_.Invalidate();
 		}
 	}
@@ -1543,7 +1543,7 @@ void ViewSpikeDetection::on_en_change_spike_no()
 {
 	if (mm_spike_no_.m_b_entry_done)
 	{
-		mm_spike_no_.OnEnChange(this, m_spike_index, 1, -1);
+		mm_spike_no_.on_en_change(this, m_spike_index, 1, -1);
 		// check boundaries
 		if (m_spike_index < -1)
 			m_spike_index = -1;
@@ -1730,7 +1730,7 @@ void ViewSpikeDetection::on_en_change_threshold()
 	if (mm_threshold_val_.m_b_entry_done)
 	{
 		const auto threshold_value = m_threshold_val;
-		mm_threshold_val_.OnEnChange(this, m_threshold_val, 1.f, -1.f);
+		mm_threshold_val_.on_en_change(this, m_threshold_val, 1.f, -1.f);
 
 		// change display if necessary
 		if (m_threshold_val < threshold_value || m_threshold_val > threshold_value)
@@ -1749,7 +1749,7 @@ void ViewSpikeDetection::on_en_change_time_first()
 {
 	if (mm_time_first_.m_b_entry_done)
 	{
-		mm_time_first_.OnEnChange(this, m_time_first, 1.f, -1.f);
+		mm_time_first_.on_en_change(this, m_time_first, 1.f, -1.f);
 		chart_data_filtered_.get_data_from_doc(static_cast<long>(m_time_first * m_sampling_rate_),
 			static_cast<long>(m_time_last * m_sampling_rate_));
 		chart_data_.get_data_from_doc(static_cast<long>(m_time_first * m_sampling_rate_),
@@ -1762,7 +1762,7 @@ void ViewSpikeDetection::on_en_change_time_last()
 {
 	if (mm_time_last_.m_b_entry_done)
 	{
-		mm_time_last_.OnEnChange(this, m_time_last, 1.f, -1.f);
+		mm_time_last_.on_en_change(this, m_time_last, 1.f, -1.f);
 
 		chart_data_filtered_.get_data_from_doc(static_cast<long>(m_time_first * m_sampling_rate_),
 			static_cast<long>(m_time_last * m_sampling_rate_));
@@ -2878,7 +2878,7 @@ void ViewSpikeDetection::on_en_change_spk_wnd_amplitude()
 		m_spk_wnd_amplitude_ = chart_spike_shape_.get_extent_mv();
 		const auto y_old = m_spk_wnd_amplitude_;
 		CString cs;
-		mm_spk_wnd_amplitude_.OnEnChange(this, m_spk_wnd_amplitude_, 1.f, -1.f);
+		mm_spk_wnd_amplitude_.on_en_change(this, m_spk_wnd_amplitude_, 1.f, -1.f);
 
 		// compute new extent and change the display
 		if (m_spk_wnd_amplitude_ <= 0)
@@ -2905,7 +2905,7 @@ void ViewSpikeDetection::on_en_change_spk_wnd_length()
 		m_spk_wnd_duration_ = chart_spike_shape_.get_extent_ms();
 		const auto x_old = m_spk_wnd_duration_;
 		CString cs;
-		mm_spk_wnd_duration_.OnEnChange(this, m_spk_wnd_duration_, 1.f, -1.f);
+		mm_spk_wnd_duration_.on_en_change(this, m_spk_wnd_duration_, 1.f, -1.f);
 
 		// compute new extent and change the display
 		if (m_spk_wnd_duration_ <= 0)
@@ -3054,7 +3054,7 @@ void ViewSpikeDetection::on_en_change_chan_selected()
 {
 	if (mm_selected_channel_.m_b_entry_done)
 	{
-		mm_selected_channel_.OnEnChange(this, m_selected_channel, 1, -1);
+		mm_selected_channel_.on_en_change(this, m_selected_channel, 1, -1);
 		SetDlgItemInt(IDC_CHANSELECTED, m_selected_channel);
 	}
 }
@@ -3063,7 +3063,7 @@ void ViewSpikeDetection::on_en_change_chan_selected_2()
 {
 	if (mm_selected_channel2_.m_b_entry_done)
 	{
-		mm_selected_channel2_.OnEnChange(this, m_selected_channel2, 1, -1);
+		mm_selected_channel2_.on_en_change(this, m_selected_channel2, 1, -1);
 		SetDlgItemInt(IDC_CHANSELECTED2, m_selected_channel2);
 	}
 }

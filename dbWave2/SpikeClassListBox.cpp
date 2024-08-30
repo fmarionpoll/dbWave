@@ -525,14 +525,14 @@ void SpikeClassListBox::OnRButtonUp(UINT nFlags, CPoint point)
 	CListBox::OnRButtonUp(nFlags, point);
 
 	DlgListBClaSize dlg;
-	dlg.m_rowheight = get_row_height();
-	dlg.m_textcol = get_columns_text_width();
-	dlg.m_superpcol = get_columns_spikes_width();
-	dlg.m_intercolspace = get_columns_separator_width();
+	dlg.m_row_height = get_row_height();
+	dlg.m_text_col = get_columns_text_width();
+	dlg.m_super_p_col = get_columns_spikes_width();
+	dlg.m_inter_col_space = get_columns_separator_width();
 	if (IDOK == dlg.DoModal())
 	{
-		set_row_height(dlg.m_rowheight);
-		set_columns_width(dlg.m_superpcol, dlg.m_intercolspace);
+		set_row_height(dlg.m_row_height);
+		set_columns_width(dlg.m_super_p_col, dlg.m_inter_col_space);
 		Invalidate();
 	}
 }

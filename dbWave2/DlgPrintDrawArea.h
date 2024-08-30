@@ -6,22 +6,22 @@ class DlgPrintDrawArea : public CDialog
 {
 	// Construction
 public:
-	DlgPrintDrawArea(CWnd* pParent = nullptr); // standard constructor
+	DlgPrintDrawArea(CWnd* p_parent = nullptr); // standard constructor
 
 	// Dialog Data
 	enum { IDD = IDD_PRINTDRAWAREA };
 
-	int m_HeightDoc{ 0 };
-	int m_heightSeparator{ 0 };
-	int m_WidthDoc{ 0 };
-	int m_spkheight{ 0 };
-	int m_spkwidth{ 0 };
-	options_view_data* mdPM{ nullptr };
-	BOOL m_bFilterDat{ false };
+	int m_height_doc{ 0 };
+	int m_height_separator{ 0 };
+	int m_width_doc{ 0 };
+	int m_spk_height{ 0 };
+	int m_spk_width{ 0 };
+	options_view_data* options_view_data{ nullptr };
+	BOOL m_b_filter_dat{ false };
 
 	// Implementation
 protected:
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	void DoDataExchange(CDataExchange* p_dx) override; // DDX/DDV support
 	BOOL OnInitDialog() override;
 	void OnOK() override;
 

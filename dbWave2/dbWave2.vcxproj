@@ -786,6 +786,7 @@
     <ClCompile Include="Controls\GridComboEdit.cpp" />
     <ClCompile Include="Controls\InPlaceEdit.cpp" />
     <ClCompile Include="DlgOverwriteFileOptions.cpp" />
+    <ClCompile Include="DlgPrintDataComments.cpp" />
     <ClCompile Include="GridCtrl\GridDefaultCell.cpp" />
     <ClCompile Include="GridCtrl\GridInPlaceList.cpp" />
     <ClCompile Include="RowItem.cpp" />
@@ -1373,6 +1374,7 @@
     <ClInclude Include="Controls\InPlaceEdit.h" />
     <ClInclude Include="DataListCtrl_Infos.h" />
     <ClInclude Include="DlgOverwriteFileOptions.h" />
+    <ClInclude Include="DlgPrintDataComments.h" />
     <ClInclude Include="GridCtrl\GridDefaultCell.h" />
     <ClInclude Include="GridCtrl\GridDefines.h" />
     <ClInclude Include="GridCtrl\GridInPlaceList.h" />

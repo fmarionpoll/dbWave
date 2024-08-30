@@ -269,7 +269,7 @@ void ViewSpikeHist::on_en_change_time_first()
 	if (mm_time_first_.m_b_entry_done)
 	{
 		const auto time_first = m_time_first;
-		mm_time_first_.OnEnChange(this, m_time_first, 1.f, -1.f);
+		mm_time_first_.on_en_change(this, m_time_first, 1.f, -1.f);
 
 		if (m_time_first > m_time_last)
 		{
@@ -288,7 +288,7 @@ void ViewSpikeHist::on_en_change_time_last()
 	if (mm_time_last_.m_b_entry_done)
 	{
 		const auto time_last = m_time_last;
-		mm_time_last_.OnEnChange(this, m_time_last, 1.f, -1.f);
+		mm_time_last_.on_en_change(this, m_time_last, 1.f, -1.f);
 		if (m_time_last < m_time_first)
 		{
 			m_time_last = time_last;
@@ -306,7 +306,7 @@ void ViewSpikeHist::on_en_change_time_bin()
 	if (mm_time_bin_ms_.m_b_entry_done)
 	{
 		const auto bin_ms = m_time_bin_ms;
-		mm_time_bin_ms_.OnEnChange(this, m_time_bin_ms, 1.f, -1.f);
+		mm_time_bin_ms_.on_en_change(this, m_time_bin_ms, 1.f, -1.f);
 		options_view_spikes_->time_bin = m_time_bin_ms / t1000_;
 		UpdateData(FALSE);
 		if (bin_ms != m_time_bin_ms)
@@ -319,7 +319,7 @@ void ViewSpikeHist::on_en_change_bin_isi()
 	if (mm_bin_isi_ms_.m_b_entry_done)
 	{
 		const auto bin_ms = m_bin_isi_ms;
-		mm_bin_isi_ms_.OnEnChange(this, m_bin_isi_ms, 1.f, -1.f);
+		mm_bin_isi_ms_.on_en_change(this, m_bin_isi_ms, 1.f, -1.f);
 		options_view_spikes_->bin_isi = m_bin_isi_ms / t1000_;
 		UpdateData(FALSE);
 		if (bin_ms != m_bin_isi_ms)
@@ -332,7 +332,7 @@ void ViewSpikeHist::on_en_change_spike_class()
 	if (mm_spike_class_.m_b_entry_done)
 	{
 		const auto spike_class_option = m_spike_class;
-		mm_spike_class_.OnEnChange(this, m_spike_class, 1, -1);
+		mm_spike_class_.on_en_change(this, m_spike_class, 1, -1);
 		options_view_spikes_->class_nb = m_spike_class;
 		UpdateData(FALSE);
 		if (spike_class_option != m_spike_class)
@@ -594,7 +594,7 @@ void ViewSpikeHist::on_en_change_n_bins()
 	if (mm_n_bins_isi_.m_b_entry_done)
 	{
 		const auto n_bins = m_n_bins_isi;
-		mm_n_bins_isi_.OnEnChange(this, m_n_bins_isi, 1, -1);
+		mm_n_bins_isi_.on_en_change(this, m_n_bins_isi, 1, -1);
 		options_view_spikes_->n_bins_isi = m_n_bins_isi;
 		UpdateData(FALSE);
 		if (n_bins != m_n_bins_isi)
@@ -607,7 +607,7 @@ void ViewSpikeHist::on_en_change_row_height()
 	if (mm_row_height_.m_b_entry_done)
 	{
 		const auto row_height = m_row_height;
-		mm_row_height_.OnEnChange(this, m_row_height, 1, -1);
+		mm_row_height_.on_en_change(this, m_row_height, 1, -1);
 		options_view_spikes_->dot_line_height = m_row_height + options_view_spikes_->dot_height;
 		UpdateData(FALSE);
 		if (row_height != m_row_height)
@@ -620,7 +620,7 @@ void ViewSpikeHist::on_en_change_dot_height()
 	if (mm_dot_height_.m_b_entry_done)
 	{
 		const auto dot_height = m_dot_height;
-		mm_dot_height_.OnEnChange(this, m_dot_height, 1, -1);
+		mm_dot_height_.on_en_change(this, m_dot_height, 1, -1);
 		options_view_spikes_->dot_height = m_dot_height;
 		options_view_spikes_->dot_line_height = m_row_height + m_dot_height;
 		UpdateData(FALSE);
@@ -808,7 +808,7 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 		m_comment_rect_.OffsetRect(options_view_data_->text_separator + m_comment_rect_.Width(), 0);
 		m_comment_rect_.right = pInfo->m_rectDraw.right;
 		// refresh data if necessary
-		if (m_n_files_ == 1) //??? (m_nfiles > 1)
+		if (m_n_files_ == 1) //??? (m_n_files > 1)
 		{
 			BOOL success = p_dbwave_doc->db_set_current_record_position(i_file);
 			build_data();
@@ -861,29 +861,29 @@ void ViewSpikeHist::OnBeginPrinting(CDC* p_dc, CPrintInfo* pInfo)
 void ViewSpikeHist::on_format_histogram()
 {
 	DlgFormatHistogram dlg;
-	dlg.m_bYmaxAuto = options_view_spikes_->b_y_max_auto;
-	dlg.m_Ymax = options_view_spikes_->y_max;
-	dlg.m_xfirst = options_view_spikes_->time_start;
-	dlg.m_xlast = options_view_spikes_->time_end;
-	dlg.m_crHistFill = options_view_spikes_->cr_hist_fill;
-	dlg.m_crHistBorder = options_view_spikes_->cr_hist_border;
-	dlg.m_crStimFill = options_view_spikes_->cr_stimulus_fill;
-	dlg.m_crStimBorder = options_view_spikes_->cr_stimulus_border;
-	dlg.m_crChartArea = options_view_spikes_->cr_chart_area;
+	dlg.m_b_y_max_auto = options_view_spikes_->b_y_max_auto;
+	dlg.m_y_max = options_view_spikes_->y_max;
+	dlg.m_x_first = options_view_spikes_->time_start;
+	dlg.m_x_last = options_view_spikes_->time_end;
+	dlg.m_cr_hist_fill = options_view_spikes_->cr_hist_fill;
+	dlg.m_cr_hist_border = options_view_spikes_->cr_hist_border;
+	dlg.m_cr_stimulus_fill = options_view_spikes_->cr_stimulus_fill;
+	dlg.m_cr_stimulus_border = options_view_spikes_->cr_stimulus_border;
+	dlg.m_cr_chart_area = options_view_spikes_->cr_chart_area;
 
 	if (IDOK == dlg.DoModal())
 	{
-		options_view_spikes_->b_y_max_auto = dlg.m_bYmaxAuto;
-		options_view_spikes_->y_max = dlg.m_Ymax;
-		options_view_spikes_->time_start = dlg.m_xfirst;
-		options_view_spikes_->time_end = dlg.m_xlast;
+		options_view_spikes_->b_y_max_auto = dlg.m_b_y_max_auto;
+		options_view_spikes_->y_max = dlg.m_y_max;
+		options_view_spikes_->time_start = dlg.m_x_first;
+		options_view_spikes_->time_end = dlg.m_x_last;
 		m_time_first = options_view_spikes_->time_start;
 		m_time_last = options_view_spikes_->time_end;
-		options_view_spikes_->cr_hist_fill = dlg.m_crHistFill;
-		options_view_spikes_->cr_hist_border = dlg.m_crHistBorder;
-		options_view_spikes_->cr_stimulus_fill = dlg.m_crStimFill;
-		options_view_spikes_->cr_stimulus_border = dlg.m_crStimBorder;
-		options_view_spikes_->cr_chart_area = dlg.m_crChartArea;
+		options_view_spikes_->cr_hist_fill = dlg.m_cr_hist_fill;
+		options_view_spikes_->cr_hist_border = dlg.m_cr_hist_border;
+		options_view_spikes_->cr_stimulus_fill = dlg.m_cr_stimulus_fill;
+		options_view_spikes_->cr_stimulus_border = dlg.m_cr_stimulus_border;
+		options_view_spikes_->cr_chart_area = dlg.m_cr_chart_area;
 		build_data_and_display();
 	}
 }
@@ -990,7 +990,7 @@ void ViewSpikeHist::build_data()
 	{
 		p_dlg = new DlgProgress;
 		p_dlg->Create();
-		p_dlg->SetStep(1);
+		p_dlg->set_step(1);
 		first_file = 0;
 		last_file = m_n_files_ - 1;
 	}
@@ -1002,14 +1002,14 @@ void ViewSpikeHist::build_data()
 		if (m_n_files_ > 1)
 		{
 			// check if user wants to stop
-			if (p_dlg->CheckCancelButton())
+			if (p_dlg->check_cancel_button())
 				if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 					break;
 			cs_comment.Format(_T("Processing file [%i / %i]"), i_file + 1, m_n_files_);
-			p_dlg->SetStatus(cs_comment);
+			p_dlg->set_status(cs_comment);
 			if (MulDiv(i_file, 100, m_n_files_) > i_step)
 			{
-				p_dlg->StepIt();
+				p_dlg->step_it();
 				i_step = MulDiv(i_file, 100, m_n_files_);
 			}
 		}

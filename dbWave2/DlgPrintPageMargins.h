@@ -5,20 +5,20 @@ class DlgPrintPageMargins : public CDialog
 {
 	// Construction
 public:
-	DlgPrintPageMargins(CWnd* pParent = nullptr); // standard constructor
+	DlgPrintPageMargins(CWnd* p_parent = nullptr); // standard constructor
 
 	// Dialog Data
 	enum { IDD = IDD_PRINTPAGEMARGINS };
 
-	int m_leftPageMargin{ 0 };
-	int m_bottomPageMargin{ 0 };
-	int m_rightPageMargin{ 0 };
-	int m_topPageMargin{ 0 };
-	options_view_data* mdPM{ nullptr };
+	int m_left_page_margin{ 0 };
+	int m_bottom_page_margin{ 0 };
+	int m_right_page_margin{ 0 };
+	int m_top_page_margin{ 0 };
+	options_view_data* options_view_data{ nullptr };
 
 	// Implementation
 protected:
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	void DoDataExchange(CDataExchange* p_dx) override; // DDX/DDV support
 
 	// Generated message map functions
 	BOOL OnInitDialog() override;

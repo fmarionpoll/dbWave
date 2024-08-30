@@ -9,7 +9,7 @@ class GridInPlaceList : public CComboBox
 
 	// Construction
 public:
-	GridInPlaceList(CWnd* pParent,	// parent
+	GridInPlaceList(CWnd* p_parent,	// parent
 		CRect& rect,				// dimensions & location
 		DWORD dw_style,				// window/combobox style
 		UINT nID,					// control ID

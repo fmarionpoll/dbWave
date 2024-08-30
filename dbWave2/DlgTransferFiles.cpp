@@ -11,22 +11,22 @@
 
 IMPLEMENT_DYNAMIC(DlgTransferFiles, CDialogEx)
 
-DlgTransferFiles::DlgTransferFiles(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD, pParent)
+DlgTransferFiles::DlgTransferFiles(CWnd* p_parent /*=NULL*/)
+	: CDialogEx(IDD, p_parent)
 {
 }
 
 DlgTransferFiles::~DlgTransferFiles()
 = default;
 
-void DlgTransferFiles::DoDataExchange(CDataExchange* pDX)
+void DlgTransferFiles::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialogEx::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT1, m_csPathname);
+	CDialogEx::DoDataExchange(p_dx);
+	DDX_Text(p_dx, IDC_EDIT1, m_csPathname);
 }
 
 BEGIN_MESSAGE_MAP(DlgTransferFiles, CDialogEx)
-	ON_BN_CLICKED(IDC_BUTTONPATH, &DlgTransferFiles::OnBnClickedButtonpath)
+	ON_BN_CLICKED(IDC_BUTTONPATH, &DlgTransferFiles::on_bn_clicked_button_path)
 END_MESSAGE_MAP()
 
 TCHAR sz_dir3[MAX_PATH];
@@ -44,7 +44,7 @@ int CALLBACK BrowseCallbackProc3(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM p_data)
 	return 0;
 }
 
-void DlgTransferFiles::OnBnClickedButtonpath()
+void DlgTransferFiles::on_bn_clicked_button_path()
 {
 	UpdateData(TRUE);
 	lstrcpy(sz_dir3, m_csPathname);

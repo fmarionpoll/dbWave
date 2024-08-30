@@ -8,18 +8,18 @@
 
 IMPLEMENT_DYNAMIC(DlgEditSpikeClass, CDialog)
 
-DlgEditSpikeClass::DlgEditSpikeClass(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgEditSpikeClass::DlgEditSpikeClass(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
 DlgEditSpikeClass::~DlgEditSpikeClass()
 = default;
 
-void DlgEditSpikeClass::DoDataExchange(CDataExchange* pDX)
+void DlgEditSpikeClass::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT1, m_iClass);
+	CDialog::DoDataExchange(p_dx);
+	DDX_Text(p_dx, IDC_EDIT1, m_i_class);
 }
 
 BEGIN_MESSAGE_MAP(DlgEditSpikeClass, CDialog)

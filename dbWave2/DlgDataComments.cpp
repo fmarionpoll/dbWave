@@ -7,8 +7,8 @@
 #endif
 
 
-DlgDataComments::DlgDataComments(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgDataComments::DlgDataComments(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 

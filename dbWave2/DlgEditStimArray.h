@@ -8,24 +8,24 @@ class DlgEditStimArray : public CDialog
 {
 	DECLARE_DYNAMIC(DlgEditStimArray)
 
-	DlgEditStimArray(CWnd* pParent = nullptr);
+	DlgEditStimArray(CWnd* p_parent = nullptr);
 	~DlgEditStimArray() override;
 
 	// data passed by caller
 	TagList*	tag_list {nullptr};
 	CIntervals	intervals_saved {};
 	CIntervals	intervals{};
-	float		m_sampling_rate = 0.f;
+	float		m_sampling_rate { 0.f};
 
 	enum { IDD = IDD_EDITSTIMARRAY};
 
 protected:
-	void DoDataExchange(CDataExchange* pDX) override;
+	void DoDataExchange(CDataExchange* p_dx) override;
 	
-	CIntervalsListCtrl list_control{};
-	CStretchControl m_stretch{};
-	BOOL m_initialized { false };
-	int m_item_index {-1};
+	CIntervalsListCtrl list_control_{};
+	CStretchControl m_stretch_{};
+	BOOL m_initialized_ { false };
+	int m_item_index_ {-1};
 
 	void make_dialog_stretchable();
 	void reset_list_order();
@@ -37,13 +37,13 @@ public:
 
 	BOOL OnInitDialog() override;
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnBnClickedDelete();
-	afx_msg void OnBnClickedInsert();
-	afx_msg void OnBnClickedDelete3();
-	afx_msg void OnBnClickedReOrder();
-	afx_msg void OnBnClickedCopy();
-	afx_msg void OnBnClickedPaste();
-	afx_msg void OnBnClickedExport();
-	afx_msg void OnBnClickedImportfromdata();
-	afx_msg void OnBnClickedOk();
+	afx_msg void on_bn_clicked_delete();
+	afx_msg void on_bn_clicked_insert();
+	afx_msg void on_bn_clicked_delete3();
+	afx_msg void on_bn_clicked_re_order();
+	afx_msg void on_bn_clicked_copy();
+	afx_msg void on_bn_clicked_paste();
+	afx_msg void on_bn_clicked_export();
+	afx_msg void on_bn_clicked_import_from_data();
+	afx_msg void on_bn_clicked_ok();
 };

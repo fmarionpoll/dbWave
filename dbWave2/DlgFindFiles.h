@@ -6,40 +6,41 @@ class DlgFindFiles : public CDialog
 {
 	// Construction
 public:
-	DlgFindFiles(CWnd* pParent = nullptr); // standard constructor
+	DlgFindFiles(CWnd* p_parent = nullptr); // standard constructor
 
 	// Dialog Data
 	enum { IDD = IDD_FINDFILES };
 
-	CComboBox m_fileext;
+	CComboBox m_file_ext;
 	CString m_path{ _T("")};
-	CMFCEditBrowseCtrl m_mfcbrowsecontrol;
-	int m_nfound{ 0 };
-	int m_selinit{ 0 };
-	CStringArray* m_pfilenames{ nullptr };
-	BOOL m_ioption{ 0 };
-	BOOL m_banyformat{ false };
+	CMFCEditBrowseCtrl m_mfc_browse_control;
+	int m_n_found{ 0 };
+	int m_sel_init{ 0 };
+	CStringArray* m_p_file_names{ nullptr };
+	BOOL m_i_option{ 0 };
+	BOOL m_b_any_format{ false };
 	CdbWaveDoc* m_pdbDoc{ nullptr };
 
 	// Overrides
 protected:
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	void DoDataExchange(CDataExchange* p_dx) override; // DDX/DDV support
 
 	// Implementation
 protected:
-	CString m_searchString;
-	BOOL m_bSubtreeSearch{ false };
-	CStringArray m_ppath;
-	CString m_csrootSearch;
+	CString m_search_string_;
+	BOOL m_b_subtree_search_{ false };
+	CStringArray m_p_path_;
+	CString m_cs_root_search_;
 
-	void TraverseDirectory(CString path);
-	void DisplaynFound();
-	void FindFiles(CString path);
+	void traverse_directory(const CString& path);
+	void display_n_found() const;
+	void find_files(const CString& path);
 
 	// Generated message map functions
 	void OnOK() override;
 	BOOL OnInitDialog() override;
-	afx_msg void OnSearch();
+
+	afx_msg void on_search();
 
 	DECLARE_MESSAGE_MAP()
 };

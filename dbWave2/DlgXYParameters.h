@@ -6,38 +6,38 @@ class DlgXYParameters : public CDialog
 {
 	// Construction
 public:
-	DlgXYParameters(CWnd* pParent = nullptr); // standard constructor
+	DlgXYParameters(CWnd* p_parent = nullptr); // standard constructor
 
 	// Dialog Data
 	enum { IDD = IDD_XYPARAMETERS };
 
-	int m_xextent{ 0 };
-	int m_xzero{ 0 };
-	int m_yextent{ 0 };
-	int m_yzero{ 0 };
-	BOOL m_bDisplayspikes{ false };
-	BOOL m_bDisplaybars{ false };
-	BOOL m_bDisplaysource{ false };
-	BOOL m_xparam{ true };
-	BOOL m_yparam{ true };
+	int m_x_extent{ 0 };
+	int m_x_zero{ 0 };
+	int m_y_extent{ 0 };
+	int m_y_zero{ 0 };
+	BOOL b_display_spikes{ false };
+	BOOL m_b_display_bars{ false };
+	BOOL m_b_display_source{ false };
+	BOOL m_x_param{ true };
+	BOOL m_y_param{ true };
 
-	CEditCtrl mm_xextent;
-	CEditCtrl mm_xzero;
-	CEditCtrl mm_yextent;
-	CEditCtrl mm_yzero;
+	CEditCtrl mm_x_extent;
+	CEditCtrl mm_x_zero;
+	CEditCtrl mm_y_extent;
+	CEditCtrl mm_y_zero;
 
 	// Overrides
 public:
 protected:
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	void DoDataExchange(CDataExchange* p_dx) override; // DDX/DDV support
 
 	// Implementation
 protected:
 	BOOL OnInitDialog() override;
-	afx_msg void OnEnChangeXextent();
-	afx_msg void OnEnChangeXzero();
-	afx_msg void OnEnChangeYextent();
-	afx_msg void OnEnChangeYzero();
+	afx_msg void on_en_change_x_extent();
+	afx_msg void on_en_change_x_zero();
+	afx_msg void on_en_change_y_extent();
+	afx_msg void on_en_change_y_zero();
 
 	DECLARE_MESSAGE_MAP()
 };

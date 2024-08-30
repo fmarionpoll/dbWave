@@ -214,10 +214,10 @@ void CFilterPanel::init_filter_list()
 	// setup dialog box
 	DlgProgress dlg;
 	dlg.Create();
-	dlg.SetStep(1);
+	dlg.set_step(1);
 
 	// fill items of the combo (column heads to sort data)
-	dlg.SetStatus(_T("List categories available..."));
+	dlg.set_status(_T("List categories available..."));
 
 	const auto p_combo = static_cast<CMFCToolBarComboBoxButton*>(m_wnd_tool_bar_.GetButton(3));
 	ASSERT(ID_RECORD_SORT == m_wnd_tool_bar_.GetItemID(3));
@@ -229,7 +229,7 @@ void CFilterPanel::init_filter_list()
 	p_combo->SelectItem(p_db->m_main_table_set.m_strSort);
 
 	// fill items of the tree
-	dlg.SetStatus(_T("Populate categories..."));
+	dlg.set_status(_T("Populate categories..."));
 	if (p_db->m_main_table_set.IsBOF() && p_db->m_main_table_set.IsEOF())
 		return;
 	m_wnd_filter_view_.LockWindowUpdate(); // prevent screen update (and flicker)
@@ -249,7 +249,7 @@ void CFilterPanel::init_filter_list()
 
 		cs_comment.Format(_T("Category %i: "), i);
 		cs_comment += CdbTable::m_column_properties[i_col].description;
-		dlg.SetStatus(cs_comment);
+		dlg.set_status(cs_comment);
 
 		// collect data (array of unique descriptors)
 		switch (p_desc->data_code_number)
@@ -276,7 +276,7 @@ void CFilterPanel::init_filter_list()
 		for (auto j = 0; j < p_desc->cs_elements_array.GetSize(); j++)
 		{
 			cs_comment.Format(_T("Create subitem %i"), j);
-			dlg.SetStatus(cs_comment);
+			dlg.set_status(cs_comment);
 
 			h_tree_item = m_wnd_filter_view_.InsertItem(p_desc->cs_elements_array.GetAt(j), m_h_tree_item_[i]);
 			b_check = TVCS_CHECKED;

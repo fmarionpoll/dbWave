@@ -5,7 +5,7 @@ class InPlaceEdit : public CEdit
 {
 public:
     InPlaceEdit(CWnd* parent, int iItem, int iSubItem, CString sInitText);
-    InPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
+    InPlaceEdit(CWnd* p_parent, CRect& rect, DWORD dwStyle, UINT nID,
         int nRow, int nColumn, CString sInitText, UINT nFirstChar);
     ~InPlaceEdit() override;
 

@@ -7,25 +7,25 @@
 
 IMPLEMENT_DYNAMIC(DlgEditList, CDialog)
 
-DlgEditList::DlgEditList(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgEditList::DlgEditList(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
 DlgEditList::~DlgEditList()
 = default;
 
-void DlgEditList::DoDataExchange(CDataExchange* pDX)
+void DlgEditList::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT1, m_csNewString);
-	DDX_Control(pDX, IDC_LIST1, m_clStrings);
+	CDialog::DoDataExchange(p_dx);
+	DDX_Text(p_dx, IDC_EDIT1, m_cs_new_string);
+	DDX_Control(p_dx, IDC_LIST1, m_cl_strings);
 }
 
 BEGIN_MESSAGE_MAP(DlgEditList, CDialog)
 	ON_WM_INITMENU()
-	ON_BN_CLICKED(IDC_DELETE, &DlgEditList::OnBnClickedDelete)
-	ON_BN_CLICKED(IDC_ADDITEM, &DlgEditList::OnBnClickedAdditem)
+	ON_BN_CLICKED(IDC_DELETE, &DlgEditList::on_bn_clicked_delete)
+	ON_BN_CLICKED(IDC_ADDITEM, &DlgEditList::on_bn_clicked_add_item)
 	ON_WM_SIZE()
 	//	ON_BN_CLICKED(IDC_BUTTON1, &CEditListDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
@@ -34,67 +34,67 @@ BOOL DlgEditList::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	const auto nitems = pCo->GetCount();
-	CString csdummy;
+	const auto nitems = p_co->GetCount();
+	CString cs_dummy;
 	for (auto i = 0; i < nitems; i++)
 	{
-		pCo->GetLBText(i, csdummy);
-		m_clStrings.AddString(csdummy);
+		p_co->GetLBText(i, cs_dummy);
+		m_cl_strings.AddString(cs_dummy);
 	}
 	return TRUE;
 }
 
 void DlgEditList::OnOK()
 {
-	m_selected = m_clStrings.GetCurSel();
-	const auto nitems = m_clStrings.GetCount();
-	CString csdummy;
-	for (auto i = 0; i < nitems; i++)
+	m_selected = m_cl_strings.GetCurSel();
+	const auto n_items = m_cl_strings.GetCount();
+	CString cs_dummy;
+	for (auto i = 0; i < n_items; i++)
 	{
-		m_clStrings.GetText(i, csdummy);
-		if (!csdummy.IsEmpty())
-			m_csArray.Add(csdummy);
+		m_cl_strings.GetText(i, cs_dummy);
+		if (!cs_dummy.IsEmpty())
+			m_cs_array.Add(cs_dummy);
 	}
 	CDialog::OnOK();
 }
 
-void DlgEditList::OnBnClickedDelete()
+void DlgEditList::on_bn_clicked_delete()
 {
-	const auto ncount = m_clStrings.GetSelCount();
-	if (0 == ncount)
+	const auto n_count = m_cl_strings.GetSelCount();
+	if (0 == n_count)
 		return;
-	const auto sel_index = new int[ncount];
-	m_clStrings.GetSelItems(ncount, sel_index);
+	const auto sel_index = new int[n_count];
+	m_cl_strings.GetSelItems(n_count, sel_index);
 
-	for (auto i = ncount; i > 0; i--)
-		m_clStrings.DeleteString(sel_index[i - 1]);
+	for (auto i = n_count; i > 0; i--)
+		m_cl_strings.DeleteString(sel_index[i - 1]);
 	delete[] sel_index;
 
-	const auto nitems = m_clStrings.GetCount();
-	CString csdummy;
-	for (auto i = nitems - 1; i >= 0; i--)
+	const auto n_items = m_cl_strings.GetCount();
+	CString cs_dummy;
+	for (auto i = n_items - 1; i >= 0; i--)
 	{
-		m_clStrings.GetText(i, csdummy);
-		if (csdummy.IsEmpty())
-			m_clStrings.DeleteString(i);
+		m_cl_strings.GetText(i, cs_dummy);
+		if (cs_dummy.IsEmpty())
+			m_cl_strings.DeleteString(i);
 	}
 
 	UpdateData(FALSE);
 }
 
-void DlgEditList::OnBnClickedAdditem()
+void DlgEditList::on_bn_clicked_add_item()
 {
-	UpdateData(TRUE); // get data from dlg
-	if (!m_csNewString.IsEmpty()) // add string if not empty
+	UpdateData(TRUE); 
+	if (!m_cs_new_string.IsEmpty()) 
 	{
-		m_clStrings.AddString(m_csNewString);
-		m_csNewString.Empty();
-		UpdateData(FALSE); // update data
+		m_cl_strings.AddString(m_cs_new_string);
+		m_cs_new_string.Empty();
+		UpdateData(FALSE);
 	}
 	GetDlgItem(IDC_EDIT1)->SetFocus();
 }
 
-void DlgEditList::OnSize(UINT nType, int cx, int cy)
+void DlgEditList::OnSize(const UINT n_type, const int cx, const int cy)
 {
-	CDialog::OnSize(nType, cx, cy);
+	CDialog::OnSize(n_type, cx, cy);
 }

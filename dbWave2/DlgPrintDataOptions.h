@@ -6,18 +6,18 @@ class DlgPrintDataOptions : public CDialog
 {
 	// Construction
 public:
-	DlgPrintDataOptions(CWnd* pParent = nullptr); // standard constructor
+	DlgPrintDataOptions(CWnd* p_parent = nullptr);
 
 	// Dialog Data
 	enum { IDD = IDD_PRINTDATADRAWOPTIONS };
 
-	BOOL m_bClipRect{ false };
-	BOOL m_bFrameRect{ false };
-	BOOL m_bTimeScaleBar{ false };
-	BOOL m_bVoltageScaleBar{ false };
-	BOOL m_bPrintSelection{ false };
-	BOOL m_bPrintSpkBars{ false };
-	options_view_data* mdPM{ nullptr };
+	BOOL m_b_clip_rect{ false };
+	BOOL m_b_frame_rect{ false };
+	BOOL m_b_time_scale_bar{ false };
+	BOOL m_b_voltage_scale_bar{ false };
+	BOOL m_b_print_selection{ false };
+	BOOL m_b_print_spk_bars{ false };
+	options_view_data* options_view_data{ nullptr };
 
 	// Implementation
 protected:
@@ -27,31 +27,3 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-/////////////////////////////////////////////////////////////////////////////
-// CPrintDataCommentsDlg dialog
-
-class CPrintDataCommentsDlg : public CDialog
-{
-	// Construction
-public:
-	CPrintDataCommentsDlg(CWnd* pParent = nullptr); // standard constructor
-
-	// Dialog Data
-	enum { IDD = IDD_OPTIONSPRINTDATACOMMENTS };
-
-	BOOL m_bacqcomment;
-	BOOL m_bacqdatetime;
-	BOOL m_bchanscomment;
-	BOOL m_bchansettings;
-	BOOL m_bdocname;
-	int m_fontsize;
-	int m_textseparator;
-	options_view_data* mdPM;
-
-	// Implementation
-protected:
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
-	void OnOK() override;
-	BOOL OnInitDialog() override;
-	DECLARE_MESSAGE_MAP()
-};

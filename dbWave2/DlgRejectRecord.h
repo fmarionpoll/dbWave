@@ -5,19 +5,19 @@ class DlgRejectRecord : public CDialog
 {
 	// Construction
 public:
-	DlgRejectRecord(CWnd* pParent = nullptr); // standard constructor
+	DlgRejectRecord(CWnd* p_parent = nullptr); // standard constructor
 
 	// Dialog Data
 	enum { IDD = IDD_DEFINEARTEFACTSLIMITS };
 
-	BOOL m_bconsecutivepoints{ false };
-	int m_Nconsecutivepoints{ 0 };
+	BOOL m_b_consecutive_points{ false };
+	int m_n_consecutive_points{ 0 };
 	int m_jitter{ 0 };
 	int m_flag{ 1 };
 
 	// Overrides
 protected:
-	void DoDataExchange(CDataExchange* pDX) override; // DDX/DDV support
+	void DoDataExchange(CDataExchange* p_dx) override; // DDX/DDV support
 
 	// Implementation
 protected:

@@ -11,22 +11,22 @@
 
 IMPLEMENT_DYNAMIC(DlgFileNew1, CDialogEx)
 
-DlgFileNew1::DlgFileNew1(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD, pParent)
+DlgFileNew1::DlgFileNew1(CWnd* p_parent /*=NULL*/)
+	: CDialogEx(IDD, p_parent)
 {
 }
 
 DlgFileNew1::~DlgFileNew1()
 = default;
 
-void DlgFileNew1::DoDataExchange(CDataExchange* pDX)
+void DlgFileNew1::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_LIST, m_list);
+	CDialogEx::DoDataExchange(p_dx);
+	DDX_Control(p_dx, IDC_LIST, m_list);
 }
 
 BEGIN_MESSAGE_MAP(DlgFileNew1, CDialogEx)
-	ON_BN_CLICKED(IDOK, &DlgFileNew1::OnBnClickedOk)
+	ON_BN_CLICKED(IDOK, &DlgFileNew1::on_bn_clicked_ok)
 END_MESSAGE_MAP()
 
 // CFileNew1 message handlers
@@ -44,8 +44,8 @@ BOOL DlgFileNew1::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void DlgFileNew1::OnBnClickedOk()
+void DlgFileNew1::on_bn_clicked_ok()
 {
-	m_icursel = m_list.GetCurSel();
+	m_i_cur_sel = m_list.GetCurSel();
 	CDialogEx::OnOK();
 }

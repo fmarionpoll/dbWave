@@ -8,18 +8,18 @@
 #endif
 
 
-DlgListBClaSize::DlgListBClaSize(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgListBClaSize::DlgListBClaSize(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
-void DlgListBClaSize::DoDataExchange(CDataExchange* pDX)
+void DlgListBClaSize::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_ROWHEIGHT, m_rowheight);
-	DDX_Text(pDX, IDC_SUPERPCOL, m_superpcol);
-	DDX_Text(pDX, IDC_TEXTCOL, m_textcol);
-	DDX_Text(pDX, IDC_INTERCOLSPACE, m_intercolspace);
+	CDialog::DoDataExchange(p_dx);
+	DDX_Text(p_dx, IDC_ROWHEIGHT, m_row_height);
+	DDX_Text(p_dx, IDC_SUPERPCOL, m_super_p_col);
+	DDX_Text(p_dx, IDC_TEXTCOL, m_text_col);
+	DDX_Text(p_dx, IDC_INTERCOLSPACE, m_inter_col_space);
 }
 
 BEGIN_MESSAGE_MAP(DlgListBClaSize, CDialog)

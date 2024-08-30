@@ -16,7 +16,7 @@ InPlaceEdit::InPlaceEdit(CWnd* parent, int iItem, int iSubItem, CString sInitTex
 	m_parent = parent;
 }
 
-InPlaceEdit::InPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
+InPlaceEdit::InPlaceEdit(CWnd* p_parent, CRect& rect, DWORD dwStyle, UINT nID,
 	int nRow, int nColumn, CString sInitText,
 	UINT nFirstChar)
 {
@@ -34,9 +34,9 @@ InPlaceEdit::InPlaceEdit(CWnd* pParent, CRect& rect, DWORD dwStyle, UINT nID,
 
 	const DWORD dwEditStyle = WS_BORDER | WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL //|ES_MULTILINE
 		| dwStyle;
-	if (!Create(dwEditStyle, rect, pParent, nID)) return;
+	if (!Create(dwEditStyle, rect, p_parent, nID)) return;
 
-	SetFont(pParent->GetFont());
+	SetFont(p_parent->GetFont());
 
 	SetWindowText(sInitText);
 	SetFocus();

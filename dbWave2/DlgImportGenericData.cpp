@@ -6,47 +6,47 @@
 #define new DEBUG_NEW
 #endif
 
-DlgImportGenericData::DlgImportGenericData(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgImportGenericData::DlgImportGenericData(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
-void DlgImportGenericData::DoDataExchange(CDataExchange* pDX)
+void DlgImportGenericData::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_FILELIST, m_filedroplist);
-	DDX_Control(pDX, IDC_PRECISION, m_ComboPrecision);
-	DDX_Text(pDX, IDC_CHANNELCOMMENT, m_adChannelComment);
-	DDX_Text(pDX, IDC_CHANNELGAIN, m_adChannelGain);
-	DDX_Text(pDX, IDC_CHANNELNO, m_adChannelChan);
-	DDX_Text(pDX, IDC_NUMBEROFCHANNELS, m_nb_AD_channels);
-	DDX_Text(pDX, IDC_NUMBEROFRUNS, m_nbRuns);
-	DDX_Text(pDX, IDC_SAMPLINGRATE, m_samplingrate);
-	DDX_Text(pDX, IDC_SKIPNBYTES, m_skipNbytes);
-	DDX_Text(pDX, IDC_VMAX, m_voltageMax);
-	DDX_Text(pDX, IDC_VMIN, m_voltageMin);
-	DDX_Text(pDX, IDC_FILETITLE, m_csFileTitle);
-	DDX_Check(pDX, IDC_CHECK1, m_bpreviewON);
+	CDialog::DoDataExchange(p_dx);
+	DDX_Control(p_dx, IDC_FILELIST, m_file_drop_list);
+	DDX_Control(p_dx, IDC_PRECISION, m_combo_precision);
+	DDX_Text(p_dx, IDC_CHANNELCOMMENT, m_ad_channel_comment);
+	DDX_Text(p_dx, IDC_CHANNELGAIN, m_ad_channel_gain);
+	DDX_Text(p_dx, IDC_CHANNELNO, m_ad_channel_chan);
+	DDX_Text(p_dx, IDC_NUMBEROFCHANNELS, m_nb_ad_channels);
+	DDX_Text(p_dx, IDC_NUMBEROFRUNS, m_nb_runs);
+	DDX_Text(p_dx, IDC_SAMPLINGRATE, m_sampling_rate);
+	DDX_Text(p_dx, IDC_SKIPNBYTES, m_skip_n_bytes);
+	DDX_Text(p_dx, IDC_VMAX, m_voltage_max);
+	DDX_Text(p_dx, IDC_VMIN, m_voltage_min);
+	DDX_Text(p_dx, IDC_FILETITLE, m_cs_file_title);
+	DDX_Check(p_dx, IDC_CHECK1, m_b_preview_on);
 }
 
 BEGIN_MESSAGE_MAP(DlgImportGenericData, CDialog)
-	ON_CBN_SELCHANGE(IDC_PRECISION, OnSelchangePrecision)
-	ON_EN_CHANGE(IDC_NUMBEROFCHANNELS, OnEnChangeNumberofchannels)
-	ON_BN_CLICKED(IDC_MULTIPLERUNS, OnMultipleruns)
-	ON_BN_CLICKED(IDC_SINGLERUN, OnSinglerun)
-	ON_EN_CHANGE(IDC_CHANNELNO, OnEnChangeChannelno)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN2, OnDeltaposSpinNbChannels)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN1, OnDeltaposSpinNoChan)
-	ON_BN_CLICKED(IDC_IMPORT, OnImport)
-	ON_BN_CLICKED(IDC_IMPORTALL, OnImportall)
-	ON_BN_CLICKED(IDC_CHECK1, OnSetPreview)
-	ON_CBN_SELCHANGE(IDC_FILELIST, OnSelchangeFilelist)
-	ON_BN_CLICKED(IDC_OFFSETBINARY, OnOffsetbinary)
-	ON_BN_CLICKED(IDC_TWOSCOMPLEMENT, OnTwoscomplement)
-	ON_EN_CHANGE(IDC_SKIPNBYTES, OnEnChangeSkipnbytes)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN3, OnDeltaposSkipNbytes)
-	ON_BN_CLICKED(IDC_CHECKSAPID, OnSapid3_5)
-	ON_EN_CHANGE(IDC_CHANNELCOMMENT, OnEnChangeChannelcomment)
+	ON_CBN_SELCHANGE(IDC_PRECISION, on_sel_change_precision)
+	ON_EN_CHANGE(IDC_NUMBEROFCHANNELS, on_en_change_number_of_channels)
+	ON_BN_CLICKED(IDC_MULTIPLERUNS, on_multiple_runs)
+	ON_BN_CLICKED(IDC_SINGLERUN, on_single_run)
+	ON_EN_CHANGE(IDC_CHANNELNO, on_en_change_channel_no)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN2, on_delta_pos_spin_nb_channels)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN1, on_delta_pos_spin_no_chan)
+	ON_BN_CLICKED(IDC_IMPORT, on_import)
+	ON_BN_CLICKED(IDC_IMPORTALL, on_import_all)
+	ON_BN_CLICKED(IDC_CHECK1, on_set_preview)
+	ON_CBN_SELCHANGE(IDC_FILELIST, on_sel_change_file_list)
+	ON_BN_CLICKED(IDC_OFFSETBINARY, on_offset_binary)
+	ON_BN_CLICKED(IDC_TWOSCOMPLEMENT, on_twos_complement)
+	ON_EN_CHANGE(IDC_SKIPNBYTES, on_en_change_skip_n_bytes)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN3, on_delta_pos_skip_n_bytes)
+	ON_BN_CLICKED(IDC_CHECKSAPID, on_sapid3_5)
+	ON_EN_CHANGE(IDC_CHANNELCOMMENT, on_en_change_channel_comment)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -61,14 +61,14 @@ BOOL DlgImportGenericData::OnInitDialog()
 	CDialog::OnInitDialog(); // normal initialization CSpinButtonCtrl
 
 	// subclass edit control
-	VERIFY(mm_nb_AD_channels.SubclassDlgItem(IDC_NUMBEROFCHANNELS, this));
-	VERIFY(mm_adChannelChan.SubclassDlgItem(IDC_CHANNELNO, this));
-	VERIFY(mm_skipNbytes.SubclassDlgItem(IDC_SKIPNBYTES, this));
-	VERIFY(m_ChartDataWnd.SubclassDlgItem(IDC_DISPLAYSOURCE, this));
+	VERIFY(mm_nb_ad_channels.SubclassDlgItem(IDC_NUMBEROFCHANNELS, this));
+	VERIFY(mm_ad_channel_chan.SubclassDlgItem(IDC_CHANNELNO, this));
+	VERIFY(mm_skip_n_bytes.SubclassDlgItem(IDC_SKIPNBYTES, this));
+	VERIFY(m_chart_data_wnd.SubclassDlgItem(IDC_DISPLAYSOURCE, this));
 
 	// inhibit buttons linked to conversion if requested
 	int nIDFocus;
-	if (!bConvert)
+	if (!b_convert)
 	{
 		GetDlgItem(IDC_FILELIST)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_IMPORT)->ShowWindow(SW_HIDE);
@@ -81,32 +81,32 @@ BOOL DlgImportGenericData::OnInitDialog()
 	else
 	{
 		// transfer file names into CComboBox
-		int lastindex = m_pfilenameArray->GetSize();
-		for (int i = 0; i < lastindex; i++)
+		const int last_index = m_p_file_name_array->GetSize();
+		for (int i = 0; i < last_index; i++)
 		{
-			CString filename = m_pfilenameArray->GetAt(i);
-			int icount = filename.GetLength() - filename.ReverseFind('\\') - 1;
-			m_filedroplist.AddString(filename.Right(icount));
-			m_filedroplist.SetItemData(i, i);
+			CString filename = m_p_file_name_array->GetAt(i);
+			const int i_count = filename.GetLength() - filename.ReverseFind('\\') - 1;
+			m_file_drop_list.AddString(filename.Right(i_count));
+			m_file_drop_list.SetItemData(i, i);
 		}
-		m_filedroplist.SetCurSel(0); // select first item in the list
+		m_file_drop_list.SetCurSel(0); // select first item in the list
 		nIDFocus = IDC_IMPORT;
-		static_cast<CButton*>(GetDlgItem(IDC_CHECKSAPID))->SetCheck(piivO->is_sapid_3_5);
-		if (!piivO->preview_requested)
+		static_cast<CButton*>(GetDlgItem(IDC_CHECKSAPID))->SetCheck(options_import->is_sapid_3_5);
+		if (!options_import->preview_requested)
 			GetDlgItem(IDC_DISPLAYSOURCE)->ShowWindow(SW_HIDE);
 	}
 
 	// copy relevant data into controls
-	m_adChannelChan = 1;
-	UpdateControlsFromStruct();
+	m_ad_channel_chan = 1;
+	update_controls_from_struct();
 	// convert selected file if options say so
-	if (bConvert && piivO->preview_requested)
+	if (b_convert && options_import->preview_requested)
 	{
-		m_bpreviewON = piivO->preview_requested;
+		m_b_preview_on = options_import->preview_requested;
 		// get options as set by caller
-		static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(piivO->preview_requested);
-		SetFileNames(0);
-		UpdatePreview();
+		static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(options_import->preview_requested);
+		set_file_names(0);
+		update_preview();
 	}
 
 	GetDlgItem(nIDFocus)->SetFocus();
@@ -118,107 +118,107 @@ BOOL DlgImportGenericData::OnInitDialog()
 // corresponding edit control
 // otherwise disable them
 
-void DlgImportGenericData::EnableRunParameters()
+void DlgImportGenericData::enable_run_parameters()
 {
-	int IDC_button = IDC_SINGLERUN; // check button concerning structure of
-	if (!piivO->is_single_run) // file; either a single acquisition bout
-		IDC_button = IDC_MULTIPLERUNS; // or more than one
-	CheckRadioButton(IDC_SINGLERUN, IDC_MULTIPLERUNS, IDC_button);
-	GetDlgItem(IDC_NUMBEROFRUNS)->EnableWindow(!piivO->is_single_run); // edit window
-	GetDlgItem(IDC_STATIC1)->EnableWindow(!piivO->is_single_run); // static
-	static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(piivO->preview_requested);
-	m_bChanged = TRUE;
+	int idc_button = IDC_SINGLERUN; // check button concerning structure of
+	if (!options_import->is_single_run) // file; either a single acquisition bout
+		idc_button = IDC_MULTIPLERUNS; // or more than one
+	CheckRadioButton(IDC_SINGLERUN, IDC_MULTIPLERUNS, idc_button);
+	GetDlgItem(IDC_NUMBEROFRUNS)->EnableWindow(!options_import->is_single_run); // edit window
+	GetDlgItem(IDC_STATIC1)->EnableWindow(!options_import->is_single_run); // static
+	static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->SetCheck(options_import->preview_requested);
+	m_b_changed = TRUE;
 }
 
 // copy values from structure iivO into controls
 // this routine is called when the dialog box is opened
 
-void DlgImportGenericData::UpdateControlsFromStruct()
+void DlgImportGenericData::update_controls_from_struct()
 {
 	// copy structure content into controls
-	m_nbRuns = piivO->nb_runs; // load number of repetitions & enable corresp
-	GetDlgItem(IDC_SAMPLINGRATE)->EnableWindow(!piivO->is_sapid_3_5);
-	EnableRunParameters(); // enable dependent dlg items
-	m_samplingrate = piivO->sampling_rate; // sampling rate per channel (in Herz)
-	m_nb_AD_channels = piivO->nb_channels; // number of data acquisition channels
-	piivO->p_wave_chan_array->chan_array_set_size(piivO->nb_channels);
+	m_nb_runs = options_import->nb_runs; // load number of repetitions & enable corresponding
+	GetDlgItem(IDC_SAMPLINGRATE)->EnableWindow(!options_import->is_sapid_3_5);
+	enable_run_parameters(); // enable dependent dlg items
+	m_sampling_rate = options_import->sampling_rate; // sampling rate per channel (in Hertz)
+	m_nb_ad_channels = options_import->nb_channels; // number of data acquisition channels
+	options_import->p_wave_chan_array->chan_array_set_size(options_import->nb_channels);
 
 	int IDC_button = IDC_OFFSETBINARY; // check button concerning data encoding mode
-	if (piivO->encoding_mode > 0)
+	if (options_import->encoding_mode > 0)
 		IDC_button = IDC_TWOSCOMPLEMENT;
 	CheckRadioButton(IDC_OFFSETBINARY, IDC_TWOSCOMPLEMENT, IDC_button);
 
-	// set precision combox box
-	int precisionindex = 1; // default = 1 (12 bits)
-	if (piivO->bits_precision == 16) // 16 bits = 2nd position
-		precisionindex = 2;
-	else if (piivO->bits_precision == 8) // 8 bits = initial position
-		precisionindex = 0;
-	else if (piivO->bits_precision == 24) // 24 bits
-		precisionindex = 3;
-	else if (piivO->bits_precision == 32) // 32 bits
-		precisionindex = 4;
-	m_ComboPrecision.SetCurSel(precisionindex);
+	// set precision combo box
+	int precision_index = 1; // default = 1 (12 bits)
+	if (options_import->bits_precision == 16) // 16 bits = 2nd position
+		precision_index = 2;
+	else if (options_import->bits_precision == 8) // 8 bits = initial position
+		precision_index = 0;
+	else if (options_import->bits_precision == 24) // 24 bits
+		precision_index = 3;
+	else if (options_import->bits_precision == 32) // 32 bits
+		precision_index = 4;
+	m_combo_precision.SetCurSel(precision_index);
 
-	m_voltageMax = piivO->voltage_max; // set voltage max
-	m_voltageMin = piivO->voltage_min; // set voltage min
-	m_skipNbytes = piivO->skip_n_bytes; // set "skip n bytes"
-	m_csFileTitle = piivO->title; // file global comment
-	CWaveChan* pChannel = piivO->p_wave_chan_array->get_p_channel(m_adChannelChan - 1);
-	m_adChannelGain = static_cast<float>(pChannel->am_gaintotal); // set gain
-	m_adChannelComment = pChannel->am_csComment; // and comment
+	m_voltage_max = options_import->voltage_max; // set voltage max
+	m_voltage_min = options_import->voltage_min; // set voltage min
+	m_skip_n_bytes = options_import->skip_n_bytes; // set "skip n bytes"
+	m_cs_file_title = options_import->title; // file global comment
+	const CWaveChan* p_channel = options_import->p_wave_chan_array->get_p_channel(m_ad_channel_chan - 1);
+	m_ad_channel_gain = static_cast<float>(p_channel->am_gaintotal); // set gain
+	m_ad_channel_comment = p_channel->am_csComment; // and comment
 
 	// set limits associated spin controls
 	static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN2))->SetRange(1, 1024);
-	static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN1))->SetRange(1, m_nb_AD_channels);
+	static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN1))->SetRange(1, m_nb_ad_channels);
 	static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN3))->SetRange(1, 32767);
 
 	UpdateData(FALSE); // refresh controls
-	m_bChanged = FALSE;
+	m_b_changed = FALSE;
 }
 
 // copy values from controls into structure iivO
 // this routine is called on exit
 
-void DlgImportGenericData::UpdateStructFromControls()
+void DlgImportGenericData::update_struct_from_controls()
 {
 	UpdateData(TRUE);
 	// copy controls into structure
 	if (IsDlgButtonChecked(IDC_SINGLERUN))
-		piivO->is_single_run = TRUE;
+		options_import->is_single_run = TRUE;
 	else
 	{
-		piivO->is_single_run = FALSE;
-		piivO->nb_runs = m_nbRuns;
+		options_import->is_single_run = FALSE;
+		options_import->nb_runs = m_nb_runs;
 	}
-	piivO->sampling_rate = m_samplingrate; // sampling rate per channel (in Herz)
-	piivO->nb_channels = m_nb_AD_channels; // number of data acquisition channels
+	options_import->sampling_rate = m_sampling_rate; // sampling rate per channel (in Herz)
+	options_import->nb_channels = m_nb_ad_channels; // number of data acquisition channels
 	// encoding
 	if (IsDlgButtonChecked(IDC_OFFSETBINARY))
-		piivO->encoding_mode = OLx_ENC_BINARY;
+		options_import->encoding_mode = OLx_ENC_BINARY;
 	else
-		piivO->encoding_mode = OLx_ENC_2SCOMP;
+		options_import->encoding_mode = OLx_ENC_2SCOMP;
 
 	// precision is updated when a change is made
 
-	piivO->voltage_max = m_voltageMax; // set voltage max
-	piivO->voltage_min = m_voltageMin; // set voltage min
-	piivO->skip_n_bytes = m_skipNbytes; // set "skip n bytes"
-	piivO->title = m_csFileTitle; // file global comment
+	options_import->voltage_max = m_voltage_max; // set voltage max
+	options_import->voltage_min = m_voltage_min; // set voltage min
+	options_import->skip_n_bytes = m_skip_n_bytes; // set "skip n bytes"
+	options_import->title = m_cs_file_title; // file global comment
 
-	CWaveChan* pChannel = piivO->p_wave_chan_array->get_p_channel(m_adChannelChan - 1);
-	pChannel->am_gaintotal = m_adChannelGain; // set gain
-	pChannel->am_amplifiergain = pChannel->am_gaintotal;
-	pChannel->am_gainAD = 1;
-	pChannel->am_gainpre = 1;
-	pChannel->am_gainpost = 1;
-	pChannel->am_gainheadstage = 1;
-	pChannel->am_csComment = m_adChannelComment; // and comment
+	CWaveChan* p_channel = options_import->p_wave_chan_array->get_p_channel(m_ad_channel_chan - 1);
+	p_channel->am_gaintotal = m_ad_channel_gain; // set gain
+	p_channel->am_amplifiergain = p_channel->am_gaintotal;
+	p_channel->am_gainAD = 1;
+	p_channel->am_gainpre = 1;
+	p_channel->am_gainpost = 1;
+	p_channel->am_gainheadstage = 1;
+	p_channel->am_csComment = m_ad_channel_comment; // and comment
 
 	// adjust size of chan descriptors array
-	piivO->p_wave_chan_array->chan_array_set_size(m_nb_AD_channels);
+	options_import->p_wave_chan_array->chan_array_set_size(m_nb_ad_channels);
 
-	m_bChanged = FALSE;
+	m_b_changed = FALSE;
 }
 
 // exit dialog box
@@ -227,19 +227,19 @@ void DlgImportGenericData::UpdateStructFromControls()
 
 void DlgImportGenericData::OnOK()
 {
-	if (m_bChanged)
-		UpdateStructFromControls(); // update structures with options
+	if (m_b_changed)
+		update_struct_from_controls(); // update structures with options
 
 	// remove names that were not converted
-	if (bConvert)
+	if (b_convert)
 	{
-		int lastindex = m_pfilenameArray->GetUpperBound();
-		for (int i = lastindex; i >= 0; i--) // loop backwards
+		int last_index = m_p_file_name_array->GetUpperBound();
+		for (int i = last_index; i >= 0; i--) // loop backwards
 		{
-			CString filename = m_pfilenameArray->GetAt(i);
-			int icount = filename.Find(_T("AW_"));
-			if (icount < 0) // delete unconverted file name
-				m_pfilenameArray->RemoveAt(i);
+			CString filename = m_p_file_name_array->GetAt(i);
+			int i_count = filename.Find(_T("AW_"));
+			if (i_count < 0) // delete unconverted file name
+				m_p_file_name_array->RemoveAt(i);
 		}
 	}
 	// base class routine...
@@ -249,13 +249,13 @@ void DlgImportGenericData::OnOK()
 // change parameter describing the precision of the data
 // convert CCombobox selection into a number of bits, store result into iivO
 
-void DlgImportGenericData::OnSelchangePrecision()
+void DlgImportGenericData::on_sel_change_precision()
 {
 	UpdateData(TRUE); // load data from controls
-	// set precision combox box
-	int precisionindex = m_ComboPrecision.GetCurSel();
+	// set precision combo box
+	const int precision_index = m_combo_precision.GetCurSel();
 	int value; // convert corresponding precision  value
-	switch (precisionindex)
+	switch (precision_index)
 	{
 	case 0: value = 8;
 		break;
@@ -271,38 +271,38 @@ void DlgImportGenericData::OnSelchangePrecision()
 		break;
 	}
 	// action only if different
-	if (value != piivO->bits_precision)
+	if (value != options_import->bits_precision)
 	{
-		piivO->bits_precision = value;
-		UpdatePreview();
+		options_import->bits_precision = value;
+		update_preview();
 	}
-	m_bChanged = TRUE;
+	m_b_changed = TRUE;
 }
 
 // On check : set flag single / multiple run
 
-void DlgImportGenericData::OnMultipleruns()
+void DlgImportGenericData::on_multiple_runs()
 {
 	if (IsDlgButtonChecked(IDC_MULTIPLERUNS)
-		&& piivO->is_single_run != FALSE)
+		&& options_import->is_single_run != FALSE)
 	{
-		piivO->is_single_run = FALSE;
-		EnableRunParameters();
+		options_import->is_single_run = FALSE;
+		enable_run_parameters();
 		// UpdatePreview();
 	}
-	m_bChanged = TRUE;
+	m_b_changed = TRUE;
 }
 
-void DlgImportGenericData::OnSinglerun()
+void DlgImportGenericData::on_single_run()
 {
 	if (IsDlgButtonChecked(IDC_SINGLERUN)
-		&& piivO->is_single_run != TRUE)
+		&& options_import->is_single_run != TRUE)
 	{
-		piivO->is_single_run = TRUE;
-		EnableRunParameters();
+		options_import->is_single_run = TRUE;
+		enable_run_parameters();
 		// UpdatePreview();
 	}
-	m_bChanged = TRUE;
+	m_b_changed = TRUE;
 }
 
 // change the number of data acquisition channels
@@ -315,32 +315,32 @@ void DlgImportGenericData::OnSinglerun()
 // this routine get the data from the edit control, evaluate the result and
 // restore flags to enable CEditCtrl to receive new data
 
-void DlgImportGenericData::OnEnChangeNumberofchannels()
+void DlgImportGenericData::on_en_change_number_of_channels()
 {
-	if (!mm_nb_AD_channels.m_b_entry_done)
+	if (!mm_nb_ad_channels.m_b_entry_done)
 		return;
 
-	const UINT nb_AD_channels = m_nb_AD_channels;
-	mm_nb_AD_channels.OnEnChange(this, m_nb_AD_channels, 1, -1);
+	const UINT nb_AD_channels = m_nb_ad_channels;
+	mm_nb_ad_channels.on_en_change(this, m_nb_ad_channels, 1, -1);
 
-	// modif limit max of chan parameters
-	if (m_nb_AD_channels < 1) // check that there is at least one chan
-		m_nb_AD_channels = 1; // then change the limit of the spin
+	//  limit max of chan parameters
+	if (m_nb_ad_channels < 1) // check that there is at least one chan
+		m_nb_ad_channels = 1; // then change the limit of the spin
 
 	// action if value has changed
-	if (m_nb_AD_channels != nb_AD_channels)
+	if (m_nb_ad_channels != nb_AD_channels)
 	{
-		piivO->nb_channels = m_nb_AD_channels;
-		piivO->p_wave_chan_array->chan_array_set_size(m_nb_AD_channels);
-		static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN1))->SetRange(1, m_nb_AD_channels);
-		if (m_adChannelChan > m_nb_AD_channels) // and update dependent chan no
+		options_import->nb_channels = m_nb_ad_channels;
+		options_import->p_wave_chan_array->chan_array_set_size(m_nb_ad_channels);
+		static_cast<CSpinButtonCtrl*>(GetDlgItem(IDC_SPIN1))->SetRange(1, m_nb_ad_channels);
+		if (m_ad_channel_chan > m_nb_ad_channels) // and update dependent chan no
 		{
-			m_adChannelChan = m_nb_AD_channels;
+			m_ad_channel_chan = m_nb_ad_channels;
 			UpdateData(FALSE);
 		}
-		UpdatePreview();
+		update_preview();
 	}
-	m_bChanged = TRUE;
+	m_b_changed = TRUE;
 }
 
 // change channel number
@@ -348,108 +348,108 @@ void DlgImportGenericData::OnEnChangeNumberofchannels()
 // each data acquisition channel is associated with descriptors
 // which can be modified by the user. This control allow the selection
 // of one descriptor
-// same comments as with OnEnChangeNumberofchannels()
+// same comments as with OnEnChange_Number_of_channels()
 // operations:
 // - evaluate and clip irrelevant values
 // - save current parameters
 // - load parameters for new channel
 
-void DlgImportGenericData::OnEnChangeChannelno()
+void DlgImportGenericData::on_en_change_channel_no()
 {
-	if (!mm_adChannelChan.m_b_entry_done)
+	if (!mm_ad_channel_chan.m_b_entry_done)
 		return;
 
-	UINT previous_channel = m_adChannelChan;
-	mm_adChannelChan.OnEnChange(this, m_adChannelChan, 1, -1);
+	UINT previous_channel = m_ad_channel_chan;
+	mm_ad_channel_chan.on_en_change(this, m_ad_channel_chan, 1, -1);
 
 	// check limits of m_adChannelChan
-	if (m_adChannelChan < 1)
-		m_adChannelChan = 1;
-	if (m_adChannelChan > m_nb_AD_channels)
-		m_adChannelChan = m_nb_AD_channels;
-	if (m_adChannelChan != previous_channel)
+	if (m_ad_channel_chan < 1)
+		m_ad_channel_chan = 1;
+	if (m_ad_channel_chan > m_nb_ad_channels)
+		m_ad_channel_chan = m_nb_ad_channels;
+	if (m_ad_channel_chan != previous_channel)
 	{
 		// save previous data
-		previous_channel = m_adChannelChan;
+		previous_channel = m_ad_channel_chan;
 		UpdateData(TRUE); // load data from controls
-		m_adChannelChan = previous_channel;
-		CWaveChan* pChannel = piivO->p_wave_chan_array->get_p_channel(previous_channel - 1);
-		pChannel->am_gaintotal = m_adChannelGain; // set gain
-		pChannel->am_amplifiergain = pChannel->am_gaintotal;
-		pChannel->am_csComment = m_adChannelComment; // and comment
+		m_ad_channel_chan = previous_channel;
+		CWaveChan* p_channel = options_import->p_wave_chan_array->get_p_channel(previous_channel - 1);
+		p_channel->am_gaintotal = m_ad_channel_gain; // set gain
+		p_channel->am_amplifiergain = p_channel->am_gaintotal;
+		p_channel->am_csComment = m_ad_channel_comment; // and comment
 		// point to new channel: add new descriptors if necessary
-		piivO->p_wave_chan_array->chan_array_set_size(m_nb_AD_channels);
+		options_import->p_wave_chan_array->chan_array_set_size(m_nb_ad_channels);
 
 		// load data from new current channel
-		pChannel = piivO->p_wave_chan_array->get_p_channel(m_adChannelChan - 1);
-		m_adChannelGain = static_cast<float>(pChannel->am_gaintotal); // set gain
-		m_adChannelComment = pChannel->am_csComment; // and comment
+		p_channel = options_import->p_wave_chan_array->get_p_channel(m_ad_channel_chan - 1);
+		m_ad_channel_gain = static_cast<float>(p_channel->am_gaintotal); // set gain
+		m_ad_channel_comment = p_channel->am_csComment; // and comment
 		UpdateData(FALSE);
 	}
 
-	m_bChanged = TRUE;
+	m_b_changed = TRUE;
 }
 
 // change size of data header... ie offset from start of file to data
 
-void DlgImportGenericData::OnEnChangeSkipnbytes()
+void DlgImportGenericData::on_en_change_skip_n_bytes()
 {
-	if (!mm_skipNbytes.m_b_entry_done)
+	if (!mm_skip_n_bytes.m_b_entry_done)
 		return;
 
-	UINT skipNbytes = m_skipNbytes;
-	mm_skipNbytes.OnEnChange(this, m_skipNbytes, 1, -1);
+	const UINT skip_n_bytes = m_skip_n_bytes;
+	mm_skip_n_bytes.on_en_change(this, m_skip_n_bytes, 1, -1);
 
 	// check limits of m_adChannelChan
-	if (m_skipNbytes < 0)
-		m_skipNbytes = 0;
+	if (m_skip_n_bytes < 0)
+		m_skip_n_bytes = 0;
 	UpdateData(FALSE);
 
-	if (m_skipNbytes != skipNbytes)
+	if (m_skip_n_bytes != skip_n_bytes)
 	{
-		piivO->skip_n_bytes = m_skipNbytes;
-		UpdatePreview();
+		options_import->skip_n_bytes = static_cast<int>(m_skip_n_bytes);
+		update_preview();
 	}
-	m_bChanged = TRUE;
+	m_b_changed = TRUE;
 }
 
 // spin control associated with Edit control "nb of data channels"
 // convert notification message into flags adapted to the CEditCtrl
 
-void DlgImportGenericData::OnDeltaposSpinNbChannels(NMHDR* pNMHDR, LRESULT* pResult)
+void DlgImportGenericData::on_delta_pos_spin_nb_channels(NMHDR* p_nmhdr, LRESULT* p_result)
 {
-	NM_UPDOWN* pNMUpDown = (NM_UPDOWN*)pNMHDR;
-	if (pNMUpDown->iDelta > 0)
-		mm_nb_AD_channels.m_n_char = VK_UP;
+	NM_UPDOWN* p_nm_up_down = reinterpret_cast<NMUPDOWN*>(p_nmhdr);
+	if (p_nm_up_down->iDelta > 0)
+		mm_nb_ad_channels.m_n_char = VK_UP;
 	else
-		mm_nb_AD_channels.m_n_char = VK_DOWN;
-	mm_nb_AD_channels.m_b_entry_done = TRUE;
-	*pResult = 0;
+		mm_nb_ad_channels.m_n_char = VK_DOWN;
+	mm_nb_ad_channels.m_b_entry_done = TRUE;
+	*p_result = 0;
 }
 
 // spin control associated with channel no
 // same remarks as above
 
-void DlgImportGenericData::OnDeltaposSpinNoChan(NMHDR* pNMHDR, LRESULT* pResult)
+void DlgImportGenericData::on_delta_pos_spin_no_chan(NMHDR* p_nmhdr, LRESULT* p_result)
 {
-	NM_UPDOWN* pNMUpDown = (NM_UPDOWN*)pNMHDR;
-	if (pNMUpDown->iDelta > 0)
-		mm_adChannelChan.m_n_char = VK_UP;
+	NM_UPDOWN* p_nm_up_down = reinterpret_cast<NMUPDOWN*>(p_nmhdr);
+	if (p_nm_up_down->iDelta > 0)
+		mm_ad_channel_chan.m_n_char = VK_UP;
 	else
-		mm_adChannelChan.m_n_char = VK_DOWN;
-	mm_adChannelChan.m_b_entry_done = TRUE;
-	*pResult = 0;
+		mm_ad_channel_chan.m_n_char = VK_DOWN;
+	mm_ad_channel_chan.m_b_entry_done = TRUE;
+	*p_result = 0;
 }
 
-void DlgImportGenericData::OnDeltaposSkipNbytes(NMHDR* pNMHDR, LRESULT* pResult)
+void DlgImportGenericData::on_delta_pos_skip_n_bytes(NMHDR* p_nmhdr, LRESULT* p_result)
 {
-	NM_UPDOWN* pNMUpDown = (NM_UPDOWN*)pNMHDR;
-	if (pNMUpDown->iDelta > 0)
-		mm_skipNbytes.m_n_char = VK_UP;
+	NM_UPDOWN* p_nm_up_down = reinterpret_cast<NMUPDOWN*>(p_nmhdr);
+	if (p_nm_up_down->iDelta > 0)
+		mm_skip_n_bytes.m_n_char = VK_UP;
 	else
-		mm_skipNbytes.m_n_char = VK_DOWN;
-	mm_skipNbytes.m_b_entry_done = TRUE;
-	*pResult = 0;
+		mm_skip_n_bytes.m_n_char = VK_DOWN;
+	mm_skip_n_bytes.m_b_entry_done = TRUE;
+	*p_result = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -463,26 +463,26 @@ void DlgImportGenericData::OnDeltaposSkipNbytes(NMHDR* pNMHDR, LRESULT* pResult)
 // - select next item
 // if combobox is empty, exit dialog.
 
-void DlgImportGenericData::OnImport()
+void DlgImportGenericData::on_import()
 {
-	if (!m_bimportall)
-		UpdateStructFromControls();
+	if (!m_b_import_all)
+		update_struct_from_controls();
 
-	int cursel = m_filedroplist.GetCurSel();
-	int index = m_filedroplist.GetItemData(cursel);
-	SetFileNames(index);
+	const int cur_sel = m_file_drop_list.GetCurSel();
+	const int index = m_file_drop_list.GetItemData(cur_sel);
+	set_file_names(index);
 
 	// convert file
-	UpdateWaveDescriptors(&m_AcqDataFile);
-	m_AcqDataFile.save_as(m_filedest);
-	m_pfilenameArray->SetAt(index, m_filedest);
+	update_wave_descriptors(&m_acq_data_file);
+	m_acq_data_file.save_as(m_file_dest);
+	m_p_file_name_array->SetAt(index, m_file_dest);
 
 	// delete drop list item CComboBox
-	m_filedroplist.DeleteString(cursel);
-	if (m_filedroplist.GetCount() > 0)
+	m_file_drop_list.DeleteString(cur_sel);
+	if (m_file_drop_list.GetCount() > 0)
 	{
-		m_filedroplist.SetCurSel(0);
-		OnSelchangeFilelist();
+		m_file_drop_list.SetCurSel(0);
+		on_sel_change_file_list();
 	}
 	else
 		OnOK();
@@ -490,148 +490,148 @@ void DlgImportGenericData::OnImport()
 
 // import all files at once: loop through all members of the combo box
 
-void DlgImportGenericData::OnImportall()
+void DlgImportGenericData::on_import_all()
 {
-	m_bimportall = TRUE;
-	UpdateStructFromControls();
-	int nbitems = m_filedroplist.GetCount();
-	for (int i = 0; i < nbitems; i++)
-		OnImport();
-	m_bimportall = FALSE;
+	m_b_import_all = TRUE;
+	update_struct_from_controls();
+	const int n_items = m_file_drop_list.GetCount();
+	for (int i = 0; i < n_items; i++)
+		on_import();
+	m_b_import_all = FALSE;
 }
 
 // update preview file
 
-void DlgImportGenericData::UpdatePreview()
+void DlgImportGenericData::update_preview()
 {
 	// convert data
-	if (m_filesource != m_fileold)
+	if (m_file_source != m_file_old)
 	{
 		CFileStatus status;
-		const auto b_open = CFile::GetStatus(m_filesource, status);
-		m_AcqDataFile.open_acq_file(m_filesource, status);
-		m_fileold = m_filesource;
+		const auto b_open = CFile::GetStatus(m_file_source, status);
+		m_acq_data_file.open_acq_file(m_file_source, status);
+		m_file_old = m_file_source;
 	}
-	m_AcqDataFile.set_reading_buffer_dirty(); // invalidate data buffer
-	UpdateWaveDescriptors(&m_AcqDataFile);
+	m_acq_data_file.set_reading_buffer_dirty(); // invalidate data buffer
+	update_wave_descriptors(&m_acq_data_file);
 
 	// display data
-	if (!m_bpreviewON)
+	if (!m_b_preview_on)
 		return;
 
-	int ndocchans = m_AcqDataFile.get_wave_format()->scan_count;
-	m_ChartDataWnd.attach_data_file(&m_AcqDataFile);
-	CSize lsize = m_ChartDataWnd.get_rect_size();
-	m_ChartDataWnd.resize_channels(lsize.cx, m_AcqDataFile.get_doc_channel_length());
-	if (m_ChartDataWnd.get_channel_list_size() < ndocchans) // add envelopes if necessary
+	const int n_doc_channels = m_acq_data_file.get_wave_format()->scan_count;
+	m_chart_data_wnd.attach_data_file(&m_acq_data_file);
+	const CSize l_size = m_chart_data_wnd.get_rect_size();
+	m_chart_data_wnd.resize_channels(l_size.cx, m_acq_data_file.get_doc_channel_length());
+	if (m_chart_data_wnd.get_channel_list_size() < n_doc_channels) // add envelopes if necessary
 	{
-		for (int jdocchan = 1; jdocchan < ndocchans; jdocchan++)
-			m_ChartDataWnd.add_channel_list_item(jdocchan, 0);
+		for (int j_doc_channel = 1; j_doc_channel < n_doc_channels; j_doc_channel++)
+			m_chart_data_wnd.add_channel_list_item(j_doc_channel, 0);
 	}
 	// load data from document and adjust display
-	m_ChartDataWnd.get_data_from_doc(0, m_AcqDataFile.get_doc_channel_length() - 1);
-	for (int i = 0; i < ndocchans; i++)
+	m_chart_data_wnd.get_data_from_doc(0, m_acq_data_file.get_doc_channel_length() - 1);
+	for (int i = 0; i < n_doc_channels; i++)
 	{
 		int max, min;
-		CChanlistItem* chan = m_ChartDataWnd.get_channel_list_item(i);
+		CChanlistItem* chan = m_chart_data_wnd.get_channel_list_item(i);
 		chan->get_max_min(&max, &min);
 		// split curves if requested by options
-		int iextent = MulDiv(max - min + 1, 11, 10);
-		int izero = (max + min) / 2;
-		chan->set_y_extent(iextent);
-		chan->set_y_zero(izero);
+		const int i_extent = MulDiv(max - min + 1, 11, 10);
+		const int i_zero = (max + min) / 2;
+		chan->set_y_extent(i_extent);
+		chan->set_y_zero(i_zero);
 	}
-	m_ChartDataWnd.Invalidate();
+	m_chart_data_wnd.Invalidate();
 }
 
-void DlgImportGenericData::OnSetPreview()
+void DlgImportGenericData::on_set_preview()
 {
 	// get latest from controls
-	piivO->preview_requested = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
+	options_import->preview_requested = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
 	int n_cmd_show = SW_SHOW;
-	if (!piivO->preview_requested)
+	if (!options_import->preview_requested)
 		n_cmd_show = SW_HIDE;
 	GetDlgItem(IDC_DISPLAYSOURCE)->ShowWindow(n_cmd_show);
 
 	// if preview OFF: hide display source
-	if (!piivO->preview_requested && m_bpreviewON)
+	if (!options_import->preview_requested && m_b_preview_on)
 	{
-		m_bpreviewON = FALSE;
+		m_b_preview_on = FALSE;
 	}
-	else if (piivO->preview_requested && !m_bpreviewON)
+	else if (options_import->preview_requested && !m_b_preview_on)
 	{
 		// build current file
-		SetFileNames(m_filedroplist.GetItemData(m_filedroplist.GetCurSel()));
-		m_bpreviewON = TRUE;
-		UpdatePreview();
+		set_file_names(m_file_drop_list.GetItemData(m_file_drop_list.GetCurSel()));
+		m_b_preview_on = TRUE;
+		update_preview();
 	}
 }
 
-void DlgImportGenericData::OnSelchangeFilelist()
+void DlgImportGenericData::on_sel_change_file_list()
 {
-	int cursel = m_filedroplist.GetCurSel();
-	int index = m_filedroplist.GetItemData(cursel);
-	CString filesource = m_pfilenameArray->GetAt(index);
-	if (filesource.CompareNoCase(m_filesource) != 0)
+	const int cur_sel = m_file_drop_list.GetCurSel();
+	const int index = m_file_drop_list.GetItemData(cur_sel);
+	const CString file_source = m_p_file_name_array->GetAt(index);
+	if (file_source.CompareNoCase(m_file_source) != 0)
 	{
-		SetFileNames(index);
-		UpdatePreview();
+		set_file_names(index);
+		update_preview();
 	}
 }
 
-void DlgImportGenericData::OnOffsetbinary()
+void DlgImportGenericData::on_offset_binary()
 {
-	UINT state = IsDlgButtonChecked(IDC_OFFSETBINARY);
+	const UINT state = IsDlgButtonChecked(IDC_OFFSETBINARY);
 	if (state == 1
-		&& piivO->encoding_mode != OLx_ENC_BINARY)
+		&& options_import->encoding_mode != OLx_ENC_BINARY)
 	{
-		piivO->encoding_mode = OLx_ENC_BINARY;
-		UpdatePreview();
+		options_import->encoding_mode = OLx_ENC_BINARY;
+		update_preview();
 	}
-	m_bChanged = TRUE;
+	m_b_changed = TRUE;
 }
 
-void DlgImportGenericData::OnTwoscomplement()
+void DlgImportGenericData::on_twos_complement()
 {
-	UINT state = IsDlgButtonChecked(IDC_TWOSCOMPLEMENT);
+	const UINT state = IsDlgButtonChecked(IDC_TWOSCOMPLEMENT);
 	if (state == 1
-		&& piivO->encoding_mode != OLx_ENC_2SCOMP)
+		&& options_import->encoding_mode != OLx_ENC_2SCOMP)
 	{
-		piivO->encoding_mode = OLx_ENC_2SCOMP;
-		UpdatePreview();
+		options_import->encoding_mode = OLx_ENC_2SCOMP;
+		update_preview();
 	}
-	m_bChanged = TRUE;
+	m_b_changed = TRUE;
 }
 
-void DlgImportGenericData::SetFileNames(int index)
+void DlgImportGenericData::set_file_names(int index)
 {
-	m_filesource = m_pfilenameArray->GetAt(index);
-	int icount = m_filesource.ReverseFind('\\') + 1;
-	CString csPath = m_filesource.Left(icount);
-	int icount2 = m_filesource.Find('.') - icount + 1;
-	m_filedest = _T("AW_") + m_filesource.Mid(icount, icount2);
-	m_filedest = csPath + m_filedest;
-	m_filedest += _T("dat");
+	m_file_source = m_p_file_name_array->GetAt(index);
+	const int i_count = m_file_source.ReverseFind('\\') + 1;
+	const CString cs_path = m_file_source.Left(i_count);
+	const int i_count2 = m_file_source.Find('.') - i_count + 1;
+	m_file_dest = _T("AW_") + m_file_source.Mid(i_count, i_count2);
+	m_file_dest = cs_path + m_file_dest;
+	m_file_dest += _T("dat");
 }
 
-void DlgImportGenericData::OnSapid3_5()
+void DlgImportGenericData::on_sapid3_5()
 {
 	// get latest from controls
-	if (piivO->is_sapid_3_5 != static_cast<CButton*>(GetDlgItem(IDC_CHECKSAPID))->GetCheck())
+	if (options_import->is_sapid_3_5 != static_cast<CButton*>(GetDlgItem(IDC_CHECKSAPID))->GetCheck())
 	{
-		piivO->is_sapid_3_5 = static_cast<CButton*>(GetDlgItem(IDC_CHECKSAPID))->GetCheck();
-		if (piivO->is_sapid_3_5)
+		options_import->is_sapid_3_5 = static_cast<CButton*>(GetDlgItem(IDC_CHECKSAPID))->GetCheck();
+		if (options_import->is_sapid_3_5)
 		{
-			piivO->is_single_run = TRUE;
-			piivO->bits_precision = 12;
-			piivO->skip_n_bytes = 7;
-			piivO->nb_channels = 1;
-			UpdateControlsFromStruct();
+			options_import->is_single_run = TRUE;
+			options_import->bits_precision = 12;
+			options_import->skip_n_bytes = 7;
+			options_import->nb_channels = 1;
+			update_controls_from_struct();
 		}
-		GetDlgItem(IDC_SAMPLINGRATE)->EnableWindow(!piivO->is_sapid_3_5);
-		UpdatePreview();
+		GetDlgItem(IDC_SAMPLINGRATE)->EnableWindow(!options_import->is_sapid_3_5);
+		update_preview();
 	}
-	m_bChanged = TRUE;
+	m_b_changed = TRUE;
 }
 
 // UpdateWaveDescriptors()
@@ -639,22 +639,22 @@ void DlgImportGenericData::OnSapid3_5()
 // Update parameters that describe the structure of the data within data file
 // load parameters from user selected options
 
-void DlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
+void DlgImportGenericData::update_wave_descriptors(const AcqDataDoc* p_df)
 {
 	CFileStatus status;
-	pDataF->x_file->GetStatus(status);
-	pDataF->set_offset_to_data(m_skipNbytes);
+	p_df->x_file->GetStatus(status);
+	p_df->set_offset_to_data(m_skip_n_bytes);
 
-	pDataF->p_w_buf->create_buffer_with_n_channels(piivO->nb_channels);
-	CWaveFormat* pwF = pDataF->get_wave_format();
+	p_df->p_w_buf->create_buffer_with_n_channels(options_import->nb_channels);
+	CWaveFormat* pwF = p_df->get_wave_format();
 
 	// define parameters within CWaveFormat
-	pwF->cs_comment = piivO->title;
+	pwF->cs_comment = options_import->title;
 	pwF->acquisition_time = status.m_ctime; // use CFile creation time
-	pwF->full_scale_volts = piivO->voltage_max - piivO->voltage_min;
-	pwF->mode_encoding = piivO->encoding_mode;
+	pwF->full_scale_volts = options_import->voltage_max - options_import->voltage_min;
+	pwF->mode_encoding = options_import->encoding_mode;
 	long binspan = 4096;
-	switch (piivO->bits_precision)
+	switch (options_import->bits_precision)
 	{
 	case 8: binspan = 256;
 		break;
@@ -668,29 +668,29 @@ void DlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
 	}
 	pwF->bin_span = binspan;
 	pwF->bin_zero = 0;
-	if (piivO->encoding_mode == 0) // OLx_ENC_BINARY
+	if (options_import->encoding_mode == 0) // OLx_ENC_BINARY
 		pwF->bin_zero = binspan / 2;
 
 	// copy ACQCHAN directly from iivO
-	pDataF->get_wave_channels_array()->Copy(piivO->p_wave_chan_array);
+	p_df->get_wave_channels_array()->Copy(options_import->p_wave_chan_array);
 
 	// UNUSED PARAMETERS FROM iivO :
 	//			BOOL	bSingleRun;
 	//			short	nbRuns;
 
 	// read data and copy into CDataFileAWAVE
-	ULONGLONG lCompteur = status.m_size - piivO->skip_n_bytes; // get size of data
-	if (piivO->is_sapid_3_5) // special case SAPID
+	ULONGLONG l_count = status.m_size - options_import->skip_n_bytes; // get size of data
+	if (options_import->is_sapid_3_5) // special case SAPID
 	{
-		lCompteur -= 2; // last word = sampling rate
-		WORD wrate; // get rate from source file
-		pDataF->x_file->Seek(-2, CFile::end); // position and read
-		pDataF->x_file->Read(&wrate, sizeof(WORD));
-		piivO->sampling_rate = wrate; // transfer rate
+		l_count -= 2; // last word = sampling rate
+		WORD w_rate; // get rate from source file
+		p_df->x_file->Seek(-2, CFile::end); // position and read
+		p_df->x_file->Read(&w_rate, sizeof(WORD));
+		options_import->sampling_rate = w_rate; // transfer rate
 	}
-	pwF->sampling_rate_per_channel = piivO->sampling_rate;
-	pwF->sample_count = static_cast<long>(lCompteur / 2);
-	m_AcqDataFile.read_data_infos();
+	pwF->sampling_rate_per_channel = options_import->sampling_rate;
+	pwF->sample_count = static_cast<long>(l_count / 2);
+	m_acq_data_file.read_data_infos();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -701,7 +701,7 @@ void DlgImportGenericData::UpdateWaveDescriptors(AcqDataDoc* pDataF)
 // - transfer data from source file into destination
 // - close file and delete CDataFileAWAVE object
 
-void DlgImportGenericData::OnEnChangeChannelcomment()
+void DlgImportGenericData::on_en_change_channel_comment()
 {
-	m_bChanged = TRUE;
+	m_b_changed = TRUE;
 }

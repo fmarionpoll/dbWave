@@ -11,18 +11,18 @@
 
 
 
-DlgPrintPageMargins::DlgPrintPageMargins(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgPrintPageMargins::DlgPrintPageMargins(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
-void DlgPrintPageMargins::DoDataExchange(CDataExchange* pDX)
+void DlgPrintPageMargins::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_LEFTPAGEMARGIN, m_leftPageMargin);
-	DDX_Text(pDX, IDC_LOWERPAGEMARGIN, m_bottomPageMargin);
-	DDX_Text(pDX, IDC_RIGHTPAGEMARGIN, m_rightPageMargin);
-	DDX_Text(pDX, IDC_UPPERPAGEMARGIN, m_topPageMargin);
+	CDialog::DoDataExchange(p_dx);
+	DDX_Text(p_dx, IDC_LEFTPAGEMARGIN, m_left_page_margin);
+	DDX_Text(p_dx, IDC_LOWERPAGEMARGIN, m_bottom_page_margin);
+	DDX_Text(p_dx, IDC_RIGHTPAGEMARGIN, m_right_page_margin);
+	DDX_Text(p_dx, IDC_UPPERPAGEMARGIN, m_top_page_margin);
 }
 
 BEGIN_MESSAGE_MAP(DlgPrintPageMargins, CDialog)
@@ -33,10 +33,10 @@ BOOL DlgPrintPageMargins::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_leftPageMargin = mdPM->left_page_margin;
-	m_bottomPageMargin = mdPM->bottom_page_margin;
-	m_rightPageMargin = mdPM->right_page_margin;
-	m_topPageMargin = mdPM->top_page_margin;
+	m_left_page_margin = options_view_data->left_page_margin;
+	m_bottom_page_margin = options_view_data->bottom_page_margin;
+	m_right_page_margin = options_view_data->right_page_margin;
+	m_top_page_margin = options_view_data->top_page_margin;
 	UpdateData(FALSE);
 
 	return TRUE; // return TRUE  unless you set the focus to a control
@@ -46,10 +46,10 @@ void DlgPrintPageMargins::OnOK()
 {
 	UpdateData(TRUE);
 
-	mdPM->left_page_margin = m_leftPageMargin;
-	mdPM->bottom_page_margin = m_bottomPageMargin;
-	mdPM->right_page_margin = m_rightPageMargin;
-	mdPM->top_page_margin = m_topPageMargin;
+	options_view_data->left_page_margin = m_left_page_margin;
+	options_view_data->bottom_page_margin = m_bottom_page_margin;
+	options_view_data->right_page_margin = m_right_page_margin;
+	options_view_data->top_page_margin = m_top_page_margin;
 
 	CDialog::OnOK();
 }

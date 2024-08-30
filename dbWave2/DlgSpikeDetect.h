@@ -22,7 +22,7 @@ public:
 	ChartData* m_p_chart_data_source_wnd{ nullptr };
 
 protected:
-	options_detect_spikes* m_pspkD{ nullptr };
+	options_detect_spikes* options_detect_spikes_{ nullptr };
 	int m_scan_count_{ 0 };
 
 	// Implementation

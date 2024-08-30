@@ -128,7 +128,7 @@ void GridCellDateTime::SetTime(CTime time)
 /////////////////////////////////////////////////////////////////////////////
 // InPlaceDateTime
 
-InPlaceDateTime::InPlaceDateTime(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
+InPlaceDateTime::InPlaceDateTime(CWnd* p_parent, CRect& rect, DWORD dw_style, UINT nID,
                                    int nRow, int nColumn,
                                    COLORREF crFore, COLORREF crBack,
                                    CTime* pcTime,
@@ -144,14 +144,14 @@ InPlaceDateTime::InPlaceDateTime(CWnd* pParent, CRect& rect, DWORD dw_style, UIN
 
 	const DWORD dwStl = WS_BORDER | WS_VISIBLE | WS_CHILD | dw_style;
 
-	if (!Create(dwStl, rect, pParent, nID))
+	if (!Create(dwStl, rect, p_parent, nID))
 	{
 		return;
 	}
 
 	SetTime(m_pcTime);
 
-	SetFont(pParent->GetFont());
+	SetFont(p_parent->GetFont());
 	SetFocus();
 
 	switch (nFirstChar)

@@ -476,7 +476,7 @@ void ViewSpikeSort::on_sort()
 		last_file = pdb_doc->db_get_records_count() - 1; // index last file
 		dlg_progress = new DlgProgress;
 		dlg_progress->Create();
-		dlg_progress->SetStep(1);
+		dlg_progress->set_step(1);
 	}
 
 	for (auto i_file = first_file; i_file <= last_file; i_file++)
@@ -492,14 +492,14 @@ void ViewSpikeSort::on_sort()
 		// update screen if multi-file requested
 		if (b_all_files_)
 		{
-			if (dlg_progress->CheckCancelButton())
+			if (dlg_progress->check_cancel_button())
 				if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 					break;
 			cs_comment.Format(_T("Processing file [%i / %i]"), i_file + 1, n_files);
-			dlg_progress->SetStatus(cs_comment);
+			dlg_progress->set_status(cs_comment);
 			if (MulDiv(i_file, 100, n_files) > i_step)
 			{
-				dlg_progress->StepIt();
+				dlg_progress->step_it();
 				i_step = MulDiv(i_file, 100, n_files);
 			}
 		}
@@ -1357,7 +1357,7 @@ void ViewSpikeSort::on_en_change_edit_left2()
 {
 	if (mm_t_xy_left_.m_b_entry_done)
 	{
-		mm_t_xy_left_.OnEnChange(this, t_xy_left_, delta_ms_, -delta_ms_);
+		mm_t_xy_left_.on_en_change(this, t_xy_left_, delta_ms_, -delta_ms_);
 		// check boundaries
 		if (t_xy_left_ >= t_xy_right_)
 			t_xy_left_ = t_xy_right_ - delta_ms_;
@@ -1378,7 +1378,7 @@ void ViewSpikeSort::on_en_change_edit_right2()
 {
 	if (mm_t_xy_right_.m_b_entry_done)
 	{
-		mm_t_xy_right_.OnEnChange(this, t_xy_right_, delta_ms_, -delta_ms_);
+		mm_t_xy_right_.on_en_change(this, t_xy_right_, delta_ms_, -delta_ms_);
 
 		// check boundaries
 		if (t_xy_right_ <= t_xy_left_)
@@ -1417,7 +1417,7 @@ void ViewSpikeSort::on_en_change_source_class()
 	if (mm_source_class_.m_b_entry_done)
 	{
 		const auto source_class = sort_source_class_;
-		mm_source_class_.OnEnChange(this, sort_source_class_, 1, -1);
+		mm_source_class_.on_en_change(this, sort_source_class_, 1, -1);
 		if (sort_source_class_ != source_class)
 		{
 			chart_shape_.set_plot_mode(PLOT_ONE_COLOR, sort_source_class_);
@@ -1437,7 +1437,7 @@ void ViewSpikeSort::on_en_change_destination_class()
 {
 	if (mm_destination_class_.m_b_entry_done)
 	{
-		mm_destination_class_.OnEnChange(this, sort_destination_class_, 1, -1);
+		mm_destination_class_.on_en_change(this, sort_destination_class_, 1, -1);
 		auto db_sel = db_spike(-1, -1, -1);
 		select_spike(db_sel);
 		UpdateData(FALSE);
@@ -1475,7 +1475,7 @@ void ViewSpikeSort::on_en_change_lower_threshold()
 	if (mm_lower_threshold_mv_.m_b_entry_done)
 	{
 		const auto old_threshold = lower_threshold_mv_;
-		mm_lower_threshold_mv_.OnEnChange(this, lower_threshold_mv_, delta_mv_, -delta_mv_);
+		mm_lower_threshold_mv_.on_en_change(this, lower_threshold_mv_, delta_mv_, -delta_mv_);
 		check_valid_threshold_limits();
 
 		if (old_threshold > lower_threshold_mv_ || old_threshold < lower_threshold_mv_)
@@ -1492,7 +1492,7 @@ void ViewSpikeSort::on_en_change_upper_threshold()
 	if (mm_upper_threshold_mv_.m_b_entry_done)
 	{
 		const auto old_threshold = upper_threshold_mv_;
-		mm_upper_threshold_mv_.OnEnChange(this, upper_threshold_mv_, delta_mv_, -delta_mv_);
+		mm_upper_threshold_mv_.on_en_change(this, upper_threshold_mv_, delta_mv_, -delta_mv_);
 		check_valid_threshold_limits();
 		if (old_threshold > upper_threshold_mv_ || old_threshold < upper_threshold_mv_)
 		{
@@ -1507,7 +1507,7 @@ void ViewSpikeSort::on_en_change_shape_t1()
 {
 	if (mm_shape_t1_ms_.m_b_entry_done)
 	{
-		mm_shape_t1_ms_.OnEnChange(this, shape_t1_ms_, delta_ms_, -delta_ms_);
+		mm_shape_t1_ms_.on_en_change(this, shape_t1_ms_, delta_ms_, -delta_ms_);
 		// check boundaries
 		if (shape_t1_ms_ < 0)
 			shape_t1_ms_ = 0.0f;
@@ -1529,7 +1529,7 @@ void ViewSpikeSort::on_en_change_shape_t2()
 {
 	if (mm_shape_t2_ms_.m_b_entry_done)
 	{
-		mm_shape_t2_ms_.OnEnChange(this, shape_t2_ms_, delta_ms_, -delta_ms_);
+		mm_shape_t2_ms_.on_en_change(this, shape_t2_ms_, delta_ms_, -delta_ms_);
 
 		// check boundaries
 		if (shape_t2_ms_ < shape_t1_ms_)
@@ -1553,7 +1553,7 @@ void ViewSpikeSort::on_en_change_time_first()
 {
 	if (mm_time_first_s_.m_b_entry_done)
 	{
-		mm_time_first_s_.OnEnChange(this, time_first_s_, 1.f, -1.f);
+		mm_time_first_s_.on_en_change(this, time_first_s_, 1.f, -1.f);
 
 		// check boundaries
 		if (time_first_s_ < 0.f)
@@ -1570,7 +1570,7 @@ void ViewSpikeSort::on_en_change_time_last()
 {
 	if (mm_time_last_s_.m_b_entry_done)
 	{
-		mm_time_last_s_.OnEnChange(this, time_last_s_, 1.f, -1.f);
+		mm_time_last_s_.on_en_change(this, time_last_s_, 1.f, -1.f);
 
 		// check boundaries
 		if (time_last_s_ <= time_first_s_)
@@ -1585,7 +1585,7 @@ void ViewSpikeSort::on_en_change_min_mv()
 {
 	if (mm_measure_min_mv_.m_b_entry_done)
 	{
-		mm_measure_min_mv_.OnEnChange(this, measure_min_mv_, 1.f, -1.f);
+		mm_measure_min_mv_.on_en_change(this, measure_min_mv_, 1.f, -1.f);
 
 		// check boundaries
 		if (measure_min_mv_ >= measure_max_mv_)
@@ -1601,7 +1601,7 @@ void ViewSpikeSort::on_en_change_max_mv()
 {
 	if (mm_measure_max_mv_.m_b_entry_done)
 	{
-		mm_measure_max_mv_.OnEnChange(this, measure_max_mv_, 1.f, -1.f);
+		mm_measure_max_mv_.on_en_change(this, measure_max_mv_, 1.f, -1.f);
 		if (measure_max_mv_ <= measure_min_mv_)
 			measure_max_mv_ = measure_min_mv_ + 1.f;
 
@@ -1615,7 +1615,7 @@ void ViewSpikeSort::on_en_change_file_index()
 	if (mm_file_index_.m_b_entry_done)
 	{
 		const auto file_index = record_id_;
-		mm_file_index_.OnEnChange(this, record_id_, 1, -1);
+		mm_file_index_.on_en_change(this, record_id_, 1, -1);
 
 		//if (file_index_ != file_index)
 		//{
@@ -1635,7 +1635,7 @@ void ViewSpikeSort::on_en_change_list_index()
 	if (mm_list_index_.m_b_entry_done)
 	{
 		const auto list_index = list_index_;
-		mm_file_index_.OnEnChange(this, list_index_, 1, -1);
+		mm_file_index_.on_en_change(this, list_index_, 1, -1);
 
 		//if (list_index_ != list_index)
 		//{
@@ -1654,7 +1654,7 @@ void ViewSpikeSort::on_en_change_spike_index()
 	if (mm_spike_index_.m_b_entry_done)
 	{
 		const int spike_index = spike_index_;
-		mm_spike_index_.OnEnChange(this, spike_index_, 1, -1);
+		mm_spike_index_.on_en_change(this, spike_index_, 1, -1);
 
 		// check boundaries
 		if (spike_index_ < 0)
@@ -1691,7 +1691,7 @@ void ViewSpikeSort::on_en_change_spike_class()
 	if (mm_class_index_.m_b_entry_done)
 	{
 		const auto spike_index_class = class_index_;
-		mm_class_index_.OnEnChange(this, class_index_, 1, -1);
+		mm_class_index_.on_en_change(this, class_index_, 1, -1);
 
 		if (class_index_ != spike_index_class)
 		{
@@ -1710,7 +1710,7 @@ void ViewSpikeSort::on_en_change_hist_bin_ms()
 	{
 		const auto old_histogram_bin_mv = histogram_bin_mv_;
 		const auto delta = (measure_max_mv_ - measure_min_mv_) / 10.f;
-		mm_histogram_bin_mv_.OnEnChange(this, histogram_bin_mv_, delta, -delta);
+		mm_histogram_bin_mv_.on_en_change(this, histogram_bin_mv_, delta, -delta);
 
 		if (histogram_bin_mv_ > old_histogram_bin_mv || histogram_bin_mv_ < old_histogram_bin_mv)
 		{

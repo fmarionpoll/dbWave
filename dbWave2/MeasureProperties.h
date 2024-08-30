@@ -13,7 +13,7 @@ class CMeasureProperties : public CPropertySheet
 
 	// Construction
 public:
-	CMeasureProperties(CWnd* pParentWnd = nullptr, int iselect = 0);
+	CMeasureProperties(CWnd* pParentWnd = nullptr, int i_select = 0);
 
 	// Attributes
 public:

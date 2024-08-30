@@ -328,14 +328,14 @@ void DlgADExperiment::load_list(CComboBox* p_co, const CStringArray* p_spike_ele
 void DlgADExperiment::edit_combo_box(CComboBox* p_co)
 {
 	DlgEditList dlg;
-	dlg.pCo = p_co;
+	dlg.p_co = p_co;
 	if (IDOK == dlg.DoModal())
 	{
 		p_co->ResetContent();
-		const auto n_items = dlg.m_csArray.GetCount();
+		const auto n_items = dlg.m_cs_array.GetCount();
 		for (auto i = 0; i < n_items; i++)
 		{
-			p_co->AddString(dlg.m_csArray.GetAt(i));
+			p_co->AddString(dlg.m_cs_array.GetAt(i));
 		}
 		p_co->SetCurSel(dlg.m_selected);
 	}

@@ -4,7 +4,7 @@
 class DlgDataComments : public CDialog
 {
 public:
-	DlgDataComments(CWnd* pParent = nullptr); 
+	DlgDataComments(CWnd* p_parent = nullptr); 
 
 	// Dialog Data
 	enum { IDD = IDD_DATACOMMENTS };

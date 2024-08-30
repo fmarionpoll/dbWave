@@ -11,33 +11,33 @@
 #endif
 
 
-DlgFormatHistogram::DlgFormatHistogram(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgFormatHistogram::DlgFormatHistogram(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
-void DlgFormatHistogram::DoDataExchange(CDataExchange* pDX)
+void DlgFormatHistogram::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT1, m_Ymax);
-	DDX_Text(pDX, IDC_EDIT2, m_xfirst);
-	DDX_Text(pDX, IDC_EDIT3, m_xlast);
+	CDialog::DoDataExchange(p_dx);
+	DDX_Text(p_dx, IDC_EDIT1, m_y_max);
+	DDX_Text(p_dx, IDC_EDIT2, m_x_first);
+	DDX_Text(p_dx, IDC_EDIT3, m_x_last);
 }
 
 BEGIN_MESSAGE_MAP(DlgFormatHistogram, CDialog)
-	ON_BN_CLICKED(IDC_CHECK1, OnCheckbYmaxAuto)
-	ON_BN_CLICKED(IDC_BUTTON1, OnButtonHistFill)
+	ON_BN_CLICKED(IDC_CHECK1, on_check_max_auto)
+	ON_BN_CLICKED(IDC_BUTTON1, on_button_hist_fill)
 	ON_WM_PAINT()
-	ON_BN_CLICKED(IDC_BUTTON2, OnHistBordercolor)
-	ON_BN_CLICKED(IDC_BUTTON6, OnStimulusFillcolor)
-	ON_BN_CLICKED(IDC_BUTTON7, OnStimulusBordercolor)
-	ON_BN_CLICKED(IDC_BUTTON3, OnBackgroundcolor)
+	ON_BN_CLICKED(IDC_BUTTON2, on_hist_border_color)
+	ON_BN_CLICKED(IDC_BUTTON6, on_stimulus_fill_color)
+	ON_BN_CLICKED(IDC_BUTTON7, on_stimulus_border_color)
+	ON_BN_CLICKED(IDC_BUTTON3, on_background_color)
 END_MESSAGE_MAP()
 
-void DlgFormatHistogram::OnCheckbYmaxAuto()
+void DlgFormatHistogram::on_check_max_auto()
 {
-	m_bYmaxAuto = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
-	if (!m_bYmaxAuto)
+	m_b_y_max_auto = static_cast<CButton*>(GetDlgItem(IDC_CHECK1))->GetCheck();
+	if (!m_b_y_max_auto)
 	{
 		GetDlgItem(IDC_EDIT1)->EnableWindow(FALSE);
 	}
@@ -49,10 +49,10 @@ void DlgFormatHistogram::OnCheckbYmaxAuto()
 
 void DlgFormatHistogram::OnPaint()
 {
-	CRect rect; // rect variable
-	CPaintDC dc(this); // device context for painting
-	auto p_old_brush = static_cast<CBrush*>(dc.SelectStockObject(WHITE_BRUSH));
-	auto pOldPen = static_cast<CPen*>(dc.SelectStockObject(NULL_PEN));
+	CRect rect; 
+	CPaintDC dc(this); 
+	static_cast<CBrush*>(dc.SelectStockObject(WHITE_BRUSH));
+	static_cast<CPen*>(dc.SelectStockObject(NULL_PEN));
 
 	// erase background
 	CWnd* pFWnd = GetDlgItem(IDC_STATIC10);
@@ -61,102 +61,102 @@ void DlgFormatHistogram::OnPaint()
 	dc.Rectangle(&rect);
 
 	// display abscissa
-	int binlen = rect.Width() / 8;
-	int baseline = rect.Height() / 8;
+	const int bin_len = rect.Width() / 8;
+	const int baseline = rect.Height() / 8;
 	CRect rect0 = rect;
-	rect0.DeflateRect(binlen, baseline);
-	dc.FillSolidRect(&rect0, m_crChartArea);
+	rect0.DeflateRect(bin_len, baseline);
+	dc.FillSolidRect(&rect0, m_cr_chart_area);
 
 	dc.SelectStockObject(BLACK_PEN);
-	dc.MoveTo(rect.left + binlen / 2, rect.bottom - baseline);
-	dc.LineTo(rect.right - binlen / 2, rect.bottom - baseline);
+	dc.MoveTo(rect.left + bin_len / 2, rect.bottom - baseline);
+	dc.LineTo(rect.right - bin_len / 2, rect.bottom - baseline);
 
-	// display stim
-	CBrush sbHist;
-	sbHist.CreateSolidBrush(m_crStimFill);
+	// display stimulus
+	CBrush sb_hist;
+	sb_hist.CreateSolidBrush(m_cr_stimulus_fill);
 	CPen spHist;
-	spHist.CreatePen(PS_SOLID, 0, m_crStimBorder);
-	dc.SelectObject(&sbHist);
+	spHist.CreatePen(PS_SOLID, 0, m_cr_stimulus_border);
+	dc.SelectObject(&sb_hist);
 	dc.SelectObject(&spHist);
 
-	CRect rstim(rect.left + (3 * binlen + binlen / 2), rect.top + baseline,
-	            rect.left + (5 * binlen + binlen / 2), rect.bottom - baseline);
-	dc.Rectangle(&rstim); // 1
+	const CRect r_stimulus(rect.left + (3 * bin_len + bin_len / 2), rect.top + baseline,
+	                  rect.left + (5 * bin_len + bin_len / 2), rect.bottom - baseline);
+	dc.Rectangle(&r_stimulus); // 1
 
 	// display histogram
-	CBrush BHist;
-	BHist.CreateSolidBrush(m_crHistFill);
-	CPen PHist;
-	PHist.CreatePen(PS_SOLID, 0, m_crHistBorder);
-	dc.SelectObject(&BHist);
-	dc.SelectObject(&PHist);
+	CBrush b_hist;
+	b_hist.CreateSolidBrush(m_cr_hist_fill);
+	CPen p_hist;
+	p_hist.CreatePen(PS_SOLID, 0, m_cr_hist_border);
+	dc.SelectObject(&b_hist);
+	dc.SelectObject(&p_hist);
 
-	CRect rhist(rect.left + binlen, rect.bottom - 2 * baseline,
-	            rect.left + 2 * binlen, rect.bottom - baseline);
-	dc.Rectangle(&rhist); // 1
-	rhist.OffsetRect(binlen, 0);
-	rhist.top = rect.bottom - 3 * baseline;
-	dc.Rectangle(&rhist); // 2
-	rhist.OffsetRect(binlen, 0);
-	rhist.top = rect.bottom - 6 * baseline;
-	dc.Rectangle(&rhist); // 3
-	rhist.OffsetRect(binlen, 0);
-	rhist.top = rect.bottom - 4 * baseline;
-	dc.Rectangle(&rhist); // 4
-	rhist.OffsetRect(binlen, 0);
-	rhist.top = rect.bottom - 5 * baseline;
-	dc.Rectangle(&rhist); // 5
-	rhist.OffsetRect(binlen, 0);
-	rhist.top = rect.bottom - 2 * baseline;
-	dc.Rectangle(&rhist); // 6
+	CRect r_histogram(rect.left + bin_len, rect.bottom - 2 * baseline,
+	            rect.left + 2 * bin_len, rect.bottom - baseline);
+	dc.Rectangle(&r_histogram); // 1
+	r_histogram.OffsetRect(bin_len, 0);
+	r_histogram.top = rect.bottom - 3 * baseline;
+	dc.Rectangle(&r_histogram); // 2
+	r_histogram.OffsetRect(bin_len, 0);
+	r_histogram.top = rect.bottom - 6 * baseline;
+	dc.Rectangle(&r_histogram); // 3
+	r_histogram.OffsetRect(bin_len, 0);
+	r_histogram.top = rect.bottom - 4 * baseline;
+	dc.Rectangle(&r_histogram); // 4
+	r_histogram.OffsetRect(bin_len, 0);
+	r_histogram.top = rect.bottom - 5 * baseline;
+	dc.Rectangle(&r_histogram); // 5
+	r_histogram.OffsetRect(bin_len, 0);
+	r_histogram.top = rect.bottom - 2 * baseline;
+	dc.Rectangle(&r_histogram); // 6
 }
 
-void DlgFormatHistogram::OnHistBordercolor()
+void DlgFormatHistogram::on_hist_border_color()
 {
-	CColorDialog dlg(m_crStimBorder, CC_RGBINIT, nullptr);
+	CColorDialog dlg(m_cr_stimulus_border, CC_RGBINIT, nullptr);
 	if (IDOK == dlg.DoModal() != IDOK)
 	{
-		m_crHistBorder = dlg.GetColor();
+		m_cr_hist_border = dlg.GetColor();
 		Invalidate();
 	}
 }
 
-void DlgFormatHistogram::OnStimulusFillcolor()
+void DlgFormatHistogram::on_stimulus_fill_color()
 {
-	CColorDialog dlg(m_crStimFill, CC_RGBINIT, nullptr);
+	CColorDialog dlg(m_cr_stimulus_fill, CC_RGBINIT, nullptr);
 	if (IDOK == dlg.DoModal())
 	{
-		m_crStimFill = dlg.GetColor();
+		m_cr_stimulus_fill = dlg.GetColor();
 		Invalidate();
 	}
 }
 
-void DlgFormatHistogram::OnStimulusBordercolor()
+void DlgFormatHistogram::on_stimulus_border_color()
 {
-	CColorDialog dlg(m_crStimBorder, CC_RGBINIT, nullptr);
+	CColorDialog dlg(m_cr_stimulus_border, CC_RGBINIT, nullptr);
 	if (IDOK == dlg.DoModal())
 	{
-		m_crStimBorder = dlg.GetColor();
+		m_cr_stimulus_border = dlg.GetColor();
 		Invalidate();
 	}
 }
 
-void DlgFormatHistogram::OnButtonHistFill()
+void DlgFormatHistogram::on_button_hist_fill()
 {
-	CColorDialog dlg(m_crHistFill, CC_RGBINIT, nullptr);
+	CColorDialog dlg(m_cr_hist_fill, CC_RGBINIT, nullptr);
 	if (IDOK == dlg.DoModal())
 	{
-		m_crHistFill = dlg.GetColor();
+		m_cr_hist_fill = dlg.GetColor();
 		Invalidate();
 	}
 }
 
-void DlgFormatHistogram::OnBackgroundcolor()
+void DlgFormatHistogram::on_background_color()
 {
-	CColorDialog dlg(m_crChartArea, CC_RGBINIT, nullptr);
+	CColorDialog dlg(m_cr_chart_area, CC_RGBINIT, nullptr);
 	if (IDOK == dlg.DoModal())
 	{
-		m_crChartArea = dlg.GetColor();
+		m_cr_chart_area = dlg.GetColor();
 		Invalidate();
 	}
 }

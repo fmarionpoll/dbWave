@@ -27,7 +27,7 @@
 class GridInPlaceEdit : public CEdit
 {
 public:
-	GridInPlaceEdit(CWnd* pParent, CRect& rect, DWORD dw_style, UINT nID,
+	GridInPlaceEdit(CWnd* p_parent, CRect& rect, DWORD dw_style, UINT nID,
 	             int nRow, int nColumn, CString sInitText, UINT nFirstChar);
 	~GridInPlaceEdit() override;
 

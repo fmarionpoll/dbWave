@@ -109,7 +109,7 @@ void ViewdbWave::OnInitialUpdate()
 	m_data_list_ctrl.SetExtendedStyle
 	(m_data_list_ctrl.GetExtendedStyle()
 		| LVS_EX_FULLROWSELECT
-		//| LVS_EX_GRIDLINES
+		//| LVS_EX_GRIDLINES // when this style is set, data vertical bar is suppressed
 		| LVS_EX_ONECLICKACTIVATE
 		| LVS_EX_SUBITEMIMAGES);
 
@@ -541,7 +541,7 @@ void ViewdbWave::on_en_change_time_first()
 {
 	if (!mm_time_first_.m_b_entry_done)
 		return;
-	mm_time_first_.OnEnChange(this, m_time_first_, 1.f, -1.f);
+	mm_time_first_.on_en_change(this, m_time_first_, 1.f, -1.f);
 
 	m_options_view_data_->t_first = m_time_first_;
 	if (m_time_first_ > m_time_last_)
@@ -555,7 +555,7 @@ void ViewdbWave::on_en_change_time_last()
 	if (!mm_time_last_.m_b_entry_done)
 		return;
 
-	mm_time_last_.OnEnChange(this, m_time_last_, 1.f, -1.f);
+	mm_time_last_.on_en_change(this, m_time_last_, 1.f, -1.f);
 	m_options_view_data_->t_last = m_time_last_;
 	m_data_list_ctrl.set_time_intervals(m_time_first_, m_time_last_);
 	m_data_list_ctrl.refresh_display();
@@ -566,7 +566,7 @@ void ViewdbWave::on_en_change_amplitude_span()
 	if (!mm_amplitude_span_.m_b_entry_done)
 		return;
 
-	mm_amplitude_span_.OnEnChange(this, m_amplitude_span_, 1.f, -1.f);
+	mm_amplitude_span_.on_en_change(this, m_amplitude_span_, 1.f, -1.f);
 	UpdateData(FALSE);
 	m_options_view_data_->mv_span = m_amplitude_span_;
 	m_data_list_ctrl.set_amplitude_span(m_amplitude_span_);
@@ -638,7 +638,7 @@ void ViewdbWave::on_en_change_spike_class()
 	if (!mm_spike_class_.m_b_entry_done)
 		return;
 
-	mm_spike_class_.OnEnChange(this, m_spike_class_, 1, -1);
+	mm_spike_class_.on_en_change(this, m_spike_class_, 1, -1);
 	m_options_view_data_->spike_class = m_spike_class_;
 	UpdateData(FALSE);
 	m_data_list_ctrl.set_spike_plot_mode(PLOT_ONE_CLASS_ONLY, m_spike_class_);

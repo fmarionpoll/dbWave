@@ -222,12 +222,13 @@ void ChartWnd::display_text_bottom_left(CDC* p_dc, const CString& text, const CO
 
 void ChartWnd::erase_background(CDC* p_dc)
 {
-	// erase background around m_displayRect (assume only left and bottom areas)
+	// erase background around m_displayRect
 	if (b_nice_grid)
 	{
 		auto rect = client_rect_;
 		rect.right = display_rect_.left;
 		p_dc->FillSolidRect(rect, GetSysColor(COLOR_BTNFACE));
+
 		rect.top = display_rect_.bottom;
 		rect.right = client_rect_.right;
 		rect.left = display_rect_.left;
@@ -237,8 +238,10 @@ void ChartWnd::erase_background(CDC* p_dc)
 	CBrush brush;
 	brush.CreateSolidBrush(scope_structure_.cr_scope_fill);
 	const auto p_old_brush = p_dc->SelectObject(&brush);
+
 	const auto p_old_pen = static_cast<CPen*>(p_dc->SelectStockObject(BLACK_PEN));
 	p_dc->Rectangle(&display_rect_);
+
 	p_dc->SelectObject(p_old_pen);
 	p_dc->SelectObject(p_old_brush);
 

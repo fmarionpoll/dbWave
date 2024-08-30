@@ -9,12 +9,11 @@ class DlgOverwriteFileOptions : public CDialog
 	DECLARE_DYNAMIC(DlgOverwriteFileOptions)
 
 public:
-	DlgOverwriteFileOptions(CWnd* pParent = nullptr);
-	//~DlgOverwriteFileOptions();
+	DlgOverwriteFileOptions(CWnd* p_parent = nullptr);
 
 public:
-	BOOL m_bKeepChoice{ true };
-	BOOL m_bOverwriteFile{ false };
+	BOOL m_b_keep_choice{ true };
+	BOOL m_b_overwrite_file{ false };
 
 	// Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -22,7 +21,7 @@ public:
 #endif
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual void DoDataExchange(CDataExchange* p_dx);
 
 	DECLARE_MESSAGE_MAP()
 };

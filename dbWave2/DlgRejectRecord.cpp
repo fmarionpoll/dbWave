@@ -10,18 +10,18 @@
 #endif
 
 
-DlgRejectRecord::DlgRejectRecord(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD, pParent)
+DlgRejectRecord::DlgRejectRecord(CWnd* p_parent /*=NULL*/)
+	: CDialog(IDD, p_parent)
 {
 }
 
-void DlgRejectRecord::DoDataExchange(CDataExchange* pDX)
+void DlgRejectRecord::DoDataExchange(CDataExchange* p_dx)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Check(pDX, IDC_CHECK1, m_bconsecutivepoints);
-	DDX_Text(pDX, IDC_EDIT1, m_Nconsecutivepoints);
-	DDX_Text(pDX, IDC_EDIT2, m_jitter);
-	DDX_Text(pDX, IDC_EDIT3, m_flag);
+	CDialog::DoDataExchange(p_dx);
+	DDX_Check(p_dx, IDC_CHECK1, m_b_consecutive_points);
+	DDX_Text(p_dx, IDC_EDIT1, m_n_consecutive_points);
+	DDX_Text(p_dx, IDC_EDIT2, m_jitter);
+	DDX_Text(p_dx, IDC_EDIT3, m_flag);
 }
 
 BEGIN_MESSAGE_MAP(DlgRejectRecord, CDialog)

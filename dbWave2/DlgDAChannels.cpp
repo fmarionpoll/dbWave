@@ -278,11 +278,11 @@ void DlgDAChannels::edit_sequence(const int i_id, const int channel)
 	case DA_MSEQWAVE: // M-seq
 		{
 			DlgEditDAMseq dlg;
-			dlg.m_outDParms = output_params_array.GetAt(channel);
+			dlg.m_out_d_parameters = output_params_array.GetAt(channel);
 			if (IDOK == dlg.DoModal())
 			{
 				const auto p_params = &output_params_array.GetAt(channel);
-				*p_params = dlg.m_outDParms;
+				*p_params = dlg.m_out_d_parameters;
 				p_params->sti.import_intervals_series(&p_params->stimulus_sequence);
 			}
 		}

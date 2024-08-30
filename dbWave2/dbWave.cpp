@@ -585,7 +585,7 @@ void CdbWaveApp::OnFileNew()
 	DlgFileNew1 dlg;
 	if (dlg.DoModal() == IDOK)
 	{
-		const auto i_cur_sel = dlg.m_icursel;
+		const auto i_cur_sel = dlg.m_i_cur_sel;
 		if (i_cur_sel == 1)
 		{
 			auto* p_dbwave_doc = static_cast<CNoteDoc*>(m_note_view_template->CreateNewDocument());
