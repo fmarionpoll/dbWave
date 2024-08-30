@@ -83,7 +83,7 @@ void ChartSpike::sub_item_draw(CDC& dc, CRect& rect)
 
 	// draw actual data
 	set_display_area_size(rect.Width(), rect.Height());
-	plot_data_to_dc(&dc_mem); //plot_spikes(&dc_mem);
+	plot_data_to_dc(&dc_mem); 
 
 	// transfer data to DC and clean the memory DC
 	dc.BitBlt(rect.left, rect.top, rect.Width(), rect.Height(), &dc_mem, 0, 0, SRCCOPY);

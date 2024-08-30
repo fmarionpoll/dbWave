@@ -262,7 +262,7 @@ void DataListCtrl_Row::plot_data(DataListCtrlInfos* infos, const int i_image) co
 	p_data_chart_wnd->plot_data_to_dc(&mem_dc);
 
 	CPen pen;
-	pen.CreatePen(PS_SOLID, 1, col_red);
+	pen.CreatePen(PS_SOLID, 1, col_black); // col_red);
 	mem_dc.MoveTo(1, 0);
 	mem_dc.LineTo(1, client_rect.bottom);
 
