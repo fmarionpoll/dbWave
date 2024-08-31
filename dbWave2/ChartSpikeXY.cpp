@@ -146,7 +146,7 @@ void ChartSpikeXY::display_spike_measure(const Spike* spike, CDC* p_dc, const CR
 			return;
 		break;
 	case PLOT_CLASS_COLORS:
-		selected_brush = spike_class_id % NB_COLORS;
+		selected_brush = spike_class_id % nb_colors;
 		break;
 	case PLOT_ONE_CLASS:
 		if (spike_class_id != selected_class_)
@@ -168,7 +168,7 @@ void ChartSpikeXY::display_spike_measure(const Spike* spike, CDC* p_dc, const CR
 	const auto y1 = MulDiv(spike->get_y1() - y_wo_, y_ve_, y_we_) + y_vo_;
 	rect_i.OffsetRect(x1, y1);
 	p_dc->MoveTo(x1, y1);
-	p_dc->FillSolidRect(&rect_i, color_table_[selected_brush]);
+	p_dc->FillSolidRect(&rect_i, color_table[selected_brush]);
 }
 
 void ChartSpikeXY::display_spike_measure(const Spike* spike) 
@@ -207,7 +207,7 @@ void ChartSpikeXY::draw_spike_measure(const Spike* spike, const int color_index)
 
 	const auto background_color = dc.GetBkColor();
 	dc.MoveTo(x1, y1);
-	dc.FillSolidRect(&rect, color_table_[color_index]);
+	dc.FillSolidRect(&rect, color_table[color_index]);
 	dc.SetBkColor(background_color);
 }
 

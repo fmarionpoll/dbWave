@@ -39,7 +39,7 @@ protected:
 	float shape_t2_ms_{ 0.5f };
 	int shape_t1_{};
 	int shape_t2_{};
-	void change_chart_shape_vt_tag(int tag_index);
+	void change_spikes_measuring_window(int tag_index);
 
 	CEditCtrl mm_source_class_;
 	CEditCtrl mm_destination_class_;
@@ -148,6 +148,10 @@ protected:
 	void gain_adjust_shape_and_bars();
 	void gain_adjust_xy_and_histogram();
 	void center_curve();
+
+	void change_spike_index_single_file();
+	void change_spike_index_all_files();
+
 
 	// public interface to view
 public:

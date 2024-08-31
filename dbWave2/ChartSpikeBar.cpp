@@ -148,14 +148,14 @@ void ChartSpikeBar::display_stimulus(CDC* p_dc, const CRect* rect) const
 		&& p_intervals->get_at(i0) < ii_first)
 		i0++; 
 
-	auto state = bottom;	 // use this variable to keep track of pulse broken by display limits
-	const auto jj = (i0 / 2) * 2; // keep index of the ON transition
-	if (jj != i0)
+	auto state = bottom;	 
+	const auto on_transition_index = (i0 / 2) * 2; 
+	if (on_transition_index != i0)
 		state = top;
 	p_dc->MoveTo(rect->left, state);
 
 	const auto n_stimuli = ((p_intervals->get_size()) / 2) * 2;
-	for (auto ii = jj; ii < n_stimuli; ii += 2)
+	for (auto ii = on_transition_index; ii < n_stimuli; ii += 2)
 	{
 		// stimulus starts here
 		int iix0 = p_intervals->get_at(ii) - ii_first;
@@ -165,11 +165,11 @@ void ChartSpikeBar::display_stimulus(CDC* p_dc, const CRect* rect) const
 			iix0 = 0; 
 
 		iix0 = MulDiv(display_width, iix0, ii_length) + rect->left;
-		p_dc->LineTo(iix0, state);	// draw line up to the first point of the pulse
-		p_dc->LineTo(iix0, top);	// draw vertical line to top of pulse
+		p_dc->LineTo(iix0, state);	
+		p_dc->LineTo(iix0, top);	
 
 		// stimulus ends here
-		state = bottom; // after pulse, descend to bottom level
+		state = bottom; // after pulse on, descend to bottom level
 		int iix1 = p_intervals->get_at(ii + 1) - ii_first;
 		if (iix1 > ii_length) // last transition off graph?
 		{
@@ -177,10 +177,10 @@ void ChartSpikeBar::display_stimulus(CDC* p_dc, const CRect* rect) const
 			state = top; // do not descend
 		}
 		iix1 = MulDiv(display_width, iix1, ii_length) + rect->left + 1;
-		p_dc->LineTo(iix1, top); // draw top of pulse
-		p_dc->LineTo(iix1, state); // draw descent to bottom line
+		p_dc->LineTo(iix1, top); 
+		p_dc->LineTo(iix1, state); 
 	}
-	p_dc->LineTo(rect->left + display_width, state); // end of loop - draw the rest
+	p_dc->LineTo(rect->left + display_width, state); 
 	p_dc->SelectObject(old_pen);
 }
 
@@ -202,6 +202,11 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 	p_dc->MoveTo(rect->left, baseline);
 	p_dc->LineTo(rect->right, baseline);
 
+	// prepare text
+	const auto h_font = CreateFont(10, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, 0, 0, 2, 0, _T("SYSTEM_FIXED_FONT"));
+	const auto h_tmp = static_cast<HFONT>(p_dc->SelectObject(h_font));
+	p_dc->SetBkMode(TRANSPARENT);
+
 	// loop through all spikes of the list
 	auto i_first = 0;
 	auto i_last = p_spike_list_->get_spikes_count() - 1;
@@ -216,6 +221,7 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 	}
 	const auto len = (l_last_ - l_first_ + 1);
 	auto pen_color = BLACK_COLOR;
+
 	for (auto i_spike = i_last; i_spike >= i_first; i_spike--)
 	{
 		const Spike* spike = p_spike_list_->get_spike(i_spike);
@@ -233,7 +239,7 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 				continue;
 			break;
 		case PLOT_CLASS_COLORS:
-			pen_color = spike_class % NB_COLORS;
+			pen_color = spike_class % nb_colors;
 			break;
 		case PLOT_ONE_CLASS:
 			if (spike_class != selected_class_)
@@ -258,13 +264,10 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 
 		if (spike_class >= 1)
 		{
-			TEXTMETRIC text_metric;
-			if (p_dc->GetTextMetrics(&text_metric))
-			{
-				auto letter = _T('0');
-				letter += spike_class;
-				p_dc->TextOut(abscissa, min + (text_metric.tmHeight / 2), &letter, 1);
-			}
+			p_dc->SetTextColor(color_table[spike_class % nb_colors]);
+			CString str;
+			str.Format(_T("%i"), spike_class);
+			p_dc->TextOut(abscissa, min, str, str.GetLength());
 		}
 	}
 
@@ -279,6 +282,9 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 		display_flagged_spikes(TRUE);
 
 	p_dc->SelectObject(old_pen);
+	DeleteObject(p_dc->SelectObject(h_tmp));
+
+
 }
 
 void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
@@ -300,12 +306,13 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 	const boolean is_selected_spike_in_this_list = 
 		(dbwave_doc_->get_current_spike_file()->get_spike_list_current_index()
 			== spike_selected_.spike_list_index);
+
 	for (auto i = p_spike_list_->get_spike_flag_array_count() - 1; i >= 0; i--)
 	{
 		constexpr auto pen_size = 0;
-		const auto no_spike = p_spike_list_->get_spike_index_of_flag(i);
+		const auto spike_index_flagged = p_spike_list_->get_spike_index_of_flag(i);
 
-		const Spike* spike = p_spike_list_->get_spike(no_spike);
+		const Spike* spike = p_spike_list_->get_spike(spike_index_flagged);
 		const auto no_spike_class = spike->get_class_id();
 		if (PLOT_ONE_CLASS_ONLY == plot_mode_ && no_spike_class != selected_class_)
 			continue;
@@ -322,9 +329,9 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 					color_index = SILVER_COLOR;
 				break;
 			case PLOT_CLASS_COLORS:
-				if (is_selected_spike_in_this_list && no_spike == spike_selected_.spike_index)
+				if (is_selected_spike_in_this_list && spike_index_flagged == spike_selected_.spike_index)
 					highlight_spike(spike);
-				color_index = no_spike_class % NB_COLORS;
+				color_index = no_spike_class % nb_colors;
 				break;
 			case PLOT_BLACK:
 			default:
@@ -334,7 +341,7 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 		}
 
 		CPen new_pen;
-		new_pen.CreatePen(PS_SOLID, pen_size, color_table_[color_index]);
+		new_pen.CreatePen(PS_SOLID, pen_size, color_table[color_index]);
 		const auto old_pen = dc.SelectObject(&new_pen);
 
 		// display data
@@ -363,7 +370,7 @@ void ChartSpikeBar::display_spike(const Spike* spike)
 			color_index = SILVER_COLOR;
 		break;
 	case PLOT_CLASS_COLORS:
-		color_index = spike_class % NB_COLORS;
+		color_index = spike_class % nb_colors;
 		break;
 	case PLOT_BLACK:
 	default:
@@ -381,7 +388,7 @@ void ChartSpikeBar::draw_spike(const Spike* spike, const int color_index)
 
 	CPen new_pen;
 	constexpr auto pen_size = 0;
-	new_pen.CreatePen(PS_SOLID, pen_size, color_table_[color_index]);
+	new_pen.CreatePen(PS_SOLID, pen_size, color_table[color_index]);
 	const auto old_pen = dc.SelectObject(&new_pen);
 
 	// display data
@@ -414,7 +421,7 @@ void ChartSpikeBar::highlight_spike(const Spike* spike)
 	const auto min = MulDiv(display_rect_.Height() - 2 - y_vo_, y_we_, y_ve_) + y_wo_;
 
 	CPen new_pen;
-	new_pen.CreatePen(PS_SOLID, 1, RGB(196, 2, 51));
+	new_pen.CreatePen(PS_SOLID, 1, col_red);
 	const auto old_pen = dc.SelectObject(&new_pen);
 	auto* old_brush = dc.SelectStockObject(NULL_BRUSH);
 	const CRect rect1(abscissa - 2, max, abscissa + 2, min);
@@ -544,7 +551,7 @@ void ChartSpikeBar::OnLButtonDown(const UINT n_flags, CPoint point)
 // rectangle selected
 // lp to dp: d = (l -wo)*ve/we + vo
 // dp to lp: l = (d -vo)*we/ve + wo
-// wo= window origin; we= window extent; vo=viewport origin, ve=viewport extent
+// wo = window origin; we= window extent; vo=viewport origin, ve=viewport extent
 // with ordinates: wo=zero, we=y_extent, ve=rect.height/2, vo = -rect.GetRectHeight()/2
 //---------------------------------------------------------------------------
 

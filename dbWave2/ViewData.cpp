@@ -153,6 +153,8 @@ void ViewData::OnInitialUpdate()
 	b_common_scale_ = TRUE;
 	m_combo_select_chan.SetCurSel(chart_data.get_channel_list_size());
 	update_legends(legends_options);
+
+	on_split_curves();
 }
 
 void ViewData::OnUpdate(CView* p_sender, const LPARAM l_hint, CObject* p_hint)

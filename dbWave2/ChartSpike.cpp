@@ -23,7 +23,7 @@ int ChartSpike::get_color_according_to_plot_mode(const Spike* spike, int plot_mo
 			color = SILVER_COLOR;
 		break;
 	case PLOT_CLASS_COLORS:
-		color = no_spike_class % NB_COLORS;
+		color = no_spike_class % nb_colors;
 		break;
 	case PLOT_BLACK:
 	default:

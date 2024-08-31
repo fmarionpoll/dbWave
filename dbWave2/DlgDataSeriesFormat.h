@@ -9,7 +9,7 @@ class DlgDataSeriesFormat : public CDialog
 {
 	// Construction
 public:
-	DlgDataSeriesFormat(CWnd* p_parent = nullptr); // standard constructor
+	DlgDataSeriesFormat(CWnd* p_parent = nullptr); 
 
 	// Dialog Data
 	enum { IDD = IDD_DATASERIESFORMAT };
@@ -26,20 +26,25 @@ public:
 	int m_bin_zero{ 2048 };
 	CMFCColorButton m_color_button;
 
-	// Overrides
-public:
 protected:
-	void DoDataExchange(CDataExchange* p_dx) override; 
+	CPalette* m_p_palette_ {nullptr};
+
 	void get_params(int index);
 	void set_params(int index);
+	void define_custom_palette();
+	void init_colors_button();
+	void init_color_button(int i_color);
 
-	// Implementation
-protected:
 	// Generated message map functions
+	void DoDataExchange(CDataExchange* p_dx) override;
 	void OnOK() override;
 	void OnCancel() override;
 	BOOL OnInitDialog() override;
 	afx_msg void on_sel_change_list_series();
+
+public:
+	afx_msg void on_bn_clicked_mfc_color_button1();
+	afx_msg void OnDestroy();
 
 	DECLARE_MESSAGE_MAP()
 };

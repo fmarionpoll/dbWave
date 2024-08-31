@@ -1746,8 +1746,9 @@ void ViewSpikeHist::display_psth_autocorrelation(CDC* p_dc, CRect* p_rect)
 			d_rect.top = rect_hist.bottom - MulDiv((i_autocorrelation + 1), d_rect_height, m_size_isi_);
 			const int val = *p_array;
 			p_array++;
-			auto i_color = MulDiv(val, NB_COLORS, max_val);
-			if (i_color > NB_COLORS) i_color = NB_COLORS;
+			auto i_color = MulDiv(val, ChartWnd::nb_colors, max_val);
+			if (i_color > ChartWnd::nb_colors) 
+				i_color = ChartWnd::nb_colors;
 			if (i_color > 0)
 				p_dc->FillSolidRect(&d_rect, options_view_spikes_->cr_scale[i_color]);
 			d_rect.bottom = d_rect.top;

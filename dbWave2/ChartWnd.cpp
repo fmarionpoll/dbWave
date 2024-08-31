@@ -9,25 +9,18 @@
 #define new DEBUG_NEW
 #endif
 
-COLORREF ChartWnd::color_table_[] =
+COLORREF ChartWnd::color_table[] =
 {
-	col_black, // 0 black
-	col_purple, // 1 purple
-	col_silver, // 2 silver
-	col_maroon, // 3 maroon
-	col_red, // 4 red
-	col_gray, // 5 gray
-	col_fuchsia, // 6 fuchsia
-	col_green, // 7 green
-	col_lime, // 8 lime
-	col_olive, // 9 olive
-	col_yellow, // 10 yellow
-	col_navy, // 11 navy
-	col_blue, // 12 blue
-	col_teal, // 13 teal
-	col_aqua, // 14 aqua
-	col_white, // 15 white
-	col_salmon // 16 dummy
+	col_black, // 0
+	0xffa600, // 1 
+	0xff6361, // 2 
+	0xbc5090, // 3 
+	0x58508d,
+	0x003f5c, // 5
+	0x00f1c6c6, // 6
+	0x00ec9c9d, // 7
+	0x00e27076,
+	0x00de425b // 9
 };
 
 HCURSOR ChartWnd::cursors_[NB_CURSORS];
@@ -37,8 +30,8 @@ int ChartWnd::cursors_count_ = 0;
 int ChartWnd::find_color_index(const COLORREF color_ref)
 {
 	auto color_index = -1;
-	for (auto i = 0; i < NB_COLORS; i++)
-		if (color_ref == color_table_[i])
+	for (auto i = 0; i < nb_colors; i++)
+		if (color_ref == color_table[i])
 			color_index = i;
 	return color_index;
 }
@@ -77,11 +70,11 @@ ChartWnd::ChartWnd()
 
 	cx_mouse_jitter_ = GetSystemMetrics(SM_CXDOUBLECLK);
 	cy_mouse_jitter_ = GetSystemMetrics(SM_CYDOUBLECLK);
-	black_dotted_pen_.CreatePen(PS_DOT, 0, color_table_[BLACK_COLOR]);
+	black_dotted_pen_.CreatePen(PS_DOT, 0, color_table[BLACK_COLOR]);
 
 	// set colored CPen objects
-	for (int i = 0; i < NB_COLORS; i++)
-		pen_table_[i].CreatePen(PS_SOLID, 0, color_table_[i]);
+	for (int i = 0; i < nb_colors; i++)
+		pen_table_[i].CreatePen(PS_SOLID, 0, color_table[i]);
 
 	x_ruler.m_is_horizontal = TRUE;
 	y_ruler.m_is_horizontal = FALSE;
@@ -109,6 +102,7 @@ ChartWnd::~ChartWnd()
 	// delete array of pens
 	for (auto& i : pen_table_)
 		i.DeleteObject();
+
 }
 
 // trap call to pre-subclass in order to get source window size

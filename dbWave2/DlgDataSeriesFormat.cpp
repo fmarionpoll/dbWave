@@ -8,6 +8,8 @@
 #endif
 
 
+
+
 DlgDataSeriesFormat::DlgDataSeriesFormat(CWnd* p_parent /*=NULL*/)
 	: CDialog(IDD, p_parent)
 {
@@ -25,6 +27,8 @@ void DlgDataSeriesFormat::DoDataExchange(CDataExchange* p_dx)
 BEGIN_MESSAGE_MAP(DlgDataSeriesFormat, CDialog)
 	ON_LBN_DBLCLK(IDC_LISTSERIES, on_sel_change_list_series)
 	ON_LBN_SELCHANGE(IDC_LISTSERIES, on_sel_change_list_series)
+	ON_BN_CLICKED(IDC_MFCCOLORBUTTON1, &DlgDataSeriesFormat::on_bn_clicked_mfc_color_button1)
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 void DlgDataSeriesFormat::OnOK()
@@ -34,9 +38,47 @@ void DlgDataSeriesFormat::OnOK()
 	CDialog::OnOK();
 }
 
-void DlgDataSeriesFormat::get_params(int index)
+void  DlgDataSeriesFormat::define_custom_palette()
 {
-	CChanlistItem* chan = m_p_chart_data_wnd->get_channel_list_item(index);
+	constexpr int color_table_length = std::size(ChartWnd::color_table);
+	const auto p_log_palette = reinterpret_cast<LOGPALETTE*>(new BYTE[sizeof(LOGPALETTE) +
+		(color_table_length * sizeof(PALETTEENTRY))]);
+	p_log_palette->palVersion = 0x300;
+	p_log_palette->palNumEntries = color_table_length;
+
+	for (int i = 0; i < color_table_length; i++)
+	{
+		const COLORREF current_color = ChartWnd::color_table[i];
+		p_log_palette->palPalEntry[i].peRed = GetRValue(current_color);
+		p_log_palette->palPalEntry[i].peGreen = GetGValue(current_color);
+		p_log_palette->palPalEntry[i].peBlue = GetBValue(current_color);
+	}
+
+	m_p_palette_ = new CPalette();
+	m_p_palette_->CreatePalette(p_log_palette);
+	delete[]p_log_palette;
+}
+
+void  DlgDataSeriesFormat::init_colors_button()
+{
+	constexpr int color_table_length = std::size(ChartWnd::color_table);
+	int i_color = 1;
+	/*for (int i_color = 0; i_color < color_table_length; i_color ++)
+	{*/
+		init_color_button(i_color);
+	//}
+}
+
+void  DlgDataSeriesFormat::init_color_button(const int i_color)
+{
+	m_color_button.SetPalette(m_p_palette_);
+	//m_color_button.SetColor(i_color);
+	m_color_button.SetColumnsNumber(10);
+}
+
+void DlgDataSeriesFormat::get_params(const int index)
+{
+	const CChanlistItem* chan = m_p_chart_data_wnd->get_channel_list_item(index);
 	m_y_zero = chan->get_y_zero();
 	m_y_extent = chan->get_y_extent();
 	const auto color = chan->get_color_index();
@@ -58,7 +100,7 @@ void DlgDataSeriesFormat::set_params(const int index)
 	auto i_color = ChartData::find_color_index(c_color);
 	if (i_color < 0)
 	{
-		i_color = NB_COLORS - 1;
+		i_color = std::size(ChartWnd::color_table);
 		ChartData::set_color_table_at(i_color, c_color);
 	}
 	chan->set_color(i_color);
@@ -79,7 +121,9 @@ BOOL DlgDataSeriesFormat::OnInitDialog()
 	for (auto i = 0; i < chan_max; i++)
 		m_list_series.AddString(m_p_chart_data_wnd->get_channel_list_item(i)->get_comment());
 
-	// select...
+	define_custom_palette();
+	init_colors_button();
+
 	get_params(m_list_index);
 	UpdateData(FALSE);
 	m_list_series.SetCurSel(m_list_index);
@@ -89,10 +133,22 @@ BOOL DlgDataSeriesFormat::OnInitDialog()
 
 void DlgDataSeriesFormat::on_sel_change_list_series()
 {
-	UpdateData(TRUE); // transfer data to controls
+	UpdateData(TRUE); 
 	const auto list_index = m_list_series.GetCurSel();
 	set_params(m_list_index);
 	m_list_index = list_index;
 	get_params(list_index);
-	UpdateData(FALSE); // transfer data to controls
+	UpdateData(FALSE); 
+}
+
+void DlgDataSeriesFormat::on_bn_clicked_mfc_color_button1()
+{
+	const auto list_index = m_list_series.GetCurSel();
+	set_params(m_list_index);
+}
+
+void DlgDataSeriesFormat::OnDestroy()
+{
+	CDialog::OnDestroy();
+	delete m_p_palette_;
 }

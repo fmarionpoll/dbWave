@@ -95,7 +95,7 @@ void ChartSpikeHistVert::plot_data_to_dc(CDC* p_dc)
 			if (PLOT_ONE_CLASS_ONLY == plot_mode_ && spk_cla != selected_class_)
 				continue;
 			if (PLOT_CLASS_COLORS == plot_mode_)
-				color = spk_cla % NB_COLORS;
+				color = spk_cla % nb_colors;
 			else if (plot_mode_ == PLOT_ONE_CLASS && spk_cla == selected_class_)
 			{
 				color = BLACK_COLOR;
@@ -123,8 +123,6 @@ void ChartSpikeHistVert::plot_data_to_dc(CDC* p_dc)
 		display_hz_tags(p_dc);
 	if (vt_tags.get_tag_list_size() > 0) // display vertical tags
 	{
-		/*const auto wo = MulDiv(0 - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;*/
-		/*const auto we = MulDiv(m_display_rect_.bottom - m_y_viewport_origin_, m_y_we_, m_y_viewport_extent_) + m_y_wo_;*/
 		display_vt_tags_int_values(p_dc);
 	}
 	p_dc->RestoreDC(n_saved_dc);
@@ -145,18 +143,13 @@ void ChartSpikeHistVert::plot_histogram(CDC* p_dc, const CDWordArray* p_dw, cons
 		if (rect_histogram.top > 0)
 		{
 			p_dc->MoveTo(rect_histogram.bottom, rect_histogram.left);
-			p_dc->FillSolidRect(rect_histogram, color_table_[color]);
+			p_dc->FillSolidRect(rect_histogram, color_table[color]);
 		}
 	}
 }
 
 void ChartSpikeHistVert::move_hz_tag_to_val(const int tag_index, const int value)
 {
-	//m_pt_last_.y = MulDiv(hz_tags.get_value_int(i_tag) - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
-	//const auto j = MulDiv(value - m_y_wo_, m_y_viewport_extent_, m_y_we_) + m_y_viewport_origin_;
-	//xor_hz_tag(j);
-	//hz_tags.set_value_int(i_tag, val);
-
 	Tag* p_tag = hz_tags.get_tag(tag_index);
 	p_tag->value_int = value;
 	p_tag->pixel = MulDiv(value - y_wo_, y_ve_, y_we_) + y_vo_;
@@ -165,9 +158,6 @@ void ChartSpikeHistVert::move_hz_tag_to_val(const int tag_index, const int value
 
 void ChartSpikeHistVert::move_vt_tag_to_val(const int i_tag, const int val)
 {
-	//m_pt_last_.x = MulDiv(vertical_tags.get_value_int(i_tag) - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-	//const auto j = MulDiv(val - m_x_wo_, m_x_viewport_extent_, m_x_we_) + m_x_viewport_origin_;
-
 	Tag* p_tag = vt_tags.get_tag(i_tag);
 	p_tag->value_int = val;
 	const auto pixels = MulDiv(val - x_wo_, x_viewport_extent_, x_we_) + x_viewport_origin_;

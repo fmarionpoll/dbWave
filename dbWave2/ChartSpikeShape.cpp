@@ -95,7 +95,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 					continue;
 				break;
 			case PLOT_CLASS_COLORS:
-				selected_pen_color = spike_class % NB_COLORS;
+				selected_pen_color = spike_class % nb_colors;
 				p_dc->SelectObject(&pen_table_[selected_pen_color]);
 				break;
 			case PLOT_ONE_CLASS:
@@ -113,7 +113,7 @@ void ChartSpikeShape::plot_data_to_dc(CDC * p_dc)
 		{
 			selected_pen_color = index_color_selected_;
 			if (plot_mode_ == PLOT_ONE_COLOR)
-				selected_pen_color = selected_class_ % NB_COLORS;
+				selected_pen_color = selected_class_ % nb_colors;
 			p_dc->SelectObject(&pen_table_[selected_pen_color]);
 			for (auto i_spike = i_first_spike; i_spike <= i_last_spike; i_spike++)
 			{
@@ -184,7 +184,7 @@ void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
 {
 	const auto n_saved_dc = p_dc->SaveDC();
 	constexpr auto pen_size = 1;
-	CPen new_pen(PS_SOLID, pen_size, color_table_[color_selected_spike_]);
+	CPen new_pen(PS_SOLID, pen_size, color_table[color_selected_spike_]);
 	const auto old_pen = p_dc->SelectObject(&new_pen);
 
 	get_extents();
@@ -228,7 +228,7 @@ int ChartSpikeShape::display_ex_data(int* p_data, const int color)
 	dc.IntersectClipRect(&client_rect_);
 	dc.SetMapMode(MM_ANISOTROPIC);
 	prepare_dc(&dc);
-	CPen new_pen(PS_SOLID, 0, color_table_[color]);
+	CPen new_pen(PS_SOLID, 0, color_table[color]);
 	const auto old_pen = dc.SelectObject(&new_pen);
 	fill_polypoint_y_axis(p_data);
 	dc.Polyline(&polyline_points_[0], p_spike_list_->get_spike_length());
@@ -275,7 +275,7 @@ void ChartSpikeShape::draw_spike_on_dc(const Spike* spike, CDC * p_dc)
 	p_dc->SetViewportExt(display_rect_.Width(), -display_rect_.Height());
 
 	constexpr auto pen_size = 2;
-	CPen new_pen(PS_SOLID, pen_size, color_table_[color_selected_spike_]);
+	CPen new_pen(PS_SOLID, pen_size, color_table[color_selected_spike_]);
 	auto* old_pen = p_dc->SelectObject(&new_pen);
 
 	display_spike_data(p_dc, spike);
@@ -645,7 +645,7 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 	// display selected spike
 	if (spike_selected_.spike_index >= 0 && is_spike_within_range(spike_selected_))
 	{
-		CPen new_pen(PS_SOLID, 0, color_table_[color_selected_spike_]);
+		CPen new_pen(PS_SOLID, 0, color_table[color_selected_spike_]);
 		p_dc->SelectObject(&new_pen);
 		const Spike* spike = dbwave_doc_->get_spike(spike_selected_);
 		print_array_to_dc(p_dc, spike->get_p_data());

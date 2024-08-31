@@ -83,7 +83,7 @@ void ChartSpikeHist::plot_data_to_dc(CDC* p_dc)
 			if (PLOT_ONE_CLASS_ONLY == plot_mode_ && spike_class != selected_class_)
 				continue;
 			if (PLOT_CLASS_COLORS == plot_mode_)
-				color_index = spike_class % NB_COLORS;
+				color_index = spike_class % nb_colors;
 			else if (plot_mode_ == PLOT_ONE_CLASS && spike_class == selected_class_)
 			
 				continue;
@@ -131,7 +131,7 @@ void ChartSpikeHist::plot_histogram(CDC* p_dc, const CDWordArray* p_dw, const in
 		if (rect_histogram.top > 0)
 		{
 			p_dc->MoveTo(rect_histogram.left, rect_histogram.bottom);
-			p_dc->FillSolidRect(rect_histogram, color_table_[color]);
+			p_dc->FillSolidRect(rect_histogram, color_table[color]);
 		}
 	}
 }

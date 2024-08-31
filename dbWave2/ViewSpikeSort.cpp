@@ -94,13 +94,13 @@ BEGIN_MESSAGE_MAP(ViewSpikeSort, ViewDbTable)
 	ON_EN_CHANGE(IDC_EDIT_LEFT, &ViewSpikeSort::on_en_change_edit_left2)
 	ON_EN_CHANGE(IDC_EDIT_RIGHT, &ViewSpikeSort::on_en_change_edit_right2)
 	ON_EN_CHANGE(IDC_SPIKE_INDEX, &ViewSpikeSort::on_en_change_spike_index)
+	ON_EN_CHANGE(IDC_LIST_INDEX, &ViewSpikeSort::on_en_change_list_index)
+	ON_EN_CHANGE(IDC_FILE_INDEX, &ViewSpikeSort::on_en_change_file_index)
 	ON_EN_CHANGE(IDC_SPIKE_CLASS, &ViewSpikeSort::on_en_change_spike_class)
 	ON_EN_CHANGE(IDC_HISTOGRAM_BIN_MS, &ViewSpikeSort::on_en_change_hist_bin_ms)
 
 	ON_BN_DOUBLECLICKED(IDC_CHART_MEASURE, &ViewSpikeSort::on_tools_edit_spikes)
-
-	ON_EN_CHANGE(IDC_LIST_INDEX, &ViewSpikeSort::on_en_change_list_index)
-	ON_EN_CHANGE(IDC_FILE_INDEX, &ViewSpikeSort::on_en_change_file_index)
+	
 END_MESSAGE_MAP()
 
 void ViewSpikeSort::define_sub_classed_items()
@@ -582,7 +582,7 @@ void ViewSpikeSort::hit_spike()
 	select_spike(spike_hit);
 }
 
-void ViewSpikeSort::change_chart_shape_vt_tag(const int tag_index)
+void ViewSpikeSort::change_spikes_measuring_window(const int tag_index)
 {
 	if (tag_index == shape_t1_)
 	{
@@ -700,7 +700,7 @@ LRESULT ViewSpikeSort::on_my_message(const WPARAM code, const LPARAM l_param)
 
 	case HINT_CHANGE_VERT_TAG:
 		if (HIWORD(l_param) == IDC_CHART_SHAPE)
-			change_chart_shape_vt_tag(value);
+			change_spikes_measuring_window(value);
 		else if (HIWORD(l_param) == IDC_CHART_HISTOGRAM)
 			change_chart_histogram_vt_tag(value);
 		else if (HIWORD(l_param) == IDC_CHART_MEASURE)
@@ -1653,6 +1653,49 @@ void ViewSpikeSort::on_en_change_spike_index()
 {
 	if (mm_spike_index_.m_b_entry_done)
 	{
+		if (b_all_files_)
+			change_spike_index_all_files();
+		else
+			change_spike_index_single_file();
+	}
+}
+
+void ViewSpikeSort::change_spike_index_single_file()
+{
+	const int spike_index = spike_index_;
+	mm_spike_index_.on_en_change(this, spike_index_, 1, -1);
+
+	// check boundaries
+	if (spike_index_ < 0)
+		spike_index_ = -1;
+	if (spike_index_ >= p_spk_list->get_spikes_count())
+		spike_index_ = p_spk_list->get_spikes_count() - 1;
+
+	if (spike_index_ != spike_index)
+	{
+		if (spike_index_ >= 0)
+		{
+			// test if spike visible in the current time interval
+			const auto spike_element = p_spk_list->get_spike(spike_index_);
+			const auto spk_first = spike_element->get_time() - p_spk_list->get_detection_parameters()->detect_pre_threshold;
+			const auto spk_last = spk_first + p_spk_list->get_spike_length();
+
+			if (spk_first < l_first_ || spk_last > l_last_)
+			{
+				const auto l_span = (l_last_ - l_first_) / 2;
+				const auto l_center = (spk_last + spk_first) / 2;
+				l_first_ = l_center - l_span;
+				l_last_ = l_center + l_span;
+				update_legends();
+			}
+		}
+	}
+	auto db_sel = db_spike(-1, -1, spike_index_);
+	select_spike(db_sel);
+
+}
+void ViewSpikeSort::change_spike_index_all_files()
+{
 		const int spike_index = spike_index_;
 		mm_spike_index_.on_en_change(this, spike_index_, 1, -1);
 
@@ -1683,9 +1726,7 @@ void ViewSpikeSort::on_en_change_spike_index()
 		}
 		auto db_sel = db_spike(-1, -1, spike_index_);
 		select_spike(db_sel);
-	}
 }
-
 void ViewSpikeSort::on_en_change_spike_class()
 {
 	if (mm_class_index_.m_b_entry_done)

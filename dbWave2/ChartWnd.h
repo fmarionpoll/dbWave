@@ -18,7 +18,6 @@ constexpr auto PLOT_ALLGREY = 5;
 constexpr auto PLOT_WITHIN_BOUNDS = 6;
 constexpr auto PLOT_ONE_COLOR = 7;
 
-constexpr auto NB_COLORS = 17;
 constexpr auto BLACK_COLOR = 0;
 constexpr auto SILVER_COLOR = 2;
 constexpr auto RED_COLOR = 4;
@@ -40,6 +39,10 @@ public:
 
 	virtual BOOL Create(LPCTSTR lpsz_window_name, DWORD dw_style, const RECT& rect, CWnd* p_parent_wnd, UINT n_id,
 	                    CCreateContext* p_context = nullptr);
+
+	static constexpr int nb_colors {10}; 
+	static COLORREF color_table[nb_colors];
+
 protected:
 	static int cursors_count_;
 	static HCURSOR cursors_[NB_CURSORS];
@@ -48,10 +51,9 @@ protected:
 	int cursor_type_{ 0 };
 	int old_cursor_type_{ 0 };
 	HCURSOR handle_current_cursor_{};
-	int current_cursor_mode_{ 0 }; // current cursor drag mode
-	static COLORREF color_table_[NB_COLORS]; // array with color ref
+	int current_cursor_mode_{ 0 }; 
 
-	CPen pen_table_[NB_COLORS]; // table with CPen objects (same colors as color table)
+	CPen pen_table_[nb_colors];
 	BOOL b_left_mouse_button_down_ {false};
 	BOOL b_use_dib_{ false };
 	CDC plot_dc_{};
@@ -68,7 +70,7 @@ protected:
 	int index_color_background_ {SILVER_COLOR};
 	int index_color_selected_  {BLACK_COLOR};
 	BOOL b_erase_background_  {TRUE}; // erase background (flag)
-	BOOL b_vertical_tags_as_long_  {FALSE}; // flag: TRUE if VT tags are defined as long
+	BOOL b_vertical_tags_as_long_  {FALSE}; // TRUE if VT tags are defined as long
 	long file_position_first_left_pixel_  {0}; // file position of first left pixel
 	long file_position_last_right_pixel_  {0}; // file position of last right pixel
 	long file_position_equivalent_to_mouse_jitter_{}; // file position range corresponding mouse jitter
@@ -122,8 +124,8 @@ public:
 	void erase_background(CDC* p_dc);
 	void plot_to_bitmap(CDC* p_dc);
 
-	static COLORREF get_color(const int color_index) { return color_table_[color_index]; }
-	static void set_color_table_at(const int color_index, const COLORREF color_ref) { color_table_[color_index] = color_ref; }
+	static COLORREF get_color(const int color_index) { return color_table[color_index]; }
+	static void set_color_table_at(const int color_index, const COLORREF color_ref) { color_table[color_index] = color_ref; }
 	static int find_color_index(COLORREF color_ref);
 
 	void set_string(const CString& cs) { cs_empty_ = cs; }
