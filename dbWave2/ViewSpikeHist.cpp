@@ -37,18 +37,18 @@ BOOL ViewSpikeHist::PreCreateWindow(CREATESTRUCT& cs)
 	return ViewDbTable::PreCreateWindow(cs);
 }
 
-void ViewSpikeHist::DoDataExchange(CDataExchange* pDX)
+void ViewSpikeHist::DoDataExchange(CDataExchange* p_dx)
 {
-	ViewDbTable::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_TIMEFIRST, m_time_first);
-	DDX_Text(pDX, IDC_TIMELAST, m_time_last);
-	DDX_Text(pDX, IDC_SPIKECLASS, m_spike_class);
-	DDX_Text(pDX, IDC_EDIT2, m_dot_height);
-	DDX_Text(pDX, IDC_EDIT3, m_row_height);
-	DDX_Text(pDX, IDC_BINSIZE, m_bin_isi_ms);
-	DDX_Text(pDX, IDC_EDIT1, m_n_bins_isi);
-	DDX_Text(pDX, IDC_EDIT4, m_time_bin_ms);
-	DDX_Control(pDX, IDC_TAB1, m_tabCtrl);
+	ViewDbTable::DoDataExchange(p_dx);
+	DDX_Text(p_dx, IDC_TIMEFIRST, m_time_first);
+	DDX_Text(p_dx, IDC_TIMELAST, m_time_last);
+	DDX_Text(p_dx, IDC_SPIKECLASS, m_spike_class);
+	DDX_Text(p_dx, IDC_EDIT2, m_dot_height);
+	DDX_Text(p_dx, IDC_EDIT3, m_row_height);
+	DDX_Text(p_dx, IDC_BINSIZE, m_bin_isi_ms);
+	DDX_Text(p_dx, IDC_EDIT1, m_n_bins_isi);
+	DDX_Text(p_dx, IDC_EDIT4, m_time_bin_ms);
+	DDX_Control(p_dx, IDC_TAB1, m_tabCtrl);
 }
 
 BEGIN_MESSAGE_MAP(ViewSpikeHist, ViewDbTable)
@@ -82,9 +82,6 @@ BEGIN_MESSAGE_MAP(ViewSpikeHist, ViewDbTable)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &ViewSpikeHist::on_tcn_sel_change_tab1)
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// ViewSpikeHist message handlers
-
 void ViewSpikeHist::OnInitialUpdate()
 {
 	VERIFY(mm_bin_isi_ms_.SubclassDlgItem(IDC_BINSIZE, this));
@@ -101,14 +98,13 @@ void ViewSpikeHist::OnInitialUpdate()
 
 	// load stored parameters
 	auto p_app = static_cast<CdbWaveApp*>(AfxGetApp());
-	options_view_spikes_ = &(p_app->options_view_spikes); // get address of spike display options
-	options_view_data_ = &(p_app->options_view_data); // printing options
+	options_view_spikes_ = &(p_app->options_view_spikes); 
+	options_view_data_ = &(p_app->options_view_data); 
 
 	// create local fonts
-	memset(&m_log_font_display_, 0, sizeof(LOGFONT)); // prepare font
-	lstrcpy(m_log_font_display_.lfFaceName, _T("Arial")); // Arial font
-	m_log_font_display_.lfHeight = 15; // font height
-	/*BOOL flag = */
+	memset(&m_log_font_display_, 0, sizeof(LOGFONT));
+	lstrcpy(m_log_font_display_.lfFaceName, _T("Arial")); 
+	m_log_font_display_.lfHeight = 15; 
 	m_font_display_.CreateFontIndirect(&m_log_font_display_);
 
 	// fill controls with initial values
@@ -128,11 +124,11 @@ void ViewSpikeHist::OnInitialUpdate()
 	static_cast<CButton*>(GetDlgItem(IDC_RADIOONECLASS))->SetCheck(options_view_spikes_->spike_class_option);
 	m_spike_class = options_view_spikes_->class_nb;
 
-	static_cast<CListBox*>(GetDlgItem(IDC_LIST1))->AddString(_T("Peristimulus histogram (PS)"));
+	static_cast<CListBox*>(GetDlgItem(IDC_LIST1))->AddString(_T("Peri-stimulus histogram (PS)"));
 	static_cast<CListBox*>(GetDlgItem(IDC_LIST1))->AddString(_T("Spike intervals histogram (ISI)"));
-	static_cast<CListBox*>(GetDlgItem(IDC_LIST1))->AddString(_T("Autocorrelation histogram (Autoc)"));
+	static_cast<CListBox*>(GetDlgItem(IDC_LIST1))->AddString(_T("Autocorrelation histogram"));
 	static_cast<CListBox*>(GetDlgItem(IDC_LIST1))->AddString(_T("Raster display"));
-	static_cast<CListBox*>(GetDlgItem(IDC_LIST1))->AddString(_T("Peristimulus-Autocorrelation (PS-Autoc)"));
+	static_cast<CListBox*>(GetDlgItem(IDC_LIST1))->AddString(_T("Peri-stimulus + Autocorrelation"));
 
 	GetDlgItem(IDC_SPIKECLASS)->EnableWindow(options_view_spikes_->spike_class_option);
 	m_time_bin_ms = options_view_spikes_->time_bin * t1000_;
@@ -278,8 +274,7 @@ void ViewSpikeHist::on_en_change_time_first()
 		}
 		options_view_spikes_->time_start = m_time_first;
 		UpdateData(FALSE);
-		if (time_first != m_time_first)
-			build_data_and_display();
+		build_data_and_display();
 	}
 }
 
@@ -296,8 +291,7 @@ void ViewSpikeHist::on_en_change_time_last()
 		}
 		options_view_spikes_->time_end = m_time_last;
 		UpdateData(FALSE);
-		if (time_last != m_time_last)
-			build_data_and_display();
+		build_data_and_display();
 	}
 }
 
@@ -309,7 +303,7 @@ void ViewSpikeHist::on_en_change_time_bin()
 		mm_time_bin_ms_.on_en_change(this, m_time_bin_ms, 1.f, -1.f);
 		options_view_spikes_->time_bin = m_time_bin_ms / t1000_;
 		UpdateData(FALSE);
-		if (bin_ms != m_time_bin_ms)
+		if (bin_ms > m_time_bin_ms || bin_ms < m_time_bin_ms)
 			build_data_and_display();
 	}
 }
@@ -322,7 +316,7 @@ void ViewSpikeHist::on_en_change_bin_isi()
 		mm_bin_isi_ms_.on_en_change(this, m_bin_isi_ms, 1.f, -1.f);
 		options_view_spikes_->bin_isi = m_bin_isi_ms / t1000_;
 		UpdateData(FALSE);
-		if (bin_ms != m_bin_isi_ms)
+		if (bin_ms > m_bin_isi_ms || bin_ms < m_bin_isi_ms)
 			build_data_and_display();
 	}
 }
@@ -433,16 +427,16 @@ void ViewSpikeHist::get_file_infos(CString& str_comment)
 		const CString rc("\n"); 
 		if (m_b_print_)
 		{
-			if (options_view_data_->b_doc_name || options_view_data_->b_acq_date_time) // print doc infos?
+			if (options_view_data_->b_doc_name || options_view_data_->b_acq_date_time) 
 			{
-				if (options_view_data_->b_doc_name) // print file name
+				if (options_view_data_->b_doc_name) 
 				{
 					const auto filename = GetDocument()->db_get_current_spk_file_name(FALSE);
 					str_comment += filename + tab;
 				}
-				if (options_view_data_->b_acq_date_time) // print data acquisition date & time
+				if (options_view_data_->b_acq_date_time) 
 				{
-					const auto date = (p_spike_doc->get_acq_time()).Format("%#d %m %Y %X"); //("%c");
+					const auto date = (p_spike_doc->get_acq_time()).Format("%#d %m %Y %X"); 
 					str_comment += date;
 				}
 				str_comment += rc;
@@ -484,7 +478,7 @@ void ViewSpikeHist::on_click_one_class()
 	if (!options_view_spikes_->spike_class_option)
 	{
 		options_view_spikes_->spike_class_option = TRUE;
-		(CWnd*)GetDlgItem(IDC_SPIKECLASS)->EnableWindow(TRUE);
+		reinterpret_cast<CWnd*>(GetDlgItem(IDC_SPIKECLASS)->EnableWindow(TRUE));
 		build_data_and_display();
 	}
 }
@@ -494,7 +488,7 @@ void ViewSpikeHist::on_click_all_classes()
 	if (options_view_spikes_->spike_class_option)
 	{
 		options_view_spikes_->spike_class_option = FALSE;
-		(CWnd*)GetDlgItem(IDC_SPIKECLASS)->EnableWindow(FALSE);
+		reinterpret_cast<CWnd*>(GetDlgItem(IDC_SPIKECLASS)->EnableWindow(FALSE));
 		build_data_and_display();
 	}
 }
@@ -586,7 +580,7 @@ void ViewSpikeHist::show_controls(const int i_select)
 
 	GetDlgItem(IDC_STATIC2)->ShowWindow(b_settings[i_select][i]);
 	i++; // 10 ISI &bin size (ms)
-	GetDlgItem(IDC_STATIC13)->ShowWindow(b_settings[i_select][i]); /*i++;*/ // 11 autocorrelation &bin size (ms)
+	GetDlgItem(IDC_STATIC13)->ShowWindow(b_settings[i_select][i]); 
 }
 
 void ViewSpikeHist::on_en_change_n_bins()
@@ -678,15 +672,15 @@ void ViewSpikeHist::on_edit_copy()
 	ASSERT(h_emf_tmp != NULL);
 	if (OpenClipboard())
 	{
-		EmptyClipboard(); // prepare clipboard
-		SetClipboardData(CF_ENHMETAFILE, h_emf_tmp); // put data
-		CloseClipboard(); // close clipboard
+		EmptyClipboard(); 
+		SetClipboardData(CF_ENHMETAFILE, h_emf_tmp); 
+		CloseClipboard(); 
 	}
 	else
 	{
 		// Someone else has the Clipboard open...
-		DeleteEnhMetaFile(h_emf_tmp); // delete data
-		MessageBeep(0); // tell user something is wrong!
+		DeleteEnhMetaFile(h_emf_tmp); 
+		MessageBeep(0); 
 		AfxMessageBox(IDS_CANNOT_ACCESS_CLIPBOARD, NULL, MB_OK | MB_ICONEXCLAMATION);
 	}
 }
@@ -705,13 +699,12 @@ BOOL ViewSpikeHist::OnPreparePrinting(CPrintInfo* p_info)
 		|| options_view_data_->vertical_resolution != p_info->m_rectDraw.Height())
 	{
 		// compute printer's page dot resolution
-		CPrintDialog dlg(FALSE); // borrowed from VC++ sample\drawcli\drawdoc.cpp
+		CPrintDialog dlg(FALSE); 
 		VERIFY(AfxGetApp()->GetPrinterDeviceDefaults(&dlg.m_pd));
-		CDC dc; // GetPrinterDC returns a HDC so attach it
+		CDC dc;
 		const auto h_dc = dlg.CreatePrinterDC();
 		ASSERT(h_dc != NULL);
 		dc.Attach(h_dc);
-		// Get the size of the page in pixels
 		options_view_data_->horizontal_resolution = dc.GetDeviceCaps(HORZRES);
 		options_view_data_->vertical_resolution = dc.GetDeviceCaps(VERTRES);
 	}
@@ -755,9 +748,9 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	const int file0 = GetDocument()->db_get_current_record_position();
 
 	// print page footer: file path, page number/total pages, date
-	const auto t = CTime::GetCurrentTime(); // current date & time
-	CString cs_footer; // first string to receive
-	cs_footer.Format(_T("  page %d:%d %d-%d-%d"), // page and time infos
+	const auto t = CTime::GetCurrentTime(); 
+	CString cs_footer; 
+	cs_footer.Format(_T("  page %d:%d %d-%d-%d"),
 	                 pInfo->m_nCurPage, pInfo->GetMaxPage(),
 	                 t.GetDay(), t.GetMonth(), t.GetYear());
 	CString ch_date = GetDocument()->db_get_current_spk_file_name(FALSE);
@@ -766,29 +759,26 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	p_dc->TextOut(options_view_data_->horizontal_resolution / 2, options_view_data_->vertical_resolution - 57, ch_date);
 
 	// define page rectangle (where data and comments are plotted)
-	CRect rect_page; // = pInfo->m_rectDraw;
-	//rect_page.right = mdPM->horzRes-mdPM->rightPageMargin;
-	//rect_page.bottom = mdPM->vertRes-mdPM->bottomPageMargin;
+	CRect rect_page; 
 	rect_page.left = options_view_data_->left_page_margin;
 	rect_page.top = options_view_data_->top_page_margin;
 
 	// define data file rectangle - position of the first file
-	const auto r_width = options_view_data_->width_doc; // margins
-	const auto r_height = options_view_data_->height_doc; // margins
+	const auto r_width = options_view_data_->width_doc; 
+	const auto r_height = options_view_data_->height_doc;
 	CRect r_where(rect_page.left, rect_page.top,
 	              rect_page.left + r_width, rect_page.top + r_height);
 
 	// prepare file loop
 	auto p_dbwave_doc = GetDocument();
-	/*int nfiles = */
-	long n_records = p_dbwave_doc->db_get_records_count();
-	const auto size_row = options_view_data_->height_doc + options_view_data_->height_separator; // size of one row
-	auto n_rows_per_page = pInfo->m_rectDraw.Height() / size_row; // nb of rows per page
+	//long n_records = p_dbwave_doc->db_get_records_count();
+	const auto size_row = options_view_data_->height_doc + options_view_data_->height_separator; 
+	auto n_rows_per_page = pInfo->m_rectDraw.Height() / size_row; 
 	if (n_rows_per_page == 0)
 		n_rows_per_page = 1;
-	const int file1 = (pInfo->m_nCurPage - 1) * n_rows_per_page; // index first file
-	auto file2 = file1 + n_rows_per_page; // index last file
-	if (m_n_files_ != 1) // special case: all together
+	const int file1 = (pInfo->m_nCurPage - 1) * n_rows_per_page; 
+	auto file2 = file1 + n_rows_per_page; 
+	if (m_n_files_ != 1) 
 		file2 = file1 + 1;
 	if (file2 > p_dbwave_doc->db_get_records_count())
 		file2 = p_dbwave_doc->db_get_records_count();
@@ -796,7 +786,7 @@ void ViewSpikeHist::OnPrint(CDC* p_dc, CPrintInfo* pInfo)
 	// loop through all files
 	for (auto i_file = file1; i_file < file2; i_file++)
 	{
-		if (options_view_data_->b_frame_rect) // print data rect if necessary
+		if (options_view_data_->b_frame_rect) 
 		{
 			p_dc->MoveTo(r_where.left, r_where.top);
 			p_dc->LineTo(r_where.right, r_where.top);
@@ -2000,7 +1990,7 @@ void ViewSpikeHist::OnHScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar
 		delta = m_time_first - m_time_last;
 		break;
 	case SB_ENDSCROLL: // End scroll.
-		delta = (m_time_last - m_time_first) * (cur_pos - 50) / 100;
+		delta = (m_time_last - m_time_first) *  (static_cast<float>(cur_pos) - 50.f) / 100.f;
 		break;
 	case SB_LINELEFT: // Scroll left.
 		delta = -2 * m_time_bin_ms / t1000_;
@@ -2016,16 +2006,18 @@ void ViewSpikeHist::OnHScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar
 		break;
 	case SB_THUMBPOSITION: // Scroll to absolute position. nPos is the position
 		cur_pos = n_pos; // of the scroll box at the end of the drag operation.
-		return; // no action
+		break;
+		//return; // no action
 	case SB_THUMBTRACK: // Drag scroll box to specified position. nPos is the
 		cur_pos = n_pos; // position that the scroll box has been dragged to.
-		return; // no action
+		break;
+		//return; // no action
 	default:
 		return;
 	}
 
 	// Set the new position of the thumb (scroll box).
-	p_scroll_bar->SetScrollPos(50);
+	p_scroll_bar->SetScrollPos(cur_pos);
 	const auto n_bins = static_cast<int>(delta * t1000_ / m_time_bin_ms);
 	delta = m_time_bin_ms * static_cast<float>(n_bins) / t1000_;
 	m_time_first += delta;

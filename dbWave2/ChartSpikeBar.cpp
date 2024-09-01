@@ -340,21 +340,7 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 			}
 		}
 
-		CPen new_pen;
-		new_pen.CreatePen(PS_SOLID, pen_size, color_table[color_index]);
-		const auto old_pen = dc.SelectObject(&new_pen);
-
-		// display data
-		const auto l_spike_time = spike->get_time();
-		const auto len = l_last_ - l_first_ + 1;
-		const auto llk = MulDiv(l_spike_time - l_first_, x_we_, len);
-		const auto abscissa = static_cast<int>(llk) + x_wo_;
-		int max, min;
-		spike->get_max_min(&max, &min);
-
-		dc.MoveTo(abscissa, max);
-		dc.LineTo(abscissa, min);
-		dc.SelectObject(old_pen);
+		draw_spike(&dc, spike, color_selected_table[color_index]);
 	}
 }
 
@@ -378,18 +364,23 @@ void ChartSpikeBar::display_spike(const Spike* spike)
 		break;
 	}
 
-	draw_spike(spike, color_index);
+	draw_spike(spike, color_table[color_index]);
 }
 
-void ChartSpikeBar::draw_spike(const Spike* spike, const int color_index)
+void ChartSpikeBar::draw_spike(const Spike* spike, const COLORREF& color)
 {
 	CClientDC dc(this);
 	dc.IntersectClipRect(&client_rect_);
 
+	draw_spike(&dc, spike, color);
+}
+
+void ChartSpikeBar::draw_spike(CDC* p_dc,  const Spike* spike, const COLORREF& color) const
+{
 	CPen new_pen;
 	constexpr auto pen_size = 0;
-	new_pen.CreatePen(PS_SOLID, pen_size, color_table[color_index]);
-	const auto old_pen = dc.SelectObject(&new_pen);
+	new_pen.CreatePen(PS_SOLID, pen_size, color);
+	const auto old_pen = p_dc->SelectObject(&new_pen);
 
 	// display data
 	const auto l_spike_time = spike->get_time();
@@ -398,53 +389,36 @@ void ChartSpikeBar::draw_spike(const Spike* spike, const int color_index)
 	const auto abscissa = static_cast<int>(llk) + x_wo_;
 	int max, min;
 	spike->get_max_min(&max, &min);
+	p_dc->MoveTo(abscissa, max);
+	p_dc->LineTo(abscissa, min);
 
-	dc.MoveTo(abscissa, max);
-	dc.LineTo(abscissa, min);
-	dc.SelectObject(old_pen);
+	p_dc->SelectObject(old_pen);
 }
 
-void ChartSpikeBar::highlight_spike(const Spike* spike) 
+void ChartSpikeBar::highlight_spike(const Spike* spike)
 {
 	CClientDC dc(this);
 	dc.IntersectClipRect(&client_rect_);
 
 	const auto old_rop2 = dc.GetROP2();
 	dc.SetROP2(R2_NOTXORPEN);
+	draw_spike(&dc, spike, col_red);
 
-	const auto l_spike_time = spike->get_time();
-	const auto len = l_last_ - l_first_ + 1;
-	const auto llk = MulDiv(l_spike_time - l_first_, x_we_, len);
-	const auto abscissa = static_cast<int>(llk) + x_wo_;
-
-	const auto max = MulDiv(1 - y_vo_, y_we_, y_ve_) + y_wo_;
-	const auto min = MulDiv(display_rect_.Height() - 2 - y_vo_, y_we_, y_ve_) + y_wo_;
-
-	CPen new_pen;
-	new_pen.CreatePen(PS_SOLID, 1, col_red);
-	const auto old_pen = dc.SelectObject(&new_pen);
-	auto* old_brush = dc.SelectStockObject(NULL_BRUSH);
-	const CRect rect1(abscissa - 2, max, abscissa + 2, min);
-	dc.Rectangle(&rect1);
-
-	// restore resources
-	dc.SelectObject(old_pen);
-	dc.SelectObject(old_brush);
 	dc.SetROP2(old_rop2);
 }
 
 void ChartSpikeBar::select_spike(const db_spike& new_spike_selected)
 {
-	if (spike_selected_.spike_index >= 0) {
+	if (spike_selected_.spike_index >= 0)
+	{
 		const Spike* spike = dbwave_doc_->get_spike(spike_selected_);
 		highlight_spike(spike);
-		display_spike(spike);
 	}
 
 	spike_selected_ = new_spike_selected;
-	if (spike_selected_.spike_index >= 0) {
+	if (spike_selected_.spike_index >= 0)
+	{
 		const Spike* spike = dbwave_doc_->get_spike(spike_selected_);
-		display_spike(spike);
 		highlight_spike(spike);
 	}
 }

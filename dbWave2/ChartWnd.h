@@ -42,6 +42,7 @@ public:
 
 	static constexpr int nb_colors {10}; 
 	static COLORREF color_table[nb_colors];
+	static COLORREF color_selected_table[nb_colors];
 
 protected:
 	static int cursors_count_;

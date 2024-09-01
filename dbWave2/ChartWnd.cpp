@@ -11,17 +11,32 @@
 
 COLORREF ChartWnd::color_table[] =
 {
-	col_black, // 0
-	0xffa600, // 1 
-	0xff6361, // 2 
-	0xbc5090, // 3 
-	0x58508d,
-	0x003f5c, // 5
-	0x00f1c6c6, // 6
-	0x00ec9c9d, // 7
-	0x00e27076,
-	0x00de425b // 9
+	col_black,
+	RGB(126, 132, 250), // 6
+	RGB(246, 133, 17), // 3
+	RGB(15, 181, 174), // 1
+	RGB(197, 198, 198), //4
+	RGB(114, 224, 106), // 7
+	RGB(222, 61, 130), // 5
+	RGB(20, 122, 243), // 8
+	RGB(64, 70, 202), // 2
+	RGB(115, 38, 211), // 9
 };
+
+COLORREF ChartWnd::color_selected_table[] =
+{
+	col_red,
+	col_red, // 6
+	col_red, // 3
+	col_red, // 1
+	col_red, //4
+	col_red, // 7
+	col_red, // 5
+	col_red, // 8
+	col_red, // 2
+	col_red // 9
+};
+
 
 HCURSOR ChartWnd::cursors_[NB_CURSORS];
 int ChartWnd::cursors_drag_mode_[NB_CURSORS];

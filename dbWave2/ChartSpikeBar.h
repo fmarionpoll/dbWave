@@ -46,7 +46,8 @@ public:
 protected:
 	int hit_curve(CPoint point) override;
 	void display_bars(CDC* p_dc, const CRect* rect);
-	void draw_spike(const Spike* spike, int color_index);
+	void draw_spike(const Spike* spike, const COLORREF& color);
+	void draw_spike(CDC* p_dc, const Spike* spike, const COLORREF& color) const;
 	void display_stimulus(CDC* p_dc, const CRect* rect) const;
 
 	afx_msg void OnLButtonUp(UINT n_flags, CPoint point) override;

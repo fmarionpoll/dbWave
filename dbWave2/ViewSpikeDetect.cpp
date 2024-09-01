@@ -285,14 +285,14 @@ void ViewSpikeDetection::update_spike_file(const BOOL b_update_interface)
 	{
 		update_tabs();
 		update_detection_controls();
-		highlight_spikes(FALSE);
+		highlight_spikes_in_chart_data(FALSE);
 		update_number_of_spikes();
 		chart_spike_bar_.Invalidate();
 		chart_spike_shape_.Invalidate();
 	}
 }
 
-void ViewSpikeDetection::highlight_spikes(BOOL flag)
+void ViewSpikeDetection::highlight_spikes_in_chart_data(const BOOL flag)
 {
 	if (!flag || p_spk_list == nullptr || p_spk_list->get_spikes_count() < 1) 
 		return;
@@ -326,7 +326,7 @@ void ViewSpikeDetection::highlight_spikes(BOOL flag)
 	
 }
 
-void ViewSpikeDetection::update_file_parameters(BOOL b_update_interface)
+void ViewSpikeDetection::update_file_parameters(const BOOL b_update_interface)
 {
 	update_data_file(b_update_interface);
 	update_spike_file(b_update_interface);
@@ -1160,7 +1160,7 @@ void ViewSpikeDetection::detect_all(const BOOL b_all)
 		update_spike_shape_window_scale(FALSE);
 	}
 
-	highlight_spikes(FALSE);
+	highlight_spikes_in_chart_data(FALSE);
 	update_legends();
 	update_tabs();
 }
@@ -1506,7 +1506,7 @@ void ViewSpikeDetection::on_bn_clicked_clear_all()
 	p_spk_list = p_spk_doc->get_spike_list_current();
 	ASSERT(p_spk_list != NULL);
 
-	highlight_spikes(FALSE); // remove display of spikes
+	highlight_spikes_in_chart_data(FALSE); // remove display of spikes
 	chart_spike_shape_.set_source_data(p_spk_list, GetDocument());
 	p_spk_doc->m_stimulus_intervals.n_items = 0; // zero stimuli
 	p_spk_doc->m_stimulus_intervals.remove_all();
@@ -1526,7 +1526,7 @@ void ViewSpikeDetection::on_clear()
 
 	p_spk_list = p_spk_doc->get_spike_list_current();
 	p_spk_list->init_spike_list(GetDocument()->m_p_data_doc, nullptr);
-	highlight_spikes(FALSE);
+	highlight_spikes_in_chart_data(FALSE);
 
 	if (p_spk_list->get_detection_parameters()->detect_what == DETECT_STIMULUS)
 	{
@@ -2982,7 +2982,7 @@ void ViewSpikeDetection::update_detection_settings(const int i_sel_parameters)
 	m_p_detect_parameters_ = spk_detect_array_.get_item(i_sel_parameters);
 	p_spk_list = p_spk_doc->set_spike_list_current_index(i_sel_parameters);
 	if (p_spk_list != nullptr)
-		highlight_spikes(TRUE);
+		highlight_spikes_in_chart_data(TRUE);
 
 	update_detection_controls();
 	update_legends();
@@ -3116,7 +3116,7 @@ void ViewSpikeDetection::on_cbn_sel_change_transform_2()
 	chart_spike_bar_.set_yw_ext_org(chart_spike_shape_.get_yw_extent(), middle);
 	update_spike_shape_window_scale(FALSE);
 
-	highlight_spikes(TRUE);
+	highlight_spikes_in_chart_data(TRUE);
 	update_legends();
 	update_tabs();
 }

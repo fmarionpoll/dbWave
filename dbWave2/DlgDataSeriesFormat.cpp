@@ -62,17 +62,13 @@ void  DlgDataSeriesFormat::define_custom_palette()
 void  DlgDataSeriesFormat::init_colors_button()
 {
 	constexpr int color_table_length = std::size(ChartWnd::color_table);
-	int i_color = 1;
-	/*for (int i_color = 0; i_color < color_table_length; i_color ++)
-	{*/
-		init_color_button(i_color);
-	//}
+	constexpr int i_color = 1;
+	init_color_button(i_color);
 }
 
 void  DlgDataSeriesFormat::init_color_button(const int i_color)
 {
 	m_color_button.SetPalette(m_p_palette_);
-	//m_color_button.SetColor(i_color);
 	m_color_button.SetColumnsNumber(10);
 }
 

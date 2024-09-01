@@ -15,7 +15,6 @@ public:
 	void Serialize(CArchive& ar) override;
 
 protected:
-	int color_selected_spike_ = RED_COLOR; 
 	BOOL b_text_ = FALSE;
 	int n_displayed_spikes_{};
 

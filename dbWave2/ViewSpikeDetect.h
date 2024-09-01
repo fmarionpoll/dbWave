@@ -104,7 +104,7 @@ protected:
 	int  detect_stimulus_1(int channel_index); // stimulus detection
 	void serialize_windows_state(BOOL save, int tab_index = -1);
 	void align_display_to_current_spike();
-	void highlight_spikes(BOOL flag = TRUE);
+	void highlight_spikes_in_chart_data(BOOL flag = TRUE);
 	void scroll_file(UINT n_sb_code, UINT n_pos);
 	void select_spike_no(db_spike& spike_sel, BOOL b_multiple_selection);
 	BOOL check_detection_settings();

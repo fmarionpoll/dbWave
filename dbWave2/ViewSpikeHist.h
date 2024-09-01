@@ -76,7 +76,7 @@ public:
 	BOOL OnMove(UINT n_id_move_command) override;
 protected:
 	void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint) override;
-	void DoDataExchange(CDataExchange* pDX) override;
+	void DoDataExchange(CDataExchange* p_dx) override;
 	void OnInitialUpdate() override;
 	void OnActivateView(BOOL b_activate, CView* p_activate_view, CView* p_deactive_view) override;
 	void OnDraw(CDC* p_dc) override;

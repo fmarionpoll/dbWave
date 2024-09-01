@@ -184,7 +184,7 @@ void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
 {
 	const auto n_saved_dc = p_dc->SaveDC();
 	constexpr auto pen_size = 1;
-	CPen new_pen(PS_SOLID, pen_size, color_table[color_selected_spike_]);
+	CPen new_pen(PS_SOLID, pen_size, color_selected_table[0]);
 	const auto old_pen = p_dc->SelectObject(&new_pen);
 
 	get_extents();
@@ -275,7 +275,7 @@ void ChartSpikeShape::draw_spike_on_dc(const Spike* spike, CDC * p_dc)
 	p_dc->SetViewportExt(display_rect_.Width(), -display_rect_.Height());
 
 	constexpr auto pen_size = 2;
-	CPen new_pen(PS_SOLID, pen_size, color_table[color_selected_spike_]);
+	CPen new_pen(PS_SOLID, pen_size, color_selected_table[0]);
 	auto* old_pen = p_dc->SelectObject(&new_pen);
 
 	display_spike_data(p_dc, spike);
@@ -645,9 +645,9 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 	// display selected spike
 	if (spike_selected_.spike_index >= 0 && is_spike_within_range(spike_selected_))
 	{
-		CPen new_pen(PS_SOLID, 0, color_table[color_selected_spike_]);
-		p_dc->SelectObject(&new_pen);
 		const Spike* spike = dbwave_doc_->get_spike(spike_selected_);
+		CPen new_pen(PS_SOLID, 0, color_selected_table[spike->get_class_id() % nb_colors]);
+		p_dc->SelectObject(&new_pen);
 		print_array_to_dc(p_dc, spike->get_p_data());
 	}
 
@@ -697,7 +697,7 @@ void ChartSpikeShape::Serialize(CArchive & ar)
 		ar << index_last_spike_; 
 		ar << current_class_;
 		ar << dummy_int;
-		ar << color_selected_spike_; 
+		ar << dummy_int; 
 		ar << dummy_int; 
 		ar << selected_class_; 
 		ar << b_text_; 
@@ -713,7 +713,7 @@ void ChartSpikeShape::Serialize(CArchive & ar)
 		ar >> index_last_spike_; 
 		ar >> current_class_; 
 		ar >> dummy_int;
-		ar >> color_selected_spike_; 
+		ar >> dummy_int; 
 		ar >> dummy_int; 
 		ar >> selected_class_; 
 		ar >> b_text_; 
