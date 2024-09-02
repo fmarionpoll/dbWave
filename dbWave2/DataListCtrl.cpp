@@ -475,7 +475,7 @@ ChartData* DataListCtrl::get_chart_data_of_current_record()
 		ASSERT(n_item != -1);
 		n_item -= GetTopIndex();
 		if (n_item >= 0 && n_item < rows_.GetSize())
-			ptr = rows_.GetAt(n_item)->p_data_chart_wnd;
+			ptr = rows_.GetAt(n_item)->p_chart_data_wnd;
 	}
 	return ptr;
 }
@@ -492,8 +492,8 @@ void DataListCtrl::resize_signal_column(const int n_pixels)
 	for (int i = 0; i < rows_.GetSize(); i++)
 	{
 		auto* ptr = rows_.GetAt(i);
-		SAFE_DELETE(ptr->p_data_chart_wnd)
-		SAFE_DELETE(ptr->p_spike_chart_wnd)
+		SAFE_DELETE(ptr->p_chart_data_wnd)
+		SAFE_DELETE(ptr->p_chart_spike_wnd)
 	}
 	refresh_display();
 }

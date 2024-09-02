@@ -34,10 +34,10 @@ class DataListCtrl_Row : public CObject
 	CString cs_date{};
 
 	AcqDataDoc* p_data_doc  {nullptr};
-	ChartData* p_data_chart_wnd = {nullptr};
+	ChartData* p_chart_data_wnd = {nullptr};
 	
 	CSpikeDoc* p_spike_doc {nullptr};
-	ChartSpikeBar* p_spike_chart_wnd {nullptr};
+	ChartSpikeBar* p_chart_spike_wnd {nullptr};
 
 	DataListCtrl_Row& operator =(const DataListCtrl_Row& arg);
 	void Serialize(CArchive& ar) override;
