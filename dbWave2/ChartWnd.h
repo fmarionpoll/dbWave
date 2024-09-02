@@ -41,8 +41,9 @@ public:
 	                    CCreateContext* p_context = nullptr);
 
 	static constexpr int nb_colors {10}; 
-	static COLORREF color_table[nb_colors];
-	static COLORREF color_selected_table[nb_colors];
+	static COLORREF color_spike_class[nb_colors];
+	static COLORREF color_spike_class_selected[nb_colors];
+	static COLORREF color_spike_class_text[nb_colors];
 
 protected:
 	static int cursors_count_;
@@ -125,8 +126,8 @@ public:
 	void erase_background(CDC* p_dc);
 	void plot_to_bitmap(CDC* p_dc);
 
-	static COLORREF get_color(const int color_index) { return color_table[color_index]; }
-	static void set_color_table_at(const int color_index, const COLORREF color_ref) { color_table[color_index] = color_ref; }
+	static COLORREF get_color(const int color_index) { return color_spike_class[color_index]; }
+	static void set_color_table_at(const int color_index, const COLORREF color_ref) { color_spike_class[color_index] = color_ref; }
 	static int find_color_index(COLORREF color_ref);
 
 	void set_string(const CString& cs) { cs_empty_ = cs; }

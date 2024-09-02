@@ -1044,7 +1044,7 @@ void ChartData::print(CDC* p_dc, const CRect* p_rect, const BOOL b_center_line)
 		if (hz_tags.get_tag_list_size() > 0) 
 		{
 			// select pen and display mode
-			CPen pen_light_grey(PS_SOLID, 0, color_table[SILVER_COLOR]);
+			CPen pen_light_grey(PS_SOLID, 0, color_spike_class[SILVER_COLOR]);
 			const auto old_pen2 = p_dc->SelectObject(&pen_light_grey);
 			// iterate through HZ cursor list
 			const int x0 = p_rect->left;
@@ -1068,7 +1068,7 @@ void ChartData::print(CDC* p_dc, const CRect* p_rect, const BOOL b_center_line)
 	if (vt_tags.get_tag_list_size() > 0)
 	{
 		// select pen and display mode
-		CPen pen_light_grey(PS_SOLID, 0, color_table[SILVER_COLOR]);
+		CPen pen_light_grey(PS_SOLID, 0, color_spike_class[SILVER_COLOR]);
 		const auto p_old_pen = p_dc->SelectObject(&pen_light_grey);
 		// iterate through VT cursor list
 		const int y0 = p_rect->top;
@@ -1265,7 +1265,7 @@ void ChartData::curve_xor()
 	const auto p_dc = GetDC();
 	const auto n_saved_dc = p_dc->SaveDC();
 	CPen temp_pen;
-	temp_pen.CreatePen(PS_SOLID, 0, color_table[SILVER_COLOR]);
+	temp_pen.CreatePen(PS_SOLID, 0, color_spike_class[SILVER_COLOR]);
 	const auto old_pen = p_dc->SelectObject(&temp_pen);
 	p_dc->IntersectClipRect(&display_rect_);
 

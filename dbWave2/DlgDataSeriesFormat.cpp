@@ -40,7 +40,7 @@ void DlgDataSeriesFormat::OnOK()
 
 void  DlgDataSeriesFormat::define_custom_palette()
 {
-	constexpr int color_table_length = std::size(ChartWnd::color_table);
+	constexpr int color_table_length = std::size(ChartWnd::color_spike_class);
 	const auto p_log_palette = reinterpret_cast<LOGPALETTE*>(new BYTE[sizeof(LOGPALETTE) +
 		(color_table_length * sizeof(PALETTEENTRY))]);
 	p_log_palette->palVersion = 0x300;
@@ -48,7 +48,7 @@ void  DlgDataSeriesFormat::define_custom_palette()
 
 	for (int i = 0; i < color_table_length; i++)
 	{
-		const COLORREF current_color = ChartWnd::color_table[i];
+		const COLORREF current_color = ChartWnd::color_spike_class[i];
 		p_log_palette->palPalEntry[i].peRed = GetRValue(current_color);
 		p_log_palette->palPalEntry[i].peGreen = GetGValue(current_color);
 		p_log_palette->palPalEntry[i].peBlue = GetBValue(current_color);
@@ -61,7 +61,7 @@ void  DlgDataSeriesFormat::define_custom_palette()
 
 void  DlgDataSeriesFormat::init_colors_button()
 {
-	constexpr int color_table_length = std::size(ChartWnd::color_table);
+	constexpr int color_table_length = std::size(ChartWnd::color_spike_class);
 	constexpr int i_color = 1;
 	init_color_button(i_color);
 }
@@ -96,7 +96,7 @@ void DlgDataSeriesFormat::set_params(const int index)
 	auto i_color = ChartData::find_color_index(c_color);
 	if (i_color < 0)
 	{
-		i_color = std::size(ChartWnd::color_table);
+		i_color = std::size(ChartWnd::color_spike_class);
 		ChartData::set_color_table_at(i_color, c_color);
 	}
 	chan->set_color(i_color);

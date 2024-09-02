@@ -264,7 +264,7 @@ void ChartSpikeBar::display_bars(CDC* p_dc, const CRect* rect)
 
 		if (spike_class >= 1)
 		{
-			p_dc->SetTextColor(color_table[spike_class % nb_colors]);
+			p_dc->SetTextColor(color_spike_class[spike_class % nb_colors]);
 			CString str;
 			str.Format(_T("%i"), spike_class);
 			p_dc->TextOut(abscissa, min, str, str.GetLength());
@@ -340,7 +340,7 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 			}
 		}
 
-		draw_spike(&dc, spike, color_selected_table[color_index]);
+		draw_spike(&dc, spike, color_spike_class_selected[color_index]);
 	}
 }
 
@@ -364,7 +364,7 @@ void ChartSpikeBar::display_spike(const Spike* spike)
 		break;
 	}
 
-	draw_spike(spike, color_table[color_index]);
+	draw_spike(spike, color_spike_class[color_index]);
 }
 
 void ChartSpikeBar::draw_spike(const Spike* spike, const COLORREF& color)

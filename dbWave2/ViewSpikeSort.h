@@ -30,7 +30,7 @@ protected:
 	CEditCtrl mm_spike_index_;
 	int spike_index_{ -1 };
 	CEditCtrl mm_class_index_;
-	int class_index_{ 0 };
+	int spike_class_index_{ 0 };
 
 	ChartSpikeShape chart_shape_;
 	CEditCtrl mm_shape_t1_ms_;
@@ -152,6 +152,7 @@ protected:
 	void change_spike_index_single_file();
 	void change_spike_index_all_files();
 
+	static HBRUSH set_brush_and_text_color_according_to_class(CDC* p_dc, int spike_class);
 
 	// public interface to view
 public:
@@ -166,7 +167,8 @@ public:
 	
 	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
 	afx_msg LRESULT on_my_message(WPARAM code, LPARAM l_param);
-	
+	afx_msg HBRUSH OnCtlColor(CDC* p_dc, CWnd* p_wnd, UINT n_ctl_color);
+
 	afx_msg void on_select_change_measure_type();
 	afx_msg void on_sort();
 
@@ -201,7 +203,9 @@ public:
 	afx_msg void on_en_change_edit_left2();
 	afx_msg void on_en_change_edit_right2();
 	afx_msg void on_en_change_hist_bin_ms();
+	
 
 	DECLARE_MESSAGE_MAP()
 
+	
 };

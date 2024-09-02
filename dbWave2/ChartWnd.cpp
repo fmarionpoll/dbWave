@@ -9,7 +9,7 @@
 #define new DEBUG_NEW
 #endif
 
-COLORREF ChartWnd::color_table[] =
+COLORREF ChartWnd::color_spike_class[] =
 {
 	col_black,
 	RGB(126, 132, 250), // 6
@@ -23,7 +23,7 @@ COLORREF ChartWnd::color_table[] =
 	RGB(115, 38, 211), // 9
 };
 
-COLORREF ChartWnd::color_selected_table[] =
+COLORREF ChartWnd::color_spike_class_selected[] =
 {
 	col_red,
 	col_red, // 6
@@ -37,6 +37,21 @@ COLORREF ChartWnd::color_selected_table[] =
 	col_red // 9
 };
 
+COLORREF ChartWnd::color_spike_class_text[] =
+{
+	col_white,
+	col_white, // 6
+	col_white, // 3
+	col_black, // 1
+	col_black, //4
+	col_black, // 7
+	col_white, // 5
+	col_white, // 8
+	col_white, // 2
+	col_white // 9
+};
+
+
 
 HCURSOR ChartWnd::cursors_[NB_CURSORS];
 int ChartWnd::cursors_drag_mode_[NB_CURSORS];
@@ -46,7 +61,7 @@ int ChartWnd::find_color_index(const COLORREF color_ref)
 {
 	auto color_index = -1;
 	for (auto i = 0; i < nb_colors; i++)
-		if (color_ref == color_table[i])
+		if (color_ref == color_spike_class[i])
 			color_index = i;
 	return color_index;
 }
@@ -85,11 +100,11 @@ ChartWnd::ChartWnd()
 
 	cx_mouse_jitter_ = GetSystemMetrics(SM_CXDOUBLECLK);
 	cy_mouse_jitter_ = GetSystemMetrics(SM_CYDOUBLECLK);
-	black_dotted_pen_.CreatePen(PS_DOT, 0, color_table[BLACK_COLOR]);
+	black_dotted_pen_.CreatePen(PS_DOT, 0, color_spike_class[BLACK_COLOR]);
 
 	// set colored CPen objects
 	for (int i = 0; i < nb_colors; i++)
-		pen_table_[i].CreatePen(PS_SOLID, 0, color_table[i]);
+		pen_table_[i].CreatePen(PS_SOLID, 0, color_spike_class[i]);
 
 	x_ruler.m_is_horizontal = TRUE;
 	y_ruler.m_is_horizontal = FALSE;

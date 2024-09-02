@@ -143,7 +143,7 @@ void ChartSpikeHistVert::plot_histogram(CDC* p_dc, const CDWordArray* p_dw, cons
 		if (rect_histogram.top > 0)
 		{
 			p_dc->MoveTo(rect_histogram.bottom, rect_histogram.left);
-			p_dc->FillSolidRect(rect_histogram, color_table[color]);
+			p_dc->FillSolidRect(rect_histogram, color_spike_class[color]);
 		}
 	}
 }

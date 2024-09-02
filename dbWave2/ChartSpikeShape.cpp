@@ -184,7 +184,7 @@ void ChartSpikeShape::draw_flagged_spikes(CDC * p_dc)
 {
 	const auto n_saved_dc = p_dc->SaveDC();
 	constexpr auto pen_size = 1;
-	CPen new_pen(PS_SOLID, pen_size, color_selected_table[0]);
+	CPen new_pen(PS_SOLID, pen_size, color_spike_class_selected[0]);
 	const auto old_pen = p_dc->SelectObject(&new_pen);
 
 	get_extents();
@@ -228,7 +228,7 @@ int ChartSpikeShape::display_ex_data(int* p_data, const int color)
 	dc.IntersectClipRect(&client_rect_);
 	dc.SetMapMode(MM_ANISOTROPIC);
 	prepare_dc(&dc);
-	CPen new_pen(PS_SOLID, 0, color_table[color]);
+	CPen new_pen(PS_SOLID, 0, color_spike_class[color]);
 	const auto old_pen = dc.SelectObject(&new_pen);
 	fill_polypoint_y_axis(p_data);
 	dc.Polyline(&polyline_points_[0], p_spike_list_->get_spike_length());
@@ -275,7 +275,7 @@ void ChartSpikeShape::draw_spike_on_dc(const Spike* spike, CDC * p_dc)
 	p_dc->SetViewportExt(display_rect_.Width(), -display_rect_.Height());
 
 	constexpr auto pen_size = 2;
-	CPen new_pen(PS_SOLID, pen_size, color_selected_table[0]);
+	CPen new_pen(PS_SOLID, pen_size, color_spike_class_selected[0]);
 	auto* old_pen = p_dc->SelectObject(&new_pen);
 
 	display_spike_data(p_dc, spike);
@@ -646,7 +646,7 @@ void ChartSpikeShape::print(CDC * p_dc, const CRect * rect)
 	if (spike_selected_.spike_index >= 0 && is_spike_within_range(spike_selected_))
 	{
 		const Spike* spike = dbwave_doc_->get_spike(spike_selected_);
-		CPen new_pen(PS_SOLID, 0, color_selected_table[spike->get_class_id() % nb_colors]);
+		CPen new_pen(PS_SOLID, 0, color_spike_class_selected[spike->get_class_id() % nb_colors]);
 		p_dc->SelectObject(&new_pen);
 		print_array_to_dc(p_dc, spike->get_p_data());
 	}

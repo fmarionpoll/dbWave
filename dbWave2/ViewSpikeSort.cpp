@@ -52,7 +52,7 @@ void ViewSpikeSort::DoDataExchange(CDataExchange* p_dx)
 	DDX_Text(p_dx, IDC_HISTOGRAM_BIN_MS, histogram_bin_mv_);
 	DDX_Check(p_dx, IDC_ALL_FILES, b_all_files_);
 	DDX_Text(p_dx, IDC_SPIKE_INDEX, spike_index_);
-	DDX_Text(p_dx, IDC_SPIKE_CLASS, class_index_);
+	DDX_Text(p_dx, IDC_SPIKE_CLASS, spike_class_index_);
 	DDX_Text(p_dx, IDC_EDIT_RIGHT, t_xy_right_);
 	DDX_Text(p_dx, IDC_EDIT_LEFT, t_xy_left_);
 
@@ -65,6 +65,7 @@ BEGIN_MESSAGE_MAP(ViewSpikeSort, ViewDbTable)
 	ON_WM_SETFOCUS()
 	ON_WM_DESTROY()
 	ON_WM_HSCROLL()
+	ON_WM_CTLCOLOR()
 
 	ON_MESSAGE(WM_MYMESSAGE, &ViewSpikeSort::on_my_message)
 
@@ -100,7 +101,7 @@ BEGIN_MESSAGE_MAP(ViewSpikeSort, ViewDbTable)
 	ON_EN_CHANGE(IDC_HISTOGRAM_BIN_MS, &ViewSpikeSort::on_en_change_hist_bin_ms)
 
 	ON_BN_DOUBLECLICKED(IDC_CHART_MEASURE, &ViewSpikeSort::on_tools_edit_spikes)
-	
+
 END_MESSAGE_MAP()
 
 void ViewSpikeSort::define_sub_classed_items()
@@ -982,13 +983,13 @@ void ViewSpikeSort::select_spike(db_spike& spike_sel)
 	chart_measures_.select_spike_measure(spike_sel);
 	p_spk_list->m_selected_spike = spike_sel.spike_index;
 
-	class_index_ = -1;
+	spike_class_index_ = -1;
 	auto n_cmd_show = SW_HIDE;
 	if (spike_sel.spike_index >= 0)
 	{
 		const auto spike = p_spk_list->get_spike(spike_sel.spike_index);
 		if (spike != nullptr) {
-			class_index_ = spike->get_class_id();
+			spike_class_index_ = spike->get_class_id();
 			n_cmd_show = SW_SHOW;
 		}
 	}
@@ -1031,9 +1032,9 @@ boolean ViewSpikeSort::open_dat_and_spk_files_of_selected_spike(const db_spike& 
 
 void ViewSpikeSort::on_tools_edit_spikes()
 {
-	db_spike spike_coords = GetDocument()->get_spike_hit();
-	ASSERT(spike_index_ == spike_coords.spike_index);
-	select_spike(spike_coords);
+	const db_spike spike_coords (-1, -1, spike_index_);
+	//ASSERT(spike_index_ == spike_coords.spike_index);
+	//select_spike(spike_coords);
 
 	if (!open_dat_and_spk_files_of_selected_spike(spike_coords))
 		return;
@@ -1420,7 +1421,6 @@ void ViewSpikeSort::on_en_change_source_class()
 		mm_source_class_.on_en_change(this, sort_source_class_, 1, -1);
 		if (sort_source_class_ != source_class)
 		{
-			chart_shape_.set_plot_mode(PLOT_ONE_COLOR, sort_source_class_);
 			chart_measures_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class_);
 			chart_histogram_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class_);
 			chart_spike_bar_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class_);
@@ -1727,19 +1727,20 @@ void ViewSpikeSort::change_spike_index_all_files()
 		auto db_sel = db_spike(-1, -1, spike_index_);
 		select_spike(db_sel);
 }
+
 void ViewSpikeSort::on_en_change_spike_class()
 {
 	if (mm_class_index_.m_b_entry_done)
 	{
-		const auto spike_index_class = class_index_;
-		mm_class_index_.on_en_change(this, class_index_, 1, -1);
+		const auto spike_index_class = spike_class_index_;
+		mm_class_index_.on_en_change(this, spike_class_index_, 1, -1);
 
-		if (class_index_ != spike_index_class)
+		if (spike_class_index_ != spike_index_class)
 		{
 			p_spk_doc->SetModifiedFlag(TRUE);
 			const auto current_list = spk_list_tab_ctrl.GetCurSel();
 			auto* spike_list = p_spk_doc->set_spike_list_current_index(current_list);
-			spike_list->get_spike(spike_index_)->set_class_id(class_index_);
+			spike_list->get_spike(spike_index_)->set_class_id(spike_class_index_);
 			update_legends();
 		}
 	}
@@ -1761,4 +1762,37 @@ void ViewSpikeSort::on_en_change_hist_bin_ms()
 	}
 }
 
+HBRUSH ViewSpikeSort::set_brush_and_text_color_according_to_class(CDC* p_dc, const int spike_class)
+{
+	const int color_index = spike_class % ChartWnd::nb_colors;
+	const COLORREF color = ChartWnd::color_spike_class[color_index];
+	p_dc->SetBkColor(color);
+	
+	const COLORREF color_text = ChartWnd::color_spike_class_text[color_index];
+	p_dc->SetTextColor(color_text);
 
+	return CreateSolidBrush(color);
+}
+
+HBRUSH ViewSpikeSort::OnCtlColor(CDC* p_dc, CWnd* p_wnd, const UINT n_ctl_color)
+{
+	HBRUSH hbr = ViewDbTable::OnCtlColor(p_dc, p_wnd, n_ctl_color);
+
+	const int control_id = p_wnd->GetDlgCtrlID();
+	switch (control_id)
+	{
+	case IDC_SOURCE_CLASS:
+		hbr = set_brush_and_text_color_according_to_class(p_dc, sort_source_class_);
+		break;
+	case IDC_DESTINATION_CLASS:
+		hbr = set_brush_and_text_color_according_to_class(p_dc, sort_destination_class_);
+		break;
+	case IDC_SPIKE_CLASS:
+		hbr = set_brush_and_text_color_according_to_class(p_dc, spike_class_index_);
+		break;
+	default:
+		break;
+	}
+
+	return hbr;
+}
