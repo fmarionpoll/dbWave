@@ -22,7 +22,7 @@ public:
 	int get_class_n_items() const {return n_items_; }
 	void set_class_n_items(const int n) { n_items_ = n; }
 
-	CString get_class_descriptor()  { return descriptor_; }
+	CString get_class_descriptor()  { return descriptor_.IsEmpty() ? _T(" "): descriptor_; }
 	void set_class_descriptor(const CString& desc) { descriptor_ = desc; }
 
 	int increment_n_items() { n_items_++; return n_items_; }

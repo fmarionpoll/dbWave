@@ -28,11 +28,11 @@ void SpikeClassDescriptor::Serialize(CArchive& ar)
 
 	if (ar.IsStoring())
 	{
-		ar << class_id_ << n_items_   << descriptor_;
+		ar << class_id_ << n_items_  << descriptor_;
 	}
 	else
 	{
-		const int i = ar.GetObjectSchema();
+		const auto i = ar.GetObjectSchema();
 		switch (i)
 		{
 		case 1:	
@@ -42,6 +42,8 @@ void SpikeClassDescriptor::Serialize(CArchive& ar)
 		case 2:
 		default:
 			ar >> class_id_ >> n_items_ >> descriptor_;
+			if (descriptor_.IsEmpty())
+				descriptor_ = " ";
 			break;
 		}
 	}
