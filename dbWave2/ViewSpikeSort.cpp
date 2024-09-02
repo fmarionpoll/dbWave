@@ -1033,8 +1033,6 @@ boolean ViewSpikeSort::open_dat_and_spk_files_of_selected_spike(const db_spike& 
 void ViewSpikeSort::on_tools_edit_spikes()
 {
 	const db_spike spike_coords (-1, -1, spike_index_);
-	//ASSERT(spike_index_ == spike_coords.spike_index);
-	//select_spike(spike_coords);
 
 	if (!open_dat_and_spk_files_of_selected_spike(spike_coords))
 		return;
