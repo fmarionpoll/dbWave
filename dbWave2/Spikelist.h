@@ -150,6 +150,7 @@ protected:
 	void serialize_version_8(CArchive& ar);
 	void read_file_version_before_5(CArchive& ar, int version);
 	void read_file_version_5(CArchive& ar);
+	void read_class_descriptors_v5(CArchive& ar, int index);
 
 	void delete_arrays();
 	void serialize_version_7(CArchive& ar);

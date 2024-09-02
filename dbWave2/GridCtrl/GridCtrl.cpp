@@ -642,7 +642,7 @@ void GridCtrl::EraseBkgnd(CDC* p_dc)
 		               &Back);
 }
 
-void GridCtrl::OnSize(UINT nType, int cx, int cy)
+void GridCtrl::OnSize(UINT n_type, int cx, int cy)
 {
 	static BOOL bAlreadyInsideThisProcedure = FALSE;
 	if (bAlreadyInsideThisProcedure)
@@ -660,7 +660,7 @@ void GridCtrl::OnSize(UINT nType, int cx, int cy)
 	bAlreadyInsideThisProcedure = TRUE;
 
 	EndEditing(); // destroy any InPlaceEdit's
-	CWnd::OnSize(nType, cx, cy);
+	CWnd::OnSize(n_type, cx, cy);
 	ResetScrollBars();
 
 	// End re-entry blocking
@@ -854,11 +854,11 @@ void GridCtrl::OnTimer(UINT nIDEvent)
 }
 
 // move about with keyboard
-void GridCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void GridCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT n_flags)
 {
 	if (!IsValid(m_idCurrentCell))
 	{
-		CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+		CWnd::OnKeyDown(nChar, nRepCnt, n_flags);
 		return;
 	}
 	GridCellID next = m_idCurrentCell;
@@ -974,7 +974,7 @@ void GridCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				bChangeLine = TRUE;
 			}
 			else
-				CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+				CWnd::OnKeyDown(nChar, nRepCnt, n_flags);
 		}
 
 		// We're on a non-hidden row, so look across for the next non-hidden column
@@ -1018,7 +1018,7 @@ void GridCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				bChangeLine = TRUE;
 			}
 			else
-				CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+				CWnd::OnKeyDown(nChar, nRepCnt, n_flags);
 		}
 
 		while (next.col >= m_nFixedCols)
@@ -1139,7 +1139,7 @@ void GridCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 	else
 	{
-		CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+		CWnd::OnKeyDown(nChar, nRepCnt, n_flags);
 		return;
 	}
 
@@ -1230,22 +1230,22 @@ void GridCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 }
 
-void GridCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+void GridCtrl::OnKeyUp(UINT nChar, UINT nRepCnt, UINT n_flags)
 {
-	CWnd::OnKeyUp(nChar, nRepCnt, nFlags);
+	CWnd::OnKeyUp(nChar, nRepCnt, n_flags);
 }
 
-void GridCtrl::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void GridCtrl::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT n_flags)
 {
 #ifdef GRIDCONTROL_USE_TITLETIPS
 	m_TitleTip.Hide();  // hide any titletips
 #endif
 
-	CWnd::OnSysKeyDown(nChar, nRepCnt, nFlags);
+	CWnd::OnSysKeyDown(nChar, nRepCnt, n_flags);
 }
 
 // Instant editing of cells when keys are pressed
-void GridCtrl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
+void GridCtrl::OnChar(UINT nChar, UINT nRepCnt, UINT n_flags)
 {
 	// EFW - BUG FIX
 	if (!IsCTRLpressed() && m_MouseMode == MOUSE_NOTHING && nChar != VK_ESCAPE)
@@ -1254,7 +1254,7 @@ void GridCtrl::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 			OnEditCell(m_idCurrentCell.row, m_idCurrentCell.col, CPoint(-1, -1), nChar);
 	}
 
-	CWnd::OnChar(nChar, nRepCnt, nFlags);
+	CWnd::OnChar(nChar, nRepCnt, n_flags);
 }
 
 // Added by KiteFly
@@ -4150,9 +4150,9 @@ void GridCtrl::AutoFill()
 // GridCtrl data functions
 
 // Set CListCtrl::GetNextItem for details
-GridCellID GridCtrl::GetNextItem(GridCellID& cell, int nFlags) const
+GridCellID GridCtrl::GetNextItem(GridCellID& cell, int n_flags) const
 {
-	if ((nFlags & GVNI_ALL) == GVNI_ALL)
+	if ((n_flags & GVNI_ALL) == GVNI_ALL)
 	{
 		// GVNI_ALL Search whole Grid beginning from cell
 		//          First row (cell.row) -- ONLY Columns to the right of cell
@@ -4167,20 +4167,20 @@ GridCellID GridCtrl::GetNextItem(GridCellID& cell, int nFlags) const
 			for (; col < GetColumnCount(); col++)
 			{
 				const int nState = GetItemState(row, col);
-				if ((nFlags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
-					(nFlags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
-					(nFlags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
-					(nFlags & GVNI_READONLY && nState & GVIS_READONLY) ||
-					(nFlags & GVNI_FIXED && nState & GVIS_FIXED) ||
-					(nFlags & GVNI_MODIFIED && nState & GVIS_MODIFIED))
+				if ((n_flags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
+					(n_flags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
+					(n_flags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
+					(n_flags & GVNI_READONLY && nState & GVIS_READONLY) ||
+					(n_flags & GVNI_FIXED && nState & GVIS_FIXED) ||
+					(n_flags & GVNI_MODIFIED && nState & GVIS_MODIFIED))
 					return GridCellID(row, col);
 			}
 			// go to First Column
 			col = GetFixedColumnCount();
 		}
 	}
-	else if ((nFlags & GVNI_BELOW) == GVNI_BELOW &&
-		(nFlags & GVNI_TORIGHT) == GVNI_TORIGHT)
+	else if ((n_flags & GVNI_BELOW) == GVNI_BELOW &&
+		(n_flags & GVNI_TORIGHT) == GVNI_TORIGHT)
 	{
 		// GVNI_AREA Search Grid beginning from cell to Lower-Right of Grid
 		//           Only rows starting with  cell.row and below
@@ -4196,69 +4196,69 @@ GridCellID GridCtrl::GetNextItem(GridCellID& cell, int nFlags) const
 			for (; col < GetColumnCount(); col++)
 			{
 				const int nState = GetItemState(row, col);
-				if ((nFlags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
-					(nFlags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
-					(nFlags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
-					(nFlags & GVNI_READONLY && nState & GVIS_READONLY) ||
-					(nFlags & GVNI_FIXED && nState & GVIS_FIXED) ||
-					(nFlags & GVNI_MODIFIED && nState & GVIS_MODIFIED))
+				if ((n_flags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
+					(n_flags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
+					(n_flags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
+					(n_flags & GVNI_READONLY && nState & GVIS_READONLY) ||
+					(n_flags & GVNI_FIXED && nState & GVIS_FIXED) ||
+					(n_flags & GVNI_MODIFIED && nState & GVIS_MODIFIED))
 					return GridCellID(row, col);
 			}
 		}
 	}
-	else if ((nFlags & GVNI_ABOVE) == GVNI_ABOVE)
+	else if ((n_flags & GVNI_ABOVE) == GVNI_ABOVE)
 	{
 		for (int row = cell.row - 1; row >= GetFixedRowCount(); row--)
 		{
 			const int nState = GetItemState(row, cell.col);
-			if ((nFlags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
-				(nFlags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
-				(nFlags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
-				(nFlags & GVNI_READONLY && nState & GVIS_READONLY) ||
-				(nFlags & GVNI_FIXED && nState & GVIS_FIXED) ||
-				(nFlags & GVNI_MODIFIED && nState & GVIS_MODIFIED))
+			if ((n_flags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
+				(n_flags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
+				(n_flags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
+				(n_flags & GVNI_READONLY && nState & GVIS_READONLY) ||
+				(n_flags & GVNI_FIXED && nState & GVIS_FIXED) ||
+				(n_flags & GVNI_MODIFIED && nState & GVIS_MODIFIED))
 				return GridCellID(row, cell.col);
 		}
 	}
-	else if ((nFlags & GVNI_BELOW) == GVNI_BELOW)
+	else if ((n_flags & GVNI_BELOW) == GVNI_BELOW)
 	{
 		for (int row = cell.row + 1; row < GetRowCount(); row++)
 		{
 			const int nState = GetItemState(row, cell.col);
-			if ((nFlags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
-				(nFlags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
-				(nFlags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
-				(nFlags & GVNI_READONLY && nState & GVIS_READONLY) ||
-				(nFlags & GVNI_FIXED && nState & GVIS_FIXED) ||
-				(nFlags & GVNI_MODIFIED && nState & GVIS_MODIFIED))
+			if ((n_flags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
+				(n_flags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
+				(n_flags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
+				(n_flags & GVNI_READONLY && nState & GVIS_READONLY) ||
+				(n_flags & GVNI_FIXED && nState & GVIS_FIXED) ||
+				(n_flags & GVNI_MODIFIED && nState & GVIS_MODIFIED))
 				return GridCellID(row, cell.col);
 		}
 	}
-	else if ((nFlags & GVNI_TOLEFT) == GVNI_TOLEFT)
+	else if ((n_flags & GVNI_TOLEFT) == GVNI_TOLEFT)
 	{
 		for (int col = cell.col - 1; col >= GetFixedColumnCount(); col--)
 		{
 			const int nState = GetItemState(cell.row, col);
-			if ((nFlags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
-				(nFlags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
-				(nFlags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
-				(nFlags & GVNI_READONLY && nState & GVIS_READONLY) ||
-				(nFlags & GVNI_FIXED && nState & GVIS_FIXED) ||
-				(nFlags & GVNI_MODIFIED && nState & GVIS_MODIFIED))
+			if ((n_flags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
+				(n_flags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
+				(n_flags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
+				(n_flags & GVNI_READONLY && nState & GVIS_READONLY) ||
+				(n_flags & GVNI_FIXED && nState & GVIS_FIXED) ||
+				(n_flags & GVNI_MODIFIED && nState & GVIS_MODIFIED))
 				return GridCellID(cell.row, col);
 		}
 	}
-	else if ((nFlags & GVNI_TORIGHT) == GVNI_TORIGHT)
+	else if ((n_flags & GVNI_TORIGHT) == GVNI_TORIGHT)
 	{
 		for (int col = cell.col + 1; col < GetColumnCount(); col++)
 		{
 			const int nState = GetItemState(cell.row, col);
-			if ((nFlags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
-				(nFlags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
-				(nFlags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
-				(nFlags & GVNI_READONLY && nState & GVIS_READONLY) ||
-				(nFlags & GVNI_FIXED && nState & GVIS_FIXED) ||
-				(nFlags & GVNI_MODIFIED && nState & GVIS_MODIFIED))
+			if ((n_flags & GVNI_DROPHILITED && nState & GVIS_DROPHILITED) ||
+				(n_flags & GVNI_FOCUSED && nState & GVIS_FOCUSED) ||
+				(n_flags & GVNI_SELECTED && nState & GVIS_SELECTED) ||
+				(n_flags & GVNI_READONLY && nState & GVIS_READONLY) ||
+				(n_flags & GVNI_FIXED && nState & GVIS_FIXED) ||
+				(n_flags & GVNI_MODIFIED && nState & GVIS_MODIFIED))
 				return GridCellID(cell.row, col);
 		}
 	}
@@ -5555,7 +5555,7 @@ BOOL GridCtrl::InvalidateCellRect(const GridCellRange& cellRange)
 // Handles mouse wheel notifications
 // Note - if this doesn't work for win95 then use OnRegisteredMouseWheel instead
 #if !defined(_WIN32_WCE) && (_MFC_VER >= 0x0421)
-BOOL GridCtrl::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+BOOL GridCtrl::OnMouseWheel(UINT n_flags, short zDelta, CPoint pt)
 {
 	// A m_nRowsPerWheelNotch value less than 0 indicates that the mouse
 	// wheel scrolls whole pages, not just lines.
@@ -5598,11 +5598,11 @@ BOOL GridCtrl::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 		}
 	}
 
-	return CWnd::OnMouseWheel(nFlags, zDelta, pt);
+	return CWnd::OnMouseWheel(n_flags, zDelta, pt);
 }
 #endif // !defined(_WIN32_WCE) && (_MFC_VER >= 0x0421)
 
-void GridCtrl::OnMouseMove(UINT /*nFlags*/, CPoint point)
+void GridCtrl::OnMouseMove(UINT /*n_flags*/, CPoint point)
 {
 	CRect rect;
 	GetClientRect(rect);
@@ -5617,7 +5617,7 @@ void GridCtrl::OnMouseMove(UINT /*nFlags*/, CPoint point)
 	// has been let go, but before the BUTTONUP message hs been processed.
 	// We'll keep track of mouse buttons manually to avoid this.
 	// All bMouseButtonDown's have been replaced with the member m_bLMouseButtonDown
-	// BOOL bMouseButtonDown = ((nFlags & MK_LBUTTON) == MK_LBUTTON);
+	// BOOL bMouseButtonDown = ((n_flags & MK_LBUTTON) == MK_LBUTTON);
 
 	// If the left mouse button is up, then test to see if row/column sizing is imminent
 	if (!m_bLMouseButtonDown ||
@@ -5792,7 +5792,7 @@ CPoint GridCtrl::GetPointClicked(int nRow, int nCol, const CPoint& point)
 	return PointClickedCellRelative;
 }
 
-void GridCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
+void GridCtrl::OnLButtonDblClk(UINT n_flags, CPoint point)
 {
 	//ATLTRACE2("GridCtrl::OnLButtonDblClk\n");
 
@@ -5902,10 +5902,10 @@ void GridCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
 		}
 	}
 
-	CWnd::OnLButtonDblClk(nFlags, point);
+	CWnd::OnLButtonDblClk(n_flags, point);
 }
 
-void GridCtrl::OnLButtonDown(UINT nFlags, CPoint point)
+void GridCtrl::OnLButtonDown(UINT n_flags, CPoint point)
 {
 #ifdef GRIDCONTROL_USE_TITLETIPS
 	// EFW - Bug Fix
@@ -5913,7 +5913,7 @@ void GridCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 #endif
 
 	// ATLTRACE2("GridCtrl::OnLButtonDown\n");
-	// CWnd::OnLButtonDown(nFlags, point);
+	// CWnd::OnLButtonDown(n_flags, point);
 
 	SetFocus();
 	m_CurCol = -1;
@@ -5928,7 +5928,7 @@ void GridCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 	// cell just clicked. Otherwise, keep the previous selection-start-cell so the user
 	// can add to their previous cell selections in an intuitive way. If no selection-
 	// start-cell has been specified, then set it's value here and now.
-	if ((nFlags & MK_SHIFT) != MK_SHIFT)
+	if ((n_flags & MK_SHIFT) != MK_SHIFT)
 		m_SelectionStartCell = m_LeftClickDownCell;
 	else
 	{
@@ -5958,7 +5958,7 @@ void GridCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 	// If the user clicks on the current cell, then prepare to edit it.
 	// (If the user moves the mouse, then dragging occurs)
 	if (m_LeftClickDownCell == m_idCurrentCell &&
-		!(nFlags & MK_CONTROL) && bInTextArea &&
+		!(n_flags & MK_CONTROL) && bInTextArea &&
 		IsCellEditable(m_LeftClickDownCell))
 	{
 		m_MouseMode = MOUSE_PREPARE_EDIT;
@@ -5971,7 +5971,7 @@ void GridCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 		SetFocusCell(m_LeftClickDownCell.row, m_LeftClickDownCell.col);
 
 		// If CTRL is pressed then unselect the cell or row (depending on the list mode)
-		if (nFlags & MK_CONTROL)
+		if (n_flags & MK_CONTROL)
 		{
 			SetFocusCell(m_LeftClickDownCell);
 			if (GetListMode())
@@ -6225,7 +6225,7 @@ void GridCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 			// If Ctrl pressed, save the current cell selection. This will get added
 			// to the new cell selection at the end of the cell selection process
 			m_PrevSelectedCellMap.RemoveAll();
-			if (nFlags & MK_CONTROL)
+			if (n_flags & MK_CONTROL)
 			{
 				for (POSITION pos = m_SelectedCellMap.GetStartPosition(); pos != nullptr;)
 				{
@@ -6261,11 +6261,11 @@ void GridCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 	m_LastMousePoint = point;
 }
 
-void GridCtrl::OnLButtonUp(UINT nFlags, CPoint point)
+void GridCtrl::OnLButtonUp(UINT n_flags, CPoint point)
 {
 	// ATLTRACE2("GridCtrl::OnLButtonUp\n");
 
-	CWnd::OnLButtonUp(nFlags, point);
+	CWnd::OnLButtonUp(n_flags, point);
 
 	m_bLMouseButtonDown = FALSE;
 
@@ -6381,9 +6381,9 @@ void GridCtrl::OnLButtonUp(UINT nFlags, CPoint point)
 }
 
 #ifndef _WIN32_WCE
-void GridCtrl::OnRButtonDown(UINT nFlags, CPoint point)
+void GridCtrl::OnRButtonDown(UINT n_flags, CPoint point)
 {
-	CWnd::OnRButtonDown(nFlags, point);
+	CWnd::OnRButtonDown(n_flags, point);
 	m_bRMouseButtonDown = TRUE;
 
 #ifdef GRIDCONTROL_USE_TITLETIPS
@@ -6394,9 +6394,9 @@ void GridCtrl::OnRButtonDown(UINT nFlags, CPoint point)
 
 // EFW - Added to forward right click to parent so that a context
 // menu can be shown without deriving a new grid class.
-void GridCtrl::OnRButtonUp(UINT nFlags, CPoint point)
+void GridCtrl::OnRButtonUp(UINT n_flags, CPoint point)
 {
-	CWnd::OnRButtonUp(nFlags, point);
+	CWnd::OnRButtonUp(n_flags, point);
 
 	m_bRMouseButtonDown = FALSE;
 

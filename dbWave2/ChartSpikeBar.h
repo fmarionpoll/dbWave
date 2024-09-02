@@ -7,10 +7,12 @@ class ChartSpikeBar : public ChartSpike
 {
 public:
 	ChartSpikeBar();
-	~ChartSpikeBar() override;
+	~ChartSpikeBar();
+
 	void plot_data_to_dc_prepare_dc(CDC* p_dc);
+
 	DECLARE_SERIAL(ChartSpikeBar)
-	void Serialize(CArchive& archive) override;
+	void Serialize(CArchive& archive);
 
 protected:
 	BOOL b_plot_spikes_ = FALSE; // FALSE=bars; TRUE=spike shapes
@@ -50,9 +52,9 @@ protected:
 	void draw_spike(CDC* p_dc, const Spike* spike, const COLORREF& color) const;
 	void display_stimulus(CDC* p_dc, const CRect* rect) const;
 
-	afx_msg void OnLButtonUp(UINT n_flags, CPoint point) override;
-	afx_msg void OnLButtonDown(UINT n_flags, CPoint point) override;
-	afx_msg void OnLButtonDblClk(UINT n_flags, CPoint point) override;
+	afx_msg void OnLButtonUp(UINT n_flags, CPoint point) ;
+	afx_msg void OnLButtonDown(UINT n_flags, CPoint point) ;
+	afx_msg void OnLButtonDblClk(UINT n_flags, CPoint point) ;
 
 	DECLARE_MESSAGE_MAP()
 };

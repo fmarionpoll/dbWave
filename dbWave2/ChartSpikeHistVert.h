@@ -66,7 +66,7 @@ protected:
 	void plot_histogram(CDC* p_dc, const CDWordArray* p_dw, int color) const;
 
 	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonDown(UINT n_flags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT n_flags, CPoint point);
 	afx_msg void OnSize(UINT n_type, int cx, int cy);
 

@@ -100,11 +100,11 @@ void DlgEditStimArray::transfer_control_list_to_intervals_array()
 	}
 }
 
-void DlgEditStimArray::OnSize(UINT nType, int cx, int cy)
+void DlgEditStimArray::OnSize(UINT n_type, int cx, int cy)
 {
 	if (cx > 1 || cy > 1)
-		m_stretch_.resize_controls(nType, cx, cy);
-	CDialog::OnSize(nType, cx, cy);
+		m_stretch_.resize_controls(n_type, cx, cy);
+	CDialog::OnSize(n_type, cx, cy);
 }
 
 void DlgEditStimArray::on_bn_clicked_delete()

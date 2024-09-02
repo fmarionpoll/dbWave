@@ -5,12 +5,14 @@ class SpikeClassDescriptor : public CObject
 protected:
 	int class_id_  {0};
 	int n_items_  {0};
+	CString descriptor_{};
 
 public:
 	SpikeClassDescriptor(); 
     ~SpikeClassDescriptor() override;                         
-    SpikeClassDescriptor(int number, int items);
-    SpikeClassDescriptor(const SpikeClassDescriptor& other);    
+    SpikeClassDescriptor(int number, int items, const CString& descriptor);
+    SpikeClassDescriptor(const SpikeClassDescriptor& other);
+
 	void Serialize(CArchive& ar) override;
 	SpikeClassDescriptor& operator=(const SpikeClassDescriptor& arg);
 
@@ -19,6 +21,9 @@ public:
 
 	int get_n_items() const {return n_items_; }
 	void set_n_items(const int n) { n_items_ = n; }
+
+	CString& get_class_descriptor()  { return descriptor_; }
+	void set_class_descriptor(const CString& desc) { descriptor_ = desc; }
 
 	int increment_n_items() { n_items_++; return n_items_; }
 	int decrement_n_items() { if (n_items_ > 0)  n_items_--; return n_items_; }

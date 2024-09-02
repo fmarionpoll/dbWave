@@ -174,9 +174,9 @@ BOOL RulerBar::OnEraseBkgnd(CDC* p_dc)
 	//return CWnd::OnEraseBkgnd(p_dc);
 }
 
-void RulerBar::OnSize(UINT nType, int cx, int cy)
+void RulerBar::OnSize(UINT n_type, int cx, int cy)
 {
-	CWnd::OnSize(nType, cx, cy);
+	CWnd::OnSize(n_type, cx, cy);
 	GetClientRect(&rc_client_);
 }
 

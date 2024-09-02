@@ -131,7 +131,7 @@ void InPlaceEdit::OnNcDestroy()
 	delete this;
 }
 
-void InPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
+void InPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT n_flags)
 {
 	if (nChar == VK_ESCAPE || nChar == VK_RETURN)
 	{
@@ -142,7 +142,7 @@ void InPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 
 
-	CEdit::OnChar(nChar, nRepCnt, nFlags);
+	CEdit::OnChar(nChar, nRepCnt, n_flags);
 
 	// Resize edit control if needed
 

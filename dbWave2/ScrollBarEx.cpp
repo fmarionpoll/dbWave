@@ -34,7 +34,7 @@ END_MESSAGE_MAP()
 
 // ScrollBarEx message handlers
 
-void ScrollBarEx::OnMouseMove(UINT nFlags, CPoint point)
+void ScrollBarEx::OnMouseMove(UINT n_flags, CPoint point)
 {
 	if (!GetScrollBarInfo(&m_scBarInfo))
 		return;
@@ -100,10 +100,10 @@ void ScrollBarEx::OnMouseMove(UINT nFlags, CPoint point)
 			GetParent()->SendMessage(WM_HSCROLL, MAKEWPARAM(SB_THUMBTRACK, 0), (LPARAM)m_hWnd);
 	}
 	else
-		CScrollBar::OnMouseMove(nFlags, point);
+		CScrollBar::OnMouseMove(n_flags, point);
 }
 
-void ScrollBarEx::OnLButtonDown(UINT nFlags, CPoint point)
+void ScrollBarEx::OnLButtonDown(UINT n_flags, CPoint point)
 {
 	// capture mouse, get current scroll max and min values
 	if (!GetScrollBarInfo(&m_scBarInfo))
@@ -141,10 +141,10 @@ void ScrollBarEx::OnLButtonDown(UINT nFlags, CPoint point)
 		oldpt = point;
 	}
 	else
-		CScrollBar::OnLButtonDown(nFlags, point);
+		CScrollBar::OnLButtonDown(n_flags, point);
 }
 
-void ScrollBarEx::OnLButtonUp(UINT nFlags, CPoint point)
+void ScrollBarEx::OnLButtonUp(UINT n_flags, CPoint point)
 {
 	if (m_bCaptured)
 	{
@@ -154,5 +154,5 @@ void ScrollBarEx::OnLButtonUp(UINT nFlags, CPoint point)
 		GetParent()->SendMessage(WM_HSCROLL, MAKEWPARAM(SB_THUMBPOSITION, 0), (LPARAM)m_hWnd);
 	}
 	else
-		CScrollBar::OnLButtonUp(nFlags, point);
+		CScrollBar::OnLButtonUp(n_flags, point);
 }

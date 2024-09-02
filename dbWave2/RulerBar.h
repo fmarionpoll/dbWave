@@ -40,7 +40,7 @@ public:
 
 	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC* p_dc);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnSize(UINT n_type, int cx, int cy);
 	afx_msg void OnMouseMove(UINT n_flags, CPoint point);
 	afx_msg void OnLButtonDown(UINT n_flags, CPoint point);
 	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);

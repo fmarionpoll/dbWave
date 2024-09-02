@@ -14,12 +14,12 @@ CSpikeDoc::CSpikeDoc()
 
 void CSpikeDoc::clear_data()
 {
-	m_spike_class.erase_data();
 	if (m_stimulus_intervals.n_items > 0)
 	{
 		m_stimulus_intervals.remove_all();
 		m_stimulus_intervals.n_items = 0;
 	}
+
 	spike_list_array_.SetSize(1);
 	spike_list_array_[0].erase_data();
 }
@@ -217,8 +217,6 @@ void CSpikeDoc::read_version6(CArchive& ar)
 	spike_list_array_.RemoveAll();
 	spike_list_array_.SetSize(1);
 	spike_list_array_[0].Serialize(ar); // v6
-	
-	//m_spike_class.Serialize(ar);
 }
 
 void CSpikeDoc::serialize_v7(CArchive& ar)
@@ -226,7 +224,6 @@ void CSpikeDoc::serialize_v7(CArchive& ar)
 	serialize_acquisition_parameters(ar);
 	serialize_stimulus_intervals(ar);
 	serialize_spike_list_arrays(ar);
-	m_spike_class.Serialize(ar);
 }
 
 // CSpikeDoc commands
@@ -238,7 +235,7 @@ void CSpikeDoc::set_file_extension_as_spk(CString& file_name)
 	file_name += ".spk";	
 }
 
-BOOL CSpikeDoc::OnSaveDocument(LPCTSTR psz_path_name)
+BOOL CSpikeDoc::OnSaveDocument(const LPCTSTR psz_path_name)
 {
 	// check that path name has ".spk"
 	CString file_name = psz_path_name;

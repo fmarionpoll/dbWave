@@ -210,7 +210,7 @@ void GridInPlaceList::OnKillFocus(CWnd* pNewWnd)
 // If an arrow key (or associated) is pressed, then exit if
 //  a) The Ctrl key was down, or
 //  b) m_bExitOnArrows == TRUE
-void GridInPlaceList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void GridInPlaceList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT n_flags)
 {
 	if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
 		nChar == VK_DOWN || nChar == VK_UP ||
@@ -222,11 +222,11 @@ void GridInPlaceList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		return;
 	}
 
-	CComboBox::OnKeyDown(nChar, nRepCnt, nFlags);
+	CComboBox::OnKeyDown(nChar, nRepCnt, n_flags);
 }
 
 // Need to keep a lookout for Tabs, Esc and Returns.
-void GridInPlaceList::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+void GridInPlaceList::OnKeyUp(UINT nChar, UINT nRepCnt, UINT n_flags)
 {
 	if (nChar == VK_ESCAPE)
 		SetWindowText(m_sInitText); // restore previous text
@@ -238,7 +238,7 @@ void GridInPlaceList::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		return;
 	}
 
-	CComboBox::OnKeyUp(nChar, nRepCnt, nFlags);
+	CComboBox::OnKeyUp(nChar, nRepCnt, n_flags);
 }
 
 HBRUSH GridInPlaceList::CtlColor(CDC* /*p_dc*/, UINT /*nCtlColor*/)

@@ -33,7 +33,7 @@ private:
 protected:
     afx_msg void OnKillFocus(CWnd* p_new_wnd);
     afx_msg void OnNcDestroy();
-    afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+    afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT n_flags);
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     DECLARE_MESSAGE_MAP()
 };

@@ -5,11 +5,11 @@
 #include "ChartSpikeShape.h"
 #include "SpikeClassListBoxContext.h"
 
-class RowItem : public CWnd
+class SpikeClassRowItem : public CWnd
 {
 public:
-	RowItem();
-	~RowItem() override;
+	SpikeClassRowItem();
+	~SpikeClassRowItem() override;
 
 	void	create_item(CWnd* parent_wnd, CdbWaveDoc* pdb_doc, SpikeList* p_spike_list, int i_class, int i_id, SpikeClassListBoxContext* context);
 	void	draw_item(LPDRAWITEMSTRUCT lp_dis) const;

@@ -45,7 +45,7 @@ void GridComboEdit::OnKillFocus(CWnd* pNewWnd)
 		pOwner->EndEdit();
 }
 
-void GridComboEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void GridComboEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT n_flags)
 {
 	if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
 		nChar == VK_DOWN || nChar == VK_UP ||
@@ -54,20 +54,20 @@ void GridComboEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 		const CWnd* pOwner = GetOwner();
 		if (pOwner)
-			pOwner->SendMessage(WM_KEYDOWN, nChar, nRepCnt + (static_cast<DWORD>(nFlags) << 16));
+			pOwner->SendMessage(WM_KEYDOWN, nChar, nRepCnt + (static_cast<DWORD>(n_flags) << 16));
 		return;
 	}
 
-	CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
+	CEdit::OnKeyDown(nChar, nRepCnt, n_flags);
 }
 
-void GridComboEdit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+void GridComboEdit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT n_flags)
 {
 	if (nChar == VK_ESCAPE)
 	{
 		const CWnd* pOwner = GetOwner();
 		if (pOwner)
-			pOwner->SendMessage(WM_KEYUP, nChar, nRepCnt + (static_cast<DWORD>(nFlags) << 16));
+			pOwner->SendMessage(WM_KEYUP, nChar, nRepCnt + (static_cast<DWORD>(n_flags) << 16));
 		return;
 	}
 
@@ -75,9 +75,9 @@ void GridComboEdit::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 		const CWnd* pOwner = GetOwner();
 		if (pOwner)
-			pOwner->SendMessage(WM_KEYUP, nChar, nRepCnt + (static_cast<DWORD>(nFlags) << 16));
+			pOwner->SendMessage(WM_KEYUP, nChar, nRepCnt + (static_cast<DWORD>(n_flags) << 16));
 		return;
 	}
 
-	CEdit::OnKeyUp(nChar, nRepCnt, nFlags);
+	CEdit::OnKeyUp(nChar, nRepCnt, n_flags);
 }

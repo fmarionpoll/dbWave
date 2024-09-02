@@ -33,7 +33,8 @@ class ChartWnd : public CWnd
 {
 public:
 	ChartWnd();
-	~ChartWnd() override;
+	~ChartWnd();
+
 	DECLARE_SERIAL(ChartWnd)
 	void Serialize(CArchive& ar) override;
 

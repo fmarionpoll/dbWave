@@ -23,9 +23,9 @@ private:
 	CPoint oldpt;
 
 public:
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT n_flags, CPoint point);
+	afx_msg void OnLButtonDown(UINT n_flags, CPoint point);
+	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
 
 	DECLARE_MESSAGE_MAP()
 };

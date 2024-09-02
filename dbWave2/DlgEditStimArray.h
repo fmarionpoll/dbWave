@@ -36,7 +36,7 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 	BOOL OnInitDialog() override;
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnSize(UINT n_type, int cx, int cy);
 	afx_msg void on_bn_clicked_delete();
 	afx_msg void on_bn_clicked_insert();
 	afx_msg void on_bn_clicked_delete3();

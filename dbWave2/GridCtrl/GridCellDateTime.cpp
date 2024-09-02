@@ -243,7 +243,7 @@ UINT InPlaceDateTime::OnGetDlgCode()
 	return DLGC_WANTALLKEYS;
 }
 
-void InPlaceDateTime::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void InPlaceDateTime::OnKeyDown(UINT nChar, UINT nRepCnt, UINT n_flags)
 {
 	if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
 			nChar == VK_DOWN || nChar == VK_UP ||
@@ -255,10 +255,10 @@ void InPlaceDateTime::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		return;
 	}
 
-	CDateTimeCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
+	CDateTimeCtrl::OnKeyDown(nChar, nRepCnt, n_flags);
 }
 
-void InPlaceDateTime::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+void InPlaceDateTime::OnKeyUp(UINT nChar, UINT nRepCnt, UINT n_flags)
 {
 	if (nChar == VK_TAB || nChar == VK_RETURN || nChar == VK_ESCAPE)
 	{
@@ -267,5 +267,5 @@ void InPlaceDateTime::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 		return;
 	}
 
-	CDateTimeCtrl::OnKeyUp(nChar, nRepCnt, nFlags);
+	CDateTimeCtrl::OnKeyUp(nChar, nRepCnt, n_flags);
 }

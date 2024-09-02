@@ -376,7 +376,7 @@ public:
 	// Misc.
 	///////////////////////////////////////////////////////////////////////////////////
 public:
-	GridCellID GetNextItem(GridCellID& cell, int nFlags) const;
+	GridCellID GetNextItem(GridCellID& cell, int n_flags) const;
 
 	BOOL SortItems(int nCol, BOOL bAscending, LPARAM data = 0);
 	BOOL SortTextItems(int nCol, BOOL bAscending, LPARAM data = 0);
@@ -627,25 +627,25 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnSize(UINT n_type, int cx, int cy);
+	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
+	afx_msg void OnLButtonDown(UINT n_flags, CPoint point);
+	afx_msg void OnMouseMove(UINT n_flags, CPoint point);
 	afx_msg void OnTimer(UINT nIDEvent);
 	afx_msg UINT OnGetDlgCode();
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT n_flags);
+	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT n_flags);
+	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT n_flags);
+	afx_msg void OnLButtonDblClk(UINT n_flags, CPoint point);
 	afx_msg BOOL OnEraseBkgnd(CDC* p_dc);
-	afx_msg void OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT n_flags);
 	afx_msg void OnUpdateEditSelectAll(CCmdUI* pCmdUI);
 #ifndef _WIN32_WCE_NO_CURSOR
 	afx_msg BOOL OnSetCursor(CWnd* p_wnd, UINT nHitTest, UINT message);
 #endif
 #ifndef _WIN32_WCE
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point); // EFW - Added
+	afx_msg void OnRButtonDown(UINT n_flags, CPoint point);
+	afx_msg void OnRButtonUp(UINT n_flags, CPoint point); // EFW - Added
 	afx_msg void OnSysColorChange();
 #endif
 #ifndef _WIN32_WCE_NO_CURSOR
@@ -660,7 +660,7 @@ protected:
 	afx_msg void OnSettingChange(UINT uFlags, LPCTSTR lpszSection);
 #endif
 #if !defined(_WIN32_WCE) && (_MFC_VER >= 0x0421)
-	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+	afx_msg BOOL OnMouseWheel(UINT n_flags, short zDelta, CPoint pt);
 #endif
 	afx_msg LRESULT OnSetFont(WPARAM hFont, LPARAM lParam);
 	afx_msg LRESULT OnGetFont(WPARAM hFont, LPARAM lParam);

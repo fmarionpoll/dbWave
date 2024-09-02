@@ -14,8 +14,8 @@ public:
 
 protected:
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT n_flags);
+	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT n_flags);
 
 	DECLARE_MESSAGE_MAP()
 };

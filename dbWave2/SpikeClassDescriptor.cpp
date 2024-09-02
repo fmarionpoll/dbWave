@@ -1,15 +1,16 @@
 #include <StdAfx.h>
 #include "SpikeClassDescriptor.h"
 
-IMPLEMENT_SERIAL(SpikeClassDescriptor, CObject, 0)
+IMPLEMENT_SERIAL(SpikeClassDescriptor, CObject, VERSIONABLE_SCHEMA | 2)
 
 SpikeClassDescriptor::SpikeClassDescriptor()
 =default;
 
-SpikeClassDescriptor::SpikeClassDescriptor(int number, int items)
+SpikeClassDescriptor::SpikeClassDescriptor(const int number, const int items, const CString& descriptor)
 {
 	class_id_ = number;
 	n_items_ = items;
+	descriptor_ = descriptor;
 }
 
 SpikeClassDescriptor::SpikeClassDescriptor(const SpikeClassDescriptor & other)
@@ -23,15 +24,26 @@ SpikeClassDescriptor::~SpikeClassDescriptor()
 
 void SpikeClassDescriptor::Serialize(CArchive& ar)
 {
+	CObject::Serialize(ar);
+
 	if (ar.IsStoring())
 	{
-		ar << class_id_;
-		ar << n_items_ ;
+		ar << class_id_ << n_items_   << descriptor_;
 	}
 	else
 	{
-		ar >> class_id_;
-		ar >> n_items_;
+		const int i = ar.GetObjectSchema();
+		switch (i)
+		{
+		case 1:	
+			ar >> class_id_ >> n_items_;
+			descriptor_.Format(_T("class %i"), class_id_);
+			break;
+		case 2:
+		default:
+			ar >> class_id_ >> n_items_ >> descriptor_;
+			break;
+		}
 	}
 }
 
@@ -41,6 +53,7 @@ SpikeClassDescriptor& SpikeClassDescriptor::operator=(const SpikeClassDescriptor
 	{
 		class_id_ = arg.class_id_;
 		n_items_ = arg.n_items_;
+		descriptor_= arg.descriptor_;
 	}
 	return *this;
 }

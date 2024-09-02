@@ -69,7 +69,7 @@ protected:
 
 	// Generated message map functions
 protected:
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT n_flags, CPoint point);
 
 	DECLARE_MESSAGE_MAP()
 };

@@ -3,7 +3,7 @@
 #include "SpikeClassListBox.h"
 
 #include "DlgListBClaSize.h"
-#include "RowItem.h"
+#include "SpikeClassRowItem.h"
 
 
 #ifdef _DEBUG
@@ -36,14 +36,14 @@ void SpikeClassListBox::MeasureItem(const LPMEASUREITEMSTRUCT lp_mis)
 
 void SpikeClassListBox::DrawItem(const LPDRAWITEMSTRUCT lp_dis)
 {
-	const auto row_item = reinterpret_cast<RowItem*>(lp_dis->itemData);
+	const auto row_item = reinterpret_cast<SpikeClassRowItem*>(lp_dis->itemData);
 	row_item->draw_item(lp_dis);
 }
 
 
 void SpikeClassListBox::DeleteItem(const LPDELETEITEMSTRUCT lp_di)
 {
-	const auto item = reinterpret_cast<RowItem*>(lp_di->itemData);
+	const auto item = reinterpret_cast<SpikeClassRowItem*>(lp_di->itemData);
 	delete item;
 }
 
@@ -69,10 +69,10 @@ void SpikeClassListBox::set_columns_width(const int width_spikes, const int widt
 	context_.m_width_bars = rect.Width() - context_.m_left_column_width;
 }
 
-int SpikeClassListBox::CompareItem(LPCOMPAREITEMSTRUCT lpCIS)
+int SpikeClassListBox::CompareItem(LPCOMPAREITEMSTRUCT lp_cis)
 {
-	const auto row_item1 = reinterpret_cast<RowItem*>(lpCIS->itemData1);
-	const auto row_item2 = reinterpret_cast<RowItem*>(lpCIS->itemData2);
+	const auto row_item1 = reinterpret_cast<SpikeClassRowItem*>(lp_cis->itemData1);
+	const auto row_item2 = reinterpret_cast<SpikeClassRowItem*>(lp_cis->itemData2);
 
 	auto result = 1; 
 	if (row_item1->get_class_id() == row_item2->get_class_id())
@@ -107,9 +107,9 @@ void SpikeClassListBox::set_source_data(SpikeList* p_s_list, CdbWaveDoc* pdb_doc
 	SetRedraw(TRUE);
 }
 
-RowItem* SpikeClassListBox::add_row_item(const int class_id, const int i_id)
+SpikeClassRowItem* SpikeClassListBox::add_row_item(const int class_id, const int i_id)
 {
-	const auto row_item = new(RowItem);
+	const auto row_item = new(SpikeClassRowItem);
 	ASSERT(row_item != NULL);
 	row_item->create_item(this, m_dbwave_doc_, m_spike_list_, class_id, i_id, &context_);
 	AddString(reinterpret_cast<LPTSTR>(row_item));
@@ -223,9 +223,9 @@ int SpikeClassListBox::set_mouse_cursor_type(const int cursor_m) const
 	return old_cursor;
 }
 
-void SpikeClassListBox::OnSize(UINT nType, int cx, int cy)
+void SpikeClassListBox::OnSize(UINT n_type, int cx, int cy)
 {
-	CListBox::OnSize(nType, cx, cy);
+	CListBox::OnSize(n_type, cx, cy);
 	context_.m_width_bars = cx - context_.m_left_column_width;
 	// move all windows out of the way to prevent displaying old rows
 	for (auto i = 0; i < GetCount(); i++)
@@ -298,7 +298,7 @@ float SpikeClassListBox::get_extent_mv() const
 }
 
 
-HBRUSH SpikeClassListBox::CtlColor(CDC* p_dc, UINT nCtlColor)
+HBRUSH SpikeClassListBox::CtlColor(CDC* p_dc, UINT n_ctl_color)
 {
 	p_dc->SetTextColor(context_.m_color_text);
 	p_dc->SetBkColor(context_.m_color_background);
@@ -381,7 +381,7 @@ void SpikeClassListBox::update_rows_from_spike_list()
 			get_row_item(i_class)->set_class_id(spike_list_class_id);
 		else
 		{
-			const RowItem* row_item = add_row_item(spike_list_class_id, i_class * 2);
+			const SpikeClassRowItem* row_item = add_row_item(spike_list_class_id, i_class * 2);
 			row_item->set_time_intervals(m_l_first_, m_l_last_);
 		}
 	}
@@ -424,11 +424,11 @@ void SpikeClassListBox::reflect_bar_mouse_move_message(const HWND h_wnd)
 	}
 }
 
-LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
+LRESULT SpikeClassListBox::OnMyMessage(WPARAM w_param, LPARAM l_param)
 {
-	const auto row_selected = static_cast<int>(HIWORD(lParam)) / 2; // row index
-	const int threshold = LOWORD(lParam);
-	switch (wParam)
+	const auto row_selected = static_cast<int>(HIWORD(l_param)) / 2; // row index
+	const int threshold = LOWORD(l_param);
+	switch (w_param)
 	{
 	case HINT_SET_MOUSE_CURSOR:
 		set_mouse_cursor_type(threshold);
@@ -457,7 +457,7 @@ LRESULT SpikeClassListBox::OnMyMessage(WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	// forward message to parent
-	GetParent()->PostMessage(WM_MYMESSAGE, wParam, MAKELPARAM(threshold, GetDlgCtrlID()));
+	GetParent()->PostMessage(WM_MYMESSAGE, w_param, MAKELPARAM(threshold, GetDlgCtrlID()));
 	return 0L;
 }
 
@@ -486,7 +486,7 @@ void SpikeClassListBox::set_class_of_dropped_spike(const int row_selected) const
 	}
 }
 
-void SpikeClassListBox::OnMouseMove(const UINT nFlags, CPoint point)
+void SpikeClassListBox::OnMouseMove(const UINT n_flags, CPoint point)
 {
 	if (h_wnd_bars_reflect_ != nullptr && point.x >= (context_.m_width_text + context_.m_width_spikes))
 	{
@@ -496,15 +496,15 @@ void SpikeClassListBox::OnMouseMove(const UINT nFlags, CPoint point)
 		::GetWindowRect(h_wnd_bars_reflect_, &rect0);
 
 		// reflect mouse move message
-		::SendMessage(h_wnd_bars_reflect_, WM_MOUSEMOVE, nFlags,
+		::SendMessage(h_wnd_bars_reflect_, WM_MOUSEMOVE, n_flags,
 		              MAKELPARAM(point.x + (rect1.left - rect0.left),
 		                         point.y + (rect1.top - rect0.top)));
 	}
 	else
-		CListBox::OnMouseMove(nFlags, point);
+		CListBox::OnMouseMove(n_flags, point);
 }
 
-void SpikeClassListBox::OnLButtonUp(UINT nFlags, CPoint point)
+void SpikeClassListBox::OnLButtonUp(UINT n_flags, CPoint point)
 {
 	if (h_wnd_bars_reflect_ != nullptr && point.x >= (context_.m_width_text + context_.m_width_spikes))
 	{
@@ -512,17 +512,17 @@ void SpikeClassListBox::OnLButtonUp(UINT nFlags, CPoint point)
 		CRect rect0, rect1;
 		GetWindowRect(&rect1);
 		::GetWindowRect(h_wnd_bars_reflect_, &rect0);
-		::SendMessage(h_wnd_bars_reflect_, WM_LBUTTONUP, nFlags,
+		::SendMessage(h_wnd_bars_reflect_, WM_LBUTTONUP, n_flags,
 		              MAKELPARAM(point.x + (rect1.left - rect0.left),
 		                         point.y + (rect1.top - rect0.top)));
 	}
 	else
-		CListBox::OnLButtonUp(nFlags, point);
+		CListBox::OnLButtonUp(n_flags, point);
 }
 
-void SpikeClassListBox::OnRButtonUp(UINT nFlags, CPoint point)
+void SpikeClassListBox::OnRButtonUp(UINT n_flags, CPoint point)
 {
-	CListBox::OnRButtonUp(nFlags, point);
+	CListBox::OnRButtonUp(n_flags, point);
 
 	DlgListBClaSize dlg;
 	dlg.m_row_height = get_row_height();

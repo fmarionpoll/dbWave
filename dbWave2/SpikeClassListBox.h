@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RowItem.h"
+#include "SpikeClassRowItem.h"
 #include "SpikeClassListBoxContext.h"
 
 
@@ -67,9 +67,9 @@ protected:
 	void remove_spike_from_row(int spike_no);
 	void add_spike_to_row(int spike_no);
 	int get_row_index_of_spike_class(int spike_class) const;
-	RowItem* add_row_item(int class_id, int i_id);
+	SpikeClassRowItem* add_row_item(int class_id, int i_id);
 	void update_rows_from_spike_list();
-	RowItem* get_row_item(int i) const { if (i >= GetCount() || i < 0) i = 0;  return reinterpret_cast<RowItem*>(GetItemData(i)); }
+	SpikeClassRowItem* get_row_item(int i) const { if (i >= GetCount() || i < 0) i = 0;  return reinterpret_cast<SpikeClassRowItem*>(GetItemData(i)); }
 	void set_horizontal_limits(int row_selected);
 	void set_y_zoom(int row_selected) const;
 	void set_class_of_dropped_spike(int row_selected) const;
@@ -78,15 +78,15 @@ protected:
 public:
 	void MeasureItem(LPMEASUREITEMSTRUCT lp_mis) override;
 	void DrawItem(LPDRAWITEMSTRUCT lp_dis) override;
-	int CompareItem(LPCOMPAREITEMSTRUCT lpCIS) override;
+	int CompareItem(LPCOMPAREITEMSTRUCT lp_cis) override;
 	void DeleteItem(LPDELETEITEMSTRUCT lp_di) override;
 
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
-	afx_msg HBRUSH CtlColor(CDC* p_dc, UINT nCtlColor);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnSize(UINT n_type, int cx, int cy);
+	afx_msg LRESULT OnMyMessage(WPARAM w_param, LPARAM l_param);
+	afx_msg HBRUSH CtlColor(CDC* p_dc, UINT n_ctl_color);
+	afx_msg void OnMouseMove(UINT n_flags, CPoint point);
+	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
+	afx_msg void OnRButtonUp(UINT n_flags, CPoint point);
 
 	DECLARE_MESSAGE_MAP()
 };

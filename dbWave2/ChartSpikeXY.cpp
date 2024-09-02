@@ -400,7 +400,7 @@ void ChartSpikeXY::zoom_data(CRect* rect_from, CRect* rect_dest)
 void ChartSpikeXY::OnLButtonDblClk(UINT n_flags, CPoint point)
 {
 	/*if (spike_selected_.spike_index < 0 || spike_hit_.spike_index < 0)
-		ChartSpike::OnLButtonDblClk(nFlags, point);
+		ChartSpike::OnLButtonDblClk(n_flags, point);
 	else
 		GetParent()->PostMessage(WM_COMMAND, MAKELONG(GetDlgCtrlID(), BN_DOUBLECLICKED),
 		                         reinterpret_cast<LPARAM>(m_hWnd));*/

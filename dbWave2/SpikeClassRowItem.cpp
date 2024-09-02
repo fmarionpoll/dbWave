@@ -1,17 +1,17 @@
 #include "StdAfx.h"
-#include "RowItem.h"
+#include "SpikeClassRowItem.h"
 
-RowItem::RowItem()
+SpikeClassRowItem::SpikeClassRowItem()
 = default;
 
-RowItem::~RowItem()
+SpikeClassRowItem::~SpikeClassRowItem()
 {
 	delete row_comment_;
 	delete chart_spike_shape_;
 	delete chart_spike_bar_;
 }
 
-void RowItem::create_item(CWnd* parent_wnd, CdbWaveDoc* pdb_doc, SpikeList* p_spike_list, const int i_class, int i_id, SpikeClassListBoxContext* context)
+void SpikeClassRowItem::create_item(CWnd* parent_wnd, CdbWaveDoc* pdb_doc, SpikeList* p_spike_list, const int i_class, int i_id, SpikeClassListBoxContext* context)
 {
 	const auto rect_spikes = CRect(0, 0, 0, 0); 
 	const auto rect_bars = CRect(0, 0, 0, 0);
@@ -40,7 +40,7 @@ void RowItem::create_item(CWnd* parent_wnd, CdbWaveDoc* pdb_doc, SpikeList* p_sp
 	row_comment_->Format(_T("class %i\nn=%i"), i_class, spike_list_->get_class_id_n_items(i_class));
 }
 
-void RowItem::set_class_id(const int new_class_id)
+void SpikeClassRowItem::set_class_id(const int new_class_id)
 {
 	class_id_ = new_class_id;
 	chart_spike_bar_->set_plot_mode(PLOT_ONE_CLASS_ONLY, class_id_);
@@ -48,7 +48,7 @@ void RowItem::set_class_id(const int new_class_id)
 	row_comment_->Format(_T("class %i\nn=%i"), class_id_, spike_list_->get_class_id_n_items(class_id_));
 }
 
-void RowItem::draw_item(const LPDRAWITEMSTRUCT lp_dis) const
+void SpikeClassRowItem::draw_item(const LPDRAWITEMSTRUCT lp_dis) const
 {
 	CDC dc;
 	dc.Attach(lp_dis->hDC);
@@ -92,7 +92,7 @@ void RowItem::draw_item(const LPDRAWITEMSTRUCT lp_dis) const
 	dc.Detach();
 }
 
-void RowItem::set_time_intervals(const long l_first, const long l_last) const
+void SpikeClassRowItem::set_time_intervals(const long l_first, const long l_last) const
 {
 	if (chart_spike_shape_ != nullptr)
 	{
@@ -103,20 +103,20 @@ void RowItem::set_time_intervals(const long l_first, const long l_last) const
 	chart_spike_bar_->set_time_intervals(l_first, l_last);
 }
 
-void RowItem::set_spk_list(SpikeList* p_spike_list) const
+void SpikeClassRowItem::set_spk_list(SpikeList* p_spike_list) const
 {
 	chart_spike_shape_->set_spike_list(p_spike_list);
 	chart_spike_bar_->set_spike_list(p_spike_list);
 }
 
-int RowItem::set_mouse_cursor_type(const int cursor_m) const
+int SpikeClassRowItem::set_mouse_cursor_type(const int cursor_m) const
 {
 	if (chart_spike_shape_ != nullptr)
 		chart_spike_shape_->set_mouse_cursor_type(cursor_m);
 	return chart_spike_bar_->set_mouse_cursor_type(cursor_m);
 }
 
-void RowItem::move_row_out_of_the_way() const
+void SpikeClassRowItem::move_row_out_of_the_way() const
 {
 	CRect rect(0, 0, 0, 0);
 	if (chart_spike_shape_ != nullptr)
@@ -124,32 +124,32 @@ void RowItem::move_row_out_of_the_way() const
 	chart_spike_bar_->MoveWindow(rect, FALSE);
 }
 
-void RowItem::set_y_zoom(const int y_we, const int y_wo) const
+void SpikeClassRowItem::set_y_zoom(const int y_we, const int y_wo) const
 {
 	if (chart_spike_shape_ != nullptr)
 		chart_spike_shape_->set_yw_ext_org(y_we, y_wo);
 	chart_spike_bar_->set_yw_ext_org(y_we, y_wo);
 }
 
-void RowItem::set_x_zoom(const int x_we, const int x_wo) const
+void SpikeClassRowItem::set_x_zoom(const int x_we, const int x_wo) const
 {
 	if (chart_spike_shape_ != nullptr)
 		chart_spike_shape_->set_xw_ext_org(x_we, x_wo);
 }
 
-void RowItem::get_time_intervals(long& first, long& last) const
+void SpikeClassRowItem::get_time_intervals(long& first, long& last) const
 {
 	first = chart_spike_bar_->get_time_first();
 	last = chart_spike_bar_->get_time_last();
 }
 
-void RowItem::get_zoom_y(int& we, int& wo) const
+void SpikeClassRowItem::get_zoom_y(int& we, int& wo) const
 {
 	we = chart_spike_bar_->get_yw_extent();
 	wo = chart_spike_bar_->get_yw_org();
 }
 
-void RowItem::get_zoom_x_shapes(int& we, int& wo) const
+void SpikeClassRowItem::get_zoom_x_shapes(int& we, int& wo) const
 {
 	if (chart_spike_shape_ == nullptr) return;
 
@@ -157,13 +157,13 @@ void RowItem::get_zoom_x_shapes(int& we, int& wo) const
 	wo = chart_spike_shape_->get_xw_org();
 }
 
-float RowItem::get_zoom_y_shapes_mv() const
+float SpikeClassRowItem::get_zoom_y_shapes_mv() const
 {
 	if (chart_spike_shape_ == nullptr) return 0.f;
 	return chart_spike_shape_->get_extent_mv();
 }
 
-void RowItem::select_individual_spike(const int no_spike) const
+void SpikeClassRowItem::select_individual_spike(const int no_spike) const
 {
 	const CdbWaveDoc* p_doc = chart_spike_shape_->get_db_wave_doc();
 	db_spike spike_sel(p_doc->db_get_current_record_id(), //db_get_current_record_position(),
@@ -173,7 +173,7 @@ void RowItem::select_individual_spike(const int no_spike) const
 	return chart_spike_bar_->select_spike(spike_sel);
 }
 
-void RowItem::print(CDC* p_dc, CRect* rect1, const CRect* rect2, const CRect* rect3) const
+void SpikeClassRowItem::print(CDC* p_dc, CRect* rect1, const CRect* rect2, const CRect* rect3) const
 {
 	// print text
 	const auto text_length = row_comment_->GetLength();
@@ -183,7 +183,7 @@ void RowItem::print(CDC* p_dc, CRect* rect1, const CRect* rect2, const CRect* re
 	if (chart_spike_bar_ != nullptr) chart_spike_bar_->print(p_dc, rect3);
 }
 
-void RowItem::update_string(const int i_class, const int n_spikes)
+void SpikeClassRowItem::update_string(const int i_class, const int n_spikes)
 {
 	delete row_comment_;
 	const auto c_string = new CString;

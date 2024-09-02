@@ -227,9 +227,9 @@ void DataListCtrl_Row::display_data_wnd(DataListCtrlInfos* infos, const int i_im
 	else
 	{
 		if (cs_n_spikes.IsEmpty())
-			p_chart_data_wnd->get_scope_parameters()->cr_scope_fill = ChartData::get_color(2);
+			p_chart_data_wnd->get_scope_parameters()->cr_scope_fill = col_light_grey; 
 		else
-			p_chart_data_wnd->get_scope_parameters()->cr_scope_fill = col_white; // ChartData::get_color(15);
+			p_chart_data_wnd->get_scope_parameters()->cr_scope_fill = col_white; 
 
 		p_data_doc->read_data_infos();
 		cs_comment = p_data_doc->get_wave_format()->get_comments(_T(" "));

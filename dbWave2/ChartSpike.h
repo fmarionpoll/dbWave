@@ -12,7 +12,7 @@ class ChartSpike : public ChartWnd
 {
 public:
 	ChartSpike();
-	~ChartSpike() override;
+	~ChartSpike();
 
 protected:
 	int range_mode_ {RANGE_TIME_INTERVALS};	// display range

@@ -47,8 +47,8 @@ protected:
 
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnNcDestroy();
-	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT n_flags);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT n_flags);
 	afx_msg UINT OnGetDlgCode();
 	DECLARE_MESSAGE_MAP()
 };

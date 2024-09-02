@@ -157,7 +157,7 @@ CStretchControl::~CStretchControl()
 
 // --------------------------------------------------------------------------
 // OnSize passes:
-// nType: SIZE_MAXIMIZED, _MINIMIZED, _RESTORED, _MAX_HIDE, _MAX_SHOW
+// n_type: SIZE_MAXIMIZED, _MINIMIZED, _RESTORED, _MAX_HIDE, _MAX_SHOW
 // cx = new width of the client area
 // cy = new height of the client area
 // --------------------------------------------------------------------------

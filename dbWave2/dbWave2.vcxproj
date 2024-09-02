@@ -789,7 +789,7 @@
     <ClCompile Include="DlgPrintDataComments.cpp" />
     <ClCompile Include="GridCtrl\GridDefaultCell.cpp" />
     <ClCompile Include="GridCtrl\GridInPlaceList.cpp" />
-    <ClCompile Include="RowItem.cpp" />
+    <ClCompile Include="SpikeClassRowItem.cpp" />
     <ClCompile Include="SpikeClassListBoxContext.cpp" />
     <ClCompile Include="SpikeDetectArray.cpp" />
     <ClCompile Include="IntervalsListCtrl.cpp" />
@@ -1189,11 +1189,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SpikeClass.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="SpikeClassListBox.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
@@ -1378,7 +1373,7 @@
     <ClInclude Include="GridCtrl\GridDefaultCell.h" />
     <ClInclude Include="GridCtrl\GridDefines.h" />
     <ClInclude Include="GridCtrl\GridInPlaceList.h" />
-    <ClInclude Include="RowItem.h" />
+    <ClInclude Include="SpikeClassRowItem.h" />
     <ClInclude Include="SpikeClassListBoxContext.h" />
     <ClInclude Include="SpikeDetectArray.h" />
     <ClInclude Include="IntervalsListCtrl.h" />
@@ -1531,7 +1526,6 @@
     <ClInclude Include="DlgChartProps.h" />
     <ClInclude Include="ScrollBarEx.h" />
     <ClInclude Include="ChartSpikeBar.h" />
-    <ClInclude Include="SpikeClass.h" />
     <ClInclude Include="SpikeClassListBox.h" />
     <ClInclude Include="DlgSpikeDetect.h" />
     <ClInclude Include="Spikedoc.h" />

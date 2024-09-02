@@ -125,7 +125,7 @@ END_MESSAGE_MAP()
 //  a) The Ctrl key was down, or
 //  b) m_bExitOnArrows == TRUE
 
-void GridInPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void GridInPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT n_flags)
 {
 	if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
 			nChar == VK_DOWN || nChar == VK_UP ||
@@ -137,7 +137,7 @@ void GridInPlaceEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		return;
 	}
 
-	CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
+	CEdit::OnKeyDown(nChar, nRepCnt, n_flags);
 }
 
 // As soon as this edit loses focus, kill it.
@@ -147,7 +147,7 @@ void GridInPlaceEdit::OnKillFocus(CWnd* pNewWnd)
 	EndEdit();
 }
 
-void GridInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
+void GridInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT n_flags)
 {
 	if (nChar == VK_TAB || nChar == VK_RETURN)
 	{
@@ -163,7 +163,7 @@ void GridInPlaceEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 		return;
 	}
 
-	CEdit::OnChar(nChar, nRepCnt, nFlags);
+	CEdit::OnChar(nChar, nRepCnt, n_flags);
 
 	// Resize edit control if needed
 

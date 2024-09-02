@@ -168,9 +168,6 @@
     <ClCompile Include="DlgPrintPageMargins.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpikeClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SpikeClassListBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -504,7 +501,7 @@
     <ClCompile Include="GridCtrl\GridInPlaceList.cpp">
       <Filter>customctrl</Filter>
     </ClCompile>
-    <ClCompile Include="RowItem.cpp">
+    <ClCompile Include="SpikeClassRowItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpikeClassListBoxContext.cpp">
@@ -657,9 +654,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DlgPrintPageMargins.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpikeClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpikeClassListBox.h">
@@ -1118,7 +1112,7 @@
     <ClInclude Include="ChartSpike.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RowItem.h">
+    <ClInclude Include="SpikeClassRowItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpikeClassListBoxContext.h">

@@ -2,7 +2,6 @@
 
 #include "Intervals.h"
 #include "Spikelist.h"
-#include "SpikeClass.h"
 #include "options_view_spikes.h"
 
 class CSpikeDoc : public CDocument
@@ -12,7 +11,6 @@ class CSpikeDoc : public CDocument
 	CSpikeDoc();
 	~CSpikeDoc() override;
 
-	SpikeClass m_spike_class{};
 	CIntervals m_stimulus_intervals{};
 	CWaveFormat m_wave_format{};
 

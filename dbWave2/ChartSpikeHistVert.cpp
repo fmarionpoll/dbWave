@@ -262,7 +262,7 @@ void ChartSpikeHistVert::OnLButtonUp(const UINT n_flags, const CPoint point)
 	}
 }
 
-void ChartSpikeHistVert::OnLButtonDown(UINT nFlags, CPoint point)
+void ChartSpikeHistVert::OnLButtonDown(UINT n_flags, CPoint point)
 {
 	// compute pixel position of horizontal tags
 	if (hz_tags.get_tag_list_size() > 0)
@@ -276,7 +276,7 @@ void ChartSpikeHistVert::OnLButtonDown(UINT nFlags, CPoint point)
 		for (auto i_cur = vt_tags.get_tag_list_size() - 1; i_cur >= 0; i_cur--) // loop through all tags
 			vt_tags.set_pixel(i_cur, MulDiv(vt_tags.get_value_int(i_cur) - x_wo_, x_viewport_extent_, x_we_) + x_viewport_origin_);
 	}
-	ChartSpike::OnLButtonDown(nFlags, point);
+	ChartSpike::OnLButtonDown(n_flags, point);
 	if (current_cursor_mode_ != 0 || hc_trapped_ >= 0) // do nothing else if mode != 0
 		return; // or any tag hit (VT, HZ) detected
 

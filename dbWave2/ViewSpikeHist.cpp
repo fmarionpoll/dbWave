@@ -1978,7 +1978,7 @@ void ViewSpikeHist::OnHScroll(const UINT n_sb_code, const UINT n_pos, CScrollBar
 
 	// Get the current position of scroll box.
 	auto cur_pos = p_scroll_bar->GetScrollPos();
-	float delta;
+	float delta = 0.f;
 
 	// Determine the new position of scroll box.
 	switch (n_sb_code)

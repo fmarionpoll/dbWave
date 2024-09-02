@@ -226,7 +226,7 @@ void GridTitleTip::Hide()
 	ShowWindow(SW_HIDE);
 }
 
-void GridTitleTip::OnMouseMove(UINT nFlags, CPoint point)
+void GridTitleTip::OnMouseMove(UINT n_flags, CPoint point)
 {
 	if (!m_rectHover.PtInRect(point))
 	{
@@ -242,7 +242,7 @@ void GridTitleTip::OnMouseMove(UINT nFlags, CPoint point)
 			if (hittest == HTCLIENT)
 			{
 				p_wnd->ScreenToClient(&point);
-				p_wnd->PostMessage(WM_MOUSEMOVE, nFlags, MAKELONG(point.x, point.y));
+				p_wnd->PostMessage(WM_MOUSEMOVE, n_flags, MAKELONG(point.x, point.y));
 			}
 			else
 			{
