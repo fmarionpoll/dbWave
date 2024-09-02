@@ -469,7 +469,7 @@ void CSpikeDoc::export_spk_latencies(CSharedFile* shared_file, const options_vie
 	for (auto class_index = class0; class_index <= class1; class_index++)
 	{
 		// check if class is Ok
-		const auto class_n_items = spike_list->get_class_n_items(class_index);
+		const auto class_n_items = spike_list->get_class_descriptor(class_index)->get_class_n_items();
 		if ((FALSE == options_view_spikes->b_export_zero) && (class_n_items == 0))
 			continue;
 		const auto class_id = spike_list->get_class_id(class_index);
@@ -621,7 +621,7 @@ void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, const options_view_spi
 	for (int class_index = class0; class_index <= class1; class_index++)
 	{
 		// check if class is Ok
-		const auto class_n_items = spike_list->get_class_n_items(class_index);
+		const auto class_n_items = spike_list->get_class_descriptor(class_index)->get_class_n_items();
 		const auto class_id = spike_list->get_class_id(class_index);
 		// export the comments
 		export_spk_file_comment(shared_file, options_view_spikes, class_id, cs_file_comment);

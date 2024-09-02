@@ -35,9 +35,19 @@ void SpikeClassRowItem::create_item(CWnd* parent_wnd, CdbWaveDoc* pdb_doc, Spike
 	chart_spike_bar_->sub_item_create(parent_wnd, rect_bars, i_id, i_class, pdb_doc, spike_list_);
 
 	// 3) create text
-	row_comment_ = new CString();
-	ASSERT(row_comment_ != NULL);
-	row_comment_->Format(_T("class %i\nn=%i"), i_class, spike_list_->get_class_id_n_items(i_class));
+	row_comment_ = get_class_comment(i_class);
+}
+
+CString SpikeClassRowItem::get_class_comment(const int class_id) const
+{
+	SpikeClassDescriptor* p_desc = spike_list_->get_class_descriptor(class_id_);
+	CString cs; 
+	cs.Format(_T("class %i\ndescriptor: %s\nn=%i"),
+		p_desc->get_class_id(),
+		(LPCTSTR)p_desc->get_class_descriptor(),
+		p_desc->get_class_n_items());
+
+	return cs;
 }
 
 void SpikeClassRowItem::set_class_id(const int new_class_id)
@@ -45,7 +55,7 @@ void SpikeClassRowItem::set_class_id(const int new_class_id)
 	class_id_ = new_class_id;
 	chart_spike_bar_->set_plot_mode(PLOT_ONE_CLASS_ONLY, class_id_);
 	chart_spike_shape_->set_plot_mode(PLOT_ONE_CLASS_ONLY, class_id_);
-	row_comment_->Format(_T("class %i\nn=%i"), class_id_, spike_list_->get_class_id_n_items(class_id_));
+	row_comment_ = get_class_comment(new_class_id);
 }
 
 void SpikeClassRowItem::draw_item(const LPDRAWITEMSTRUCT lp_dis) const
@@ -61,8 +71,8 @@ void SpikeClassRowItem::draw_item(const LPDRAWITEMSTRUCT lp_dis) const
 	
 
 		// display text
-		const auto text_length = row_comment_->GetLength();
-		dc.DrawText(*row_comment_, text_length, rc_text, DT_LEFT | DT_WORDBREAK);
+		const auto text_length = row_comment_.GetLength();
+		dc.DrawText(row_comment_, text_length, rc_text, DT_LEFT | DT_WORDBREAK);
 
 		// display spikes
 		const auto col1 = parent_context_->m_width_text + parent_context_->m_width_separator;
@@ -176,8 +186,8 @@ void SpikeClassRowItem::select_individual_spike(const int no_spike) const
 void SpikeClassRowItem::print(CDC* p_dc, CRect* rect1, const CRect* rect2, const CRect* rect3) const
 {
 	// print text
-	const auto text_length = row_comment_->GetLength();
-	p_dc->DrawText(*row_comment_, text_length, rect1, DT_LEFT | DT_WORDBREAK);
+	const auto text_length = row_comment_.GetLength();
+	p_dc->DrawText(row_comment_, text_length, rect1, DT_LEFT | DT_WORDBREAK);
 
 	if (chart_spike_shape_ != nullptr) chart_spike_shape_->print(p_dc, rect2);
 	if (chart_spike_bar_ != nullptr) chart_spike_bar_->print(p_dc, rect3);
@@ -191,7 +201,7 @@ void SpikeClassRowItem::update_string(const int i_class, const int n_spikes)
 	c_string->Format(_T("class %i\nn=%i"), i_class, n_spikes);
 	class_id_ = i_class;
 
-	row_comment_ = c_string;
+	row_comment_ = *c_string;
 }
 
 

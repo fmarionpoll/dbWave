@@ -569,7 +569,7 @@ BOOL SpikeList::is_any_spike_around(const long ii_time, const int jitter, int& s
 	return FALSE;
 }
 
-int SpikeList::get_class_id_descriptor_index(const int class_id)
+int SpikeList::get_class_id_index(const int class_id)
 {
 	int item_index = -1;
 	for (int i = 0; i < n_classes_; i++)
@@ -582,35 +582,36 @@ int SpikeList::get_class_id_descriptor_index(const int class_id)
 	return item_index;
 }
 
-int SpikeList::get_class_id_n_items(const int class_id)
+SpikeClassDescriptor* SpikeList::get_class_descriptor(int class_id)
 {
-	const int index = get_class_id_descriptor_index(class_id);
+	SpikeClassDescriptor* p_class_descriptor = nullptr;
+	const int index = get_class_id_index(class_id);
 	if (index < 0)
-		return 0;
-	return class_descriptors_.GetAt(index).get_n_items();
+		return nullptr;
+	return &class_descriptors_.GetAt(index);
 }
 
-int SpikeList::increment_class_id_n_items(const int class_id)
+int SpikeList::increment_class_n_items(const int class_id)
 {
-	const int index = get_class_id_descriptor_index(class_id);
+	const int index = get_class_id_index(class_id);
 	if (index < 0)
 		return 0;
 	return class_descriptors_.GetAt(index).increment_n_items();
 }
 
-int SpikeList::decrement_class_id_n_items(const int class_id)
+int SpikeList::decrement_class_n_items(const int class_id)
 {
-	const int index = get_class_id_descriptor_index(class_id);
+	const int index = get_class_id_index(class_id);
 	return class_descriptors_.GetAt(index).decrement_n_items();
 }
 
 void SpikeList::change_spike_class_id(const int spike_no, const int class_id)
 {
 	Spike* spike = get_spike(spike_no);
-	decrement_class_id_n_items(spike->get_class_id());
+	decrement_class_n_items(spike->get_class_id());
 
 	spike->set_class_id(class_id);
-	increment_class_id_n_items(class_id);
+	increment_class_n_items(class_id);
 }
 
 int SpikeList::add_spike(short* source_data, const int n_channels, const long ii_time, const int source_channel, const int i_class, const BOOL b_check)

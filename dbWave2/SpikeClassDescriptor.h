@@ -19,10 +19,10 @@ public:
 	int get_class_id() const {return class_id_; }
 	void set_class_id(const int id) { class_id_ = id; }
 
-	int get_n_items() const {return n_items_; }
-	void set_n_items(const int n) { n_items_ = n; }
+	int get_class_n_items() const {return n_items_; }
+	void set_class_n_items(const int n) { n_items_ = n; }
 
-	CString& get_class_descriptor()  { return descriptor_; }
+	CString get_class_descriptor()  { return descriptor_; }
 	void set_class_descriptor(const CString& desc) { descriptor_ = desc; }
 
 	int increment_n_items() { n_items_++; return n_items_; }

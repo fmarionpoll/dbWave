@@ -329,7 +329,7 @@ void SpikeClassListBox::remove_spike_from_row(const int spike_no)
 
 	const auto row_item = get_row_item(row_index);
 	row_item->select_individual_spike(-1);
-	const auto n_spikes = m_spike_list_->decrement_class_id_n_items(current_class);
+	const auto n_spikes = m_spike_list_->decrement_class_n_items(current_class);
 	if (n_spikes > 0)
 		row_item->update_string(current_class, n_spikes);
 	else
@@ -357,7 +357,7 @@ void SpikeClassListBox::add_spike_to_row(const int spike_no)
 			return;
 	}
 	else
-		n_spikes = m_spike_list_->increment_class_id_n_items(class_id);
+		n_spikes = m_spike_list_->increment_class_n_items(class_id);
 
 	const auto row_item = get_row_item(row_index);
 	row_item->update_string(class_id, n_spikes);

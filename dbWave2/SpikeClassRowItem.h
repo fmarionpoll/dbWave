@@ -12,6 +12,7 @@ public:
 	~SpikeClassRowItem() override;
 
 	void	create_item(CWnd* parent_wnd, CdbWaveDoc* pdb_doc, SpikeList* p_spike_list, int i_class, int i_id, SpikeClassListBoxContext* context);
+	CString get_class_comment(int class_id) const;
 	void	draw_item(LPDRAWITEMSTRUCT lp_dis) const;
 
 	void	set_time_intervals(long l_first, long l_last) const;
@@ -39,7 +40,7 @@ public:
 	ChartSpikeBar* get_chart_bars() const { return chart_spike_bar_; }
 
 protected:
-	CString* row_comment_  {nullptr};
+	CString row_comment_  {};
 	ChartSpikeShape* chart_spike_shape_  {nullptr};
 	ChartSpikeBar* chart_spike_bar_  {nullptr};
 	SpikeList* spike_list_  {nullptr};
