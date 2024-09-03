@@ -569,20 +569,33 @@ BOOL SpikeList::is_any_spike_around(const long ii_time, const int jitter, int& s
 	return FALSE;
 }
 
+CString SpikeList::get_class_description_from_id(const int class_id)
+{
+	SpikeClassDescriptor* p_class_descriptor = get_class_descriptor_from_id(class_id);
+	if (p_class_descriptor == nullptr)
+		return {_T("undefined")};
+	else
+		return p_class_descriptor->get_class_descriptor();
+}
+
 int SpikeList::get_class_id_index(const int class_id)
 {
 	int item_index = -1;
-	for (int i = 0; i < n_classes_; i++)
+	const int n_descriptors = class_descriptors_.GetCount();
+	if (n_descriptors > 0)
 	{
-		if (class_descriptors_.GetAt(i).get_class_id() != class_id)
-			continue;
-		item_index = i;
-		break;
+		for (int i = 0; i < n_descriptors; i++)
+		{
+			if (class_descriptors_.GetAt(i).get_class_id() != class_id)
+				continue;
+			item_index = i;
+			break;
+		}
 	}
 	return item_index;
 }
 
-SpikeClassDescriptor* SpikeList::get_class_descriptor(int class_id)
+SpikeClassDescriptor* SpikeList::get_class_descriptor_from_id(const int class_id)
 {
 	SpikeClassDescriptor* p_class_descriptor = nullptr;
 	const int index = get_class_id_index(class_id);

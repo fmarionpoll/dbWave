@@ -1,6 +1,18 @@
 #include <StdAfx.h>
 #include "SpikeClassDescriptor.h"
 
+CString SpikeClassDescriptor::class_descriptor[] =
+{
+	_T("sugar cell"),
+	_T("bitter cell"),
+	_T("salt cell"),
+	_T("water cell"),
+	_T("mechano-receptor"),
+	_T("background activity"),
+	_T("funny spikes")
+};
+
+
 IMPLEMENT_SERIAL(SpikeClassDescriptor, CObject, VERSIONABLE_SCHEMA | 2)
 
 SpikeClassDescriptor::SpikeClassDescriptor()

@@ -44,8 +44,8 @@ public:
 	int			get_spike_list_size() const { return spike_list_array_.GetSize(); }
 	void		set_spike_list_size(const int i) { return spike_list_array_.SetSize(i); }
 	SpikeList*	get_spike_list_at(int spike_list_index);
-	int			get_spike_list_current_index() const { return current_spike_list_index_; }
-	SpikeList*	set_spike_list_current_index(int spike_list_index);
+	int			get_index_current_spike_list() const { return current_spike_list_index_; }
+	SpikeList*	set_index_current_spike_list(int spike_list_index);
 	SpikeList*	get_spike_list_current();
 	int 		add_spk_list()
 	{

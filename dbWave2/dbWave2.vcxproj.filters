@@ -525,6 +525,9 @@
     <ClCompile Include="CMFCMyPropertyGridCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CMFCMyPropertyGridProperty.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCell.h">
@@ -1143,6 +1146,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CMFCMyPropertyGridCtrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CMFCMyPropertyGridProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

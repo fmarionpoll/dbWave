@@ -140,7 +140,7 @@ void ViewdbWave::OnInitialUpdate()
 		if (p_spk_doc != nullptr)
 		{
 			spk_list_tab_ctrl.init_ctrl_tab_from_spike_doc(p_spk_doc);
-			spk_list_tab_ctrl.SetCurSel(p_spk_doc->get_spike_list_current_index());
+			spk_list_tab_ctrl.SetCurSel(p_spk_doc->get_index_current_spike_list());
 		}
 		spk_list_tab_ctrl.ShowWindow(p_spk_doc != nullptr ? SW_SHOW : SW_HIDE);
 	}
@@ -363,7 +363,7 @@ LRESULT ViewdbWave::on_my_message(const WPARAM w_param, const LPARAM l_param)
 
 	if (w_param == HINT_VIEW_TAB_HAS_CHANGED)
 	{
-		GetDocument()->get_current_spike_file()->set_spike_list_current_index(threshold);
+		GetDocument()->get_current_spike_file()->set_index_current_spike_list(threshold);
 		m_data_list_ctrl.refresh_display();
 	}
 	return 0L;
@@ -524,7 +524,7 @@ void ViewdbWave::on_bn_clicked_display_spikes()
 		{
 			spk_list_tab_ctrl.init_ctrl_tab_from_spike_doc(p_spk_doc);
 			spk_list_tab_ctrl.ShowWindow(SW_SHOW);
-			spk_list_tab_ctrl.SetCurSel(p_spk_doc->get_spike_list_current_index());
+			spk_list_tab_ctrl.SetCurSel(p_spk_doc->get_index_current_spike_list());
 			spk_list_tab_ctrl.Invalidate();
 		}
 	}

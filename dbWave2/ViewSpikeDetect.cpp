@@ -250,7 +250,7 @@ void ViewSpikeDetection::update_spike_file(const BOOL b_update_interface)
 	// select a spike list
 	p_spk_list = p_spk_doc->get_spike_list_current();
 	if (p_spk_list == nullptr && p_spk_doc->get_spike_list_size() > 0)
-		p_spk_list = p_spk_doc->set_spike_list_current_index(0);
+		p_spk_list = p_spk_doc->set_index_current_spike_list(0);
 
 	// no spikes list available, create one
 	if (p_spk_list == nullptr)
@@ -261,7 +261,7 @@ void ViewSpikeDetection::update_spike_file(const BOOL b_update_interface)
 		p_spk_doc->set_spike_list_size(i_size);
 		for (auto i = 0; i < i_size; i++)
 		{
-			auto spike_list_current = p_spk_doc->set_spike_list_current_index(i);
+			auto spike_list_current = p_spk_doc->set_index_current_spike_list(i);
 			if (spike_list_current == nullptr)
 			{
 				p_spk_doc->add_spk_list();
@@ -269,7 +269,7 @@ void ViewSpikeDetection::update_spike_file(const BOOL b_update_interface)
 			}
 			spike_list_current->init_spike_list(pdb_doc->m_p_data_doc, spk_detect_array_.get_item(i));
 		}
-		p_spk_list = p_spk_doc->set_spike_list_current_index(0);
+		p_spk_list = p_spk_doc->set_index_current_spike_list(0);
 		ASSERT(p_spk_list != nullptr);
 	}
 
@@ -341,7 +341,7 @@ BOOL ViewSpikeDetection::check_detection_settings()
 	ASSERT_VALID(m_p_detect_parameters_);
 	if (nullptr == m_p_detect_parameters_)
 	{
-		m_i_detect_parameters_ = GetDocument()->get_current_spike_file()->get_spike_list_current_index();
+		m_i_detect_parameters_ = GetDocument()->get_current_spike_file()->get_index_current_spike_list();
 		m_p_detect_parameters_ = spk_detect_array_.get_item(m_i_detect_parameters_);
 	}
 
@@ -1069,7 +1069,7 @@ void ViewSpikeDetection::detect_all(const BOOL b_all)
 	p_spk_doc->init_source_doc(data_document);
 
 	p_spk_doc->set_detection_date(CTime::GetCurrentTime());
-	auto old_spike_list_index = db_document->get_current_spike_file()->get_spike_list_current_index();
+	auto old_spike_list_index = db_document->get_current_spike_file()->get_index_current_spike_list();
 	m_spike_index = -1;
 
 	// check if detection parameters are ok? prevent detection from a channel that does not exist
@@ -1103,7 +1103,7 @@ void ViewSpikeDetection::detect_all(const BOOL b_all)
 			continue;
 
 		// select new spike list (list with no spikes for stimulus channel)
-		SpikeList* spike_list = p_spk_doc->set_spike_list_current_index(i);
+		SpikeList* spike_list = p_spk_doc->set_index_current_spike_list(i);
 		if (spike_list == nullptr)
 		{
 			p_spk_doc->add_spk_list();
@@ -1138,7 +1138,7 @@ void ViewSpikeDetection::detect_all(const BOOL b_all)
 	// display data
 	if (old_spike_list_index < 0)
 		old_spike_list_index = 0;
-	p_spk_list = p_spk_doc->set_spike_list_current_index(old_spike_list_index);
+	p_spk_list = p_spk_doc->set_index_current_spike_list(old_spike_list_index);
 
 	chart_spike_bar_.set_source_data(p_spk_list, db_document);
 	chart_spike_shape_.set_source_data(p_spk_list, db_document);
@@ -1500,7 +1500,7 @@ void ViewSpikeDetection::on_bn_clicked_clear_all()
 	// update spike list
 	for (int i = 0; i < p_spk_doc->get_spike_list_size(); i++)
 	{
-		SpikeList* p_spk_list = p_spk_doc->set_spike_list_current_index(i);
+		SpikeList* p_spk_list = p_spk_doc->set_index_current_spike_list(i);
 		p_spk_list->init_spike_list(GetDocument()->m_p_data_doc, nullptr);
 	}
 	p_spk_list = p_spk_doc->get_spike_list_current();
@@ -1588,7 +1588,7 @@ void ViewSpikeDetection::on_artefact()
 
 	const auto i_sel_parameters = spk_list_tab_ctrl.GetCurSel();
 	m_p_detect_parameters_ = spk_detect_array_.get_item(i_sel_parameters);
-	p_spk_list = p_spk_doc->set_spike_list_current_index(i_sel_parameters);
+	p_spk_list = p_spk_doc->set_index_current_spike_list(i_sel_parameters);
 
 	db_spike spike_sel(-1, -1, m_spike_index);
 	select_spike_no(spike_sel, FALSE);
@@ -2953,7 +2953,7 @@ void ViewSpikeDetection::update_detection_settings(const int i_sel_parameters)
 		for (int i = 0; i < spike_list_size; i++)
 		{
 			// select new spike list (list with no spikes for stimulus channel)
-			const auto spike_list_current = p_spk_doc->set_spike_list_current_index(i);
+			const auto spike_list_current = p_spk_doc->set_index_current_spike_list(i);
 			ASSERT(spike_list_current != NULL);
 			const auto ps_d = spike_list_current->get_detection_parameters();
 			spk_detect_array_.set_item(i, ps_d); 
@@ -2964,7 +2964,7 @@ void ViewSpikeDetection::update_detection_settings(const int i_sel_parameters)
 	for (auto i = 0; i < spk_detect_array_.get_size(); i++)
 	{
 		// select new spike list (list with no spikes for stimulus channel)
-		auto spike_list_current = p_spk_doc->set_spike_list_current_index(i);
+		auto spike_list_current = p_spk_doc->set_index_current_spike_list(i);
 		const auto p_sd = spk_detect_array_.get_item(i);
 		if (spike_list_current == nullptr)
 		{
@@ -2980,7 +2980,7 @@ void ViewSpikeDetection::update_detection_settings(const int i_sel_parameters)
 	p_spk_list->m_selected_spike = m_spike_index; 
 	m_i_detect_parameters_ = i_sel_parameters;
 	m_p_detect_parameters_ = spk_detect_array_.get_item(i_sel_parameters);
-	p_spk_list = p_spk_doc->set_spike_list_current_index(i_sel_parameters);
+	p_spk_list = p_spk_doc->set_index_current_spike_list(i_sel_parameters);
 	if (p_spk_list != nullptr)
 		highlight_spikes_in_chart_data(TRUE);
 
@@ -3129,11 +3129,11 @@ void ViewSpikeDetection::update_tabs()
 		spk_list_tab_ctrl.DeleteAllItems();
 
 	// load list of detection parameters
-	const auto current_spike_list_index = p_spk_doc->get_spike_list_current_index();
+	const auto current_spike_list_index = p_spk_doc->get_index_current_spike_list();
 	for (auto i = 0; i < p_spk_doc->get_spike_list_size(); i++)
 	{
 		CString cs;
-		const auto current_spike_list = p_spk_doc->set_spike_list_current_index(i);
+		const auto current_spike_list = p_spk_doc->set_index_current_spike_list(i);
 		cs.Format(_T("#%i %s"), i, (LPCTSTR)current_spike_list->get_detection_parameters()->comment);
 		if (!b_replace)
 			spk_list_tab_ctrl.InsertItem(i, cs);
@@ -3147,8 +3147,8 @@ void ViewSpikeDetection::update_tabs()
 			cs.ReleaseBuffer();
 		}
 	}
-	p_spk_doc->set_spike_list_current_index(current_spike_list_index);
+	p_spk_doc->set_index_current_spike_list(current_spike_list_index);
 
-	m_i_detect_parameters_ = p_spk_doc->get_spike_list_current_index();
+	m_i_detect_parameters_ = p_spk_doc->get_index_current_spike_list();
 	spk_list_tab_ctrl.SetCurSel(m_i_detect_parameters_);
 }

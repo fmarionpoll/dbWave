@@ -163,7 +163,7 @@ void ViewSpikeHist::OnInitialUpdate()
 	p_spike_doc = p_dbwave_doc->m_p_spk_doc;
 	p_spike_doc->get_spike_list_current();
 	build_data_and_display();
-	select_spk_list(p_spike_doc->get_spike_list_current_index(), TRUE);
+	select_spk_list(p_spike_doc->get_index_current_spike_list(), TRUE);
 }
 
 void ViewSpikeHist::OnSize(const UINT n_type, const int cx, const int cy)
@@ -216,7 +216,7 @@ void ViewSpikeHist::OnUpdate(CView* p_sender, const LPARAM l_hint, CObject* p_hi
 		break;
 	case HINT_DOC_HAS_CHANGED:
 	case HINT_DOC_MOVE_RECORD:
-		select_spk_list(GetDocument()->get_current_spike_file()->get_spike_list_current_index(), TRUE);
+		select_spk_list(GetDocument()->get_current_spike_file()->get_index_current_spike_list(), TRUE);
 		build_data_and_display();
 		break;
 
@@ -238,7 +238,7 @@ BOOL ViewSpikeHist::OnMove(const UINT n_id_move_command)
 	p_document->update_all_views_db_wave(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 	if (!options_view_spikes_->b_all_files)
 		build_data_and_display();
-	select_spk_list(GetDocument()->get_current_spike_file()->get_spike_list_current_index(), TRUE);
+	select_spk_list(GetDocument()->get_current_spike_file()->get_index_current_spike_list(), TRUE);
 	return flag;
 }
 
@@ -985,7 +985,7 @@ void ViewSpikeHist::build_data()
 		last_file = m_n_files_ - 1;
 	}
 
-	const auto current_list_index = p_dbwave_doc->get_current_spike_file()->get_spike_list_current_index();
+	const auto current_list_index = p_dbwave_doc->get_current_spike_file()->get_index_current_spike_list();
 
 	for (auto i_file = first_file; i_file <= last_file; i_file++)
 	{
@@ -1010,7 +1010,7 @@ void ViewSpikeHist::build_data()
 		if (nullptr == p_spike_doc)
 			continue;
 
-		p_spike_doc->set_spike_list_current_index(current_list_index);
+		p_spike_doc->set_index_current_spike_list(current_list_index);
 
 		switch (m_b_hist_type_)
 		{
@@ -1043,7 +1043,7 @@ void ViewSpikeHist::build_data()
 	{
 		BOOL success = p_dbwave_doc->db_set_current_record_position(current_file);
 		p_spike_doc = p_dbwave_doc->open_current_spike_file();
-		p_spike_doc->set_spike_list_current_index(current_list_index);
+		p_spike_doc->set_index_current_spike_list(current_list_index);
 	}
 	SAFE_DELETE(p_dlg)
 }
@@ -1356,14 +1356,14 @@ void ViewSpikeHist::display_dot(CDC* p_dc, CRect* p_rect)
 	}
 
 	// external loop: browse from file to file
-	auto current_list_index = p_dbwave_doc->get_current_spike_file()->get_spike_list_current_index();
+	auto current_list_index = p_dbwave_doc->get_current_spike_file()->get_index_current_spike_list();
 	for (auto i_file = first_file;
 	     i_file <= last_file && row < display_rect.bottom;
 	     i_file++)
 	{
 		BOOL success = p_dbwave_doc->db_set_current_record_position(i_file);
 		p_spike_doc = p_dbwave_doc->open_current_spike_file();
-		p_spike_doc->set_spike_list_current_index(current_list_index);
+		p_spike_doc->set_index_current_spike_list(current_list_index);
 
 		// load pointers to spike file and spike list
 		const auto p_spk_list = p_spike_doc->get_spike_list_current();
@@ -1511,7 +1511,7 @@ void ViewSpikeHist::display_dot(CDC* p_dc, CRect* p_rect)
 
 	BOOL success = p_dbwave_doc->db_set_current_record_position(current_file);
 	p_spike_doc = p_dbwave_doc->open_current_spike_file();
-	p_spike_doc->set_spike_list_current_index(current_list_index);
+	p_spike_doc->set_index_current_spike_list(current_list_index);
 
 	p_dc->SelectObject(p_old_pen);
 	p_dc->SelectObject(p_old_brush);
@@ -2038,7 +2038,7 @@ void ViewSpikeHist::select_spk_list(const int i_cur_sel, const BOOL b_refresh_in
 		auto j = 0;
 		for (auto i = 0; i < p_spike_doc->get_spike_list_size(); i++)
 		{
-			const auto p_spike_list = p_spike_doc->set_spike_list_current_index(i);
+			const auto p_spike_list = p_spike_doc->set_index_current_spike_list(i);
 			CString cs;
 			if (p_spike_list->get_detection_parameters()->detect_what != DETECT_SPIKES)
 				continue;
@@ -2049,7 +2049,7 @@ void ViewSpikeHist::select_spk_list(const int i_cur_sel, const BOOL b_refresh_in
 	}
 
 	// select spike list
-	GetDocument()->get_current_spike_file()->set_spike_list_current_index(i_cur_sel);
+	GetDocument()->get_current_spike_file()->set_index_current_spike_list(i_cur_sel);
 	m_tabCtrl.SetCurSel(i_cur_sel);
 }
 

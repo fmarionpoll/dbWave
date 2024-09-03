@@ -95,7 +95,7 @@ void ChartSpikeXY::plot_data_to_dc(CDC* p_dc)
 		if (p_spike_list_->get_spike_flag_array_count() > 0)
 		{
 			// loop over the array of flagged spikes
-			auto spike_sel = db_spike (index_file, dbwave_doc_->m_p_spk_doc->get_spike_list_current_index(), 0);
+			auto spike_sel = db_spike (index_file, dbwave_doc_->m_p_spk_doc->get_index_current_spike_list(), 0);
 			for (auto i = p_spike_list_->get_spike_flag_array_count() - 1; i >= 0; i--)
 			{
 				spike_sel.spike_index = p_spike_list_->get_spike_index_of_flag(i);

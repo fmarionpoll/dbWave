@@ -304,7 +304,7 @@ void ChartSpikeBar::display_flagged_spikes(const BOOL b_high_light)
 
 	// loop over the array of flagged spikes
 	const boolean is_selected_spike_in_this_list = 
-		(dbwave_doc_->get_current_spike_file()->get_spike_list_current_index()
+		(dbwave_doc_->get_current_spike_file()->get_index_current_spike_list()
 			== spike_selected_.spike_list_index);
 
 	for (auto i = p_spike_list_->get_spike_flag_array_count() - 1; i >= 0; i--)

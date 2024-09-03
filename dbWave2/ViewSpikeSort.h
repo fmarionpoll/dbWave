@@ -8,6 +8,7 @@
 #include "ScrollBarEx.h"
 #include "options_spk_classification.h"
 #include "CMFCMyPropertyGridCtrl.h"
+#include "CMFCMyPropertyGridProperty.h"
 
 
 class ViewSpikeSort : public ViewDbTable
@@ -92,10 +93,12 @@ protected:
 	float t_xy_right_{ 1.f };
 	float t_xy_left_{ 0.f };
 
-	CMFCMyPropertyGridCtrl m_propertyGrid;
-	void init_classes_properties_table();
-	void add_class_property(int index_class);
-	void delete_all_properties();
+	CMFCMyPropertyGridCtrl classes_table_;
+	void classes_table_init();
+	CMFCMyPropertyGridProperty* classes_table_add_item(int class_id);
+	CMFCMyPropertyGridProperty* classes_table_find_item(int class_id) const;
+	void classes_table_update(SpikeList* spk_list);
+	void classes_table_delete_all();
 
 	options_spk_classification* spike_classification_{};
 	options_view_data* options_view_data_{};
@@ -193,6 +196,7 @@ public:
 	afx_msg void on_en_change_shape_t1();
 	afx_msg void on_en_change_shape_t2();
 	afx_msg void on_en_change_source_class();
+	void update_destination_class_descriptor() const;
 	afx_msg void on_en_change_destination_class();
 
 	afx_msg void on_en_change_time_first();

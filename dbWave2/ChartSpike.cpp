@@ -143,7 +143,7 @@ db_spike ChartSpike::hit_curve_in_doc(const CPoint point)
 			continue;
 
 		result.record_id = dbwave_doc_->db_get_current_record_id();
-		result.spike_list_index = dbwave_doc_->m_p_spk_doc->get_spike_list_current_index();
+		result.spike_list_index = dbwave_doc_->m_p_spk_doc->get_index_current_spike_list();
 
 		result.spike_index = hit_curve(point);
 		if (result.spike_index >= 0)

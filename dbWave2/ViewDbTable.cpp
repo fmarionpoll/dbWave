@@ -147,7 +147,7 @@ void ViewDbTable::save_current_spk_file()
 	{
 		auto current_list = 0;
 		if (spk_list_tab_ctrl.m_hWnd != nullptr) current_list = spk_list_tab_ctrl.GetCurSel();
-		p_spk_list = p_spk_doc->set_spike_list_current_index(current_list);
+		p_spk_list = p_spk_doc->set_index_current_spike_list(current_list);
 		if (p_spk_list != nullptr && !p_spk_list->is_class_list_valid())
 			p_spk_list->update_class_list();
 

@@ -21,6 +21,17 @@ ViewSpikeTemplates::~ViewSpikeTemplates()
 		save_current_spk_file(); 
 }
 
+void ViewSpikeTemplates::OnDestroy()
+{
+	if (m_template_list_.get_n_templates() != 0)
+	{
+		if (spike_classification_parameters_->p_template == nullptr)
+			spike_classification_parameters_->create_tpl();
+		*static_cast<CTemplateListWnd*>(spike_classification_parameters_->p_template) = m_template_list_;
+	}
+	ViewDbTable::OnDestroy();
+}
+
 void ViewSpikeTemplates::DoDataExchange(CDataExchange* pDX)
 {
 	ViewDbTable::DoDataExchange(pDX);
@@ -69,17 +80,6 @@ BEGIN_MESSAGE_MAP(ViewSpikeTemplates, ViewDbTable)
 	ON_EN_CHANGE(IDC_SHAPE_T1, &ViewSpikeTemplates::on_en_change_t1)
 	ON_EN_CHANGE(IDC_SHAPE_T2, &ViewSpikeTemplates::on_en_change_t2)
 END_MESSAGE_MAP()
-
-void ViewSpikeTemplates::OnDestroy()
-{
-	if (m_template_list_.get_n_templates() != 0)
-	{
-		if (spike_classification_parameters_->p_template == nullptr)
-			spike_classification_parameters_->create_tpl();
-		*static_cast<CTemplateListWnd*>(spike_classification_parameters_->p_template) = m_template_list_;
-	}
-	ViewDbTable::OnDestroy();
-}
 
 BOOL ViewSpikeTemplates::OnMove(UINT n_id_move_command)
 {
@@ -186,7 +186,7 @@ void ViewSpikeTemplates::OnInitialUpdate()
 void ViewSpikeTemplates::update_file_parameters()
 {
 	update_spike_file();
-	const int index_current = p_spk_doc->get_spike_list_current_index();
+	const int index_current = p_spk_doc->get_index_current_spike_list();
 	select_spike_list(index_current);
 }
 
@@ -198,8 +198,8 @@ void ViewSpikeTemplates::update_spike_file()
 	{
 		p_spk_doc->SetModifiedFlag(FALSE);
 		p_spk_doc->SetPathName(GetDocument()->db_get_current_spk_file_name(), FALSE);
-		const int index_current_spike_list = GetDocument()->get_current_spike_file()->get_spike_list_current_index();
-		p_spk_list = p_spk_doc->set_spike_list_current_index(index_current_spike_list);
+		const int index_current_spike_list = GetDocument()->get_current_spike_file()->get_index_current_spike_list();
+		p_spk_list = p_spk_doc->set_index_current_spike_list(index_current_spike_list);
 
 		// update Tab at the bottom
 		spk_list_tab_ctrl.init_ctrl_tab_from_spike_doc(p_spk_doc);
@@ -209,7 +209,7 @@ void ViewSpikeTemplates::update_spike_file()
 
 void ViewSpikeTemplates::select_spike_list(const int index_current)
 {
-	p_spk_list = p_spk_doc->set_spike_list_current_index(index_current);
+	p_spk_list = p_spk_doc->set_index_current_spike_list(index_current);
 	spk_list_tab_ctrl.SetCurSel(index_current);
 
 	if (!p_spk_list->is_class_list_valid())
@@ -314,7 +314,7 @@ void ViewSpikeTemplates::select_spike(db_spike& spike_sel)
 	if (spike_sel.record_id < 0) 
 	{
 		spike_sel.record_id = p_doc->db_get_current_record_id();
-		spike_sel.spike_list_index = p_doc->m_p_spk_doc->get_spike_list_current_index();
+		spike_sel.spike_list_index = p_doc->m_p_spk_doc->get_index_current_spike_list();
 	}
 	else if (spike_sel.record_id != p_doc->db_get_current_record_id())
 	{
@@ -621,7 +621,7 @@ void ViewSpikeTemplates::display_avg(const boolean b_all_files, CTemplateListWnd
 	auto last_file = current_file; // index last file in the series
 	// make sure we have the correct spike list here
 	const auto current_list = spk_list_tab_ctrl.GetCurSel();
-	p_spk_doc->set_spike_list_current_index(current_list);
+	p_spk_doc->set_index_current_spike_list(current_list);
 
 	CString cs_comment;
 	CString cs_file_comment = _T("Analyze file: ");
@@ -644,7 +644,7 @@ void ViewSpikeTemplates::display_avg(const boolean b_all_files, CTemplateListWnd
 		p_dbwave_doc->SetTitle(cs);
 		p_spk_doc->SetModifiedFlag(FALSE);
 
-		auto pSpkList = p_spk_doc->set_spike_list_current_index(current_list); // load pointer to spike list
+		auto pSpkList = p_spk_doc->set_index_current_spike_list(current_list); // load pointer to spike list
 		if (!pSpkList->is_class_list_valid()) // if class list not valid:
 		{
 			pSpkList->update_class_list(); // rebuild list of classes
@@ -735,7 +735,7 @@ void ViewSpikeTemplates::on_build_templates()
 				continue;
 		}
 
-		const auto spike_list = p_spk_doc->set_spike_list_current_index(currentlist);
+		const auto spike_list = p_spk_doc->set_index_current_spike_list(currentlist);
 		n_spikes = spike_list->get_spikes_count();
 		for (auto i = 0; i < n_spikes; i++)
 			m_template_list_.t_add(p_spk_list->get_spike(i)->get_p_data());
@@ -765,7 +765,7 @@ void ViewSpikeTemplates::on_build_templates()
 			p_dbwave_doc->SetTitle(cs);
 		}
 
-		auto spike_list = p_spk_doc->set_spike_list_current_index(currentlist);
+		auto spike_list = p_spk_doc->set_index_current_spike_list(currentlist);
 		n_spikes = spike_list->get_spikes_count();
 
 		// create template CListCtrl
@@ -879,7 +879,7 @@ void ViewSpikeTemplates::sort_spikes()
 			p_dbwave_doc->SetTitle(cs);
 			p_spk_doc->SetModifiedFlag(FALSE);
 
-			p_spk_list = p_spk_doc->set_spike_list_current_index(current_list); // load pointer to spike list
+			p_spk_list = p_spk_doc->set_index_current_spike_list(current_list); // load pointer to spike list
 			if (!p_spk_list->is_class_list_valid()) // if class list not valid:
 			{
 				p_spk_list->update_class_list(); // rebuild list of classes
@@ -1081,7 +1081,7 @@ void ViewSpikeTemplates::edit_spike_class(const int control_id, const int contro
 					cs += dbwave_doc->db_get_current_spk_file_name(FALSE);
 					dbwave_doc->SetTitle(cs);
 					p_spk_doc->SetModifiedFlag(FALSE);
-					p_spk_list = p_spk_doc->set_spike_list_current_index(current_list);
+					p_spk_list = p_spk_doc->set_index_current_spike_list(current_list);
 				}
 
 				// TODO: this should not work - changing SpikeClassID does not change the spike class because UpdateClassList reset classes array to zero

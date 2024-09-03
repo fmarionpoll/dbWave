@@ -427,7 +427,7 @@ Spike* CdbWaveDoc::get_spike(db_spike& spike_coords)
 	if (spike_coords.record_id < 0)
 	{
 		spike_coords.record_id = db_get_current_record_id();
-		spike_coords.spike_list_index = m_p_spk_doc->get_spike_list_current_index();
+		spike_coords.spike_list_index = m_p_spk_doc->get_index_current_spike_list();
 	}
 	else if (spike_coords.record_id != db_get_current_record_id()) 
 	{
@@ -451,7 +451,7 @@ boolean CdbWaveDoc::get_max_min_amplitude_of_all_spikes(const BOOL b_all_files, 
 {
 	boolean spikes_found = false;
 	const long n_files = b_all_files ? db_get_records_count() : 1;
-	const int current_spike_list_index = m_p_spk_doc->get_spike_list_current_index();
+	const int current_spike_list_index = m_p_spk_doc->get_index_current_spike_list();
 	boolean initialized = false;
 
 	for (long i_file = 0; i_file < n_files; i_file++)
@@ -462,7 +462,7 @@ boolean CdbWaveDoc::get_max_min_amplitude_of_all_spikes(const BOOL b_all_files, 
 				open_current_spike_file();
 			if (m_p_spk_doc == nullptr)
 				continue;
-			m_p_spk_doc->set_spike_list_current_index(current_spike_list_index);
+			m_p_spk_doc->set_index_current_spike_list(current_spike_list_index);
 		}
 
 		const auto p_spk_list = m_p_spk_doc->get_spike_list_current();
@@ -496,7 +496,7 @@ boolean CdbWaveDoc::get_max_min_y1_of_all_spikes(const boolean b_all_files, int&
 {
 	boolean spikes_found = false;
 	const long n_files = b_all_files ? db_get_records_count() : 1;
-	const int current_spike_list_index = m_p_spk_doc->get_spike_list_current_index();
+	const int current_spike_list_index = m_p_spk_doc->get_index_current_spike_list();
 	boolean initialized = false;
 
 	for (long i_file = 0; i_file < n_files; i_file++)
@@ -507,7 +507,7 @@ boolean CdbWaveDoc::get_max_min_y1_of_all_spikes(const boolean b_all_files, int&
 				open_current_spike_file();
 			if (m_p_spk_doc == nullptr)
 				continue;
-			m_p_spk_doc->set_spike_list_current_index(current_spike_list_index);
+			m_p_spk_doc->set_index_current_spike_list(current_spike_list_index);
 		}
 
 		const auto p_spk_list = m_p_spk_doc->get_spike_list_current();
@@ -540,7 +540,7 @@ boolean CdbWaveDoc::get_max_min_y1_of_all_spikes(const boolean b_all_files, int&
 void CdbWaveDoc::center_spike_amplitude_all_spikes_between_t1_and_t2(const boolean b_all_files, const int spike_class, const int t1, const int t2)
 {
 	const long n_files = b_all_files ? db_get_records_count() : 1;
-	const int current_spike_list_index = m_p_spk_doc->get_spike_list_current_index();
+	const int current_spike_list_index = m_p_spk_doc->get_index_current_spike_list();
 	boolean initialized = false;
 
 	for (long i_file = 0; i_file < n_files; i_file++)
@@ -551,7 +551,7 @@ void CdbWaveDoc::center_spike_amplitude_all_spikes_between_t1_and_t2(const boole
 				open_current_spike_file();
 			if (m_p_spk_doc == nullptr)
 				continue;
-			m_p_spk_doc->set_spike_list_current_index(current_spike_list_index);
+			m_p_spk_doc->set_index_current_spike_list(current_spike_list_index);
 		}
 
 		const auto p_spk_list = m_p_spk_doc->get_spike_list_current();
@@ -1740,12 +1740,19 @@ void CdbWaveDoc::export_spk_descriptors(CSharedFile * p_sf, SpikeList * p_spike_
 
 	// spike list iColumn, spike class
 	if (options_view_spikes->spike_class_option != 0)
+	{
 		cs_dummy.Format(_T("%s%i %s%s %s%i"), (LPCTSTR)cs_tab, options_view_spikes->i_chan,
-			(LPCTSTR)cs_tab, (LPCTSTR)p_spike_list->get_detection_parameters()->comment,
-			(LPCTSTR)cs_tab, k_class);
+		   (LPCTSTR)cs_tab, (LPCTSTR)p_spike_list->get_detection_parameters()->comment,
+		   (LPCTSTR)cs_tab, k_class);
+		// spike class descriptor
+		const CString cs = _T("\t") + p_spike_list->get_class_description_from_id(k_class);
+		cs_dummy = cs_dummy + cs;
+	}
 	else
+	{
 		cs_dummy.Format(_T("%s%i %s%s \t(all)"), (LPCTSTR)cs_tab, options_view_spikes->i_chan,
-			(LPCTSTR)cs_tab, (LPCTSTR)p_spike_list->get_detection_parameters()->comment);
+		   (LPCTSTR)cs_tab, (LPCTSTR)p_spike_list->get_detection_parameters()->comment);
+	}
 	p_sf->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 }
 
@@ -1842,14 +1849,15 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 	{
 		m_p_spk_doc = new CSpikeDoc;
 		ASSERT(m_p_spk_doc != NULL);
-		m_p_spk_doc->set_spike_list_current_index(get_current_spike_file()->get_spike_list_current_index());
+		m_p_spk_doc->set_index_current_spike_list(get_current_spike_file()->get_index_current_spike_list());
 	}
 
 	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	const auto options_view_spikes = &(p_app->options_view_spikes);
 
-	const auto i_old_list = m_p_spk_doc->get_spike_list_current_index();
+	const auto i_old_list = m_p_spk_doc->get_index_current_spike_list();
 	m_p_spk_doc->export_table_title(p_sf, options_view_spikes, n_files);
+
 	CSpikeDoc::export_headers_descriptors(p_sf, options_view_spikes);
 	m_p_spk_doc->export_headers_data(p_sf, options_view_spikes); 
 
@@ -1938,8 +1946,8 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 				p_sf->Write(cs_file_comment, cs_file_comment.GetLength() * sizeof(TCHAR));
 				continue;
 			}
-			const auto flag = (open_current_spike_file() != nullptr);
-			ASSERT(flag);
+			if (open_current_spike_file() == nullptr)
+				continue;
 
 			// loop over the spike lists stored in that file
 			auto i_chan1 = 0;
@@ -1953,7 +1961,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 			//----------------------------------------------------------
 			for (auto i_spike_list = i_chan1; i_spike_list < i_chan2; i_spike_list++)
 			{
-				const auto p_spike_list = m_p_spk_doc->set_spike_list_current_index(i_spike_list);
+				const auto p_spike_list = m_p_spk_doc->set_index_current_spike_list(i_spike_list);
 				options_view_spikes->i_chan = i_spike_list;
 				for (auto k_class = class1; k_class <= class2; k_class++)
 				{
@@ -2005,7 +2013,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 	if (db_set_current_record_position(i_old_index)) 
 	{
 		if (open_current_spike_file() != nullptr)
-			m_p_spk_doc->set_spike_list_current_index(i_old_list);
+			m_p_spk_doc->set_index_current_spike_list(i_old_list);
 	}
 	UpdateAllViews(nullptr, HINT_DOC_MOVE_RECORD, nullptr);
 }

@@ -63,7 +63,6 @@ void DataListCtrl::OnDestroy()
 {
 	save_columns_width();
 }
-
 void DataListCtrl::save_columns_width() const
 {
 	if (m_width_columns_ != nullptr)

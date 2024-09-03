@@ -294,7 +294,7 @@ void DataListCtrl_Row::display_spike_wnd(DataListCtrlInfos* infos, const int i_i
 		int i_tab = p_parent0->spk_list_tab_ctrl.GetCurSel();
 		if (i_tab < 0)
 			i_tab = 0;
-		const auto p_spk_list = p_spike_doc->set_spike_list_current_index(i_tab);
+		const auto p_spk_list = p_spike_doc->set_index_current_spike_list(i_tab);
 
 		p_chart_spike_wnd->set_source_data(p_spk_list, p_parent0->GetDocument());
 		p_chart_spike_wnd->set_spike_doc(p_spike_doc);

@@ -623,8 +623,8 @@ void ViewSpikes::update_spike_file(BOOL b_update_interface)
 		p_spk_doc->SetPathName(GetDocument()->db_get_current_spk_file_name(), FALSE);
 		spk_list_tab_ctrl.init_ctrl_tab_from_spike_doc(p_spk_doc);
 
-		const int current_index = GetDocument()->get_current_spike_file()->get_spike_list_current_index();
-		p_spk_list = p_spk_doc->set_spike_list_current_index(current_index);
+		const int current_index = GetDocument()->get_current_spike_file()->get_index_current_spike_list();
+		p_spk_list = p_spk_doc->set_index_current_spike_list(current_index);
 		spk_detection_parameters_ = p_spk_list->get_detection_parameters();
 
 		spike_class_listbox_.set_source_data(p_spk_list, GetDocument());
@@ -711,7 +711,7 @@ void ViewSpikes::adjust_y_zoom_to_max_min(const BOOL b_force_search_max_min)
 
 void ViewSpikes::select_spike_list(int current_selection)
 {
-	p_spk_list = p_spk_doc->set_spike_list_current_index(current_selection);
+	p_spk_list = p_spk_doc->set_index_current_spike_list(current_selection);
 	ASSERT(p_spk_list != NULL);
 
 	spike_class_listbox_.set_spk_list(p_spk_list);

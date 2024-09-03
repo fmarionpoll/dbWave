@@ -469,7 +469,7 @@ void CSpikeDoc::export_spk_latencies(CSharedFile* shared_file, const options_vie
 	for (auto class_index = class0; class_index <= class1; class_index++)
 	{
 		// check if class is Ok
-		const auto class_n_items = spike_list->get_class_descriptor(class_index)->get_class_n_items();
+		const auto class_n_items = spike_list->get_class_descriptor_from_id(class_index)->get_class_n_items();
 		if ((FALSE == options_view_spikes->b_export_zero) && (class_n_items == 0))
 			continue;
 		const auto class_id = spike_list->get_class_id(class_index);
@@ -601,8 +601,8 @@ void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, const options_view_spi
 			// dummy export if requested export nb spikes / bin: print nb
 			switch (options_view_spikes->export_data_type)
 			{
-			case EXPORT_ISI: // ISI
-			case EXPORT_AUTOCORR: // Autocorrelation
+			case EXPORT_ISI: 
+			case EXPORT_AUTOCORR: 
 				cs_dummy.Format(_T("\t0"));
 				shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 				break;
@@ -621,7 +621,7 @@ void CSpikeDoc::export_spk_psth(CSharedFile* shared_file, const options_view_spi
 	for (int class_index = class0; class_index <= class1; class_index++)
 	{
 		// check if class is Ok
-		const auto class_n_items = spike_list->get_class_descriptor(class_index)->get_class_n_items();
+		const auto class_n_items = spike_list->get_class_descriptor_from_id(class_index)->get_class_n_items();
 		const auto class_id = spike_list->get_class_id(class_index);
 		// export the comments
 		export_spk_file_comment(shared_file, options_view_spikes, class_id, cs_file_comment);
@@ -1002,6 +1002,10 @@ void CSpikeDoc::export_headers_descriptors(CSharedFile* shared_file, options_vie
 	cs_dummy = _T("\tdetectchan\tchan\tclass");
 	shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
 	n_columns += 3;
+	// class descriptor
+	cs_dummy = _T("\tdescriptor");
+	shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
+	n_columns += 1;
 
 	options_view_spikes->n_comment_columns = n_columns;
 }
@@ -1176,6 +1180,10 @@ void CSpikeDoc::export_spk_file_comment(CSharedFile* shared_file, const options_
 	// spike list item, spike class
 	cs_dummy.Format(_T("\t%i \t%s \t%i"), options_view_spikes->i_chan, (LPCTSTR)p_spk_list->get_detection_parameters()->comment, class_index);
 	shared_file->Write(cs_dummy, cs_dummy.GetLength() * sizeof(TCHAR));
+	// spike class descriptor
+	const CString cs = _T("\t") + p_spk_list->get_class_description_from_id(class_index);
+	shared_file->Write(cs, cs.GetLength() * sizeof(TCHAR));
+
 }
 
 // compute post_stimulus histogram
@@ -1731,7 +1739,7 @@ void CSpikeDoc::export_spk_average_wave(CSharedFile* shared_file, const options_
 	}
 }
 
-SpikeList* CSpikeDoc::set_spike_list_current_index(int spike_list_index)
+SpikeList* CSpikeDoc::set_index_current_spike_list(int spike_list_index)
 {
 	SpikeList* spike_list = nullptr;
 	if (spike_list_array_.GetSize() > 0 && spike_list_index >= 0 && spike_list_index < spike_list_array_.GetSize())

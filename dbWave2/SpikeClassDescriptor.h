@@ -8,6 +8,9 @@ protected:
 	CString descriptor_{};
 
 public:
+	static constexpr int nb_descriptors{ 7 };
+	static CString class_descriptor[nb_descriptors];
+
 	SpikeClassDescriptor(); 
     ~SpikeClassDescriptor() override;                         
     SpikeClassDescriptor(int number, int items, const CString& descriptor);

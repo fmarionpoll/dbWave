@@ -851,6 +851,7 @@
 #define IDC_FILE_INDEX                  1533
 #define IDC_LIST_STATIC                 1534
 #define IDC_MFCPROPERTYGRID1            1535
+#define IDC_CLASS_DESCRIPTOR            1536
 #define IDC_VSPLIT                      30980
 #define IDC_HSPLIT                      30981
 #define ID_CANCEL_EDIT_CNTR             32768
@@ -981,7 +982,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        580
 #define _APS_NEXT_COMMAND_VALUE         33069
-#define _APS_NEXT_CONTROL_VALUE         1536
+#define _APS_NEXT_CONTROL_VALUE         1537
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
 #endif

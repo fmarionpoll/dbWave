@@ -39,7 +39,7 @@ void SpikeClassRowItem::create_item(CWnd* parent_wnd, CdbWaveDoc* pdb_doc, Spike
 
 CString SpikeClassRowItem::get_class_comment(const int class_id) const
 {
-	SpikeClassDescriptor* p_desc = spike_list_->get_class_descriptor(class_id_);
+	SpikeClassDescriptor* p_desc = spike_list_->get_class_descriptor_from_id(class_id_);
 	CString cs; 
 	cs.Format(_T("class %i\n%s\nn=%i"),
 		p_desc->get_class_id(),
@@ -176,7 +176,7 @@ void SpikeClassRowItem::select_individual_spike(const int no_spike) const
 {
 	const CdbWaveDoc* p_doc = chart_spike_shape_->get_db_wave_doc();
 	db_spike spike_sel(p_doc->db_get_current_record_id(), //db_get_current_record_position(),
-		p_doc->m_p_spk_doc->get_spike_list_current_index(), no_spike);
+		p_doc->m_p_spk_doc->get_index_current_spike_list(), no_spike);
 	if (chart_spike_shape_ != nullptr)
 		chart_spike_shape_->select_spike(spike_sel);
 	return chart_spike_bar_->select_spike(spike_sel);

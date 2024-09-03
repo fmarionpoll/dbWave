@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "ViewSpikeSort.h"
 
+#include "CMFCMyPropertyGridProperty.h"
 #include "dbWave.h"
 #include "DlgProgress.h"
 #include "DlgSpikeEdit.h"
@@ -32,8 +33,6 @@ ViewSpikeSort::~ViewSpikeSort()
 	spike_classification_->dest_class = sort_destination_class_;
 	spike_classification_->mv_max = measure_max_mv_;
 	spike_classification_->mv_min = measure_min_mv_;
-
-	delete_all_properties();
 }
 
 void ViewSpikeSort::DoDataExchange(CDataExchange* p_dx)
@@ -59,7 +58,7 @@ void ViewSpikeSort::DoDataExchange(CDataExchange* p_dx)
 	DDX_Text(p_dx, IDC_EDIT_LEFT, t_xy_left_);
 
 	DDX_Control(p_dx, IDC_TAB1, spk_list_tab_ctrl);
-	DDX_Control(p_dx, IDC_MFCPROPERTYGRID1, m_propertyGrid);
+	DDX_Control(p_dx, IDC_MFCPROPERTYGRID1, classes_table_);
 }
 
 BEGIN_MESSAGE_MAP(ViewSpikeSort, ViewDbTable)
@@ -140,8 +139,6 @@ void ViewSpikeSort::define_sub_classed_items()
 
 	VERIFY(m_file_scroll_.SubclassDlgItem(IDC_FILESCROLL, this));
 	m_file_scroll_.SetScrollRange(0, 100, FALSE);
-
-	//VERIFY(m_propertyGrid.SubclassDlgItem(IDC_MFCPROPERTYGRID1, this));
 }
 
 void ViewSpikeSort::define_stretch_parameters()
@@ -180,6 +177,7 @@ void ViewSpikeSort::init_charts_from_saved_parameters()
 
 	sort_source_class_ = spike_classification_->source_class;
 	sort_destination_class_ = spike_classification_->dest_class;
+	update_destination_class_descriptor();
 
 	chart_shape_.display_all_files(false, GetDocument());
 	chart_shape_.set_plot_mode(PLOT_CLASS_COLORS, sort_source_class_); // PLOT_ONE_COLOR
@@ -203,54 +201,105 @@ void ViewSpikeSort::init_charts_from_saved_parameters()
 	tag_index_hist_low_ = chart_histogram_.vt_tags.add_tag(spike_classification_->lower_threshold, 0);
 }
 
-void ViewSpikeSort::init_classes_properties_table()
-{
-	//HDITEM item;
-	//item.cxy = 60;
-	//item.mask = HDI_WIDTH;
-	//m_propertyGrid.GetHeaderCtrl().SetItem(0, new HDITEM(item));
-}
-
-void ViewSpikeSort::add_class_property(const int index_class)
+CMFCMyPropertyGridProperty* ViewSpikeSort::classes_table_add_item(const int class_id)
 {
 	CString cs;
-	cs.Format(_T("class %i"), index_class);
-	auto* p_prop2 = new CMFCPropertyGridProperty(cs, _T("select/edit.."), _T(""));
-	p_prop2->AddOption(_T("sugar cell"));
-	p_prop2->AddOption(_T("bitter cell"));
-	p_prop2->AddOption(_T("salt cell"));
-	p_prop2->AddOption(_T("water cell"));
-	p_prop2->AddOption(_T("mechano-receptor"));
-	p_prop2->AddOption(_T("background activity"));
-	p_prop2->AddOption(_T("funny spikes"));
-	p_prop2->AllowEdit(TRUE);  //Editing of options is not allowed
-	p_prop2->SetData(index_class);
-	m_propertyGrid.AddProperty(p_prop2);
+	cs.Format(_T(" %i "), class_id);
 
-	/*
-	 *CMFCPropertyGridColorProperty * pProp3 = new CMFCPropertyGridColorProperty(
-    _T("colour"), RGB(0, 111, 200));
-m_propertyGrid.AddProperty(pProp3);
+	const COleVariant var_value = _T("select/edit..");
 
-CMFCPropertyGridFileProperty * pProp4 = new CMFCPropertyGridFileProperty(
-    _T("open file"), TRUE, _T("D:\\test.txt"));
-m_propertyGrid.AddProperty(pProp4);
+	auto* p_prop = new CMFCMyPropertyGridProperty(cs, var_value, _T(""));
+	p_prop->SetData(class_id);
+	for (auto& i : SpikeClassDescriptor::class_descriptor)
+		p_prop->AddOption(i);
+	p_prop->AllowEdit(TRUE); 
+	classes_table_.AddProperty(p_prop);
+	const int index = class_id;
+	if (index < p_prop->GetOptionCount())
+		p_prop->SetValue(p_prop->GetOption(class_id));
 
-LOGFONT font = { NULL };
-CMFCPropertyGridFontProperty * pProp5 = new CMFCPropertyGridFontProperty(
-    _T("select font"), font);
-m_propertyGrid.AddProperty(pProp5);
-	 */
+	return p_prop;
 }
 
-void ViewSpikeSort::delete_all_properties()
+CMFCMyPropertyGridProperty* ViewSpikeSort::classes_table_find_item(const int class_id) const
 {
-	int n_properties = m_propertyGrid.GetPropertyCount();
+	boolean found = false;
+	CMFCMyPropertyGridProperty* p_prop = nullptr;
+	const int n_properties = classes_table_.GetPropertyCount();
+	for (int i = n_properties - 1; i >= 0; i--)
+	{
+		p_prop = static_cast<CMFCMyPropertyGridProperty*>(classes_table_.GetProperty(i));
+		if(static_cast<int>(p_prop->GetData()) == class_id)
+		{
+			found = true;
+			break;
+		}
+	}
+	if (!found)
+		p_prop = nullptr;
+	return p_prop;
+}
+
+void ViewSpikeSort::classes_table_update(SpikeList* spk_list)
+{
+	const int classes_count = spk_list->get_classes_count();
+	for (int i = 0; i < classes_count; i++)
+	{
+		SpikeClassDescriptor* p_desc = spk_list->get_class_descriptor_from_index(i);
+		const int class_id = p_desc->get_class_id();
+		CMFCMyPropertyGridProperty* p_prop = classes_table_find_item(class_id);
+		if (p_prop == nullptr)
+			p_prop = classes_table_add_item(class_id);
+		if (p_prop != nullptr)
+		{
+			CString cs = p_prop->GetValue();
+			p_desc->set_class_descriptor(cs);
+		}
+	}
+}
+
+void ViewSpikeSort::classes_table_init()
+{
+	CMFCHeaderCtrl& headerCtrl = classes_table_.GetHeaderCtrl();
+	HDITEM hd_item {};
+
+	int col = 0;
+	headerCtrl.GetItem(col, &hd_item);
+	hd_item.mask = HDI_TEXT;
+	LPCTSTR lp_sz_my_string = _T("class");
+	enum
+	{
+		sizeOfBuffer = 12
+	};
+	TCHAR lp_buffer[sizeOfBuffer];
+	hd_item.pszText = lp_buffer;
+	hd_item.cchTextMax = sizeOfBuffer;
+	_tcscpy_s(hd_item.pszText, sizeOfBuffer, lp_sz_my_string);
+	headerCtrl.SetItem(col, &hd_item);
+
+	col = 1;
+	headerCtrl.GetItem(col, &hd_item);
+	hd_item.mask = HDI_TEXT | HDF_CENTER;
+	LPCTSTR lp_sz_my_string2 = _T("description");
+	hd_item.pszText = lp_buffer;
+	hd_item.cchTextMax = sizeOfBuffer;
+	_tcscpy_s(hd_item.pszText, sizeOfBuffer, lp_sz_my_string2);
+	headerCtrl.SetItem(col, &hd_item);
+
+	classes_table_.make_fixed_header();
+	classes_table_.set_left_column_width(35);
+
+}
+
+void ViewSpikeSort::classes_table_delete_all()
+{
+	const int n_properties = classes_table_.GetPropertyCount();
 	for (int i = n_properties-1; i >= 0; i--)
 	{
-		auto p_prop = m_propertyGrid.GetProperty(i);
-		m_propertyGrid.DeleteProperty(p_prop, FALSE, FALSE);
+		auto p_prop = classes_table_.GetProperty(i);
+		classes_table_.DeleteProperty(p_prop, FALSE, FALSE);
 	}
+	classes_table_.Invalidate();
 }
 
 void ViewSpikeSort::OnInitialUpdate()
@@ -259,9 +308,7 @@ void ViewSpikeSort::OnInitialUpdate()
 	define_stretch_parameters();
 	ViewDbTable::OnInitialUpdate();
 
-	init_classes_properties_table();
-	add_class_property(0);
-	add_class_property(2);
+	classes_table_init();
 
 	init_charts_from_saved_parameters();
 	update_file_parameters();
@@ -389,8 +436,8 @@ void ViewSpikeSort::load_current_spike_file()
 	{
 		p_spk_doc->SetModifiedFlag(FALSE);
 		p_spk_doc->SetPathName(GetDocument()->db_get_current_spk_file_name(), FALSE);
-		const int current_index = GetDocument()->get_current_spike_file()->get_spike_list_current_index();
-		p_spk_list = p_spk_doc->set_spike_list_current_index(current_index);
+		const int current_index = GetDocument()->get_current_spike_file()->get_index_current_spike_list();
+		p_spk_list = p_spk_doc->set_index_current_spike_list(current_index);
 	}
 }
 
@@ -400,7 +447,7 @@ void ViewSpikeSort::update_file_parameters()
 	load_current_spike_file();
 	// update Tab at the bottom
 	spk_list_tab_ctrl.init_ctrl_tab_from_spike_doc(p_spk_doc);
-	spk_list_tab_ctrl.SetCurSel(GetDocument()->get_current_spike_file()->get_spike_list_current_index());
+	spk_list_tab_ctrl.SetCurSel(GetDocument()->get_current_spike_file()->get_index_current_spike_list());
 
 	if (first_update || options_view_data_->b_complete_record)
 	{
@@ -524,7 +571,7 @@ void ViewSpikeSort::on_sort()
 	const auto n_files = pdb_doc->db_get_records_count();
 	auto current_list = 0;
 	if (p_spk_doc != nullptr)
-		current_list = p_spk_doc->get_spike_list_current_index();
+		current_list = p_spk_doc->get_index_current_spike_list();
 
 	// change indexes if ALL files selected
 	DlgProgress* dlg_progress = nullptr;
@@ -538,6 +585,8 @@ void ViewSpikeSort::on_sort()
 		dlg_progress->Create();
 		dlg_progress->set_step(1);
 	}
+
+	classes_table_delete_all();
 
 	for (auto i_file = first_file; i_file <= last_file; i_file++)
 	{
@@ -565,7 +614,7 @@ void ViewSpikeSort::on_sort()
 		}
 
 		// load spike list
-		p_spk_list = p_spk_doc->set_spike_list_current_index(current_list);
+		p_spk_list = p_spk_doc->set_index_current_spike_list(current_list);
 		if ((nullptr == p_spk_list) || (0 == p_spk_list->get_spike_length()))
 			continue;
 
@@ -586,6 +635,7 @@ void ViewSpikeSort::on_sort()
 			flag_changed = p_spk_list->sort_spike_with_y1_and_y2(from_class_id_to_class_id, time_window, limits1, limits2);
 		}
 
+		classes_table_update(p_spk_list);
 		if (flag_changed)
 		{
 			p_spk_doc->OnSaveDocument(pdb_doc->db_get_current_spk_file_name(FALSE));
@@ -802,7 +852,7 @@ void ViewSpikeSort::clear_flag_all_spikes()
 
 				for (auto j = 0; j < p_spk_doc->get_spike_list_size(); j++)
 				{
-					p_spk_list = p_spk_doc->set_spike_list_current_index(j);
+					p_spk_list = p_spk_doc->set_index_current_spike_list(j);
 					p_spk_list->clear_flagged_spikes();
 				}
 			}
@@ -816,10 +866,11 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 {
 	const auto pdb_doc = GetDocument();
 	const int n_files = pdb_doc->db_get_records_count();
-	const auto current_spike_list = p_spk_doc->get_spike_list_current_index();
+	const auto current_spike_list = p_spk_doc->get_index_current_spike_list();
 	const int index_current_file = pdb_doc->db_get_current_record_position();
 	db_spike spike_sel(-1, -1, -1);
 	select_spike(spike_sel);
+	classes_table_delete_all();
 
 	const int index_first_file = b_all_files_?  0: index_current_file;
 	const int index_last_file = b_all_files_ ? (n_files-1): index_current_file;
@@ -834,7 +885,7 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 		if (p_spk_doc == nullptr)
 			continue;
 
-		p_spk_list = p_spk_doc->set_spike_list_current_index(current_spike_list);
+		p_spk_list = p_spk_doc->set_index_current_spike_list(current_spike_list);
 		if (p_spk_list == nullptr)
 			continue;
 
@@ -865,6 +916,8 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 			break;
 		}
 
+		classes_table_update(p_spk_list);
+
 		p_spk_doc->OnSaveDocument(pdb_doc->db_get_current_spk_file_name(FALSE));
 		if (b_all_files_)
 		{
@@ -879,6 +932,7 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 	chart_shape_.set_source_data(p_spk_list, GetDocument());
 	chart_spike_bar_.set_source_data(p_spk_list, GetDocument());
 	on_format_gain_adjust();
+
 	UpdateData(FALSE);
 
 	//update_cursors_from_upper_threshold_mv();
@@ -1031,7 +1085,7 @@ void ViewSpikeSort::select_spike(db_spike& spike_sel)
 		const CdbWaveDoc* p_doc = GetDocument();
 		spike_sel.record_id = p_doc->db_get_current_record_id();
 		if (p_doc->m_p_spk_doc != nullptr)
-			spike_sel.spike_list_index = p_doc->m_p_spk_doc->get_spike_list_current_index();
+			spike_sel.spike_list_index = p_doc->m_p_spk_doc->get_index_current_spike_list();
 	}
 	record_id_ = spike_sel.record_id;
 	list_index_ = spike_sel.spike_list_index;
@@ -1403,7 +1457,7 @@ void ViewSpikeSort::update_file_scroll()
 
 void ViewSpikeSort::select_spike_list(const int current_index)
 {
-	p_spk_list = p_spk_doc->set_spike_list_current_index(current_index);
+	p_spk_list = p_spk_doc->set_index_current_spike_list(current_index);
 	ASSERT(p_spk_list != NULL);
 	on_measure_parameters_from_spikes();
 
@@ -1490,11 +1544,21 @@ void ViewSpikeSort::on_en_change_source_class()
 	}
 }
 
+void ViewSpikeSort::update_destination_class_descriptor() const
+{
+	CString cs = _T("undefined category");
+	if (sort_destination_class_ >= 0 && sort_destination_class_ < SpikeClassDescriptor::nb_descriptors)
+		cs = SpikeClassDescriptor::class_descriptor[sort_destination_class_];
+	GetDlgItem(IDC_CLASS_DESCRIPTOR)->SetWindowText(cs);
+}
+
 void ViewSpikeSort::on_en_change_destination_class()
 {
 	if (mm_destination_class_.m_b_entry_done)
 	{
 		mm_destination_class_.on_en_change(this, sort_destination_class_, 1, -1);
+		update_destination_class_descriptor();
+
 		auto db_sel = db_spike(-1, -1, -1);
 		select_spike(db_sel);
 		UpdateData(FALSE);
@@ -1796,7 +1860,7 @@ void ViewSpikeSort::on_en_change_spike_class()
 		{
 			p_spk_doc->SetModifiedFlag(TRUE);
 			const auto current_list = spk_list_tab_ctrl.GetCurSel();
-			auto* spike_list = p_spk_doc->set_spike_list_current_index(current_list);
+			auto* spike_list = p_spk_doc->set_index_current_spike_list(current_list);
 			spike_list->get_spike(spike_index_)->set_class_id(spike_class_index_);
 			update_legends();
 		}

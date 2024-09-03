@@ -41,7 +41,7 @@ COLORREF ChartWnd::color_spike_class_text[] =
 {
 	col_white,
 	col_white, // 6
-	col_white, // 3
+	col_black, // 3
 	col_black, // 1
 	col_black, //4
 	col_black, // 7
@@ -50,8 +50,6 @@ COLORREF ChartWnd::color_spike_class_text[] =
 	col_white, // 2
 	col_white // 9
 };
-
-
 
 HCURSOR ChartWnd::cursors_[NB_CURSORS];
 int ChartWnd::cursors_drag_mode_[NB_CURSORS];
