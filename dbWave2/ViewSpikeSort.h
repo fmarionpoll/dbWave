@@ -7,6 +7,7 @@
 #include "Editctrl.h"
 #include "ScrollBarEx.h"
 #include "options_spk_classification.h"
+#include "CMFCMyPropertyGridCtrl.h"
 
 
 class ViewSpikeSort : public ViewDbTable
@@ -15,7 +16,7 @@ protected:
 	DECLARE_DYNCREATE(ViewSpikeSort)
 	ViewSpikeSort();
 	~ViewSpikeSort() override;
-
+	
 	// Form Data
 	enum { IDD = IDD_VIEWSPKSORT1 };
 
@@ -90,6 +91,11 @@ protected:
 	CEditCtrl mm_t_xy_left_;
 	float t_xy_right_{ 1.f };
 	float t_xy_left_{ 0.f };
+
+	CMFCMyPropertyGridCtrl m_propertyGrid;
+	void init_classes_properties_table();
+	void add_class_property(int index_class);
+	void delete_all_properties();
 
 	options_spk_classification* spike_classification_{};
 	options_view_data* options_view_data_{};
@@ -206,6 +212,4 @@ public:
 	
 
 	DECLARE_MESSAGE_MAP()
-
-	
 };

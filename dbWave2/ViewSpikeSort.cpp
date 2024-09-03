@@ -32,6 +32,8 @@ ViewSpikeSort::~ViewSpikeSort()
 	spike_classification_->dest_class = sort_destination_class_;
 	spike_classification_->mv_max = measure_max_mv_;
 	spike_classification_->mv_min = measure_min_mv_;
+
+	delete_all_properties();
 }
 
 void ViewSpikeSort::DoDataExchange(CDataExchange* p_dx)
@@ -57,6 +59,7 @@ void ViewSpikeSort::DoDataExchange(CDataExchange* p_dx)
 	DDX_Text(p_dx, IDC_EDIT_LEFT, t_xy_left_);
 
 	DDX_Control(p_dx, IDC_TAB1, spk_list_tab_ctrl);
+	DDX_Control(p_dx, IDC_MFCPROPERTYGRID1, m_propertyGrid);
 }
 
 BEGIN_MESSAGE_MAP(ViewSpikeSort, ViewDbTable)
@@ -137,6 +140,8 @@ void ViewSpikeSort::define_sub_classed_items()
 
 	VERIFY(m_file_scroll_.SubclassDlgItem(IDC_FILESCROLL, this));
 	m_file_scroll_.SetScrollRange(0, 100, FALSE);
+
+	//VERIFY(m_propertyGrid.SubclassDlgItem(IDC_MFCPROPERTYGRID1, this));
 }
 
 void ViewSpikeSort::define_stretch_parameters()
@@ -198,11 +203,65 @@ void ViewSpikeSort::init_charts_from_saved_parameters()
 	tag_index_hist_low_ = chart_histogram_.vt_tags.add_tag(spike_classification_->lower_threshold, 0);
 }
 
+void ViewSpikeSort::init_classes_properties_table()
+{
+	//HDITEM item;
+	//item.cxy = 60;
+	//item.mask = HDI_WIDTH;
+	//m_propertyGrid.GetHeaderCtrl().SetItem(0, new HDITEM(item));
+}
+
+void ViewSpikeSort::add_class_property(const int index_class)
+{
+	CString cs;
+	cs.Format(_T("class %i"), index_class);
+	auto* p_prop2 = new CMFCPropertyGridProperty(cs, _T("select/edit.."), _T(""));
+	p_prop2->AddOption(_T("sugar cell"));
+	p_prop2->AddOption(_T("bitter cell"));
+	p_prop2->AddOption(_T("salt cell"));
+	p_prop2->AddOption(_T("water cell"));
+	p_prop2->AddOption(_T("mechano-receptor"));
+	p_prop2->AddOption(_T("background activity"));
+	p_prop2->AddOption(_T("funny spikes"));
+	p_prop2->AllowEdit(TRUE);  //Editing of options is not allowed
+	p_prop2->SetData(index_class);
+	m_propertyGrid.AddProperty(p_prop2);
+
+	/*
+	 *CMFCPropertyGridColorProperty * pProp3 = new CMFCPropertyGridColorProperty(
+    _T("colour"), RGB(0, 111, 200));
+m_propertyGrid.AddProperty(pProp3);
+
+CMFCPropertyGridFileProperty * pProp4 = new CMFCPropertyGridFileProperty(
+    _T("open file"), TRUE, _T("D:\\test.txt"));
+m_propertyGrid.AddProperty(pProp4);
+
+LOGFONT font = { NULL };
+CMFCPropertyGridFontProperty * pProp5 = new CMFCPropertyGridFontProperty(
+    _T("select font"), font);
+m_propertyGrid.AddProperty(pProp5);
+	 */
+}
+
+void ViewSpikeSort::delete_all_properties()
+{
+	int n_properties = m_propertyGrid.GetPropertyCount();
+	for (int i = n_properties-1; i >= 0; i--)
+	{
+		auto p_prop = m_propertyGrid.GetProperty(i);
+		m_propertyGrid.DeleteProperty(p_prop, FALSE, FALSE);
+	}
+}
+
 void ViewSpikeSort::OnInitialUpdate()
 {
 	define_sub_classed_items();
 	define_stretch_parameters();
 	ViewDbTable::OnInitialUpdate();
+
+	init_classes_properties_table();
+	add_class_property(0);
+	add_class_property(2);
 
 	init_charts_from_saved_parameters();
 	update_file_parameters();
