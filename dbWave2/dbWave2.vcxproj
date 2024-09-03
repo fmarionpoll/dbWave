@@ -808,7 +808,7 @@
     <ClCompile Include="output_parameters.cpp" />
     <ClCompile Include="options_scope_channel.cpp" />
     <ClCompile Include="options_scope_struct.cpp" />
-    <ClCompile Include="SpikeClassDescriptor.cpp" />
+    <ClCompile Include="SpikeClassProperties.cpp" />
     <ClCompile Include="options_spk_classification.cpp" />
     <ClCompile Include="spike_detection_array.cpp" />
     <ClCompile Include="options_detect_spikes.cpp" />
@@ -1394,7 +1394,7 @@
     <ClInclude Include="output_parameters.h" />
     <ClInclude Include="options_scope_channel.h" />
     <ClInclude Include="options_scope_struct.h" />
-    <ClInclude Include="SpikeClassDescriptor.h" />
+    <ClInclude Include="SpikeClassProperties.h" />
     <ClInclude Include="db_spike.h" />
     <ClInclude Include="options_spk_classification.h" />
     <ClInclude Include="spike_detection_array.h" />

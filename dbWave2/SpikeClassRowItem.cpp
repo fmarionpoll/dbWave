@@ -39,11 +39,11 @@ void SpikeClassRowItem::create_item(CWnd* parent_wnd, CdbWaveDoc* pdb_doc, Spike
 
 CString SpikeClassRowItem::get_class_comment(const int class_id) const
 {
-	SpikeClassDescriptor* p_desc = spike_list_->get_class_descriptor_from_id(class_id_);
+	SpikeClassProperties* p_desc = spike_list_->get_class_descriptor_from_id(class_id_);
 	CString cs; 
 	cs.Format(_T("class %i\n%s\nn=%i"),
 		p_desc->get_class_id(),
-		(LPCTSTR)p_desc->get_class_descriptor(),
+		(LPCTSTR)p_desc->get_class_text(),
 		p_desc->get_class_n_items());
 
 	return cs;

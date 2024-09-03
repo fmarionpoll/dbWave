@@ -210,7 +210,7 @@ CMFCMyPropertyGridProperty* ViewSpikeSort::classes_table_add_item(const int clas
 
 	auto* p_prop = new CMFCMyPropertyGridProperty(cs, var_value, _T(""));
 	p_prop->SetData(class_id);
-	for (auto& i : SpikeClassDescriptor::class_descriptor)
+	for (auto& i : SpikeClassProperties::class_descriptor)
 		p_prop->AddOption(i);
 	p_prop->AllowEdit(TRUE); 
 	classes_table_.AddProperty(p_prop);
@@ -245,15 +245,26 @@ void ViewSpikeSort::classes_table_update(SpikeList* spk_list)
 	const int classes_count = spk_list->get_classes_count();
 	for (int i = 0; i < classes_count; i++)
 	{
-		SpikeClassDescriptor* p_desc = spk_list->get_class_descriptor_from_index(i);
+		SpikeClassProperties* p_desc = spk_list->get_class_descriptor_from_index(i);
 		const int class_id = p_desc->get_class_id();
+		CString cs_desc = p_desc->get_class_text();
+
 		CMFCMyPropertyGridProperty* p_prop = classes_table_find_item(class_id);
 		if (p_prop == nullptr)
 			p_prop = classes_table_add_item(class_id);
+
 		if (p_prop != nullptr)
 		{
-			CString cs = p_prop->GetValue();
-			p_desc->set_class_descriptor(cs);
+			if (cs_desc.IsEmpty())
+			{
+				CString cs = p_prop->GetValue();
+				p_desc->set_class_text(cs);
+				p_spk_doc->SetModifiedFlag(TRUE);
+			}
+			else
+			{
+				p_desc->set_class_text(cs_desc);
+			}
 		}
 	}
 }
@@ -445,6 +456,7 @@ void ViewSpikeSort::update_file_parameters()
 {
 	const BOOL first_update = (p_spk_doc == nullptr);
 	load_current_spike_file();
+
 	// update Tab at the bottom
 	spk_list_tab_ctrl.init_ctrl_tab_from_spike_doc(p_spk_doc);
 	spk_list_tab_ctrl.SetCurSel(GetDocument()->get_current_spike_file()->get_index_current_spike_list());
@@ -636,7 +648,7 @@ void ViewSpikeSort::on_sort()
 		}
 
 		classes_table_update(p_spk_list);
-		if (flag_changed)
+		if (flag_changed || p_spk_doc->IsModified())
 		{
 			p_spk_doc->OnSaveDocument(pdb_doc->db_get_current_spk_file_name(FALSE));
 			pdb_doc->set_db_n_spikes(p_spk_list->get_spikes_count());
@@ -917,8 +929,8 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 		}
 
 		classes_table_update(p_spk_list);
-
 		p_spk_doc->OnSaveDocument(pdb_doc->db_get_current_spk_file_name(FALSE));
+
 		if (b_all_files_)
 		{
 			l_first_ = 0;
@@ -1547,8 +1559,8 @@ void ViewSpikeSort::on_en_change_source_class()
 void ViewSpikeSort::update_destination_class_descriptor() const
 {
 	CString cs = _T("undefined category");
-	if (sort_destination_class_ >= 0 && sort_destination_class_ < SpikeClassDescriptor::nb_descriptors)
-		cs = SpikeClassDescriptor::class_descriptor[sort_destination_class_];
+	if (sort_destination_class_ >= 0 && sort_destination_class_ < SpikeClassProperties::nb_descriptors)
+		cs = SpikeClassProperties::class_descriptor[sort_destination_class_];
 	GetDlgItem(IDC_CLASS_DESCRIPTOR)->SetWindowText(cs);
 }
 

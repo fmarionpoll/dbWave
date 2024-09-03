@@ -471,7 +471,7 @@
     <ClCompile Include="IntervalsListCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpikeClassDescriptor.cpp">
+    <ClCompile Include="SpikeClassProperties.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="spike_detection_array.cpp">
@@ -1082,7 +1082,7 @@
     <ClInclude Include="IntervalsListCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpikeClassDescriptor.h">
+    <ClInclude Include="SpikeClassProperties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="options_detect_stimulus.h">

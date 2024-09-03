@@ -153,6 +153,7 @@ protected:
 	afx_msg void OnMouseMove(UINT n_flags, CPoint point);
 	afx_msg void OnLButtonUp(UINT n_flags, CPoint point);
 	afx_msg void OnLButtonDown(UINT n_flags, CPoint point);
+
 	afx_msg void on_edit_copy();
 	afx_msg void on_gain_button();
 	afx_msg void on_bias_button();

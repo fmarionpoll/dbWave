@@ -15,7 +15,7 @@ SpikeList::SpikeList()
 {
 	flagged_spikes_.SetSize(0);
 	class_descriptors_.SetSize(1);
-	class_descriptors_.Add(SpikeClassDescriptor(0,0, _T("class 0")));
+	class_descriptors_.Add(SpikeClassProperties(0,0, _T("class 0")));
 }
 
 SpikeList::~SpikeList()
@@ -302,7 +302,7 @@ void SpikeList::serialize_spike_class_descriptors(CArchive& ar)
 		ar << static_cast<long>(n_descriptors);
 		for (auto i = 0; i < n_descriptors; i++)
 		{
-			SpikeClassDescriptor item = class_descriptors_.GetAt(i);
+			SpikeClassProperties item = class_descriptors_.GetAt(i);
 			item.Serialize(ar);
 		}
 	}
@@ -316,7 +316,7 @@ void SpikeList::serialize_spike_class_descriptors(CArchive& ar)
 		class_descriptors_.SetSize(n_classes_);
 		for (auto i = 0; i < n_classes_; i++)
 		{
-			SpikeClassDescriptor item;
+			SpikeClassProperties item;
 			item.Serialize(ar);
 			class_descriptors_.Add(item);
 		}
@@ -370,7 +370,7 @@ void SpikeList::read_file_version_5(CArchive& ar)
 	keep_only_valid_classes_ = FALSE; 
 	n_classes_ = 1;
 	class_descriptors_.SetSize(1);
-	class_descriptors_.SetAt(0, SpikeClassDescriptor(0, 0, _T("class 0"))); 
+	class_descriptors_.SetAt(0, SpikeClassProperties(0, 0, _T("class 0"))); 
 	long dummy;
 	ar >> dummy;
 	keep_only_valid_classes_ = dummy;
@@ -398,7 +398,7 @@ void SpikeList::read_class_descriptors_v5(CArchive& ar, const int index)
 	ar >> dummy1;
 	ar >> dummy2;
 	cs.Format(_T("class %i"), dummy1);
-	class_descriptors_.SetAt(index, SpikeClassDescriptor(dummy1, dummy2, cs));
+	class_descriptors_.SetAt(index, SpikeClassProperties(dummy1, dummy2, cs));
 }
 
 void SpikeList::read_file_version_before_5(CArchive& ar, const int version)
@@ -461,7 +461,7 @@ void SpikeList::read_file_version_before_5(CArchive& ar, const int version)
 	keep_only_valid_classes_ = FALSE; // default: no valid array
 	n_classes_ = 1;
 	class_descriptors_.SetSize(2); // default size - some functions
-	class_descriptors_.SetAt(0, SpikeClassDescriptor(0, 0, _T("class 0")));
+	class_descriptors_.SetAt(0, SpikeClassProperties(0, 0, _T("class 0")));
 
 	// load flag and load elements only if valid
 	long dummy;
@@ -571,11 +571,11 @@ BOOL SpikeList::is_any_spike_around(const long ii_time, const int jitter, int& s
 
 CString SpikeList::get_class_description_from_id(const int class_id)
 {
-	SpikeClassDescriptor* p_class_descriptor = get_class_descriptor_from_id(class_id);
+	SpikeClassProperties* p_class_descriptor = get_class_descriptor_from_id(class_id);
 	if (p_class_descriptor == nullptr)
 		return {_T("undefined")};
 	else
-		return p_class_descriptor->get_class_descriptor();
+		return p_class_descriptor->get_class_text();
 }
 
 int SpikeList::get_class_id_index(const int class_id)
@@ -595,9 +595,9 @@ int SpikeList::get_class_id_index(const int class_id)
 	return item_index;
 }
 
-SpikeClassDescriptor* SpikeList::get_class_descriptor_from_id(const int class_id)
+SpikeClassProperties* SpikeList::get_class_descriptor_from_id(const int class_id)
 {
-	SpikeClassDescriptor* p_class_descriptor = nullptr;
+	SpikeClassProperties* p_class_descriptor = nullptr;
 	const int index = get_class_id_index(class_id);
 	if (index < 0)
 		return nullptr;
@@ -818,7 +818,7 @@ BOOL SpikeList::init_spike_list(const AcqDataDoc* acq_data_doc, const options_de
 	keep_only_valid_classes_ = FALSE; // default: no valid array
 	n_classes_ = 0;
 	class_descriptors_.SetSize(2); // default size - some functions
-	class_descriptors_.SetAt(0, SpikeClassDescriptor(0,0, _T("class 0")));
+	class_descriptors_.SetAt(0, SpikeClassProperties(0,0, _T("class 0")));
 	return TRUE;
 }
 
@@ -974,7 +974,7 @@ long SpikeList::update_class_list()
 		//m_spike_class_descriptors.Add(SpikeClassDescriptor(0, 0)); 
 		return 0L; 
 	}
-	class_descriptors_.Add(SpikeClassDescriptor(get_spike(0)->get_class_id(), 1,  _T("class 1")));
+	class_descriptors_.Add(SpikeClassProperties(get_spike(0)->get_class_id(), 1,  _T("class 1")));
 	n_classes_ = 1; 
 
 	// loop over all spikes of the list
@@ -984,7 +984,7 @@ long SpikeList::update_class_list()
 		boolean found = false;
 		for (auto j = 0; j < n_classes_; j++)
 		{
-			SpikeClassDescriptor* class_descriptor = &class_descriptors_.GetAt(j);
+			SpikeClassProperties* class_descriptor = &class_descriptors_.GetAt(j);
 			const auto array_class = class_descriptor->get_class_id();
 			if (spike_class == array_class) 
 			{
@@ -1006,13 +1006,13 @@ int SpikeList::add_class_id(const int id)
 	{
 		if (id < class_descriptors_.GetAt(i).get_class_id())
 		{
-			class_descriptors_.InsertAt(i, SpikeClassDescriptor(id, 1, _T("class 1")));
+			class_descriptors_.InsertAt(i, SpikeClassProperties(id, 1, _T("class 1")));
 			index = i;
 			break;
 		}
 	}
 	if (index < 0)
-		index = class_descriptors_.Add(SpikeClassDescriptor(id, 1, _T("class 1")));
+		index = class_descriptors_.Add(SpikeClassProperties(id, 1, _T("class 1")));
 	n_classes_++;
 	return index;
 }
