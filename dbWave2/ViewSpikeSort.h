@@ -213,7 +213,10 @@ public:
 	afx_msg void on_en_change_edit_left2();
 	afx_msg void on_en_change_edit_right2();
 	afx_msg void on_en_change_hist_bin_ms();
-	
+
+
+	afx_msg LRESULT OnPropertyChanged(WPARAM wparam, LPARAM lparam);
+
 
 	DECLARE_MESSAGE_MAP()
 };

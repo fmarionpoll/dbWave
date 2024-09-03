@@ -104,6 +104,8 @@ BEGIN_MESSAGE_MAP(ViewSpikeSort, ViewDbTable)
 
 	ON_BN_DOUBLECLICKED(IDC_CHART_MEASURE, &ViewSpikeSort::on_tools_edit_spikes)
 
+	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, OnPropertyChanged)
+
 END_MESSAGE_MAP()
 
 void ViewSpikeSort::define_sub_classed_items()
@@ -929,7 +931,7 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 		}
 
 		classes_table_update(p_spk_list);
-		p_spk_doc->OnSaveDocument(pdb_doc->db_get_current_spk_file_name(FALSE));
+		save_current_spk_file();
 
 		if (b_all_files_)
 		{
@@ -1928,4 +1930,26 @@ HBRUSH ViewSpikeSort::OnCtlColor(CDC* p_dc, CWnd* p_wnd, const UINT n_ctl_color)
 	}
 
 	return hbr;
+}
+
+LRESULT ViewSpikeSort::OnPropertyChanged(WPARAM wparam, LPARAM lparam)
+{
+	if (!lparam)
+		return 0;
+	auto prop = reinterpret_cast<CMFCPropertyGridProperty*>(lparam);
+	/*if (prop != m_pProp)
+	{*/
+	const int class_id = static_cast<int>(prop->GetData());
+	const auto str_variant = prop->GetValue();
+	CString str;
+	if (str_variant.vt == VT_BSTR)
+		str = CString(str_variant.bstrVal);
+
+	SpikeClassProperties* p_desc = p_spk_list->get_class_descriptor_from_id(class_id);
+	p_desc->set_class_text(str);
+
+	p_spk_doc->SetModifiedFlag(TRUE);
+	save_current_spk_file();
+	//}
+	return 0;
 }

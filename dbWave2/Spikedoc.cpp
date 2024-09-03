@@ -196,7 +196,10 @@ void CSpikeDoc::serialize_spike_list_arrays(CArchive& ar)
 	}
 
 	for (int i = 0; i < n_spike_arrays; i++)
-		spike_list_array_[i].Serialize(ar); // v6-v7
+	{
+		SpikeList& spk_list = spike_list_array_.GetAt(i);
+		spk_list.Serialize(ar); // v6-v7
+	}
 }
 
 void CSpikeDoc::read_version6(CArchive& ar)

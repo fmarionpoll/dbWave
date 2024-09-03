@@ -29,6 +29,7 @@ SpikeClassProperties::SpikeClassProperties(const SpikeClassProperties & other)
 {
 	class_id_ = other.class_id_;
 	n_items_ = other.n_items_;
+	class_text_ = other.class_text_;
 }
 
 SpikeClassProperties::~SpikeClassProperties()
@@ -37,26 +38,23 @@ SpikeClassProperties::~SpikeClassProperties()
 void SpikeClassProperties::Serialize(CArchive& ar)
 {
 	CObject::Serialize(ar);
-
+	WORD trap = 100;
+	WORD count = 3;
 	if (ar.IsStoring())
 	{
-		ar << class_id_ << n_items_  << class_text_;
+		ar << trap << count << class_id_ << n_items_  << class_text_;
 	}
 	else
 	{
-		const auto i = ar.GetObjectSchema();
-		switch (i)
+		ar >> trap;
+		if (trap < 100)
 		{
-		case 1:	
-			ar >> class_id_ >> n_items_;
-			class_text_.Format(_T("class %i"), class_id_);
-			break;
-		case 2:
-		default:
-			ar >> class_id_ >> n_items_ >> class_text_;
-			if (class_text_.IsEmpty())
-				class_text_ = " ";
-			break;
+			class_id_ = trap;
+			ar >> n_items_;
+		}
+		else
+		{
+			ar >> count >> class_id_ >> n_items_ >> class_text_;
 		}
 	}
 }
