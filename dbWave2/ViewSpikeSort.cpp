@@ -58,7 +58,7 @@ void ViewSpikeSort::DoDataExchange(CDataExchange* p_dx)
 	DDX_Text(p_dx, IDC_EDIT_LEFT, t_xy_left_);
 
 	DDX_Control(p_dx, IDC_TAB1, spk_list_tab_ctrl);
-	DDX_Control(p_dx, IDC_MFCPROPERTYGRID1, classes_table_);
+	DDX_Control(p_dx, IDC_MFCPROPERTYGRID1, property_grid_);
 }
 
 BEGIN_MESSAGE_MAP(ViewSpikeSort, ViewDbTable)
@@ -203,7 +203,7 @@ void ViewSpikeSort::init_charts_from_saved_parameters()
 	tag_index_hist_low_ = chart_histogram_.vt_tags.add_tag(spike_classification_->lower_threshold, 0);
 }
 
-CMFCMyPropertyGridProperty* ViewSpikeSort::classes_table_add_item(const int class_id)
+CMFCMyPropertyGridProperty* ViewSpikeSort::property_grid_add_item(const int class_id)
 {
 	CString cs;
 	cs.Format(_T(" %i "), class_id);
@@ -215,7 +215,7 @@ CMFCMyPropertyGridProperty* ViewSpikeSort::classes_table_add_item(const int clas
 	for (auto& i : SpikeClassProperties::class_descriptor)
 		p_prop->AddOption(i);
 	p_prop->AllowEdit(TRUE); 
-	classes_table_.AddProperty(p_prop);
+	property_grid_.AddProperty(p_prop);
 	const int index = class_id;
 	if (index < p_prop->GetOptionCount())
 		p_prop->SetValue(p_prop->GetOption(class_id));
@@ -223,14 +223,14 @@ CMFCMyPropertyGridProperty* ViewSpikeSort::classes_table_add_item(const int clas
 	return p_prop;
 }
 
-CMFCMyPropertyGridProperty* ViewSpikeSort::classes_table_find_item(const int class_id) const
+CMFCMyPropertyGridProperty* ViewSpikeSort::property_grid_find_item(const int class_id) const
 {
 	boolean found = false;
 	CMFCMyPropertyGridProperty* p_prop = nullptr;
-	const int n_properties = classes_table_.GetPropertyCount();
+	const int n_properties = property_grid_.GetPropertyCount();
 	for (int i = n_properties - 1; i >= 0; i--)
 	{
-		p_prop = static_cast<CMFCMyPropertyGridProperty*>(classes_table_.GetProperty(i));
+		p_prop = static_cast<CMFCMyPropertyGridProperty*>(property_grid_.GetProperty(i));
 		if(static_cast<int>(p_prop->GetData()) == class_id)
 		{
 			found = true;
@@ -242,7 +242,7 @@ CMFCMyPropertyGridProperty* ViewSpikeSort::classes_table_find_item(const int cla
 	return p_prop;
 }
 
-void ViewSpikeSort::classes_table_update(SpikeList* spk_list)
+void ViewSpikeSort::property_grid_update(SpikeList* spk_list)
 {
 	const int classes_count = spk_list->get_classes_count();
 	for (int i = 0; i < classes_count; i++)
@@ -251,9 +251,9 @@ void ViewSpikeSort::classes_table_update(SpikeList* spk_list)
 		const int class_id = p_desc->get_class_id();
 		CString cs_desc = p_desc->get_class_text();
 
-		CMFCMyPropertyGridProperty* p_prop = classes_table_find_item(class_id);
+		CMFCMyPropertyGridProperty* p_prop = property_grid_find_item(class_id);
 		if (p_prop == nullptr)
-			p_prop = classes_table_add_item(class_id);
+			p_prop = property_grid_add_item(class_id);
 
 		if (p_prop != nullptr)
 		{
@@ -271,13 +271,13 @@ void ViewSpikeSort::classes_table_update(SpikeList* spk_list)
 	}
 }
 
-void ViewSpikeSort::classes_table_init()
+void ViewSpikeSort::property_grid_init()
 {
-	CMFCHeaderCtrl& headerCtrl = classes_table_.GetHeaderCtrl();
+	CMFCHeaderCtrl& header_ctrl = property_grid_.GetHeaderCtrl();
 	HDITEM hd_item {};
 
 	int col = 0;
-	headerCtrl.GetItem(col, &hd_item);
+	header_ctrl.GetItem(col, &hd_item);
 	hd_item.mask = HDI_TEXT;
 	LPCTSTR lp_sz_my_string = _T("class");
 	enum
@@ -288,31 +288,31 @@ void ViewSpikeSort::classes_table_init()
 	hd_item.pszText = lp_buffer;
 	hd_item.cchTextMax = sizeOfBuffer;
 	_tcscpy_s(hd_item.pszText, sizeOfBuffer, lp_sz_my_string);
-	headerCtrl.SetItem(col, &hd_item);
+	header_ctrl.SetItem(col, &hd_item);
 
 	col = 1;
-	headerCtrl.GetItem(col, &hd_item);
+	header_ctrl.GetItem(col, &hd_item);
 	hd_item.mask = HDI_TEXT | HDF_CENTER;
 	LPCTSTR lp_sz_my_string2 = _T("description");
 	hd_item.pszText = lp_buffer;
 	hd_item.cchTextMax = sizeOfBuffer;
 	_tcscpy_s(hd_item.pszText, sizeOfBuffer, lp_sz_my_string2);
-	headerCtrl.SetItem(col, &hd_item);
+	header_ctrl.SetItem(col, &hd_item);
 
-	classes_table_.make_fixed_header();
-	classes_table_.set_left_column_width(35);
+	property_grid_.make_fixed_header();
+	property_grid_.set_left_column_width(35);
 
 }
 
-void ViewSpikeSort::classes_table_delete_all()
+void ViewSpikeSort::property_grid_delete_all()
 {
-	const int n_properties = classes_table_.GetPropertyCount();
+	const int n_properties = property_grid_.GetPropertyCount();
 	for (int i = n_properties-1; i >= 0; i--)
 	{
-		auto p_prop = classes_table_.GetProperty(i);
-		classes_table_.DeleteProperty(p_prop, FALSE, FALSE);
+		auto p_prop = property_grid_.GetProperty(i);
+		property_grid_.DeleteProperty(p_prop, FALSE, FALSE);
 	}
-	classes_table_.Invalidate();
+	property_grid_.Invalidate();
 }
 
 void ViewSpikeSort::OnInitialUpdate()
@@ -321,7 +321,7 @@ void ViewSpikeSort::OnInitialUpdate()
 	define_stretch_parameters();
 	ViewDbTable::OnInitialUpdate();
 
-	classes_table_init();
+	property_grid_init();
 
 	init_charts_from_saved_parameters();
 	update_file_parameters();
@@ -600,7 +600,7 @@ void ViewSpikeSort::on_sort()
 		dlg_progress->set_step(1);
 	}
 
-	classes_table_delete_all();
+	property_grid_delete_all();
 
 	for (auto i_file = first_file; i_file <= last_file; i_file++)
 	{
@@ -649,7 +649,7 @@ void ViewSpikeSort::on_sort()
 			flag_changed = p_spk_list->sort_spike_with_y1_and_y2(from_class_id_to_class_id, time_window, limits1, limits2);
 		}
 
-		classes_table_update(p_spk_list);
+		property_grid_update(p_spk_list);
 		if (flag_changed || p_spk_doc->IsModified())
 		{
 			p_spk_doc->OnSaveDocument(pdb_doc->db_get_current_spk_file_name(FALSE));
@@ -884,7 +884,7 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 	const int index_current_file = pdb_doc->db_get_current_record_position();
 	db_spike spike_sel(-1, -1, -1);
 	select_spike(spike_sel);
-	classes_table_delete_all();
+	property_grid_delete_all();
 
 	const int index_first_file = b_all_files_?  0: index_current_file;
 	const int index_last_file = b_all_files_ ? (n_files-1): index_current_file;
@@ -930,7 +930,7 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 			break;
 		}
 
-		classes_table_update(p_spk_list);
+		property_grid_update(p_spk_list);
 		save_current_spk_file();
 
 		if (b_all_files_)

@@ -93,12 +93,12 @@ protected:
 	float t_xy_right_{ 1.f };
 	float t_xy_left_{ 0.f };
 
-	CMFCMyPropertyGridCtrl classes_table_;
-	void classes_table_init();
-	CMFCMyPropertyGridProperty* classes_table_add_item(int class_id);
-	CMFCMyPropertyGridProperty* classes_table_find_item(int class_id) const;
-	void classes_table_update(SpikeList* spk_list);
-	void classes_table_delete_all();
+	CMFCMyPropertyGridCtrl property_grid_;
+	void property_grid_init();
+	CMFCMyPropertyGridProperty* property_grid_add_item(int class_id);
+	CMFCMyPropertyGridProperty* property_grid_find_item(int class_id) const;
+	void property_grid_update(SpikeList* spk_list);
+	void property_grid_delete_all();
 
 	options_spk_classification* spike_classification_{};
 	options_view_data* options_view_data_{};
