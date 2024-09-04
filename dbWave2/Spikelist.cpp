@@ -1004,7 +1004,7 @@ void SpikeList::remove_spike_classes_with_no_spikes()
 	for (int i = count-1; i >= 0; i--)
 	{
 		const auto* desc = class_properties_.GetAt(i);
-		if( desc->get_class_n_items())
+		if( desc->get_class_n_items() < 1)
 		{
 			class_properties_.RemoveAt(i);
 			delete desc;
