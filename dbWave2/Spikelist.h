@@ -65,7 +65,8 @@ protected:
 	BOOL b_save_artefacts_ {false}; 
 	BOOL keep_only_valid_classes_ {false};
 	int n_classes_ {0};
-	CArray<SpikeClassProperties, SpikeClassProperties> class_descriptors_{};
+
+	CArray<SpikeClassProperties*, SpikeClassProperties*> class_properties_{};
 
 	//  (5) list of spikes flagged
 	CArray<int, int> flagged_spikes_ {};
@@ -74,19 +75,22 @@ protected:
 public:
 	BOOL is_class_list_valid() const { return keep_only_valid_classes_; }
 
-	int get_classes_count() const {return  class_descriptors_.GetCount();}
-	int get_class_id(const int i) const { return class_descriptors_.GetAt(i).get_class_id();}
-	void set_class_id(const int i, const int id) { class_descriptors_.GetAt(i).set_class_id(id); }
+	int get_classes_count() const {return  class_properties_.GetCount();}
+	int get_class_id(const int i) const { return class_properties_.GetAt(i)->get_class_id();}
+	void set_class_id(const int i, const int id) { class_properties_.GetAt(i)->set_class_id(id); }
 	int add_class_id(int id);
 
 	SpikeClassProperties* get_class_descriptor_from_id(int class_id);
-	SpikeClassProperties* get_class_descriptor_from_index(const int index) {return &class_descriptors_.GetAt(index);}
+	SpikeClassProperties* get_class_descriptor_from_index(const int index) {return class_properties_.GetAt(index);}
 	CString get_class_description_from_id(int class_id);
 
 	int get_class_id_index(int class_id);
 	int increment_class_n_items(int class_id);
 	int decrement_class_n_items(int class_id);
 	void change_spike_class_id(int spike_no, int class_id);
+	long update_class_list();
+	void remove_spike_classes_with_no_spikes();
+	void clear_spike_classes_spikes_count();
 
 	Spike* get_spike(const int index) { return spikes_.GetSize() > 0 ? spikes_.GetAt(index) : nullptr; }
 	int get_spikes_count() const { return spikes_.GetCount(); }
@@ -113,7 +117,7 @@ public:
 	int get_total_max_min_of_y1(int* max, int* min);
 
 	BOOL init_spike_list(const AcqDataDoc* acq_data_doc, const options_detect_spikes* spk_detect_parameters);
-	long update_class_list();
+
 	void erase_data();
 	void change_all_spike_from_class_id_to_new_class_id(int old_class_id, int new_class_id);
 
@@ -157,7 +161,7 @@ protected:
 	void serialize_spikes(CArchive& ar);
 	void serialize_spike_data_short(CArchive& ar);
 	
-	void serialize_spike_class_descriptors(CArchive& ar);
+	void serialize_spike_class_properties(CArchive& ar);
 	void serialize_additional_data(CArchive& ar);
 
 	int get_index_first_spike(int index_start, boolean reject_artefacts);

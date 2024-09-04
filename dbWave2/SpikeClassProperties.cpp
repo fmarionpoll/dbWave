@@ -35,6 +35,13 @@ SpikeClassProperties::SpikeClassProperties(const SpikeClassProperties & other)
 SpikeClassProperties::~SpikeClassProperties()
 = default;
 
+CString SpikeClassProperties::get_class_default_descriptor_string(const int class_id)
+{
+	CString cs = (class_id >= 0 && class_id < SpikeClassProperties::nb_descriptors) ?
+		SpikeClassProperties::class_descriptor[class_id] : _T("undefined");
+	return cs;
+}
+
 void SpikeClassProperties::Serialize(CArchive& ar)
 {
 	CObject::Serialize(ar);

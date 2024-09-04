@@ -5,7 +5,7 @@ class SpikeClassProperties : public CObject
 protected:
 	int class_id_  {0};
 	int n_items_  {0};
-	CString class_text_{};
+	CString class_text_{ _T("class 0") };
 
 public:
 	static constexpr int nb_descriptors{ 7 };
@@ -30,5 +30,7 @@ public:
 
 	int increment_n_items() { n_items_++; return n_items_; }
 	int decrement_n_items() { if (n_items_ > 0)  n_items_--; return n_items_; }
+
+	static CString get_class_default_descriptor_string(int class_id);
 };
 
