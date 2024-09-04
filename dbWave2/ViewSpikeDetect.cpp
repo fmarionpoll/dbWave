@@ -6,7 +6,7 @@
 #include "dbWave.h"
 #include "ViewSpikeDetect.h"
 
-#include "CNiceUnit.h"
+#include "NiceUnit.h"
 #include "DlgCopyAs.h"
 #include "DlgDataSeries.h"
 #include "DlgProgress.h"
@@ -2050,7 +2050,7 @@ CString ViewSpikeDetection::print_convert_file_index(const long l_first, const l
 	CString cs_unit = _T(" s");
 	CString cs_comment;
 	float x_scale_factor;
-	const auto x1 = CNiceUnit::change_unit(static_cast<float>(l_first) /									m_sampling_rate_, &cs_unit, &x_scale_factor);
+	const auto x1 = NiceUnit::change_unit(static_cast<float>(l_first) /									m_sampling_rate_, &cs_unit, &x_scale_factor);
 	double d;
 	const auto fraction1 = modf(x1, &d) * 1000.f;
 		//static_cast<int>((x1 - static_cast<int>(x1)) * static_cast<float>(1000.));
@@ -2171,8 +2171,8 @@ CString ViewSpikeDetection::print_data_bars(CDC* p_dc, const ChartData* p_data_c
 		const auto time_per_pixel = p_data_chart_wnd->get_time_per_pixel();
 		const auto z = time_per_pixel * static_cast<float>(i_horizontal_bar); // convert 1/10 of the length of the data displayed into time
 		float x_scale_factor;
-		const auto x = CNiceUnit::change_unit(z, &cs_unit, &x_scale_factor); // convert time into a scaled time
-		const auto k = CNiceUnit::nice_unit(x); // convert the (scaled) time value into time expressed as an integral
+		const auto x = NiceUnit::change_unit(z, &cs_unit, &x_scale_factor); // convert time into a scaled time
+		const auto k = NiceUnit::nice_unit(x); // convert the (scaled) time value into time expressed as an integral
 		i_horizontal_bar = static_cast<int>((static_cast<float>(k) * x_scale_factor) / time_per_pixel);
 		// compute how many pixels it makes
 		// print out the scale and units
@@ -2191,8 +2191,8 @@ CString ViewSpikeDetection::print_data_bars(CDC* p_dc, const ChartData* p_data_c
 	// convert bar size into voltage units and back into pixels
 	const auto volts_per_pixel = p_data_chart_wnd->get_channel_list_volts_per_pixel(0);
 	const auto z_volts = volts_per_pixel * static_cast<float>(i_vertical_bar); // convert 1/3 of the height into voltage
-	const auto z_scale = CNiceUnit::change_unit(z_volts, &cs_unit, &y_scale_factor);
-	const auto z_nice = static_cast<float>(CNiceUnit::nice_unit(z_scale));
+	const auto z_scale = NiceUnit::change_unit(z_volts, &cs_unit, &y_scale_factor);
+	const auto z_nice = static_cast<float>(NiceUnit::nice_unit(z_scale));
 	i_vertical_bar = static_cast<int>(z_nice * y_scale_factor / volts_per_pixel); // compute how many pixels it makes
 
 	if (options_view_data_->b_voltage_scale_bar)
@@ -2218,7 +2218,7 @@ CString ViewSpikeDetection::print_data_bars(CDC* p_dc, const ChartData* p_data_c
 			{
 				const auto z = static_cast<float>(i_vertical_bar) * p_data_chart_wnd->get_channel_list_volts_per_pixel(channel_index);
 				const auto x = z / y_scale_factor;
-				const auto j = CNiceUnit::nice_unit(x);
+				const auto j = NiceUnit::nice_unit(x);
 				cs.Format(_T("vert bar = %i %s "), j, (LPCTSTR)cs_unit); 
 				str_comment += cs;
 			}

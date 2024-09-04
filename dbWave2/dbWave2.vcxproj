@@ -784,13 +784,15 @@
     <ClCompile Include="ChartSpike.cpp" />
     <ClCompile Include="CMFCMyPropertyGridCtrl.cpp" />
     <ClCompile Include="CMFCMyPropertyGridProperty.cpp" />
-    <ClCompile Include="CNiceUnit.cpp" />
+    <ClCompile Include="NiceUnit.cpp" />
     <ClCompile Include="Controls\GridComboEdit.cpp" />
     <ClCompile Include="Controls\InPlaceEdit.cpp" />
     <ClCompile Include="DlgOverwriteFileOptions.cpp" />
     <ClCompile Include="DlgPrintDataComments.cpp" />
     <ClCompile Include="GridCtrl\GridDefaultCell.cpp" />
     <ClCompile Include="GridCtrl\GridInPlaceList.cpp" />
+    <ClCompile Include="PaneldbFilterToolBar.cpp" />
+    <ClCompile Include="PaneldbPropertiesToolBar.cpp" />
     <ClCompile Include="SpikeClassRowItem.cpp" />
     <ClCompile Include="SpikeClassListBoxContext.cpp" />
     <ClCompile Include="SpikeDetectArray.cpp" />
@@ -839,7 +841,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="CSpkListTabCtrl.cpp" />
+    <ClCompile Include="SpikeListTabCtrl.cpp" />
     <ClCompile Include="datafile_CEDSpike2.cpp" />
     <ClCompile Include="DlgDataTranslationBoard.cpp" />
     <ClCompile Include="ChanListItem.cpp">
@@ -864,7 +866,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Cscale.cpp">
+    <ClCompile Include="Scale.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1120,12 +1122,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="PanelFilter.cpp">
+    <ClCompile Include="PaneldbFilter.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="PanelProperties.cpp">
+    <ClCompile Include="PaneldbProperties.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -1367,7 +1369,7 @@
     <ClInclude Include="ChartSpike.h" />
     <ClInclude Include="CMFCMyPropertyGridCtrl.h" />
     <ClInclude Include="CMFCMyPropertyGridProperty.h" />
-    <ClInclude Include="CNiceUnit.h" />
+    <ClInclude Include="NiceUnit.h" />
     <ClInclude Include="ColorNames.h" />
     <ClInclude Include="Controls\GridComboEdit.h" />
     <ClInclude Include="Controls\InPlaceEdit.h" />
@@ -1377,6 +1379,8 @@
     <ClInclude Include="GridCtrl\GridDefaultCell.h" />
     <ClInclude Include="GridCtrl\GridDefines.h" />
     <ClInclude Include="GridCtrl\GridInPlaceList.h" />
+    <ClInclude Include="PaneldbFilterToolBar.h" />
+    <ClInclude Include="PaneldbPropertiesToolBar.h" />
     <ClInclude Include="SpikeClassRowItem.h" />
     <ClInclude Include="SpikeClassListBoxContext.h" />
     <ClInclude Include="SpikeDetectArray.h" />
@@ -1412,7 +1416,7 @@
     <ClInclude Include="DlgADIntervals.h" />
     <ClInclude Include="DlgBrowseFile.h" />
     <ClInclude Include="CApplication.h" />
-    <ClInclude Include="CSpkListTabCtrl.h" />
+    <ClInclude Include="SpikeListTabCtrl.h" />
     <ClInclude Include="datafile_CEDSpike2.h" />
     <ClInclude Include="DlgDataTranslationBoard.h" />
     <ClInclude Include="chanlistitem.h" />
@@ -1437,7 +1441,7 @@
     <ClInclude Include="CPivotTables.h" />
     <ClInclude Include="CRange.h" />
     <ClInclude Include="CRanges.h" />
-    <ClInclude Include="Cscale.h" />
+    <ClInclude Include="Scale.h" />
     <ClInclude Include="CWorkbook.h" />
     <ClInclude Include="CWorkbooks.h" />
     <ClInclude Include="CWorksheet.h" />
@@ -1512,8 +1516,8 @@
     <ClInclude Include="MeasureVTtagsPage.h" />
     <ClInclude Include="NoteDoc.h" />
     <ClInclude Include="NotedocCntrItem.h" />
-    <ClInclude Include="PanelFilter.h" />
-    <ClInclude Include="PanelProperties.h" />
+    <ClInclude Include="PaneldbFilter.h" />
+    <ClInclude Include="PaneldbProperties.h" />
     <ClInclude Include="DlgPrintDataOptions.h" />
     <ClInclude Include="DlgPrintDrawArea.h" />
     <ClInclude Include="DlgPrintMargins.h" />

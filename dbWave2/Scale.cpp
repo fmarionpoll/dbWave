@@ -1,19 +1,19 @@
 #include "StdAfx.h"
-#include "Cscale.h"
+#include "Scale.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_SERIAL(CScale, CObject, 1 /* schema number*/)
+IMPLEMENT_SERIAL(Scale, CObject, 1 /* schema number*/)
 
 // create CScale with zero points
-CScale::CScale()
+Scale::Scale()
 {
 }
 
 // create CScale with n points
-CScale::CScale(const int n_pixels) : m_n_pixels_(n_pixels)
+Scale::Scale(const int n_pixels) : m_n_pixels_(n_pixels)
 {
 	m_intervals_.SetSize(n_pixels);
 	m_position_.SetSize(n_pixels + 1);
@@ -53,7 +53,7 @@ CScale::CScale(const int n_pixels) : m_n_pixels_(n_pixels)
 //  (assume start at zero)
 // --------------------------------------------------------------------------
 
-int CScale::set_scale(const int n_pixels, const long n_data_points)
+int Scale::set_scale(const int n_pixels, const long n_data_points)
 {
 	ASSERT(n_data_points != 0);
 	m_n_pixels_ = n_pixels;
@@ -173,7 +173,7 @@ int CScale::set_scale(const int n_pixels, const long n_data_points)
 	implementation and use of this in CLineViewWnd::GetDataForDisplay().
  **************************************************************************/
 
-int CScale::how_many_intervals_fit(const int first_pixel, long* l_last)
+int Scale::how_many_intervals_fit(const int first_pixel, long* l_last)
 {
 	// assume that l_first equal m_position[firstPixel-1]
 	const DWORD last_pos = *l_last; // end within m_position
@@ -204,7 +204,7 @@ int CScale::how_many_intervals_fit(const int first_pixel, long* l_last)
 	return (last_pixel - first_pixel + 1);
 }
 
-int CScale::get_which_interval(const long l_index)
+int Scale::get_which_interval(const long l_index)
 {
 	const DWORD ll_index = l_index;
 	if (l_index < 0 || ll_index > m_position_[m_position_.GetUpperBound()])
@@ -239,7 +239,7 @@ int CScale::get_which_interval(const long l_index)
 	return interval;
 }
 
-void CScale::Serialize(CArchive& ar)
+void Scale::Serialize(CArchive& ar)
 {
 	m_intervals_.Serialize(ar); // scale array: n_pts within each interval
 	m_position_.Serialize(ar); // interval array: consecutive file index (long)

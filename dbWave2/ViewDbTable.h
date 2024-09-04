@@ -1,7 +1,7 @@
 #pragma once
 #include <afxdao.h>
 #pragma warning(disable : 4995)
-#include "CSpkListTabCtrl.h"
+#include "SpikeListTabCtrl.h"
 #include "dbTableMain.h"
 #include "StretchControls.h"
 #include "dbWaveDoc.h"
@@ -31,7 +31,7 @@ public:
 	SpikeList* p_spk_list{ nullptr };
 	void save_current_spk_file();
 	void increment_spike_flag();
-	CSpkListTabCtrl spk_list_tab_ctrl {};
+	SpikeListTabCtrl spk_list_tab_ctrl {};
 
 #ifdef _DEBUG
 	void AssertValid() const override;

@@ -2,7 +2,7 @@
 
 #include "MainFrm.h"
 #include "resource.h"
-#include "PanelFilter.h"
+#include "PaneldbFilter.h"
 
 #include "dbWave.h"
 #include "dbWave_constants.h"
@@ -14,7 +14,7 @@
 
 
 // the numbers here are those of m_pszTableCol - they define the order of appearance of the different parameters
-int CFilterPanel::m_no_col_[] = {
+int PaneldbFilter::m_no_col_[] = {
 	CH_EXPT_ID,
 	CH_IDINSECT, CH_IDSENSILLUM, CH_INSECT_ID, CH_SENSILLUM_ID,
 	CH_LOCATION_ID, CH_STRAIN_ID, CH_SEX_ID, CH_OPERATOR_ID,
@@ -22,13 +22,13 @@ int CFilterPanel::m_no_col_[] = {
 	CH_FLAG, CH_ACQDATE_DAY, -1
 };
 
-CFilterPanel::CFilterPanel()
+PaneldbFilter::PaneldbFilter()
 = default;
 
-CFilterPanel::~CFilterPanel()
+PaneldbFilter::~PaneldbFilter()
 = default;
 
-BEGIN_MESSAGE_MAP(CFilterPanel, CDockablePane)
+BEGIN_MESSAGE_MAP(PaneldbFilter, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_CONTEXTMENU()
@@ -43,7 +43,7 @@ BEGIN_MESSAGE_MAP(CFilterPanel, CDockablePane)
 
 END_MESSAGE_MAP()
 
-int CFilterPanel::OnCreate(const LPCREATESTRUCT lp_create_struct)
+int PaneldbFilter::OnCreate(const LPCREATESTRUCT lp_create_struct)
 {
 	if (CDockablePane::OnCreate(lp_create_struct) == -1)
 		return -1;
@@ -74,13 +74,13 @@ int CFilterPanel::OnCreate(const LPCREATESTRUCT lp_create_struct)
 	return 0;
 }
 
-void CFilterPanel::OnSize(const UINT n_type, const int cx, const int cy)
+void PaneldbFilter::OnSize(const UINT n_type, const int cx, const int cy)
 {
 	CDockablePane::OnSize(n_type, cx, cy);
 	AdjustLayout();
 }
 
-void CFilterPanel::OnContextMenu(CWnd* p_wnd, const CPoint point)
+void PaneldbFilter::OnContextMenu(CWnd* p_wnd, const CPoint point)
 {
 	const auto p_wnd_tree = static_cast<CTreeCtrl*>(&m_wnd_filter_view_);
 	ASSERT_VALID(p_wnd_tree);
@@ -109,7 +109,7 @@ void CFilterPanel::OnContextMenu(CWnd* p_wnd, const CPoint point)
 	the_app.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);
 }
 
-void CFilterPanel::AdjustLayout()
+void PaneldbFilter::AdjustLayout()
 {
 	if (GetSafeHwnd() == nullptr)
 		return;
@@ -124,7 +124,7 @@ void CFilterPanel::AdjustLayout()
 		rect_client.Width() - 2,rect_client.Height() - cy_tlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CFilterPanel::OnPaint()
+void PaneldbFilter::OnPaint()
 {
 	CPaintDC dc(this);
 	CRect rect_tree;
@@ -135,19 +135,19 @@ void CFilterPanel::OnPaint()
 	dc.Draw3dRect(rect_tree, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
 }
 
-void CFilterPanel::OnSetFocus(CWnd* p_old_wnd)
+void PaneldbFilter::OnSetFocus(CWnd* p_old_wnd)
 {
 	CDockablePane::OnSetFocus(p_old_wnd);
 	m_wnd_filter_view_.SetFocus();
 }
 
-void CFilterPanel::on_update_tree()
+void PaneldbFilter::on_update_tree()
 {
 	m_p_doc_old_ = nullptr;
 	init_filter_list();
 }
 
-LRESULT CFilterPanel::on_my_message(const WPARAM w_param, const LPARAM l_param)
+LRESULT PaneldbFilter::on_my_message(const WPARAM w_param, const LPARAM l_param)
 {
 	//auto p_app = (CdbWaveApp*)AfxGetApp();
 	//short low_p = LO_WORD(lParam);
@@ -182,7 +182,7 @@ LRESULT CFilterPanel::on_my_message(const WPARAM w_param, const LPARAM l_param)
 	return 0L;
 }
 
-void CFilterPanel::OnUpdate(CView* p_sender, const LPARAM l_hint, CObject* p_hint)
+void PaneldbFilter::OnUpdate(CView* p_sender, const LPARAM l_hint, CObject* p_hint)
 {
 	m_p_doc_ = reinterpret_cast<CdbWaveDoc*>(p_sender);
 	switch (LOWORD(l_hint))
@@ -202,7 +202,7 @@ void CFilterPanel::OnUpdate(CView* p_sender, const LPARAM l_hint, CObject* p_hin
 	}
 }
 
-void CFilterPanel::init_filter_list()
+void PaneldbFilter::init_filter_list()
 {
 	if (m_p_doc_old_ == m_p_doc_)
 		return;
@@ -316,7 +316,7 @@ void CFilterPanel::init_filter_list()
 	m_wnd_filter_view_.UnlockWindowUpdate();
 }
 
-void CFilterPanel::populate_item_from_table_long(DB_ITEMDESC* p_desc) const
+void PaneldbFilter::populate_item_from_table_long(DB_ITEMDESC* p_desc) const
 {
 	const auto p_set = &m_p_doc_->db_table->m_main_table_set;
 	const auto cs_col_head = p_desc->header_name;
@@ -353,7 +353,7 @@ void CFilterPanel::populate_item_from_table_long(DB_ITEMDESC* p_desc) const
 	}
 }
 
-void CFilterPanel::populate_item_from_linked_table(DB_ITEMDESC* p_desc) const
+void PaneldbFilter::populate_item_from_linked_table(DB_ITEMDESC* p_desc) const
 {
 	auto str2 = p_desc->header_name;
 	ASSERT(!str2.IsEmpty());
@@ -396,7 +396,7 @@ void CFilterPanel::populate_item_from_linked_table(DB_ITEMDESC* p_desc) const
 	}
 }
 
-void CFilterPanel::populate_item_from_table_with_date(DB_ITEMDESC* p_desc) const
+void PaneldbFilter::populate_item_from_table_with_date(DB_ITEMDESC* p_desc) const
 {
 	CString cs; // to construct date
 	const auto cs_column_head = p_desc->header_name;
@@ -431,7 +431,7 @@ void CFilterPanel::populate_item_from_table_with_date(DB_ITEMDESC* p_desc) const
 	}
 }
 
-void CFilterPanel::insert_alphabetic(const CString& cs, CStringArray& cs_array)
+void PaneldbFilter::insert_alphabetic(const CString& cs, CStringArray& cs_array)
 {
 	auto k = 0;
 	for (auto i = 0; i < cs_array.GetSize(); i++, k++)
@@ -444,7 +444,7 @@ void CFilterPanel::insert_alphabetic(const CString& cs, CStringArray& cs_array)
 	cs_array.InsertAt(k, cs);
 }
 
-void CFilterPanel::build_filter_item_indirection_from_tree(DB_ITEMDESC* p_desc, const HTREEITEM start_item) const
+void PaneldbFilter::build_filter_item_indirection_from_tree(DB_ITEMDESC* p_desc, const HTREEITEM start_item) const
 {
 	auto i = 0;
 	for (auto item = start_item; item != nullptr; item = m_wnd_filter_view_.GetNextItem(item, TVGN_NEXT), i++)
@@ -468,7 +468,7 @@ void CFilterPanel::build_filter_item_indirection_from_tree(DB_ITEMDESC* p_desc, 
 	}
 }
 
-void CFilterPanel::build_filter_item_long_from_tree(DB_ITEMDESC* p_desc, const HTREEITEM start_item) const
+void PaneldbFilter::build_filter_item_long_from_tree(DB_ITEMDESC* p_desc, const HTREEITEM start_item) const
 {
 	auto i = 0;
 	for (auto item = start_item; item != nullptr; item = m_wnd_filter_view_.GetNextItem(item, TVGN_NEXT), i++)
@@ -484,7 +484,7 @@ void CFilterPanel::build_filter_item_long_from_tree(DB_ITEMDESC* p_desc, const H
 	}
 }
 
-void CFilterPanel::build_filter_item_date_from_tree(DB_ITEMDESC* p_desc, const HTREEITEM start_item) const
+void PaneldbFilter::build_filter_item_date_from_tree(DB_ITEMDESC* p_desc, const HTREEITEM start_item) const
 {
 	auto i = 0;
 	for (auto item = start_item; item != nullptr; item = m_wnd_filter_view_.GetNextItem(item, TVGN_NEXT), i++)
@@ -501,7 +501,7 @@ void CFilterPanel::build_filter_item_date_from_tree(DB_ITEMDESC* p_desc, const H
 	}
 }
 
-void CFilterPanel::on_apply_filter()
+void PaneldbFilter::on_apply_filter()
 {
 	if (!m_p_doc_)
 		return;
@@ -554,7 +554,7 @@ void CFilterPanel::on_apply_filter()
 	m_p_doc_->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
 }
 
-void CFilterPanel::on_sort_records()
+void PaneldbFilter::on_sort_records()
 {
 	auto p_database = m_p_doc_->db_table;
 	ASSERT(p_database);
@@ -570,7 +570,7 @@ void CFilterPanel::on_sort_records()
 	m_p_doc_->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
 }
 
-void CFilterPanel::select_next(BOOL b_next)
+void PaneldbFilter::select_next(BOOL b_next)
 {
 	const auto p_tree = static_cast<CTreeCtrl*>(&m_wnd_filter_view_);
 	ASSERT_VALID(p_tree);
@@ -612,12 +612,12 @@ void CFilterPanel::select_next(BOOL b_next)
 	}
 }
 
-void CFilterPanel::on_select_next()
+void PaneldbFilter::on_select_next()
 {
 	select_next(TRUE);
 }
 
-void CFilterPanel::on_select_previous()
+void PaneldbFilter::on_select_previous()
 {
 	select_next(FALSE);
 }

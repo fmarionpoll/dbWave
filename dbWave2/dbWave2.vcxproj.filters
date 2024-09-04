@@ -75,7 +75,7 @@
     <ClCompile Include="DlgCopyAs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Cscale.cpp">
+    <ClCompile Include="Scale.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DlgDataComments.cpp">
@@ -237,10 +237,10 @@
     <ClCompile Include="StretchControls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PanelProperties.cpp">
+    <ClCompile Include="PaneldbProperties.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PanelFilter.cpp">
+    <ClCompile Include="PaneldbFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MeasureVTtagsPage.cpp">
@@ -264,7 +264,7 @@
     <ClCompile Include="ScrollBarEx.cpp">
       <Filter>customctrl</Filter>
     </ClCompile>
-    <ClCompile Include="CSpkListTabCtrl.cpp">
+    <ClCompile Include="SpikeListTabCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="datafile_CEDSpike2.cpp">
@@ -516,7 +516,7 @@
     <ClCompile Include="DlgOverwriteFileOptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CNiceUnit.cpp">
+    <ClCompile Include="NiceUnit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DlgPrintDataComments.cpp">
@@ -526,6 +526,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CMFCMyPropertyGridProperty.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PaneldbPropertiesToolBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PaneldbFilterToolBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -563,7 +569,7 @@
     <ClInclude Include="DlgCopyAs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Cscale.h">
+    <ClInclude Include="Scale.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DlgDataComments.h">
@@ -797,10 +803,10 @@
     <ClInclude Include="StretchControls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PanelProperties.h">
+    <ClInclude Include="PaneldbProperties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PanelFilter.h">
+    <ClInclude Include="PaneldbFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DTx-EZ\Include\OLTYPES.H">
@@ -836,7 +842,7 @@
     <ClInclude Include="ScrollBarEx.h">
       <Filter>customctrl</Filter>
     </ClInclude>
-    <ClInclude Include="CSpkListTabCtrl.h">
+    <ClInclude Include="SpikeListTabCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="datafile_CEDSpike2.h">
@@ -1133,7 +1139,7 @@
     <ClInclude Include="db_spike.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CNiceUnit.h">
+    <ClInclude Include="NiceUnit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ColorNames.h">
@@ -1149,6 +1155,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CMFCMyPropertyGridProperty.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PaneldbPropertiesToolBar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PaneldbFilterToolBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

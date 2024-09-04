@@ -1,26 +1,20 @@
 #pragma once
+#include "PaneldbFilterToolBar.h"
 #include "QuadStateTree.h"
 
-class CFilterToolBar : public CMFCToolBar
-{
-	void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler) override
-	{
-		CMFCToolBar::OnUpdateCmdUI(static_cast<CFrameWnd*>(GetOwner()), bDisableIfNoHndler);
-	}
-	BOOL AllowShowOnList() const override { return FALSE; }
-};
 
-class CFilterPanel : public CDockablePane
+
+class PaneldbFilter : public CDockablePane
 {
 	// Construction
 public:
-	CFilterPanel();
+	PaneldbFilter();
 	void AdjustLayout() override;
 
 	// Attributes
 protected:
 	CQuadStateTree m_wnd_filter_view_;
-	CFilterToolBar m_wnd_tool_bar_;
+	PaneldbFilterToolBar m_wnd_tool_bar_;
 
 	CdbWaveDoc* m_p_doc_{nullptr};
 	CdbWaveDoc* m_p_doc_old_{nullptr};
@@ -39,7 +33,7 @@ protected:
 
 	// Implementation
 public:
-	~CFilterPanel() override;
+	~PaneldbFilter() override;
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lp_create_struct);

@@ -2,25 +2,25 @@
 //
 #include "StdAfx.h"
 #include "dbWaveDoc.h"
-#include "CSpkListTabCtrl.h"
+#include "SpikeListTabCtrl.h"
 
 // CSpkListTabCtrl
 
-IMPLEMENT_DYNAMIC(CSpkListTabCtrl, CTabCtrl)
+IMPLEMENT_DYNAMIC(SpikeListTabCtrl, CTabCtrl)
 
-CSpkListTabCtrl::CSpkListTabCtrl()
+SpikeListTabCtrl::SpikeListTabCtrl()
 {
 }
 
-CSpkListTabCtrl::~CSpkListTabCtrl()
+SpikeListTabCtrl::~SpikeListTabCtrl()
 {
 }
 
-BEGIN_MESSAGE_MAP(CSpkListTabCtrl, CTabCtrl)
+BEGIN_MESSAGE_MAP(SpikeListTabCtrl, CTabCtrl)
 END_MESSAGE_MAP()
 
 // CSpkListTabCtrl message handlers
-void CSpkListTabCtrl::init_ctrl_tab_from_spike_doc(CSpikeDoc* p_spk_doc)
+void SpikeListTabCtrl::init_ctrl_tab_from_spike_doc(CSpikeDoc* p_spk_doc)
 {
 	DeleteAllItems();
 	auto j = 0;

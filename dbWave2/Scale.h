@@ -1,11 +1,11 @@
 #pragma once
 
-class CScale : public CObject
+class Scale : public CObject
 {
 public:
-	CScale();
-	CScale(int n_pixels); 
-	DECLARE_SERIAL(CScale)
+	Scale();
+	Scale(int n_pixels); 
+	DECLARE_SERIAL(Scale)
 	void Serialize(CArchive& ar) override;
 
 protected:

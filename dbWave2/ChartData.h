@@ -4,7 +4,7 @@
 #include "chanlistitem.h"
 #include "ChartWnd.h"
 #include "AcqDataDoc.h"
-#include "Cscale.h"
+#include "Scale.h"
 
 class ChartData : public ChartWnd
 {
@@ -50,7 +50,7 @@ protected:
 	CArray<CEnvelope*, CEnvelope*> envelope_ptr_array_; 
 	CArray<CPoint, CPoint> m_poly_points_; 
 	CHighLight m_highlighted_;
-	CScale m_scale_;
+	Scale m_scale_;
 
 	int m_n_pixels_ = 1; // nb pixels displayed horizontally
 	int m_data_per_pixel_ = 1; // nb of data point per pixel

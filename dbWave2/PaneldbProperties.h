@@ -2,31 +2,22 @@
 
 #pragma once
 #include "dbWaveDoc.h"
+#include "PaneldbPropertiesToolBar.h"
 
-class CPropertiesToolBar : public CMFCToolBar
-{
-public:
-	void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler) override
-	{
-		CMFCToolBar::OnUpdateCmdUI(static_cast<CFrameWnd*>(GetOwner()), bDisableIfNoHndler);
-	}
-	BOOL AllowShowOnList() const override { return FALSE; }
-};
 
-class CPropertiesPanel : public CDockablePane
+class PaneldbProperties : public CDockablePane
 {
-	DECLARE_DYNAMIC(CPropertiesPanel)
+	DECLARE_DYNAMIC(PaneldbProperties)
 public:
-	CPropertiesPanel();
-	~CPropertiesPanel() override;
+	PaneldbProperties();
+	~PaneldbProperties() override;
 	void AdjustLayout() override;
 
 protected:
-	CPropertiesToolBar m_wnd_tool_bar_;
+	PaneldbPropertiesToolBar m_wnd_tool_bar_;
 	CMFCPropertyGridCtrl m_wnd_prop_list_;
 
 	// Implementation
-public:
 protected:
 	CdbWaveDoc* m_p_doc_ {nullptr};
 	CdbWaveDoc* m_p_doc_old_ {nullptr};

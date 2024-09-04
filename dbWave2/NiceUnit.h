@@ -1,5 +1,5 @@
 #pragma once
-class CNiceUnit
+class NiceUnit
 {
 	static int nice_intervals_[];
 	static TCHAR cs_unit_[];

@@ -12,7 +12,7 @@
 #include "DlgADInputParms.h"
 #include "ViewData.h"
 
-#include "CNiceUnit.h"
+#include "NiceUnit.h"
 #include "DlgCopyAs.h"
 #include "DlgDataSeries.h"
 #include "DlgDataSeriesFormat.h"
@@ -1226,7 +1226,7 @@ CString ViewData::convert_file_index(const long l_first, const long l_last) cons
 	TCHAR sz_value[64]; 
 	const auto psz_value = sz_value;
 	float x_scale_factor; 
-	auto x = CNiceUnit::change_unit(static_cast<float>(l_first) / m_sampling_rate_, &cs_unit, &x_scale_factor);
+	auto x = NiceUnit::change_unit(static_cast<float>(l_first) / m_sampling_rate_, &cs_unit, &x_scale_factor);
 	auto fraction = static_cast<int>((x - static_cast<int>(x)) * static_cast<float>(1000.)); 
 	wsprintf(psz_value, _T("time = %i.%03.3i - "), static_cast<int>(x), fraction); 
 	CString cs_comment = psz_value;
@@ -1349,13 +1349,13 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect) const
 				cs_unit = _T(" V"); 
 				auto z = static_cast<float>(chart_data.get_rect_height()) / 5
 					* chart_data.get_channel_list_volts_per_pixel(i_chan);
-				const auto x = CNiceUnit::change_unit(z, &cs_unit, &x_scale_factor); 
+				const auto x = NiceUnit::change_unit(z, &cs_unit, &x_scale_factor); 
 
 				// approximate
 				auto j = static_cast<int>(x);
 				if ((static_cast<double>(x) - j) > 0.5) // increment integer if diff > 0.5
 					j++;
-				auto k = CNiceUnit::nice_unit(x); // compare with nice unit abs
+				auto k = NiceUnit::nice_unit(x); // compare with nice unit abs
 				if (j > 750) // there is a gap between 500 and 1000
 					k = 1000;
 				if (MulDiv(100, abs(k - j), j) <= 1) // keep nice unit if difference is less= than 1 %
@@ -1363,7 +1363,7 @@ CString ViewData::print_bars(CDC* p_dc, const CRect* rect) const
 				if (k >= 1000)
 				{
 					z = static_cast<float>(k) * x_scale_factor;
-					j = static_cast<int>(CNiceUnit::change_unit(z, &cs_unit, &x_scale_factor)); // convert
+					j = static_cast<int>(NiceUnit::change_unit(z, &cs_unit, &x_scale_factor)); // convert
 				}
 				wsprintf(sz_value, _T("bar = %i %s "), j, static_cast<LPCTSTR>(cs_unit)); // store value into comment
 				cs_comment += sz_value;

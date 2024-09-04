@@ -1,8 +1,8 @@
 #pragma once
 
 #include "dbWaveDoc.h"
-#include "PanelFilter.h"
-#include "PanelProperties.h"
+#include "PaneldbFilter.h"
+#include "PaneldbProperties.h"
 
 class CMainFrame : public CMDIFrameWndEx
 {
@@ -34,8 +34,8 @@ protected: // control bar embedded members
 	CMFCRibbonBar ribbon_bar_;
 	CMFCRibbonApplicationButton ribbon_application_button_;
 	CMFCToolBarImages user_images_;
-	CPropertiesPanel panel_properties_;
-	CFilterPanel panel_filter_;
+	PaneldbProperties panel_properties_;
+	PaneldbFilter panel_filter_;
 	CMFCOutlookBar outlook_bar_;
 	CMFCOutlookBarPane outlook_pane_;
 

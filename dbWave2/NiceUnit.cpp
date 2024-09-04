@@ -1,12 +1,12 @@
 #include "stdafx.h"
-#include "CNiceUnit.h"
+#include "NiceUnit.h"
 
-TCHAR CNiceUnit::cs_unit_[] = { _T("GM  mµpf  ") };
-int CNiceUnit::units_power_[] = { 9, 6, 0, 0, -3, -6, -9, -12, 0 };
-int CNiceUnit::max_index_ = 8;
-int CNiceUnit::nice_intervals_[] = { 1, 5, 10, 20, 25, 30, 40, 50, 75, 100, 200, 250, 300, 400, 500, 0 };
+TCHAR NiceUnit::cs_unit_[] = { _T("GM  mµpf  ") };
+int NiceUnit::units_power_[] = { 9, 6, 0, 0, -3, -6, -9, -12, 0 };
+int NiceUnit::max_index_ = 8;
+int NiceUnit::nice_intervals_[] = { 1, 5, 10, 20, 25, 30, 40, 50, 75, 100, 200, 250, 300, 400, 500, 0 };
 
-int CNiceUnit::nice_unit(const float y)
+int NiceUnit::nice_unit(const float y)
 {
 	auto i = 0;
 	const auto i_value = static_cast<int>(y);
@@ -23,7 +23,7 @@ int CNiceUnit::nice_unit(const float y)
 }
 
 
-float CNiceUnit::change_unit(float x_val, CString* x_unit, float* x_scale_factor)
+float NiceUnit::change_unit(float x_val, CString* x_unit, float* x_scale_factor)
 {
 	// avoid division by zero error
 	if (x_val == 0)
