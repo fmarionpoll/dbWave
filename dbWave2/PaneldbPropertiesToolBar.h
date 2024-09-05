@@ -1,5 +1,6 @@
 #pragma once
 #include <afxtoolbar.h>
+
 class PaneldbPropertiesToolBar : public CMFCToolBar
 {
 public:

@@ -1,4 +1,5 @@
 #pragma once
+
 class PaneldbFilterToolBar : public CMFCToolBar
 {
 	void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler) override

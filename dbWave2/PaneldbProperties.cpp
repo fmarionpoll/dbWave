@@ -102,7 +102,7 @@ void PaneldbProperties::AdjustLayout()
 	                           SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-int PaneldbProperties::OnCreate(LPCREATESTRUCT lp_create_struct)
+int PaneldbProperties::OnCreate(const LPCREATESTRUCT lp_create_struct)
 {
 	if (CDockablePane::OnCreate(lp_create_struct) == -1)
 		return -1;
@@ -115,21 +115,24 @@ int PaneldbProperties::OnCreate(LPCREATESTRUCT lp_create_struct)
 
 	m_wnd_tool_bar_.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_PROPERTIES);
 	m_wnd_tool_bar_.LoadToolBar(IDR_PROPERTIES, 0, 0, TRUE /* Is locked */);
+
 	m_wnd_tool_bar_.CleanUpLockedImages();
 	m_wnd_tool_bar_.LoadBitmap(the_app.hi_color_icons ? IDB_PROPERTIES_HC : IDR_PROPERTIES, 0, 0, TRUE /* Locked */);
+
 	m_wnd_tool_bar_.SetPaneStyle(m_wnd_tool_bar_.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
 	m_wnd_tool_bar_.SetPaneStyle(
 		m_wnd_tool_bar_.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM |
 			CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
-	m_wnd_tool_bar_.SetOwner(this);
+
 	// All commands will be routed via this control, not via the parent frame:
+	m_wnd_tool_bar_.SetOwner(this);
 	m_wnd_tool_bar_.SetRouteCommandsViaFrame(FALSE);
 
 	AdjustLayout();
 	return 0;
 }
 
-void PaneldbProperties::OnSize(UINT n_type, int cx, int cy)
+void PaneldbProperties::OnSize(const UINT n_type, const int cx, int cy)
 {
 	CDockablePane::OnSize(n_type, cx, cy);
 	AdjustLayout();

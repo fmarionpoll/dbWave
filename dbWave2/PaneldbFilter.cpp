@@ -43,6 +43,25 @@ BEGIN_MESSAGE_MAP(PaneldbFilter, CDockablePane)
 
 END_MESSAGE_MAP()
 
+void PaneldbFilter::AdjustLayout()
+{
+	if (GetSafeHwnd() == nullptr)
+		return;
+
+	CRect rect_client;
+	GetClientRect(rect_client);
+
+	const int cy_tlb = m_wnd_tool_bar_.CalcFixedLayout(FALSE, TRUE).cy;
+	m_wnd_tool_bar_.SetWindowPos(nullptr, rect_client.left, 
+							rect_client.top,
+							rect_client.Width(), 
+							cy_tlb, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wnd_filter_view_.SetWindowPos(nullptr, rect_client.left + 1, 
+							rect_client.top + cy_tlb + 1,
+							rect_client.Width() - 2, 
+							rect_client.Height() - cy_tlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
+}
+
 int PaneldbFilter::OnCreate(const LPCREATESTRUCT lp_create_struct)
 {
 	if (CDockablePane::OnCreate(lp_create_struct) == -1)
@@ -58,6 +77,7 @@ int PaneldbFilter::OnCreate(const LPCREATESTRUCT lp_create_struct)
 
 	m_wnd_tool_bar_.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EXPLORER);
 	m_wnd_tool_bar_.LoadToolBar(IDR_EXPLORER, 0, 0, TRUE /* Is locked */);
+
 	m_wnd_tool_bar_.SetPaneStyle(m_wnd_tool_bar_.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
 	m_wnd_tool_bar_.SetPaneStyle(
 		m_wnd_tool_bar_.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM |
@@ -66,9 +86,9 @@ int PaneldbFilter::OnCreate(const LPCREATESTRUCT lp_create_struct)
 		ID_RECORD_SORT,
 		CMFCToolBarComboBoxButton(ID_RECORD_SORT, /*GetCmdMgr()->GetCmdImage(ID_RECORD_SORT)*/ NULL, CBS_DROPDOWN));
 
+	// All commands will be routed via this control, not via the parent frame:
 	m_wnd_tool_bar_.SetOwner(this);
 	m_wnd_tool_bar_.SetRouteCommandsViaFrame(FALSE);
-	// All commands will be routed via this control , not via the parent frame:
 
 	AdjustLayout();
 	return 0;
@@ -107,21 +127,6 @@ void PaneldbFilter::OnContextMenu(CWnd* p_wnd, const CPoint point)
 
 	p_wnd_tree->SetFocus();
 	the_app.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);
-}
-
-void PaneldbFilter::AdjustLayout()
-{
-	if (GetSafeHwnd() == nullptr)
-		return;
-
-	CRect rect_client;
-	GetClientRect(rect_client);
-
-	const int cy_tlb = m_wnd_tool_bar_.CalcFixedLayout(FALSE, TRUE).cy;
-	m_wnd_tool_bar_.SetWindowPos(nullptr, rect_client.left, rect_client.top, 
-		rect_client.Width(), cy_tlb,SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wnd_filter_view_.SetWindowPos(nullptr, rect_client.left + 1, rect_client.top + cy_tlb + 1,
-		rect_client.Width() - 2,rect_client.Height() - cy_tlb - 2, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void PaneldbFilter::OnPaint()

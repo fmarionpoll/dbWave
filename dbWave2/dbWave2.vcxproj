@@ -1787,6 +1787,7 @@
     <Image Include="res\pages_hc.bmp" />
     <Image Include="res\pages_small.bmp" />
     <Image Include="res\pages_small_hc.bmp" />
+    <Image Include="res\properti.bmp" />
     <Image Include="res\properties_hc.bmp" />
     <Image Include="res\properties_wnd.ico" />
     <Image Include="res\properties_wnd_hc.ico" />
