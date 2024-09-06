@@ -15,7 +15,6 @@ SpikeList::SpikeList()
 {
 	flagged_spikes_.SetSize(0);
 	class_properties_.SetSize(0);
-	//class_properties_.Add(new SpikeClassProperties());
 }
 
 SpikeList::~SpikeList()
@@ -824,7 +823,7 @@ BOOL SpikeList::init_spike_list(const AcqDataDoc* acq_data_doc, const options_de
 	// reset classes
 	keep_only_valid_classes_ = FALSE; // default: no valid array
 	n_classes_ = 0;
-	class_properties_.SetSize(1); // default size - some functions
+	class_properties_.SetSize(1); 
 	class_properties_.SetAt(0, new SpikeClassProperties());
 	return TRUE;
 }

@@ -203,25 +203,26 @@ void ViewSpikeSort::init_charts_from_saved_parameters()
 	tag_index_hist_low_ = chart_histogram_.vt_tags.add_tag(spike_classification_->lower_threshold, 0);
 }
 
-CMFCMyPropertyGridProperty* ViewSpikeSort::property_grid_add_item(const int class_id)
-{
-	CString cs;
-	cs.Format(_T(" %i "), class_id);
-
-	const COleVariant var_value = _T("select/edit..");
-
-	auto* p_prop = new CMFCMyPropertyGridProperty(cs, var_value, _T(""));
-	p_prop->SetData(class_id);
-	for (auto& i : SpikeClassProperties::class_descriptor)
-		p_prop->AddOption(i);
-	p_prop->AllowEdit(TRUE); 
-	property_grid_.AddProperty(p_prop);
-	const int index = class_id;
-	if (index < p_prop->GetOptionCount())
-		p_prop->SetValue(p_prop->GetOption(class_id));
-
-	return p_prop;
-}
+//CMFCMyPropertyGridProperty* ViewSpikeSort::property_grid_add_item(const int class_id)
+//{
+//	CString cs;
+//	cs.Format(_T(" %i "), class_id);
+//
+//	const COleVariant var_value = _T("select/edit..");
+//
+//	auto* p_prop = new CMFCMyPropertyGridProperty(cs, var_value, _T(""));
+//	p_prop->SetData(class_id);
+//	for (auto& i : SpikeClassProperties::class_descriptor)
+//		p_prop->AddOption(i);
+//	p_prop->AllowEdit(TRUE);
+//
+//	const int index = class_id;
+//	if (index < p_prop->GetOptionCount())
+//		p_prop->SetValue(p_prop->GetOption(class_id));
+//
+//	property_grid_.AddProperty(p_prop);
+//	return p_prop;
+//}
 
 CMFCMyPropertyGridProperty* ViewSpikeSort::property_grid_find_item(const int class_id) const
 {
@@ -253,7 +254,10 @@ void ViewSpikeSort::property_grid_update(SpikeList* spk_list)
 
 		CMFCMyPropertyGridProperty* p_prop = property_grid_find_item(class_id);
 		if (p_prop == nullptr)
-			p_prop = property_grid_add_item(class_id);
+		{
+			p_prop = CMFCMyPropertyGridProperty::create(class_id);
+			property_grid_.AddProperty(p_prop);
+		}
 
 		if (p_prop != nullptr)
 		{
@@ -456,8 +460,10 @@ void ViewSpikeSort::load_current_spike_file()
 
 void ViewSpikeSort::update_file_parameters()
 {
-	const BOOL first_update = (p_spk_doc == nullptr);
+	const BOOL first_update = p_spk_doc == nullptr;
 	load_current_spike_file();
+	if (p_spk_doc == nullptr)
+		return;
 
 	// update Tab at the bottom
 	spk_list_tab_ctrl.init_ctrl_tab_from_spike_doc(p_spk_doc);
@@ -468,16 +474,16 @@ void ViewSpikeSort::update_file_parameters()
 		if (p_spk_doc != nullptr)
 		{
 			time_first_s_ = 0.f;
-			time_last_s_ = (static_cast<float>(p_spk_doc->get_acq_size()) - 1) / p_spk_list->get_acq_sampling_rate();
+			time_last_s_ = (static_cast<float>(p_spk_doc->get_acq_size()) - 1) / p_spk_doc->get_acq_rate();
 		}
 	}
 
 	if (p_spk_list != nullptr)
 	{
-		l_first_ = static_cast<long>(time_first_s_ * p_spk_list->get_acq_sampling_rate());
-		l_last_ = static_cast<long>(time_last_s_ * p_spk_list->get_acq_sampling_rate());
-		sampling_rate_ = p_spk_list->get_acq_sampling_rate();;
-		delta_ms_ = time_unit_ / p_spk_list->get_acq_sampling_rate();
+		sampling_rate_ = p_spk_doc->get_acq_rate();
+		l_first_ = static_cast<long>(time_first_s_ * sampling_rate_);
+		l_last_ = static_cast<long>(time_last_s_ * sampling_rate_);
+		delta_ms_ = time_unit_ / sampling_rate_;
 		delta_mv_ = p_spk_list->get_acq_volts_per_bin() * mv_unit_;
 
 		if (0 == spike_classification_->shape_t1 && 0 == spike_classification_->shape_t2)
@@ -673,6 +679,7 @@ void ViewSpikeSort::on_sort()
 	update_file_parameters();
 	build_histogram();
 	all_charts_invalidate();
+	property_grid_.Invalidate();
 }
 
 void ViewSpikeSort::set_mouse_cursor(int value)
@@ -880,6 +887,8 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 {
 	const auto pdb_doc = GetDocument();
 	const int n_files = pdb_doc->db_get_records_count();
+	if (p_spk_doc == nullptr)
+		return;
 	const auto current_spike_list = p_spk_doc->get_index_current_spike_list();
 	const int index_current_file = pdb_doc->db_get_current_record_position();
 	db_spike spike_sel(-1, -1, -1);

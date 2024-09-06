@@ -5,8 +5,9 @@ class CMFCMyPropertyGridProperty :
     public CMFCPropertyGridProperty
 {
 public:
-    CMFCMyPropertyGridProperty(const CString& strName, const COleVariant& varValue, LPCTSTR lpszDescr = nullptr, DWORD_PTR dwData = 0,
-        LPCTSTR lpszEditMask = nullptr, LPCTSTR lpszEditTemplate = nullptr, LPCTSTR lpszValidChars = nullptr);
+    CMFCMyPropertyGridProperty(const CString& str_name, const COleVariant& var_value, LPCTSTR lpsz_descr = nullptr, DWORD_PTR dw_data = 0, LPCTSTR lpsz_edit_mask = nullptr, LPCTSTR lpsz_edit_template = nullptr, LPCTSTR lpsz_valid_chars = nullptr);
+
+    static CMFCMyPropertyGridProperty* create(int class_id);
 
     void OnDrawName(CDC* p_dc, CRect rect) override;
     //void OnDrawValue(CDC* p_dc, CRect rect) override;

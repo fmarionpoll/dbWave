@@ -54,7 +54,7 @@ void SpikeClassProperties::Serialize(CArchive& ar)
 	else
 	{
 		ar >> trap;
-		if (trap < 100)
+		if (trap != 100)
 		{
 			class_id_ = trap;
 			ar >> n_items_;

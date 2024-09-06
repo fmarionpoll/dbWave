@@ -47,6 +47,7 @@ protected:
 	CEditCtrl mm_destination_class_;
 	int sort_source_class_{ 0 };
 	int sort_destination_class_{ 0 };
+	void update_destination_class_descriptor() const;
 
 	ChartSpikeBar chart_spike_bar_; 
 	ScrollBarEx m_file_scroll_;
@@ -95,7 +96,7 @@ protected:
 
 	CMFCMyPropertyGridCtrl property_grid_;
 	void property_grid_init();
-	CMFCMyPropertyGridProperty* property_grid_add_item(int class_id);
+	//CMFCMyPropertyGridProperty* property_grid_add_item(int class_id);
 	CMFCMyPropertyGridProperty* property_grid_find_item(int class_id) const;
 	void property_grid_update(SpikeList* spk_list);
 	void property_grid_delete_all();
@@ -196,7 +197,6 @@ public:
 	afx_msg void on_en_change_shape_t1();
 	afx_msg void on_en_change_shape_t2();
 	afx_msg void on_en_change_source_class();
-	void update_destination_class_descriptor() const;
 	afx_msg void on_en_change_destination_class();
 
 	afx_msg void on_en_change_time_first();
