@@ -47,17 +47,17 @@ protected:
 	SCROLLINFO m_h_scroll_infos_{}; 
 	SCROLLINFO m_v_scroll_infos_{};
 
-protected:
 	void DoDataExchange(CDataExchange* p_dx) override; // DDX/DDV support
 	void load_spike_parameters();
 	void load_source_view_data();
 	void load_spike_from_data(int shift);
 	void update_spike_scroll();
+	void init_chart_spike();
+	void init_chart_data();
 
 	// Generated message map functions
 	BOOL OnInitDialog() override;
-	void init_chart_spike();
-	void init_chart_data();
+
 	afx_msg void on_en_change_spike_index();
 	afx_msg void on_en_change_spike_class();
 	afx_msg void on_artefact();

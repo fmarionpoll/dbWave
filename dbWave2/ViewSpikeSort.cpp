@@ -655,12 +655,14 @@ void ViewSpikeSort::on_sort()
 			flag_changed = p_spk_list->sort_spike_with_y1_and_y2(from_class_id_to_class_id, time_window, limits1, limits2);
 		}
 
-		property_grid_update(p_spk_list);
 		if (flag_changed || p_spk_doc->IsModified())
 		{
 			p_spk_doc->OnSaveDocument(pdb_doc->db_get_current_spk_file_name(FALSE));
 			pdb_doc->set_db_n_spikes(p_spk_list->get_spikes_count());
+
 		}
+
+		property_grid_update(p_spk_list);
 	}
 
 	// end of loop, select current file again if necessary
@@ -679,7 +681,7 @@ void ViewSpikeSort::on_sort()
 	update_file_parameters();
 	build_histogram();
 	all_charts_invalidate();
-	property_grid_.Invalidate();
+	
 }
 
 void ViewSpikeSort::set_mouse_cursor(int value)
@@ -1941,11 +1943,11 @@ HBRUSH ViewSpikeSort::OnCtlColor(CDC* p_dc, CWnd* p_wnd, const UINT n_ctl_color)
 	return hbr;
 }
 
-LRESULT ViewSpikeSort::OnPropertyChanged(WPARAM wparam, LPARAM lparam)
+LRESULT ViewSpikeSort::OnPropertyChanged(WPARAM w_param, LPARAM l_param)
 {
-	if (!lparam)
+	if (!l_param)
 		return 0;
-	auto prop = reinterpret_cast<CMFCPropertyGridProperty*>(lparam);
+	auto prop = reinterpret_cast<CMFCPropertyGridProperty*>(l_param);
 	/*if (prop != m_pProp)
 	{*/
 	const int class_id = static_cast<int>(prop->GetData());

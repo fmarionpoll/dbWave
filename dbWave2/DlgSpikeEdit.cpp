@@ -380,9 +380,9 @@ void DlgSpikeEdit::OnVScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_ba
 		break; 
 	case SB_LINEDOWN: shift = 1;
 		break; 
-	case SB_PAGEUP: shift = -10;
+	case SB_PAGEUP: shift = -50;
 		break; 
-	case SB_PAGEDOWN: shift = 10;
+	case SB_PAGEDOWN: shift = 50;
 		break; 
 	case SB_BOTTOM: shift = 100;
 		break; 

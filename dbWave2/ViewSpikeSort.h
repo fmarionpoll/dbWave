@@ -96,7 +96,6 @@ protected:
 
 	CMFCMyPropertyGridCtrl property_grid_;
 	void property_grid_init();
-	//CMFCMyPropertyGridProperty* property_grid_add_item(int class_id);
 	CMFCMyPropertyGridProperty* property_grid_find_item(int class_id) const;
 	void property_grid_update(SpikeList* spk_list);
 	void property_grid_delete_all();
@@ -215,7 +214,7 @@ public:
 	afx_msg void on_en_change_hist_bin_ms();
 
 
-	afx_msg LRESULT OnPropertyChanged(WPARAM wparam, LPARAM lparam);
+	afx_msg LRESULT OnPropertyChanged(WPARAM w_param, LPARAM l_param);
 
 
 	DECLARE_MESSAGE_MAP()

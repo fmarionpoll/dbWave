@@ -310,8 +310,8 @@ void Spike::offset_spike_data(const int offset)
 		*lp_dest += offset; 
 	
 	offset_ = offset;
-	value_max_ -= offset;
-	value_min_ -= offset;
+	value_max_ += offset;
+	value_min_ += offset;
 }
 
 void Spike::offset_spike_data_to_average_ex(const int i_first, const int i_last)
