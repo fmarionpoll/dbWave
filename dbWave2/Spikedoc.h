@@ -69,9 +69,9 @@ public:
 	static void export_headers_descriptors(CSharedFile* shared_file, options_view_spikes* options_view_spikes);
 	void export_headers_data(CSharedFile* shared_file, const options_view_spikes* options_view_spikes);
 	void export_spk_amplitude_histogram(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, long* p_hist0, int spike_list_index, int class_index);
-	void 		export_spk_average_wave(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, double* value, int spike_list_index, int class_index);
-	void 		export_spk_psth(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, long* sum0, int spike_list_index, int class_index);
-	void 		export_spk_latencies(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, int intervals_count, int spike_list_index, int class_index);
+	void export_spk_average_wave(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, double* value, int spike_list_index, int class_index);
+	void export_spk_psth(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, long* sum0, int spike_list_index, int class_index);
+	void export_spk_latencies(CSharedFile* shared_file, const options_view_spikes* options_view_spikes, int intervals_count, int spike_list_index, int class_index);
 
 	BOOL OnSaveDocument(LPCTSTR psz_path_name) override;
 	BOOL OnNewDocument() override;

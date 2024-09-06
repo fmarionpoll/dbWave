@@ -114,7 +114,7 @@ BOOL CdbWaveDoc::open_new_document(LPCTSTR lpsz_path_name)
 			{
 			case 0: // open file
 				db_table = new CdbTable;
-				db_table->attach(current_datafile_name_, current_spike_file_name_);
+				db_table->attach(current_data_file_name_, current_spike_file_name_);
 				return open_database(cs_name);
 				//break;
 			case 1: // overwrite file
@@ -141,7 +141,7 @@ BOOL CdbWaveDoc::open_new_document(LPCTSTR lpsz_path_name)
 
 	// create dbFile
 	db_table = new CdbTable;
-	db_table->attach(current_datafile_name_, current_spike_file_name_);
+	db_table->attach(current_data_file_name_, current_spike_file_name_);
 	db_table->Create(cs_name, dbLangGeneral, dbVersion30);
 	db_filename = cs_name;
 	proposed_data_path_name = cs_name.Left(cs_name.ReverseFind('.'));
@@ -245,7 +245,7 @@ BOOL CdbWaveDoc::OnOpenDocument(LPCTSTR lpsz_path_name)
 BOOL CdbWaveDoc::open_database(const LPCTSTR lpsz_path_name)
 {
 	const auto tmp_db = new CdbTable;
-	tmp_db->attach(current_datafile_name_, current_spike_file_name_);
+	tmp_db->attach(current_data_file_name_, current_spike_file_name_);
 
 	// Attempt to open the new database before replacing our ptr
 	try
@@ -317,7 +317,7 @@ CString CdbWaveDoc::db_set_current_spike_file_name()
 		return current_spike_file_name_;
 
 	// not found? derive name from data file (same directory)
-	current_spike_file_name_ = current_datafile_name_.Left(current_datafile_name_.ReverseFind(_T('.')) + 1) + _T("spk");
+	current_spike_file_name_ = current_data_file_name_.Left(current_data_file_name_.ReverseFind(_T('.')) + 1) + _T("spk");
 
 	const auto i_count = current_spike_file_name_.ReverseFind(_T('\\'));
 	const auto cs_name = current_spike_file_name_.Right(current_spike_file_name_.GetLength() - i_count - 1);
@@ -340,8 +340,8 @@ CString CdbWaveDoc::db_set_current_spike_file_name()
 
 CString CdbWaveDoc::db_get_current_dat_file_name(const BOOL b_test)
 {
-	current_datafile_name_ = db_table->get_current_record_data_file_name();
-	auto filename = current_datafile_name_;
+	current_data_file_name_ = db_table->get_current_record_data_file_name();
+	auto filename = current_data_file_name_;
 	if (b_test && !is_file_present(filename))
 		filename.Empty();
 	return filename;
@@ -380,14 +380,14 @@ AcqDataDoc* CdbWaveDoc::open_current_data_file()
 
 	// open document; erase object if operation failed
 	db_get_current_dat_file_name(TRUE);
-	if (current_datafile_name_.IsEmpty()
-		|| !m_p_data_doc->open_document(current_datafile_name_))
+	if (current_data_file_name_.IsEmpty()
+		|| !m_p_data_doc->open_document(current_data_file_name_))
 	{
 		delete m_p_data_doc;
 		m_p_data_doc = nullptr;
 	}
 	else
-		m_p_data_doc->SetPathName(current_datafile_name_, FALSE);
+		m_p_data_doc->SetPathName(current_data_file_name_, FALSE);
 	return m_p_data_doc;
 }
 
@@ -586,6 +586,17 @@ long CdbWaveDoc::db_get_current_record_position() const
 	return i_file;
 }
 
+BOOL CdbWaveDoc::db_set_current_record_position(const long i_file)
+{
+	BOOL flag = db_table->set_index_current_file(i_file);
+	if (flag)
+	{
+		current_data_file_name_ = db_table->current_data_filename;
+		current_spike_file_name_ = db_table->current_spike_filename;
+	}
+	return flag;
+}
+
 long CdbWaveDoc::db_get_current_record_id() const
 {
 	return db_table->m_main_table_set.m_id;
@@ -689,7 +700,7 @@ void CdbWaveDoc::export_data_ascii_comments(CSharedFile * p_shared_file)
 		if (dlg.check_cancel_button())
 			if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 				break;
-		cs_comment.Format(_T("Processing file [%i / %i] %s"), i_file + 1, n_files, (LPCTSTR)current_datafile_name_);
+		cs_comment.Format(_T("Processing file [%i / %i] %s"), i_file + 1, n_files, (LPCTSTR)current_data_file_name_);
 		dlg.set_status(cs_comment);
 
 		cs_dummy.Empty();
@@ -886,9 +897,9 @@ BOOL CdbWaveDoc::copy_files_to_directory(const CString & path)
 		{
 			db_table->get_current_record_file_names();
 			// data file
-			if (!current_datafile_name_.IsEmpty())
+			if (!current_data_file_name_.IsEmpty())
 			{
-				old_names_array.Add(current_datafile_name_);
+				old_names_array.Add(current_data_file_name_);
 
 				const UINT uid = db_table->m_main_table_set.m_path_id;
 				auto j = 0;
@@ -1010,7 +1021,7 @@ BOOL CdbWaveDoc::copy_files_to_directory(const CString & path)
 		{
 			p_new->db_table->get_current_record_file_names();
 			CFileStatus status;
-			const auto b_dat_file = CFile::GetStatus(p_new->current_datafile_name_, status);
+			const auto b_dat_file = CFile::GetStatus(p_new->current_data_file_name_, status);
 			// check if data file is present
 			const auto b_spk_file = CFile::GetStatus(p_new->current_spike_file_name_, status);
 			// check if spike file is present
@@ -1590,7 +1601,7 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 	{
 		CWaveFormat* wave_format;
 		// process data file
-		if (!current_datafile_name_.IsEmpty())
+		if (!current_data_file_name_.IsEmpty())
 		{
 			const auto p_dat = open_current_data_file();
 			ASSERT(p_dat != nullptr);
@@ -1638,7 +1649,7 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 
 		CWaveFormat* p_wave_format;
 		// process data file
-		if (!current_datafile_name_.IsEmpty())
+		if (!current_data_file_name_.IsEmpty())
 		{
 			const auto p_dat = open_current_data_file();
 			ASSERT(p_dat != nullptr);
@@ -1855,13 +1866,15 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 	auto* p_app = static_cast<CdbWaveApp*>(AfxGetApp());
 	const auto options_view_spikes = &(p_app->options_view_spikes);
 
+	// export description of the type of data exported
 	const auto i_old_list = m_p_spk_doc->get_index_current_spike_list();
 	m_p_spk_doc->export_table_title(p_sf, options_view_spikes, n_files);
 
+	// export header of all columns
 	CSpikeDoc::export_headers_descriptors(p_sf, options_view_spikes);
 	m_p_spk_doc->export_headers_data(p_sf, options_view_spikes); 
 
-	// single file export operation: EXTREMA, amplitude, SPIKE_POINTS
+	// single file export operation: EXTREMA, amplitude, SPIKE_POINTS - change orientation of table
 	transpose_ = FALSE;
 	if (options_view_spikes->export_data_type == EXPORT_INTERV)
 		transpose_ = TRUE;
@@ -1874,6 +1887,7 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 		m_p_spk_doc->export_spk_file_comment(p_sf, options_view_spikes, 0, cs_file_desc);
 		m_p_spk_doc->export_spk_attributes_one_file(p_sf, options_view_spikes);
 	}
+
 	// multiple file export operations: ISI, AUTOCORRELATION, HIST_AMPL, AVERAGE, INTERVALS, PSTH
 	else
 	{
@@ -1883,20 +1897,24 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 		double* p_double = nullptr;
 		switch (options_view_spikes->export_data_type)
 		{
-		case EXPORT_ISI: // ISI
-		case EXPORT_AUTOCORR: // Autocorrelation
+		case EXPORT_ISI: 
+		case EXPORT_AUTOCORR: 
 			n_bins = options_view_spikes->n_bins_isi;
 			break;
-		case EXPORT_HISTAMPL: // spike amplitude histogram
+
+		case EXPORT_HISTAMPL: 
 			n_bins = options_view_spikes->hist_ampl_n_bins + 2;
 			break;
-		case EXPORT_AVERAGE: // assume that all spikes have the same length
+
+		case EXPORT_AVERAGE: 
 			p_double = new double[m_p_spk_doc->get_spike_list_current()->get_spike_length() * 2 + 1 + 2];
 			*p_double = m_p_spk_doc->get_spike_list_current()->get_spike_length();
 			break;
+
 		case EXPORT_INTERV: // feb 23, 2009
 			break;
-		case EXPORT_PSTH: // PSTH
+
+		case EXPORT_PSTH:
 		default:
 			n_bins = options_view_spikes->n_bins;
 			break;
@@ -1963,29 +1981,35 @@ void CdbWaveDoc::export_number_of_spikes(CSharedFile * p_sf)
 			{
 				const auto p_spike_list = m_p_spk_doc->set_index_current_spike_list(i_spike_list);
 				options_view_spikes->i_chan = i_spike_list;
+
 				for (auto k_class = class1; k_class <= class2; k_class++)
 				{
 					export_spk_descriptors(p_sf, p_spike_list, k_class);
 					// export data
 					switch (options_view_spikes->export_data_type)
 					{
-					case EXPORT_HISTAMPL: // spike amplitude histogram
+					case EXPORT_HISTAMPL: 
 						m_p_spk_doc->export_spk_amplitude_histogram(p_sf, options_view_spikes, p_hist0, i_spike_list, k_class);
 						break;
-					case EXPORT_LATENCY: // occurence time of the first 10 spikes
+
+					case EXPORT_LATENCY: 
 						m_p_spk_doc->export_spk_latencies(p_sf, options_view_spikes, 10, i_spike_list, k_class);
 						break;
-					case EXPORT_INTERV: // feb 23, 2009 - occurence time of all spikes
+
+					case EXPORT_INTERV: 
 						m_p_spk_doc->export_spk_latencies(p_sf, options_view_spikes, -1, i_spike_list, k_class);
 						break;
-					case EXPORT_AVERAGE: // assume that all spikes have the same length
+
+					case EXPORT_AVERAGE: 
 						m_p_spk_doc->export_spk_average_wave(p_sf, options_view_spikes, p_double, i_spike_list, k_class);
 						break;
-					case EXPORT_PSTH: // PSTH
-					case EXPORT_ISI: // ISI
-					case EXPORT_AUTOCORR: // Autocorrelation
+
+					case EXPORT_PSTH: 
+					case EXPORT_ISI: 
+					case EXPORT_AUTOCORR: 
 						m_p_spk_doc->export_spk_psth(p_sf, options_view_spikes, p_hist0, i_spike_list, k_class);
 						break;
+
 					default:
 						ATLTRACE2(_T("option selected not implemented: %i /n"), options_view_spikes->export_data_type);
 						break;
@@ -2416,11 +2440,11 @@ void CdbWaveDoc::remove_duplicate_files()
 			const auto bookmark = db_table->m_main_table_set.GetBookmark();
 			db_table->get_current_record_file_names();
 			db_table->m_main_table_set.SetBookmark(bookmark);
-			all_names.SetAt(index_valid_records, current_datafile_name_);
+			all_names.SetAt(index_valid_records, current_data_file_name_);
 
 			// process file
 			CString comment;
-			comment.Format(_T("Processing file [%i / %i] %s"), index_valid_records, n_files, (LPCTSTR)current_datafile_name_);
+			comment.Format(_T("Processing file [%i / %i] %s"), index_valid_records, n_files, (LPCTSTR)current_data_file_name_);
 			dlg.set_status(comment);
 			if (dlg.check_cancel_button())
 				if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
@@ -2455,7 +2479,7 @@ void CdbWaveDoc::remove_duplicate_files()
 					original_names.SetAt(nb_records_to_suppress, all_names.GetAt(i_duplicate_file));
 				else
 					original_names.SetAt(nb_records_to_suppress, _T("(none)"));
-				deleted_dat_names.SetAt(nb_records_to_suppress, current_datafile_name_);
+				deleted_dat_names.SetAt(nb_records_to_suppress, current_data_file_name_);
 				deleted_spk_names.SetAt(nb_records_to_suppress, current_spike_file_name_);
 				db_table->m_main_table_set.Delete();
 				nb_records_to_suppress++;
@@ -2587,10 +2611,10 @@ void CdbWaveDoc::remove_missing_files() const
 					break;
 
 			db_table->get_current_record_file_names();
-			cs_comment.Format(_T("Processing file [%i / %i] %s"), i_file, n_files, (LPCTSTR)current_datafile_name_);
+			cs_comment.Format(_T("Processing file [%i / %i] %s"), i_file, n_files, (LPCTSTR)current_data_file_name_);
 			dlg.set_status(cs_comment);
 
-			const auto b_dat_file = CFile::GetStatus(current_datafile_name_, status);
+			const auto b_dat_file = CFile::GetStatus(current_data_file_name_, status);
 			const auto b_spk_file = CFile::GetStatus(current_spike_file_name_, status);
 			if (!b_dat_file && !b_spk_file)
 				db_table->m_main_table_set.Delete();
@@ -2653,11 +2677,11 @@ void CdbWaveDoc::remove_false_spk_files() const
 				if (AfxMessageBox(_T("Are you sure you want to Cancel?"), MB_YESNO) == IDYES)
 					break;
 			db_table->get_current_record_file_names();
-			cs_comment.Format(_T("Processing file [%i / %i] %s"), i_file, n_files, (LPCTSTR)current_datafile_name_);
+			cs_comment.Format(_T("Processing file [%i / %i] %s"), i_file, n_files, (LPCTSTR)current_data_file_name_);
 			dlg.set_status(cs_comment);
 
 			// check if spike file is present
-			auto cs_spike_file_name = current_datafile_name_.Left(current_datafile_name_.ReverseFind('.') + 1) + _T("spk");
+			auto cs_spike_file_name = current_data_file_name_.Left(current_data_file_name_.ReverseFind('.') + 1) + _T("spk");
 			const auto b_spk_file = CFile::GetStatus(cs_spike_file_name, status);
 
 			// if spk file not found in the same directory, remove pRecord
@@ -2751,7 +2775,7 @@ void CdbWaveDoc::export_datafiles_as_text_files()
 		dlg.set_status(cs_comment);
 
 		// process data file
-		if (!current_datafile_name_.IsEmpty())
+		if (!current_data_file_name_.IsEmpty())
 		{
 			// open file
 			const auto p_dat = open_current_data_file();
@@ -2759,7 +2783,7 @@ void CdbWaveDoc::export_datafiles_as_text_files()
 
 			// create text file on disk with the same name as the data file_with dat
 			CStdioFile data_dest; 
-			auto cs_txt_file = current_datafile_name_ + _T("_.txt");
+			auto cs_txt_file = current_data_file_name_ + _T("_.txt");
 			CFileException fe; 
 			if (!data_dest.Open(
 				cs_txt_file, CFile::modeCreate | CFile::modeReadWrite | CFile::shareDenyNone | CFile::typeText, &fe))

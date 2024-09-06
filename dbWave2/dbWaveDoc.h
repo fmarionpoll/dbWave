@@ -26,8 +26,8 @@ protected:
 	DECLARE_DYNCREATE(CdbWaveDoc)
 
 protected:
-	CString		current_datafile_name_;
-	CString		current_spike_file_name_;
+	CString		current_data_file_name_ {};
+	CString		current_spike_file_name_ {};
 
 	BOOL		b_call_new_  {true};
 	CStringArray names_of_files_to_delete_;
@@ -44,8 +44,8 @@ public:
 	CdbTable*	db_table  {nullptr};
 	BOOL		valid_tables  {false};
 	CDWordArray selected_records;
-	CString		db_filename;
-	CString		proposed_data_path_name;
+	CString		db_filename {};
+	CString		proposed_data_path_name {};
 
 	void	import_file_list(CStringArray& cs_descriptors_array, int n_columns = 1, boolean b_header = false);
 	BOOL	import_database(const CString& filename) const;
@@ -161,7 +161,7 @@ public:
 
 	long	db_get_current_record_position() const;
 	long	db_get_current_record_id() const;
-	BOOL	db_set_current_record_position(const long i_file) const { return db_table->set_index_current_file(i_file); }
+	BOOL	db_set_current_record_position(const long i_file);
 
 	BOOL	db_move_to_id(const long record_id) const { return db_table->move_to_id(record_id); }
 	BOOL	db_move_first() const { return db_table->move_to(ID_RECORD_FIRST); }
