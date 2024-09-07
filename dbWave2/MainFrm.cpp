@@ -127,7 +127,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CMFCToolBar::AddToolBarForImageCollection(IDR_MENU_IMAGES, the_app.hi_color_icons ? IDB_MENU_IMAGES_24 : 0);
 
 	// create docking windows
-	if (!create_docking_properties_panes())
+	if (!create_docking_panes())
 	{
 		TRACE0("Failed to create docking windows\n");
 		return -1;
@@ -175,7 +175,7 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 #endif //_DEBUG
 
-BOOL CMainFrame::create_docking_properties_panes()
+BOOL CMainFrame::create_docking_panes()
 {
 	// Create filter pane
 	CString str_filter_view;
@@ -202,11 +202,11 @@ BOOL CMainFrame::create_docking_properties_panes()
 		return FALSE; // failed to create
 	}
 
-	set_docking_properties_panes_icons(the_app.hi_color_icons);
+	set_docking_panes_icons(the_app.hi_color_icons);
 	return TRUE;
 }
 
-void CMainFrame::set_docking_properties_panes_icons(BOOL b_hi_color_icons)
+void CMainFrame::set_docking_panes_icons(BOOL b_hi_color_icons)
 {
 	const auto h_filter_pane_icon = static_cast<HICON>(::LoadImage(AfxGetResourceHandle(),
 	                                                               MAKEINTRESOURCE(

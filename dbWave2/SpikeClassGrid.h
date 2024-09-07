@@ -7,6 +7,7 @@
 class SpikeClassGrid :
     public CMFCPropertyGridCtrl
 {
+    DECLARE_DYNAMIC(SpikeClassGrid)
 
 public:
     void init_header();

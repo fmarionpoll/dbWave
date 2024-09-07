@@ -3,6 +3,7 @@
 
 #include "dbWave.h"
 
+IMPLEMENT_DYNAMIC(SpikeClassGrid, CMFCPropertyGridCtrl)
 
 BEGIN_MESSAGE_MAP(SpikeClassGrid, CMFCPropertyGridCtrl)
 	ON_WM_SIZE()

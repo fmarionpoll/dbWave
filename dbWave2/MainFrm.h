@@ -40,8 +40,8 @@ protected: // control bar embedded members
 	CMFCOutlookBarPane outlook_pane_;
 
 	BOOL create_outlook_bar();
-	BOOL create_docking_properties_panes();
-	void set_docking_properties_panes_icons(BOOL b_hi_color_icons);
+	BOOL create_docking_panes();
+	void set_docking_panes_icons(BOOL b_hi_color_icons);
 	CdbWaveDoc* GetMDIActiveDocument();
 
 	// Generated message map functions

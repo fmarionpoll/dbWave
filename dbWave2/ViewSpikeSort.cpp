@@ -61,7 +61,7 @@ void ViewSpikeSort::DoDataExchange(CDataExchange* p_dx)
 	DDX_Text(p_dx, IDC_EDIT_LEFT, t_xy_left_);
 
 	DDX_Control(p_dx, IDC_TAB1, spk_list_tab_ctrl);
-	DDX_Control(p_dx, IDC_MFCPROPERTYGRID1, property_grid_);
+	DDX_Control(p_dx, IDC_MFCPROPERTYGRID1, property_grid);
 }
 
 BEGIN_MESSAGE_MAP(ViewSpikeSort, ViewDbTable)
@@ -208,22 +208,22 @@ void ViewSpikeSort::init_charts_from_saved_parameters()
 
 void ViewSpikeSort::add_toolbar_on_top_of_property_grid()
 {
-	if (wnd_property_tool_bar_.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_PROPERTIES))
+	if (property_grid_toolbar_.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_PROPERTIES))
 	{
-		wnd_property_tool_bar_.LoadToolBar(IDR_PROPERTIES, 0, 0, TRUE /* Is locked */);
-		wnd_property_tool_bar_.CleanUpLockedImages();
-		wnd_property_tool_bar_.LoadBitmap(the_app.hi_color_icons ? IDB_PROPERTIES_HC : IDR_PROPERTIES, 0, 0, TRUE /* Locked */);
-		wnd_property_tool_bar_.SetPaneStyle(
-			wnd_property_tool_bar_.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM |
+		property_grid_toolbar_.LoadToolBar(IDR_PROPERTIES, 0, 0, TRUE /* Is locked */);
+		property_grid_toolbar_.CleanUpLockedImages();
+		property_grid_toolbar_.LoadBitmap(the_app.hi_color_icons ? IDB_PROPERTIES_HC : IDR_PROPERTIES, 0, 0, TRUE /* Locked */);
+		property_grid_toolbar_.SetPaneStyle(
+			property_grid_toolbar_.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM |
 				CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
 
-		const CSize size_tool_bar = wnd_property_tool_bar_.CalcFixedLayout(FALSE, TRUE);
+		const CSize size_tool_bar = property_grid_toolbar_.CalcFixedLayout(FALSE, TRUE);
 		WINDOWPLACEMENT wpl;
-		property_grid_.GetWindowPlacement(&wpl);
+		property_grid.GetWindowPlacement(&wpl);
 
 		wpl.rcNormalPosition.bottom = wpl.rcNormalPosition.top - 1;
 		wpl.rcNormalPosition.top = wpl.rcNormalPosition.bottom - size_tool_bar.cy;
-		wnd_property_tool_bar_.SetWindowPlacement(&wpl);
+		property_grid_toolbar_.SetWindowPlacement(&wpl);
 	}
 }
 
@@ -233,7 +233,7 @@ void ViewSpikeSort::OnInitialUpdate()
 	define_stretch_parameters();
 	ViewDbTable::OnInitialUpdate();
 
-	property_grid_.init_header();
+	property_grid.init_header();
 	add_toolbar_on_top_of_property_grid();
 
 	init_charts_from_saved_parameters();
@@ -515,7 +515,7 @@ void ViewSpikeSort::on_sort()
 		dlg_progress->set_step(1);
 	}
 
-	property_grid_.delete_all();
+	property_grid.delete_all();
 
 	for (auto i_file = first_file; i_file <= last_file; i_file++)
 	{
@@ -571,7 +571,7 @@ void ViewSpikeSort::on_sort()
 
 		}
 
-		property_grid_.update(p_spk_list);
+		property_grid.update(p_spk_list);
 		p_spk_doc->SetModifiedFlag(TRUE);
 	}
 
@@ -805,7 +805,7 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 	const int index_current_file = pdb_doc->db_get_current_record_position();
 	db_spike spike_sel(-1, -1, -1);
 	select_spike(spike_sel);
-	property_grid_.delete_all();
+	property_grid.delete_all();
 
 	const int index_first_file = b_all_files_?  0: index_current_file;
 	const int index_last_file = b_all_files_ ? (n_files-1): index_current_file;
@@ -851,7 +851,7 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 			break;
 		}
 
-		property_grid_.update(p_spk_list);
+		property_grid.update(p_spk_list);
 		p_spk_doc->SetModifiedFlag(TRUE);
 		save_current_spk_file();
 

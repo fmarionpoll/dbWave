@@ -782,7 +782,6 @@
     <ClCompile Include="ADAcqDataDoc.cpp" />
     <ClCompile Include="ChartDataAD.cpp" />
     <ClCompile Include="ChartSpike.cpp" />
-    <ClCompile Include="DummyPanel.cpp" />
     <ClCompile Include="SpikeClassGrid.cpp" />
     <ClCompile Include="SpikeClassGridProperty.cpp" />
     <ClCompile Include="NiceUnit.cpp" />
@@ -1369,7 +1368,6 @@
     <ClInclude Include="CDTBoardParameters.h" />
     <ClInclude Include="ChartDataAD.h" />
     <ClInclude Include="ChartSpike.h" />
-    <ClInclude Include="DummyPanel.h" />
     <ClInclude Include="SpikeClassGrid.h" />
     <ClInclude Include="SpikeClassGridProperty.h" />
     <ClInclude Include="NiceUnit.h" />

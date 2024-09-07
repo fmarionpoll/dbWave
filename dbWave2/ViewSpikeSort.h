@@ -94,9 +94,12 @@ protected:
 	CEditCtrl mm_t_xy_left_;
 	float t_xy_right_{ 1.f };
 	float t_xy_left_{ 0.f };
+public:
+	SpikeClassGrid property_grid;
+	BOOL b_changed_property{ FALSE };
 
-	SpikeClassGrid property_grid_;
-	SpikeClassGridToolBar wnd_property_tool_bar_;
+protected:
+	SpikeClassGridToolBar property_grid_toolbar_;
 	void add_toolbar_on_top_of_property_grid();
 
 	options_spk_classification* spike_classification_{};
