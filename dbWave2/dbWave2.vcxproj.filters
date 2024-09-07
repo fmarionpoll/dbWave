@@ -1471,6 +1471,9 @@
     <Image Include="res\properti.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\bmp00001.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\..\..\..\OneDrive\Documents\CED Library\CEDSon64\CEDS64ML\x86\ceds64int.lib" />

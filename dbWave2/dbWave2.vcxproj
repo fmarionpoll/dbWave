@@ -1759,6 +1759,7 @@
     <ResourceCompile Include="dbWave.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\bmp00001.bmp" />
     <Image Include="res\buttons.bmp" />
     <Image Include="res\check1.bmp" />
     <Image Include="res\classview.bmp" />

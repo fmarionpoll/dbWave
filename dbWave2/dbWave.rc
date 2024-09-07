@@ -2375,6 +2375,8 @@ IDR_DBDATATYPE_256      BITMAP                  "res\\toolbar_dat256.bmp"
 
 IDB_CHECK1              BITMAP                  "res\\check1.bmp"
 
+IDB_SPIKE_CLASS_PROPERTIES_HC BITMAP                  "res\\bmp00001.bmp"
+
 IDR_SPIKE_CLASS_PROPERTIES BITMAP                  "res\\properti.bmp"
 
 
@@ -3395,6 +3397,8 @@ END
 
 IDR_SPIKE_CLASS_PROPERTIES TOOLBAR 16, 15
 BEGIN
+    BUTTON      ID_EXPAND_ALL
+    BUTTON      ID_SORT_PROPERTIES
     BUTTON      IDC_UPDATE_INFOS
     BUTTON      IDC_EDIT_INFOS
 END

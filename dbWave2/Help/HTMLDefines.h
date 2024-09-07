@@ -183,6 +183,7 @@
 #define HIDR_MENU_IMAGES                        0x200B3
 #define HIDR_OUTPUT_POPUP                       0x200B6
 #define HIDR_PROPERTIES                         0x200B7
+#define HIDR_PROPERTIES1                        0x200B8
 #define HIDR_SPIKE_CLASS_PROPERTIES             0x200B8
 #define HIDR_RIBBON                             0x2013F
 #define HIDR_THEME_MENU                         0x2021A
