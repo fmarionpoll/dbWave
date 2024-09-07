@@ -206,26 +206,6 @@ void ViewSpikeSort::init_charts_from_saved_parameters()
 	tag_index_hist_low_ = chart_histogram_.vt_tags.add_tag(spike_classification_->lower_threshold, 0);
 }
 
-void ViewSpikeSort::add_toolbar_on_top_of_property_grid()
-{
-	if (property_grid_toolbar_.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_PROPERTIES))
-	{
-		property_grid_toolbar_.LoadToolBar(IDR_PROPERTIES, 0, 0, TRUE /* Is locked */);
-		property_grid_toolbar_.CleanUpLockedImages();
-		property_grid_toolbar_.LoadBitmap(the_app.hi_color_icons ? IDB_PROPERTIES_HC : IDR_PROPERTIES, 0, 0, TRUE /* Locked */);
-		property_grid_toolbar_.SetPaneStyle(
-			property_grid_toolbar_.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM |
-				CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
-
-		const CSize size_tool_bar = property_grid_toolbar_.CalcFixedLayout(FALSE, TRUE);
-		WINDOWPLACEMENT wpl;
-		property_grid.GetWindowPlacement(&wpl);
-
-		wpl.rcNormalPosition.bottom = wpl.rcNormalPosition.top - 1;
-		wpl.rcNormalPosition.top = wpl.rcNormalPosition.bottom - size_tool_bar.cy;
-		property_grid_toolbar_.SetWindowPlacement(&wpl);
-	}
-}
 
 void ViewSpikeSort::OnInitialUpdate()
 {
@@ -234,7 +214,8 @@ void ViewSpikeSort::OnInitialUpdate()
 	ViewDbTable::OnInitialUpdate();
 
 	property_grid.init_header();
-	add_toolbar_on_top_of_property_grid();
+	property_grid_toolbar_.create_toolbar(this);
+	property_grid_toolbar_.place_on_top_of_companion_window(&property_grid);
 
 	init_charts_from_saved_parameters();
 	update_file_parameters();

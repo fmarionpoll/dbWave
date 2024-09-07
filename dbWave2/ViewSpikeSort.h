@@ -8,7 +8,6 @@
 #include "ScrollBarEx.h"
 #include "options_spk_classification.h"
 #include "SpikeClassGrid.h"
-#include "SpikeClassGridProperty.h"
 #include "SpikeClassGridToolBar.h"
 
 
@@ -100,7 +99,6 @@ public:
 
 protected:
 	SpikeClassGridToolBar property_grid_toolbar_;
-	void add_toolbar_on_top_of_property_grid();
 
 	options_spk_classification* spike_classification_{};
 	options_view_data* options_view_data_{};

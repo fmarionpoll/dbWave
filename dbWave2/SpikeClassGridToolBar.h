@@ -11,6 +11,8 @@ public:
 		CMFCToolBar::OnUpdateCmdUI(static_cast<CFrameWnd*>(GetOwner()), bDisableIfNoHndler);
 	}
 	BOOL AllowShowOnList() const override { return FALSE; }
+	BOOL create_toolbar(CWnd* p_wnd);
+	void place_on_top_of_companion_window(CWnd* p_wnd);
 
 	afx_msg void on_expand_all_properties();
 	afx_msg void on_update_expand_all_properties(CCmdUI* p_cmd_ui);

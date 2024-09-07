@@ -95,6 +95,7 @@ void PaneldbProperties::AdjustLayout()
 	                          rect_client.top + m_wnd_edit_infos_height_,
 	                          rect_client.Width(),
 	                          cy_tlb, SWP_NOACTIVATE | SWP_NOZORDER);
+
 	wnd_property_list_.SetWindowPos(nullptr, rect_client.left,
 	                           rect_client.top + m_wnd_edit_infos_height_ + cy_tlb,
 	                           rect_client.Width(),
