@@ -534,6 +534,12 @@
     <ClCompile Include="PaneldbFilterToolBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SpikeClassGridToolBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DummyPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCell.h">
@@ -1161,6 +1167,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PaneldbFilterToolBar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpikeClassGridToolBar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DummyPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

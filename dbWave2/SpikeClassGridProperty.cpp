@@ -30,6 +30,7 @@ SpikeClassGridProperty* SpikeClassGridProperty::create(const int class_id)
 	return p_prop;
 }
 
+
 void SpikeClassGridProperty::OnDrawName(CDC* p_dc, const CRect rect)
 {
 	const int class_index = static_cast<int>(GetData());

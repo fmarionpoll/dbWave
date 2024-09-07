@@ -10,7 +10,4 @@ public:
     static SpikeClassGridProperty* create(int class_id);
 
     void OnDrawName(CDC* p_dc, CRect rect) override;
-    //void OnDrawValue(CDC* p_dc, CRect rect) override;
-    //void OnDrawButton(CDC* p_dc, CRect rect) override;
-    //void OnDrawDescription(CDC* p_dc, CRect rect) override;
 };

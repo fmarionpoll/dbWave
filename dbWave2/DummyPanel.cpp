@@ -1,9 +1,8 @@
-#include "StdAfx.h"
+#include "stdafx.h"
+#include "DummyPanel.h"
 
-#include "PaneldbProperties.h"
-#include "resource.h"
-//#include "MainFrm.h"
 #include "dbWave.h"
+#include "resource.h"
 #include "dbWave_constants.h"
 #include "DlgdbEditRecord.h"
 
@@ -12,10 +11,10 @@
 #endif
 
 
-IMPLEMENT_DYNAMIC(PaneldbProperties, CDockablePane)
+IMPLEMENT_DYNAMIC(DummyPanel, CWnd)
 
 // the numbers here are those of m_pszTableCol - they define the order of appearance of the different parameters
-int PaneldbProperties::m_no_col_[] = {
+int DummyPanel::m_no_col_[] = {
 	// ------1
 	CH_ACQDATE_DAY,
 	CH_ACQDATE_TIME,
@@ -50,7 +49,7 @@ int PaneldbProperties::m_no_col_[] = {
 	-1
 }; // 22-25 measures: n spikes, spike_classes, flag, more
 
-int PaneldbProperties::m_prop_col_[] = {
+int DummyPanel::m_prop_col_[] = {
 	// TRUE = allow edit; list all possible columns
 	FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE,
 	TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE,
@@ -58,13 +57,13 @@ int PaneldbProperties::m_prop_col_[] = {
 	TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE
 };
 
-PaneldbProperties::PaneldbProperties()
+DummyPanel::DummyPanel()
 = default;
 
-PaneldbProperties::~PaneldbProperties()
+DummyPanel::~DummyPanel()
 = default;
 
-BEGIN_MESSAGE_MAP(PaneldbProperties, CDockablePane)
+BEGIN_MESSAGE_MAP(DummyPanel, CWnd)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
@@ -82,7 +81,7 @@ BEGIN_MESSAGE_MAP(PaneldbProperties, CDockablePane)
 	ON_MESSAGE(WM_MYMESSAGE, on_my_message)
 END_MESSAGE_MAP()
 
-void PaneldbProperties::AdjustLayout()
+void DummyPanel::AdjustLayout()
 {
 	if (GetSafeHwnd() == nullptr || (AfxGetMainWnd() != nullptr && AfxGetMainWnd()->IsIconic()))
 		return;
@@ -92,19 +91,19 @@ void PaneldbProperties::AdjustLayout()
 	const int cy_tlb = wnd_tool_bar_.CalcFixedLayout(FALSE, TRUE).cy;
 
 	wnd_tool_bar_.SetWindowPos(nullptr, rect_client.left,
-	                          rect_client.top + m_wnd_edit_infos_height_,
-	                          rect_client.Width(),
-	                          cy_tlb, SWP_NOACTIVATE | SWP_NOZORDER);
+		rect_client.top + m_wnd_edit_infos_height_,
+		rect_client.Width(),
+		cy_tlb, SWP_NOACTIVATE | SWP_NOZORDER);
 	wnd_property_list_.SetWindowPos(nullptr, rect_client.left,
-	                           rect_client.top + m_wnd_edit_infos_height_ + cy_tlb,
-	                           rect_client.Width(),
-	                           rect_client.Height() - m_wnd_edit_infos_height_ - cy_tlb,
-	                           SWP_NOACTIVATE | SWP_NOZORDER);
+		rect_client.top + m_wnd_edit_infos_height_ + cy_tlb,
+		rect_client.Width(),
+		rect_client.Height() - m_wnd_edit_infos_height_ - cy_tlb,
+		SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-int PaneldbProperties::OnCreate(const LPCREATESTRUCT lp_create_struct)
+int DummyPanel::OnCreate(const LPCREATESTRUCT lp_create_struct)
 {
-	if (CDockablePane::OnCreate(lp_create_struct) == -1)
+	if (CWnd::OnCreate(lp_create_struct) == -1)
 		return -1;
 
 	const CRect rect_dummy(0, 0, 24, 24);
@@ -132,32 +131,32 @@ int PaneldbProperties::OnCreate(const LPCREATESTRUCT lp_create_struct)
 	return 0;
 }
 
-void PaneldbProperties::OnSize(const UINT n_type, const int cx, int cy)
+void DummyPanel::OnSize(const UINT n_type, const int cx, int cy)
 {
-	CDockablePane::OnSize(n_type, cx, cy);
+	CWnd::OnSize(n_type, cx, cy);
 	AdjustLayout();
 }
 
-void PaneldbProperties::on_expand_all_properties()
+void DummyPanel::on_expand_all_properties()
 {
 	wnd_property_list_.ExpandAll();
 }
 
-void PaneldbProperties::on_update_expand_all_properties(CCmdUI* /* pCmdUI */)
+void DummyPanel::on_update_expand_all_properties(CCmdUI* /* pCmdUI */)
 {
 }
 
-void PaneldbProperties::on_sort_properties()
+void DummyPanel::on_sort_properties()
 {
 	wnd_property_list_.SetAlphabeticMode(!wnd_property_list_.IsAlphabeticMode());
 }
 
-void PaneldbProperties::on_update_sort_properties(CCmdUI* p_cmd_ui)
+void DummyPanel::on_update_sort_properties(CCmdUI * p_cmd_ui)
 {
 	p_cmd_ui->SetCheck(wnd_property_list_.IsAlphabeticMode());
 }
 
-void PaneldbProperties::update_prop_list()
+void DummyPanel::update_prop_list()
 {
 	m_b_changed_property_ = FALSE; // reset flag
 
@@ -180,7 +179,7 @@ void PaneldbProperties::update_prop_list()
 	m_b_update_combos_ = FALSE;
 }
 
-void PaneldbProperties::update_group_prop_from_table(CMFCPropertyGridProperty* p_group) const
+void DummyPanel::update_group_prop_from_table(CMFCPropertyGridProperty * p_group) const
 {
 	auto p_db = m_p_doc_->db_table;
 	DB_ITEMDESC desc;
@@ -243,11 +242,11 @@ void PaneldbProperties::update_group_prop_from_table(CMFCPropertyGridProperty* p
 	}
 }
 
-void PaneldbProperties::update_table_from_prop()
+void DummyPanel::update_table_from_prop()
 {
 	const auto p_database = m_p_doc_->db_table;
 	const auto p_main_table_set = &p_database->m_main_table_set;
-	m_b_changed_property_ = FALSE; 
+	m_b_changed_property_ = FALSE;
 	p_main_table_set->Edit();
 
 	const auto property_count = wnd_property_list_.GetPropertyCount();
@@ -259,7 +258,7 @@ void PaneldbProperties::update_table_from_prop()
 	p_main_table_set->Update();
 }
 
-void PaneldbProperties::update_table_from_group_prop(const CMFCPropertyGridProperty* p_group)
+void DummyPanel::update_table_from_group_prop(const CMFCPropertyGridProperty * p_group)
 {
 	const auto p_database = m_p_doc_->db_table;
 	const auto sub_items_count = p_group->GetSubItemsCount();
@@ -297,7 +296,7 @@ void PaneldbProperties::update_table_from_group_prop(const CMFCPropertyGridPrope
 			p_prop->SetOriginalValue(prop_val.lVal);
 			p_prop->SetValue(prop_val.lVal);
 			break;
-		//case FIELD_DATE:
+			//case FIELD_DATE:
 		default:
 			break;
 		}
@@ -307,7 +306,7 @@ void PaneldbProperties::update_table_from_group_prop(const CMFCPropertyGridPrope
 
 #define ID_BASE	1000
 
-void PaneldbProperties::init_prop_list()
+void DummyPanel::init_prop_list()
 {
 	// exit if doc is not defined
 	if (!m_p_doc_ || m_p_doc_ == nullptr)
@@ -341,12 +340,12 @@ void PaneldbProperties::init_prop_list()
 	const int record_position = p_database->m_main_table_set.GetAbsolutePosition() + 1;
 	const int records_count = p_database->m_main_table_set.get_records_count();
 	auto p_prop = new CMFCPropertyGridProperty(_T("current record"), static_cast<_variant_t>(record_position),
-	                                           _T("current record in the database (soft index)"));
+		_T("current record in the database (soft index)"));
 	p_prop->SetData(m_i_id);
 	m_i_id++; // iID = 1001
 	p_group0->AddSubItem(p_prop);
 	p_prop = new CMFCPropertyGridProperty(_T("total records"), static_cast<_variant_t>(records_count),
-	                                      _T("number of records in the database"));
+		_T("number of records in the database"));
 	p_prop->SetData(m_i_id);
 	m_i_id++; // iID = 1002
 	p_group0->AddSubItem(p_prop);
@@ -390,7 +389,7 @@ void PaneldbProperties::init_prop_list()
 // init all elements pointed at within m_noCol table from element i_col0 to element = -1 (stop value)
 // returns next position after the stop tag
 
-int PaneldbProperties::init_group_from_table(CMFCPropertyGridProperty* p_group, int i_col0) const
+int DummyPanel::init_group_from_table(CMFCPropertyGridProperty * p_group, int i_col0)
 {
 	const auto p_database = m_p_doc_->db_table;
 	p_database->m_main_table_set.get_records_count();
@@ -409,7 +408,7 @@ int PaneldbProperties::init_group_from_table(CMFCPropertyGridProperty* p_group, 
 		desc.l_val = 0;
 		desc.data_code_number = p_database->m_main_table_set.m_desc[i_desc_tab].data_code_number;
 
-		CMFCPropertyGridProperty* p_prop;
+		CMFCPropertyGridProperty* p_prop = nullptr;
 		CString cs_comment;
 		CString cs_title = CdbTable::m_column_properties[i_desc_tab].description;
 
@@ -436,8 +435,8 @@ int PaneldbProperties::init_group_from_table(CMFCPropertyGridProperty* p_group, 
 			break;
 		default:
 			cs_comment = _T("Field type unknown");
-			CString cs_value = cs_comment;
-			p_prop = new CMFCPropertyGridProperty(cs_title, cs_value, cs_comment, i_desc_tab);
+			CString csValue = cs_comment;
+			p_prop = new CMFCPropertyGridProperty(cs_title, csValue, cs_comment, i_desc_tab);
 			break;
 		}
 
@@ -449,19 +448,19 @@ int PaneldbProperties::init_group_from_table(CMFCPropertyGridProperty* p_group, 
 	return i + 1;
 }
 
-void PaneldbProperties::OnSetFocus(CWnd* p_old_wnd)
+void DummyPanel::OnSetFocus(CWnd * p_old_wnd)
 {
-	CDockablePane::OnSetFocus(p_old_wnd);
+	CWnd::OnSetFocus(p_old_wnd);
 	wnd_property_list_.SetFocus();
 }
 
-void PaneldbProperties::OnSettingChange(UINT u_flags, LPCTSTR lpsz_section)
+void DummyPanel::OnSettingChange(UINT u_flags, LPCTSTR lpsz_section)
 {
-	CDockablePane::OnSettingChange(u_flags, lpsz_section);
+	CWnd::OnSettingChange(u_flags, lpsz_section);
 	set_prop_list_font();
 }
 
-void PaneldbProperties::set_prop_list_font()
+void DummyPanel::set_prop_list_font()
 {
 	DeleteObject(m_fnt_prop_list_.Detach());
 
@@ -478,11 +477,11 @@ void PaneldbProperties::set_prop_list_font()
 	wnd_property_list_.SetFont(&m_fnt_prop_list_);
 }
 
-void PaneldbProperties::on_update_bn_edit_infos(CCmdUI* p_cmd_ui)
+void DummyPanel::on_update_bn_edit_infos(CCmdUI * p_cmd_ui)
 {
 }
 
-void PaneldbProperties::on_bn_clicked_edit_infos()
+void DummyPanel::on_bn_clicked_edit_infos()
 {
 	m_p_doc_->update_all_views_db_wave(nullptr, HINT_GET_SELECTED_RECORDS, nullptr);
 	DlgdbEditRecord dlg;
@@ -494,12 +493,12 @@ void PaneldbProperties::on_bn_clicked_edit_infos()
 	}
 }
 
-void PaneldbProperties::on_update_bn_update_infos(CCmdUI* p_cmd_ui)
+void DummyPanel::on_update_bn_update_infos(CCmdUI * p_cmd_ui)
 {
 	p_cmd_ui->Enable(m_b_changed_property_);
 }
 
-void PaneldbProperties::on_bn_clicked_update_infos()
+void DummyPanel::on_bn_clicked_update_infos()
 {
 	const auto l_index = m_p_doc_->db_get_current_record_position();
 	update_table_from_prop();
@@ -507,14 +506,19 @@ void PaneldbProperties::on_bn_clicked_update_infos()
 	m_p_doc_->update_all_views_db_wave(nullptr, HINT_DOC_HAS_CHANGED, nullptr);
 }
 
-LRESULT PaneldbProperties::on_property_changed(WPARAM, LPARAM l_param)
+LRESULT DummyPanel::on_property_changed(WPARAM, LPARAM lParam)
 {
+	//auto p_prop = reinterpret_cast<CMFCPropertyGridProperty*>(lParam);
 	m_b_changed_property_ = TRUE;
 	return 0;
 }
 
-LRESULT PaneldbProperties::on_my_message(WPARAM w_param, const LPARAM l_param)
+LRESULT DummyPanel::on_my_message(WPARAM w_param, LPARAM l_param)
 {
+	//auto p_app = (CdbWaveApp*)AfxGetApp();
+	//short low_p = LO_WORD(lParam);
+	//short high_p = HI_WORD(lParam);
+
 	switch (w_param)
 	{
 	case HINT_ACTIVATE_VIEW:
@@ -524,22 +528,22 @@ LRESULT PaneldbProperties::on_my_message(WPARAM w_param, const LPARAM l_param)
 		break;
 
 	case HINT_MDI_ACTIVATE:
+	{
+		const auto* main_window_frame = static_cast<CMDIFrameWndEx*>(AfxGetMainWnd());
+		BOOL b_maximized;
+		const auto p_child = main_window_frame->MDIGetActive(&b_maximized);
+		if (!p_child) return NULL;
+		const auto p_document = p_child->GetActiveDocument();
+		if (!p_document || !p_document->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
+			return NULL;
+		m_p_doc_ = static_cast<CdbWaveDoc*>(p_document);
+		if (m_p_doc_ != m_p_doc_old_)
 		{
-			const auto* main_window_frame = static_cast<CMDIFrameWndEx*>(AfxGetMainWnd());
-			BOOL b_maximized;
-			const auto p_child = main_window_frame->MDIGetActive(&b_maximized);
-			if (!p_child) return NULL;
-			const auto p_document = p_child->GetActiveDocument();
-			if (!p_document || !p_document->IsKindOf(RUNTIME_CLASS(CdbWaveDoc)))
-				return NULL;
-			m_p_doc_ = static_cast<CdbWaveDoc*>(p_document);
-			if (m_p_doc_ != m_p_doc_old_)
-			{
-				m_b_update_combos_ = TRUE;
-				init_prop_list();
-			}
+			m_b_update_combos_ = TRUE;
+			init_prop_list();
 		}
-		break;
+	}
+	break;
 
 	default:
 		break;
@@ -547,7 +551,7 @@ LRESULT PaneldbProperties::on_my_message(WPARAM w_param, const LPARAM l_param)
 	return 0L;
 }
 
-void PaneldbProperties::OnUpdate(CView* p_sender, const LPARAM l_hint, CObject* p_hint)
+void DummyPanel::OnUpdate(CView * p_sender, const LPARAM l_hint, CObject * p_hint)
 {
 	m_p_doc_ = reinterpret_cast<CdbWaveDoc*>(p_sender);
 	switch (LOWORD(l_hint))

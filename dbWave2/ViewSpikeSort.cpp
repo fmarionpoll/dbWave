@@ -28,11 +28,14 @@ ViewSpikeSort::~ViewSpikeSort()
 	if (p_spk_doc != nullptr)
 		save_current_spk_file(); 
 
-	spike_classification_->b_changed = TRUE;
-	spike_classification_->source_class = sort_source_class_;
-	spike_classification_->dest_class = sort_destination_class_;
-	spike_classification_->mv_max = measure_max_mv_;
-	spike_classification_->mv_min = measure_min_mv_;
+	if (spike_classification_ != nullptr)
+	{
+		spike_classification_->b_changed = TRUE;
+		spike_classification_->source_class = sort_source_class_;
+		spike_classification_->dest_class = sort_destination_class_;
+		spike_classification_->mv_max = measure_max_mv_;
+		spike_classification_->mv_min = measure_min_mv_;
+	}
 }
 
 void ViewSpikeSort::DoDataExchange(CDataExchange* p_dx)
@@ -203,99 +206,25 @@ void ViewSpikeSort::init_charts_from_saved_parameters()
 	tag_index_hist_low_ = chart_histogram_.vt_tags.add_tag(spike_classification_->lower_threshold, 0);
 }
 
-SpikeClassGridProperty* ViewSpikeSort::property_grid_find_item(const int class_id) const
+void ViewSpikeSort::add_toolbar_on_top_of_property_grid()
 {
-	boolean found = false;
-	SpikeClassGridProperty* p_prop = nullptr;
-	const int n_properties = property_grid_.GetPropertyCount();
-	for (int i = n_properties - 1; i >= 0; i--)
+	if (wnd_property_tool_bar_.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_PROPERTIES))
 	{
-		p_prop = static_cast<SpikeClassGridProperty*>(property_grid_.GetProperty(i));
-		if(static_cast<int>(p_prop->GetData()) == class_id)
-		{
-			found = true;
-			break;
-		}
+		wnd_property_tool_bar_.LoadToolBar(IDR_PROPERTIES, 0, 0, TRUE /* Is locked */);
+		wnd_property_tool_bar_.CleanUpLockedImages();
+		wnd_property_tool_bar_.LoadBitmap(the_app.hi_color_icons ? IDB_PROPERTIES_HC : IDR_PROPERTIES, 0, 0, TRUE /* Locked */);
+		wnd_property_tool_bar_.SetPaneStyle(
+			wnd_property_tool_bar_.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM |
+				CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
+
+		const CSize size_tool_bar = wnd_property_tool_bar_.CalcFixedLayout(FALSE, TRUE);
+		WINDOWPLACEMENT wpl;
+		property_grid_.GetWindowPlacement(&wpl);
+
+		wpl.rcNormalPosition.bottom = wpl.rcNormalPosition.top - 1;
+		wpl.rcNormalPosition.top = wpl.rcNormalPosition.bottom - size_tool_bar.cy;
+		wnd_property_tool_bar_.SetWindowPlacement(&wpl);
 	}
-	if (!found)
-		p_prop = nullptr;
-	return p_prop;
-}
-
-void ViewSpikeSort::property_grid_update(SpikeList* spk_list)
-{
-	const int classes_count = spk_list->get_classes_count();
-	for (int i = 0; i < classes_count; i++)
-	{
-		SpikeClassProperties* p_desc = spk_list->get_class_descriptor_from_index(i);
-		const int class_id = p_desc->get_class_id();
-		CString cs_desc = p_desc->get_class_text();
-
-		SpikeClassGridProperty* p_prop = property_grid_find_item(class_id);
-		if (p_prop == nullptr)
-		{
-			p_prop = SpikeClassGridProperty::create(class_id);
-			property_grid_.AddProperty(p_prop);
-		}
-
-		if (p_prop != nullptr)
-		{
-			if (cs_desc.IsEmpty())
-			{
-				CString cs = p_prop->GetValue();
-				p_desc->set_class_text(cs);
-				p_spk_doc->SetModifiedFlag(TRUE);
-			}
-			else
-			{
-				p_desc->set_class_text(cs_desc);
-			}
-		}
-	}
-}
-
-void ViewSpikeSort::property_grid_init()
-{
-	CMFCHeaderCtrl& header_ctrl = property_grid_.GetHeaderCtrl();
-	HDITEM hd_item {};
-
-	int col = 0;
-	header_ctrl.GetItem(col, &hd_item);
-	hd_item.mask = HDI_TEXT;
-	LPCTSTR lp_sz_my_string = _T("class");
-	enum
-	{
-		sizeOfBuffer = 12
-	};
-	TCHAR lp_buffer[sizeOfBuffer];
-	hd_item.pszText = lp_buffer;
-	hd_item.cchTextMax = sizeOfBuffer;
-	_tcscpy_s(hd_item.pszText, sizeOfBuffer, lp_sz_my_string);
-	header_ctrl.SetItem(col, &hd_item);
-
-	col = 1;
-	header_ctrl.GetItem(col, &hd_item);
-	hd_item.mask = HDI_TEXT | HDF_CENTER;
-	LPCTSTR lp_sz_my_string2 = _T("description");
-	hd_item.pszText = lp_buffer;
-	hd_item.cchTextMax = sizeOfBuffer;
-	_tcscpy_s(hd_item.pszText, sizeOfBuffer, lp_sz_my_string2);
-	header_ctrl.SetItem(col, &hd_item);
-
-	property_grid_.make_fixed_header();
-	property_grid_.set_left_column_width(35);
-
-}
-
-void ViewSpikeSort::property_grid_delete_all()
-{
-	const int n_properties = property_grid_.GetPropertyCount();
-	for (int i = n_properties-1; i >= 0; i--)
-	{
-		auto p_prop = property_grid_.GetProperty(i);
-		property_grid_.DeleteProperty(p_prop, FALSE, FALSE);
-	}
-	property_grid_.Invalidate();
 }
 
 void ViewSpikeSort::OnInitialUpdate()
@@ -304,7 +233,8 @@ void ViewSpikeSort::OnInitialUpdate()
 	define_stretch_parameters();
 	ViewDbTable::OnInitialUpdate();
 
-	property_grid_init();
+	property_grid_.init_header();
+	add_toolbar_on_top_of_property_grid();
 
 	init_charts_from_saved_parameters();
 	update_file_parameters();
@@ -585,7 +515,7 @@ void ViewSpikeSort::on_sort()
 		dlg_progress->set_step(1);
 	}
 
-	property_grid_delete_all();
+	property_grid_.delete_all();
 
 	for (auto i_file = first_file; i_file <= last_file; i_file++)
 	{
@@ -641,7 +571,8 @@ void ViewSpikeSort::on_sort()
 
 		}
 
-		property_grid_update(p_spk_list);
+		property_grid_.update(p_spk_list);
+		p_spk_doc->SetModifiedFlag(TRUE);
 	}
 
 	// end of loop, select current file again if necessary
@@ -874,7 +805,7 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 	const int index_current_file = pdb_doc->db_get_current_record_position();
 	db_spike spike_sel(-1, -1, -1);
 	select_spike(spike_sel);
-	property_grid_delete_all();
+	property_grid_.delete_all();
 
 	const int index_first_file = b_all_files_?  0: index_current_file;
 	const int index_last_file = b_all_files_ ? (n_files-1): index_current_file;
@@ -920,7 +851,8 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 			break;
 		}
 
-		property_grid_update(p_spk_list);
+		property_grid_.update(p_spk_list);
+		p_spk_doc->SetModifiedFlag(TRUE);
 		save_current_spk_file();
 
 		if (b_all_files_)

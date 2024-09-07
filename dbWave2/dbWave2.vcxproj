@@ -782,6 +782,7 @@
     <ClCompile Include="ADAcqDataDoc.cpp" />
     <ClCompile Include="ChartDataAD.cpp" />
     <ClCompile Include="ChartSpike.cpp" />
+    <ClCompile Include="DummyPanel.cpp" />
     <ClCompile Include="SpikeClassGrid.cpp" />
     <ClCompile Include="SpikeClassGridProperty.cpp" />
     <ClCompile Include="NiceUnit.cpp" />
@@ -793,6 +794,7 @@
     <ClCompile Include="GridCtrl\GridInPlaceList.cpp" />
     <ClCompile Include="PaneldbFilterToolBar.cpp" />
     <ClCompile Include="PaneldbPropertiesToolBar.cpp" />
+    <ClCompile Include="SpikeClassGridToolBar.cpp" />
     <ClCompile Include="SpikeClassRowItem.cpp" />
     <ClCompile Include="SpikeClassListBoxContext.cpp" />
     <ClCompile Include="SpikeDetectArray.cpp" />
@@ -1367,6 +1369,7 @@
     <ClInclude Include="CDTBoardParameters.h" />
     <ClInclude Include="ChartDataAD.h" />
     <ClInclude Include="ChartSpike.h" />
+    <ClInclude Include="DummyPanel.h" />
     <ClInclude Include="SpikeClassGrid.h" />
     <ClInclude Include="SpikeClassGridProperty.h" />
     <ClInclude Include="NiceUnit.h" />
@@ -1381,6 +1384,7 @@
     <ClInclude Include="GridCtrl\GridInPlaceList.h" />
     <ClInclude Include="PaneldbFilterToolBar.h" />
     <ClInclude Include="PaneldbPropertiesToolBar.h" />
+    <ClInclude Include="SpikeClassGridToolBar.h" />
     <ClInclude Include="SpikeClassRowItem.h" />
     <ClInclude Include="SpikeClassListBoxContext.h" />
     <ClInclude Include="SpikeDetectArray.h" />

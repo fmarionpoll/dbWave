@@ -9,6 +9,7 @@
 #include "options_spk_classification.h"
 #include "SpikeClassGrid.h"
 #include "SpikeClassGridProperty.h"
+#include "SpikeClassGridToolBar.h"
 
 
 class ViewSpikeSort : public ViewDbTable
@@ -95,11 +96,8 @@ protected:
 	float t_xy_left_{ 0.f };
 
 	SpikeClassGrid property_grid_;
-	void property_grid_init();
-
-	SpikeClassGridProperty* property_grid_find_item(int class_id) const;
-	void property_grid_update(SpikeList* spk_list);
-	void property_grid_delete_all();
+	SpikeClassGridToolBar wnd_property_tool_bar_;
+	void add_toolbar_on_top_of_property_grid();
 
 	options_spk_classification* spike_classification_{};
 	options_view_data* options_view_data_{};
@@ -219,4 +217,5 @@ public:
 
 
 	DECLARE_MESSAGE_MAP()
+	
 };

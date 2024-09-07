@@ -1,25 +1,25 @@
-// PropertiesWnd.h
-
 #pragma once
+#include <afxdockablepane.h>
+
 #include "dbWaveDoc.h"
 #include "PaneldbPropertiesToolBar.h"
 
-
-class PaneldbProperties : public CDockablePane
+class DummyPanel :
+    public CWnd
 {
-	DECLARE_DYNAMIC(PaneldbProperties)
+	DECLARE_DYNAMIC(DummyPanel)
 public:
-	PaneldbProperties();
-	~PaneldbProperties() override;
-	void AdjustLayout() override;
+	DummyPanel();
+	~DummyPanel() override;
+	void AdjustLayout();
 
 protected:
 	PaneldbPropertiesToolBar wnd_tool_bar_;
 	CMFCPropertyGridCtrl wnd_property_list_;
 
 	// Implementation
-	CdbWaveDoc* m_p_doc_ {nullptr};
-	CdbWaveDoc* m_p_doc_old_ {nullptr};
+	CdbWaveDoc* m_p_doc_{ nullptr };
+	CdbWaveDoc* m_p_doc_old_{ nullptr };
 	CFont m_fnt_prop_list_;
 
 	static int m_no_col_[]; // [26] succession of fields
@@ -27,11 +27,11 @@ protected:
 	CUIntArray m_type_props_;
 	CUIntArray m_i_id_props_;
 	CUIntArray m_group_props_;
-	int m_wnd_edit_infos_height_ {0};
-	BOOL m_b_update_combos_ {FALSE};
-	BOOL m_b_changed_property_ {FALSE};
+	int m_wnd_edit_infos_height_{ 0 };
+	BOOL m_b_update_combos_{ FALSE };
+	BOOL m_b_changed_property_{ FALSE };
 
-	int init_group_from_table(CMFCPropertyGridProperty* p_group, int i_col0) const;
+	int init_group_from_table(CMFCPropertyGridProperty* p_group, int i_col0);
 	void update_group_prop_from_table(CMFCPropertyGridProperty* p_group) const;
 	void init_prop_list();
 	void update_prop_list();
@@ -60,3 +60,4 @@ public:
 
 	DECLARE_MESSAGE_MAP()
 };
+
