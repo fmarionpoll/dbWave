@@ -522,10 +522,10 @@
     <ClCompile Include="DlgPrintDataComments.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CMFCMyPropertyGridCtrl.cpp">
+    <ClCompile Include="SpikeClassGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CMFCMyPropertyGridProperty.cpp">
+    <ClCompile Include="SpikeClassGridProperty.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PaneldbPropertiesToolBar.cpp">
@@ -1151,10 +1151,10 @@
     <ClInclude Include="DlgPrintDataComments.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CMFCMyPropertyGridCtrl.h">
+    <ClInclude Include="SpikeClassGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CMFCMyPropertyGridProperty.h">
+    <ClInclude Include="SpikeClassGridProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PaneldbPropertiesToolBar.h">

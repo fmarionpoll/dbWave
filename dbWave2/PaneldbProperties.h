@@ -18,7 +18,6 @@ protected:
 	CMFCPropertyGridCtrl m_wnd_prop_list_;
 
 	// Implementation
-protected:
 	CdbWaveDoc* m_p_doc_ {nullptr};
 	CdbWaveDoc* m_p_doc_old_ {nullptr};
 	CFont m_fnt_prop_list_;
@@ -40,7 +39,6 @@ protected:
 	void update_table_from_prop();
 	void update_table_from_group_prop(const CMFCPropertyGridProperty* p_group);
 
-protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lp_create_struct);
 	afx_msg void OnSize(UINT n_type, int cx, int cy);
 	afx_msg void OnSetFocus(CWnd* p_old_wnd);

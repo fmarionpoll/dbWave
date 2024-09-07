@@ -2,17 +2,28 @@
 #include <afxpropertygridctrl.h>
 
 #include "ChartWnd.h"
+#include "PaneldbPropertiesToolBar.h"
 
-class CMFCMyPropertyGridCtrl :
+class SpikeClassGrid :
     public CMFCPropertyGridCtrl
 {
 
+protected:
+    //PaneldbPropertiesToolBar m_wndFormatBar;
+    //int m_wnd_edit_infos_height_{ 0 };
+    //CFont m_fnt_prop_list_;
+
+    //void property_grid_toolbar_init();
+    //void AdjustLayout() override;
+    //void set_prop_list_font();
+
 public:
-    CMFCMyPropertyGridCtrl()
+    SpikeClassGrid()
     {
         m_nLeftColumnWidth = 10;
     }
 
+public:
 
     void make_fixed_header()
     {
@@ -29,8 +40,10 @@ public:
         AdjustLayout();
     }
 
-
+protected:
     afx_msg void OnSize(UINT n_type, int cx, int cy);
+    //afx_msg int OnCreate(LPCREATESTRUCT lp_create_struct);
+
 
     DECLARE_MESSAGE_MAP()
 

@@ -72,14 +72,14 @@ void CMainFrame::OnDestroy()
 
 void CMainFrame::ActivatePropertyPane(const BOOL b_activate)
 {
-	if (b_activate != panel_properties_.IsVisible())
-		panel_properties_.ShowPane(b_activate, FALSE, FALSE);
+	if (b_activate != panel_db_properties_.IsVisible())
+		panel_db_properties_.ShowPane(b_activate, FALSE, FALSE);
 }
 
 void CMainFrame::ActivateFilterPane(const BOOL b_activate)
 {
-	if (b_activate != panel_filter_.IsVisible())
-		panel_filter_.ShowPane(b_activate, FALSE, FALSE);
+	if (b_activate != panel_db_filter_.IsVisible())
+		panel_db_filter_.ShowPane(b_activate, FALSE, FALSE);
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -134,10 +134,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	// enable docking and attach
 	// TODO - see model VS as they have more calls here
-	panel_filter_.EnableDocking(CBRS_ALIGN_ANY);
-	DockPane(&panel_filter_);
-	panel_properties_.EnableDocking(CBRS_ALIGN_ANY);
-	DockPane(&panel_properties_);
+	panel_db_filter_.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&panel_db_filter_);
+	panel_db_properties_.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&panel_db_properties_);
 
 	// set the visual manager and style based on persisted value
 	OnApplicationLook(the_app.app_look);
@@ -181,7 +181,7 @@ BOOL CMainFrame::create_docking_properties_panes()
 	CString str_filter_view;
 	auto b_name_valid = str_filter_view.LoadString(IDS_FILTERPANE);
 	ASSERT(b_name_valid);
-	if (!panel_filter_.Create(str_filter_view, this, CRect(0, 0, 200, 200), TRUE,
+	if (!panel_db_filter_.Create(str_filter_view, this, CRect(0, 0, 200, 200), TRUE,
 	                         ID_PANE_FILTERWND,
 	                         WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI))
 	{
@@ -193,7 +193,7 @@ BOOL CMainFrame::create_docking_properties_panes()
 	CString str_properties_view;
 	b_name_valid = str_properties_view.LoadString(IDS_PROPERTIESPANE);
 	ASSERT(b_name_valid);
-	if (!panel_properties_.Create(str_properties_view, this, CRect(0, 0, 200, 200), TRUE,
+	if (!panel_db_properties_.Create(str_properties_view, this, CRect(0, 0, 200, 200), TRUE,
 	                             ID_PANE_PROPERTIESWND,
 	                             WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_RIGHT |
 	                             CBRS_FLOAT_MULTI))
@@ -214,7 +214,7 @@ void CMainFrame::set_docking_properties_panes_icons(BOOL b_hi_color_icons)
 		                                                               IDI_FILE_VIEW),
 	                                                               IMAGE_ICON, GetSystemMetrics(SM_CXSMICON),
 	                                                               GetSystemMetrics(SM_CYSMICON), 0));
-	panel_filter_.SetIcon(h_filter_pane_icon, FALSE);
+	panel_db_filter_.SetIcon(h_filter_pane_icon, FALSE);
 
 	const auto h_properties_pane_icon = static_cast<HICON>(::LoadImage(AfxGetResourceHandle(),
 	                                                                   MAKEINTRESOURCE(
@@ -222,7 +222,7 @@ void CMainFrame::set_docking_properties_panes_icons(BOOL b_hi_color_icons)
 		                                                                   IDI_PROPERTIES_WND),
 	                                                                   IMAGE_ICON, GetSystemMetrics(SM_CXSMICON),
 	                                                                   GetSystemMetrics(SM_CYSMICON), 0));
-	panel_properties_.SetIcon(h_properties_pane_icon, FALSE);
+	panel_db_properties_.SetIcon(h_properties_pane_icon, FALSE);
 
 	UpdateMDITabbedBarsIcons();
 }
@@ -433,8 +433,8 @@ void CMainFrame::OnViewPropertiesWindow()
 {
 	// Show or activate the pane, depending on current state.  The
 	// pane can only be closed via the [x] button on the pane frame.
-	panel_properties_.ShowPane(TRUE, FALSE, TRUE);
-	panel_properties_.SetFocus();
+	panel_db_properties_.ShowPane(TRUE, FALSE, TRUE);
+	panel_db_properties_.SetFocus();
 	is_properties_panel_visible_ = TRUE;
 }
 
@@ -448,8 +448,8 @@ void CMainFrame::OnViewFilterWindow()
 {
 	// Show or activate the pane, depending on current state.  The
 	// pane can only be closed via the [x] button on the pane frame.
-	panel_filter_.ShowPane(TRUE, FALSE, TRUE);
-	panel_filter_.SetFocus();
+	panel_db_filter_.ShowPane(TRUE, FALSE, TRUE);
+	panel_db_filter_.SetFocus();
 	is_filter_pane_visible_ = TRUE;
 }
 
@@ -461,22 +461,22 @@ void CMainFrame::OnUpdateViewFilterWindow(CCmdUI* pCmdUI)
 
 void CMainFrame::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	panel_properties_.OnUpdate(pSender, lHint, pHint);
-	panel_filter_.OnUpdate(pSender, lHint, pHint);
+	panel_db_properties_.OnUpdate(pSender, lHint, pHint);
+	panel_db_filter_.OnUpdate(pSender, lHint, pHint);
 }
 
 LRESULT CMainFrame::OnMyMessage(WPARAM wParam, LPARAM lParam)
 {
 	// pass message to PropertiesPane
-	panel_properties_.on_my_message(wParam, lParam);
-	panel_filter_.on_my_message(wParam, lParam);
+	panel_db_properties_.on_my_message(wParam, lParam);
+	panel_db_filter_.on_my_message(wParam, lParam);
 	return 0L;
 }
 
 void CMainFrame::OnCheckFilterpane()
 {
 	is_filter_pane_visible_ = !is_filter_pane_visible_;
-	panel_filter_.ShowPane(is_filter_pane_visible_, FALSE, TRUE);
+	panel_db_filter_.ShowPane(is_filter_pane_visible_, FALSE, TRUE);
 }
 
 void CMainFrame::OnUpdateCheckFilterpane(CCmdUI* pCmdUI)
@@ -487,7 +487,7 @@ void CMainFrame::OnUpdateCheckFilterpane(CCmdUI* pCmdUI)
 void CMainFrame::OnCheckPropertiespane()
 {
 	is_properties_panel_visible_ = !is_properties_panel_visible_;
-	panel_properties_.ShowPane(is_properties_panel_visible_, FALSE, TRUE);
+	panel_db_properties_.ShowPane(is_properties_panel_visible_, FALSE, TRUE);
 }
 
 void CMainFrame::OnUpdateCheckPropertiespane(CCmdUI* pCmdUI)

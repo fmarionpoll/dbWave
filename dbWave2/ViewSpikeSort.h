@@ -7,8 +7,8 @@
 #include "Editctrl.h"
 #include "ScrollBarEx.h"
 #include "options_spk_classification.h"
-#include "CMFCMyPropertyGridCtrl.h"
-#include "CMFCMyPropertyGridProperty.h"
+#include "SpikeClassGrid.h"
+#include "SpikeClassGridProperty.h"
 
 
 class ViewSpikeSort : public ViewDbTable
@@ -94,9 +94,10 @@ protected:
 	float t_xy_right_{ 1.f };
 	float t_xy_left_{ 0.f };
 
-	CMFCMyPropertyGridCtrl property_grid_;
+	SpikeClassGrid property_grid_;
 	void property_grid_init();
-	CMFCMyPropertyGridProperty* property_grid_find_item(int class_id) const;
+
+	SpikeClassGridProperty* property_grid_find_item(int class_id) const;
 	void property_grid_update(SpikeList* spk_list);
 	void property_grid_delete_all();
 

@@ -34,8 +34,8 @@ protected: // control bar embedded members
 	CMFCRibbonBar ribbon_bar_;
 	CMFCRibbonApplicationButton ribbon_application_button_;
 	CMFCToolBarImages user_images_;
-	PaneldbProperties panel_properties_;
-	PaneldbFilter panel_filter_;
+	PaneldbProperties panel_db_properties_;
+	PaneldbFilter panel_db_filter_;
 	CMFCOutlookBar outlook_bar_;
 	CMFCOutlookBarPane outlook_pane_;
 

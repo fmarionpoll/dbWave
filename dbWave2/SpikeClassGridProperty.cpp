@@ -1,23 +1,23 @@
 #include "stdafx.h"
-#include "CMFCMyPropertyGridProperty.h"
+#include "SpikeClassGridProperty.h"
 
 #include "ChartWnd.h"
 #include "SpikeClassProperties.h"
 
-CMFCMyPropertyGridProperty::CMFCMyPropertyGridProperty(const CString& str_name, const COleVariant& var_value,
+SpikeClassGridProperty::SpikeClassGridProperty(const CString& str_name, const COleVariant& var_value,
                                                        LPCTSTR lpsz_descr, DWORD_PTR dw_data, LPCTSTR lpsz_edit_mask, LPCTSTR lpsz_edit_template, LPCTSTR lpsz_valid_chars) :
 	CMFCPropertyGridProperty(str_name, var_value, lpsz_descr, dw_data, lpsz_edit_mask, lpsz_edit_template, lpsz_valid_chars)
 {
 }
 
-CMFCMyPropertyGridProperty* CMFCMyPropertyGridProperty::create(const int class_id)
+SpikeClassGridProperty* SpikeClassGridProperty::create(const int class_id)
 {
 	CString cs;
 	cs.Format(_T(" %i "), class_id);
 
 	const COleVariant var_value = _T("select/edit..");
 
-	auto* p_prop = new CMFCMyPropertyGridProperty(cs, var_value, _T(""));
+	auto* p_prop = new SpikeClassGridProperty(cs, var_value, _T(""));
 	p_prop->SetData(class_id);
 	for (auto& i : SpikeClassProperties::class_descriptor)
 		p_prop->AddOption(i);
@@ -30,7 +30,7 @@ CMFCMyPropertyGridProperty* CMFCMyPropertyGridProperty::create(const int class_i
 	return p_prop;
 }
 
-void CMFCMyPropertyGridProperty::OnDrawName(CDC* p_dc, const CRect rect)
+void SpikeClassGridProperty::OnDrawName(CDC* p_dc, const CRect rect)
 {
 	const int class_index = static_cast<int>(GetData());
 	const COLORREF color = ChartWnd::color_spike_class[class_index];

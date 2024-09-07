@@ -782,8 +782,8 @@
     <ClCompile Include="ADAcqDataDoc.cpp" />
     <ClCompile Include="ChartDataAD.cpp" />
     <ClCompile Include="ChartSpike.cpp" />
-    <ClCompile Include="CMFCMyPropertyGridCtrl.cpp" />
-    <ClCompile Include="CMFCMyPropertyGridProperty.cpp" />
+    <ClCompile Include="SpikeClassGrid.cpp" />
+    <ClCompile Include="SpikeClassGridProperty.cpp" />
     <ClCompile Include="NiceUnit.cpp" />
     <ClCompile Include="Controls\GridComboEdit.cpp" />
     <ClCompile Include="Controls\InPlaceEdit.cpp" />
@@ -1367,8 +1367,8 @@
     <ClInclude Include="CDTBoardParameters.h" />
     <ClInclude Include="ChartDataAD.h" />
     <ClInclude Include="ChartSpike.h" />
-    <ClInclude Include="CMFCMyPropertyGridCtrl.h" />
-    <ClInclude Include="CMFCMyPropertyGridProperty.h" />
+    <ClInclude Include="SpikeClassGrid.h" />
+    <ClInclude Include="SpikeClassGridProperty.h" />
     <ClInclude Include="NiceUnit.h" />
     <ClInclude Include="ColorNames.h" />
     <ClInclude Include="Controls\GridComboEdit.h" />

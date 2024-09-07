@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "ViewSpikeSort.h"
 
-#include "CMFCMyPropertyGridProperty.h"
+#include "SpikeClassGridProperty.h"
 #include "dbWave.h"
 #include "DlgProgress.h"
 #include "DlgSpikeEdit.h"
@@ -203,35 +203,14 @@ void ViewSpikeSort::init_charts_from_saved_parameters()
 	tag_index_hist_low_ = chart_histogram_.vt_tags.add_tag(spike_classification_->lower_threshold, 0);
 }
 
-//CMFCMyPropertyGridProperty* ViewSpikeSort::property_grid_add_item(const int class_id)
-//{
-//	CString cs;
-//	cs.Format(_T(" %i "), class_id);
-//
-//	const COleVariant var_value = _T("select/edit..");
-//
-//	auto* p_prop = new CMFCMyPropertyGridProperty(cs, var_value, _T(""));
-//	p_prop->SetData(class_id);
-//	for (auto& i : SpikeClassProperties::class_descriptor)
-//		p_prop->AddOption(i);
-//	p_prop->AllowEdit(TRUE);
-//
-//	const int index = class_id;
-//	if (index < p_prop->GetOptionCount())
-//		p_prop->SetValue(p_prop->GetOption(class_id));
-//
-//	property_grid_.AddProperty(p_prop);
-//	return p_prop;
-//}
-
-CMFCMyPropertyGridProperty* ViewSpikeSort::property_grid_find_item(const int class_id) const
+SpikeClassGridProperty* ViewSpikeSort::property_grid_find_item(const int class_id) const
 {
 	boolean found = false;
-	CMFCMyPropertyGridProperty* p_prop = nullptr;
+	SpikeClassGridProperty* p_prop = nullptr;
 	const int n_properties = property_grid_.GetPropertyCount();
 	for (int i = n_properties - 1; i >= 0; i--)
 	{
-		p_prop = static_cast<CMFCMyPropertyGridProperty*>(property_grid_.GetProperty(i));
+		p_prop = static_cast<SpikeClassGridProperty*>(property_grid_.GetProperty(i));
 		if(static_cast<int>(p_prop->GetData()) == class_id)
 		{
 			found = true;
@@ -252,10 +231,10 @@ void ViewSpikeSort::property_grid_update(SpikeList* spk_list)
 		const int class_id = p_desc->get_class_id();
 		CString cs_desc = p_desc->get_class_text();
 
-		CMFCMyPropertyGridProperty* p_prop = property_grid_find_item(class_id);
+		SpikeClassGridProperty* p_prop = property_grid_find_item(class_id);
 		if (p_prop == nullptr)
 		{
-			p_prop = CMFCMyPropertyGridProperty::create(class_id);
+			p_prop = SpikeClassGridProperty::create(class_id);
 			property_grid_.AddProperty(p_prop);
 		}
 
