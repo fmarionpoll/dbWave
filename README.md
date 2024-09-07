@@ -1,10 +1,10 @@
-# dbWave2
+# dbWave
 
-**dbwave2** is a program routinely used in our laboratory to acquire and analyze extracellular data from olfactory and taste sensilla of insects. 
-During an experimental session, it collects data (electrophysiological recordings typically of 2 to 30 s) and stores them on disk, along with information describing the experiment.
-After the experiment, recordings are displayed and analyzed, to detect and sort spikes, and to export data and results under different formats. 
+**dbwave** is a program routinely used in our laboratory to acquire and analyze extracellular data from olfactory and taste sensilla of insects. 
+During an experimental session, it collects data and stores them on disk, along with information describing the experiment.
+After the experiment, recordings are displayed and analyzed interactively, to detect and sort spikes, and to export data and the results under different formats. 
 
-**Data acquisition**: dbWave2 is interfaced to [Data Translation](http://www.datatranslation.eu/) cards to sample electrical data on several channels (1 to 8 or 16), convert them into numbers (12 or 16 bits) by sampling them at a frequency usually of 10 kHz and store them into a binary file along with a descriptor header (**.dat files**).
+**Data acquisition**: dbWave is interfaced to [Data Translation](http://www.datatranslation.eu/) cards to sample electrical data on several channels (1 to 8 or 16), convert them into numbers (12 or 16 bits) by sampling them at a frequency usually of 10 kHz and store them into a binary file along with a descriptor header (**.dat files**).
 It also communicates to Axon Instrument amplifiers (CyberAmp 320) and to Alligator Technology amplifiers.
 Depending on the Data Translation card model, it may also drive digital or output lines. 
 Usually, data acquisition bouts are triggered by an external TTL signal.
