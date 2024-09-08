@@ -3,11 +3,12 @@
 #include "ChartSpikeHist.h"
 #include "ChartSpikeShape.h"
 #include "ChartSpikeXY.h"
+#include "SpikeClassGrid.h"
 #include "ViewDbTable.h"
 #include "Editctrl.h"
 #include "ScrollBarEx.h"
 #include "options_spk_classification.h"
-#include "SpikeClassGrid.h"
+#include "SpikeClassGridList.h"
 #include "SpikeClassGridToolBar.h"
 
 
@@ -93,12 +94,14 @@ protected:
 	CEditCtrl mm_t_xy_left_;
 	float t_xy_right_{ 1.f };
 	float t_xy_left_{ 0.f };
-public:
-	SpikeClassGrid property_grid;
-	BOOL b_changed_property{ FALSE };
+//public:
+//	SpikeClassGrid property_grid;
+//	BOOL b_changed_property{ FALSE };
+//
+//protected:
+//	SpikeClassGridToolBar property_grid_toolbar_;
 
-protected:
-	SpikeClassGridToolBar property_grid_toolbar_;
+	SpikeClassGrid dummy_grid_;
 
 	options_spk_classification* spike_classification_{};
 	options_view_data* options_view_data_{};

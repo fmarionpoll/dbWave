@@ -522,7 +522,7 @@
     <ClCompile Include="DlgPrintDataComments.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpikeClassGrid.cpp">
+    <ClCompile Include="SpikeClassGridList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpikeClassGridProperty.cpp">
@@ -535,6 +535,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpikeClassGridToolBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpikeClassGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1154,7 +1157,7 @@
     <ClInclude Include="DlgPrintDataComments.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpikeClassGrid.h">
+    <ClInclude Include="SpikeClassGridList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpikeClassGridProperty.h">
@@ -1167,6 +1170,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpikeClassGridToolBar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpikeClassGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

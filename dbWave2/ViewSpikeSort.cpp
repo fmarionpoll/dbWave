@@ -61,7 +61,7 @@ void ViewSpikeSort::DoDataExchange(CDataExchange* p_dx)
 	DDX_Text(p_dx, IDC_EDIT_LEFT, t_xy_left_);
 
 	DDX_Control(p_dx, IDC_TAB1, spk_list_tab_ctrl);
-	DDX_Control(p_dx, IDC_MFCPROPERTYGRID1, property_grid);
+	//DDX_Control(p_dx, IDC_MFCPROPERTYGRID1, property_grid);
 }
 
 BEGIN_MESSAGE_MAP(ViewSpikeSort, ViewDbTable)
@@ -118,6 +118,7 @@ void ViewSpikeSort::define_sub_classed_items()
 	VERIFY(chart_measures_.SubclassDlgItem(IDC_CHART_MEASURE, this));
 	VERIFY(chart_shape_.SubclassDlgItem(IDC_CHART_SHAPE, this));
 	VERIFY(chart_spike_bar_.SubclassDlgItem(IDC_CHART_BARS, this));
+	VERIFY(dummy_grid_.SubclassDlgItem(IDC_GRID_PLACEHOLDER, this));
 
 	VERIFY(mm_shape_t1_ms_.SubclassDlgItem(IDC_SHAPE_T1_MS, this));
 	VERIFY(mm_shape_t2_ms_.SubclassDlgItem(IDC_SHAPE_T2_MS, this));
@@ -213,9 +214,9 @@ void ViewSpikeSort::OnInitialUpdate()
 	define_stretch_parameters();
 	ViewDbTable::OnInitialUpdate();
 
-	property_grid.init_header();
-	property_grid_toolbar_.create_toolbar(this);
-	property_grid_toolbar_.place_on_top_of_companion_window(&property_grid);
+	// Create properties pane
+	dummy_grid_.create_grid();
+	dummy_grid_.get_property_list()->init_header();
 
 	init_charts_from_saved_parameters();
 	update_file_parameters();
@@ -232,6 +233,8 @@ void ViewSpikeSort::OnInitialUpdate()
 
 	activate_mode4();
 	gain_adjust_shape_and_bars();
+
+
 }
 
 void ViewSpikeSort::activate_mode4()
@@ -496,7 +499,7 @@ void ViewSpikeSort::on_sort()
 		dlg_progress->set_step(1);
 	}
 
-	property_grid.delete_all();
+	dummy_grid_.get_property_list()->delete_all();
 
 	for (auto i_file = first_file; i_file <= last_file; i_file++)
 	{
@@ -552,7 +555,7 @@ void ViewSpikeSort::on_sort()
 
 		}
 
-		property_grid.update(p_spk_list);
+		dummy_grid_.get_property_list()->update(p_spk_list);
 		p_spk_doc->SetModifiedFlag(TRUE);
 	}
 
@@ -786,7 +789,7 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 	const int index_current_file = pdb_doc->db_get_current_record_position();
 	db_spike spike_sel(-1, -1, -1);
 	select_spike(spike_sel);
-	property_grid.delete_all();
+	dummy_grid_.get_property_list()->delete_all();
 
 	const int index_first_file = b_all_files_?  0: index_current_file;
 	const int index_last_file = b_all_files_ ? (n_files-1): index_current_file;
@@ -832,7 +835,7 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 			break;
 		}
 
-		property_grid.update(p_spk_list);
+		dummy_grid_.get_property_list()->update(p_spk_list);
 		p_spk_doc->SetModifiedFlag(TRUE);
 		save_current_spk_file();
 
@@ -851,11 +854,6 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 	on_format_gain_adjust();
 
 	UpdateData(FALSE);
-
-	//update_cursors_from_upper_threshold_mv();
-	//update_cursors_from_lower_threshold_mv();
-	//chart_measures_.Invalidate();
-	//chart_histogram_.Invalidate();
 }
 
 void ViewSpikeSort::update_gain()

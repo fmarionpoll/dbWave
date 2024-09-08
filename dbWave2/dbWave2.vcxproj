@@ -783,6 +783,7 @@
     <ClCompile Include="ChartDataAD.cpp" />
     <ClCompile Include="ChartSpike.cpp" />
     <ClCompile Include="SpikeClassGrid.cpp" />
+    <ClCompile Include="SpikeClassGridList.cpp" />
     <ClCompile Include="SpikeClassGridProperty.cpp" />
     <ClCompile Include="NiceUnit.cpp" />
     <ClCompile Include="Controls\GridComboEdit.cpp" />
@@ -1369,6 +1370,7 @@
     <ClInclude Include="ChartDataAD.h" />
     <ClInclude Include="ChartSpike.h" />
     <ClInclude Include="SpikeClassGrid.h" />
+    <ClInclude Include="SpikeClassGridList.h" />
     <ClInclude Include="SpikeClassGridProperty.h" />
     <ClInclude Include="NiceUnit.h" />
     <ClInclude Include="ColorNames.h" />

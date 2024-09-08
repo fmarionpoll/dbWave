@@ -42,6 +42,7 @@
 #define HID_VIEW_APPLOOK_OFF_2007_SILVER        0x10228
 #define HID_VIEW_APPLOOK_OFF_2007_AQUA          0x10229
 #define HID_VIEW_APPLOOK_WINDOWS_7              0x1022A
+#define HID_SPIKE_CLASS_LIST                    0x1023F
 #define HID_START_STOP                          0x103E9
 #define HID_CANCEL_EDIT_CNTR                    0x18000
 #define HID_RECORD_EDIT_MODE                    0x18002
@@ -183,7 +184,6 @@
 #define HIDR_MENU_IMAGES                        0x200B3
 #define HIDR_OUTPUT_POPUP                       0x200B6
 #define HIDR_PROPERTIES                         0x200B7
-#define HIDR_PROPERTIES1                        0x200B8
 #define HIDR_SPIKE_CLASS_PROPERTIES             0x200B8
 #define HIDR_RIBBON                             0x2013F
 #define HIDR_THEME_MENU                         0x2021A

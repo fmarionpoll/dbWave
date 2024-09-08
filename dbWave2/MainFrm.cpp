@@ -136,6 +136,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// TODO - see model VS as they have more calls here
 	panel_db_filter_.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&panel_db_filter_);
+
 	panel_db_properties_.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&panel_db_properties_);
 

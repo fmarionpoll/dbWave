@@ -144,7 +144,6 @@
 #define IDR_PROPERTIES                  183
 #define IDC_TRANSFORM2                  184
 #define IDD_SPKDETECTPARM               184
-#define IDR_PROPERTIES1                 184
 #define IDR_SPIKE_CLASS_PROPERTIES      184
 #define IDD_VIEWSPKDETECTION            185
 #define IDC_DEFINESERIES                186
@@ -372,6 +371,8 @@
 #define IDC_BINSIZE                     379
 #define IDC_CHART_HISTOGRAM             381
 #define IDC_EXECUTE                     382
+#define IDC_CHART_HISTOGRAM2            384
+#define IDC_GRID_PLACEHOLDER            384
 #define IDC_STATIC3                     392
 #define IDC_STATIC4                     393
 #define IDC_FILE_STATIC                 394
@@ -460,6 +461,7 @@
 #define IDR_DBSPIKETYPE_256             572
 #define IDB_CHECK1                      573
 #define IDB_SPIKE_CLASS_PROPERTIES_HC   574
+#define ID_SPIKE_CLASS_LIST				575
 #define ID_START_STOP                   1001
 #define CG_IDC_PROGDLG_PROGRESS         1003
 #define IDC_SAMPLINGRATE                1003
