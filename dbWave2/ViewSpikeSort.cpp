@@ -555,7 +555,7 @@ void ViewSpikeSort::on_sort()
 
 		}
 
-		dummy_grid_.get_property_list()->update(p_spk_list);
+		dummy_grid_.update_list(p_spk_list);
 		p_spk_doc->SetModifiedFlag(TRUE);
 	}
 
@@ -835,7 +835,7 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 			break;
 		}
 
-		dummy_grid_.get_property_list()->update(p_spk_list);
+		dummy_grid_.update_list(p_spk_list);
 		p_spk_doc->SetModifiedFlag(TRUE);
 		save_current_spk_file();
 

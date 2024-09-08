@@ -9,7 +9,6 @@ class SpikeClassGridList :
 {
     DECLARE_DYNAMIC(SpikeClassGridList)
 
-public:
     void init_header();
     void delete_all();
     SpikeClassGridProperty* find_item(int class_id) const;

@@ -115,11 +115,11 @@ public:
 	void resize_controls(UINT n_type, int cx, int cy);
 
 	// Attributes
-public:
 	CSize GetDlgMinSize() const { return m_dlg_min_size_; }
 	CSize GetDialogSize() const { return m_dialog_size_; }
 	int GetBOTTOMBARHeight() const { return m_bottom_bar_height_; }
 	int GetRIGHTBARWidth() const { return m_right_bar_width_; }
+
 	// Implementation
 protected:
 	CRect align_control(const CCtrlProp* pa, int cx, int cy);

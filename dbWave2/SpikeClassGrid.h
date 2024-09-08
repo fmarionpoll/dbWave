@@ -23,12 +23,14 @@ protected:
 	BOOL m_b_changed_property_{ FALSE };
 
 	void set_prop_list_font();
+	int get_vertical_size_with_all_rows();
 
 public:
 	BOOL create_window(CWnd* p_parent);
 	BOOL create_grid();
 	SpikeClassGridList* get_property_list() { return &property_list_; }
 	SpikeClassGridToolBar* get_property_toolbar() { return &property_toolbar_; }
+	void update_list(SpikeList* p_spike_list);
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lp_create_struct);

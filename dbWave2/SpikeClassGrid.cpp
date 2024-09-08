@@ -41,8 +41,19 @@ void SpikeClassGrid::adjust_layout()
 	if (GetSafeHwnd() == nullptr || (AfxGetMainWnd() != nullptr && AfxGetMainWnd()->IsIconic()))
 		return;
 
+	CRect rect;
+	GetWindowRect(&rect);
+	const int cy = get_vertical_size_with_all_rows();
+	int rect_height = rect.Height();
+	if (cy != rect_height)
+	{
+		GetParent()->ScreenToClient(&rect);
+		SetWindowPos(nullptr, rect.left, rect.top, rect.Width(),
+			cy, SWP_NOACTIVATE | SWP_NOZORDER);
+	}
+
 	CRect rect_client;
-	GetClientRect(rect_client);
+	GetClientRect(&rect_client);
 	const int cy_tlb = property_toolbar_.CalcFixedLayout(FALSE, TRUE).cy;
 
 	property_toolbar_.SetWindowPos(nullptr, rect_client.left,
@@ -66,8 +77,30 @@ int SpikeClassGrid::OnCreate(const LPCREATESTRUCT lp_create_struct)
 	return 0;
 }
 
+int SpikeClassGrid::get_vertical_size_with_all_rows()
+{
+	const int cy_tlb = property_toolbar_.CalcFixedLayout(FALSE, TRUE).cy;
+	const int n_items = property_list_.GetPropertyCount() +1;
+	const int cy_header = property_list_.GetHeaderHeight();
+	const int cy_row_height = property_list_.GetRowHeight();
+	const int cy_total = cy_row_height * n_items  + cy_header + cy_tlb;
+	return cy_total;
+}
+
+void SpikeClassGrid::update_list(SpikeList* p_spike_list)
+{
+	const int n_items = property_list_.GetPropertyCount();
+	property_list_.update(p_spike_list);
+	if (property_list_.GetPropertyCount() != n_items)
+		adjust_layout();
+}
+
 void SpikeClassGrid::OnSize(const UINT n_type, const int cx, int cy)
 {
+	const int cy_total = get_vertical_size_with_all_rows();
+	if (cy != cy_total)
+		cy = cy_total;
+
 	CWnd::OnSize(n_type, cx, cy);
 	adjust_layout();
 }
