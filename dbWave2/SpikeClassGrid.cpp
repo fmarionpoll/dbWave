@@ -2,6 +2,7 @@
 #include "SpikeClassGrid.h"
 
 #include "dbWave.h"
+#include "dbWave_constants.h"
 #include "resource.h"
 
 
@@ -223,15 +224,13 @@ void SpikeClassGrid::on_bn_clicked_edit_infos()
 
 void SpikeClassGrid::on_update_bn_update_infos(CCmdUI * p_cmd_ui)
 {
-	p_cmd_ui->Enable(m_b_changed_property_);
+	//p_cmd_ui->Enable(m_b_changed_property_);
+	p_cmd_ui->Enable(TRUE);
 }
 
 void SpikeClassGrid::on_bn_clicked_update_infos()
 {
-	//const auto l_index = m_p_doc_->db_get_current_record_position();
-	//update_table_from_prop();
-	//BOOL b_success = m_p_doc_->db_set_current_record_position(l_index);
-	//m_p_doc_->update_all_views_db_wave(nullptr, HINT_DOC_HAS_CHANGED, nullptr);
+	GetParent()->SendMessage(WM_MYMESSAGE, HINT_SAVE_SPIKEFILE, MAKELONG(0, GetDlgCtrlID()));
 }
 
 LRESULT SpikeClassGrid::on_property_changed(WPARAM, LPARAM lParam)

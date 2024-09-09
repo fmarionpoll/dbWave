@@ -95,7 +95,7 @@ protected:
 	float t_xy_right_{ 1.f };
 	float t_xy_left_{ 0.f };
 
-	SpikeClassGrid dummy_grid_;
+	SpikeClassGrid classes_grid_;
 	options_spk_classification* spike_classification_{};
 	options_view_data* options_view_data_{};
 
@@ -154,8 +154,8 @@ protected:
 	void gain_adjust_xy_and_histogram();
 	void center_curve();
 
-	void change_spike_index_single_file();
-	void change_spike_index_all_files();
+	void change_spike_index_in_single_file_mode();
+	void change_spike_index_in_all_files_mode();
 
 	static HBRUSH set_brush_and_text_color_according_to_class(CDC* p_dc, int spike_class);
 
@@ -171,17 +171,18 @@ public:
 	// Generated message map functions
 	
 	afx_msg void OnHScroll(UINT n_sb_code, UINT n_pos, CScrollBar* p_scroll_bar);
-	afx_msg LRESULT on_my_message(WPARAM code, LPARAM l_param);
 	afx_msg HBRUSH OnCtlColor(CDC* p_dc, CWnd* p_wnd, UINT n_ctl_color);
 
+	afx_msg LRESULT on_my_message(WPARAM code, LPARAM l_param);
 	afx_msg void on_select_change_measure_type();
 	afx_msg void on_sort();
-
 	afx_msg void on_measure_parameters_from_spikes();
+
 	afx_msg void on_view_all_data_on_abscissa();
 	afx_msg void on_format_center_curve();
 	afx_msg void on_format_gain_adjust();
 	afx_msg void on_format_split_curves();
+
 	afx_msg void on_tools_edit_spikes();
 	afx_msg void on_select_all_files();
 	afx_msg void on_tools_align_spikes();

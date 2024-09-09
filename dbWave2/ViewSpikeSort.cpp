@@ -118,7 +118,7 @@ void ViewSpikeSort::define_sub_classed_items()
 	VERIFY(chart_measures_.SubclassDlgItem(IDC_CHART_MEASURE, this));
 	VERIFY(chart_shape_.SubclassDlgItem(IDC_CHART_SHAPE, this));
 	VERIFY(chart_spike_bar_.SubclassDlgItem(IDC_CHART_BARS, this));
-	VERIFY(dummy_grid_.SubclassDlgItem(IDC_GRID_PLACEHOLDER, this));
+	VERIFY(classes_grid_.SubclassDlgItem(IDC_GRID_PLACEHOLDER, this));
 
 	VERIFY(mm_shape_t1_ms_.SubclassDlgItem(IDC_SHAPE_T1_MS, this));
 	VERIFY(mm_shape_t2_ms_.SubclassDlgItem(IDC_SHAPE_T2_MS, this));
@@ -215,8 +215,8 @@ void ViewSpikeSort::OnInitialUpdate()
 	ViewDbTable::OnInitialUpdate();
 
 	// Create properties pane
-	dummy_grid_.create_grid();
-	dummy_grid_.get_property_list()->init_header();
+	classes_grid_.create_grid();
+	classes_grid_.get_property_list()->init_header();
 
 	init_charts_from_saved_parameters();
 	update_file_parameters();
@@ -499,7 +499,7 @@ void ViewSpikeSort::on_sort()
 		dlg_progress->set_step(1);
 	}
 
-	dummy_grid_.get_property_list()->delete_all();
+	classes_grid_.get_property_list()->delete_all();
 
 	for (auto i_file = first_file; i_file <= last_file; i_file++)
 	{
@@ -555,7 +555,7 @@ void ViewSpikeSort::on_sort()
 
 		}
 
-		dummy_grid_.update_list(p_spk_list);
+		classes_grid_.update_list(p_spk_list);
 		p_spk_doc->SetModifiedFlag(TRUE);
 	}
 
@@ -751,6 +751,10 @@ LRESULT ViewSpikeSort::on_my_message(const WPARAM code, const LPARAM l_param)
 		select_spike_list(value);
 		break;
 
+	case HINT_SAVE_SPIKEFILE:
+		save_current_spk_file();
+		break;
+
 	default:
 		break;
 	}
@@ -785,11 +789,12 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 	const int n_files = pdb_doc->db_get_records_count();
 	if (p_spk_doc == nullptr)
 		return;
+
 	const auto current_spike_list = p_spk_doc->get_index_current_spike_list();
 	const int index_current_file = pdb_doc->db_get_current_record_position();
 	db_spike spike_sel(-1, -1, -1);
 	select_spike(spike_sel);
-	dummy_grid_.get_property_list()->delete_all();
+	classes_grid_.get_property_list()->delete_all();
 
 	const int index_first_file = b_all_files_?  0: index_current_file;
 	const int index_last_file = b_all_files_ ? (n_files-1): index_current_file;
@@ -835,7 +840,7 @@ void ViewSpikeSort::on_measure_parameters_from_spikes()
 			break;
 		}
 
-		dummy_grid_.update_list(p_spk_list);
+		classes_grid_.update_list(p_spk_list);
 		p_spk_doc->SetModifiedFlag(TRUE);
 		save_current_spk_file();
 
@@ -1690,13 +1695,14 @@ void ViewSpikeSort::on_en_change_spike_index()
 	if (mm_spike_index_.m_b_entry_done)
 	{
 		if (b_all_files_)
-			change_spike_index_all_files();
+			change_spike_index_in_all_files_mode();
 		else
-			change_spike_index_single_file();
+			change_spike_index_in_single_file_mode();
 	}
 }
 
-void ViewSpikeSort::change_spike_index_single_file()
+// TODO check this routine for all_files
+void ViewSpikeSort::change_spike_index_in_single_file_mode()
 {
 	const int spike_index = spike_index_;
 	mm_spike_index_.on_en_change(this, spike_index_, 1, -1);
@@ -1730,7 +1736,9 @@ void ViewSpikeSort::change_spike_index_single_file()
 	select_spike(db_sel);
 
 }
-void ViewSpikeSort::change_spike_index_all_files()
+
+// TODO make it work properly
+void ViewSpikeSort::change_spike_index_in_all_files_mode()
 {
 		const int spike_index = spike_index_;
 		mm_spike_index_.on_en_change(this, spike_index_, 1, -1);

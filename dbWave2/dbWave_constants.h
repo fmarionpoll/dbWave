@@ -93,7 +93,8 @@ constexpr auto HINT_GET_SELECTED_RECORDS = 204; // get currently selected record
 constexpr auto HINT_SET_SELECTED_RECORDS = 205; // select records (in a CListCtrl)
 constexpr auto HINT_MDI_ACTIVATE = 206;		// MDI activate (to send to PropertiesListWnd);
 constexpr auto HINT_RECORD_MODE = 207;		// tells if we enter into record mode (then hide properties);
-constexpr auto HINT_ACTIVATE_VIEW = 208;	// message sent when view is activated;
+constexpr auto HINT_ACTIVATE_VIEW = 208;	// message sent when view is activated
+constexpr auto HINT_SAVE_SPIKEFILE = 209;	// save spike list along with modified spike classes
 
 // control bars
 constexpr auto BAR_BIAS = 1;
