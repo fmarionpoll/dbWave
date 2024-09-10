@@ -1785,6 +1785,8 @@ void ViewSpikeSort::on_en_change_spike_class()
 			const auto current_list = spk_list_tab_ctrl.GetCurSel();
 			auto* spike_list = p_spk_doc->set_index_current_spike_list(current_list);
 			spike_list->get_spike(spike_index_)->set_class_id(spike_class_index_);
+
+			classes_grid_.update_list(spike_list);
 			update_legends();
 		}
 	}

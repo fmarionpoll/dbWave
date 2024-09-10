@@ -153,6 +153,8 @@
 #define HID_CHECK_FILTER_PANE                   0x18128
 #define HID_CHECK_PROPERTIES_PANE               0x18129
 #define HID_TOOLS_SPIKE_DETECTION_PARAMETERS    0x1812C
+#define HID_BUTTON_PREVIOUS                     0x1812D
+#define HID_BUTTON_NEXT                         0x1812E
 #define HID_TOOLS_IMPORT                        0x18149
 #define HID_TOOLS_PATHS_RELATIVE                0x1814B
 #define HID_TOOLS_PATHS_ABSOLUTE                0x1814C

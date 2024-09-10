@@ -192,6 +192,7 @@ public:
 
 	afx_msg void on_en_change_shape_t1();
 	afx_msg void on_en_change_shape_t2();
+
 	afx_msg void on_en_change_source_class();
 	afx_msg void on_en_change_destination_class();
 

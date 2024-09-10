@@ -82,8 +82,7 @@ int PaneldbFilter::OnCreate(const LPCREATESTRUCT lp_create_struct)
 	m_wnd_tool_bar_.SetPaneStyle(
 		m_wnd_tool_bar_.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM |
 			CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
-	m_wnd_tool_bar_.ReplaceButton(
-		ID_RECORD_SORT,
+	m_wnd_tool_bar_.ReplaceButton(ID_RECORD_SORT,
 		CMFCToolBarComboBoxButton(ID_RECORD_SORT, /*GetCmdMgr()->GetCmdImage(ID_RECORD_SORT)*/ NULL, CBS_DROPDOWN));
 
 	// All commands will be routed via this control, not via the parent frame:
