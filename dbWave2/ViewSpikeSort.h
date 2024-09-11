@@ -174,6 +174,8 @@ public:
 	afx_msg HBRUSH OnCtlColor(CDC* p_dc, CWnd* p_wnd, UINT n_ctl_color);
 
 	afx_msg LRESULT on_my_message(WPARAM code, LPARAM l_param);
+	afx_msg LRESULT OnPropertyChanged(WPARAM w_param, LPARAM l_param);
+
 	afx_msg void on_select_change_measure_type();
 	afx_msg void on_sort();
 	afx_msg void on_measure_parameters_from_spikes();
@@ -210,10 +212,6 @@ public:
 	afx_msg void on_en_change_edit_left2();
 	afx_msg void on_en_change_edit_right2();
 	afx_msg void on_en_change_hist_bin_ms();
-
-
-	afx_msg LRESULT OnPropertyChanged(WPARAM w_param, LPARAM l_param);
-
 
 	DECLARE_MESSAGE_MAP()
 	

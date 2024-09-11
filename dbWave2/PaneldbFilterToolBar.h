@@ -4,7 +4,11 @@ class PaneldbFilterToolBar : public CMFCToolBar
 {
 	void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler) override
 	{
-		CMFCToolBar::OnUpdateCmdUI(static_cast<CFrameWnd*>(GetOwner()), bDisableIfNoHndler);
+		auto* pTarget = static_cast<CFrameWnd*>(GetOwner());
+		CMFCToolBar::OnUpdateCmdUI(pTarget, bDisableIfNoHndler);
 	}
 	BOOL AllowShowOnList() const override { return FALSE; }
+
+	afx_msg virtual void OnSize(UINT n_type, int cx, int cy);
+	DECLARE_MESSAGE_MAP()
 };

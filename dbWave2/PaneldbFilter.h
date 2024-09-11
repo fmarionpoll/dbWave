@@ -47,6 +47,12 @@ protected:
 	afx_msg void on_select_next();
 	afx_msg void on_select_previous();
 
+	afx_msg void select_previous_combo_item();
+	afx_msg void select_next_combo_item();
+
+	afx_msg void on_update_bn_update_previous(CCmdUI* p_cmd_ui);
+	afx_msg void on_update_bn_update_next(CCmdUI* p_cmd_ui);
+
 public:
 	afx_msg void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint);
 	afx_msg LRESULT on_my_message(WPARAM w_param, LPARAM l_param);

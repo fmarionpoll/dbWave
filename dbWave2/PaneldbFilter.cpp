@@ -32,15 +32,18 @@ BEGIN_MESSAGE_MAP(PaneldbFilter, CDockablePane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_CONTEXTMENU()
-	ON_COMMAND(ID_UPDATE, on_update_tree)
-	ON_COMMAND(ID_APPLY_FILTER, on_apply_filter)
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
+	ON_COMMAND(ID_UPDATE, on_update_tree)
+	ON_COMMAND(ID_APPLY_FILTER, on_apply_filter)
 	ON_MESSAGE(WM_MYMESSAGE, on_my_message)
 	ON_COMMAND(ID_RECORD_SORT, on_sort_records)
 	ON_COMMAND(ID_EXPLORER_NEXT, on_select_next)
 	ON_COMMAND(ID_EXPLORER_PREVIOUS, on_select_previous)
-
+	ON_COMMAND(ID_BUTTON_PREVIOUS, select_previous_combo_item)
+	ON_COMMAND(ID_BUTTON_NEXT, select_next_combo_item)
+	ON_UPDATE_COMMAND_UI(ID_BUTTON_PREVIOUS, on_update_bn_update_previous)
+	ON_UPDATE_COMMAND_UI(ID_BUTTON_NEXT, on_update_bn_update_next)
 END_MESSAGE_MAP()
 
 void PaneldbFilter::AdjustLayout()
@@ -624,4 +627,26 @@ void PaneldbFilter::on_select_next()
 void PaneldbFilter::on_select_previous()
 {
 	select_next(FALSE);
+}
+
+void PaneldbFilter::select_previous_combo_item()
+{
+	TRACE("got to previous");
+}
+
+void PaneldbFilter::select_next_combo_item()
+{
+	TRACE("go to next");
+}
+
+void PaneldbFilter::on_update_bn_update_previous(CCmdUI* p_cmd_ui)
+{
+	//p_cmd_ui->Enable(m_b_changed_property_);
+	p_cmd_ui->Enable(TRUE);
+}
+
+void PaneldbFilter::on_update_bn_update_next(CCmdUI* p_cmd_ui)
+{
+	//p_cmd_ui->Enable(m_b_changed_property_);
+	p_cmd_ui->Enable(FALSE);
 }
