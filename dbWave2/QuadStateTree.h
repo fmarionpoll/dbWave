@@ -42,23 +42,20 @@
 
 enum TVCS_CHECKSTATE // Checkbox state codes, compatible with CTreeCtrl::SetCheck()
 {
-	TVCS_NONE = -1,
-	// No checkbox associated with this item
-	TVCS_UNCHECKED = 0,
-	// BST_UNCHECKED equivalent
-	TVCS_CHECKED = 1,
-	// BST_CHECKED
-	TVCS_INDETERMINATE = 2 // BST_INDETERMINATE
+	TVCS_NONE = -1, 		// No checkbox associated with this item
+	TVCS_UNCHECKED = 0, 	// BST_UNCHECKED equivalent
+	TVCS_CHECKED = 1, 		// BST_CHECKED
+	TVCS_INDETERMINATE = 2	// BST_INDETERMINATE
 };
 
 typedef struct tagTVNCHECK // Information for the TVN_CHECK notification code
 {
-	NMHDR hdr; // Standard NMHDR structure
-	HTREEITEM hTreeItem; // Handle to the tree item that is changing
-	LPARAM lParam; // Extra data associated with the tree item
-	TVCS_CHECKSTATE OldCheckState; // Old Checkbox state
-	TVCS_CHECKSTATE NewCheckState; // New checkbox state
-	HTREEITEM hTriggerItem; // Handle of the tree item that was initially triggered
+	NMHDR hdr; 
+	HTREEITEM h_tree_item; 
+	LPARAM l_param; 
+	TVCS_CHECKSTATE old_check_state; 
+	TVCS_CHECKSTATE new_check_state; 
+	HTREEITEM h_trigger_item; 
 } NMTVNCHECK, *LPNMTVNCHECK;
 
 // CQuadStateTree
@@ -70,28 +67,28 @@ public:
 	CQuadStateTree();
 	~CQuadStateTree() override;
 
-	TVCS_CHECKSTATE GetCheck(HTREEITEM hTreeItem) const;
-	BOOL SetCheck(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState = TVCS_CHECKED);
+	TVCS_CHECKSTATE GetCheck(HTREEITEM h_tree_item) const;
+	BOOL SetCheck(HTREEITEM h_tree_item, TVCS_CHECKSTATE new_check_state = TVCS_CHECKED);
 
-	virtual BOOL Create(DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID);
-	virtual BOOL CreateEx(DWORD dwExStyle, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID);
+	virtual BOOL Create(DWORD dw_style, const RECT& rect, CWnd* p_parent_wnd, UINT n_id);
+	virtual BOOL CreateEx(DWORD dw_ex_style, DWORD dw_style, const RECT& rect, CWnd* p_parent_wnd, UINT n_id);
 
 protected:
 	void PreSubclassWindow() override;
 
 private:
-	void BuildBitmap();
-	void ToggleCheck(HTREEITEM hTreeItem);
-	void SetTriggerItem(HTREEITEM hTreeItem);
-	BOOL SetCheckInternal(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState);
-	LRESULT SendTVNCheck(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState, TVCS_CHECKSTATE OldCheckState);
+	void build_bitmap();
+	void toggle_check(HTREEITEM h_tree_item);
+	void set_trigger_item(HTREEITEM h_tree_item);
+	BOOL set_check_internal(HTREEITEM h_tree_item, TVCS_CHECKSTATE new_check_state);
+	LRESULT send_tvn_check(HTREEITEM h_tree_item, TVCS_CHECKSTATE new_check_state, TVCS_CHECKSTATE old_check_state);
 
-	CBitmap m_Bitmap;
-	CImageList m_ImageList;
-	bool m_bIgnoreIndeterminateState;
-	bool m_bTvnCheckReturnedNonzero;
-	bool m_bSettingChildItems;
-	HTREEITEM m_hTriggerItem;
+	CBitmap m_bitmap_;
+	CImageList m_image_list_;
+	bool m_b_ignore_indeterminate_state_;
+	bool m_b_tvn_check_returned_nonzero_;
+	bool m_b_setting_child_items_;
+	HTREEITEM m_h_trigger_item_;
 
 public:
 	afx_msg BOOL OnNMClick(NMHDR* pNMHDR, LRESULT* pResult);

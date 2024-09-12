@@ -16,10 +16,23 @@
 // the numbers here are those of m_pszTableCol - they define the order of appearance of the different parameters
 int PaneldbFilter::m_no_col_[] = {
 	CH_EXPT_ID,
-	CH_IDINSECT, CH_IDSENSILLUM, CH_INSECT_ID, CH_SENSILLUM_ID,
-	CH_LOCATION_ID, CH_STRAIN_ID, CH_SEX_ID, CH_OPERATOR_ID,
-	CH_STIM_ID, CH_CONC_ID, CH_REPEAT, CH_STIM2_ID, CH_CONC2_ID, CH_REPEAT2,
-	CH_FLAG, CH_ACQDATE_DAY, -1
+	CH_IDINSECT,
+	CH_IDSENSILLUM,
+	CH_INSECT_ID,
+	CH_SENSILLUM_ID,
+	CH_LOCATION_ID,
+	CH_STRAIN_ID,
+	CH_SEX_ID,
+	CH_OPERATOR_ID,
+	CH_STIM_ID,
+	CH_CONC_ID,
+	CH_REPEAT,
+	CH_STIM2_ID,
+	CH_CONC2_ID,
+	CH_REPEAT2,
+	CH_FLAG,
+	CH_ACQDATE_DAY,
+	-1
 };
 
 PaneldbFilter::PaneldbFilter()
@@ -34,6 +47,7 @@ BEGIN_MESSAGE_MAP(PaneldbFilter, CDockablePane)
 	ON_WM_CONTEXTMENU()
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
+
 	ON_COMMAND(ID_UPDATE, on_update_tree)
 	ON_COMMAND(ID_APPLY_FILTER, on_apply_filter)
 	ON_MESSAGE(WM_MYMESSAGE, on_my_message)
@@ -42,6 +56,7 @@ BEGIN_MESSAGE_MAP(PaneldbFilter, CDockablePane)
 	ON_COMMAND(ID_EXPLORER_PREVIOUS, on_select_previous)
 	ON_COMMAND(ID_BUTTON_PREVIOUS, select_previous_combo_item)
 	ON_COMMAND(ID_BUTTON_NEXT, select_next_combo_item)
+
 	ON_UPDATE_COMMAND_UI(ID_BUTTON_PREVIOUS, on_update_bn_update_previous)
 	ON_UPDATE_COMMAND_UI(ID_BUTTON_NEXT, on_update_bn_update_next)
 END_MESSAGE_MAP()
@@ -73,11 +88,12 @@ int PaneldbFilter::OnCreate(const LPCREATESTRUCT lp_create_struct)
 	CRect rect_dummy;
 	rect_dummy.SetRectEmpty();
 
-	// Create view:
+	// Create view for filter items
 	constexpr DWORD dw_view_style = WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS;
 	if (!m_wnd_filter_view_.Create(dw_view_style, rect_dummy, this, IDC_TREE1))
-		return -1; // fail to create
+		return -1;
 
+	// Create toolbar with a combobox
 	m_wnd_tool_bar_.Create(this, AFX_DEFAULT_TOOLBAR_STYLE, IDR_EXPLORER);
 	m_wnd_tool_bar_.LoadToolBar(IDR_EXPLORER, 0, 0, TRUE /* Is locked */);
 
@@ -209,25 +225,11 @@ void PaneldbFilter::OnUpdate(CView* p_sender, const LPARAM l_hint, CObject* p_hi
 	}
 }
 
-void PaneldbFilter::init_filter_list()
+void PaneldbFilter::fill_combo_with_categories(const CdbTable* p_db) const
 {
-	if (m_p_doc_old_ == m_p_doc_)
-		return;
-	m_p_doc_old_ = m_p_doc_;
-
-	const auto p_db = m_p_doc_->db_table;
-	ASSERT(p_db);
-
-	// setup dialog box
-	DlgProgress dlg;
-	dlg.Create();
-	dlg.set_step(1);
-
-	// fill items of the combo (column heads to sort data)
-	dlg.set_status(_T("List categories available..."));
-
 	const auto p_combo = static_cast<CMFCToolBarComboBoxButton*>(m_wnd_tool_bar_.GetButton(3));
 	ASSERT(ID_RECORD_SORT == m_wnd_tool_bar_.GetItemID(3));
+
 	if (p_combo->GetCount() <= 0)
 	{
 		for (auto i = 0; i < N_TABLE_COLUMNS; i++)
@@ -235,89 +237,112 @@ void PaneldbFilter::init_filter_list()
 	}
 	p_combo->SelectItem(p_db->m_main_table_set.m_strSort);
 
+}
+
+DB_ITEMDESC* PaneldbFilter::create_tree_category(CdbTable* p_db, const int i) 
+{
+	const auto i_col = m_no_col_[i];
+	m_h_tree_item_[i] = m_wnd_filter_view_.InsertItem(CdbTable::m_column_properties[i_col].description, TVI_ROOT);
+	m_wnd_filter_view_.SetItemData(m_h_tree_item_[i], m_no_col_[i]);
+	const auto p_desc = p_db->get_record_item_descriptor(i_col);
+	// collect data (array of unique descriptors)
+	switch (p_desc->data_code_number)
+	{
+	case FIELD_IND_TEXT:
+	case FIELD_IND_FILEPATH:
+		populate_item_from_linked_table(p_desc);
+		break;
+	case FIELD_LONG:
+		populate_item_from_table_long(p_desc);
+		break;
+	case FIELD_DATE_YMD:
+		populate_item_from_table_with_date(p_desc);
+		break;
+	default:
+		break;
+	}
+
+	return p_desc;
+}
+
+HTREEITEM PaneldbFilter::create_tree_subitem_element(const DB_ITEMDESC* p_desc, const int i, const int j)
+{
+	const HTREEITEM h_tree_item = m_wnd_filter_view_.InsertItem(p_desc->cs_elements_array.GetAt(j), m_h_tree_item_[i]);
+	TVCS_CHECKSTATE b_check = TVCS_CHECKED;
+	const auto cs_element_j = p_desc->cs_elements_array.GetAt(j);
+	if (p_desc->b_array_filter)
+	{
+		b_check = TVCS_UNCHECKED;
+		for (auto k = 0; k < p_desc->cs_array_filter.GetSize(); k++)
+		{
+			if (cs_element_j.CompareNoCase(p_desc->cs_array_filter.GetAt(k)) == 0)
+			{
+				b_check = TVCS_CHECKED;
+				break;
+			}
+		}
+	}
+	else if (p_desc->b_single_filter)
+	{
+		if (cs_element_j.CompareNoCase(p_desc->cs_param_single_filter) != 0)
+			b_check = TVCS_UNCHECKED;
+	}
+	m_wnd_filter_view_.SetCheck(h_tree_item, b_check);
+	return h_tree_item;
+}
+
+void PaneldbFilter::create_tree_subitem(const DB_ITEMDESC* p_desc, const int i)
+{
+	// create subitems
+	auto i_sum = 0;
+	auto n_items = 0;
+	HTREEITEM h_tree_item = nullptr;
+	TVCS_CHECKSTATE b_check = TVCS_UNCHECKED;
+	for (auto j = 0; j < p_desc->cs_elements_array.GetSize(); j++)
+	{
+		h_tree_item = create_tree_subitem_element(p_desc, i, j);
+		b_check = m_wnd_filter_view_.GetCheck(h_tree_item);
+		i_sum += b_check; // count number of positive checks (no check=0, check = 1)
+		n_items++;
+	}
+
+	// trick needed here because if the first item is checked and not the others, then the parent stays in the initial state
+	// namely "checked" (because at that moment it did not have other children)
+	if (i_sum == 1 && h_tree_item != nullptr)
+	{
+		m_wnd_filter_view_.SetCheck(h_tree_item, TVCS_CHECKED);
+		m_wnd_filter_view_.SetCheck(h_tree_item, b_check);
+	}
+	if (i_sum < n_items)
+		m_wnd_filter_view_.Expand(m_h_tree_item_[i], TVE_EXPAND);
+}
+
+void PaneldbFilter::init_filter_list()
+{
+	if (m_p_doc_old_ == m_p_doc_)
+		return;
+
+	m_p_doc_old_ = m_p_doc_;
+
+	const auto p_db = m_p_doc_->db_table;
+	ASSERT(p_db);
+
+	// get all categories into combo
+	fill_combo_with_categories(p_db);
+
 	// fill items of the tree
-	dlg.set_status(_T("Populate categories..."));
 	if (p_db->m_main_table_set.IsBOF() && p_db->m_main_table_set.IsEOF())
 		return;
-	m_wnd_filter_view_.LockWindowUpdate(); // prevent screen update (and flicker)
-	if (m_wnd_filter_view_.GetCount() > 0)
-		m_wnd_filter_view_.DeleteAllItems();
 
-	auto i = 0;
+	m_wnd_filter_view_.LockWindowUpdate();
+	m_wnd_filter_view_.DeleteAllItems();
+
 	p_db->m_main_table_set.build_and_sort_id_arrays();
-
-	CString cs_comment;
+	auto i = 0;
 	while (m_no_col_[i] > 0)
 	{
-		const auto i_col = m_no_col_[i];
-		const auto p_desc = p_db->get_record_item_descriptor(i_col);
-		m_h_tree_item_[i] = m_wnd_filter_view_.InsertItem(CdbTable::m_column_properties[i_col].description, TVI_ROOT); 
-		m_wnd_filter_view_.SetItemData(m_h_tree_item_[i], m_no_col_[i]); // save table index into head of the list
-
-		cs_comment.Format(_T("Category %i: "), i);
-		cs_comment += CdbTable::m_column_properties[i_col].description;
-		dlg.set_status(cs_comment);
-
-		// collect data (array of unique descriptors)
-		switch (p_desc->data_code_number)
-		{
-		case FIELD_IND_TEXT:
-		case FIELD_IND_FILEPATH:
-			populate_item_from_linked_table(p_desc);
-			break;
-		case FIELD_LONG:
-			populate_item_from_table_long(p_desc);
-			break;
-		case FIELD_DATE_YMD:
-			populate_item_from_table_with_date(p_desc);
-			break;
-		default:
-			break;
-		}
-
-		// create subitems
-		auto i_sum = 0;
-		HTREEITEM h_tree_item = nullptr;
-		TVCS_CHECKSTATE b_check = TVCS_UNCHECKED;
-		auto n_items = 0;
-		for (auto j = 0; j < p_desc->cs_elements_array.GetSize(); j++)
-		{
-			cs_comment.Format(_T("Create subitem %i"), j);
-			dlg.set_status(cs_comment);
-
-			h_tree_item = m_wnd_filter_view_.InsertItem(p_desc->cs_elements_array.GetAt(j), m_h_tree_item_[i]);
-			b_check = TVCS_CHECKED;
-			auto cs_element_j = p_desc->cs_elements_array.GetAt(j);
-			if (p_desc->b_array_filter)
-			{
-				b_check = TVCS_UNCHECKED;
-				for (auto k = 0; k < p_desc->cs_array_filter.GetSize(); k++)
-				{
-					if (cs_element_j.CompareNoCase(p_desc->cs_array_filter.GetAt(k)) == 0)
-					{
-						b_check = TVCS_CHECKED;
-						break;
-					}
-				}
-			}
-			else if (p_desc->b_single_filter)
-			{
-				if (cs_element_j.CompareNoCase(p_desc->cs_param_single_filter) != 0)
-					b_check = TVCS_UNCHECKED;
-			}
-			m_wnd_filter_view_.SetCheck(h_tree_item, b_check);
-			i_sum += b_check; // count number of positive checks (no check=0, check = 1)
-			n_items++;
-		}
-		// trick needed here because if the first item is checked and not the others, then the parent stays in the initial state
-		// namely "checked" (because at that moment it did not have other children)
-		if (i_sum == 1 && h_tree_item != nullptr)
-		{
-			m_wnd_filter_view_.SetCheck(h_tree_item, TVCS_CHECKED);
-			m_wnd_filter_view_.SetCheck(h_tree_item, b_check);
-		}
-		if (i_sum < n_items)
-			m_wnd_filter_view_.Expand(m_h_tree_item_[i], TVE_EXPAND);
+		const auto* p_desc = create_tree_category(p_db, i);
+		create_tree_subitem(p_desc, i);
 		i++;
 	}
 	m_wnd_filter_view_.UnlockWindowUpdate();
@@ -512,7 +537,7 @@ void PaneldbFilter::on_apply_filter()
 {
 	if (!m_p_doc_)
 		return;
-	auto p_db = m_p_doc_->db_table;
+	const auto p_db = m_p_doc_->db_table;
 
 	auto i = 0;
 	while (m_no_col_[i] > 0)

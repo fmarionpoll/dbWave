@@ -1688,8 +1688,7 @@ void CdbWaveDoc::synchronize_source_infos(const BOOL b_all)
 BOOL CdbWaveDoc::update_waveformat_from_database(CWaveFormat * p_wave_format) const
 {
 	auto b_changed = FALSE;
-	//GetRecordItemValue(const int i_column, DB_ITEMDESC * p_desc)
-	// CH_EXPT_ID long/CString: experiment
+
 	b_changed = db_table->get_record_value_string(CH_EXPT_ID, p_wave_format->cs_comment);
 	b_changed |= db_table->get_record_value_string(CH_MORE, p_wave_format->cs_more_comment);
 	b_changed |= db_table->get_record_value_string(CH_OPERATOR_ID, p_wave_format->cs_operator);

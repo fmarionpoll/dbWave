@@ -22,6 +22,11 @@ protected:
 	HTREEITEM m_h_tree_item_[26]{};
 
 	void init_filter_list();
+	void fill_combo_with_categories(const CdbTable* p_db) const;
+	DB_ITEMDESC* create_tree_category( CdbTable* p_db, int i) ;
+	HTREEITEM create_tree_subitem_element(const DB_ITEMDESC* p_desc, int i, int j);
+	void create_tree_subitem(const DB_ITEMDESC* p_desc, int i);
+
 	void populate_item_from_table_long(DB_ITEMDESC* p_desc) const;
 	void populate_item_from_linked_table(DB_ITEMDESC* p_desc) const;
 	void populate_item_from_table_with_date(DB_ITEMDESC* p_desc) const;
@@ -39,17 +44,17 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lp_create_struct);
 	afx_msg void OnSize(UINT n_type, int cx, int cy);
 	afx_msg void OnContextMenu(CWnd* p_wnd, CPoint point);
-	afx_msg void on_update_tree();
-	afx_msg void on_apply_filter();
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* p_old_wnd);
+
+	afx_msg void on_update_tree();
+	afx_msg void on_apply_filter();
 	afx_msg void on_sort_records();
 	afx_msg void on_select_next();
 	afx_msg void on_select_previous();
 
 	afx_msg void select_previous_combo_item();
 	afx_msg void select_next_combo_item();
-
 	afx_msg void on_update_bn_update_previous(CCmdUI* p_cmd_ui);
 	afx_msg void on_update_bn_update_next(CCmdUI* p_cmd_ui);
 

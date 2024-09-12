@@ -31,18 +31,18 @@ BEGIN_MESSAGE_MAP(CQuadStateTree, CTreeCtrl)
 END_MESSAGE_MAP()
 
 CQuadStateTree::CQuadStateTree()
-	: m_bIgnoreIndeterminateState(false)
-	  , m_bTvnCheckReturnedNonzero(false)
-	  , m_bSettingChildItems(true)
-	  , m_hTriggerItem(nullptr)
+	: m_b_ignore_indeterminate_state_(false)
+	  , m_b_tvn_check_returned_nonzero_(false)
+	  , m_b_setting_child_items_(true)
+	  , m_h_trigger_item_(nullptr)
 {
-	BuildBitmap();
+	build_bitmap();
 }
 
 CQuadStateTree::~CQuadStateTree()
 {
-	m_ImageList.DeleteImageList();
-	m_Bitmap.DeleteObject();
+	m_image_list_.DeleteImageList();
+	m_bitmap_.DeleteObject();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -63,11 +63,11 @@ CQuadStateTree::~CQuadStateTree()
 //
 /////////////////////////////////////////////////////////////////////////////
 
-TVCS_CHECKSTATE CQuadStateTree::GetCheck(HTREEITEM hTreeItem) const
+TVCS_CHECKSTATE CQuadStateTree::GetCheck(HTREEITEM h_tree_item) const
 {
 	TVITEM item;
 	item.mask = TVIF_HANDLE | TVIF_STATE;
-	item.hItem = hTreeItem;
+	item.hItem = h_tree_item;
 	item.stateMask = TVIS_STATEIMAGEMASK;
 	::SendMessage(m_hWnd, TVM_GETITEM, 0, reinterpret_cast<LPARAM>(&item));
 
@@ -130,9 +130,9 @@ LRESULT CQuadStateTree::OnTvmSetitem(WPARAM wp, LPARAM lp)
 //
 /////////////////////////////////////////////////////////////////////////////
 
-BOOL CQuadStateTree::SetCheck(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState)
+BOOL CQuadStateTree::SetCheck(HTREEITEM h_tree_item, TVCS_CHECKSTATE new_check_state)
 {
-	if (NewCheckState == TVCS_INDETERMINATE)
+	if (new_check_state == TVCS_INDETERMINATE)
 	{
 		// Cannot set a tree item's check state to indeterminate.
 		// Indeterminate can only be set in response to a parent
@@ -144,8 +144,8 @@ BOOL CQuadStateTree::SetCheck(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState
 	// this action results in a bunch of parent and child tree items
 	// having to also change checkbox states. SetCheckInternal does
 	// all the actual work.
-	SetTriggerItem(hTreeItem);
-	return SetCheckInternal(hTreeItem, NewCheckState);
+	set_trigger_item(h_tree_item);
+	return set_check_internal(h_tree_item, new_check_state);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -162,20 +162,20 @@ BOOL CQuadStateTree::SetCheck(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState
 //
 /////////////////////////////////////////////////////////////////////////////
 
-BOOL CQuadStateTree::SetCheckInternal(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState)
+BOOL CQuadStateTree::set_check_internal(HTREEITEM h_tree_item, TVCS_CHECKSTATE new_check_state)
 {
-	const auto old_check_state = GetCheck(hTreeItem);
-	if (old_check_state == NewCheckState)
+	const auto old_check_state = GetCheck(h_tree_item);
+	if (old_check_state == new_check_state)
 	{
 		// no change, do nothing
 		return TRUE;
 	}
 
-	if (NewCheckState == TVCS_NONE)
+	if (new_check_state == TVCS_NONE)
 	{
 		// TVCS_NONE state is only allowed at the top of the tree
 		// Do not allow TVCS_NONE state under a non-TVCS_NONE item
-		const auto parent = GetParentItem(hTreeItem);
+		const auto parent = GetParentItem(h_tree_item);
 		if (nullptr != parent && GetCheck(parent) != TVCS_NONE)
 		{
 			return FALSE;
@@ -186,21 +186,21 @@ BOOL CQuadStateTree::SetCheckInternal(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCh
 	// state is set to TVCS_INDETERMINATE in order for the default handler
 	// to cycle to the next state; TVCS_UNCHECKED. Do not send a TVNCHECK
 	// notification in that case.
-	if (!m_bIgnoreIndeterminateState)
+	if (!m_b_ignore_indeterminate_state_)
 	{
-		SendTVNCheck(hTreeItem, NewCheckState, old_check_state);
+		send_tvn_check(h_tree_item, new_check_state, old_check_state);
 	}
 
 	// TvnCheckReturnedNonzero is set in SendTVNCheck if the handler of the
 	// TVNCHECK notification returned a non-zero value in order to stop the
 	// checkbox state from changing
-	if (!m_bTvnCheckReturnedNonzero)
+	if (!m_b_tvn_check_returned_nonzero_)
 	{
 		TVITEM item;
 		item.mask = TVIF_HANDLE | TVIF_STATE;
-		item.hItem = hTreeItem;
+		item.hItem = h_tree_item;
 		item.stateMask = TVIS_STATEIMAGEMASK;
-		item.state = TVCS2STATE(NewCheckState);
+		item.state = TVCS2STATE(new_check_state);
 
 		// Set wParam to a 0xFEB1 to flag this message in our OnTvmSetitem handler
 		return static_cast<BOOL>(::SendMessage(m_hWnd, TVM_SETITEM, 0xFEB1, reinterpret_cast<LPARAM>(&item)));
@@ -220,14 +220,14 @@ BOOL CQuadStateTree::SetCheckInternal(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCh
 //
 /////////////////////////////////////////////////////////////////////////////
 
-void CQuadStateTree::SetTriggerItem(HTREEITEM hTreeItem)
+void CQuadStateTree::set_trigger_item(HTREEITEM h_tree_item)
 {
-	m_hTriggerItem = hTreeItem;
+	m_h_trigger_item_ = h_tree_item;
 
 	// 'SettingChildItems' is a flag used in OnTvnItemchanged() to control
 	// whether child items or parent items are being set in response
 	// to the 'TriggerItem' item checkbox being changed
-	m_bSettingChildItems = true;
+	m_b_setting_child_items_ = true;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -244,13 +244,13 @@ void CQuadStateTree::SetTriggerItem(HTREEITEM hTreeItem)
 //
 /////////////////////////////////////////////////////////////////////////////
 
-void CQuadStateTree::ToggleCheck(HTREEITEM hTreeItem)
+void CQuadStateTree::toggle_check(HTREEITEM h_tree_item)
 {
 	// By default the tree control will cycle through it's check states;
 	// unchecked -> checked -> indeterminate -> unchecked -> ...
 	// but we only want to go from indeterminate or checked to unchecked and
 	// unchecked to checked, we do not want to toggle to indeterminate state.
-	const auto old_check_state = GetCheck(hTreeItem);
+	const auto old_check_state = GetCheck(h_tree_item);
 	auto new_check_state = TVCS_CHECKED;
 	if (old_check_state == TVCS_CHECKED || old_check_state == TVCS_INDETERMINATE)
 	{
@@ -259,18 +259,18 @@ void CQuadStateTree::ToggleCheck(HTREEITEM hTreeItem)
 
 	// TVN_CHECK Notify handler can call GetCheck() to get old check state
 	// Set TriggerItem so we know who started this mess
-	SetTriggerItem(hTreeItem);
-	SendTVNCheck(hTreeItem, new_check_state, old_check_state);
+	set_trigger_item(h_tree_item);
+	send_tvn_check(h_tree_item, new_check_state, old_check_state);
 
-	if (old_check_state == TVCS_CHECKED && !m_bTvnCheckReturnedNonzero)
+	if (old_check_state == TVCS_CHECKED && !m_b_tvn_check_returned_nonzero_)
 	{
 		// Set to indeterminate state so when these functions return
 		// the default handler will set the state to unchecked. Use
 		// the IgnoreIndeterminateState flag to prevent SetCheckInternal
 		// from firing a TVNCHECK notification
-		m_bIgnoreIndeterminateState = true;
-		SetCheckInternal(hTreeItem, TVCS_INDETERMINATE);
-		m_bIgnoreIndeterminateState = false;
+		m_b_ignore_indeterminate_state_ = true;
+		set_check_internal(h_tree_item, TVCS_INDETERMINATE);
+		m_b_ignore_indeterminate_state_ = false;
 	}
 }
 
@@ -292,7 +292,7 @@ void CQuadStateTree::ToggleCheck(HTREEITEM hTreeItem)
 //
 /////////////////////////////////////////////////////////////////////////////
 
-LRESULT CQuadStateTree::SendTVNCheck(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewCheckState, TVCS_CHECKSTATE OldCheckState)
+LRESULT CQuadStateTree::send_tvn_check(HTREEITEM h_tree_item, TVCS_CHECKSTATE new_check_state, TVCS_CHECKSTATE old_check_state)
 {
 	if (IsWindow(GetParent()->m_hWnd))
 	{
@@ -300,18 +300,18 @@ LRESULT CQuadStateTree::SendTVNCheck(HTREEITEM hTreeItem, TVCS_CHECKSTATE NewChe
 		tvn.hdr.code = TVN_CHECK;
 		tvn.hdr.hwndFrom = GetSafeHwnd();
 		tvn.hdr.idFrom = GetDlgCtrlID();
-		tvn.hTreeItem = hTreeItem;
-		tvn.lParam = static_cast<LPARAM>(GetItemData(hTreeItem));
-		tvn.NewCheckState = NewCheckState;
-		tvn.OldCheckState = OldCheckState;
-		tvn.hTriggerItem = m_hTriggerItem;
+		tvn.h_tree_item = h_tree_item;
+		tvn.l_param = static_cast<LPARAM>(GetItemData(h_tree_item));
+		tvn.new_check_state = new_check_state;
+		tvn.old_check_state = old_check_state;
+		tvn.h_trigger_item = m_h_trigger_item_;
 
 		if (0 != GetParent()->SendMessage(WM_NOTIFY, tvn.hdr.idFrom, reinterpret_cast<LPARAM>(&tvn))
-			&& m_hTriggerItem == hTreeItem)
+			&& m_h_trigger_item_ == h_tree_item)
 		{
 			// Setting this to true stops the checkbox from changing
 			// Handled and reset in OnMNTvStateImageChanging
-			m_bTvnCheckReturnedNonzero = true;
+			m_b_tvn_check_returned_nonzero_ = true;
 			return 1;
 		}
 	}
@@ -353,7 +353,7 @@ BOOL CQuadStateTree::OnNMClick(NMHDR* pNMHDR, LRESULT* pResult)
 	// Was the click on a checkbox?
 	if (nullptr != h_tree_item && (flags & TVHT_ONITEMSTATEICON) == TVHT_ONITEMSTATEICON)
 	{
-		ToggleCheck(h_tree_item);
+		toggle_check(h_tree_item);
 	}
 	return FALSE;
 }
@@ -388,7 +388,7 @@ BOOL CQuadStateTree::OnTvnKeydown(NMHDR* pNMHDR, LRESULT* pResult)
 		// KeyDown is called before StateImageChanging so check for TVCS_NONE state
 		if (nullptr != h_tree_item && GetCheck(h_tree_item) != TVCS_NONE)
 		{
-			ToggleCheck(h_tree_item);
+			toggle_check(h_tree_item);
 		}
 	}
 	return FALSE;
@@ -420,9 +420,9 @@ BOOL CQuadStateTree::OnNMTvStateImageChanging(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 	const auto p_sic = reinterpret_cast<NMTVSTATEIMAGECHANGING*>(pNMHDR);
 
-	if (p_sic->iOldStateImageIndex - 1 == TVCS_NONE || m_bTvnCheckReturnedNonzero)
+	if (p_sic->iOldStateImageIndex - 1 == TVCS_NONE || m_b_tvn_check_returned_nonzero_)
 	{
-		m_bTvnCheckReturnedNonzero = false; // reset
+		m_b_tvn_check_returned_nonzero_ = false; // reset
 		*pResult = 1; // block the check state from changing
 		return TRUE; // block parent notification
 	}
@@ -462,13 +462,13 @@ BOOL CQuadStateTree::OnTvnItemchanged(NMHDR* pNMHDR, LRESULT* pResult)
 		const auto old_check_state = STATE2TVCS(pIC->uStateOld);
 		const auto new_check_state = STATE2TVCS(pIC->uStateNew);
 
-		if (old_check_state == new_check_state || (new_check_state == TVCS_INDETERMINATE && m_bIgnoreIndeterminateState
+		if (old_check_state == new_check_state || (new_check_state == TVCS_INDETERMINATE && m_b_ignore_indeterminate_state_
 			== true))
 		{
 			return TRUE; // no change; block parent notification
 		}
 
-		if (m_bSettingChildItems)
+		if (m_b_setting_child_items_)
 		{
 			if ((new_check_state == TVCS_CHECKED || new_check_state == TVCS_UNCHECKED) && ItemHasChildren(pIC->hItem))
 			{
@@ -477,20 +477,20 @@ BOOL CQuadStateTree::OnTvnItemchanged(NMHDR* pNMHDR, LRESULT* pResult)
 				auto child = GetChildItem(pIC->hItem);
 				while (child != nullptr)
 				{
-					SetCheckInternal(child, new_check_state);
+					set_check_internal(child, new_check_state);
 					child = GetNextSiblingItem(child);
 				}
 			}
 		}
 
-		if (pIC->hItem == m_hTriggerItem)
+		if (pIC->hItem == m_h_trigger_item_)
 		{
 			// All child item checkboxes of 'TriggerItem' have been set to
 			// the same state, so now we can set the parent item checkboxes
-			m_bSettingChildItems = false;
+			m_b_setting_child_items_ = false;
 		}
 
-		if (!m_bSettingChildItems)
+		if (!m_b_setting_child_items_)
 		{
 			const auto parent_item = GetParentItem(pIC->hItem);
 			if (parent_item != nullptr && GetCheck(parent_item) != TVCS_NONE)
@@ -505,7 +505,7 @@ BOOL CQuadStateTree::OnTvnItemchanged(NMHDR* pNMHDR, LRESULT* pResult)
 					check = GetCheck(child);
 					child = GetNextSiblingItem(child);
 				}
-				SetCheckInternal(parent_item, check == state ? check : TVCS_INDETERMINATE);
+				set_check_internal(parent_item, check == state ? check : TVCS_INDETERMINATE);
 			}
 		}
 	}
@@ -522,7 +522,7 @@ BOOL CQuadStateTree::OnTvnItemchanged(NMHDR* pNMHDR, LRESULT* pResult)
 //
 /////////////////////////////////////////////////////////////////////////////
 
-void CQuadStateTree::BuildBitmap()
+void CQuadStateTree::build_bitmap()
 {
 	BYTE BitmapInfoData[] = {
 		0x28, 0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 0x00, 0x0D, 0x00, 0x00, 0x00, 0x01, 0x00, 0x18, 0x00,
@@ -667,12 +667,12 @@ void CQuadStateTree::BuildBitmap()
 	                                     BitmapBitsData, pbi, DIB_RGB_COLORS);
 	//ShowGraphic(hBitmap);
 
-	if (nullptr != h_bitmap && m_Bitmap.Attach(h_bitmap))
+	if (nullptr != h_bitmap && m_bitmap_.Attach(h_bitmap))
 	{
-		if (m_ImageList.Create(pbih->biHeight, pbih->biHeight, pbih->biBitCount,
+		if (m_image_list_.Create(pbih->biHeight, pbih->biHeight, pbih->biBitCount,
 		                       pbih->biWidth / pbih->biHeight, 0))
 		{
-			m_ImageList.Add(&m_Bitmap, RGB(0xED, 0x1C, 0x24));
+			m_image_list_.Add(&m_bitmap_, RGB(0xED, 0x1C, 0x24));
 			//ShowGraphic(ImageList);
 		}
 	}
@@ -689,7 +689,7 @@ void CQuadStateTree::BuildBitmap()
 void CQuadStateTree::PreSubclassWindow()
 {
 	CTreeCtrl::PreSubclassWindow();
-	SetImageList(&m_ImageList, TVSIL_STATE);
+	SetImageList(&m_image_list_, TVSIL_STATE);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -708,9 +708,9 @@ void CQuadStateTree::PreSubclassWindow()
 //
 /////////////////////////////////////////////////////////////////////////////
 
-BOOL CQuadStateTree::Create(DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID)
+BOOL CQuadStateTree::Create(DWORD dw_style, const RECT& rect, CWnd* p_parent_wnd, UINT n_id)
 {
-	return CreateEx(0, dw_style, rect, pParentWnd, nID);
+	return CreateEx(0, dw_style, rect, p_parent_wnd, n_id);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -730,12 +730,12 @@ BOOL CQuadStateTree::Create(DWORD dw_style, const RECT& rect, CWnd* pParentWnd, 
 //
 /////////////////////////////////////////////////////////////////////////////
 
-BOOL CQuadStateTree::CreateEx(DWORD dwExStyle, DWORD dw_style, const RECT& rect, CWnd* pParentWnd, UINT nID)
+BOOL CQuadStateTree::CreateEx(DWORD dw_ex_style, DWORD dw_style, const RECT& rect, CWnd* p_parent_wnd, UINT n_id)
 {
-	const auto ret = CTreeCtrl::CreateEx(dwExStyle, dw_style | TVS_CHECKBOXES, rect, pParentWnd, nID);
+	const auto ret = CTreeCtrl::CreateEx(dw_ex_style, dw_style | TVS_CHECKBOXES, rect, p_parent_wnd, n_id);
 	if (FALSE != ret)
 	{
-		SetImageList(&m_ImageList, TVSIL_STATE);
+		SetImageList(&m_image_list_, TVSIL_STATE);
 	}
 	return ret;
 }
