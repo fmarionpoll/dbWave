@@ -48,17 +48,20 @@ BEGIN_MESSAGE_MAP(PaneldbFilter, CDockablePane)
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
 
-	ON_COMMAND(ID_UPDATE, on_update_tree)
-	ON_COMMAND(ID_APPLY_FILTER, on_apply_filter)
 	ON_MESSAGE(WM_MYMESSAGE, on_my_message)
 	ON_COMMAND(ID_RECORD_SORT, on_sort_records)
 	ON_COMMAND(ID_EXPLORER_NEXT, on_select_next)
 	ON_COMMAND(ID_EXPLORER_PREVIOUS, on_select_previous)
+
+	ON_COMMAND(ID_UPDATE, on_update_tree)
+	ON_COMMAND(ID_APPLY_FILTER, on_apply_filter)
 	ON_COMMAND(ID_BUTTON_PREVIOUS, select_previous_combo_item)
 	ON_COMMAND(ID_BUTTON_NEXT, select_next_combo_item)
-
 	ON_UPDATE_COMMAND_UI(ID_BUTTON_PREVIOUS, on_update_bn_update_previous)
 	ON_UPDATE_COMMAND_UI(ID_BUTTON_NEXT, on_update_bn_update_next)
+
+	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE1, on_tvn_sel_changed_filter_tree)
+	ON_NOTIFY(NM_CLICK, IDC_TREE1, &PaneldbFilter::on_nm_click_filter_tree)
 END_MESSAGE_MAP()
 
 void PaneldbFilter::AdjustLayout()
@@ -287,7 +290,7 @@ HTREEITEM PaneldbFilter::create_tree_subitem_element(const DB_ITEMDESC* p_desc, 
 		if (cs_element_j.CompareNoCase(p_desc->cs_param_single_filter) != 0)
 			b_check = TVCS_UNCHECKED;
 	}
-	m_wnd_filter_view_.SetCheck(h_tree_item, b_check);
+	m_wnd_filter_view_.set_check(h_tree_item, b_check);
 	return h_tree_item;
 }
 
@@ -301,7 +304,7 @@ void PaneldbFilter::create_tree_subitem(const DB_ITEMDESC* p_desc, const int i)
 	for (auto j = 0; j < p_desc->cs_elements_array.GetSize(); j++)
 	{
 		h_tree_item = create_tree_subitem_element(p_desc, i, j);
-		b_check = m_wnd_filter_view_.GetCheck(h_tree_item);
+		b_check = m_wnd_filter_view_.get_check(h_tree_item);
 		i_sum += b_check; // count number of positive checks (no check=0, check = 1)
 		n_items++;
 	}
@@ -310,8 +313,8 @@ void PaneldbFilter::create_tree_subitem(const DB_ITEMDESC* p_desc, const int i)
 	// namely "checked" (because at that moment it did not have other children)
 	if (i_sum == 1 && h_tree_item != nullptr)
 	{
-		m_wnd_filter_view_.SetCheck(h_tree_item, TVCS_CHECKED);
-		m_wnd_filter_view_.SetCheck(h_tree_item, b_check);
+		m_wnd_filter_view_.set_check(h_tree_item, TVCS_CHECKED);
+		m_wnd_filter_view_.set_check(h_tree_item, b_check);
 	}
 	if (i_sum < n_items)
 		m_wnd_filter_view_.Expand(m_h_tree_item_[i], TVE_EXPAND);
@@ -481,7 +484,7 @@ void PaneldbFilter::build_filter_item_indirection_from_tree(DB_ITEMDESC* p_desc,
 	auto i = 0;
 	for (auto item = start_item; item != nullptr; item = m_wnd_filter_view_.GetNextItem(item, TVGN_NEXT), i++)
 	{
-		const auto state = m_wnd_filter_view_.GetCheck(item);
+		const auto state = m_wnd_filter_view_.get_check(item);
 		if (state == TVCS_CHECKED)
 		{
 			auto cs = m_wnd_filter_view_.GetItemText(item);
@@ -505,7 +508,7 @@ void PaneldbFilter::build_filter_item_long_from_tree(DB_ITEMDESC* p_desc, const 
 	auto i = 0;
 	for (auto item = start_item; item != nullptr; item = m_wnd_filter_view_.GetNextItem(item, TVGN_NEXT), i++)
 	{
-		const auto state = m_wnd_filter_view_.GetCheck(item);
+		const auto state = m_wnd_filter_view_.get_check(item);
 		if (state == TVCS_CHECKED)
 		{
 			auto cs = m_wnd_filter_view_.GetItemText(item);
@@ -521,7 +524,7 @@ void PaneldbFilter::build_filter_item_date_from_tree(DB_ITEMDESC* p_desc, const 
 	auto i = 0;
 	for (auto item = start_item; item != nullptr; item = m_wnd_filter_view_.GetNextItem(item, TVGN_NEXT), i++)
 	{
-		const auto state = m_wnd_filter_view_.GetCheck(item);
+		const auto state = m_wnd_filter_view_.get_check(item);
 		if (state == TVCS_CHECKED)
 		{
 			auto cs_filter_checked = m_wnd_filter_view_.GetItemText(item);
@@ -548,7 +551,7 @@ void PaneldbFilter::on_apply_filter()
 		const int i_col = m_wnd_filter_view_.GetItemData(h_parent);
 		const auto p_desc = p_db->get_record_item_descriptor(i_col);
 		//if root is checked (or unchecked), it means no item is selected - remove flag
-		const auto state_root = m_wnd_filter_view_.GetCheck(h_parent);
+		const auto state_root = m_wnd_filter_view_.get_check(h_parent);
 		if ((state_root == TVCS_CHECKED) || (state_root == TVCS_UNCHECKED))
 		{
 			p_desc->b_array_filter = FALSE;
@@ -618,7 +621,7 @@ void PaneldbFilter::select_next(BOOL b_next)
 	auto h_kid = p_tree->GetChildItem(h_item);
 	do
 	{
-		const auto state = static_cast<CQuadStateTree*>(p_tree)->GetCheck(h_kid);
+		const auto state = static_cast<CQuadStateTree*>(p_tree)->get_check(h_kid);
 		if (state == TVCS_CHECKED)
 		{
 			h_last_selected = h_kid;
@@ -638,8 +641,8 @@ void PaneldbFilter::select_next(BOOL b_next)
 			h_next = p_tree->GetPrevSiblingItem(h_last_selected);
 		if (h_next == nullptr)
 			return;
-		static_cast<CQuadStateTree*>(p_tree)->SetCheck(h_next, TVCS_CHECKED);
-		static_cast<CQuadStateTree*>(p_tree)->SetCheck(h_last_selected, TVCS_UNCHECKED);
+		static_cast<CQuadStateTree*>(p_tree)->set_check(h_next, TVCS_CHECKED);
+		static_cast<CQuadStateTree*>(p_tree)->set_check(h_last_selected, TVCS_UNCHECKED);
 		on_apply_filter();
 	}
 }
@@ -674,4 +677,20 @@ void PaneldbFilter::on_update_bn_update_next(CCmdUI* p_cmd_ui)
 {
 	//p_cmd_ui->Enable(m_b_changed_property_);
 	p_cmd_ui->Enable(FALSE);
+}
+
+void PaneldbFilter::on_tvn_sel_changed_filter_tree(NMHDR* p_nmhdr, LRESULT* p_result)
+{
+	
+	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*) p_nmhdr;
+	auto* pNewItem = &pNMTreeView->itemNew;
+	TRACE("changed filter \n");
+}
+
+void PaneldbFilter::on_nm_click_filter_tree(NMHDR* p_nmhdr, LRESULT* p_result)
+{
+	//const auto i_cur_sel = spk_list_tab_ctrl.GetCurSel();
+	//SendMessage(WM_MYMESSAGE, HINT_VIEW_TAB_CHANGE, MAKELPARAM(i_cur_sel, 0));
+	//*p_result = 0;
+	TRACE("click filter \n");
 }

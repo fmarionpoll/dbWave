@@ -62,5 +62,8 @@ public:
 	afx_msg void OnUpdate(CView* p_sender, LPARAM l_hint, CObject* p_hint);
 	afx_msg LRESULT on_my_message(WPARAM w_param, LPARAM l_param);
 
+	afx_msg void on_tvn_sel_changed_filter_tree(NMHDR* p_nmhdr, LRESULT* p_result);
+	afx_msg void on_nm_click_filter_tree(NMHDR* p_nmhdr, LRESULT* p_result);
+
 	DECLARE_MESSAGE_MAP()
 };

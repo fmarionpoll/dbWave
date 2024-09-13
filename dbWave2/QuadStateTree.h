@@ -67,8 +67,8 @@ public:
 	CQuadStateTree();
 	~CQuadStateTree() override;
 
-	TVCS_CHECKSTATE GetCheck(HTREEITEM h_tree_item) const;
-	BOOL SetCheck(HTREEITEM h_tree_item, TVCS_CHECKSTATE new_check_state = TVCS_CHECKED);
+	TVCS_CHECKSTATE get_check(HTREEITEM h_tree_item) const;
+	BOOL set_check(HTREEITEM h_tree_item, TVCS_CHECKSTATE new_check_state = TVCS_CHECKED);
 
 	virtual BOOL Create(DWORD dw_style, const RECT& rect, CWnd* p_parent_wnd, UINT n_id);
 	virtual BOOL CreateEx(DWORD dw_ex_style, DWORD dw_style, const RECT& rect, CWnd* p_parent_wnd, UINT n_id);
@@ -91,11 +91,11 @@ private:
 	HTREEITEM m_h_trigger_item_;
 
 public:
-	afx_msg BOOL OnNMClick(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg BOOL OnNMTvStateImageChanging(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg BOOL OnTvnKeydown(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg BOOL OnTvnItemchanged(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg LRESULT OnTvmSetitem(WPARAM wp, LPARAM lp);
+	afx_msg BOOL OnNMClick(NMHDR* p_nmhdr, LRESULT* p_result);
+	afx_msg BOOL on_nm_tv_state_image_changing(NMHDR* p_nmhdr, LRESULT* p_result);
+	afx_msg BOOL on_tvn_keydown(NMHDR* p_nmhdr, LRESULT* p_result);
+	afx_msg BOOL on_tvn_item_changed(NMHDR* p_nmhdr, LRESULT* p_result);
+	afx_msg LRESULT on_tvm_set_item(WPARAM wp, LPARAM lp);
 
 	DECLARE_MESSAGE_MAP()
 };
