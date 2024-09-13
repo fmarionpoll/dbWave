@@ -61,7 +61,9 @@ BEGIN_MESSAGE_MAP(PaneldbFilter, CDockablePane)
 	ON_UPDATE_COMMAND_UI(ID_BUTTON_NEXT, on_update_bn_update_next)
 
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE1, on_tvn_sel_changed_filter_tree)
-	ON_NOTIFY(NM_CLICK, IDC_TREE1, &PaneldbFilter::on_nm_click_filter_tree)
+	ON_NOTIFY(NM_CLICK, IDC_TREE1, on_nm_click_filter_tree)
+
+	ON_CBN_SELCHANGE(ID_RECORD_SORT, on_cbn_sel_change_category)
 END_MESSAGE_MAP()
 
 void PaneldbFilter::AdjustLayout()
@@ -591,7 +593,7 @@ void PaneldbFilter::on_apply_filter()
 
 void PaneldbFilter::on_sort_records()
 {
-	auto p_database = m_p_doc_->db_table;
+	const auto p_database = m_p_doc_->db_table;
 	ASSERT(p_database);
 	const auto p_combo = static_cast<CMFCToolBarComboBoxButton*>(m_wnd_tool_bar_.GetButton(3));
 	ASSERT(ID_RECORD_SORT == m_wnd_tool_bar_.GetItemID(3));
@@ -693,4 +695,9 @@ void PaneldbFilter::on_nm_click_filter_tree(NMHDR* p_nmhdr, LRESULT* p_result)
 	//SendMessage(WM_MYMESSAGE, HINT_VIEW_TAB_CHANGE, MAKELPARAM(i_cur_sel, 0));
 	//*p_result = 0;
 	TRACE("click filter \n");
+}
+
+void  PaneldbFilter::on_cbn_sel_change_category()
+{
+	TRACE("change category from combobox \n");
 }

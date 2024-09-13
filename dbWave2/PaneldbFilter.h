@@ -64,6 +64,7 @@ public:
 
 	afx_msg void on_tvn_sel_changed_filter_tree(NMHDR* p_nmhdr, LRESULT* p_result);
 	afx_msg void on_nm_click_filter_tree(NMHDR* p_nmhdr, LRESULT* p_result);
+	afx_msg void on_cbn_sel_change_category();
 
 	DECLARE_MESSAGE_MAP()
 };
