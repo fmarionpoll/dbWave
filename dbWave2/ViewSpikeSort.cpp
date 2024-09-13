@@ -1,7 +1,6 @@
 #include "StdAfx.h"
 #include "ViewSpikeSort.h"
 
-#include "SpikeClassGridProperty.h"
 #include "dbWave.h"
 #include "DlgProgress.h"
 #include "DlgSpikeEdit.h"

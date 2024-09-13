@@ -144,7 +144,7 @@
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\fred\source\repos\dbWave2\dbWave2\include\DataTranslation;C:\Users\fred\source\repos\dbWave2\dbWave2\include\CED\win32;C:\Users\fred\source\repos\dbWave2\dbWave2\include\Alligator\win32;C:\Users\fred\source\repos\dbWave2\dbWave2\GridCtrl;C:\Users\fred\source\repos\dbWave2\dbWave2\Controls;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Include;C:\Program Files %28x86%29\Data Translation\Win32\SDK\Include;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Include;C:\Program Files %28x86%29\Data Translation\Win32\SDK\Include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\fred\source\repos\dbWave2\dbWave2\include\DataTranslation;C:\Users\fred\source\repos\dbWave2\dbWave2\include\CED\win32;C:\Users\fred\source\repos\dbWave2\dbWave2\include\Alligator\win32;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\include\DataTranslation;$(ProjectDir)\include\CED\win32;$(ProjectDir)\include\Alligator\win32;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">C:\Program Files %28x86%29\Data Translation\Win32\SDK\Include;C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Include;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files %28x86%29\Data Translation\Win32\SDK\Include;C:\Program Files %28x86%29\Data Translation\Win32\DTx-EZ\Include;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\fred\source\repos\dbWave2\dbWave2\include\DataTranslation;C:\Users\fred\source\repos\dbWave2\dbWave2\include\Alligator\win32;C:\Users\fred\source\repos\dbWave2\dbWave2\include\CED\win32;$(LibraryPath)</LibraryPath>
@@ -155,8 +155,8 @@
     <EnableManagedIncrementalBuild>true</EnableManagedIncrementalBuild>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisRuleSet>dbWave2.ruleset</CodeAnalysisRuleSet>
-    <LibraryPath>C:\Users\fred\source\repos\dbWave2\dbWave2\include\CED\win32;C:\Users\fred\source\repos\dbWave2\dbWave2\include\DataTranslation;$(LibraryPath)</LibraryPath>
-    <ExecutablePath>C:\Users\fred\source\repos\dbWave2\dbWave2\debug;$(ExecutablePath)</ExecutablePath>
+    <LibraryPath>$(ProjectDir)\include\CED\win32;$(ProjectDir)\include\DataTranslation;$(LibraryPath)</LibraryPath>
+    <ExecutablePath>$(ProjectDir)include\toAdd;$(ExecutablePath)</ExecutablePath>
     <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
     <PreLinkEventUseInBuild>false</PreLinkEventUseInBuild>
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
@@ -230,7 +230,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Users\fred\source\repos\dbWave2\dbWave2\Controls;C:\Users\fred\source\repos\dbWave2\dbWave2\GridCtrl;C:\Users\fred\source\repos\dbWave2\dbWave2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Controls;$(ProjectDir)\GridCtrl;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>

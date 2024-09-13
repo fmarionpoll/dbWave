@@ -971,6 +971,7 @@
 #define ID_TOOLS_SPIKE_DETECTION_PARAMETERS 33068
 #define ID_BUTTON_PREVIOUS              33069
 #define ID_BUTTON_NEXT                  33070
+#define ID_ACTIVE_COLUMN                33071
 #define ID_TOOLS_IMPORT                 33097
 #define ID_TOOLS_PATHS_RELATIVE         33099
 #define ID_TOOLS_PATHS_ABSOLUTE         33100
@@ -989,7 +990,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        580
-#define _APS_NEXT_COMMAND_VALUE         33071
+#define _APS_NEXT_COMMAND_VALUE         33072
 #define _APS_NEXT_CONTROL_VALUE         1542
 #define _APS_NEXT_SYMED_VALUE           555
 #endif
