@@ -49,12 +49,12 @@ BEGIN_MESSAGE_MAP(PaneldbFilter, CDockablePane)
 	ON_WM_SETFOCUS()
 
 	ON_MESSAGE(WM_MYMESSAGE, on_my_message)
-	ON_COMMAND(ID_RECORD_SORT, on_sort_records)
-	ON_COMMAND(ID_EXPLORER_NEXT, on_select_next)
-	ON_COMMAND(ID_EXPLORER_PREVIOUS, on_select_previous)
 
+	ON_CBN_SELCHANGE(ID_RECORD_SORT, on_cbn_sel_change_category)
+	ON_COMMAND(ID_RECORD_SORT, on_record_sort)
 	ON_COMMAND(ID_UPDATE, on_update_tree)
 	ON_COMMAND(ID_APPLY_FILTER, on_apply_filter)
+
 	ON_COMMAND(ID_BUTTON_PREVIOUS, select_previous_combo_item)
 	ON_COMMAND(ID_BUTTON_NEXT, select_next_combo_item)
 	ON_UPDATE_COMMAND_UI(ID_BUTTON_PREVIOUS, on_update_bn_update_previous)
@@ -63,7 +63,7 @@ BEGIN_MESSAGE_MAP(PaneldbFilter, CDockablePane)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE1, on_tvn_sel_changed_filter_tree)
 	ON_NOTIFY(NM_CLICK, IDC_TREE1, on_nm_click_filter_tree)
 
-	ON_CBN_SELCHANGE(ID_RECORD_SORT, on_cbn_sel_change_category)
+	
 END_MESSAGE_MAP()
 
 void PaneldbFilter::AdjustLayout()
@@ -232,7 +232,7 @@ void PaneldbFilter::OnUpdate(CView* p_sender, const LPARAM l_hint, CObject* p_hi
 
 void PaneldbFilter::fill_combo_with_categories(const CdbTable* p_db) const
 {
-	const auto p_combo = static_cast<CMFCToolBarComboBoxButton*>(m_wnd_tool_bar_.GetButton(3));
+	const auto p_combo = m_wnd_tool_bar_.get_combo();
 	ASSERT(ID_RECORD_SORT == m_wnd_tool_bar_.GetItemID(3));
 
 	if (p_combo->GetCount() <= 0)
@@ -311,7 +311,8 @@ void PaneldbFilter::create_tree_subitem(const DB_ITEMDESC* p_desc, const int i)
 		n_items++;
 	}
 
-	// trick needed here because if the first item is checked and not the others, then the parent stays in the initial state
+	// trick needed here because if the first item is checked and not the others,
+	// then the parent stays in the initial state
 	// namely "checked" (because at that moment it did not have other children)
 	if (i_sum == 1 && h_tree_item != nullptr)
 	{
@@ -550,8 +551,9 @@ void PaneldbFilter::on_apply_filter()
 		const auto h_parent = m_h_tree_item_[i];
 		i++;
 
-		const int i_col = m_wnd_filter_view_.GetItemData(h_parent);
+		const int i_col = static_cast<int>(m_wnd_filter_view_.GetItemData(h_parent));
 		const auto p_desc = p_db->get_record_item_descriptor(i_col);
+
 		//if root is checked (or unchecked), it means no item is selected - remove flag
 		const auto state_root = m_wnd_filter_view_.get_check(h_parent);
 		if ((state_root == TVCS_CHECKED) || (state_root == TVCS_UNCHECKED))
@@ -591,26 +593,108 @@ void PaneldbFilter::on_apply_filter()
 	m_p_doc_->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
 }
 
-void PaneldbFilter::on_sort_records()
+//void PaneldbFilter::on_sort_records()
+//{
+//	const auto p_database = m_p_doc_->db_table;
+//	ASSERT(p_database);
+//	const auto p_combo = static_cast<CMFCToolBarComboBoxButton*>(m_wnd_tool_bar_.GetButton(3));
+//	ASSERT(ID_RECORD_SORT == m_wnd_tool_bar_.GetItemID(3));
+//
+//	const auto i_sel = p_combo->GetCurSel();
+//	ASSERT(i_sel != CB_ERR);
+//	const int i = p_combo->GetItemData(i_sel);
+//	p_database->m_main_table_set.m_strSort = CdbTable::m_column_properties[i].header_name;
+//
+//	p_database->m_main_table_set.refresh_query();
+//	m_p_doc_->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
+//}
+
+void PaneldbFilter::on_tvn_sel_changed_filter_tree(NMHDR* p_nmhdr, LRESULT* p_result)
 {
-	const auto p_database = m_p_doc_->db_table;
-	ASSERT(p_database);
-	const auto p_combo = static_cast<CMFCToolBarComboBoxButton*>(m_wnd_tool_bar_.GetButton(3));
-	ASSERT(ID_RECORD_SORT == m_wnd_tool_bar_.GetItemID(3));
-
-	const auto i_sel = p_combo->GetCurSel();
-	ASSERT(i_sel != CB_ERR);
-	const int i = p_combo->GetItemData(i_sel);
-	p_database->m_main_table_set.m_strSort = CdbTable::m_column_properties[i].header_name;
-
-	p_database->m_main_table_set.refresh_query();
-	m_p_doc_->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
+	
+	NM_TREEVIEW* p_nm_tree_view = (NM_TREEVIEW*) p_nmhdr;
+	auto* p_new_item = &p_nm_tree_view->itemNew;
+	TRACE("changed filter \n");
 }
 
-void PaneldbFilter::select_next(BOOL b_next)
+void PaneldbFilter::on_nm_click_filter_tree(NMHDR* p_nmhdr, LRESULT* p_result)
+{
+	//const auto i_cur_sel = spk_list_tab_ctrl.GetCurSel();
+	//SendMessage(WM_MYMESSAGE, HINT_VIEW_TAB_CHANGE, MAKELPARAM(i_cur_sel, 0));
+	//*p_result = 0;
+	TRACE("click filter \n");
+}
+
+void  PaneldbFilter::on_cbn_sel_change_category()
+{
+	TRACE("change category from combobox \n");
+}
+
+void PaneldbFilter::on_update_bn_update_previous(CCmdUI* p_cmd_ui)
+{
+	//p_cmd_ui->Enable(m_b_changed_property_);
+	p_cmd_ui->Enable(TRUE);
+}
+
+void PaneldbFilter::on_update_bn_update_next(CCmdUI* p_cmd_ui)
+{
+	//p_cmd_ui->Enable(m_b_changed_property_);
+	p_cmd_ui->Enable(TRUE);
+}
+
+void PaneldbFilter::select_previous_combo_item()
+{
+	TRACE("got to previous");
+	select_next_filter_item(false);
+}
+
+void PaneldbFilter::select_next_combo_item()
+{
+	TRACE("go to next");
+	select_next_filter_item(true);
+}
+
+void PaneldbFilter::select_next_filter_item(boolean b_next)
+{
+	// get combo selected item
+	const int index = m_wnd_tool_bar_.get_combo()->GetCurSel();
+	const CString description = m_wnd_tool_bar_.get_combo()->GetItem(index);
+	const int column_index = static_cast<int>(m_wnd_tool_bar_.get_combo()->GetItemData(index));
+	// select corresponding tree item
+	auto h_item = select_tree_item(column_index);
+	const auto p_tree = static_cast<CTreeCtrl*>(&m_wnd_filter_view_);
+	ASSERT_VALID(p_tree);
+	p_tree->SelectItem(h_item);
+	select_next(b_next);
+}
+
+HTREEITEM PaneldbFilter::select_tree_item(const int col_requested)
+{
+	auto i = 0;
+	HTREEITEM item_found = nullptr;
+	const auto p_db = m_p_doc_->db_table;
+	const auto p_desc = p_db->get_record_item_descriptor(col_requested);
+
+	while (m_no_col_[i] > 0)
+	{
+		const auto h_parent = m_h_tree_item_[i];
+		const int i_col = static_cast<int>(m_wnd_filter_view_.GetItemData(h_parent));
+		if (i_col == col_requested)
+		{
+			item_found = h_parent;
+			break;
+		}
+		i++;
+	}
+	return item_found;
+}
+
+
+void PaneldbFilter::select_next(const boolean b_next)
 {
 	const auto p_tree = static_cast<CTreeCtrl*>(&m_wnd_filter_view_);
 	ASSERT_VALID(p_tree);
+
 	auto h_item = p_tree->GetSelectedItem();
 	if (!p_tree->ItemHasChildren(h_item))
 		h_item = p_tree->GetParentItem(h_item);
@@ -630,8 +714,7 @@ void PaneldbFilter::select_next(BOOL b_next)
 			n_selected++;
 		}
 		count++;
-	}
-	while ((h_kid = p_tree->GetNextSiblingItem(h_kid)));
+	} while ((h_kid = p_tree->GetNextSiblingItem(h_kid)));
 
 	// if single selection select next item on the list and deselect current; update
 	if (n_selected == 1)
@@ -649,55 +732,18 @@ void PaneldbFilter::select_next(BOOL b_next)
 	}
 }
 
-void PaneldbFilter::on_select_next()
+void PaneldbFilter::on_record_sort()
 {
-	select_next(TRUE);
-}
+	const auto p_database = m_p_doc_->db_table;
+	ASSERT(p_database);
+	const auto p_combo = static_cast<CMFCToolBarComboBoxButton*>(m_wnd_tool_bar_.GetButton(3));
+	ASSERT(ID_RECORD_SORT == m_wnd_tool_bar_.GetItemID(3));
 
-void PaneldbFilter::on_select_previous()
-{
-	select_next(FALSE);
-}
+	const auto i_sel = p_combo->GetCurSel();
+	ASSERT(i_sel != CB_ERR);
+	const int i = p_combo->GetItemData(i_sel);
+	//p_database->m_main_table_set.m_strSort = CdbTable::m_column_properties[i].header_name;
 
-void PaneldbFilter::select_previous_combo_item()
-{
-	TRACE("got to previous");
-}
-
-void PaneldbFilter::select_next_combo_item()
-{
-	TRACE("go to next");
-}
-
-void PaneldbFilter::on_update_bn_update_previous(CCmdUI* p_cmd_ui)
-{
-	//p_cmd_ui->Enable(m_b_changed_property_);
-	p_cmd_ui->Enable(TRUE);
-}
-
-void PaneldbFilter::on_update_bn_update_next(CCmdUI* p_cmd_ui)
-{
-	//p_cmd_ui->Enable(m_b_changed_property_);
-	p_cmd_ui->Enable(FALSE);
-}
-
-void PaneldbFilter::on_tvn_sel_changed_filter_tree(NMHDR* p_nmhdr, LRESULT* p_result)
-{
-	
-	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*) p_nmhdr;
-	auto* pNewItem = &pNMTreeView->itemNew;
-	TRACE("changed filter \n");
-}
-
-void PaneldbFilter::on_nm_click_filter_tree(NMHDR* p_nmhdr, LRESULT* p_result)
-{
-	//const auto i_cur_sel = spk_list_tab_ctrl.GetCurSel();
-	//SendMessage(WM_MYMESSAGE, HINT_VIEW_TAB_CHANGE, MAKELPARAM(i_cur_sel, 0));
-	//*p_result = 0;
-	TRACE("click filter \n");
-}
-
-void  PaneldbFilter::on_cbn_sel_change_category()
-{
-	TRACE("change category from combobox \n");
+	//p_database->m_main_table_set.refresh_query();
+	//m_p_doc_->update_all_views_db_wave(nullptr, HINT_REQUERY, nullptr);
 }
