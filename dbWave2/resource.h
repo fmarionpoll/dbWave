@@ -472,10 +472,12 @@
 #define IDC_BUTTON5                     1006
 #define IDC_STATIC7                     1006
 #define IDC_DISPLAYDATA                 1007
+#define IDC_BUTTON8                     1007
 #define IDC_COMBO_SENSILLUMID           1008
 #define IDC_COMBO_FLAG                  1009
 #define IDC_STATIC10                    1009
 #define IDC_STATIC11                    1010
+#define IDC_BUTTON9                     1010
 #define IDC_COMBO_STIMULUS              1011
 #define IDC_STATIC12                    1011
 #define IDC_COMBO_CONCENTRATION         1012

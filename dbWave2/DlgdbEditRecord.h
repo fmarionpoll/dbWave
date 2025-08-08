@@ -84,4 +84,6 @@ public:
 	afx_msg void on_bn_clicked_button_expt2();
 
 	DECLARE_MESSAGE_MAP()
+	afx_msg void OnBnClickedButton8();
+	afx_msg void OnBnClickedButton9();
 };

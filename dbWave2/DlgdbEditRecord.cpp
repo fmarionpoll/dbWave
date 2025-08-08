@@ -76,6 +76,8 @@ BEGIN_MESSAGE_MAP(DlgdbEditRecord, CDialog)
 	ON_BN_CLICKED(IDC_BUTTONREPEAT2, &DlgdbEditRecord::on_bn_clicked_button_repeat2)
 	ON_BN_CLICKED(IDC_BUTTONFLAG, &DlgdbEditRecord::on_bn_clicked_button_flag)
 	ON_BN_CLICKED(IDC_BUTTONEXPT2, &DlgdbEditRecord::on_bn_clicked_button_expt2)
+	ON_BN_CLICKED(IDC_BUTTON8, &DlgdbEditRecord::OnBnClickedButton8)
+	ON_BN_CLICKED(IDC_BUTTON9, &DlgdbEditRecord::OnBnClickedButton9)
 END_MESSAGE_MAP()
 
 // CdbEditRecordDlg message handlers
@@ -546,4 +548,19 @@ void DlgdbEditRecord::on_bn_clicked_next()
 
 	populate_controls();
 	UpdateData(FALSE);
+}
+
+
+void DlgdbEditRecord::OnBnClickedButton8()
+{
+	// TODO: edit filenames of data files
+	// remove leading spaces
+}
+
+
+void DlgdbEditRecord::OnBnClickedButton9()
+{
+	// TODO: edit filenames of spk files
+	// remove leading spaces
+
 }
