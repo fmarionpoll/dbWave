@@ -553,14 +553,132 @@ void DlgdbEditRecord::on_bn_clicked_next()
 
 void DlgdbEditRecord::OnBnClickedButton8()
 {
-	// TODO: edit filenames of data files
-	// remove leading spaces
+	// Remove leading spaces from data file filenames
+	if (AfxMessageBox(_T("This will remove leading spaces from all data file filenames in the database.\n\nContinue?"), MB_YESNO | MB_ICONQUESTION) != IDYES)
+		return;
+
+	auto* p_db_table = m_pdb_doc->db_table;
+	if (!p_db_table || !p_db_table->m_main_table_set.IsOpen())
+	{
+		AfxMessageBox(_T("Database is not open."), MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	int records_updated = 0;
+	int total_records = 0;
+
+	try
+	{
+		// Move to first record
+		p_db_table->m_main_table_set.MoveFirst();
+		
+		// Iterate through all records
+		while (!p_db_table->m_main_table_set.IsEOF())
+		{
+			total_records++;
+			
+			// Get current filename
+			CString current_filename = p_db_table->m_main_table_set.m_file_dat;
+			
+			// Check if filename has leading spaces
+			if (!current_filename.IsEmpty() && current_filename[0] == _T(' '))
+			{
+				// Remove leading spaces
+				CString trimmed_filename = current_filename;
+				trimmed_filename.TrimLeft();
+				
+				// Update the record if filename changed
+				if (trimmed_filename != current_filename)
+				{
+					p_db_table->m_main_table_set.Edit();
+					p_db_table->m_main_table_set.m_file_dat = trimmed_filename;
+					p_db_table->m_main_table_set.Update();
+					records_updated++;
+				}
+			}
+			
+			// Move to next record
+			p_db_table->m_main_table_set.MoveNext();
+		}
+		
+		// Show results
+		CString result_msg;
+		result_msg.Format(_T("Data file filename cleanup completed.\n\nTotal records processed: %d\nRecords updated: %d"), 
+						 total_records, records_updated);
+		AfxMessageBox(result_msg, MB_OK | MB_ICONINFORMATION);
+		
+		// Refresh views
+		m_pdb_doc->update_all_views_db_wave(nullptr, 0L, nullptr);
+	}
+	catch (CDaoException* e)
+	{
+		DisplayDaoException(e, 615);
+		e->Delete();
+	}
 }
 
 
 void DlgdbEditRecord::OnBnClickedButton9()
 {
-	// TODO: edit filenames of spk files
-	// remove leading spaces
+	// Remove leading spaces from spike file filenames
+	if (AfxMessageBox(_T("This will remove leading spaces from all spike file filenames in the database.\n\nContinue?"), MB_YESNO | MB_ICONQUESTION) != IDYES)
+		return;
 
+	auto* p_db_table = m_pdb_doc->db_table;
+	if (!p_db_table || !p_db_table->m_main_table_set.IsOpen())
+	{
+		AfxMessageBox(_T("Database is not open."), MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	try
+	{
+		int records_updated = 0;
+		int total_records = 0;
+		// Move to first record
+		p_db_table->m_main_table_set.MoveFirst();
+		
+		// Iterate through all records
+		while (!p_db_table->m_main_table_set.IsEOF())
+		{
+			total_records++;
+			
+			// Get current filename
+			CString current_filename = p_db_table->m_main_table_set.m_file_spk;
+			
+			// Check if filename has leading spaces
+			if (!current_filename.IsEmpty() && current_filename[0] == _T(' '))
+			{
+				// Remove leading spaces
+				CString trimmed_filename = current_filename;
+				trimmed_filename.TrimLeft();
+				
+				// Update the record if filename changed
+				if (trimmed_filename != current_filename)
+				{
+					p_db_table->m_main_table_set.Edit();
+					p_db_table->m_main_table_set.m_file_spk = trimmed_filename;
+					p_db_table->m_main_table_set.Update();
+					records_updated++;
+				}
+			}
+			
+			// Move to next record
+			p_db_table->m_main_table_set.MoveNext();
+		}
+		
+		// Show results
+		CString result_msg;
+		result_msg.Format(_T("Spike file filename cleanup completed.\n\nTotal records processed: %d\nRecords updated: %d"), 
+						 total_records, records_updated);
+		AfxMessageBox(result_msg, MB_OK | MB_ICONINFORMATION);
+		
+		// Refresh views
+		m_pdb_doc->update_all_views_db_wave(nullptr, 0L, nullptr);
+	}
+	catch (CDaoException* e)
+	{
+		DisplayDaoException(e, 682);
+		e->Delete();
+	}
 }
