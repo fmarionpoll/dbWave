@@ -982,6 +982,7 @@
 #define ID_TOOLS_PATH                   33111
 #define ID_TOOLS_REMOVE_UNUSED          33114
 #define ID_TOOLS_GARBAGE                33117
+#define ID_TOOLS_CLEANUP_FILENAMES      33118
 #define AFX_IDS_IDLEMESSAGE2            57345
 #define AFX_IDS_IDLEMESSAGE3            57346
 #define AFX_IDS_HELPMODEMESSAGE2        57347

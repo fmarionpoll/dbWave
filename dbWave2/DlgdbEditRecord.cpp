@@ -8,6 +8,9 @@
 
 #include "DlgdbEditRecord.h"
 
+#include "dbWave_constants.h"
+#include "FilenameCleanupUtils.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -553,14 +556,39 @@ void DlgdbEditRecord::on_bn_clicked_next()
 
 void DlgdbEditRecord::OnBnClickedButton8()
 {
-	// TODO: edit filenames of data files
-	// remove leading spaces
+	// Remove leading spaces from data file filenames
+	if (AfxMessageBox(_T("This will remove leading spaces from all data file filenames in the database.\n\nContinue?"), MB_YESNO | MB_ICONQUESTION) != IDYES)
+		return;
+
+	const auto* p_db_table = m_pdb_doc->db_table;
+	if (!p_db_table || !p_db_table->m_main_table_set.IsOpen())
+	{
+		AfxMessageBox(_T("Database is not open."), MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	if ( CleanupDataFileFilenames(m_pdb_doc))
+	{
+		m_pdb_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+	}
 }
 
 
 void DlgdbEditRecord::OnBnClickedButton9()
 {
-	// TODO: edit filenames of spk files
-	// remove leading spaces
+	// Remove leading spaces from spike file filenames
+	if (AfxMessageBox(_T("This will remove leading spaces from all spike file filenames in the database.\n\nContinue?"), MB_YESNO | MB_ICONQUESTION) != IDYES)
+		return;
 
+	const auto* p_db_table = m_pdb_doc->db_table;
+	if (!p_db_table || !p_db_table->m_main_table_set.IsOpen())
+	{
+		AfxMessageBox(_T("Database is not open."), MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	if (CleanupSpikeFileFilenames(m_pdb_doc))
+	{
+		m_pdb_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
+	}
 }

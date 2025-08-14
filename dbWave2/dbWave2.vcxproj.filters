@@ -540,6 +540,9 @@
     <ClCompile Include="SpikeClassGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FilenameCleanupUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GridCtrl\GridCell.h">
@@ -1173,6 +1176,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpikeClassGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FilenameCleanupUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

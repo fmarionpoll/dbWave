@@ -782,6 +782,7 @@
     <ClCompile Include="ADAcqDataDoc.cpp" />
     <ClCompile Include="ChartDataAD.cpp" />
     <ClCompile Include="ChartSpike.cpp" />
+    <ClCompile Include="FilenameCleanupUtils.cpp" />
     <ClCompile Include="SpikeClassGrid.cpp" />
     <ClCompile Include="SpikeClassGridList.cpp" />
     <ClCompile Include="SpikeClassGridProperty.cpp" />
@@ -1369,6 +1370,7 @@
     <ClInclude Include="CDTBoardParameters.h" />
     <ClInclude Include="ChartDataAD.h" />
     <ClInclude Include="ChartSpike.h" />
+    <ClInclude Include="FilenameCleanupUtils.h" />
     <ClInclude Include="SpikeClassGrid.h" />
     <ClInclude Include="SpikeClassGridList.h" />
     <ClInclude Include="SpikeClassGridProperty.h" />
