@@ -2981,6 +2981,8 @@ BEGIN
             MENUITEM "&Restore deleted files ...",  ID_TOOLS_RESTORE_DELETED_FILES
             MENUITEM "Remove &artefact files...",   ID_TOOLS_REMOVE_ARTEFACT_FILES
             MENUITEM "Chec&k consistency of spike file names...", ID_TOOLS_CHECK_CONSISTENCY_OF_LISTS
+            MENUITEM SEPARATOR
+            MENUITEM "Clean up &filename spaces...", ID_TOOLS_CLEANUP_FILENAMES
         END
         POPUP "&Upload database infos into data files"
         BEGIN
@@ -4001,6 +4003,7 @@ STRINGTABLE
 BEGIN
     ID_TOOLS_COMPACT_DATABASE "Compact database"
     ID_TOOLS_REMOVE_UNUSED  "Remove un-used entries in database"
+    ID_TOOLS_CLEANUP_FILENAMES "Remove spaces from dat and spk filnames"
 END
 
 #endif    // English (United States) resources

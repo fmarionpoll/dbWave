@@ -46,6 +46,8 @@
 #include "DlgExportSpikeInfos.h"
 #include "DlgLoadSaveOptions.h"
 #include "DlgPrintMargins.h"
+#include "DlgdbEditRecord.h"
+#include "FilenameCleanupUtils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -99,6 +101,7 @@ BEGIN_MESSAGE_MAP(CChildFrame, CMDIChildWndEx)
 	ON_COMMAND(ID_TOOLS_REMOVE_UNUSED, &CChildFrame::on_tools_remove_unused)
 	ON_COMMAND(ID_TOOLS_GARBAGE, &CChildFrame::on_tools_garbage)
 	ON_COMMAND(ID_TOOLS_COMPACT_DATABASE, &CChildFrame::on_tools_compact_database)
+	ON_COMMAND(ID_TOOLS_CLEANUP_FILENAMES, &CChildFrame::on_tools_cleanup_filenames)
 
 END_MESSAGE_MAP()
 
@@ -1156,5 +1159,29 @@ void CChildFrame::on_tools_compact_database()
 
 		const auto cs = file_name + _T(" database compacted and saved as ") + file_name_new;
 		AfxMessageBox(cs);
+	}
+}
+
+void CChildFrame::on_tools_cleanup_filenames()
+{
+	// Get the active document
+	CdbWaveDoc* p_db_wave_doc = CdbWaveDoc::get_active_mdi_document();
+	if (p_db_wave_doc == nullptr)
+	{
+		AfxMessageBox(_T("No database document is currently open."), MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	BOOL success = FALSE;
+	success = CleanupDataFileFilenames(p_db_wave_doc);
+	if (success)
+	{
+		success = CleanupSpikeFileFilenames(p_db_wave_doc);
+	}
+
+	if (success)
+	{
+		// Update all views to reflect changes
+		p_db_wave_doc->UpdateAllViews(nullptr, HINT_REQUERY, nullptr);
 	}
 }

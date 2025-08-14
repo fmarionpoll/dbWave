@@ -75,6 +75,7 @@ public:
 	afx_msg void on_tools_synchro();
 	afx_msg void on_tools_garbage();
 	afx_msg void on_tools_compact_database();
+	afx_msg void on_tools_cleanup_filenames();
 
 	DECLARE_MESSAGE_MAP()
 };

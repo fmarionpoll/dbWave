@@ -164,6 +164,7 @@
 #define HID_TOOLS_PATH                          0x18157
 #define HID_TOOLS_REMOVE_UNUSED                 0x1815A
 #define HID_TOOLS_GARBAGE                       0x1815D
+#define HID_TOOLS_CLEANUP_FILENAMES             0x1815E
  
 // Prompts (IDP_*) 
 #define HIDP_OLE_INIT_FAILED                    0x30064
